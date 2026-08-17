@@ -1660,7 +1660,28 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
           console.log('SW Registered successfully:', reg.scope);
+          // Check for worker updates
+          reg.update().catch(() => {});
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            if (installingWorker) {
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  showToast('Đã phát hiện phiên bản mới! Đang tải lại...');
+                  setTimeout(() => window.location.reload(), 1000);
+                }
+              };
+            }
+          };
         }).catch(err => console.log('SW Note:', err));
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
 
