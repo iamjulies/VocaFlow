@@ -30,6 +30,7 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       userId: fields[15] as String,
       updatedAt: fields[10] as DateTime?,
       isDeleted: fields[16] as bool,
+      masteryScore: fields[17] as int,
       synonyms: (fields[11] as List).cast<String>(),
       antonyms: (fields[12] as List).cast<String>(),
       collocations: (fields[13] as List).cast<String>(),
@@ -40,7 +41,7 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
   @override
   void write(BinaryWriter writer, WordModel obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -74,7 +75,9 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       ..writeByte(15)
       ..write(obj.userId)
       ..writeByte(16)
-      ..write(obj.isDeleted);
+      ..write(obj.isDeleted)
+      ..writeByte(17)
+      ..write(obj.masteryScore);
   }
 
   @override

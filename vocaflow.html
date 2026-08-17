@@ -357,7 +357,7 @@
       border-color: var(--primary);
     }
 
-    /* WORD LIST */
+    /* WORD LIST & SELECTION */
     .word-list {
       display: flex;
       flex-direction: column;
@@ -371,11 +371,23 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 12px;
-      transition: border-color 0.2s ease;
+      gap: 14px;
+      transition: all 0.2s ease;
+    }
+    .word-item.selected {
+      border-color: #6366f1;
+      background-color: rgba(99, 102, 241, 0.05);
     }
     .word-item:hover {
       border-color: var(--surface-elevated);
+    }
+    .word-select-checkbox {
+      width: 19px;
+      height: 19px;
+      cursor: pointer;
+      accent-color: #6366f1;
+      margin-top: 3px;
+      flex-shrink: 0;
     }
     .word-header {
       display: flex;
@@ -409,15 +421,37 @@
       gap: 10px;
       font-size: 12px;
       flex-wrap: wrap;
+      margin-bottom: 6px;
     }
     .tag-syn { color: #38bdf8; }
     .tag-ant { color: #f87171; }
     .tag-coll { color: #34d399; }
 
+    .word-mastery-track {
+      background-color: rgba(255, 255, 255, 0.08);
+      height: 6px;
+      border-radius: 4px;
+      overflow: hidden;
+      width: 140px;
+    }
+    .word-mastery-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #6366f1, #10b981);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .badge-mastery {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      font-weight: 700;
+    }
+
     .word-actions {
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-shrink: 0;
     }
 
     /* FLASHCARD 3D */
@@ -753,6 +787,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
@@ -792,13 +827,17 @@
     <!-- SCREEN 2: DECK DETAIL -->
     <section id="screen-deck-detail" class="screen">
       <div class="top-nav">
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
           <button class="btn btn-outline btn-icon" onclick="showScreen('screen-decks')">
             <svg class="icon"><use href="#i-arrow-back"/></svg>
           </button>
           <div>
-            <h1 class="screen-title" id="deck-detail-title">Deck Title</h1>
-            <p id="deck-detail-desc" style="font-size: 13px; color: var(--text-muted);"></p>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <h1 class="screen-title" id="deck-detail-title" style="margin-bottom: 0;">Deck Title</h1>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa tên / mô tả bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ này" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+            </div>
+            <p id="deck-detail-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;"></p>
           </div>
         </div>
 
@@ -815,14 +854,26 @@
         </div>
       </div>
 
-      <!-- STUDY LAUNCHERS -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
-        <button class="btn btn-primary" style="padding: 14px; font-size: 15px;" onclick="startFlashcardMode()">
-          <svg class="icon"><use href="#i-cards"/></svg> Học Flashcard 3D
-        </button>
-        <button class="btn btn-outline" style="padding: 14px; font-size: 15px; border-color: var(--primary); color: #818cf8;" onclick="startQuizMode()">
-          <svg class="icon"><use href="#i-quiz"/></svg> Luyện Trắc Nghiệm Quiz
-        </button>
+      <!-- SELECTION & STUDY BAR -->
+      <div id="selection-study-bar" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 600; user-select: none;">
+            <input type="checkbox" id="select-all-words-checkbox" onchange="toggleSelectAllWords(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #6366f1;">
+            <span>Chọn tất cả</span>
+          </label>
+          <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600;">0 từ được chọn</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected">
+            <svg class="icon icon-sm"><use href="#i-cards"/></svg> Học Flashcard (<span id="fc-count-label">Tất cả</span>)
+          </button>
+          <button class="btn btn-outline btn-sm" style="border-color: var(--primary); color: #818cf8;" onclick="startQuizMode(true)" id="btn-study-quiz-selected">
+            <svg class="icon icon-sm"><use href="#i-quiz"/></svg> Luyện Quiz (<span id="quiz-count-label">Tất cả</span>)
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">
+            <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa đã chọn
+          </button>
+        </div>
       </div>
 
       <!-- FILTER & SEARCH -->
@@ -830,9 +881,9 @@
         <input type="text" id="word-search-input" class="search-input" placeholder="Tìm kiếm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()">
         <div class="chip-group">
           <div class="chip active" onclick="setWordFilter('all', this)">Tất cả</div>
-          <div class="chip" onclick="setWordFilter('newWord', this)">Mới</div>
-          <div class="chip" onclick="setWordFilter('learning', this)">Đang học</div>
-          <div class="chip" onclick="setWordFilter('mastered', this)">Đã thuộc</div>
+          <div class="chip" onclick="setWordFilter('newWord', this)">Mới (0%)</div>
+          <div class="chip" onclick="setWordFilter('learning', this)">Đang học (1-99%)</div>
+          <div class="chip" onclick="setWordFilter('mastered', this)">Đã thuộc (100%)</div>
         </div>
       </div>
 
@@ -862,22 +913,36 @@
         <div class="flashcard" id="flashcard-element">
           <!-- Front Face -->
           <div class="card-face card-front">
-            <div id="fc-front-cefr" class="badge badge-cefr" style="margin-bottom: 8px; display: none;">B2</div>
-            <div id="fc-front-pos" class="badge badge-pos">NOUN</div>
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 10px;">
+              <div id="fc-front-cefr" class="badge badge-cefr" style="display: none;">B2</div>
+              <div id="fc-front-pos" class="badge badge-pos">NOUN</div>
+              <div id="fc-front-mastery-badge" class="badge badge-mastery">🎯 0%</div>
+            </div>
             <div class="card-term-large" id="fc-front-term">Ubiquitous</div>
             <div class="word-phonetic" id="fc-front-phonetic">/juːˈbɪk.wə.təs/</div>
-            <div style="margin-top: 36px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-              <span>Chạm để xem định nghĩa & chi tiết</span>
+            
+            <div style="margin-top: 24px; width: 100%; max-width: 220px;">
+              <div class="word-mastery-track" style="width: 100%; margin: 0 auto 6px;">
+                <div class="word-mastery-fill" id="fc-front-mastery-fill" style="width: 0%;"></div>
+              </div>
+              <div id="fc-front-mastery-sub" style="font-size: 11px; color: var(--text-muted);">Mức độ thuộc: 0/100</div>
+            </div>
+
+            <div style="margin-top: 20px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+              <span>Chạm để lật mặt sau</span>
             </div>
           </div>
 
           <!-- Back Face -->
           <div class="card-face card-back">
-            <div id="fc-back-term" style="font-size: 18px; font-weight: 700; color: var(--primary);">Ubiquitous</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
+              <div id="fc-back-term" style="font-size: 18px; font-weight: 700; color: var(--primary);">Ubiquitous</div>
+              <div id="fc-back-mastery-badge" class="badge badge-mastery">🎯 0%</div>
+            </div>
             <div class="card-def-large" id="fc-back-def">Có mặt ở khắp mọi nơi</div>
-            <div id="fc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 12px;"></div>
+            <div id="fc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px;"></div>
             
-            <div id="fc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 8px;">
+            <div id="fc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 6px;">
               <!-- Synonyms, Antonyms, Collocations -->
             </div>
           </div>
@@ -886,11 +951,11 @@
 
       <!-- Action Buttons -->
       <div style="display: flex; justify-content: center; gap: 16px; max-width: 540px; margin: 0 auto;">
-        <button class="btn btn-outline btn-danger" style="flex: 1; padding: 14px;" onclick="markFlashcardStatus('learning')">
-          <svg class="icon"><use href="#i-close"/></svg> Chưa thuộc
+        <button class="btn btn-outline btn-danger" id="fc-btn-no" style="flex: 1; padding: 14px;" onclick="markFlashcardMastery(false)">
+          <svg class="icon"><use href="#i-close"/></svg> Chưa thuộc (-1đ)
         </button>
-        <button class="btn btn-success" style="flex: 1; padding: 14px;" onclick="markFlashcardStatus('mastered')">
-          <svg class="icon"><use href="#i-check"/></svg> Đã thuộc
+        <button class="btn btn-success" id="fc-btn-yes" style="flex: 1; padding: 14px;" onclick="markFlashcardMastery(true)">
+          <svg class="icon"><use href="#i-check"/></svg> Thuộc rồi (+6đ)
         </button>
       </div>
     </section>
@@ -1755,6 +1820,7 @@
           exampleSentence: 'Smartphones have become ubiquitous in modern daily life.',
           note: 'Mẹo nhớ: U ở khắp mọi nơi',
           status: 'newWord',
+          masteryScore: 0,
           cefrLevel: 'C1',
           synonyms: ['omnipresent', 'pervasive', 'universal'],
           antonyms: ['rare', 'scarce'],
@@ -1771,6 +1837,7 @@
           exampleSentence: 'The local economy proved remarkably resilient during the crisis.',
           note: 'Hay gặp trong IELTS Writing Task 2',
           status: 'learning',
+          masteryScore: 45,
           cefrLevel: 'B2',
           synonyms: ['tough', 'flexible', 'adaptable'],
           antonyms: ['fragile', 'vulnerable'],
@@ -1787,6 +1854,7 @@
           exampleSentence: 'She gave an eloquent speech that moved the entire audience.',
           note: 'Miêu tả bài nói hoặc phong thái',
           status: 'newWord',
+          masteryScore: 0,
           cefrLevel: 'C1',
           synonyms: ['articulate', 'expressive', 'fluent'],
           antonyms: ['inarticulate'],
@@ -1803,6 +1871,7 @@
           exampleSentence: 'We need to adopt a pragmatic approach to solve this engineering challenge.',
           note: 'Ngược với idealistic',
           status: 'mastered',
+          masteryScore: 100,
           cefrLevel: 'C1',
           synonyms: ['practical', 'realistic', 'sensible'],
           antonyms: ['idealistic', 'impractical'],
@@ -1819,6 +1888,7 @@
           exampleSentence: 'Through diligent study and practice, he mastered the language.',
           note: 'Đánh giá học sinh/nhân viên',
           status: 'learning',
+          masteryScore: 60,
           cefrLevel: 'B1',
           synonyms: ['hardworking', 'assiduous', 'meticulous'],
           antonyms: ['lazy', 'careless'],
@@ -1844,7 +1914,129 @@
       }
     }
 
-    // RENDER DECKS
+    // =========================================================================
+    // MULTI-SELECTION & FILTER ENGINE
+    // =========================================================================
+    let selectedWordIds = new Set();
+
+    function getFilteredDeckWords() {
+      const query = (document.getElementById('word-search-input')?.value || '').toLowerCase().trim();
+      let deckWords = words.filter(w => w.deckId === currentDeckId);
+
+      if (currentWordFilter !== 'all') {
+        deckWords = deckWords.filter(w => w.status === currentWordFilter);
+      }
+
+      if (query) {
+        deckWords = deckWords.filter(w => 
+          w.term.toLowerCase().includes(query) ||
+          w.definitionVi.toLowerCase().includes(query) ||
+          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query)))
+        );
+      }
+      return deckWords;
+    }
+
+    function toggleWordSelect(wordId, isChecked) {
+      if (isChecked) {
+        selectedWordIds.add(wordId);
+      } else {
+        selectedWordIds.delete(wordId);
+      }
+      const item = document.getElementById(`word-item-${wordId}`);
+      if (item) {
+        item.classList.toggle('selected', isChecked);
+      }
+      updateSelectionUI();
+    }
+
+    function toggleSelectAllWords(isChecked) {
+      const currentFiltered = getFilteredDeckWords();
+      if (isChecked) {
+        currentFiltered.forEach(w => selectedWordIds.add(w.id));
+      } else {
+        currentFiltered.forEach(w => selectedWordIds.delete(w.id));
+      }
+      renderWordList();
+      updateSelectionUI();
+    }
+
+    function updateSelectionUI() {
+      const count = selectedWordIds.size;
+      const countBadge = document.getElementById('selected-word-count-badge');
+      const fcLabel = document.getElementById('fc-count-label');
+      const quizLabel = document.getElementById('quiz-count-label');
+      const btnDeleteSelected = document.getElementById('btn-delete-selected');
+      const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
+
+      if (countBadge) countBadge.textContent = `${count} từ được chọn`;
+      if (fcLabel) fcLabel.textContent = count > 0 ? `${count} từ` : 'Tất cả';
+      if (quizLabel) quizLabel.textContent = count > 0 ? `${count} từ` : 'Tất cả';
+      if (btnDeleteSelected) btnDeleteSelected.style.display = count > 0 ? 'inline-flex' : 'none';
+
+      const currentFiltered = getFilteredDeckWords();
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = currentFiltered.length > 0 && currentFiltered.every(w => selectedWordIds.has(w.id));
+      }
+    }
+
+    function deleteSelectedWords() {
+      if (selectedWordIds.size === 0) return;
+      if (!confirm(`Bạn có chắc chắn muốn xóa ${selectedWordIds.size} từ vựng đã chọn?`)) return;
+
+      words = words.filter(w => !selectedWordIds.has(w.id));
+      selectedWordIds.clear();
+      saveDatabase(true);
+      renderWordList();
+      updateSelectionUI();
+      showToast('Đã xóa các từ đã chọn!');
+    }
+
+    // =========================================================================
+    // CEFR-WEIGHTED MASTERY SCORE ENGINE (0 - 100%)
+    // =========================================================================
+    function calculateMasteryGain(cefrLevel, isQuiz = false) {
+      const norm = (cefrLevel || '').toUpperCase().trim();
+      let baseGain = 6;
+      if (norm === 'A1') baseGain = 6;
+      else if (norm === 'A2') baseGain = 5;
+      else if (norm === 'B1') baseGain = 4;
+      else if (norm === 'B2') baseGain = 3;
+      else if (norm === 'C1') baseGain = 2;
+      else if (norm === 'C2') baseGain = 1;
+
+      if (isQuiz) {
+        return Math.round(baseGain * 1.5);
+      }
+      return baseGain;
+    }
+
+    function updateWordMasteryScore(word, deltaPoints) {
+      if (typeof word.masteryScore !== 'number') {
+        if (word.status === 'mastered') word.masteryScore = 100;
+        else if (word.status === 'learning') word.masteryScore = 40;
+        else word.masteryScore = 0;
+      }
+
+      let newScore = word.masteryScore + deltaPoints;
+      if (newScore < 0) newScore = 0;
+      if (newScore > 100) newScore = 100;
+
+      word.masteryScore = newScore;
+      if (newScore >= 100) {
+        word.status = 'mastered';
+      } else if (newScore > 0) {
+        word.status = 'learning';
+      } else {
+        word.status = 'newWord';
+      }
+      word.updatedAt = new Date().toISOString();
+      return { newScore, deltaPoints };
+    }
+
+    // =========================================================================
+    // DECK RENDERING & CUSTOMIZATION (EDIT / DELETE)
+    // =========================================================================
     function renderDecks() {
       const container = document.getElementById('deck-grid');
       container.innerHTML = '';
@@ -1865,7 +2057,15 @@
         const deckWords = words.filter(w => w.deckId === deck.id);
         const total = deckWords.length;
         const mastered = deckWords.filter(w => w.status === 'mastered').length;
-        const progress = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+        let avgScore = 0;
+        if (total > 0) {
+          const totalScore = deckWords.reduce((sum, w) => {
+            const s = typeof w.masteryScore === 'number' ? w.masteryScore : (w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0));
+            return sum + s;
+          }, 0);
+          avgScore = Math.round(totalScore / total);
+        }
 
         const card = document.createElement('div');
         card.className = 'deck-card';
@@ -1877,11 +2077,15 @@
           </div>
           <p class="deck-desc">${escapeHtml(deck.description || 'Chưa có mô tả')}</p>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: ${progress}%;"></div>
+            <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
           </div>
           <div class="deck-stats">
-            <span>Tiến độ thuộc: ${progress}%</span>
+            <span>Mức độ thuộc: ${avgScore}%</span>
             <span>Đã thuộc: ${mastered}/${total}</span>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;" onclick="event.stopPropagation()">
+            <button class="btn btn-outline btn-sm" onclick="editDeck('${deck.id}')" title="Sửa bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg> Sửa</button>
+            <button class="btn btn-outline btn-sm" onclick="deleteDeck('${deck.id}')" title="Xóa bộ từ" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa</button>
           </div>
         `;
         card.onclick = () => openDeckDetail(deck.id);
@@ -1889,9 +2093,46 @@
       });
     }
 
+    function editDeck(deckId) {
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      document.getElementById('deck-id').value = deck.id;
+      document.getElementById('deck-title').value = deck.title;
+      document.getElementById('deck-desc').value = deck.description || '';
+      
+      const colorRadios = document.querySelectorAll('input[name="deck-color"]');
+      colorRadios.forEach(r => {
+        r.checked = (r.value === (deck.color || '#4f46e5'));
+      });
+
+      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
+      openModal('modal-deck');
+    }
+
+    function deleteDeck(deckId) {
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      if (!confirm(`Bạn có chắc chắn muốn xóa bộ từ "${deck.title}" và toàn bộ từ vựng bên trong?`)) {
+        return;
+      }
+
+      decks = decks.filter(d => d.id !== deckId);
+      words = words.filter(w => w.deckId !== deckId);
+      saveDatabase(true);
+      renderDecks();
+
+      if (currentDeckId === deckId) {
+        showScreen('screen-decks');
+      }
+      showToast(`Đã xóa bộ từ "${deck.title}"!`);
+    }
+
     // OPEN DECK DETAIL
     function openDeckDetail(deckId) {
       currentDeckId = deckId;
+      selectedWordIds.clear();
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
@@ -1901,6 +2142,7 @@
       currentWordFilter = 'all';
 
       renderWordList();
+      updateSelectionUI();
       showScreen('screen-deck-detail');
     }
 
@@ -1909,20 +2151,7 @@
       const container = document.getElementById('word-list-container');
       container.innerHTML = '';
 
-      const query = (document.getElementById('word-search-input').value || '').toLowerCase().trim();
-      let deckWords = words.filter(w => w.deckId === currentDeckId);
-
-      if (currentWordFilter !== 'all') {
-        deckWords = deckWords.filter(w => w.status === currentWordFilter);
-      }
-
-      if (query) {
-        deckWords = deckWords.filter(w => 
-          w.term.toLowerCase().includes(query) ||
-          w.definitionVi.toLowerCase().includes(query) ||
-          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query)))
-        );
-      }
+      const deckWords = getFilteredDeckWords();
 
       if (deckWords.length === 0) {
         container.innerHTML = `
@@ -1930,16 +2159,22 @@
             <p>Không có từ vựng nào phù hợp.</p>
           </div>
         `;
+        updateSelectionUI();
         return;
       }
 
       deckWords.forEach(w => {
         const item = document.createElement('div');
-        item.className = 'word-item';
+        item.className = 'word-item' + (selectedWordIds.has(w.id) ? ' selected' : '');
+        item.id = `word-item-${w.id}`;
 
-        let statusBadge = `<span class="badge badge-new">Mới</span>`;
-        if (w.status === 'learning') statusBadge = `<span class="badge badge-learning">Đang học</span>`;
-        if (w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">Đã thuộc</span>`;
+        const score = typeof w.masteryScore === 'number' ? w.masteryScore : (
+          w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0)
+        );
+
+        let statusBadge = `<span class="badge badge-new">Mới (${score}%)</span>`;
+        if (score >= 100 || w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">Đã thuộc (100%)</span>`;
+        else if (score > 0 || w.status === 'learning') statusBadge = `<span class="badge badge-learning">Đang học (${score}%)</span>`;
 
         const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
         const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">≈ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
@@ -1947,6 +2182,7 @@
         const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">• ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
 
         item.innerHTML = `
+          <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
           <div style="flex: 1;">
             <div class="word-header">
               <span class="word-term">${escapeHtml(w.term)}</span>
@@ -1965,6 +2201,13 @@
               ${antText}
               ${collText}
             </div>
+
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <div class="word-mastery-track">
+                <div class="word-mastery-fill" style="width: ${score}%;"></div>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">${score}/100đ</span>
+            </div>
           </div>
 
           <div class="word-actions">
@@ -1975,6 +2218,8 @@
         `;
         container.appendChild(item);
       });
+
+      updateSelectionUI();
     }
 
     function setWordFilter(filter, el) {
@@ -2012,6 +2257,10 @@
       const existingIndex = decks.findIndex(d => d.id === id);
       if (existingIndex >= 0) {
         decks[existingIndex] = { ...decks[existingIndex], title, description: desc, color, updatedAt: nowIso };
+        if (currentDeckId === id) {
+          document.getElementById('deck-detail-title').textContent = title;
+          document.getElementById('deck-detail-desc').textContent = desc;
+        }
       } else {
         decks.push({ id, title, description: desc, color, createdAt: nowIso, updatedAt: nowIso });
       }
@@ -2091,6 +2340,7 @@
           definitionVi: def, exampleSentence: example,
           synonyms: syn, antonyms: ant, collocations: coll, note,
           status: 'newWord',
+          masteryScore: 0,
           createdAt: nowIso,
           updatedAt: nowIso
         });
@@ -2105,8 +2355,10 @@
     function deleteWord(id) {
       if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
         words = words.filter(w => w.id !== id);
+        selectedWordIds.delete(id);
         saveDatabase(true);
         renderWordList();
+        updateSelectionUI();
         showToast('Đã xóa từ vựng!');
       }
     }
@@ -2153,13 +2405,23 @@
       input.setSelectionRange(start + sym.length, start + sym.length);
     }
 
-    // FLASHCARD MODE
-    function startFlashcardMode() {
-      flashcardList = words.filter(w => w.deckId === currentDeckId);
-      if (flashcardList.length === 0) {
-        alert('Bộ từ này chưa có từ nào để học flashcard!');
+    // =========================================================================
+    // FLASHCARD 3D MODE WITH CEFR MASTERY GAINS
+    // =========================================================================
+    function startFlashcardMode(useSelectionOnly = false) {
+      let deckWords = getFilteredDeckWords();
+      if (useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
+      if (deckWords.length === 0) {
+        alert('Không có từ vựng nào để học Flashcard!');
         return;
       }
+
+      flashcardList = [...deckWords];
       flashcardIndex = 0;
       loadFlashcard(flashcardIndex);
       showScreen('screen-flashcard');
@@ -2169,6 +2431,13 @@
       const word = flashcardList[index];
       currentFlashcardWord = word;
       const total = flashcardList.length;
+
+      const curScore = typeof word.masteryScore === 'number' ? word.masteryScore : (
+        word.status === 'mastered' ? 100 : (word.status === 'learning' ? 40 : 0)
+      );
+      word.masteryScore = curScore;
+
+      const gain = calculateMasteryGain(word.cefrLevel, false);
 
       document.getElementById('flashcard-element').classList.remove('flipped');
       document.getElementById('fc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
@@ -2186,11 +2455,15 @@
       document.getElementById('fc-front-pos').textContent = (word.partOfSpeech || 'WORD').toUpperCase();
       document.getElementById('fc-front-term').textContent = word.term;
       document.getElementById('fc-front-phonetic').textContent = word.phonetic || '';
+      document.getElementById('fc-front-mastery-badge').textContent = `🎯 ${curScore}%`;
+      document.getElementById('fc-front-mastery-fill').style.width = `${curScore}%`;
+      document.getElementById('fc-front-mastery-sub').textContent = `Mức độ thuộc: ${curScore}/100`;
 
       // Back
       document.getElementById('fc-back-term').textContent = word.term;
       document.getElementById('fc-back-def').textContent = word.definitionVi;
       document.getElementById('fc-back-example').textContent = word.exampleSentence ? `“${word.exampleSentence}”` : '';
+      document.getElementById('fc-back-mastery-badge').textContent = `🎯 ${curScore}%`;
 
       const metaEl = document.getElementById('fc-back-meta');
       let metaHtml = '';
@@ -2199,23 +2472,35 @@
       if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}</div>`;
       if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
       metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
+
+      // Action buttons with dynamic points preview
+      document.getElementById('fc-btn-no').innerHTML = `<svg class="icon"><use href="#i-close"/></svg> Chưa thuộc (-1đ)`;
+      document.getElementById('fc-btn-yes').innerHTML = `<svg class="icon"><use href="#i-check"/></svg> Thuộc rồi (+${gain}đ)`;
     }
 
     function toggleCardFlip() {
       document.getElementById('flashcard-element').classList.toggle('flipped');
     }
 
-    function markFlashcardStatus(status) {
+    function markFlashcardMastery(isKnown) {
       if (currentFlashcardWord) {
-        const nowIso = new Date().toISOString();
-        currentFlashcardWord.status = status;
-        currentFlashcardWord.updatedAt = nowIso;
+        const gain = calculateMasteryGain(currentFlashcardWord.cefrLevel, false);
+        const delta = isKnown ? gain : -1;
+        const { newScore } = updateWordMasteryScore(currentFlashcardWord, delta);
+
         const idx = words.findIndex(w => w.id === currentFlashcardWord.id);
         if (idx >= 0) {
-          words[idx].status = status;
-          words[idx].updatedAt = nowIso;
+          words[idx].masteryScore = newScore;
+          words[idx].status = currentFlashcardWord.status;
+          words[idx].updatedAt = currentFlashcardWord.updatedAt;
         }
         saveDatabase(true);
+
+        if (isKnown) {
+          showToast(`+${gain} điểm thuộc bài! (Thuộc: ${newScore}%)`);
+        } else {
+          showToast(`-1 điểm ôn tập! (Thuộc: ${newScore}%)`);
+        }
       }
 
       flashcardIndex++;
@@ -2224,14 +2509,23 @@
       } else {
         alert('Chúc mừng! Bạn đã hoàn thành lượt ôn Flashcard này!');
         showScreen('screen-deck-detail');
+        renderWordList();
       }
     }
 
-    // QUIZ MODE
-    function startQuizMode() {
-      const deckWords = words.filter(w => w.deckId === currentDeckId);
+    // =========================================================================
+    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN
+    // =========================================================================
+    function startQuizMode(useSelectionOnly = false) {
+      let deckWords = getFilteredDeckWords();
+      if (useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
       if (deckWords.length < 2) {
-        alert('Cần tối thiểu 2 từ vựng trong bộ này để tạo bài trắc nghiệm Quiz!');
+        alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
         return;
       }
 
@@ -2274,7 +2568,6 @@
       allButtons.forEach(btn => btn.classList.add('disabled'));
 
       const questionWord = quizList[quizIndex];
-      const nowIso = new Date().toISOString();
 
       if (isCorrect) {
         selectedButton.classList.add('correct');
@@ -2282,23 +2575,35 @@
         document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
 
         if (questionWord) {
+          const gain = calculateMasteryGain(questionWord.cefrLevel, true);
+          const { newScore } = updateWordMasteryScore(questionWord, gain);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
-            if (words[idx].status === 'newWord') {
-              words[idx].status = 'learning';
-            }
-            words[idx].updatedAt = nowIso;
-            saveDatabase(true);
+            words[idx].masteryScore = newScore;
+            words[idx].status = questionWord.status;
+            words[idx].updatedAt = questionWord.updatedAt;
           }
+          saveDatabase(true);
+          showToast(`Chính xác! +${gain} điểm thuộc bài (${newScore}%)`);
         }
       } else {
         selectedButton.classList.add('wrong');
         if (questionWord) {
+          const { newScore } = updateWordMasteryScore(questionWord, -1);
+          const idx = words.findIndex(w => w.id === questionWord.id);
+          if (idx >= 0) {
+            words[idx].masteryScore = newScore;
+            words[idx].status = questionWord.status;
+            words[idx].updatedAt = questionWord.updatedAt;
+          }
+          saveDatabase(true);
+
           allButtons.forEach(btn => {
             if (btn.textContent === questionWord.definitionVi) {
               btn.classList.add('correct');
             }
           });
+          showToast(`Chưa đúng! -1 điểm (${newScore}%)`);
         }
       }
 
@@ -2312,6 +2617,7 @@
       } else {
         alert(`Bạn đã hoàn thành bài Quiz!\nTổng điểm đạt được: ${quizScore}/${quizList.length * 10}`);
         showScreen('screen-deck-detail');
+        renderWordList();
       }
     }
 
@@ -2642,12 +2948,19 @@
         const note = noteIdx !== undefined && row[noteIdx] ? String(row[noteIdx]).trim() : '';
         
         let status = 'newWord';
+        let masteryScore = 0;
         if (statusIdx !== undefined && row[statusIdx]) {
           const s = String(row[statusIdx]).toLowerCase();
-          if (s.includes('master') || s.includes('thuộc') || s.includes('done')) status = 'mastered';
-          else if (s.includes('learn') || s.includes('học') || s.includes('review')) status = 'learning';
+          if (s.includes('master') || s.includes('thuộc') || s.includes('done')) {
+            status = 'mastered';
+            masteryScore = 100;
+          } else if (s.includes('learn') || s.includes('học') || s.includes('review')) {
+            status = 'learning';
+            masteryScore = 40;
+          }
         }
 
+        const nowIso = new Date().toISOString();
         words.push({
           id: 'w-imp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
           deckId: currentDeckId,
@@ -2662,7 +2975,9 @@
           collocations: coll,
           note: note || undefined,
           status,
-          createdAt: new Date().toISOString()
+          masteryScore,
+          createdAt: nowIso,
+          updatedAt: nowIso
         });
 
         importedCount++;

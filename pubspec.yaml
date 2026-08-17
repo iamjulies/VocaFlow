@@ -1,7 +1,7 @@
 name: vocaflow
-description: "VocaFlow - An offline-first, personalized English vocabulary learning app for Windows, Android, and iOS."
+description: "VocaFlow - Smart English Vocabulary Memorization App"
 publish_to: 'none'
-version: 0.0.2+1
+version: 0.0.3+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

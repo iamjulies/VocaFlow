@@ -62,6 +62,9 @@ class WordModel {
   @HiveField(16)
   final bool isDeleted;
 
+  @HiveField(17)
+  final int masteryScore;
+
   const WordModel({
     required this.id,
     required this.deckId,
@@ -76,6 +79,7 @@ class WordModel {
     this.userId = '',
     DateTime? updatedAt,
     this.isDeleted = false,
+    this.masteryScore = 0,
     this.synonyms = const [],
     this.antonyms = const [],
     this.collocations = const [],
@@ -97,6 +101,7 @@ class WordModel {
     String? userId,
     DateTime? updatedAt,
     bool? isDeleted,
+    int? masteryScore,
     List<String>? synonyms,
     List<String>? antonyms,
     List<String>? collocations,
@@ -116,6 +121,7 @@ class WordModel {
       userId: userId ?? this.userId,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      masteryScore: masteryScore ?? this.masteryScore,
       synonyms: synonyms ?? this.synonyms,
       antonyms: antonyms ?? this.antonyms,
       collocations: collocations ?? this.collocations,
@@ -145,6 +151,7 @@ class WordModel {
           ? (DateTime.tryParse(json['updatedAt'].toString()) ?? created)
           : created,
       isDeleted: json['isDeleted'] as bool? ?? false,
+      masteryScore: (json['masteryScore'] as num?)?.toInt() ?? 0,
       synonyms: (json['synonyms'] as List<dynamic>?)
               ?.map((e) => e.toString().trim())
               .where((e) => e.isNotEmpty)
@@ -180,6 +187,7 @@ class WordModel {
       'userId': userId,
       'updatedAt': updatedAt.toIso8601String(),
       'isDeleted': isDeleted,
+      'masteryScore': masteryScore,
       'synonyms': synonyms,
       'antonyms': antonyms,
       'collocations': collocations,
@@ -203,6 +211,7 @@ class WordModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'isDeleted': isDeleted,
+      'masteryScore': masteryScore,
       'synonyms': synonyms,
       'antonyms': antonyms,
       'collocations': collocations,
@@ -232,6 +241,7 @@ class WordModel {
           ? (DateTime.tryParse(data['updatedAt'].toString()) ?? created)
           : created,
       isDeleted: data['isDeleted'] as bool? ?? false,
+      masteryScore: (data['masteryScore'] as num?)?.toInt() ?? 0,
       synonyms: (data['synonyms'] as List<dynamic>?)
               ?.map((e) => e.toString().trim())
               .where((e) => e.isNotEmpty)
