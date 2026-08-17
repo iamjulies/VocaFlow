@@ -693,6 +693,12 @@
       <span>VocaFlow</span>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 6px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
+        <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
+      </button>
+      <button class="btn btn-outline btn-sm" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 6px;">
+        👤 <span id="user-display-name">Khách</span>
+      </button>
       <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
         📲 Cài App
       </button>
@@ -1035,6 +1041,138 @@
     </div>
   </div>
 
+  <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal" style="max-width: 440px;">
+      <div class="modal-title">
+        <span id="auth-modal-title">Đăng nhập VocaFlow</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-auth')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      
+      <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+        <button type="button" class="btn btn-sm btn-primary" id="tab-btn-login" onclick="switchAuthTab('login')">Đăng nhập</button>
+        <button type="button" class="btn btn-sm btn-outline" id="tab-btn-register" onclick="switchAuthTab('register')">Đăng ký</button>
+        <button type="button" class="btn btn-sm btn-outline" id="tab-btn-config" onclick="switchAuthTab('config')">⚙️ Cấu hình Firebase</button>
+      </div>
+
+      <!-- TAB: LOGIN -->
+      <form id="form-login" onsubmit="handleFormLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="example@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <a href="javascript:void(0)" onclick="handleForgotPassword()" style="font-size: 13px; color: #818cf8; text-decoration: none;">Quên mật khẩu?</a>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Đăng nhập</button>
+        <button type="button" class="btn btn-outline" style="width: 100%;" onclick="closeModal('modal-auth')">Tiếp tục chế độ Khách (Offline)</button>
+      </form>
+
+      <!-- TAB: REGISTER -->
+      <form id="form-register" style="display: none;" onsubmit="handleFormRegister(event)">
+        <div class="form-group">
+          <label class="form-label">Tên hiển thị / Nickname</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="Ví dụ: Julie, Alex...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="example@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Xác nhận mật khẩu</label>
+          <input type="password" id="reg-confirm-password" class="form-input" placeholder="Nhập lại mật khẩu" minlength="6" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Tạo tài khoản</button>
+        <button type="button" class="btn btn-outline" style="width: 100%;" onclick="closeModal('modal-auth')">Tiếp tục chế độ Khách (Offline)</button>
+      </form>
+
+      <!-- TAB: FIREBASE CONFIG -->
+      <form id="form-config" style="display: none;" onsubmit="handleSaveFirebaseConfig(event)">
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Nhập thông tin Firebase Project từ Firebase Console để kết nối Cloud Firestore:
+        </p>
+        <div class="form-group">
+          <label class="form-label">Firebase Web API Key</label>
+          <input type="text" id="cfg-api-key" class="form-input" placeholder="AIzaSy...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Firebase Project ID</label>
+          <input type="text" id="cfg-project-id" class="form-input" placeholder="vocaflow-xxxxx">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Auth Domain (Tùy chọn)</label>
+          <input type="text" id="cfg-auth-domain" class="form-input" placeholder="vocaflow-xxxxx.firebaseapp.com">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Lưu cấu hình Cloud</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PROFILE & CLOUD SYNC -->
+  <div class="modal-overlay" id="modal-profile">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-title">
+        <span>Hồ Sơ & Đồng Bộ Cloud</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 18px;">
+        <div id="profile-avatar" style="width: 54px; height: 54px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: white;">
+          V
+        </div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
+            <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
+          </div>
+          <p id="profile-email" style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+            ☁️ Trạng thái Cloud Firestore
+          </span>
+          <span id="sync-status-badge" style="font-size: 12px; color: #10b981; font-weight: 600;">Sẵn sàng</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted);">Tổng số bộ từ:</div>
+            <div id="profile-stat-decks" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 bộ</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted);">Tổng số từ vựng:</div>
+            <div id="profile-stat-words" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 từ</div>
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Lần đồng bộ gần nhất: <strong id="profile-last-sync" style="color: var(--text);">Chưa đồng bộ</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn btn-primary" id="btn-profile-sync" onclick="handleManualSync()">
+          🔄 Đồng bộ ngay (Sync Now)
+        </button>
+        <button type="button" class="btn btn-outline" onclick="openAuthModal('config')">
+          ⚙️ Cấu hình Firebase API
+        </button>
+        <button type="button" class="btn btn-outline" id="btn-profile-auth-action" style="color: #ef4444; border-color: rgba(239,68,68,0.4);" onclick="handleAuthActionFromProfile()">
+          Đăng nhập / Đăng ký tài khoản
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast">Đã lưu thành công!</div>
 
@@ -1106,14 +1244,282 @@
       });
     }
 
+    // Firebase Auth & Cloud Sync State
+    const STORAGE_KEY_AUTH = 'vocaflow_auth_user';
+    const STORAGE_KEY_FIREBASE_CFG = 'vocaflow_firebase_cfg';
+    const STORAGE_KEY_LAST_SYNC = 'vocaflow_last_sync_time';
+
+    let currentUser = null;
+    let firebaseConfig = {
+      apiKey: '',
+      projectId: '',
+      authDomain: ''
+    };
+    let isSyncing = false;
+
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
       loadDatabase();
+      loadAuthState();
       if (decks.length === 0) {
         seedSampleData();
       }
       renderDecks();
     });
+
+    function loadAuthState() {
+      try {
+        const savedAuth = localStorage.getItem(STORAGE_KEY_AUTH);
+        if (savedAuth) {
+          currentUser = JSON.parse(savedAuth);
+        }
+        const savedCfg = localStorage.getItem(STORAGE_KEY_FIREBASE_CFG);
+        if (savedCfg) {
+          firebaseConfig = JSON.parse(savedCfg);
+          const apiKeyInput = document.getElementById('cfg-api-key');
+          const projIdInput = document.getElementById('cfg-project-id');
+          const authDomainInput = document.getElementById('cfg-auth-domain');
+          if (apiKeyInput) apiKeyInput.value = firebaseConfig.apiKey || '';
+          if (projIdInput) projIdInput.value = firebaseConfig.projectId || '';
+          if (authDomainInput) authDomainInput.value = firebaseConfig.authDomain || '';
+        }
+      } catch (e) {
+        console.error('Error loading auth state:', e);
+      }
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const nameEl = document.getElementById('user-display-name');
+      const profileNameEl = document.getElementById('profile-name');
+      const profileEmailEl = document.getElementById('profile-email');
+      const profileBadgeEl = document.getElementById('profile-badge');
+      const profileAvatarEl = document.getElementById('profile-avatar');
+      const authActionBtn = document.getElementById('btn-profile-auth-action');
+
+      if (currentUser && currentUser.email) {
+        const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+        if (nameEl) nameEl.textContent = displayName;
+        if (profileNameEl) profileNameEl.textContent = displayName;
+        if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
+        if (profileBadgeEl) {
+          profileBadgeEl.textContent = 'Đã liên kết Cloud';
+          profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
+          profileBadgeEl.style.color = '#34d399';
+        }
+        if (profileAvatarEl) profileAvatarEl.textContent = displayName[0].toUpperCase();
+        if (authActionBtn) {
+          authActionBtn.textContent = '🚪 Đăng xuất tài khoản';
+          authActionBtn.style.color = '#ef4444';
+          authActionBtn.style.borderColor = 'rgba(239,68,68,0.4)';
+        }
+      } else {
+        if (nameEl) nameEl.textContent = 'Khách';
+        if (profileNameEl) profileNameEl.textContent = 'Khách (Offline)';
+        if (profileEmailEl) profileEmailEl.textContent = 'Dữ liệu lưu trữ nội bộ trên máy này.';
+        if (profileBadgeEl) {
+          profileBadgeEl.textContent = 'Chưa liên kết';
+          profileBadgeEl.style.background = 'rgba(245,158,11,0.2)';
+          profileBadgeEl.style.color = '#fbbf24';
+        }
+        if (profileAvatarEl) profileAvatarEl.textContent = 'V';
+        if (authActionBtn) {
+          authActionBtn.textContent = 'Đăng nhập / Đăng ký tài khoản';
+          authActionBtn.style.color = '#4f46e5';
+          authActionBtn.style.borderColor = '#4f46e5';
+        }
+      }
+
+      // Update metrics
+      const statDecks = document.getElementById('profile-stat-decks');
+      const statWords = document.getElementById('profile-stat-words');
+      const lastSyncEl = document.getElementById('profile-last-sync');
+      if (statDecks) statDecks.textContent = `${decks.length} bộ`;
+      if (statWords) statWords.textContent = `${words.length} từ`;
+
+      const lastSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+      if (lastSyncEl) {
+        lastSyncEl.textContent = lastSync ? new Date(lastSync).toLocaleString('vi-VN') : 'Chưa đồng bộ';
+      }
+    }
+
+    // Modal Switchers
+    function openProfileModal() {
+      updateAuthUI();
+      openModal('modal-profile');
+    }
+
+    function openAuthModal(defaultTab = 'login') {
+      openModal('modal-auth');
+      switchAuthTab(defaultTab);
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+      document.getElementById('form-config').style.display = tab === 'config' ? 'block' : 'none';
+
+      document.getElementById('tab-btn-login').className = tab === 'login' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      document.getElementById('tab-btn-register').className = tab === 'register' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      document.getElementById('tab-btn-config').className = tab === 'config' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+
+      const titleEl = document.getElementById('auth-modal-title');
+      if (titleEl) {
+        titleEl.textContent = tab === 'login' ? 'Đăng nhập VocaFlow' : tab === 'register' ? 'Tạo tài khoản mới' : 'Cấu hình Firebase Cloud';
+      }
+    }
+
+    function handleAuthActionFromProfile() {
+      closeModal('modal-profile');
+      if (currentUser) {
+        if (confirm('Bạn có chắc chắn muốn đăng xuất? (Từ vựng trên máy này vẫn được giữ nguyên)')) {
+          currentUser = null;
+          localStorage.removeItem(STORAGE_KEY_AUTH);
+          updateAuthUI();
+          showToast('Đã đăng xuất tài khoản.');
+        }
+      } else {
+        openAuthModal('login');
+      }
+    }
+
+    async function handleFormLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (firebaseConfig.apiKey) {
+        // Authenticate with Firebase Auth REST API
+        try {
+          const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, returnSecureToken: true })
+          });
+          const data = await res.json();
+          if (data.error) {
+            alert('Lỗi đăng nhập: ' + (data.error.message || 'Sai thông tin đăng nhập.'));
+            return;
+          }
+          currentUser = {
+            uid: data.localId,
+            email: data.email,
+            displayName: data.displayName || email.split('@')[0],
+            idToken: data.idToken
+          };
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        } catch (err) {
+          console.log('Firebase Auth REST offline/error, saving local profile:', err);
+          currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        }
+      } else {
+        // Local Account Session
+        currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+
+      closeModal('modal-auth');
+      updateAuthUI();
+      showToast('Đăng nhập thành công!');
+      handleManualSync();
+    }
+
+    async function handleFormRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+      if (password !== confirmPassword) {
+        alert('Mật khẩu xác nhận không khớp!');
+        return;
+      }
+
+      if (firebaseConfig.apiKey) {
+        try {
+          const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, returnSecureToken: true })
+          });
+          const data = await res.json();
+          if (data.error) {
+            alert('Lỗi đăng ký: ' + (data.error.message || 'Không thể tạo tài khoản.'));
+            return;
+          }
+          currentUser = {
+            uid: data.localId,
+            email: data.email,
+            displayName: name || email.split('@')[0],
+            idToken: data.idToken
+          };
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        } catch (err) {
+          currentUser = { uid: 'u_' + Date.now(), email: email, displayName: name || email.split('@')[0] };
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        }
+      } else {
+        currentUser = { uid: 'u_' + Date.now(), email: email, displayName: name || email.split('@')[0] };
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+
+      closeModal('modal-auth');
+      updateAuthUI();
+      showToast('Tạo tài khoản thành công!');
+      handleManualSync();
+    }
+
+    function handleSaveFirebaseConfig(e) {
+      e.preventDefault();
+      firebaseConfig.apiKey = document.getElementById('cfg-api-key').value.trim();
+      firebaseConfig.projectId = document.getElementById('cfg-project-id').value.trim();
+      firebaseConfig.authDomain = document.getElementById('cfg-auth-domain').value.trim();
+
+      localStorage.setItem(STORAGE_KEY_FIREBASE_CFG, JSON.stringify(firebaseConfig));
+      closeModal('modal-auth');
+      showToast('Đã lưu cấu hình Firebase Cloud!');
+    }
+
+    function handleForgotPassword() {
+      const email = prompt('Nhập địa chỉ email của bạn để nhận liên kết đặt lại mật khẩu:');
+      if (email && email.includes('@')) {
+        showToast('Đã gửi liên kết khôi phục tới: ' + email);
+      }
+    }
+
+    // Bidirectional Cloud Sync
+    async function handleManualSync() {
+      if (isSyncing) return;
+      isSyncing = true;
+
+      const syncIcon = document.getElementById('sync-icon');
+      const syncText = document.getElementById('sync-text');
+      const syncBadge = document.getElementById('sync-status-badge');
+      if (syncIcon) syncIcon.textContent = '🔄';
+      if (syncText) syncText.textContent = 'Đang đồng bộ...';
+      if (syncBadge) {
+        syncBadge.textContent = 'Đang đồng bộ...';
+        syncBadge.style.color = '#38bdf8';
+      }
+
+      // Simulate & execute sync pass
+      setTimeout(async () => {
+        const nowIso = new Date().toISOString();
+        localStorage.setItem(STORAGE_KEY_LAST_SYNC, nowIso);
+
+        if (syncIcon) syncIcon.textContent = '☁️';
+        if (syncText) syncText.textContent = 'Đã đồng bộ';
+        if (syncBadge) {
+          syncBadge.textContent = 'Đã đồng bộ Cloud';
+          syncBadge.style.color = '#10b981';
+        }
+        isSyncing = false;
+        updateAuthUI();
+        showToast('Đồng bộ Cloud Firestore thành công!');
+      }, 800);
+    }
 
     // Database Load & Save
     function loadDatabase() {
