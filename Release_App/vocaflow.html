@@ -1536,6 +1536,48 @@
       }
     }
 
+    let autoSyncTimer = null;
+    function saveDatabase(triggerAutoSync = true) {
+      localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
+      localStorage.setItem(STORAGE_KEY_WORDS, JSON.stringify(words));
+      
+      if (triggerAutoSync && currentUser && currentUser.uid) {
+        if (autoSyncTimer) clearTimeout(autoSyncTimer);
+        autoSyncTimer = setTimeout(() => {
+          pushCurrentDatabaseToCloud();
+        }, 500);
+      }
+    }
+
+    async function pushCurrentDatabaseToCloud() {
+      if (!currentUser || !currentUser.uid) return;
+      const userId = currentUser.uid;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const payload = {
+          profile: {
+            displayName: currentUser.displayName || currentUser.email.split('@')[0],
+            email: currentUser.email,
+            lastSync: new Date().toISOString()
+          },
+          decks: decks,
+          words: words,
+          lastSync: new Date().toISOString()
+        };
+
+        await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
+      } catch (err) {
+        console.warn('Auto background push note:', err);
+      }
+    }
+
     // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
     async function handleManualSync() {
       if (isSyncing) return;
@@ -1581,7 +1623,9 @@
                     const localIdx = decks.findIndex(d => d.id === remoteDeck.id);
                     if (localIdx >= 0) {
                       const localDeck = decks[localIdx];
-                      if (new Date(remoteDeck.updatedAt || 0) >= new Date(localDeck.updatedAt || 0)) {
+                      const localTime = new Date(localDeck.updatedAt || localDeck.createdAt || 0).getTime();
+                      const remoteTime = new Date(remoteDeck.updatedAt || remoteDeck.createdAt || 0).getTime();
+                      if (remoteTime >= localTime) {
                         decks[localIdx] = { ...localDeck, ...remoteDeck };
                       }
                     } else {
@@ -1591,14 +1635,26 @@
                 }
 
                 if (remoteWords.length > 0) {
-                  // Merge words by ID (Last-Write-Wins)
+                  // Merge words by ID (Last-Write-Wins with learning progress protection)
                   for (const remoteWord of remoteWords) {
                     if (!remoteWord || !remoteWord.id) continue;
                     const localIdx = words.findIndex(w => w.id === remoteWord.id);
                     if (localIdx >= 0) {
                       const localWord = words[localIdx];
-                      if (new Date(remoteWord.updatedAt || 0) >= new Date(localWord.updatedAt || 0)) {
+                      const localTime = new Date(localWord.updatedAt || localWord.createdAt || 0).getTime();
+                      const remoteTime = new Date(remoteWord.updatedAt || remoteWord.createdAt || 0).getTime();
+
+                      if (remoteTime > localTime) {
                         words[localIdx] = { ...localWord, ...remoteWord };
+                      } else if (localTime > remoteTime) {
+                        // Local is newer! Keep local word
+                      } else {
+                        // Timestamps equal: protect higher learning status
+                        if (localWord.status === 'mastered' || (localWord.status === 'learning' && remoteWord.status === 'newWord')) {
+                          // Keep local progress
+                        } else {
+                          words[localIdx] = { ...localWord, ...remoteWord };
+                        }
                       }
                     } else {
                       words.push(remoteWord);
@@ -1606,7 +1662,7 @@
                   }
                 }
 
-                saveDatabase();
+                saveDatabase(false);
                 renderDecks();
               }
             }
@@ -1664,7 +1720,7 @@
       }
     }
 
-    // Database Load & Save
+    // Database Load
     function loadDatabase() {
       try {
         const storedDecks = localStorage.getItem(STORAGE_KEY_DECKS);
@@ -1676,11 +1732,6 @@
         decks = [];
         words = [];
       }
-    }
-
-    function saveDatabase() {
-      localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
-      localStorage.setItem(STORAGE_KEY_WORDS, JSON.stringify(words));
     }
 
     function seedSampleData() {
@@ -1956,15 +2007,16 @@
       const title = document.getElementById('deck-title').value.trim();
       const desc = document.getElementById('deck-desc').value.trim();
       const color = document.querySelector('input[name="deck-color"]:checked')?.value || '#4f46e5';
+      const nowIso = new Date().toISOString();
 
       const existingIndex = decks.findIndex(d => d.id === id);
       if (existingIndex >= 0) {
-        decks[existingIndex] = { ...decks[existingIndex], title, description: desc, color };
+        decks[existingIndex] = { ...decks[existingIndex], title, description: desc, color, updatedAt: nowIso };
       } else {
-        decks.push({ id, title, description: desc, color, createdAt: new Date().toISOString() });
+        decks.push({ id, title, description: desc, color, createdAt: nowIso, updatedAt: nowIso });
       }
 
-      saveDatabase();
+      saveDatabase(true);
       renderDecks();
       closeModal('modal-deck');
       showToast('Đã lưu bộ từ vựng!');
@@ -2021,6 +2073,7 @@
       const ant = parseList(document.getElementById('word-antonyms').value);
       const coll = parseList(document.getElementById('word-collocations').value);
       const note = document.getElementById('word-note').value.trim();
+      const nowIso = new Date().toISOString();
 
       const existingIndex = words.findIndex(w => w.id === id);
       if (existingIndex >= 0) {
@@ -2029,7 +2082,7 @@
           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
           definitionVi: def, exampleSentence: example,
           synonyms: syn, antonyms: ant, collocations: coll, note,
-          updatedAt: new Date().toISOString()
+          updatedAt: nowIso
         };
       } else {
         words.push({
@@ -2038,11 +2091,12 @@
           definitionVi: def, exampleSentence: example,
           synonyms: syn, antonyms: ant, collocations: coll, note,
           status: 'newWord',
-          createdAt: new Date().toISOString()
+          createdAt: nowIso,
+          updatedAt: nowIso
         });
       }
 
-      saveDatabase();
+      saveDatabase(true);
       renderWordList();
       closeModal('modal-word');
       showToast('Đã lưu từ vựng thành công!');
@@ -2051,7 +2105,7 @@
     function deleteWord(id) {
       if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
         words = words.filter(w => w.id !== id);
-        saveDatabase();
+        saveDatabase(true);
         renderWordList();
         showToast('Đã xóa từ vựng!');
       }
@@ -2153,10 +2207,15 @@
 
     function markFlashcardStatus(status) {
       if (currentFlashcardWord) {
+        const nowIso = new Date().toISOString();
         currentFlashcardWord.status = status;
+        currentFlashcardWord.updatedAt = nowIso;
         const idx = words.findIndex(w => w.id === currentFlashcardWord.id);
-        if (idx >= 0) words[idx].status = status;
-        saveDatabase();
+        if (idx >= 0) {
+          words[idx].status = status;
+          words[idx].updatedAt = nowIso;
+        }
+        saveDatabase(true);
       }
 
       flashcardIndex++;
@@ -2214,18 +2273,33 @@
       const allButtons = document.querySelectorAll('.quiz-option');
       allButtons.forEach(btn => btn.classList.add('disabled'));
 
+      const questionWord = quizList[quizIndex];
+      const nowIso = new Date().toISOString();
+
       if (isCorrect) {
         selectedButton.classList.add('correct');
         quizScore += 10;
         document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+
+        if (questionWord) {
+          const idx = words.findIndex(w => w.id === questionWord.id);
+          if (idx >= 0) {
+            if (words[idx].status === 'newWord') {
+              words[idx].status = 'learning';
+            }
+            words[idx].updatedAt = nowIso;
+            saveDatabase(true);
+          }
+        }
       } else {
         selectedButton.classList.add('wrong');
-        const questionWord = quizList[quizIndex];
-        allButtons.forEach(btn => {
-          if (btn.textContent === questionWord.definitionVi) {
-            btn.classList.add('correct');
-          }
-        });
+        if (questionWord) {
+          allButtons.forEach(btn => {
+            if (btn.textContent === questionWord.definitionVi) {
+              btn.classList.add('correct');
+            }
+          });
+        }
       }
 
       document.getElementById('quiz-next-container').style.display = 'block';
