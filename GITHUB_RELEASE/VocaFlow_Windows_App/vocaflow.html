@@ -1508,6 +1508,92 @@
         const projectId = firebaseConfig.projectId || 'vocaflow-e866c';
 
         if (apiKey && projectId && currentUser && currentUser.idToken) {
+          // -----------------------------------------------------------
+          // PHASE 1: PULL FROM CLOUD (Tải dữ liệu từ tài khoản về trước)
+          // -----------------------------------------------------------
+          try {
+            // Pull Cloud Decks
+            const decksRes = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/decks?key=${apiKey}`, {
+              headers: { 'Authorization': `Bearer ${currentUser.idToken}` }
+            });
+            if (decksRes.ok) {
+              const decksData = await decksRes.json();
+              if (decksData.documents && decksData.documents.length > 0) {
+                // If user has cloud decks, and local only had the default sample deck, remove sample deck
+                if (decks.length === 1 && decks[0].id === 'deck-oxford-starter') {
+                  decks = [];
+                  words = words.filter(w => w.deckId !== 'deck-oxford-starter');
+                }
+
+                for (const doc of decksData.documents) {
+                  const f = doc.fields || {};
+                  const remoteDeck = {
+                    id: f.id?.stringValue || doc.name.split('/').pop(),
+                    title: f.title?.stringValue || 'Bộ từ không tên',
+                    description: f.description?.stringValue || '',
+                    colorCode: parseInt(f.colorCode?.integerValue || '0xFF4F46E5'),
+                    createdAt: f.createdAt?.stringValue || new Date().toISOString(),
+                    updatedAt: f.updatedAt?.stringValue || new Date().toISOString()
+                  };
+
+                  const localIndex = decks.findIndex(d => d.id === remoteDeck.id);
+                  if (localIndex >= 0) {
+                    const localDeck = decks[localIndex];
+                    if (new Date(remoteDeck.updatedAt) >= new Date(localDeck.updatedAt || 0)) {
+                      decks[localIndex] = remoteDeck;
+                    }
+                  } else {
+                    decks.push(remoteDeck);
+                  }
+                }
+              }
+            }
+
+            // Pull Cloud Words
+            const wordsRes = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/words?key=${apiKey}`, {
+              headers: { 'Authorization': `Bearer ${currentUser.idToken}` }
+            });
+            if (wordsRes.ok) {
+              const wordsData = await wordsRes.json();
+              if (wordsData.documents && wordsData.documents.length > 0) {
+                for (const doc of wordsData.documents) {
+                  const f = doc.fields || {};
+                  const remoteWord = {
+                    id: f.id?.stringValue || doc.name.split('/').pop(),
+                    deckId: f.deckId?.stringValue || '',
+                    term: f.term?.stringValue || '',
+                    partOfSpeech: f.partOfSpeech?.stringValue || '',
+                    phonetic: f.phonetic?.stringValue || '',
+                    definitionVi: f.definitionVi?.stringValue || '',
+                    exampleSentence: f.exampleSentence?.stringValue || '',
+                    note: f.note?.stringValue || '',
+                    status: f.status?.stringValue || 'newWord',
+                    createdAt: f.createdAt?.stringValue || new Date().toISOString(),
+                    updatedAt: f.updatedAt?.stringValue || new Date().toISOString()
+                  };
+
+                  const localIndex = words.findIndex(w => w.id === remoteWord.id);
+                  if (localIndex >= 0) {
+                    const localWord = words[localIndex];
+                    if (new Date(remoteWord.updatedAt) >= new Date(localWord.updatedAt || 0)) {
+                      words[localIndex] = remoteWord;
+                    }
+                  } else {
+                    words.push(remoteWord);
+                  }
+                }
+              }
+            }
+
+            saveDatabase();
+            renderDecks();
+          } catch (pullErr) {
+            console.log('Note on Cloud Pull:', pullErr);
+          }
+
+          // -----------------------------------------------------------
+          // PHASE 2: PUSH TO CLOUD (Đẩy các từ vựng mới trên máy lên Cloud)
+          // -----------------------------------------------------------
           for (const deck of decks) {
             try {
               const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/decks/${deck.id}?key=${apiKey}`;
@@ -1529,7 +1615,7 @@
                 })
               });
             } catch (err) {
-              console.log('Error syncing deck to Firestore:', err);
+              console.log('Error pushing deck to Firestore:', err);
             }
           }
 
@@ -1559,7 +1645,7 @@
                 })
               });
             } catch (err) {
-              console.log('Error syncing word to Firestore:', err);
+              console.log('Error pushing word to Firestore:', err);
             }
           }
         }
