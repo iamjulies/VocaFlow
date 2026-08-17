@@ -1,0 +1,19 @@
+========================================================
+   VOCAFLOW v0.0.1 - THƯ MỤC PHÁT HÀNH & GITHUB TOOL
+========================================================
+
+Thư mục này chứa đầy đủ các file để bạn quản lý và đăng lên GitHub:
+
+1. [1_DAY_CODE_LEN_GITHUB.bat]
+   -> Nhấp đúp file này để tự động đẩy toàn bộ mã nguồn lên repo:
+      https://github.com/iamjulies/VocaFlow
+
+2. [VocaFlow_v0.0.1_Windows_Portable.zip]
+   -> File ZIP bản cài đặt Windows (kèm VocaFlow.exe, HTML, Excel).
+   -> Dùng để đính kèm vào mục "Releases" trên GitHub cho mọi người tải về.
+
+3. [VocaFlow_Windows_App/]
+   -> Thư mục bản chạy sẵn trên máy tính Windows (mở VocaFlow.exe là chạy ngay).
+
+4. [vocaflow_web_single_file.html]
+   -> Bản Web chạy độc lập 1-file, mở bằng bất kỳ trình duyệt nào.
