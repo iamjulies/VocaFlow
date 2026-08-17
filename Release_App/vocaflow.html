@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VocaFlow - Học Từ Vựng Tiếng Anh Cá Nhân Hóa (Offline-First)</title>
+  <script src="xlsx.full.min.js"></script>
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: rgba(79, 70, 229, 0.14);
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-elevated: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.15);
+      --purple: #8b5cf6;
+      --purple-light: rgba(139, 92, 246, 0.15);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* SVG ICONS */
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .icon-sm { width: 15px; height: 15px; }
+    .icon-lg { width: 32px; height: 32px; }
+    .icon-xl { width: 56px; height: 56px; }
+
+    /* HEADER */
+    header {
+      background-color: rgba(30, 41, 59, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      color: white;
+      padding: 6px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      background-color: var(--surface-elevated);
+      border-color: var(--text-muted);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    .btn-icon {
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.25s ease forwards;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TOP BAR / BREADCRUMB */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .screen-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* DECK GRID */
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .deck-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .deck-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+    }
+    .deck-card-strip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+    }
+
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .deck-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .deck-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .progress-bar-bg {
+      background-color: rgba(255, 255, 255, 0.08);
+      height: 7px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #10b981);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .deck-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-cefr {
+      background-color: var(--purple-light);
+      color: #a78bfa;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .badge-pos {
+      background-color: var(--primary-light);
+      color: #818cf8;
+      font-style: italic;
+    }
+    .badge-new {
+      background-color: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+    }
+    .badge-learning {
+      background-color: var(--warning-light);
+      color: var(--warning);
+    }
+    .badge-mastered {
+      background-color: var(--success-light);
+      color: var(--success);
+    }
+
+    /* SEARCH & FILTER BAR */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .chip-group {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .chip.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* WORD LIST */
+    .word-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .word-item {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .word-item:hover {
+      border-color: var(--surface-elevated);
+    }
+    .word-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .word-term {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .word-phonetic {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .word-def {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .word-example {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .word-tags {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+    .tag-syn { color: #38bdf8; }
+    .tag-ant { color: #f87171; }
+    .tag-coll { color: #34d399; }
+
+    .word-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* FLASHCARD 3D */
+    .flashcard-container {
+      perspective: 1200px;
+      max-width: 540px;
+      height: 380px;
+      margin: 20px auto 30px;
+      cursor: pointer;
+    }
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 24px;
+    }
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 2px solid var(--border);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+    .card-face.card-back {
+      transform: rotateY(180deg);
+      border-color: var(--primary);
+    }
+    .card-term-large {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+    .card-def-large {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    /* QUIZ */
+    .quiz-container {
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .quiz-question-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .quiz-option {
+      background-color: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .quiz-option:hover:not(.disabled) {
+      border-color: var(--primary);
+      background-color: var(--surface-elevated);
+      transform: translateX(3px);
+    }
+    .quiz-option.correct {
+      background-color: var(--success-light) !important;
+      border-color: var(--success) !important;
+      color: #34d399 !important;
+    }
+    .quiz-option.wrong {
+      background-color: var(--danger-light) !important;
+      border-color: var(--danger) !important;
+      color: #f87171 !important;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .modal-title {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary);
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .form-row > * {
+      flex: 1;
+    }
+
+    /* IPA KEYBOARD CONTAINER */
+    .ipa-keyboard-panel {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    .ipa-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+    }
+    .ipa-tab {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .ipa-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .ipa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+      gap: 6px;
+    }
+    .ipa-key {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 4px;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+      transition: all 0.1s ease;
+    }
+    .ipa-key:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--surface-elevated);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+      z-index: 200;
+      display: none;
+      animation: slideUp 0.2s ease;
+      border-left: 4px solid var(--primary);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG ICON SPRITE -->
+  <svg style="display: none;">
+    <defs>
+      <g id="i-book"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></g>
+      <g id="i-add"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></g>
+      <g id="i-arrow-back"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></g>
+      <g id="i-volume"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></g>
+      <g id="i-keyboard"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></g>
+      <g id="i-download"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></g>
+      <g id="i-upload"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></g>
+      <g id="i-edit"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></g>
+      <g id="i-delete"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></g>
+      <g id="i-cards"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></g>
+      <g id="i-quiz"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm1.7-5.2c-.39.3-.7.59-.7 1.2h-2c0-1.09.61-1.74 1.21-2.2.49-.37.79-.6.79-1.1 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5H7.5c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.14-.62 1.9-1.8 2.6z"/></g>
+      <g id="i-check"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></g>
+      <g id="i-close"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></g>
+    </defs>
+  </svg>
+
+  <!-- APP HEADER -->
+  <header>
+    <div class="brand" onclick="showScreen('screen-decks')">
+      <div class="brand-icon">
+        <svg class="icon"><use href="#i-book"/></svg>
+      </div>
+      <span>VocaFlow</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="exportAllBackup()">
+        <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
+      </button>
+      <button class="btn btn-primary btn-sm" id="btn-header-add" onclick="openDeckModal()">
+        <svg class="icon icon-sm"><use href="#i-add"/></svg> Tạo Bộ Từ
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main>
+    <!-- SCREEN 1: DECK LIST -->
+    <section id="screen-decks" class="screen active">
+      <div class="top-nav">
+        <h1 class="screen-title">Bộ Từ Vựng Của Bạn</h1>
+        <button class="btn btn-primary" onclick="openDeckModal()">
+          <svg class="icon"><use href="#i-add"/></svg> Thêm Bộ Từ
+        </button>
+      </div>
+
+      <div class="deck-grid" id="deck-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SCREEN 2: DECK DETAIL -->
+    <section id="screen-deck-detail" class="screen">
+      <div class="top-nav">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="btn btn-outline btn-icon" onclick="showScreen('screen-decks')">
+            <svg class="icon"><use href="#i-arrow-back"/></svg>
+          </button>
+          <div>
+            <h1 class="screen-title" id="deck-detail-title">Deck Title</h1>
+            <p id="deck-detail-desc" style="font-size: 13px; color: var(--text-muted);"></p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-outline btn-sm" onclick="importExcelModal()">
+            <svg class="icon icon-sm"><use href="#i-upload"/></svg> Nhập Excel (.xlsx/.csv)
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()">
+            <svg class="icon icon-sm"><use href="#i-download"/></svg> Xuất Excel
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openWordModal()">
+            <svg class="icon icon-sm"><use href="#i-add"/></svg> Thêm Từ
+          </button>
+        </div>
+      </div>
+
+      <!-- STUDY LAUNCHERS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+        <button class="btn btn-primary" style="padding: 14px; font-size: 15px;" onclick="startFlashcardMode()">
+          <svg class="icon"><use href="#i-cards"/></svg> Học Flashcard 3D
+        </button>
+        <button class="btn btn-outline" style="padding: 14px; font-size: 15px; border-color: var(--primary); color: #818cf8;" onclick="startQuizMode()">
+          <svg class="icon"><use href="#i-quiz"/></svg> Luyện Trắc Nghiệm Quiz
+        </button>
+      </div>
+
+      <!-- FILTER & SEARCH -->
+      <div class="filter-bar">
+        <input type="text" id="word-search-input" class="search-input" placeholder="Tìm kiếm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()">
+        <div class="chip-group">
+          <div class="chip active" onclick="setWordFilter('all', this)">Tất cả</div>
+          <div class="chip" onclick="setWordFilter('newWord', this)">Mới</div>
+          <div class="chip" onclick="setWordFilter('learning', this)">Đang học</div>
+          <div class="chip" onclick="setWordFilter('mastered', this)">Đã thuộc</div>
+        </div>
+      </div>
+
+      <!-- WORD LIST -->
+      <div class="word-list" id="word-list-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SCREEN 3: FLASHCARD MODE -->
+    <section id="screen-flashcard" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div id="fc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</div>
+        <button class="btn btn-outline btn-sm" onclick="speakText(currentFlashcardWord?.term)">
+          <svg class="icon icon-sm"><use href="#i-volume"/></svg> Phát âm
+        </button>
+      </div>
+
+      <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 10px;">
+        <div class="progress-bar-fill" id="fc-progress-bar" style="width: 10%;"></div>
+      </div>
+
+      <div class="flashcard-container" onclick="toggleCardFlip()">
+        <div class="flashcard" id="flashcard-element">
+          <!-- Front Face -->
+          <div class="card-face card-front">
+            <div id="fc-front-cefr" class="badge badge-cefr" style="margin-bottom: 8px; display: none;">B2</div>
+            <div id="fc-front-pos" class="badge badge-pos">NOUN</div>
+            <div class="card-term-large" id="fc-front-term">Ubiquitous</div>
+            <div class="word-phonetic" id="fc-front-phonetic">/juːˈbɪk.wə.təs/</div>
+            <div style="margin-top: 36px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+              <span>Chạm để xem định nghĩa & chi tiết</span>
+            </div>
+          </div>
+
+          <!-- Back Face -->
+          <div class="card-face card-back">
+            <div id="fc-back-term" style="font-size: 18px; font-weight: 700; color: var(--primary);">Ubiquitous</div>
+            <div class="card-def-large" id="fc-back-def">Có mặt ở khắp mọi nơi</div>
+            <div id="fc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 12px;"></div>
+            
+            <div id="fc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 8px;">
+              <!-- Synonyms, Antonyms, Collocations -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; justify-content: center; gap: 16px; max-width: 540px; margin: 0 auto;">
+        <button class="btn btn-outline btn-danger" style="flex: 1; padding: 14px;" onclick="markFlashcardStatus('learning')">
+          <svg class="icon"><use href="#i-close"/></svg> Chưa thuộc
+        </button>
+        <button class="btn btn-success" style="flex: 1; padding: 14px;" onclick="markFlashcardStatus('mastered')">
+          <svg class="icon"><use href="#i-check"/></svg> Đã thuộc
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: QUIZ MODE -->
+    <section id="screen-quiz" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
+        <div id="quiz-score" style="font-weight: 700; color: var(--success);">Điểm: 0</div>
+      </div>
+
+      <div class="quiz-container">
+        <div class="quiz-question-card">
+          <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Chọn định nghĩa đúng cho từ:</div>
+          <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Term</h2>
+          <div id="quiz-question-phonetic" style="font-family: monospace; color: var(--text-muted);">/phonetic/</div>
+        </div>
+
+        <div class="quiz-options" id="quiz-options-container">
+          <!-- 4 Multiple Choices -->
+        </div>
+
+        <div id="quiz-next-container" style="text-align: center; margin-top: 20px; display: none;">
+          <button class="btn btn-primary" style="padding: 12px 32px;" onclick="nextQuizQuestion()">Câu tiếp theo ➔</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: ADD / EDIT WORD -->
+  <div class="modal-overlay" id="modal-word">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="modal-word-title">Thêm Từ Vựng Mới</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-word')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <form id="word-form" onsubmit="saveWordForm(event)">
+        <input type="hidden" id="word-id">
+        
+        <div class="form-group">
+          <label class="form-label">Từ vựng tiếng Anh *</label>
+          <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Từ loại</label>
+            <select id="word-pos" class="form-select">
+              <option value="noun">noun (danh từ)</option>
+              <option value="verb">verb (động từ)</option>
+              <option value="adjective">adjective (tính từ)</option>
+              <option value="adverb">adverb (trạng từ)</option>
+              <option value="phrase">phrase (cụm từ)</option>
+              <option value="idiom">idiom (thành ngữ)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cấp độ CEFR</label>
+            <select id="word-cefr" class="form-select">
+              <option value="">Không có</option>
+              <option value="A1">A1 - Beginner</option>
+              <option value="A2">A2 - Elementary</option>
+              <option value="B1">B1 - Intermediate</option>
+              <option value="B2">B2 - Upper Intermediate</option>
+              <option value="C1">C1 - Advanced</option>
+              <option value="C2">C2 - Mastery</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Phiên âm IPA</label>
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleIpaKeyboard()">
+              <svg class="icon icon-sm"><use href="#i-keyboard"/></svg> Bàn phím ảo IPA
+            </button>
+          </div>
+          <input type="text" id="word-phonetic" class="form-input" placeholder="/rɪˈzɪl.jənt/">
+          
+          <!-- EMBEDDED IPA KEYBOARD -->
+          <div id="ipa-keyboard-panel" class="ipa-keyboard-panel" style="display: none;">
+            <div class="ipa-tabs">
+              <div class="ipa-tab active" onclick="switchIpaTab('mono', this)">Nguyên âm đơn</div>
+              <div class="ipa-tab" onclick="switchIpaTab('dip', this)">Nguyên âm đôi</div>
+              <div class="ipa-tab" onclick="switchIpaTab('cons', this)">Phụ âm</div>
+              <div class="ipa-tab" onclick="switchIpaTab('spec', this)">Trọng âm & ký tự</div>
+            </div>
+            <div class="ipa-grid" id="ipa-keys-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Định nghĩa tiếng Việt *</label>
+          <textarea id="word-def" class="form-textarea" rows="2" placeholder="Nghĩa tiếng Việt của từ..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Câu ví dụ</label>
+          <textarea id="word-example" class="form-textarea" rows="2" placeholder="Ví dụ: She remained resilient in difficult times."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Từ đồng nghĩa (Synonyms)</label>
+            <input type="text" id="word-synonyms" class="form-input" placeholder="tough, adaptable (phân tách dấu phẩy)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Từ trái nghĩa (Antonyms)</label>
+            <input type="text" id="word-antonyms" class="form-input" placeholder="fragile, weak">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cụm từ đi kèm (Collocations)</label>
+          <input type="text" id="word-collocations" class="form-input" placeholder="resilient economy, highly resilient">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ghi chú thêm</label>
+          <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-word')">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu từ vựng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT DECK -->
+  <div class="modal-overlay" id="modal-deck">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="modal-deck-title">Tạo Bộ Từ Mới</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-deck')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <form id="deck-form" onsubmit="saveDeckForm(event)">
+        <input type="hidden" id="deck-id">
+        <div class="form-group">
+          <label class="form-label">Tên bộ từ *</label>
+          <input type="text" id="deck-title" class="form-input" placeholder="Ví dụ: IELTS Band 7.0+, TOEIC 600..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mô tả</label>
+          <textarea id="deck-desc" class="form-textarea" rows="2" placeholder="Ghi chú mục tiêu hoặc chủ đề..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Màu sắc chủ đề</label>
+          <div style="display: flex; gap: 10px; margin-top: 6px;">
+            <label><input type="radio" name="deck-color" value="#4f46e5" checked> <span style="display:inline-block;width:24px;height:24px;background:#4f46e5;border-radius:50%;vertical-align:middle;"></span></label>
+            <label><input type="radio" name="deck-color" value="#059669"> <span style="display:inline-block;width:24px;height:24px;background:#059669;border-radius:50%;vertical-align:middle;"></span></label>
+            <label><input type="radio" name="deck-color" value="#d97706"> <span style="display:inline-block;width:24px;height:24px;background:#d97706;border-radius:50%;vertical-align:middle;"></span></label>
+            <label><input type="radio" name="deck-color" value="#dc2626"> <span style="display:inline-block;width:24px;height:24px;background:#dc2626;border-radius:50%;vertical-align:middle;"></span></label>
+            <label><input type="radio" name="deck-color" value="#8b5cf6"> <span style="display:inline-block;width:24px;height:24px;background:#8b5cf6;border-radius:50%;vertical-align:middle;"></span></label>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-deck')">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu bộ từ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EXCEL IMPORT -->
+  <div class="modal-overlay" id="modal-import">
+    <div class="modal">
+      <div class="modal-title">
+        <span>Nhập Từ Vựng Từ File Excel / CSV</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-import')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Hỗ trợ định dạng Excel (.xlsx, .csv) với từng thông tin là 1 cột riêng biệt:<br>
+        <code style="display:block;margin-top:6px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-size:11px;color:#38bdf8;">Term | PartOfSpeech | Phonetic | Definition | CEFR | Example | Synonyms | Antonyms | Collocations | Note | Status</code>
+      </p>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(79,70,229,0.08); padding:10px 14px; border-radius:10px; border:1px solid rgba(79,70,229,0.2);">
+        <span style="font-size:13px; font-weight:600; color:#818cf8;">Chưa có file mẫu? Tải mẫu chuẩn tại đây:</span>
+        <button class="btn btn-outline btn-sm" style="border-color:#818cf8; color:#818cf8;" onclick="downloadSampleExcelTemplate()">
+          <svg class="icon icon-sm"><use href="#i-download"/></svg> Tải File Mẫu (.xlsx)
+        </button>
+      </div>
+
+      <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 16px;">
+        <input type="file" id="excel-file-input" accept=".csv,.xlsx" style="display: none;" onchange="handleExcelFileUpload(event)">
+        <button class="btn btn-outline" onclick="document.getElementById('excel-file-input').click()">
+          <svg class="icon"><use href="#i-upload"/></svg> Chọn file Excel / CSV từ máy tính
+        </button>
+        <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Hoặc dán nội dung từng dòng bên dưới</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dán nội dung bảng tính (Copy từ Excel / CSV):</label>
+        <textarea id="import-text-area" class="form-textarea" rows="4" placeholder="Term,PartOfSpeech,Phonetic,Definition,CEFR,Example,Synonyms,Antonyms,Collocations,Note,Status&#10;Resilient,adjective,/rɪˈzɪl.jənt/,Kiên cường,B2,She was resilient,tough,weak,resilient economy,Mẹo nhớ,Đang học"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-import')">Đóng</button>
+        <button type="button" class="btn btn-primary" onclick="processTextImport()">Nhập từ vựng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">Đã lưu thành công!</div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    const STORAGE_KEY_DECKS = 'vocaflow_decks';
+    const STORAGE_KEY_WORDS = 'vocaflow_words';
+
+    // In-memory Database State
+    let decks = [];
+    let words = [];
+    let currentDeckId = null;
+    let currentWordFilter = 'all';
+
+    // Flashcard State
+    let flashcardList = [];
+    let flashcardIndex = 0;
+    let currentFlashcardWord = null;
+
+    // Quiz State
+    let quizList = [];
+    let quizIndex = 0;
+    let quizScore = 0;
+
+    // IPA Symbols Database
+    const ipaData = {
+      mono: ['iː', 'ɪ', 'ʊ', 'uː', 'e', 'ə', 'ɜː', 'ɔː', 'æ', 'ʌ', 'ɑː', 'ɒ'],
+      dip: ['eɪ', 'aɪ', 'ɔɪ', 'əʊ', 'aʊ', 'ɪə', 'eə', 'ʊə'],
+      cons: ['p', 'b', 't', 'd', 'tʃ', 'dʒ', 'k', 'ɡ', 'f', 'v', 'θ', 'ð', 's', 'z', 'ʃ', 'ʒ', 'm', 'n', 'ŋ', 'h', 'l', 'r', 'w', 'j'],
+      spec: ['ˈ', 'ˌ', 'ː', '.', '/', '(', ')', '-']
+    };
+    let currentIpaTab = 'mono';
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDatabase();
+      if (decks.length === 0) {
+        seedSampleData();
+      }
+      renderDecks();
+    });
+
+    // Database Load & Save
+    function loadDatabase() {
+      try {
+        const storedDecks = localStorage.getItem(STORAGE_KEY_DECKS);
+        const storedWords = localStorage.getItem(STORAGE_KEY_WORDS);
+        decks = storedDecks ? JSON.parse(storedDecks) : [];
+        words = storedWords ? JSON.parse(storedWords) : [];
+      } catch (e) {
+        console.error('Failed to parse database from localStorage:', e);
+        decks = [];
+        words = [];
+      }
+    }
+
+    function saveDatabase() {
+      localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
+      localStorage.setItem(STORAGE_KEY_WORDS, JSON.stringify(words));
+    }
+
+    function seedSampleData() {
+      const sampleDeckId = 'deck-oxford-starter';
+      decks = [{
+        id: sampleDeckId,
+        title: 'Oxford Essential Words',
+        description: 'Bộ từ vựng tiếng Anh học thuật & giao tiếp thông dụng',
+        color: '#4f46e5',
+        createdAt: new Date().toISOString()
+      }];
+
+      words = [
+        {
+          id: 'w-1',
+          deckId: sampleDeckId,
+          term: 'Ubiquitous',
+          partOfSpeech: 'adjective',
+          phonetic: '/juːˈbɪk.wə.təs/',
+          definitionVi: 'Có mặt ở khắp mọi nơi cùng một lúc',
+          exampleSentence: 'Smartphones have become ubiquitous in modern daily life.',
+          note: 'Mẹo nhớ: U ở khắp mọi nơi',
+          status: 'newWord',
+          cefrLevel: 'C1',
+          synonyms: ['omnipresent', 'pervasive', 'universal'],
+          antonyms: ['rare', 'scarce'],
+          collocations: ['ubiquitous presence', 'become ubiquitous'],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'w-2',
+          deckId: sampleDeckId,
+          term: 'Resilient',
+          partOfSpeech: 'adjective',
+          phonetic: '/rɪˈzɪl.jənt/',
+          definitionVi: 'Kiên cường, có khả năng phục hồi nhanh chóng',
+          exampleSentence: 'The local economy proved remarkably resilient during the crisis.',
+          note: 'Hay gặp trong IELTS Writing Task 2',
+          status: 'learning',
+          cefrLevel: 'B2',
+          synonyms: ['tough', 'flexible', 'adaptable'],
+          antonyms: ['fragile', 'vulnerable'],
+          collocations: ['resilient economy', 'highly resilient'],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'w-3',
+          deckId: sampleDeckId,
+          term: 'Eloquent',
+          partOfSpeech: 'adjective',
+          phonetic: '/ˈel.ə.kwənt/',
+          definitionVi: 'Hùng biện, có tài ăn nói lưu loát và truyền cảm',
+          exampleSentence: 'She gave an eloquent speech that moved the entire audience.',
+          note: 'Miêu tả bài nói hoặc phong thái',
+          status: 'newWord',
+          cefrLevel: 'C1',
+          synonyms: ['articulate', 'expressive', 'fluent'],
+          antonyms: ['inarticulate'],
+          collocations: ['eloquent speaker', 'eloquent testimony'],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'w-4',
+          deckId: sampleDeckId,
+          term: 'Pragmatic',
+          partOfSpeech: 'adjective',
+          phonetic: '/præɡˈmæt.ɪk/',
+          definitionVi: 'Thực tế, coi trọng tính thực tiễn hơn lý thuyết',
+          exampleSentence: 'We need to adopt a pragmatic approach to solve this engineering challenge.',
+          note: 'Ngược với idealistic',
+          status: 'mastered',
+          cefrLevel: 'C1',
+          synonyms: ['practical', 'realistic', 'sensible'],
+          antonyms: ['idealistic', 'impractical'],
+          collocations: ['pragmatic approach', 'pragmatic solution'],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'w-5',
+          deckId: sampleDeckId,
+          term: 'Diligent',
+          partOfSpeech: 'adjective',
+          phonetic: '/ˈdɪl.ə.dʒənt/',
+          definitionVi: 'Cần cù, chăm chỉ và chu đáo trong công việc',
+          exampleSentence: 'Through diligent study and practice, he mastered the language.',
+          note: 'Đánh giá học sinh/nhân viên',
+          status: 'learning',
+          cefrLevel: 'B1',
+          synonyms: ['hardworking', 'assiduous', 'meticulous'],
+          antonyms: ['lazy', 'careless'],
+          collocations: ['diligent effort', 'diligent worker'],
+          createdAt: new Date().toISOString()
+        }
+      ];
+
+      saveDatabase();
+    }
+
+    // NAVIGATION
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add('active');
+
+      const btnAdd = document.getElementById('btn-header-add');
+      if (screenId === 'screen-deck-detail') {
+        btnAdd.style.display = 'none';
+      } else {
+        btnAdd.style.display = 'inline-flex';
+      }
+    }
+
+    // RENDER DECKS
+    function renderDecks() {
+      const container = document.getElementById('deck-grid');
+      container.innerHTML = '';
+
+      if (decks.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 48px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
+            <svg class="icon icon-xl" style="fill: var(--text-muted); margin-bottom: 12px;"><use href="#i-book"/></svg>
+            <h3>Chưa có bộ từ vựng nào</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 8px 0 16px;">Tạo bộ từ đầu tiên để bắt đầu hành trình học tập cá nhân hóa!</p>
+            <button class="btn btn-primary" onclick="openDeckModal()"><svg class="icon"><use href="#i-add"/></svg> Tạo Bộ Từ</button>
+          </div>
+        `;
+        return;
+      }
+
+      decks.forEach(deck => {
+        const deckWords = words.filter(w => w.deckId === deck.id);
+        const total = deckWords.length;
+        const mastered = deckWords.filter(w => w.status === 'mastered').length;
+        const progress = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+        const card = document.createElement('div');
+        card.className = 'deck-card';
+        card.innerHTML = `
+          <div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>
+          <div class="deck-header">
+            <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
+            <span class="badge" style="background: rgba(255,255,255,0.06);">${total} từ</span>
+          </div>
+          <p class="deck-desc">${escapeHtml(deck.description || 'Chưa có mô tả')}</p>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: ${progress}%;"></div>
+          </div>
+          <div class="deck-stats">
+            <span>Tiến độ thuộc: ${progress}%</span>
+            <span>Đã thuộc: ${mastered}/${total}</span>
+          </div>
+        `;
+        card.onclick = () => openDeckDetail(deck.id);
+        container.appendChild(card);
+      });
+    }
+
+    // OPEN DECK DETAIL
+    function openDeckDetail(deckId) {
+      currentDeckId = deckId;
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      document.getElementById('deck-detail-title').textContent = deck.title;
+      document.getElementById('deck-detail-desc').textContent = deck.description || '';
+      document.getElementById('word-search-input').value = '';
+      currentWordFilter = 'all';
+
+      renderWordList();
+      showScreen('screen-deck-detail');
+    }
+
+    // RENDER WORD LIST
+    function renderWordList() {
+      const container = document.getElementById('word-list-container');
+      container.innerHTML = '';
+
+      const query = (document.getElementById('word-search-input').value || '').toLowerCase().trim();
+      let deckWords = words.filter(w => w.deckId === currentDeckId);
+
+      if (currentWordFilter !== 'all') {
+        deckWords = deckWords.filter(w => w.status === currentWordFilter);
+      }
+
+      if (query) {
+        deckWords = deckWords.filter(w => 
+          w.term.toLowerCase().includes(query) ||
+          w.definitionVi.toLowerCase().includes(query) ||
+          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query)))
+        );
+      }
+
+      if (deckWords.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>Không có từ vựng nào phù hợp.</p>
+          </div>
+        `;
+        return;
+      }
+
+      deckWords.forEach(w => {
+        const item = document.createElement('div');
+        item.className = 'word-item';
+
+        let statusBadge = `<span class="badge badge-new">Mới</span>`;
+        if (w.status === 'learning') statusBadge = `<span class="badge badge-learning">Đang học</span>`;
+        if (w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">Đã thuộc</span>`;
+
+        const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
+        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">≈ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
+        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">≠ ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
+        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">• ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
+
+        item.innerHTML = `
+          <div style="flex: 1;">
+            <div class="word-header">
+              <span class="word-term">${escapeHtml(w.term)}</span>
+              ${cefrBadge}
+              ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
+              ${w.phonetic ? `<span class="word-phonetic">${escapeHtml(w.phonetic)}</span>` : ''}
+              <button class="btn btn-outline btn-icon btn-sm" onclick="speakText('${escapeHtml(w.term)}')" title="Phát âm">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+            </div>
+            <div class="word-def">${escapeHtml(w.definitionVi)}</div>
+            ${w.exampleSentence ? `<div class="word-example">“${escapeHtml(w.exampleSentence)}”</div>` : ''}
+            
+            <div class="word-tags">
+              ${synText}
+              ${antText}
+              ${collText}
+            </div>
+          </div>
+
+          <div class="word-actions">
+            ${statusBadge}
+            <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+            <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function setWordFilter(filter, el) {
+      currentWordFilter = filter;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      renderWordList();
+    }
+
+    // MODAL CONTROL
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // DECK MODAL
+    function openDeckModal() {
+      document.getElementById('deck-id').value = '';
+      document.getElementById('deck-title').value = '';
+      document.getElementById('deck-desc').value = '';
+      document.getElementById('modal-deck-title').textContent = 'Tạo Bộ Từ Mới';
+      openModal('modal-deck');
+    }
+
+    function saveDeckForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('deck-id').value || 'deck-' + Date.now();
+      const title = document.getElementById('deck-title').value.trim();
+      const desc = document.getElementById('deck-desc').value.trim();
+      const color = document.querySelector('input[name="deck-color"]:checked')?.value || '#4f46e5';
+
+      const existingIndex = decks.findIndex(d => d.id === id);
+      if (existingIndex >= 0) {
+        decks[existingIndex] = { ...decks[existingIndex], title, description: desc, color };
+      } else {
+        decks.push({ id, title, description: desc, color, createdAt: new Date().toISOString() });
+      }
+
+      saveDatabase();
+      renderDecks();
+      closeModal('modal-deck');
+      showToast('Đã lưu bộ từ vựng!');
+    }
+
+    // WORD MODAL
+    function openWordModal() {
+      document.getElementById('word-id').value = '';
+      document.getElementById('word-term').value = '';
+      document.getElementById('word-pos').value = 'noun';
+      document.getElementById('word-cefr').value = '';
+      document.getElementById('word-phonetic').value = '';
+      document.getElementById('word-def').value = '';
+      document.getElementById('word-example').value = '';
+      document.getElementById('word-synonyms').value = '';
+      document.getElementById('word-antonyms').value = '';
+      document.getElementById('word-collocations').value = '';
+      document.getElementById('word-note').value = '';
+      document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
+      document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      openModal('modal-word');
+    }
+
+    function editWord(id) {
+      const w = words.find(item => item.id === id);
+      if (!w) return;
+
+      document.getElementById('word-id').value = w.id;
+      document.getElementById('word-term').value = w.term;
+      document.getElementById('word-pos').value = w.partOfSpeech || 'noun';
+      document.getElementById('word-cefr').value = w.cefrLevel || '';
+      document.getElementById('word-phonetic').value = w.phonetic || '';
+      document.getElementById('word-def').value = w.definitionVi;
+      document.getElementById('word-example').value = w.exampleSentence || '';
+      document.getElementById('word-synonyms').value = (w.synonyms || []).join(', ');
+      document.getElementById('word-antonyms').value = (w.antonyms || []).join(', ');
+      document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
+      document.getElementById('word-note').value = w.note || '';
+      document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
+      document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      openModal('modal-word');
+    }
+
+    function saveWordForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('word-id').value || 'w-' + Date.now();
+      const term = document.getElementById('word-term').value.trim();
+      const pos = document.getElementById('word-pos').value;
+      const cefr = document.getElementById('word-cefr').value;
+      const phonetic = document.getElementById('word-phonetic').value.trim();
+      const def = document.getElementById('word-def').value.trim();
+      const example = document.getElementById('word-example').value.trim();
+      const syn = parseList(document.getElementById('word-synonyms').value);
+      const ant = parseList(document.getElementById('word-antonyms').value);
+      const coll = parseList(document.getElementById('word-collocations').value);
+      const note = document.getElementById('word-note').value.trim();
+
+      const existingIndex = words.findIndex(w => w.id === id);
+      if (existingIndex >= 0) {
+        words[existingIndex] = {
+          ...words[existingIndex],
+          term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
+          definitionVi: def, exampleSentence: example,
+          synonyms: syn, antonyms: ant, collocations: coll, note,
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        words.push({
+          id, deckId: currentDeckId,
+          term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
+          definitionVi: def, exampleSentence: example,
+          synonyms: syn, antonyms: ant, collocations: coll, note,
+          status: 'newWord',
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      saveDatabase();
+      renderWordList();
+      closeModal('modal-word');
+      showToast('Đã lưu từ vựng thành công!');
+    }
+
+    function deleteWord(id) {
+      if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
+        words = words.filter(w => w.id !== id);
+        saveDatabase();
+        renderWordList();
+        showToast('Đã xóa từ vựng!');
+      }
+    }
+
+    // IPA VIRTUAL KEYBOARD
+    function toggleIpaKeyboard() {
+      const panel = document.getElementById('ipa-keyboard-panel');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        renderIpaKeys();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function switchIpaTab(tab, el) {
+      currentIpaTab = tab;
+      document.querySelectorAll('.ipa-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderIpaKeys();
+    }
+
+    function renderIpaKeys() {
+      const container = document.getElementById('ipa-keys-container');
+      container.innerHTML = '';
+      const list = ipaData[currentIpaTab] || [];
+
+      list.forEach(sym => {
+        const btn = document.createElement('div');
+        btn.className = 'ipa-key';
+        btn.textContent = sym;
+        btn.onclick = () => insertIpaSymbol(sym);
+        container.appendChild(btn);
+      });
+    }
+
+    function insertIpaSymbol(sym) {
+      const input = document.getElementById('word-phonetic');
+      const start = input.selectionStart || input.value.length;
+      const end = input.selectionEnd || input.value.length;
+      const current = input.value;
+      input.value = current.substring(0, start) + sym + current.substring(end);
+      input.focus();
+      input.setSelectionRange(start + sym.length, start + sym.length);
+    }
+
+    // FLASHCARD MODE
+    function startFlashcardMode() {
+      flashcardList = words.filter(w => w.deckId === currentDeckId);
+      if (flashcardList.length === 0) {
+        alert('Bộ từ này chưa có từ nào để học flashcard!');
+        return;
+      }
+      flashcardIndex = 0;
+      loadFlashcard(flashcardIndex);
+      showScreen('screen-flashcard');
+    }
+
+    function loadFlashcard(index) {
+      const word = flashcardList[index];
+      currentFlashcardWord = word;
+      const total = flashcardList.length;
+
+      document.getElementById('flashcard-element').classList.remove('flipped');
+      document.getElementById('fc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
+      document.getElementById('fc-progress-bar').style.width = `${Math.round(((index + 1) / total) * 100)}%`;
+
+      // Front
+      const cefrEl = document.getElementById('fc-front-cefr');
+      if (word.cefrLevel) {
+        cefrEl.textContent = word.cefrLevel;
+        cefrEl.style.display = 'inline-block';
+      } else {
+        cefrEl.style.display = 'none';
+      }
+
+      document.getElementById('fc-front-pos').textContent = (word.partOfSpeech || 'WORD').toUpperCase();
+      document.getElementById('fc-front-term').textContent = word.term;
+      document.getElementById('fc-front-phonetic').textContent = word.phonetic || '';
+
+      // Back
+      document.getElementById('fc-back-term').textContent = word.term;
+      document.getElementById('fc-back-def').textContent = word.definitionVi;
+      document.getElementById('fc-back-example').textContent = word.exampleSentence ? `“${word.exampleSentence}”` : '';
+
+      const metaEl = document.getElementById('fc-back-meta');
+      let metaHtml = '';
+      if (word.synonyms && word.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(word.synonyms.join(', '))}</div>`;
+      if (word.antonyms && word.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(word.antonyms.join(', '))}</div>`;
+      if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}</div>`;
+      if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
+      metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
+    }
+
+    function toggleCardFlip() {
+      document.getElementById('flashcard-element').classList.toggle('flipped');
+    }
+
+    function markFlashcardStatus(status) {
+      if (currentFlashcardWord) {
+        currentFlashcardWord.status = status;
+        const idx = words.findIndex(w => w.id === currentFlashcardWord.id);
+        if (idx >= 0) words[idx].status = status;
+        saveDatabase();
+      }
+
+      flashcardIndex++;
+      if (flashcardIndex < flashcardList.length) {
+        loadFlashcard(flashcardIndex);
+      } else {
+        alert('Chúc mừng! Bạn đã hoàn thành lượt ôn Flashcard này!');
+        showScreen('screen-deck-detail');
+      }
+    }
+
+    // QUIZ MODE
+    function startQuizMode() {
+      const deckWords = words.filter(w => w.deckId === currentDeckId);
+      if (deckWords.length < 2) {
+        alert('Cần tối thiểu 2 từ vựng trong bộ này để tạo bài trắc nghiệm Quiz!');
+        return;
+      }
+
+      quizList = [...deckWords].sort(() => Math.random() - 0.5);
+      quizIndex = 0;
+      quizScore = 0;
+      loadQuizQuestion();
+      showScreen('screen-quiz');
+    }
+
+    function loadQuizQuestion() {
+      document.getElementById('quiz-next-container').style.display = 'none';
+      const questionWord = quizList[quizIndex];
+      const total = quizList.length;
+
+      document.getElementById('quiz-counter').textContent = `Câu ${quizIndex + 1} / ${total}`;
+      document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+      document.getElementById('quiz-question-term').textContent = questionWord.term;
+      document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
+
+      // Create 4 choices
+      const allOtherDefs = words.filter(w => w.id !== questionWord.id).map(w => w.definitionVi);
+      const distractors = allOtherDefs.sort(() => Math.random() - 0.5).slice(0, 3);
+      const choices = [questionWord.definitionVi, ...distractors].sort(() => Math.random() - 0.5);
+
+      const optionsContainer = document.getElementById('quiz-options-container');
+      optionsContainer.innerHTML = '';
+
+      choices.forEach(choice => {
+        const opt = document.createElement('button');
+        opt.className = 'quiz-option';
+        opt.textContent = choice;
+        opt.onclick = () => checkQuizAnswer(opt, choice === questionWord.definitionVi);
+        optionsContainer.appendChild(opt);
+      });
+    }
+
+    function checkQuizAnswer(selectedButton, isCorrect) {
+      const allButtons = document.querySelectorAll('.quiz-option');
+      allButtons.forEach(btn => btn.classList.add('disabled'));
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        quizScore += 10;
+        document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+      } else {
+        selectedButton.classList.add('wrong');
+        const questionWord = quizList[quizIndex];
+        allButtons.forEach(btn => {
+          if (btn.textContent === questionWord.definitionVi) {
+            btn.classList.add('correct');
+          }
+        });
+      }
+
+      document.getElementById('quiz-next-container').style.display = 'block';
+    }
+
+    function nextQuizQuestion() {
+      quizIndex++;
+      if (quizIndex < quizList.length) {
+        loadQuizQuestion();
+      } else {
+        alert(`Bạn đã hoàn thành bài Quiz!\nTổng điểm đạt được: ${quizScore}/${quizList.length * 10}`);
+        showScreen('screen-deck-detail');
+      }
+    }
+
+    // =========================================================================
+    // EXCEL / XLSX IMPORT & EXPORT ENGINE
+    // =========================================================================
+
+    const STANDARD_HEADERS = [
+      'Term', 'PartOfSpeech', 'Phonetic', 'Definition', 'CEFR',
+      'Example', 'Synonyms', 'Antonyms', 'Collocations', 'Note', 'Status'
+    ];
+
+    const COLUMN_ALIASES = {
+      term: ['term', 'từ vựng', 'tu vung', 'từ tiếng anh', 'tu tieng anh', 'word', 'vocabulary', 'từ', 'tu', 'english'],
+      partOfSpeech: ['partofspeech', 'pos', 'từ loại', 'tu loai', 'loại từ', 'loai tu', 'type', 'word type', 'từ_loại'],
+      phonetic: ['phonetic', 'ipa', 'phiên âm', 'phien am', 'phát âm', 'phat am', 'pronunciation', 'sound'],
+      definition: ['definition', 'definitionvi', 'định nghĩa', 'dinh nghia', 'nghĩa', 'nghia', 'nghĩa tiếng việt', 'nghia tieng viet', 'meaning', 'vietnamese', 'dịch'],
+      cefr: ['cefr', 'cefrlevel', 'cấp độ', 'cap do', 'trình độ', 'trinh do', 'level', 'band', 'grade'],
+      example: ['example', 'examplesentence', 'ví dụ', 'vi du', 'câu ví dụ', 'cau vi du', 'sentence', 'sample'],
+      synonyms: ['synonyms', 'synonym', 'đồng nghĩa', 'dong nghia', 'từ đồng nghĩa', 'tu dong nghia', 'syn', 'syns'],
+      antonyms: ['antonyms', 'antonym', 'trái nghĩa', 'trai nghia', 'từ trái nghĩa', 'tu trai nghia', 'ant', 'ants'],
+      collocations: ['collocations', 'collocation', 'cụm từ', 'cum tu', 'cụm từ đi kèm', 'cum tu di kem', 'coll', 'colls', 'phrases'],
+      note: ['note', 'notes', 'ghi chú', 'ghi chu', 'mẹo nhớ', 'meo nho', 'mẹo', 'meo', 'comment'],
+      status: ['status', 'trạng thái', 'trang thai', 'tình trạng', 'tinh trang', 'tiến độ', 'tien do']
+    };
+
+    function normalizeColName(str) {
+      if (!str) return '';
+      let s = String(str).toLowerCase().trim();
+      s = s.replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a')
+           .replace(/[èéẹẻẽêềếệểễ]/g, 'e')
+           .replace(/[ìíịỉĩ]/g, 'i')
+           .replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, 'o')
+           .replace(/[ùúụủũưừứựửữ]/g, 'u')
+           .replace(/[ỳýỵỷỹ]/g, 'y')
+           .replace(/[đ]/g, 'd')
+           .replace(/[^a-z0-9]/g, '');
+      return s;
+    }
+
+    function matchColumnKey(rawHeader) {
+      const clean = normalizeColName(rawHeader);
+      for (const [key, aliases] of Object.entries(COLUMN_ALIASES)) {
+        for (const alias of aliases) {
+          const cleanAlias = normalizeColName(alias);
+          if (clean === cleanAlias || clean.includes(cleanAlias)) {
+            return key;
+          }
+        }
+      }
+      return null;
+    }
+
+    // EXPORT TO NATIVE .XLSX
+    function exportCurrentDeckExcel() {
+      const deck = decks.find(d => d.id === currentDeckId);
+      const deckWords = words.filter(w => w.deckId === currentDeckId);
+
+      if (deckWords.length === 0) {
+        alert('Bộ từ này chưa có dữ liệu để xuất Excel!');
+        return;
+      }
+
+      const rows = [STANDARD_HEADERS];
+
+      deckWords.forEach(w => {
+        let statusLabel = 'Mới';
+        if (w.status === 'learning') statusLabel = 'Đang học';
+        if (w.status === 'mastered') statusLabel = 'Đã thuộc';
+
+        rows.push([
+          w.term || '',
+          w.partOfSpeech || '',
+          w.phonetic || '',
+          w.definitionVi || '',
+          w.cefrLevel || '',
+          w.exampleSentence || '',
+          (w.synonyms || []).join(', '),
+          (w.antonyms || []).join(', '),
+          (w.collocations || []).join(', '),
+          w.note || '',
+          statusLabel
+        ]);
+      });
+
+      const fileName = `${(deck.title || 'vocab').replace(/\s+/g, '_')}_vocab.xlsx`;
+
+      if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        ws['!cols'] = [
+          { wch: 18 }, { wch: 14 }, { wch: 16 }, { wch: 32 }, { wch: 8 },
+          { wch: 38 }, { wch: 25 }, { wch: 20 }, { wch: 25 }, { wch: 25 }, { wch: 12 }
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, (deck.title || 'Vocabulary').slice(0, 31));
+        XLSX.writeFile(wb, fileName);
+      } else {
+        // Fallback to CSV
+        let csv = '\uFEFF' + rows.map(r => r.map(csvEscape).join(',')).join('\n');
+        downloadBlob(csv, fileName.replace('.xlsx', '.csv'), 'text/csv;charset=utf-8;');
+      }
+
+      showToast('Đã xuất file Excel (.xlsx) với từng cột riêng biệt thành công!');
+    }
+
+    // DOWNLOAD PRE-STYLED SAMPLE TEMPLATE .XLSX
+    function downloadSampleExcelTemplate() {
+      const rows = [
+        STANDARD_HEADERS,
+        [
+          'Ubiquitous',
+          'adjective',
+          '/juːˈbɪk.wə.təs/',
+          'Có mặt ở khắp mọi nơi cùng một lúc',
+          'C1',
+          'Smartphones have become ubiquitous in daily life.',
+          'omnipresent, pervasive, universal',
+          'rare, scarce',
+          'ubiquitous presence, become ubiquitous',
+          'Mẹo nhớ: U ở khắp mọi nơi',
+          'Mới'
+        ],
+        [
+          'Resilient',
+          'adjective',
+          '/rɪˈzɪl.jənt/',
+          'Kiên cường, phục hồi nhanh chóng',
+          'B2',
+          'The local economy proved remarkably resilient.',
+          'tough, adaptable, buoyant',
+          'fragile, vulnerable, weak',
+          'resilient economy, highly resilient',
+          'Dùng trong IELTS Writing Task 2',
+          'Đang học'
+        ],
+        [
+          'Eloquent',
+          'adjective',
+          '/ˈel.ə.kwənt/',
+          'Hùng biện, ăn nói lưu loát và truyền cảm',
+          'C1',
+          'She gave an eloquent speech that moved everyone.',
+          'articulate, expressive, fluent',
+          'inarticulate, hesitant',
+          'eloquent speaker, eloquent plea',
+          'Thường miêu tả bài phát biểu hoặc người diễn giải',
+          'Mới'
+        ]
+      ];
+
+      const fileName = 'VocaFlow_Mau_Nhap_Tu_Vung.xlsx';
+
+      if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        ws['!cols'] = [
+          { wch: 18 }, { wch: 14 }, { wch: 16 }, { wch: 35 }, { wch: 8 },
+          { wch: 45 }, { wch: 30 }, { wch: 25 }, { wch: 30 }, { wch: 30 }, { wch: 12 }
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'VocaFlow_Template');
+        XLSX.writeFile(wb, fileName);
+      } else {
+        let csv = '\uFEFF' + rows.map(r => r.map(csvEscape).join(',')).join('\n');
+        downloadBlob(csv, 'VocaFlow_Mau_Nhap_Tu_Vung.csv', 'text/csv;charset=utf-8;');
+      }
+
+      showToast('Đã tải xuống file Excel mẫu chuẩn (.xlsx)!');
+    }
+
+    function downloadBlob(content, fileName, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function importExcelModal() {
+      document.getElementById('import-text-area').value = '';
+      openModal('modal-import');
+    }
+
+    // HANDLE EXCEL (.XLSX, .XLS, .CSV) FILE UPLOAD
+    function handleExcelFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const isXlsx = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+
+      if (isXlsx && typeof XLSX !== 'undefined') {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          try {
+            const data = new Uint8Array(evt.target.result);
+            const wb = XLSX.read(data, { type: 'array' });
+            const firstSheetName = wb.SheetNames[0];
+            const ws = wb.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+            processParsedGrid(rows);
+          } catch (err) {
+            alert('Lỗi khi đọc file Excel: ' + err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const text = evt.target.result;
+          document.getElementById('import-text-area').value = text;
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+    }
+
+    function processTextImport() {
+      const text = document.getElementById('import-text-area').value.trim();
+      if (!text) {
+        alert('Vui lòng chọn file Excel (.xlsx) hoặc dán văn bản.');
+        return;
+      }
+
+      const lines = text.split(/\r\n|\n/);
+      const rows = lines.map(parseCsvLine);
+      processParsedGrid(rows);
+    }
+
+    // CORE POSITION-INDEPENDENT PARSING & VALIDATION ENGINE
+    function processParsedGrid(rows) {
+      if (!rows || rows.length === 0) {
+        alert('File không có dữ liệu dòng nào!');
+        return;
+      }
+
+      // 1. Scan for header row in top 5 rows
+      let headerRowIdx = -1;
+      let headerKeyMap = {}; // Maps standard key ('term', 'definition', etc.) -> column index
+      let recognizedCols = [];
+      let unrecognizedCols = [];
+
+      for (let r = 0; r < Math.min(rows.length, 5); r++) {
+        const row = rows[r];
+        if (!row || row.length === 0) continue;
+
+        const tempMap = {};
+        const tempRec = [];
+        const tempUnrec = [];
+
+        row.forEach((cell, cIdx) => {
+          const cellStr = cell ? String(cell).trim() : '';
+          if (!cellStr) return;
+
+          const colLetter = String.fromCharCode(65 + cIdx);
+          const matchedKey = matchColumnKey(cellStr);
+          if (matchedKey) {
+            tempMap[matchedKey] = cIdx;
+            tempRec.push(`"${cellStr}" (Cột ${colLetter})`);
+          } else {
+            tempUnrec.push(`"${cellStr}" (Cột ${colLetter})`);
+          }
+        });
+
+        if (tempMap['term'] !== undefined || tempMap['definition'] !== undefined) {
+          headerRowIdx = r;
+          headerKeyMap = tempMap;
+          recognizedCols = tempRec;
+          unrecognizedCols = tempUnrec;
+          break;
+        }
+      }
+
+      // 2. Validate mandatory columns
+      if (headerRowIdx === -1 || headerKeyMap['term'] === undefined) {
+        alert('❌ LỖI THIẾU CỘT BẮT BUỘC:\n\nKhông tìm thấy cột "Term" (Từ vựng tiếng Anh) trong file.\nVui lòng đặt tiêu đề cột là "Term" hoặc "Từ vựng".');
+        return;
+      }
+
+      if (headerKeyMap['definition'] === undefined) {
+        alert('❌ LỖI THIẾU CỘT BẮT BUỘC:\n\nKhông tìm thấy cột "Definition" (Định nghĩa tiếng Việt) trong file.\nVui lòng đặt tiêu đề cột là "Definition" hoặc "Định nghĩa" / "Nghĩa".');
+        return;
+      }
+
+      // 3. Parse Data Rows
+      const termIdx = headerKeyMap['term'];
+      const defIdx = headerKeyMap['definition'];
+      const posIdx = headerKeyMap['partOfSpeech'];
+      const phoneticIdx = headerKeyMap['phonetic'];
+      const cefrIdx = headerKeyMap['cefr'];
+      const exampleIdx = headerKeyMap['example'];
+      const synIdx = headerKeyMap['synonyms'];
+      const antIdx = headerKeyMap['antonyms'];
+      const collIdx = headerKeyMap['collocations'];
+      const noteIdx = headerKeyMap['note'];
+      const statusIdx = headerKeyMap['status'];
+
+      let importedCount = 0;
+      let skippedCount = 0;
+
+      for (let r = headerRowIdx + 1; r < rows.length; r++) {
+        const row = rows[r];
+        if (!row || row.length === 0) {
+          skippedCount++;
+          continue;
+        }
+
+        const term = row[termIdx] ? String(row[termIdx]).trim() : '';
+        const def = row[defIdx] ? String(row[defIdx]).trim() : '';
+
+        if (!term && !def) {
+          skippedCount++;
+          continue;
+        }
+
+        if (!term || !def) {
+          skippedCount++;
+          continue;
+        }
+
+        const pos = posIdx !== undefined && row[posIdx] ? String(row[posIdx]).trim() : 'noun';
+        const phonetic = phoneticIdx !== undefined && row[phoneticIdx] ? String(row[phoneticIdx]).trim() : '';
+        const cefr = cefrIdx !== undefined && row[cefrIdx] ? String(row[cefrIdx]).trim().toUpperCase() : '';
+        const example = exampleIdx !== undefined && row[exampleIdx] ? String(row[exampleIdx]).trim() : '';
+        const syn = synIdx !== undefined && row[synIdx] ? parseList(String(row[synIdx])) : [];
+        const ant = antIdx !== undefined && row[antIdx] ? parseList(String(row[antIdx])) : [];
+        const coll = collIdx !== undefined && row[collIdx] ? parseList(String(row[collIdx])) : [];
+        const note = noteIdx !== undefined && row[noteIdx] ? String(row[noteIdx]).trim() : '';
+        
+        let status = 'newWord';
+        if (statusIdx !== undefined && row[statusIdx]) {
+          const s = String(row[statusIdx]).toLowerCase();
+          if (s.includes('master') || s.includes('thuộc') || s.includes('done')) status = 'mastered';
+          else if (s.includes('learn') || s.includes('học') || s.includes('review')) status = 'learning';
+        }
+
+        words.push({
+          id: 'w-imp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+          deckId: currentDeckId,
+          term,
+          partOfSpeech: pos,
+          phonetic,
+          definitionVi: def,
+          cefrLevel: cefr || undefined,
+          exampleSentence: example || undefined,
+          synonyms: syn,
+          antonyms: ant,
+          collocations: coll,
+          note: note || undefined,
+          status,
+          createdAt: new Date().toISOString()
+        });
+
+        importedCount++;
+      }
+
+      saveDatabase();
+      renderWordList();
+      closeModal('modal-import');
+
+      // 4. Report feedback to user
+      let msg = `✅ ĐÃ NHẬP THÀNH CÔNG: ${importedCount} từ vựng vào bộ từ!\n\n`;
+      msg += `📌 Các cột đã nhận diện: ${recognizedCols.join(', ')}\n`;
+      if (unrecognizedCols.length > 0) {
+        msg += `\n⚠️ CHÚ Ý: Các cột sau không nhận diện được tên chuẩn (đã tự động bỏ qua):\n👉 ${unrecognizedCols.join(', ')}`;
+      }
+
+      alert(msg);
+      showToast(`Đã nhập thành công ${importedCount} từ vựng!`);
+    }
+
+    // BACKUP
+    function exportAllBackup() {
+      const data = { decks, words, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VocaFlow_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      showToast('Đã xuất toàn bộ dữ liệu sao lưu!');
+    }
+
+    // UTILS
+    function speakText(text) {
+      if (!text) return;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    function parseList(str) {
+      if (!str) return [];
+      return str.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    function csvEscape(str) {
+      if (!str) return '""';
+      return `"${String(str).replace(/"/g, '""')}"`;
+    }
+
+    function parseCsvLine(line) {
+      const pattern = /(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)/g;
+      const result = [];
+      let match;
+      while ((match = pattern.exec(line))) {
+        let val = match[1] || '';
+        if (val.startsWith('"') && val.endsWith('"')) {
+          val = val.slice(1, -1).replace(/""/g, '"');
+        }
+        result.push(val);
+        if (pattern.lastIndex >= line.length) break;
+      }
+      return result;
+    }
+  </script>
+</body>
+</html>
