@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VocaFlow - Học Từ Vựng Tiếng Anh Cá Nhân Hóa (Offline-First)</title>
+  
+  <!-- PWA & Mobile Optimization -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VocaFlow">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+
   <script src="xlsx.full.min.js"></script>
   
   <style>
@@ -682,6 +693,9 @@
       <span>VocaFlow</span>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:none; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700;" onclick="triggerPwaInstall()">
+        📲 Cài App
+      </button>
       <button class="btn btn-outline btn-sm" onclick="exportAllBackup()">
         <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
       </button>
@@ -1053,6 +1067,34 @@
       spec: ['ˈ', 'ˌ', 'ː', '.', '/', '(', ')', '-']
     };
     let currentIpaTab = 'mono';
+
+    // PWA Install Prompt & Service Worker Registration
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const installBtn = document.getElementById('btn-install-pwa');
+      if (installBtn) installBtn.style.display = 'inline-flex';
+    });
+
+    function triggerPwaInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            const installBtn = document.getElementById('btn-install-pwa');
+            if (installBtn) installBtn.style.display = 'none';
+          }
+          deferredInstallPrompt = null;
+        });
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Note:', err));
+      });
+    }
 
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
