@@ -8,7 +8,6 @@ import '../../state/study_providers.dart';
 import '../../state/sync_controller.dart';
 import '../widgets/deck_card.dart';
 import '../widgets/edit_deck_dialog.dart';
-import 'auth/login_screen.dart';
 import 'deck_detail_screen.dart';
 import 'profile_screen.dart';
 

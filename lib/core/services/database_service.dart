@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../constants/app_constants.dart';
 import '../errors/app_exception.dart';
+import '../../firebase_options.dart';
 import '../../models/deck_model.dart';
 import '../../models/word_model.dart';
 import '../../models/word_status.dart';
@@ -106,9 +108,11 @@ class DatabaseService {
   /// Safely attempts to initialize Firebase without halting the offline-first app on desktop/fallback.
   Future<void> _initFirebase() async {
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       _isFirebaseAvailable = true;
-      debugPrint('[DatabaseService] Firebase Cloud Core initialized successfully.');
+      debugPrint('[DatabaseService] Firebase Cloud Core initialized successfully for project: ${DefaultFirebaseOptions.currentPlatform.projectId}');
     } catch (e) {
       _isFirebaseAvailable = false;
       debugPrint('[DatabaseService] Firebase initialization skipped or running offline/fallback: $e');
@@ -193,3 +197,8 @@ class DatabaseService {
     debugPrint('[DatabaseService] Database closed.');
   }
 }
+
+/// Global Riverpod Provider for [DatabaseService].
+final databaseServiceProvider = Provider<DatabaseService>((ref) {
+  return DatabaseService.instance;
+});

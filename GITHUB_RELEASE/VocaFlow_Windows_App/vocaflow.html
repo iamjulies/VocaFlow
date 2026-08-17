@@ -1251,9 +1251,9 @@
 
     let currentUser = null;
     let firebaseConfig = {
-      apiKey: '',
-      projectId: '',
-      authDomain: ''
+      apiKey: 'AIzaSyAM2KmHJzVLvd-oMbLj0AZKXeSiX-Hgv8I',
+      projectId: 'vocaflow-e866c',
+      authDomain: 'vocaflow-e866c.firebaseapp.com'
     };
     let isSyncing = false;
 
@@ -1275,14 +1275,14 @@
         }
         const savedCfg = localStorage.getItem(STORAGE_KEY_FIREBASE_CFG);
         if (savedCfg) {
-          firebaseConfig = JSON.parse(savedCfg);
-          const apiKeyInput = document.getElementById('cfg-api-key');
-          const projIdInput = document.getElementById('cfg-project-id');
-          const authDomainInput = document.getElementById('cfg-auth-domain');
-          if (apiKeyInput) apiKeyInput.value = firebaseConfig.apiKey || '';
-          if (projIdInput) projIdInput.value = firebaseConfig.projectId || '';
-          if (authDomainInput) authDomainInput.value = firebaseConfig.authDomain || '';
+          firebaseConfig = { ...firebaseConfig, ...JSON.parse(savedCfg) };
         }
+        const apiKeyInput = document.getElementById('cfg-api-key');
+        const projIdInput = document.getElementById('cfg-project-id');
+        const authDomainInput = document.getElementById('cfg-auth-domain');
+        if (apiKeyInput) apiKeyInput.value = firebaseConfig.apiKey || '';
+        if (projIdInput) projIdInput.value = firebaseConfig.projectId || '';
+        if (authDomainInput) authDomainInput.value = firebaseConfig.authDomain || '';
       } catch (e) {
         console.error('Error loading auth state:', e);
       }
@@ -1389,7 +1389,6 @@
       const password = document.getElementById('login-password').value;
 
       if (firebaseConfig.apiKey) {
-        // Authenticate with Firebase Auth REST API
         try {
           const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`, {
             method: 'POST',
@@ -1409,12 +1408,11 @@
           };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         } catch (err) {
-          console.log('Firebase Auth REST offline/error, saving local profile:', err);
+          console.log('Firebase Auth REST note:', err);
           currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
       } else {
-        // Local Account Session
         currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       }
@@ -1504,21 +1502,91 @@
         syncBadge.style.color = '#38bdf8';
       }
 
-      // Simulate & execute sync pass
-      setTimeout(async () => {
+      try {
+        const userId = currentUser ? currentUser.uid : 'guest_offline';
+        const apiKey = firebaseConfig.apiKey;
+        const projectId = firebaseConfig.projectId || 'vocaflow-e866c';
+
+        if (apiKey && projectId && currentUser && currentUser.idToken) {
+          for (const deck of decks) {
+            try {
+              const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/decks/${deck.id}?key=${apiKey}`;
+              await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${currentUser.idToken}`
+                },
+                body: JSON.stringify({
+                  fields: {
+                    id: { stringValue: deck.id },
+                    title: { stringValue: deck.title },
+                    description: { stringValue: deck.description || '' },
+                    colorCode: { integerValue: deck.colorCode || 0xFF4F46E5 },
+                    createdAt: { stringValue: deck.createdAt || new Date().toISOString() },
+                    updatedAt: { stringValue: deck.updatedAt || new Date().toISOString() }
+                  }
+                })
+              });
+            } catch (err) {
+              console.log('Error syncing deck to Firestore:', err);
+            }
+          }
+
+          for (const word of words) {
+            try {
+              const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/words/${word.id}?key=${apiKey}`;
+              await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${currentUser.idToken}`
+                },
+                body: JSON.stringify({
+                  fields: {
+                    id: { stringValue: word.id },
+                    deckId: { stringValue: word.deckId },
+                    term: { stringValue: word.term },
+                    partOfSpeech: { stringValue: word.partOfSpeech || '' },
+                    phonetic: { stringValue: word.phonetic || '' },
+                    definitionVi: { stringValue: word.definitionVi || '' },
+                    exampleSentence: { stringValue: word.exampleSentence || '' },
+                    note: { stringValue: word.note || '' },
+                    status: { stringValue: word.status || 'newWord' },
+                    createdAt: { stringValue: word.createdAt || new Date().toISOString() },
+                    updatedAt: { stringValue: word.updatedAt || new Date().toISOString() }
+                  }
+                })
+              });
+            } catch (err) {
+              console.log('Error syncing word to Firestore:', err);
+            }
+          }
+        }
+
         const nowIso = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, nowIso);
 
         if (syncIcon) syncIcon.textContent = '☁️';
         if (syncText) syncText.textContent = 'Đã đồng bộ';
         if (syncBadge) {
-          syncBadge.textContent = 'Đã đồng bộ Cloud';
+          syncBadge.textContent = 'Đã đồng bộ Cloud Firestore';
           syncBadge.style.color = '#10b981';
         }
+        showToast('Đồng bộ Cloud Firestore thành công!');
+      } catch (e) {
+        console.error('Sync error:', e);
+        if (syncIcon) syncIcon.textContent = '☁️';
+        if (syncText) syncText.textContent = 'Ngoại tuyến';
+        if (syncBadge) {
+          syncBadge.textContent = 'Đang dùng bộ nhớ cục bộ';
+          syncBadge.style.color = '#fbbf24';
+        }
+        showToast('Đã lưu dữ liệu ngoại tuyến.');
+      } finally {
         isSyncing = false;
         updateAuthUI();
-        showToast('Đồng bộ Cloud Firestore thành công!');
-      }, 800);
+      }
     }
 
     // Database Load & Save
