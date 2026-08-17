@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/deck_model.dart';
+import '../../state/auth_controller.dart';
 import '../../state/deck_state.dart';
 import '../../state/study_providers.dart';
+import '../../state/sync_controller.dart';
 import '../widgets/deck_card.dart';
 import '../widgets/edit_deck_dialog.dart';
+import 'auth/login_screen.dart';
 import 'deck_detail_screen.dart';
+import 'profile_screen.dart';
 
 /// Screen displaying the list or grid of all vocabulary Decks.
 class DeckListScreen extends ConsumerWidget {
@@ -51,7 +55,7 @@ class DeckListScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Xác nhận xóa bộ từ'),
         content: Text(
-          'Bạn có chắc chắn muốn xóa bộ từ "${deck.title}"? Tất cả từ vựng trong bộ từ này cũng sẽ bị xóa vĩnh viễn.',
+          'Bạn có chắc chắn muốn xóa bộ từ "${deck.title}"? Tất cả từ vựng trong bộ từ này cũng sẽ bị xóa.',
         ),
         actions: [
           TextButton(
@@ -67,10 +71,67 @@ class DeckListScreen extends ConsumerWidget {
               ref.read(deckListProvider.notifier).deleteDeck(deck.id);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Xóa vĩnh viễn'),
+            child: const Text('Xóa'),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSyncButton(BuildContext context, WidgetRef ref, SyncState syncState) {
+    final theme = Theme.of(context);
+
+    if (syncState.isSyncing) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.2,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      );
+    }
+
+    IconData syncIcon;
+    Color? iconColor;
+    String tooltip;
+
+    if (syncState.isOffline) {
+      syncIcon = Icons.cloud_off_rounded;
+      iconColor = Colors.grey;
+      tooltip = 'Chế độ ngoại tuyến (Offline)';
+    } else if (syncState.isError) {
+      syncIcon = Icons.sync_problem_rounded;
+      iconColor = Colors.orange;
+      tooltip = 'Đồng bộ gặp lỗi: ${syncState.errorMessage}';
+    } else {
+      syncIcon = Icons.cloud_done_rounded;
+      iconColor = Colors.green;
+      tooltip = 'Đã đồng bộ Cloud';
+    }
+
+    return IconButton(
+      tooltip: tooltip,
+      icon: Icon(syncIcon, color: iconColor),
+      onPressed: () async {
+        final result = await ref.read(syncControllerProvider.notifier).syncNow();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result.isSuccess
+                    ? 'Đã đồng bộ Cloud! (Đẩy: ${result.itemsPushed}, Nhận: ${result.itemsPulled})'
+                    : (result.errorMessage ?? 'Đồng bộ thất bại.'),
+              ),
+              backgroundColor: result.isSuccess ? Colors.green : Colors.red,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -78,6 +139,8 @@ class DeckListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final deckState = ref.watch(deckListProvider);
+    final syncState = ref.watch(syncControllerProvider);
+    final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,7 +149,7 @@ class DeckListScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.12),
+                color: theme.colorScheme.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -100,11 +163,41 @@ class DeckListScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          // Dynamic Cloud Sync Indicator & Trigger Button
+          _buildSyncButton(context, ref, syncState),
+
+          // Reload Deck List Button
           IconButton(
             tooltip: 'Tải lại danh sách',
             icon: const Icon(Icons.refresh_rounded),
             onPressed: () => ref.read(deckListProvider.notifier).loadDecks(),
           ),
+
+          // User Profile & Account Action Button
+          IconButton(
+            tooltip: authState.isAuthenticated && !authState.isGuest
+                ? 'Hồ sơ tài khoản'
+                : 'Đăng nhập / Hồ sơ',
+            icon: CircleAvatar(
+              radius: 14,
+              backgroundColor: authState.isAuthenticated && !authState.isGuest
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surfaceContainerHighest,
+              child: Icon(
+                Icons.person_rounded,
+                size: 18,
+                color: authState.isAuthenticated && !authState.isGuest
+                    ? Colors.white
+                    : theme.iconTheme.color,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: deckState.isLoading
@@ -131,7 +224,7 @@ class DeckListScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.08),
+                color: theme.colorScheme.primary.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -150,7 +243,7 @@ class DeckListScreen extends ConsumerWidget {
               'Hãy bắt đầu tạo bộ từ đầu tiên để lưu trữ và ôn tập từ vựng mỗi ngày.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 24),
@@ -172,7 +265,6 @@ class DeckListScreen extends ConsumerWidget {
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Compute crossAxisCount based on screen width
         int crossAxisCount = 1;
         if (constraints.maxWidth >= 1200) {
           crossAxisCount = 4;
