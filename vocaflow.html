@@ -8,6 +8,7 @@
   <!-- PWA & Mobile Optimization -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4f46e5">
+  <meta name="referrer" content="no-referrer">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3353,7 +3354,7 @@
       showToast('Đã xuất toàn bộ dữ liệu sao lưu!');
     }
 
-    // UTILS - NATURAL GOOGLE AUDIO STREAMING WITH CACHE & FALLBACK
+    // UTILS - NATURAL GOOGLE AUDIO STREAMING & HIGH-FIDELITY VOICE ENGINE
     const audioStreamCache = new Map();
     let currentActiveAudio = null;
 
@@ -3370,40 +3371,56 @@
 
         const encoded = encodeURIComponent(clean);
         const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : 'en-US';
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
+        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
 
-        let audio = audioStreamCache.get(url);
+        let audio = audioStreamCache.get(googleUrl);
         if (!audio) {
-          audio = new Audio(url);
-          audioStreamCache.set(url, audio);
+          audio = document.createElement('audio');
+          audio.referrerPolicy = 'no-referrer';
+          audio.src = googleUrl;
+          audioStreamCache.set(googleUrl, audio);
         } else {
           audio.currentTime = 0;
         }
 
-        audio.playbackRate = currentSpeechRate || 0.9;
+        audio.playbackRate = currentSpeechRate || 1.0;
         currentActiveAudio = audio;
 
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(err => {
-            console.warn('Google Natural Audio Stream fallback to SpeechSynthesis:', err);
-            _fallbackSpeechSynthesis(clean);
+            console.warn('Direct audio stream failed, fallback to natural SpeechSynthesis:', err);
+            _fallbackNaturalSpeechSynthesis(clean, lang);
           });
         }
       } catch (e) {
-        console.warn('Audio streaming exception, fallback to SpeechSynthesis:', e);
-        _fallbackSpeechSynthesis(clean);
+        console.warn('Audio streaming exception, fallback to natural SpeechSynthesis:', e);
+        _fallbackNaturalSpeechSynthesis(clean, 'en-US');
       }
     }
 
-    function _fallbackSpeechSynthesis(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = currentSpeechRate || 0.9;
-        window.speechSynthesis.speak(utterance);
+    function _fallbackNaturalSpeechSynthesis(text, lang = 'en-US') {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = currentSpeechRate || 0.9;
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        // Priority: Natural Online > Google English > Enhanced > Exact Match
+        const bestVoice = voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && (v.name.includes('Natural') || v.name.includes('Online')))
+          || voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && v.name.includes('Google'))
+          || voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && (v.name.includes('Enhanced') || v.name.includes('Premium')))
+          || voices.find(v => v.lang === lang)
+          || voices.find(v => v.lang.startsWith('en'));
+
+        if (bestVoice) {
+          utterance.voice = bestVoice;
+        }
       }
+
+      window.speechSynthesis.speak(utterance);
     }
 
     function showToast(msg) {
