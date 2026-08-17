@@ -14,7 +14,7 @@ abstract class DeckRepository {
   Stream<List<DeckModel>> watchDecks();
 }
 
-/// Hive implementation of [DeckRepository].
+/// Hive implementation of [DeckRepository] with Soft-Delete Tombstone support for Cloud Sync.
 class HiveDeckRepository implements DeckRepository {
   final DatabaseService _dbService;
 
@@ -26,7 +26,7 @@ class HiveDeckRepository implements DeckRepository {
   @override
   Future<List<DeckModel>> getAllDecks() async {
     try {
-      final decks = _box.values.toList();
+      final decks = _box.values.where((deck) => !deck.isDeleted).toList();
       // Sort by newest created first
       decks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return decks;
@@ -38,7 +38,9 @@ class HiveDeckRepository implements DeckRepository {
   @override
   Future<DeckModel?> getDeckById(String id) async {
     try {
-      return _box.get(id);
+      final deck = _box.get(id);
+      if (deck == null || deck.isDeleted) return null;
+      return deck;
     } catch (e) {
       throw DatabaseException('Failed to retrieve deck by id ($id): $e', originalError: e);
     }
@@ -47,7 +49,11 @@ class HiveDeckRepository implements DeckRepository {
   @override
   Future<void> createDeck(DeckModel deck) async {
     try {
-      await _box.put(deck.id, deck);
+      final newDeck = deck.copyWith(
+        updatedAt: DateTime.now(),
+        isDeleted: false,
+      );
+      await _box.put(newDeck.id, newDeck);
     } catch (e) {
       throw DatabaseException('Failed to create deck (${deck.title}): $e', originalError: e);
     }
@@ -59,7 +65,10 @@ class HiveDeckRepository implements DeckRepository {
       if (!_box.containsKey(deck.id)) {
         throw NotFoundException('Deck not found with id: ${deck.id}');
       }
-      final updated = deck.copyWith(updatedAt: DateTime.now());
+      final updated = deck.copyWith(
+        updatedAt: DateTime.now(),
+        isDeleted: false,
+      );
       await _box.put(updated.id, updated);
     } catch (e) {
       if (e is NotFoundException) rethrow;
@@ -70,21 +79,28 @@ class HiveDeckRepository implements DeckRepository {
   @override
   Future<void> deleteDeck(String id) async {
     try {
-      if (!_box.containsKey(id)) {
+      final existing = _box.get(id);
+      if (existing == null) {
         throw NotFoundException('Deck not found with id: $id');
       }
-      await _box.delete(id);
       
-      // Cascade delete: remove all words associated with this deck
+      // Mark deck as soft-deleted with fresh timestamp for cloud sync replication
+      final softDeletedDeck = existing.copyWith(
+        isDeleted: true,
+        updatedAt: DateTime.now(),
+      );
+      await _box.put(id, softDeletedDeck);
+      
+      // Cascade soft-delete all words belonging to this deck
       final wordsBox = _dbService.wordsBox;
-      final wordKeysToDelete = <dynamic>[];
       for (final entry in wordsBox.toMap().entries) {
-        if (entry.value.deckId == id) {
-          wordKeysToDelete.add(entry.key);
+        if (entry.value.deckId == id && !entry.value.isDeleted) {
+          final softDeletedWord = entry.value.copyWith(
+            isDeleted: true,
+            updatedAt: DateTime.now(),
+          );
+          await wordsBox.put(entry.key, softDeletedWord);
         }
-      }
-      if (wordKeysToDelete.isNotEmpty) {
-        await wordsBox.deleteAll(wordKeysToDelete);
       }
     } catch (e) {
       if (e is NotFoundException) rethrow;
@@ -95,7 +111,7 @@ class HiveDeckRepository implements DeckRepository {
   @override
   Future<int> getDeckCount() async {
     try {
-      return _box.length;
+      return _box.values.where((d) => !d.isDeleted).length;
     } catch (e) {
       throw DatabaseException('Failed to get deck count: $e', originalError: e);
     }

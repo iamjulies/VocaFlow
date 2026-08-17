@@ -22,7 +22,7 @@ abstract class WordRepository {
   Stream<List<WordModel>> watchWordsByDeck(String deckId);
 }
 
-/// Hive implementation of [WordRepository].
+/// Hive implementation of [WordRepository] with Soft-Delete Tombstone support for Cloud Sync.
 class HiveWordRepository implements WordRepository {
   final DatabaseService _dbService;
 
@@ -34,7 +34,7 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<List<WordModel>> getAllWords() async {
     try {
-      return _box.values.toList();
+      return _box.values.where((w) => !w.isDeleted).toList();
     } catch (e) {
       throw DatabaseException('Failed to retrieve all words: $e', originalError: e);
     }
@@ -43,7 +43,9 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<WordModel?> getWordById(String id) async {
     try {
-      return _box.get(id);
+      final word = _box.get(id);
+      if (word == null || word.isDeleted) return null;
+      return word;
     } catch (e) {
       throw DatabaseException('Failed to retrieve word by id ($id): $e', originalError: e);
     }
@@ -52,7 +54,9 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<List<WordModel>> getWordsByDeck(String deckId) async {
     try {
-      final words = _box.values.where((word) => word.deckId == deckId).toList();
+      final words = _box.values
+          .where((word) => word.deckId == deckId && !word.isDeleted)
+          .toList();
       // Sort newest created first
       words.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return words;
@@ -65,7 +69,7 @@ class HiveWordRepository implements WordRepository {
   Future<List<WordModel>> getWordsByStatus(String deckId, WordStatus status) async {
     try {
       return _box.values
-          .where((w) => w.deckId == deckId && w.status == status)
+          .where((w) => w.deckId == deckId && !w.isDeleted && w.status == status)
           .toList();
     } catch (e) {
       throw DatabaseException(
@@ -84,6 +88,7 @@ class HiveWordRepository implements WordRepository {
       }
 
       return _box.values.where((word) {
+        if (word.isDeleted) return false;
         final matchesDeck = deckId == null || word.deckId == deckId;
         if (!matchesDeck) return false;
 
@@ -102,7 +107,11 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<void> createWord(WordModel word) async {
     try {
-      await _box.put(word.id, word);
+      final newWord = word.copyWith(
+        updatedAt: DateTime.now(),
+        isDeleted: false,
+      );
+      await _box.put(newWord.id, newWord);
     } catch (e) {
       throw DatabaseException('Failed to create word (${word.term}): $e', originalError: e);
     }
@@ -111,7 +120,14 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<void> createWordsBatch(List<WordModel> words) async {
     try {
-      final entries = {for (final w in words) w.id: w};
+      final now = DateTime.now();
+      final entries = {
+        for (final w in words)
+          w.id: w.copyWith(
+            updatedAt: now,
+            isDeleted: false,
+          )
+      };
       await _box.putAll(entries);
     } catch (e) {
       throw DatabaseException('Failed to batch create words: $e', originalError: e);
@@ -124,7 +140,10 @@ class HiveWordRepository implements WordRepository {
       if (!_box.containsKey(word.id)) {
         throw NotFoundException('Word not found with id: ${word.id}');
       }
-      final updated = word.copyWith(updatedAt: DateTime.now());
+      final updated = word.copyWith(
+        updatedAt: DateTime.now(),
+        isDeleted: false,
+      );
       await _box.put(updated.id, updated);
     } catch (e) {
       if (e is NotFoundException) rethrow;
@@ -153,10 +172,16 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<void> deleteWord(String id) async {
     try {
-      if (!_box.containsKey(id)) {
+      final existing = _box.get(id);
+      if (existing == null) {
         throw NotFoundException('Word not found with id: $id');
       }
-      await _box.delete(id);
+      // Soft-delete for Cloud Sync
+      final softDeleted = existing.copyWith(
+        isDeleted: true,
+        updatedAt: DateTime.now(),
+      );
+      await _box.put(id, softDeleted);
     } catch (e) {
       if (e is NotFoundException) rethrow;
       throw DatabaseException('Failed to delete word ($id): $e', originalError: e);
@@ -166,14 +191,15 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<void> deleteWordsByDeck(String deckId) async {
     try {
-      final keysToDelete = <dynamic>[];
+      final now = DateTime.now();
       for (final entry in _box.toMap().entries) {
-        if (entry.value.deckId == deckId) {
-          keysToDelete.add(entry.key);
+        if (entry.value.deckId == deckId && !entry.value.isDeleted) {
+          final softDeleted = entry.value.copyWith(
+            isDeleted: true,
+            updatedAt: now,
+          );
+          await _box.put(entry.key, softDeleted);
         }
-      }
-      if (keysToDelete.isNotEmpty) {
-        await _box.deleteAll(keysToDelete);
       }
     } catch (e) {
       throw DatabaseException('Failed to delete words for deck ($deckId): $e', originalError: e);
@@ -183,8 +209,8 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<int> getWordCount({String? deckId}) async {
     try {
-      if (deckId == null) return _box.length;
-      return _box.values.where((w) => w.deckId == deckId).length;
+      if (deckId == null) return _box.values.where((w) => !w.isDeleted).length;
+      return _box.values.where((w) => w.deckId == deckId && !w.isDeleted).length;
     } catch (e) {
       throw DatabaseException('Failed to count words: $e', originalError: e);
     }
@@ -193,7 +219,7 @@ class HiveWordRepository implements WordRepository {
   @override
   Future<Map<WordStatus, int>> getStatusCounts(String deckId) async {
     try {
-      final words = _box.values.where((w) => w.deckId == deckId);
+      final words = _box.values.where((w) => w.deckId == deckId && !w.isDeleted);
       final counts = <WordStatus, int>{
         WordStatus.newWord: 0,
         WordStatus.learning: 0,
