@@ -18,7 +18,7 @@
   <script src="xlsx.full.min.js"></script>
   
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
       --primary-light: rgba(79, 70, 229, 0.14);
@@ -36,6 +36,31 @@
       --danger-light: rgba(239, 68, 68, 0.15);
       --purple: #8b5cf6;
       --purple-light: rgba(139, 92, 246, 0.15);
+      --card-bg-gradient: linear-gradient(145deg, #1e293b, #0f172a);
+      --header-bg: rgba(30, 41, 59, 0.95);
+      --radius: 16px;
+    }
+
+    [data-theme="light"] {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: rgba(79, 70, 229, 0.1);
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --success: #059669;
+      --success-light: rgba(16, 185, 129, 0.12);
+      --warning: #d97706;
+      --warning-light: rgba(245, 158, 11, 0.12);
+      --danger: #dc2626;
+      --danger-light: rgba(239, 68, 68, 0.12);
+      --purple: #7c3aed;
+      --purple-light: rgba(139, 92, 246, 0.12);
+      --card-bg-gradient: linear-gradient(145deg, #ffffff, #f1f5f9);
+      --header-bg: rgba(255, 255, 255, 0.95);
       --radius: 16px;
     }
 
@@ -54,6 +79,7 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     /* SVG ICONS */
@@ -71,7 +97,7 @@
 
     /* HEADER */
     header {
-      background-color: rgba(30, 41, 59, 0.95);
+      background-color: var(--header-bg);
       border-bottom: 1px solid var(--border);
       padding: 12px 20px;
       position: sticky;
@@ -81,6 +107,7 @@
       align-items: center;
       justify-content: space-between;
       backdrop-filter: blur(8px);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
     }
 
     .brand {
@@ -350,14 +377,13 @@
       user-select: none;
       transition: all 0.2s ease;
       white-space: nowrap;
-    }
     .chip.active {
       background-color: var(--primary);
       color: white;
       border-color: var(--primary);
     }
 
-    /* WORD LIST & SELECTION */
+    /* WORD LIST & CARD REDESIGN */
     .word-list {
       display: flex;
       flex-direction: column;
@@ -367,38 +393,83 @@
       background-color: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
+      padding: 14px 16px;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
+      flex-direction: column;
+      gap: 8px;
       transition: all 0.2s ease;
+      overflow: hidden;
+      box-sizing: border-box;
+      width: 100%;
     }
     .word-item.selected {
       border-color: #6366f1;
-      background-color: rgba(99, 102, 241, 0.05);
+      background-color: rgba(99, 102, 241, 0.06);
     }
     .word-item:hover {
       border-color: var(--surface-elevated);
     }
-    .word-select-checkbox {
-      width: 19px;
-      height: 19px;
-      cursor: pointer;
-      accent-color: #6366f1;
-      margin-top: 3px;
-      flex-shrink: 0;
-    }
-    .word-header {
+    .word-item-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
+      width: 100%;
       flex-wrap: wrap;
-      margin-bottom: 6px;
+    }
+    .word-item-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .word-select-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #6366f1;
+      flex-shrink: 0;
     }
     .word-term {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .btn-speaker {
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .btn-speaker:hover {
+      background: var(--surface-elevated);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .word-item-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .word-item-right .badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .word-item-right .btn-icon {
+      padding: 5px;
+    }
+    .word-item-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-left: 24px;
     }
     .word-phonetic {
       font-family: monospace;
@@ -407,38 +478,51 @@
     }
     .word-def {
       font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 4px;
+      line-height: 1.45;
+      color: var(--text);
     }
     .word-example {
       font-size: 12px;
       font-style: italic;
       color: var(--text-muted);
-      margin-bottom: 6px;
     }
     .word-tags {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       font-size: 12px;
       flex-wrap: wrap;
-      margin-bottom: 6px;
+      margin-top: 2px;
     }
     .tag-syn { color: #38bdf8; }
     .tag-ant { color: #f87171; }
     .tag-coll { color: #34d399; }
 
+    .word-mastery-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
     .word-mastery-track {
       background-color: rgba(255, 255, 255, 0.08);
       height: 6px;
       border-radius: 4px;
       overflow: hidden;
-      width: 140px;
+      width: 120px;
+    }
+    [data-theme="light"] .word-mastery-track {
+      background-color: rgba(0, 0, 0, 0.08);
     }
     .word-mastery-fill {
       height: 100%;
       border-radius: 4px;
       background: linear-gradient(90deg, #6366f1, #10b981);
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.4s ease;
+    }
+    .word-mastery-score-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
     }
     .badge-mastery {
       background: rgba(16, 185, 129, 0.12);
@@ -447,11 +531,38 @@
       font-weight: 700;
     }
 
-    .word-actions {
+    /* SELECTION & STUDY BAR */
+    .selection-study-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .selection-bar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .selection-checkbox-label {
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-shrink: 0;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      user-select: none;
+    }
+    .selection-study-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
     }
 
     /* FLASHCARD 3D */
@@ -479,7 +590,7 @@
       height: 100%;
       backface-visibility: hidden;
       border-radius: 24px;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
+      background: var(--card-bg-gradient);
       border: 2px solid var(--border);
       padding: 32px;
       display: flex;
@@ -547,12 +658,12 @@
     .quiz-option.correct {
       background-color: var(--success-light) !important;
       border-color: var(--success) !important;
-      color: #34d399 !important;
+      color: var(--success) !important;
     }
     .quiz-option.wrong {
       background-color: var(--danger-light) !important;
       border-color: var(--danger) !important;
-      color: #f87171 !important;
+      color: var(--danger) !important;
     }
 
     /* MODAL */
@@ -619,6 +730,39 @@
     }
     .form-row > * {
       flex: 1;
+    }
+
+    /* THEME PICKER GRID IN SETTINGS */
+    .theme-picker-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .theme-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: var(--surface-elevated);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .theme-card input {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      accent-color: var(--primary);
+    }
+    .theme-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .theme-icon {
+      font-size: 22px;
+      margin-bottom: 2px;
     }
 
     /* IPA KEYBOARD CONTAINER */
@@ -696,39 +840,59 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
+    /* DECK DETAIL NAV */
+    .deck-detail-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .deck-detail-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+    .deck-detail-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     /* RESPONSIVE DESIGN FOR MOBILE */
     @media (max-width: 768px) {
       header {
-        padding: 10px 12px;
-        gap: 6px;
-        min-height: 56px;
+        padding: 8px 10px;
+        gap: 4px;
+        min-height: 52px;
       }
       .brand {
-        font-size: 17px;
-        gap: 6px;
+        font-size: 16px;
+        gap: 5px;
       }
       .brand-icon {
         padding: 4px;
         border-radius: 8px;
       }
       .brand-icon .icon {
-        width: 16px;
-        height: 16px;
+        width: 15px;
+        height: 15px;
       }
       .header-actions {
-        gap: 5px;
+        gap: 4px;
         flex-shrink: 0;
       }
       .header-actions .btn {
-        padding: 6px 10px;
-        font-size: 12px;
+        padding: 5px 8px;
+        font-size: 11px;
         border-radius: 8px;
       }
       .hide-on-mobile {
         display: none !important;
       }
       .user-display-truncate {
-        max-width: 65px;
+        max-width: 60px;
         display: inline-block;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -736,25 +900,49 @@
         vertical-align: middle;
       }
       main {
-        padding: 16px 12px 60px;
+        padding: 12px 10px 60px;
       }
       .deck-grid {
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 12px;
       }
       .top-nav {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
       .screen-title {
-        font-size: 19px;
+        font-size: 18px;
       }
       .top-nav .btn {
-        padding: 8px 14px;
-        font-size: 13px;
+        padding: 7px 12px;
+        font-size: 12px;
       }
       .modal {
-        padding: 18px 16px;
+        padding: 16px 14px;
         border-radius: 16px;
+      }
+      .word-item {
+        padding: 12px 12px;
+      }
+      .word-item-body {
+        padding-left: 0;
+      }
+      .theme-picker-grid {
+        grid-template-columns: 1fr;
+      }
+      .deck-detail-btn-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        width: 100%;
+      }
+      .deck-detail-btn-row .btn {
+        padding: 7px 4px;
+        font-size: 11px;
+        justify-content: center;
+      }
+      .selection-study-actions .btn {
+        padding: 8px 4px;
+        font-size: 12px;
       }
     }
   </style>
@@ -777,6 +965,7 @@
       <g id="i-quiz"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm1.7-5.2c-.39.3-.7.59-.7 1.2h-2c0-1.09.61-1.74 1.21-2.2.49-.37.79-.6.79-1.1 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5H7.5c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.14-.62 1.9-1.8 2.6z"/></g>
       <g id="i-check"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></g>
       <g id="i-close"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></g>
+      <g id="i-settings"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></g>
     </defs>
   </svg>
 
@@ -795,6 +984,9 @@
       </button>
       <button class="btn btn-outline btn-sm" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
         👤 <span id="user-display-name" class="user-display-truncate">Khách</span>
+      </button>
+      <button class="btn btn-outline btn-sm" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
+        ⚙️ <span class="hide-on-mobile">Cài đặt</span>
       </button>
       <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
         📲 <span class="hide-on-mobile">Cài App</span>
@@ -826,52 +1018,55 @@
 
     <!-- SCREEN 2: DECK DETAIL -->
     <section id="screen-deck-detail" class="screen">
-      <div class="top-nav">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <button class="btn btn-outline btn-icon" onclick="showScreen('screen-decks')">
-            <svg class="icon"><use href="#i-arrow-back"/></svg>
-          </button>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h1 class="screen-title" id="deck-detail-title" style="margin-bottom: 0;">Deck Title</h1>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa tên / mô tả bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ này" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+      <div class="deck-detail-nav">
+        <div class="deck-detail-top-row">
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+            <button class="btn btn-outline btn-icon" onclick="showScreen('screen-decks')">
+              <svg class="icon"><use href="#i-arrow-back"/></svg>
+            </button>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h1 class="screen-title" id="deck-detail-title" style="margin-bottom: 0; font-size: 18px;">Deck Title</h1>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa tên / mô tả bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ này" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+              </div>
+              <p id="deck-detail-desc" style="font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
             </div>
-            <p id="deck-detail-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;"></p>
           </div>
         </div>
 
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="deck-detail-btn-row">
+          <button class="btn btn-primary btn-sm" onclick="openWordModal()">
+            <svg class="icon icon-sm"><use href="#i-add"/></svg> Thêm Từ
+          </button>
           <button class="btn btn-outline btn-sm" onclick="importExcelModal()">
-            <svg class="icon icon-sm"><use href="#i-upload"/></svg> Nhập Excel (.xlsx/.csv)
+            <svg class="icon icon-sm"><use href="#i-upload"/></svg> Nhập Excel
           </button>
           <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()">
             <svg class="icon icon-sm"><use href="#i-download"/></svg> Xuất Excel
-          </button>
-          <button class="btn btn-primary btn-sm" onclick="openWordModal()">
-            <svg class="icon icon-sm"><use href="#i-add"/></svg> Thêm Từ
           </button>
         </div>
       </div>
 
       <!-- SELECTION & STUDY BAR -->
-      <div id="selection-study-bar" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 600; user-select: none;">
-            <input type="checkbox" id="select-all-words-checkbox" onchange="toggleSelectAllWords(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #6366f1;">
+      <div id="selection-study-bar" class="selection-study-bar">
+        <div class="selection-bar-top">
+          <label class="selection-checkbox-label">
+            <input type="checkbox" id="select-all-words-checkbox" onchange="toggleSelectAllWords(this.checked)" class="word-select-checkbox">
             <span>Chọn tất cả</span>
           </label>
           <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600;">0 từ được chọn</span>
+          <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3); padding: 4px 8px; font-size: 11px;">
+            <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa đã chọn
+          </button>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        
+        <div class="selection-study-actions">
           <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected">
             <svg class="icon icon-sm"><use href="#i-cards"/></svg> Học Flashcard (<span id="fc-count-label">Tất cả</span>)
           </button>
           <button class="btn btn-outline btn-sm" style="border-color: var(--primary); color: #818cf8;" onclick="startQuizMode(true)" id="btn-study-quiz-selected">
             <svg class="icon icon-sm"><use href="#i-quiz"/></svg> Luyện Quiz (<span id="quiz-count-label">Tất cả</span>)
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">
-            <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa đã chọn
           </button>
         </div>
       </div>
@@ -1276,6 +1471,63 @@
     </div>
   </div>
 
+  <!-- MODAL: SETTINGS -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal">
+      <div class="modal-title">
+        <span>⚙️ Cài Đặt Ứng Dụng</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-settings')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text);">🌓 Giao Diện & Chủ Đề</label>
+        <div class="theme-picker-grid">
+          <label class="theme-card" onclick="setAppTheme('dark')">
+            <input type="radio" name="app-theme" value="dark" id="theme-dark-radio">
+            <span class="theme-icon">🌙</span>
+            <strong style="font-size: 13px;">Giao diện Tối</strong>
+            <small style="font-size: 11px; color: var(--text-muted);">Mặc định, êm dịu mắt</small>
+          </label>
+
+          <label class="theme-card" onclick="setAppTheme('light')">
+            <input type="radio" name="app-theme" value="light" id="theme-light-radio">
+            <span class="theme-icon">☀️</span>
+            <strong style="font-size: 13px;">Giao diện Sáng</strong>
+            <small style="font-size: 11px; color: var(--text-muted);">Rõ ràng, tương phản cao</small>
+          </label>
+
+          <label class="theme-card" onclick="setAppTheme('system')">
+            <input type="radio" name="app-theme" value="system" id="theme-system-radio">
+            <span class="theme-icon">🌓</span>
+            <strong style="font-size: 13px;">Theo thiết bị</strong>
+            <small style="font-size: 11px; color: var(--text-muted);">Tự động theo hệ điều hành</small>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🔊 Tốc Độ Phát Âm IPA (Text-to-Speech)</label>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <input type="range" id="speech-rate-slider" min="0.5" max="1.3" step="0.1" value="0.9" style="flex: 1; accent-color: var(--primary);" oninput="updateSpeechRate(this.value)">
+          <span id="speech-rate-label" style="font-weight: 700; min-width: 45px; font-size: 13px;">0.9x</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.3</strong></div>
+          <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
+          <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn btn-primary" onclick="closeModal('modal-settings')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast">Đã lưu thành công!</div>
 
@@ -1283,6 +1535,70 @@
   <script>
     const STORAGE_KEY_DECKS = 'vocaflow_decks';
     const STORAGE_KEY_WORDS = 'vocaflow_words';
+    const STORAGE_KEY_THEME = 'vocaflow_theme';
+    const STORAGE_KEY_SPEECH_RATE = 'vocaflow_speech_rate';
+
+    // Theme Engine
+    let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+    let currentSpeechRate = parseFloat(localStorage.getItem(STORAGE_KEY_SPEECH_RATE) || '0.9');
+
+    function initTheme() {
+      applyTheme(currentTheme);
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+          if (currentTheme === 'system') {
+            applyTheme('system');
+          }
+        });
+      }
+    }
+
+    function setAppTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem(STORAGE_KEY_THEME, theme);
+      applyTheme(theme);
+      updateThemeRadio();
+      const label = theme === 'light' ? 'Giao diện Sáng' : (theme === 'dark' ? 'Giao diện Tối' : 'Theo thiết bị');
+      showToast(`Đã chuyển sang: ${label}`);
+    }
+
+    function applyTheme(theme) {
+      let resolved = theme;
+      if (theme === 'system') {
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        resolved = isDark ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', resolved);
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', resolved === 'dark' ? '#0f172a' : '#ffffff');
+      }
+    }
+
+    function openSettingsModal() {
+      updateThemeRadio();
+      const slider = document.getElementById('speech-rate-slider');
+      const label = document.getElementById('speech-rate-label');
+      if (slider) slider.value = currentSpeechRate;
+      if (label) label.textContent = `${currentSpeechRate}x`;
+      openModal('modal-settings');
+    }
+
+    function updateThemeRadio() {
+      const radio = document.querySelector(`input[name="app-theme"][value="${currentTheme}"]`);
+      if (radio) radio.checked = true;
+      document.querySelectorAll('.theme-card').forEach(card => {
+        const r = card.querySelector('input[type="radio"]');
+        card.classList.toggle('active', r && r.value === currentTheme);
+      });
+    }
+
+    function updateSpeechRate(val) {
+      currentSpeechRate = parseFloat(val);
+      localStorage.setItem(STORAGE_KEY_SPEECH_RATE, val);
+      const label = document.getElementById('speech-rate-label');
+      if (label) label.textContent = `${val}x`;
+    }
 
     // In-memory Database State
     let decks = [];
@@ -1366,6 +1682,7 @@
 
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
       loadDatabase();
       loadAuthState();
       if (decks.length === 0) {
@@ -1995,7 +2312,7 @@
     // =========================================================================
     // CEFR-WEIGHTED MASTERY SCORE ENGINE (0 - 100%)
     // =========================================================================
-    function calculateMasteryGain(cefrLevel, isQuiz = false) {
+    function calculateMasteryPoints(cefrLevel, isQuiz = false) {
       const norm = (cefrLevel || '').toUpperCase().trim();
       let baseGain = 6;
       if (norm === 'A1') baseGain = 6;
@@ -2005,10 +2322,15 @@
       else if (norm === 'C1') baseGain = 2;
       else if (norm === 'C2') baseGain = 1;
 
+      let gain = baseGain;
       if (isQuiz) {
-        return Math.round(baseGain * 1.5);
+        gain = Math.round(baseGain * 1.5);
       }
-      return baseGain;
+
+      // Penalty is 50% of the gain, rounded up (e.g. 6*0.5=3, 5*0.5=2.5->3, 1*0.5=0.5->1)
+      const penalty = Math.ceil(gain * 0.5);
+
+      return { gain, penalty };
     }
 
     function updateWordMasteryScore(word, deltaPoints) {
@@ -2146,7 +2468,7 @@
       showScreen('screen-deck-detail');
     }
 
-    // RENDER WORD LIST
+    // RENDER WORD LIST WITH MOBILE-OPTIMIZED RESPONSIVE CARDS
     function renderWordList() {
       const container = document.getElementById('word-list-container');
       container.innerHTML = '';
@@ -2172,9 +2494,9 @@
           w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0)
         );
 
-        let statusBadge = `<span class="badge badge-new">Mới (${score}%)</span>`;
-        if (score >= 100 || w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">Đã thuộc (100%)</span>`;
-        else if (score > 0 || w.status === 'learning') statusBadge = `<span class="badge badge-learning">Đang học (${score}%)</span>`;
+        let statusBadge = `<span class="badge badge-new">${score}%</span>`;
+        if (score >= 100 || w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">🎯 100%</span>`;
+        else if (score > 0 || w.status === 'learning') statusBadge = `<span class="badge badge-learning">⚡ ${score}%</span>`;
 
         const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
         const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">≈ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
@@ -2182,38 +2504,36 @@
         const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">• ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
 
         item.innerHTML = `
-          <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
-          <div style="flex: 1;">
-            <div class="word-header">
+          <div class="word-item-header">
+            <div class="word-item-left">
+              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
               <span class="word-term">${escapeHtml(w.term)}</span>
               ${cefrBadge}
               ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
-              ${w.phonetic ? `<span class="word-phonetic">${escapeHtml(w.phonetic)}</span>` : ''}
-              <button class="btn btn-outline btn-icon btn-sm" onclick="speakText('${escapeHtml(w.term)}')" title="Phát âm">
+              <button class="btn-speaker" onclick="speakText('${escapeHtml(w.term)}')" title="Phát âm">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
             </div>
-            <div class="word-def">${escapeHtml(w.definitionVi)}</div>
-            ${w.exampleSentence ? `<div class="word-example">“${escapeHtml(w.exampleSentence)}”</div>` : ''}
-            
-            <div class="word-tags">
-              ${synText}
-              ${antText}
-              ${collText}
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-              <div class="word-mastery-track">
-                <div class="word-mastery-fill" style="width: ${score}%;"></div>
-              </div>
-              <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">${score}/100đ</span>
+            <div class="word-item-right">
+              ${statusBadge}
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
             </div>
           </div>
 
-          <div class="word-actions">
-            ${statusBadge}
-            <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-            <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+          <div class="word-item-body">
+            ${w.phonetic ? `<div class="word-phonetic">${escapeHtml(w.phonetic)}</div>` : ''}
+            <div class="word-def">${escapeHtml(w.definitionVi)}</div>
+            ${w.exampleSentence ? `<div class="word-example">“${escapeHtml(w.exampleSentence)}”</div>` : ''}
+            
+            ${(synText || antText || collText) ? `<div class="word-tags">${synText} ${antText} ${collText}</div>` : ''}
+
+            <div class="word-mastery-row">
+              <div class="word-mastery-track">
+                <div class="word-mastery-fill" style="width: ${score}%;"></div>
+              </div>
+              <span class="word-mastery-score-text">${score}/100đ</span>
+            </div>
           </div>
         `;
         container.appendChild(item);
@@ -2437,7 +2757,7 @@
       );
       word.masteryScore = curScore;
 
-      const gain = calculateMasteryGain(word.cefrLevel, false);
+      const { gain, penalty } = calculateMasteryPoints(word.cefrLevel, false);
 
       document.getElementById('flashcard-element').classList.remove('flipped');
       document.getElementById('fc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
@@ -2473,8 +2793,8 @@
       if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
       metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
 
-      // Action buttons with dynamic points preview
-      document.getElementById('fc-btn-no').innerHTML = `<svg class="icon"><use href="#i-close"/></svg> Chưa thuộc (-1đ)`;
+      // Action buttons with dynamic points preview (50% penalty for wrong)
+      document.getElementById('fc-btn-no').innerHTML = `<svg class="icon"><use href="#i-close"/></svg> Chưa thuộc (-${penalty}đ)`;
       document.getElementById('fc-btn-yes').innerHTML = `<svg class="icon"><use href="#i-check"/></svg> Thuộc rồi (+${gain}đ)`;
     }
 
@@ -2484,8 +2804,8 @@
 
     function markFlashcardMastery(isKnown) {
       if (currentFlashcardWord) {
-        const gain = calculateMasteryGain(currentFlashcardWord.cefrLevel, false);
-        const delta = isKnown ? gain : -1;
+        const { gain, penalty } = calculateMasteryPoints(currentFlashcardWord.cefrLevel, false);
+        const delta = isKnown ? gain : -penalty;
         const { newScore } = updateWordMasteryScore(currentFlashcardWord, delta);
 
         const idx = words.findIndex(w => w.id === currentFlashcardWord.id);
@@ -2499,7 +2819,7 @@
         if (isKnown) {
           showToast(`+${gain} điểm thuộc bài! (Thuộc: ${newScore}%)`);
         } else {
-          showToast(`-1 điểm ôn tập! (Thuộc: ${newScore}%)`);
+          showToast(`-${penalty} điểm ôn tập! (Thuộc: ${newScore}%)`);
         }
       }
 
@@ -2514,7 +2834,7 @@
     }
 
     // =========================================================================
-    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN
+    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN & 50% PENALTY
     // =========================================================================
     function startQuizMode(useSelectionOnly = false) {
       let deckWords = getFilteredDeckWords();
@@ -2575,7 +2895,7 @@
         document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
 
         if (questionWord) {
-          const gain = calculateMasteryGain(questionWord.cefrLevel, true);
+          const { gain } = calculateMasteryPoints(questionWord.cefrLevel, true);
           const { newScore } = updateWordMasteryScore(questionWord, gain);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
@@ -2589,7 +2909,8 @@
       } else {
         selectedButton.classList.add('wrong');
         if (questionWord) {
-          const { newScore } = updateWordMasteryScore(questionWord, -1);
+          const { penalty } = calculateMasteryPoints(questionWord.cefrLevel, true);
+          const { newScore } = updateWordMasteryScore(questionWord, -penalty);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
             words[idx].masteryScore = newScore;
@@ -2603,7 +2924,7 @@
               btn.classList.add('correct');
             }
           });
-          showToast(`Chưa đúng! -1 điểm (${newScore}%)`);
+          showToast(`Chưa đúng! -${penalty} điểm (${newScore}%)`);
         }
       }
 
@@ -3017,7 +3338,7 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = 0.9;
+        utterance.rate = currentSpeechRate || 0.9;
         window.speechSynthesis.speak(utterance);
       }
     }
