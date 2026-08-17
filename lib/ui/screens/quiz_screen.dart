@@ -6,6 +6,7 @@ import '../../models/deck_model.dart';
 import '../../models/quiz_question.dart';
 import '../../models/quiz_result.dart';
 import '../../state/study_providers.dart';
+import '../../services/tts_service.dart';
 
 /// Screen for interactive 4-choice Multiple Choice Quiz testing.
 class QuizScreen extends ConsumerWidget {
@@ -18,6 +19,9 @@ class QuizScreen extends ConsumerWidget {
     final quizState = ref.watch(quizSessionProvider(deck.id));
     final quizNotifier = ref.read(quizSessionProvider(deck.id).notifier);
     final accentColor = Color(deck.colorCode);
+    final ttsService = ref.watch(ttsServiceProvider);
+
+    final currentWord = quizState.currentQuestion?.targetWord;
 
     return Scaffold(
       appBar: AppBar(
@@ -26,6 +30,26 @@ class QuizScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          if (currentWord != null)
+            IconButton(
+              icon: ttsService.state.isTermActive(currentWord.term) && ttsService.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      ttsService.state.isTermActive(currentWord.term) && ttsService.isPlaying
+                          ? Icons.volume_up_rounded
+                          : Icons.volume_up_outlined,
+                    ),
+              tooltip: 'Phát âm tự nhiên (Google TTS)',
+              onPressed: () {
+                ref.read(ttsServiceProvider).speak(currentWord.term);
+              },
+            ),
+        ],
       ),
       body: quizState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -33,7 +57,7 @@ class QuizScreen extends ConsumerWidget {
               ? _buildEmptyState(context)
               : quizState.isCompleted && quizState.result != null
                   ? _buildResultView(context, quizState.result!, quizNotifier, accentColor)
-                  : _buildQuestionView(context, quizState, quizNotifier, accentColor),
+                  : _buildQuestionView(context, quizState, quizNotifier, accentColor, ref),
     );
   }
 
@@ -42,12 +66,17 @@ class QuizScreen extends ConsumerWidget {
     dynamic quizState,
     dynamic quizNotifier,
     Color accentColor,
+    WidgetRef ref,
   ) {
     final theme = Theme.of(context);
     final question = quizState.currentQuestion as QuizQuestion;
     final total = quizState.questions.length;
     final currentNumber = quizState.currentIndex + 1;
     final isAnswered = question.isAnswered;
+    final ttsService = ref.watch(ttsServiceProvider);
+    final isTtsActive = ttsService.state.isTermActive(question.targetWord.term);
+    final isTtsLoading = isTtsActive && ttsService.isLoading;
+    final isTtsPlaying = isTtsActive && ttsService.isPlaying;
 
     return SafeArea(
       child: Padding(
@@ -125,13 +154,36 @@ class QuizScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    Text(
-                      question.targetWord.term,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          question.targetWord.term,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: isTtsLoading
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Icon(
+                                  isTtsPlaying ? Icons.volume_up_rounded : Icons.volume_up_outlined,
+                                  color: isTtsPlaying ? accentColor : theme.iconTheme.color?.withOpacity(0.7),
+                                ),
+                          tooltip: 'Phát âm tự nhiên (Google TTS)',
+                          onPressed: () {
+                            ref.read(ttsServiceProvider).speak(question.targetWord.term);
+                          },
+                        ),
+                      ],
                     ),
                     if (question.targetWord.phonetic.isNotEmpty) ...[
                       const SizedBox(height: 8),

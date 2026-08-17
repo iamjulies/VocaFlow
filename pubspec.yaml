@@ -1,7 +1,7 @@
 name: vocaflow
 description: "VocaFlow - Smart English Vocabulary Memorization App"
 publish_to: 'none'
-version: 0.0.3+1
+version: 0.0.4+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -18,6 +18,10 @@ dependencies:
   # Local Storage & Database
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+
+  # Audio & Natural TTS Streaming
+  just_audio: ^0.9.40
+  http: ^1.2.2
 
   # Firebase Suite (Cloud Sync & Auth)
   firebase_core: ^3.6.0

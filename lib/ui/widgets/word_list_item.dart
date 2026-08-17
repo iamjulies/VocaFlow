@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/themes/app_theme.dart';
 import '../../models/word_model.dart';
 import '../../models/word_status.dart';
+import '../../services/tts_service.dart';
 
-/// List item widget presenting a vocabulary word with definition, phonetic, CEFR, and metadata badges.
-class WordListItem extends StatelessWidget {
+/// List item widget presenting a vocabulary word with definition, phonetic, CEFR, metadata badges, and natural audio TTS.
+class WordListItem extends ConsumerWidget {
   final WordModel word;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -30,9 +32,13 @@ class WordListItem extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final statusColor = _getStatusColor(word.status);
+    final ttsService = ref.watch(ttsServiceProvider);
+    final isTtsActive = ttsService.state.isTermActive(word.term);
+    final isTtsLoading = isTtsActive && ttsService.isLoading;
+    final isTtsPlaying = isTtsActive && ttsService.isPlaying;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -55,7 +61,7 @@ class WordListItem extends StatelessWidget {
                 ),
               ),
 
-              // Word Term, Phonetic, POS & Definition
+              // Word Term, Phonetic, POS, TTS & Definition
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +77,35 @@ class WordListItem extends StatelessWidget {
                             letterSpacing: -0.2,
                           ),
                         ),
+
+                        // Natural TTS Speaker Button
+                        InkWell(
+                          onTap: () {
+                            ref.read(ttsServiceProvider).speak(word.term);
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: isTtsLoading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(
+                                    isTtsPlaying
+                                        ? Icons.volume_up_rounded
+                                        : Icons.volume_up_outlined,
+                                    size: 18,
+                                    color: isTtsPlaying
+                                        ? theme.colorScheme.primary
+                                        : theme.iconTheme.color?.withOpacity(0.7),
+                                  ),
+                          ),
+                        ),
+
                         if (word.cefrLevel != null && word.cefrLevel!.isNotEmpty) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -199,7 +234,7 @@ class WordListItem extends StatelessWidget {
                     },
                     itemBuilder: (context) => [
                       const PopupMenuItem(
-                        value: 'edit',
+                          value: 'edit',
                         child: Row(
                           children: [
                             Icon(Icons.edit_outlined, size: 18),

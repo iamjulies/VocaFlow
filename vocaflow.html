@@ -977,7 +977,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
@@ -1517,7 +1517,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3332,9 +3332,50 @@
       showToast('Đã xuất toàn bộ dữ liệu sao lưu!');
     }
 
-    // UTILS
-    function speakText(text) {
+    // UTILS - NATURAL GOOGLE AUDIO STREAMING WITH CACHE & FALLBACK
+    const audioStreamCache = new Map();
+    let currentActiveAudio = null;
+
+    function speakText(text, accent = 'en-US') {
       if (!text) return;
+      const clean = text.trim();
+      if (!clean) return;
+
+      try {
+        if (currentActiveAudio) {
+          currentActiveAudio.pause();
+          currentActiveAudio = null;
+        }
+
+        const encoded = encodeURIComponent(clean);
+        const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : 'en-US';
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
+
+        let audio = audioStreamCache.get(url);
+        if (!audio) {
+          audio = new Audio(url);
+          audioStreamCache.set(url, audio);
+        } else {
+          audio.currentTime = 0;
+        }
+
+        audio.playbackRate = currentSpeechRate || 0.9;
+        currentActiveAudio = audio;
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.warn('Google Natural Audio Stream fallback to SpeechSynthesis:', err);
+            _fallbackSpeechSynthesis(clean);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio streaming exception, fallback to SpeechSynthesis:', e);
+        _fallbackSpeechSynthesis(clean);
+      }
+    }
+
+    function _fallbackSpeechSynthesis(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);

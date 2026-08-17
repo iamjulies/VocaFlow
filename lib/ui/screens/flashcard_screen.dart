@@ -6,6 +6,7 @@ import '../../core/themes/app_theme.dart';
 import '../../models/deck_model.dart';
 import '../../models/word_model.dart';
 import '../../state/study_providers.dart';
+import '../../services/tts_service.dart';
 
 /// Screen for interactive 3D Flip Flashcard study session.
 class FlashcardScreen extends ConsumerStatefulWidget {
@@ -66,6 +67,12 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
     final sessionState = ref.watch(flashcardSessionProvider(widget.deck.id));
     final sessionNotifier = ref.read(flashcardSessionProvider(widget.deck.id).notifier);
     final accentColor = Color(widget.deck.colorCode);
+    final ttsService = ref.watch(ttsServiceProvider);
+
+    final currentWord = (sessionState.words.isNotEmpty &&
+            sessionState.currentIndex < sessionState.words.length)
+        ? sessionState.words[sessionState.currentIndex]
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,6 +81,26 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          if (currentWord != null)
+            IconButton(
+              icon: ttsService.state.isTermActive(currentWord.term) && ttsService.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      ttsService.state.isTermActive(currentWord.term) && ttsService.isPlaying
+                          ? Icons.volume_up_rounded
+                          : Icons.volume_up_outlined,
+                    ),
+              tooltip: 'Phát âm tự nhiên (Google TTS)',
+              onPressed: () {
+                ref.read(ttsServiceProvider).speak(currentWord.term);
+              },
+            ),
+        ],
       ),
       body: sessionState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -220,6 +247,10 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
 
   Widget _buildCardFront(BuildContext context, WordModel word, Color accentColor) {
     final theme = Theme.of(context);
+    final ttsService = ref.watch(ttsServiceProvider);
+    final isTtsActive = ttsService.state.isTermActive(word.term);
+    final isTtsLoading = isTtsActive && ttsService.isLoading;
+    final isTtsPlaying = isTtsActive && ttsService.isPlaying;
 
     return Card(
       elevation: 4,
@@ -285,14 +316,37 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
               ],
             ),
 
-            // Term
-            Text(
-              word.term,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
-              ),
+            // Term + Speaker Button
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  word.term,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: isTtsLoading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(
+                          isTtsPlaying ? Icons.volume_up_rounded : Icons.volume_up_outlined,
+                          color: isTtsPlaying ? accentColor : theme.iconTheme.color?.withOpacity(0.7),
+                        ),
+                  tooltip: 'Phát âm tự nhiên',
+                  onPressed: () {
+                    ref.read(ttsServiceProvider).speak(word.term);
+                  },
+                ),
+              ],
             ),
 
             if (word.phonetic.isNotEmpty) ...[
@@ -334,6 +388,9 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
 
   Widget _buildCardBack(BuildContext context, WordModel word, Color accentColor) {
     final theme = Theme.of(context);
+    final ttsService = ref.watch(ttsServiceProvider);
+    final isTtsActive = ttsService.state.isTermActive(word.term);
+    final isTtsPlaying = isTtsActive && ttsService.isPlaying;
 
     return Card(
       elevation: 4,
@@ -360,12 +417,31 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                word.term,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w700,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    word.term,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: accentColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: () => ref.read(ttsServiceProvider).speak(word.term),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(
+                        isTtsPlaying ? Icons.volume_up_rounded : Icons.volume_up_outlined,
+                        size: 18,
+                        color: accentColor,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
 
