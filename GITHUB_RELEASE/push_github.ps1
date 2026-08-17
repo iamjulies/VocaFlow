@@ -1,14 +1,17 @@
-# PowerShell Script - Push VocaFlow to GitHub
+# PowerShell Script - Auto Push VocaFlow to GitHub (1-Click)
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
 $Host.UI.RawUI.WindowTitle = "VocaFlow - Đẩy Code Lên GitHub (iamjulies/VocaFlow)"
 
 $root = (Get-Item $PSScriptRoot).Parent.FullName
 $git = "C:\Users\DELL\Documents\flutter_windows_3.47.0-stable\flutter\bin\mingit\cmd\git.exe"
-$repoUrl = "https://github.com/iamjulies/VocaFlow.git"
+$tokenFile = Join-Path $PSScriptRoot ".git_token"
+$displayUrl = "https://github.com/iamjulies/VocaFlow.git"
 
+Clear-Host
 Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "   🚀 VOCAFLOW - ĐẨY CODE LÊN GITHUB" -ForegroundColor Yellow
-Write-Host "   Repository: $repoUrl" -ForegroundColor White
+Write-Host "   🚀 VOCAFLOW - ĐẨY CẬP NHẬT LÊN GITHUB (1-CLICK)" -ForegroundColor Yellow
+Write-Host "   Repository: $displayUrl" -ForegroundColor White
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -17,8 +20,20 @@ if (-not (Test-Path $git)) {
     return
 }
 
+# Lấy Token bảo mật từ file cục bộ
+$token = ""
+if (Test-Path $tokenFile) {
+    $token = (Get-Content -Path $tokenFile -Raw).Trim()
+}
+
+if ($token) {
+    $repoUrl = "https://iamjulies:$token@github.com/iamjulies/VocaFlow.git"
+} else {
+    $repoUrl = "https://github.com/iamjulies/VocaFlow.git"
+}
+
 # 1. Cập nhật bản ZIP phát hành mới nhất
-Write-Host "[1/4] Đang đóng gói bản ZIP phát hành mới nhất..." -ForegroundColor Cyan
+Write-Host "[1/3] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
 $stage = Join-Path $root "VocaFlow_Windows_Portable"
 $zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.0.1_Windows_Portable.zip"
 $rootZipPath = Join-Path $root "VocaFlow_v0.0.1_Windows_Portable.zip"
@@ -30,43 +45,34 @@ try {
     Compress-Archive -Path "$stage\*" -DestinationPath $zipPath -Force
     Copy-Item $zipPath -Destination $rootZipPath -Force
     Remove-Item -Recurse -Force $stage
-    Write-Host "  -> Đã tạo file: VocaFlow_v0.0.1_Windows_Portable.zip" -ForegroundColor Green
+    Write-Host "  -> Đã tạo gói: VocaFlow_v0.0.1_Windows_Portable.zip" -ForegroundColor Green
 } catch {
-    Write-Host "  [!] Lưu ý đóng gói ZIP: $_" -ForegroundColor Yellow
+    Write-Host "  [!] Thông báo ZIP: $_" -ForegroundColor Yellow
 }
 
-# 2. Cấu hình Git Remote
+# 2. Đồng bộ Git và Commit
 Write-Host ""
-Write-Host "[2/4] Đang cấu hình liên kết GitHub..." -ForegroundColor Cyan
+Write-Host "[2/3] Đang lưu các thay đổi mới nhất..." -ForegroundColor Cyan
 & $git -C $root remote remove origin 2>$null
 & $git -C $root remote add origin $repoUrl
 & $git -C $root branch -M main
-& $git -C $root config credential.helper manager
 
-# 3. Chuẩn bị Commit
-Write-Host ""
-Write-Host "[3/4] Đang chuẩn bị các tệp thay đổi..." -ForegroundColor Cyan
 & $git -C $root add .
-& $git -C $root commit -m "feat: VocaFlow v0.0.1 with 3D Flashcards, Quiz, IPA keyboard, and Excel sync" 2>$null
+$commitMsg = "feat: Update VocaFlow $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+& $git -C $root commit -m $commitMsg 2>$null
 
-# 4. Đẩy lên GitHub
+# 3. Đẩy lên GitHub
 Write-Host ""
-Write-Host "[4/4] Đang đẩy lên GitHub..." -ForegroundColor Cyan
-Write-Host "  (Nếu có cửa sổ GitHub / trình duyệt hiện lên, bạn chỉ cần bấm 'Sign in' / 'Authorize')" -ForegroundColor Yellow
-Write-Host ""
-
+Write-Host "[3/3] Đang đẩy lên GitHub..." -ForegroundColor Cyan
 & $git -C $root push -u origin main
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "========================================================" -ForegroundColor Green
-    Write-Host "  🎉 CHÚC MỪNG! ĐÃ ĐẨY LÊN GITHUB THÀNH CÔNG RỰC RỠ!" -ForegroundColor Green
-    Write-Host "  👉 Kiểm tra tại: https://github.com/iamjulies/VocaFlow" -ForegroundColor Cyan
+    Write-Host "  🎉 CHÚC MỪNG! ĐÃ ĐẨY LÊN GITHUB THÀNH CÔNG 100%!" -ForegroundColor Green
+    Write-Host "  👉 Xem ngay tại: https://github.com/iamjulies/VocaFlow" -ForegroundColor Cyan
     Write-Host "========================================================" -ForegroundColor Green
 } else {
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Yellow
-    Write-Host "  [!] Nếu GitHub yêu cầu đăng nhập, bạn hãy hoàn tất" -ForegroundColor Yellow
-    Write-Host "  trên trình duyệt rồi chạy lại file này nhé!" -ForegroundColor Yellow
-    Write-Host "========================================================" -ForegroundColor Yellow
+    Write-Host "[!] Đẩy code gặp trục trặc, vui lòng kiểm tra kết nối mạng." -ForegroundColor Red
 }
