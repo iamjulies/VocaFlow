@@ -661,6 +661,68 @@
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
+    /* RESPONSIVE DESIGN FOR MOBILE */
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 12px;
+        gap: 6px;
+        min-height: 56px;
+      }
+      .brand {
+        font-size: 17px;
+        gap: 6px;
+      }
+      .brand-icon {
+        padding: 4px;
+        border-radius: 8px;
+      }
+      .brand-icon .icon {
+        width: 16px;
+        height: 16px;
+      }
+      .header-actions {
+        gap: 5px;
+        flex-shrink: 0;
+      }
+      .header-actions .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+      }
+      .hide-on-mobile {
+        display: none !important;
+      }
+      .user-display-truncate {
+        max-width: 65px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      main {
+        padding: 16px 12px 60px;
+      }
+      .deck-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .top-nav {
+        margin-bottom: 14px;
+      }
+      .screen-title {
+        font-size: 19px;
+      }
+      .top-nav .btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      .modal {
+        padding: 18px 16px;
+        border-radius: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -693,19 +755,19 @@
       <span>VocaFlow</span>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 6px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
+      <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
+        <span id="sync-icon">☁️</span> <span id="sync-text" class="hide-on-mobile">Đồng bộ</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 6px;">
-        👤 <span id="user-display-name">Khách</span>
+      <button class="btn btn-outline btn-sm" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
+        👤 <span id="user-display-name" class="user-display-truncate">Khách</span>
       </button>
       <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
-        📲 Cài App
+        📲 <span class="hide-on-mobile">Cài App</span>
       </button>
-      <button class="btn btn-outline btn-sm" onclick="exportAllBackup()">
+      <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
         <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
       </button>
-      <button class="btn btn-primary btn-sm" id="btn-header-add" onclick="openDeckModal()">
+      <button class="btn btn-primary btn-sm hide-on-mobile" id="btn-header-add" onclick="openDeckModal()">
         <svg class="icon icon-sm"><use href="#i-add"/></svg> Tạo Bộ Từ
       </button>
     </div>
