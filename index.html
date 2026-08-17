@@ -1227,9 +1227,13 @@
 
     let currentUser = null;
     let firebaseConfig = {
-      apiKey: 'AIzaSyAM2KmHJzVLvd-oMbLj0AZKXeSiX-Hgv8I',
-      projectId: 'vocaflow-e866c',
-      authDomain: 'vocaflow-e866c.firebaseapp.com'
+      apiKey: "AIzaSyAM2KmHJzVLvd-oMbLj0AZKXeSiX-Hgv8I",
+      authDomain: "vocaflow-e866c.firebaseapp.com",
+      databaseURL: "https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vocaflow-e866c",
+      storageBucket: "vocaflow-e866c.firebasestorage.app",
+      messagingSenderId: "123733506844",
+      appId: "1:123733506844:web:6787f658b2999f557c98d9"
     };
     let isSyncing = false;
 
@@ -1241,6 +1245,10 @@
         seedSampleData();
       }
       renderDecks();
+      // Auto-trigger sync on load if logged in
+      if (currentUser && currentUser.uid) {
+        handleManualSync();
+      }
     });
 
     function loadAuthState() {
@@ -1273,7 +1281,7 @@
           profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
           profileBadgeEl.style.color = '#34d399';
         }
-        if (profileAvatarEl) profileAvatarEl.textContent = displayName[0].toUpperCase();
+        if (profileAvatarEl) profileAvatarEl.textContent = (displayName[0] || 'U').toUpperCase();
         if (authActionBtn) {
           authActionBtn.textContent = '🚪 Đăng xuất tài khoản';
           authActionBtn.style.color = '#ef4444';
@@ -1362,18 +1370,31 @@
           });
           const data = await res.json();
           if (data.error) {
-            alert('Lỗi đăng nhập: ' + (data.error.message || 'Sai thông tin đăng nhập.'));
+            alert('Lỗi đăng nhập: ' + (data.error.message || 'Sai email hoặc mật khẩu.'));
             return;
           }
+
+          let finalDisplayName = data.displayName;
+          if (!finalDisplayName && firebaseConfig.databaseURL) {
+            try {
+              const pRes = await fetch(`${firebaseConfig.databaseURL}/users/${data.localId}/profile.json?auth=${data.idToken}`);
+              if (pRes.ok) {
+                const pData = await pRes.json();
+                if (pData && pData.displayName) finalDisplayName = pData.displayName;
+              }
+            } catch (pErr) {}
+          }
+          if (!finalDisplayName) finalDisplayName = email.split('@')[0];
+
           currentUser = {
             uid: data.localId,
             email: data.email,
-            displayName: data.displayName || email.split('@')[0],
+            displayName: finalDisplayName,
             idToken: data.idToken
           };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         } catch (err) {
-          console.log('Firebase Auth REST note:', err);
+          console.log('Firebase Auth error fallback:', err);
           currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
@@ -1412,10 +1433,22 @@
             alert('Lỗi đăng ký: ' + (data.error.message || 'Không thể tạo tài khoản.'));
             return;
           }
+
+          const finalName = name || email.split('@')[0];
+          try {
+            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${firebaseConfig.apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken: data.idToken, displayName: finalName, returnSecureToken: true })
+            });
+          } catch (uErr) {
+            console.log('Update displayName note:', uErr);
+          }
+
           currentUser = {
             uid: data.localId,
             email: data.email,
-            displayName: name || email.split('@')[0],
+            displayName: finalName,
             idToken: data.idToken
           };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
@@ -1441,7 +1474,7 @@
       }
     }
 
-    // Bidirectional Cloud Sync
+    // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
     async function handleManualSync() {
       if (isSyncing) return;
       isSyncing = true;
@@ -1452,155 +1485,95 @@
       if (syncIcon) syncIcon.textContent = '🔄';
       if (syncText) syncText.textContent = 'Đang đồng bộ...';
       if (syncBadge) {
-        syncBadge.textContent = 'Đang đồng bộ...';
+        syncBadge.textContent = 'Đang kết nối Cloud...';
         syncBadge.style.color = '#38bdf8';
       }
 
       try {
-        const userId = currentUser ? currentUser.uid : 'guest_offline';
-        const apiKey = firebaseConfig.apiKey;
-        const projectId = firebaseConfig.projectId || 'vocaflow-e866c';
+        const userId = currentUser ? currentUser.uid : null;
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
 
-        if (apiKey && projectId && currentUser && currentUser.idToken) {
+        if (userId && rtdbUrl) {
           // -----------------------------------------------------------
-          // PHASE 1: PULL FROM CLOUD (Tải dữ liệu từ tài khoản về trước)
+          // PHASE 1: PULL FROM CLOUD (Kéo dữ liệu từ Cloud về trước)
           // -----------------------------------------------------------
           try {
-            // Pull Cloud Decks
-            const decksRes = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/decks?key=${apiKey}`, {
-              headers: { 'Authorization': `Bearer ${currentUser.idToken}` }
-            });
-            if (decksRes.ok) {
-              const decksData = await decksRes.json();
-              if (decksData.documents && decksData.documents.length > 0) {
-                // If user has cloud decks, and local only had the default sample deck, remove sample deck
-                if (decks.length === 1 && decks[0].id === 'deck-oxford-starter') {
-                  decks = [];
-                  words = words.filter(w => w.deckId !== 'deck-oxford-starter');
-                }
+            const pullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`);
+            if (pullRes.ok) {
+              const cloudData = await pullRes.json();
+              if (cloudData && typeof cloudData === 'object') {
+                const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
+                const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
 
-                for (const doc of decksData.documents) {
-                  const f = doc.fields || {};
-                  const remoteDeck = {
-                    id: f.id?.stringValue || doc.name.split('/').pop(),
-                    title: f.title?.stringValue || 'Bộ từ không tên',
-                    description: f.description?.stringValue || '',
-                    colorCode: parseInt(f.colorCode?.integerValue || '0xFF4F46E5'),
-                    createdAt: f.createdAt?.stringValue || new Date().toISOString(),
-                    updatedAt: f.updatedAt?.stringValue || new Date().toISOString()
-                  };
+                if (remoteDecks.length > 0) {
+                  // If local only has the initial starter deck and cloud has real decks, remove starter deck
+                  if (decks.length === 1 && decks[0].id === 'deck-oxford-starter') {
+                    decks = [];
+                    words = words.filter(w => w.deckId !== 'deck-oxford-starter');
+                  }
 
-                  const localIndex = decks.findIndex(d => d.id === remoteDeck.id);
-                  if (localIndex >= 0) {
-                    const localDeck = decks[localIndex];
-                    if (new Date(remoteDeck.updatedAt) >= new Date(localDeck.updatedAt || 0)) {
-                      decks[localIndex] = remoteDeck;
+                  // Merge decks by ID (Last-Write-Wins)
+                  for (const remoteDeck of remoteDecks) {
+                    if (!remoteDeck || !remoteDeck.id) continue;
+                    const localIdx = decks.findIndex(d => d.id === remoteDeck.id);
+                    if (localIdx >= 0) {
+                      const localDeck = decks[localIdx];
+                      if (new Date(remoteDeck.updatedAt || 0) >= new Date(localDeck.updatedAt || 0)) {
+                        decks[localIdx] = { ...localDeck, ...remoteDeck };
+                      }
+                    } else {
+                      decks.push(remoteDeck);
                     }
-                  } else {
-                    decks.push(remoteDeck);
                   }
                 }
-              }
-            }
 
-            // Pull Cloud Words
-            const wordsRes = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/words?key=${apiKey}`, {
-              headers: { 'Authorization': `Bearer ${currentUser.idToken}` }
-            });
-            if (wordsRes.ok) {
-              const wordsData = await wordsRes.json();
-              if (wordsData.documents && wordsData.documents.length > 0) {
-                for (const doc of wordsData.documents) {
-                  const f = doc.fields || {};
-                  const remoteWord = {
-                    id: f.id?.stringValue || doc.name.split('/').pop(),
-                    deckId: f.deckId?.stringValue || '',
-                    term: f.term?.stringValue || '',
-                    partOfSpeech: f.partOfSpeech?.stringValue || '',
-                    phonetic: f.phonetic?.stringValue || '',
-                    definitionVi: f.definitionVi?.stringValue || '',
-                    exampleSentence: f.exampleSentence?.stringValue || '',
-                    note: f.note?.stringValue || '',
-                    status: f.status?.stringValue || 'newWord',
-                    createdAt: f.createdAt?.stringValue || new Date().toISOString(),
-                    updatedAt: f.updatedAt?.stringValue || new Date().toISOString()
-                  };
-
-                  const localIndex = words.findIndex(w => w.id === remoteWord.id);
-                  if (localIndex >= 0) {
-                    const localWord = words[localIndex];
-                    if (new Date(remoteWord.updatedAt) >= new Date(localWord.updatedAt || 0)) {
-                      words[localIndex] = remoteWord;
+                if (remoteWords.length > 0) {
+                  // Merge words by ID (Last-Write-Wins)
+                  for (const remoteWord of remoteWords) {
+                    if (!remoteWord || !remoteWord.id) continue;
+                    const localIdx = words.findIndex(w => w.id === remoteWord.id);
+                    if (localIdx >= 0) {
+                      const localWord = words[localIdx];
+                      if (new Date(remoteWord.updatedAt || 0) >= new Date(localWord.updatedAt || 0)) {
+                        words[localIdx] = { ...localWord, ...remoteWord };
+                      }
+                    } else {
+                      words.push(remoteWord);
                     }
-                  } else {
-                    words.push(remoteWord);
                   }
                 }
+
+                saveDatabase();
+                renderDecks();
               }
             }
-
-            saveDatabase();
-            renderDecks();
           } catch (pullErr) {
-            console.log('Note on Cloud Pull:', pullErr);
+            console.warn('Pull from cloud note:', pullErr);
           }
 
           // -----------------------------------------------------------
-          // PHASE 2: PUSH TO CLOUD (Đẩy các từ vựng mới trên máy lên Cloud)
+          // PHASE 2: PUSH TO CLOUD (Đẩy toàn bộ trạng thái đã merge lên Cloud)
           // -----------------------------------------------------------
-          for (const deck of decks) {
-            try {
-              const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/decks/${deck.id}?key=${apiKey}`;
-              await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${currentUser.idToken}`
-                },
-                body: JSON.stringify({
-                  fields: {
-                    id: { stringValue: deck.id },
-                    title: { stringValue: deck.title },
-                    description: { stringValue: deck.description || '' },
-                    colorCode: { integerValue: deck.colorCode || 0xFF4F46E5 },
-                    createdAt: { stringValue: deck.createdAt || new Date().toISOString() },
-                    updatedAt: { stringValue: deck.updatedAt || new Date().toISOString() }
-                  }
-                })
-              });
-            } catch (err) {
-              console.log('Error pushing deck to Firestore:', err);
-            }
-          }
+          try {
+            const payload = {
+              profile: {
+                displayName: currentUser.displayName || currentUser.email.split('@')[0],
+                email: currentUser.email,
+                lastSync: new Date().toISOString()
+              },
+              decks: decks,
+              words: words,
+              lastSync: new Date().toISOString()
+            };
 
-          for (const word of words) {
-            try {
-              const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/words/${word.id}?key=${apiKey}`;
-              await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${currentUser.idToken}`
-                },
-                body: JSON.stringify({
-                  fields: {
-                    id: { stringValue: word.id },
-                    deckId: { stringValue: word.deckId },
-                    term: { stringValue: word.term },
-                    partOfSpeech: { stringValue: word.partOfSpeech || '' },
-                    phonetic: { stringValue: word.phonetic || '' },
-                    definitionVi: { stringValue: word.definitionVi || '' },
-                    exampleSentence: { stringValue: word.exampleSentence || '' },
-                    note: { stringValue: word.note || '' },
-                    status: { stringValue: word.status || 'newWord' },
-                    createdAt: { stringValue: word.createdAt || new Date().toISOString() },
-                    updatedAt: { stringValue: word.updatedAt || new Date().toISOString() }
-                  }
-                })
-              });
-            } catch (err) {
-              console.log('Error pushing word to Firestore:', err);
-            }
+            await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+          } catch (pushErr) {
+            console.warn('Push error:', pushErr);
           }
         }
 
@@ -1610,12 +1583,12 @@
         if (syncIcon) syncIcon.textContent = '☁️';
         if (syncText) syncText.textContent = 'Đã đồng bộ';
         if (syncBadge) {
-          syncBadge.textContent = 'Đã đồng bộ Cloud Firestore';
+          syncBadge.textContent = 'Đã đồng bộ Cloud';
           syncBadge.style.color = '#10b981';
         }
-        showToast('Đồng bộ Cloud Firestore thành công!');
+        showToast('Đồng bộ Cloud thành công!');
       } catch (e) {
-        console.error('Sync error:', e);
+        console.error('Sync general error:', e);
         if (syncIcon) syncIcon.textContent = '☁️';
         if (syncText) syncText.textContent = 'Ngoại tuyến';
         if (syncBadge) {
