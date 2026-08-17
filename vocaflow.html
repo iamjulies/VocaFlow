@@ -693,7 +693,7 @@
       <span>VocaFlow</span>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:none; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700;" onclick="triggerPwaInstall()">
+      <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
         📲 Cài App
       </button>
       <button class="btn btn-outline btn-sm" onclick="exportAllBackup()">
@@ -1087,12 +1087,22 @@
           }
           deferredInstallPrompt = null;
         });
+      } else {
+        // Fallback guide for Android / iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          alert('📱 CÁCH CÀI APP TRÊN IPHONE (SAFARI):\n\n1. Bấm nút Chia sẻ (biểu tượng hình vuông có mũi tên lên ở cạnh dưới màn hình).\n2. Cuộn xuống và chọn "Thêm vào Màn hình chính" (Add to Home Screen).\n3. Bấm "Thêm" ở góc phải.');
+        } else {
+          alert('📱 CÁCH CÀI APP TRÊN ANDROID (CHROME):\n\n1. Bấm vào biểu tượng Menu 3 chấm (⋮) ở góc trên bên phải trình duyệt Chrome.\n2. Chọn "Cài đặt ứng dụng" (Install App) hoặc "Thêm vào màn hình chính".\n3. Bấm "Cài đặt" để đưa icon VocaFlow ra màn hình chính.');
+        }
       }
     }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Note:', err));
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('SW Registered successfully:', reg.scope);
+        }).catch(err => console.log('SW Note:', err));
       });
     }
 

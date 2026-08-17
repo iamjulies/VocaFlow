@@ -1,9 +1,9 @@
-const CACHE_NAME = 'vocaflow-pwa-v1.0';
+const CACHE_NAME = 'vocaflow-pwa-v1.1';
 const ASSETS = [
   './',
   './index.html',
-  './xlsx.full.min.js',
   './manifest.json',
+  './xlsx.full.min.js',
   './icons/Icon-192.png',
   './icons/Icon-512.png',
   './icons/Icon-maskable-192.png',
@@ -13,7 +13,9 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS).catch((err) => {
+        console.log('Cache addAll non-fatal warning:', err);
+      });
     })
   );
   self.skipWaiting();
@@ -35,13 +37,18 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).catch(() => {
-        return caches.match('./index.html');
+      return fetch(event.request).then((networkResponse) => {
+        return networkResponse;
+      }).catch(() => {
+        if (event.request.headers.get('accept')?.includes('text/html')) {
+          return caches.match('./index.html') || caches.match('./');
+        }
       });
     })
   );
