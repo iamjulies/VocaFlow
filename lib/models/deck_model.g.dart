@@ -19,17 +19,19 @@ class DeckModelAdapter extends TypeAdapter<DeckModel> {
     return DeckModel(
       id: fields[0] as String,
       title: fields[1] as String,
-      description: fields[2] as String? ?? '',
-      colorCode: fields[3] as int? ?? 0xFF4F46E5,
+      description: fields[2] as String,
+      colorCode: fields[3] as int,
       createdAt: fields[4] as DateTime,
-      updatedAt: fields[5] as DateTime?,
+      userId: fields[5] as String,
+      updatedAt: fields[6] as DateTime?,
+      isDeleted: fields[7] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, DeckModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class DeckModelAdapter extends TypeAdapter<DeckModel> {
       ..writeByte(4)
       ..write(obj.createdAt)
       ..writeByte(5)
-      ..write(obj.updatedAt);
+      ..write(obj.userId)
+      ..writeByte(6)
+      ..write(obj.updatedAt)
+      ..writeByte(7)
+      ..write(obj.isDeleted);
   }
 
   @override

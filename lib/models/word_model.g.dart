@@ -20,17 +20,19 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       id: fields[0] as String,
       deckId: fields[1] as String,
       term: fields[2] as String,
-      partOfSpeech: fields[3] as String? ?? '',
-      phonetic: fields[4] as String? ?? '',
+      partOfSpeech: fields[3] as String,
+      phonetic: fields[4] as String,
       definitionVi: fields[5] as String,
       exampleSentence: fields[6] as String?,
       note: fields[7] as String?,
-      status: fields[8] as WordStatus? ?? WordStatus.newWord,
+      status: fields[8] as WordStatus,
       createdAt: fields[9] as DateTime,
+      userId: fields[15] as String,
       updatedAt: fields[10] as DateTime?,
-      synonyms: (fields[11] as List<dynamic>?)?.cast<String>() ?? const [],
-      antonyms: (fields[12] as List<dynamic>?)?.cast<String>() ?? const [],
-      collocations: (fields[13] as List<dynamic>?)?.cast<String>() ?? const [],
+      isDeleted: fields[16] as bool,
+      synonyms: (fields[11] as List).cast<String>(),
+      antonyms: (fields[12] as List).cast<String>(),
+      collocations: (fields[13] as List).cast<String>(),
       cefrLevel: fields[14] as String?,
     );
   }
@@ -38,7 +40,7 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
   @override
   void write(BinaryWriter writer, WordModel obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +70,11 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       ..writeByte(13)
       ..write(obj.collocations)
       ..writeByte(14)
-      ..write(obj.cefrLevel);
+      ..write(obj.cefrLevel)
+      ..writeByte(15)
+      ..write(obj.userId)
+      ..writeByte(16)
+      ..write(obj.isDeleted);
   }
 
   @override

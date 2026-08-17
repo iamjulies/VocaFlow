@@ -5,8 +5,10 @@ part 'word_model.g.dart';
 
 /// Represents a single vocabulary word in VocaFlow.
 ///
-/// Designed to be offline-first, backward compatible, and ready for
-/// advanced linguistics metadata (synonyms, antonyms, collocations, CEFR) and AI Tutor integrations.
+/// Upgraded in v0.0.2 for Cloud Firestore multi-device synchronization:
+/// - [userId]: Owner account ID for user data isolation
+/// - [updatedAt]: Timestamp for Conflict-Free Last-Write-Wins sync
+/// - [isDeleted]: Soft delete flag for cross-device tombstone replication
 @HiveType(typeId: 1)
 class WordModel {
   @HiveField(0)
@@ -40,7 +42,7 @@ class WordModel {
   final DateTime createdAt;
 
   @HiveField(10)
-  final DateTime? updatedAt;
+  final DateTime updatedAt;
 
   @HiveField(11)
   final List<String> synonyms;
@@ -54,6 +56,12 @@ class WordModel {
   @HiveField(14)
   final String? cefrLevel;
 
+  @HiveField(15)
+  final String userId;
+
+  @HiveField(16)
+  final bool isDeleted;
+
   const WordModel({
     required this.id,
     required this.deckId,
@@ -65,12 +73,14 @@ class WordModel {
     this.note,
     this.status = WordStatus.newWord,
     required this.createdAt,
-    this.updatedAt,
+    this.userId = '',
+    DateTime? updatedAt,
+    this.isDeleted = false,
     this.synonyms = const [],
     this.antonyms = const [],
     this.collocations = const [],
     this.cefrLevel,
-  });
+  }) : updatedAt = updatedAt ?? createdAt;
 
   /// Creates a copy of [WordModel] with optional mutated fields.
   WordModel copyWith({
@@ -84,7 +94,9 @@ class WordModel {
     String? note,
     WordStatus? status,
     DateTime? createdAt,
+    String? userId,
     DateTime? updatedAt,
+    bool? isDeleted,
     List<String>? synonyms,
     List<String>? antonyms,
     List<String>? collocations,
@@ -101,7 +113,9 @@ class WordModel {
       note: note ?? this.note,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      userId: userId ?? this.userId,
       updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
       synonyms: synonyms ?? this.synonyms,
       antonyms: antonyms ?? this.antonyms,
       collocations: collocations ?? this.collocations,
@@ -111,6 +125,10 @@ class WordModel {
 
   /// Deserializes a [Map<String, dynamic>] into a [WordModel] with backward compatibility.
   factory WordModel.fromJson(Map<String, dynamic> json) {
+    final created = json['createdAt'] != null
+        ? (DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now())
+        : DateTime.now();
+
     return WordModel(
       id: json['id'] as String? ?? '',
       deckId: json['deckId'] as String? ?? '',
@@ -121,12 +139,12 @@ class WordModel {
       exampleSentence: json['exampleSentence'] as String?,
       note: json['note'] as String?,
       status: WordStatus.fromString(json['status'] as String?),
-      createdAt: json['createdAt'] != null
-          ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
-          : DateTime.now(),
+      createdAt: created,
+      userId: json['userId'] as String? ?? '',
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
-          : null,
+          ? (DateTime.tryParse(json['updatedAt'].toString()) ?? created)
+          : created,
+      isDeleted: json['isDeleted'] as bool? ?? false,
       synonyms: (json['synonyms'] as List<dynamic>?)
               ?.map((e) => e.toString().trim())
               .where((e) => e.isNotEmpty)
@@ -159,12 +177,78 @@ class WordModel {
       'note': note,
       'status': status.value,
       'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
+      'userId': userId,
+      'updatedAt': updatedAt.toIso8601String(),
+      'isDeleted': isDeleted,
       'synonyms': synonyms,
       'antonyms': antonyms,
       'collocations': collocations,
       'cefrLevel': cefrLevel,
     };
+  }
+
+  /// Cloud Firestore Mapper: Serializes to Firestore Document Map.
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'deckId': deckId,
+      'userId': userId,
+      'term': term,
+      'partOfSpeech': partOfSpeech,
+      'phonetic': phonetic,
+      'definitionVi': definitionVi,
+      'exampleSentence': exampleSentence,
+      'note': note,
+      'status': status.value,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'isDeleted': isDeleted,
+      'synonyms': synonyms,
+      'antonyms': antonyms,
+      'collocations': collocations,
+      'cefrLevel': cefrLevel,
+    };
+  }
+
+  /// Cloud Firestore Mapper: Deserializes from Firestore Document Data.
+  factory WordModel.fromFirestore(Map<String, dynamic> data, [String? docId]) {
+    final created = data['createdAt'] != null
+        ? (DateTime.tryParse(data['createdAt'].toString()) ?? DateTime.now())
+        : DateTime.now();
+
+    return WordModel(
+      id: docId ?? data['id'] as String? ?? '',
+      deckId: data['deckId'] as String? ?? '',
+      userId: data['userId'] as String? ?? '',
+      term: data['term'] as String? ?? '',
+      partOfSpeech: data['partOfSpeech'] as String? ?? '',
+      phonetic: data['phonetic'] as String? ?? '',
+      definitionVi: data['definitionVi'] as String? ?? '',
+      exampleSentence: data['exampleSentence'] as String?,
+      note: data['note'] as String?,
+      status: WordStatus.fromString(data['status'] as String?),
+      createdAt: created,
+      updatedAt: data['updatedAt'] != null
+          ? (DateTime.tryParse(data['updatedAt'].toString()) ?? created)
+          : created,
+      isDeleted: data['isDeleted'] as bool? ?? false,
+      synonyms: (data['synonyms'] as List<dynamic>?)
+              ?.map((e) => e.toString().trim())
+              .where((e) => e.isNotEmpty)
+              .toList() ??
+          const [],
+      antonyms: (data['antonyms'] as List<dynamic>?)
+              ?.map((e) => e.toString().trim())
+              .where((e) => e.isNotEmpty)
+              .toList() ??
+          const [],
+      collocations: (data['collocations'] as List<dynamic>?)
+              ?.map((e) => e.toString().trim())
+              .where((e) => e.isNotEmpty)
+              .toList() ??
+          const [],
+      cefrLevel: data['cefrLevel'] as String?,
+    );
   }
 
   @override
@@ -182,7 +266,9 @@ class WordModel {
           note == other.note &&
           status == other.status &&
           createdAt == other.createdAt &&
+          userId == other.userId &&
           updatedAt == other.updatedAt &&
+          isDeleted == other.isDeleted &&
           _listEquals(synonyms, other.synonyms) &&
           _listEquals(antonyms, other.antonyms) &&
           _listEquals(collocations, other.collocations) &&
@@ -209,7 +295,9 @@ class WordModel {
       note.hashCode ^
       status.hashCode ^
       createdAt.hashCode ^
+      userId.hashCode ^
       updatedAt.hashCode ^
+      isDeleted.hashCode ^
       Object.hashAll(synonyms) ^
       Object.hashAll(antonyms) ^
       Object.hashAll(collocations) ^
@@ -217,6 +305,6 @@ class WordModel {
 
   @override
   String toString() {
-    return 'WordModel(id: $id, deckId: $deckId, term: $term, partOfSpeech: $partOfSpeech, phonetic: $phonetic, definitionVi: $definitionVi, status: ${status.value}, cefrLevel: $cefrLevel, synonyms: $synonyms, antonyms: $antonyms, collocations: $collocations, createdAt: $createdAt)';
+    return 'WordModel(id: $id, userId: $userId, term: $term, isDeleted: $isDeleted, updatedAt: $updatedAt)';
   }
 }

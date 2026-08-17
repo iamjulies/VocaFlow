@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,9 +10,11 @@ import '../../models/deck_model.dart';
 import '../../models/word_model.dart';
 import '../../models/word_status.dart';
 
-/// Core Database Service managing Hive lifecycle and boxes for VocaFlow.
+/// Core Database & Persistence Service managing Hive local storage and Firebase Cloud initialization.
 ///
-/// Supports Android, iOS, Windows Desktop, macOS, Linux, and Web out-of-the-box.
+/// Multi-Platform support: Android, iOS, Windows Desktop, macOS, Linux, and Web.
+/// Implements an Offline-First architecture: Hive is always primary and guaranteed to work,
+/// with Firebase seamlessly activating whenever network and credentials are present.
 class DatabaseService {
   DatabaseService._internal();
 
@@ -20,6 +23,9 @@ class DatabaseService {
 
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
+
+  bool _isFirebaseAvailable = false;
+  bool get isFirebaseAvailable => _isFirebaseAvailable;
 
   Box<DeckModel>? _decksBox;
   Box<WordModel>? _wordsBox;
@@ -43,23 +49,22 @@ class DatabaseService {
     return _settingsBox!;
   }
 
-  /// Initializes Hive storage and opens all essential boxes.
+  /// Initializes Hive local database and safely initializes Firebase across all platforms.
   ///
   /// [subDir]: Optional custom subdirectory for Hive storage.
   Future<void> init({String? subDir}) async {
     if (_isInitialized) {
-      debugPrint('[DatabaseService] Hive is already initialized.');
+      debugPrint('[DatabaseService] Database is already initialized.');
       return;
     }
 
     try {
-      debugPrint('[DatabaseService] Initializing Hive for platform: ${defaultTargetPlatform.name}...');
+      debugPrint('[DatabaseService] Initializing Local Hive Database for platform: ${defaultTargetPlatform.name}...');
       
-      // Initialize Hive with Flutter path resolution
+      // 1. Initialize Hive with Platform-Specific Paths
       if (kIsWeb) {
         await Hive.initFlutter();
       } else {
-        // Desktop (Windows/macOS/Linux) and Mobile (Android/iOS)
         final appDocDir = await getApplicationDocumentsDirectory();
         final storagePath = subDir != null 
             ? '${appDocDir.path}${Platform.pathSeparator}$subDir' 
@@ -73,18 +78,21 @@ class DatabaseService {
         await Hive.initFlutter(storagePath);
       }
 
-      // Register Adapters
+      // 2. Register Type Adapters
       _registerAdapters();
 
-      // Open Boxes concurrently for optimal startup performance
+      // 3. Open Local Hive Boxes Concurrently
       await Future.wait([
         _openDecksBox(),
         _openWordsBox(),
         _openSettingsBox(),
       ]);
 
+      // 4. Safe Cross-Platform Firebase Initialization
+      await _initFirebase();
+
       _isInitialized = true;
-      debugPrint('[DatabaseService] Hive initialized successfully. Decks: ${_decksBox?.length}, Words: ${_wordsBox?.length}');
+      debugPrint('[DatabaseService] Database initialized successfully (Decks: ${_decksBox?.length}, Words: ${_wordsBox?.length}, Firebase Available: $_isFirebaseAvailable).');
     } catch (e, stackTrace) {
       debugPrint('[DatabaseService] Failed to initialize database: $e\n$stackTrace');
       throw DatabaseException(
@@ -92,6 +100,18 @@ class DatabaseService {
         code: 'HIVE_INIT_FAILED',
         originalError: e,
       );
+    }
+  }
+
+  /// Safely attempts to initialize Firebase without halting the offline-first app on desktop/fallback.
+  Future<void> _initFirebase() async {
+    try {
+      await Firebase.initializeApp();
+      _isFirebaseAvailable = true;
+      debugPrint('[DatabaseService] Firebase Cloud Core initialized successfully.');
+    } catch (e) {
+      _isFirebaseAvailable = false;
+      debugPrint('[DatabaseService] Firebase initialization skipped or running offline/fallback: $e');
     }
   }
 
@@ -169,6 +189,7 @@ class DatabaseService {
     _wordsBox = null;
     _settingsBox = null;
     _isInitialized = false;
+    _isFirebaseAvailable = false;
     debugPrint('[DatabaseService] Database closed.');
   }
 }
