@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2628,7 +2628,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3620,17 +3620,37 @@
 
     function selectUserAvatar(avatar) {
       if (!avatar) return;
+      const avatarTime = Date.now();
       localStorage.setItem('vocaflow_user_avatar', avatar);
+      localStorage.setItem('vocaflow_avatar_time', avatarTime.toString());
+
       if (!currentUser) {
-        currentUser = { displayName: 'Khách', email: '', avatar: avatar };
+        currentUser = { displayName: 'Khách', email: '', avatar: avatar, avatarTime: avatarTime };
       } else {
         currentUser.avatar = avatar;
+        currentUser.avatarTime = avatarTime;
       }
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       updateAuthUI();
       renderAvatarPresets();
 
       if (currentUser && currentUser.uid) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        
+        // Instant direct patch to Cloud
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatar.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(avatar)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatarTime.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(avatarTime)
+        }).catch(() => {});
+
         pushCurrentDatabaseToCloud();
       }
       showToast('🎭 Đã cập nhật ảnh đại diện!');
@@ -3976,6 +3996,69 @@
       });
       html += '</div>';
       container.innerHTML = html;
+    }
+
+    function viewStudentDecksModal(uid, displayName) {
+      const student = adminStudentsData.find(s => s.uid === uid);
+      if (!student) return;
+
+      const titleEl = document.getElementById('student-modal-title');
+      const subEl = document.getElementById('student-modal-subtitle');
+      const avEl = document.getElementById('student-modal-avatar');
+      const container = document.getElementById('student-modal-decks-container');
+
+      if (titleEl) titleEl.textContent = 'Bộ Từ Của ' + displayName;
+      if (subEl) subEl.textContent = '✉️ ' + student.email + ' • UID: ' + student.uid;
+      if (avEl) avEl.innerHTML = renderAvatarHtml(student.avatar || (displayName ? displayName[0].toUpperCase() : 'U'), 40, 18);
+
+      if (!container) return;
+
+      if (!student.rawDecks || student.rawDecks.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;"><span style="font-size: 32px; display: block; margin-bottom: 8px;">📭</span>Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
+        openModal('modal-student-decks-detail');
+        return;
+      }
+
+      let html = '';
+      student.rawDecks.forEach((deck, idx) => {
+        const dWords = (student.rawWords || []).filter(w => w.deckId === deck.id);
+        const wCount = dWords.length;
+        const mastered = dWords.filter(w => w.status === 'mastered' || (w.masteryScore >= 100)).length;
+        const avgScore = wCount ? Math.round(dWords.reduce((sum, w) => sum + getWordScore(w), 0) / wCount) : 0;
+        const color = deck.color || '#6366f1';
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-left: 4px solid ${color}; border-radius: 10px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+              <div>
+                <strong style="font-size: 14.5px; color: var(--text);">${idx + 1}. ${escapeHtml(deck.title || 'Chưa đặt tên')}</strong>
+                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">${escapeHtml(deck.description || 'Không có mô tả')}</p>
+              </div>
+              <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; flex-shrink: 0; font-size: 11.5px;">
+                ${wCount} từ vựng
+              </span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 8px; margin-bottom: 4px;">
+              <span>Mức độ thuộc: <strong style="color: #34d399;">${avgScore}%</strong> (${mastered}/${wCount} đã thuộc)</span>
+              <span>🕒 ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+            </div>
+            <div class="progress-bar-bg" style="height: 5px;">
+              <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
+            </div>
+
+            ${dWords.length > 0 ? `
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px;">
+                ${dWords.slice(0, 8).map(w => '<span style="font-size: 10.5px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--text);">' + escapeHtml(w.term) + '</span>').join('')}
+                ${dWords.length > 8 ? '<span style="font-size: 10.5px; color: var(--text-muted);">+' + (dWords.length - 8) + ' từ nữa...</span>' : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      openModal('modal-student-decks-detail');
     }
 
     function openPublisherModal_Legacy() {
@@ -4446,6 +4529,7 @@
             displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
             email: currentUser.email || '',
             avatar: getUserAvatar(),
+            avatarTime: parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10),
             geminiApiKey: geminiApiKey || '',
             lastSync: new Date().toISOString()
           },
@@ -4531,12 +4615,38 @@
 
                 if (cloudData.profile && cloudData.profile.avatar) {
                   const remoteAvatar = cloudData.profile.avatar;
-                  localStorage.setItem('vocaflow_user_avatar', remoteAvatar);
-                  if (currentUser) {
-                    currentUser.avatar = remoteAvatar;
-                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+                  const remoteAvatarTime = parseInt(cloudData.profile.avatarTime || '0', 10);
+                  const localAvatarTime = parseInt(localStorage.getItem('vocaflow_avatar_time') || '0', 10);
+
+                  if (remoteAvatarTime >= localAvatarTime || localAvatarTime === 0) {
+                    localStorage.setItem('vocaflow_user_avatar', remoteAvatar);
+                    localStorage.setItem('vocaflow_avatar_time', remoteAvatarTime.toString());
+                    if (currentUser) {
+                      currentUser.avatar = remoteAvatar;
+                      currentUser.avatarTime = remoteAvatarTime;
+                      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+                    }
+                    updateAuthUI();
+                  } else if (localAvatarTime > remoteAvatarTime) {
+                    // Local is newer, push local avatar to Cloud
+                    if (currentUser && currentUser.uid) {
+                      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+                      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+                      const localAv = localStorage.getItem('vocaflow_user_avatar');
+                      if (localAv) {
+                        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatar.json' + authParam, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(localAv)
+                        }).catch(() => {});
+                        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatarTime.json' + authParam, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(localAvatarTime)
+                        }).catch(() => {});
+                      }
+                    }
                   }
-                  updateAuthUI();
                 }
 
                 if (cloudData.deckSort) {
