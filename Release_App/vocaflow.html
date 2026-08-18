@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.8</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.9</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1696,15 +1696,7 @@
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
-            <div style="display: inline-flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 2px 6px;">
-              <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🎯 Độ khó:</span>
-              <select id="deck-quiz-difficulty-select" onchange="setQuizDifficulty(this.value)" style="background: transparent; border: none; color: var(--text); font-size: 11.5px; font-weight: 700; cursor: pointer; outline: none; padding: 2px 2px;">
-                <option value="easy" style="background: #1e1b4b; color: #34d399;">🟢 Dễ (x1.0 thưởng)</option>
-                <option value="medium" style="background: #1e1b4b; color: #fbbf24;">🟡 Bình thường (x1.5 + AI bẫy)</option>
-                <option value="hard" style="background: #1e1b4b; color: #f87171;">🔴 Khó (x2.0 + AI bẫy cao cấp)</option>
-              </select>
-            </div>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
             </button>
           </div>
@@ -2182,6 +2174,86 @@
     </div>
   </div>
 
+  <!-- MODAL: QUIZ SETUP & DIFFICULTY SELECTION (v0.0.9.9) -->
+  <div class="modal-overlay" id="modal-quiz-setup">
+    <div class="modal" style="max-width: 520px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🎯</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Bài Trắc Nghiệm Quiz</strong>
+            <div id="quiz-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách cho bài trắc nghiệm của bạn</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-quiz-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: block;">
+          Chọn Cấp Độ Khó:
+        </label>
+
+        <!-- 3 DIFFICULTY CARDS -->
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="quiz-difficulty-cards-container">
+          <!-- 1. DỄ (EASY) -->
+          <div class="quiz-diff-card" id="quiz-diff-card-easy" onclick="selectQuizSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🟢</span>
+                <strong style="font-size: 14px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px;">x1.0 Điểm ví</span>
+              </div>
+              <span class="tooltip-trigger" title="Phương án sai được chọn ngẫu nhiên từ các từ vựng trong kho/bộ từ. Phù hợp cho việc làm quen từ mới." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + 3 phương án ngẫu nhiên trong kho từ. Thưởng/phạt điểm chuẩn.</p>
+          </div>
+
+          <!-- 2. BÌNH THƯỜNG (MEDIUM) -->
+          <div class="quiz-diff-card" id="quiz-diff-card-medium" onclick="selectQuizSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🟡</span>
+                <strong style="font-size: 14px; color: #fbbf24;">Cấp độ BÌNH THƯỜNG (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10.5px;">x1.5 Điểm thưởng</span>
+              </div>
+              <span class="tooltip-trigger" title="AI Gemini sẽ tạo 1 phương án bẫy tinh vi (nghĩa gần giống hoặc nhầm lẫn ngữ cảnh) để thử thách độ tập trung. Điểm thưởng & độ thuộc bài tăng 1.5 lần!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #fbbf24;">1 bẫy AI tinh vi</strong> + 2 phương án từ kho. Thưởng điểm x1.5!</p>
+          </div>
+
+          <!-- 3. KHÓ (HARD) -->
+          <div class="quiz-diff-card" id="quiz-diff-card-hard" onclick="selectQuizSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🔴</span>
+                <strong style="font-size: 14px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10.5px;">x2.0 Siêu Cấp Điểm</span>
+              </div>
+              <span class="tooltip-trigger" title="Thử thách đỉnh cao! AI tạo 2-3 phương án bẫy chuyên nghiệp đòi hỏi nắm chắc sắc thái từ. Điểm thưởng và độ thuộc bài tăng gấp đôi (x2.0)!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #f87171;">2-3 bẫy AI cao cấp</strong>. Điểm thưởng & Thuộc bài nhân đôi (x2.0)!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHUFFLE OPTION -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; border: 1px solid var(--border);">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text); cursor: pointer; margin: 0;">
+          <input type="checkbox" id="quiz-setup-shuffle-checkbox" style="width: 16px; height: 16px; accent-color: #6366f1;">
+          <span>🔀 Trộn ngẫu nhiên thứ tự các câu hỏi</span>
+        </label>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-quiz-setup')">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartQuizFromModal()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; padding: 9px 20px; display: inline-flex; align-items: center; gap: 6px;">
+          🚀 Bắt Đầu Làm Quiz Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ADD / EDIT DECK -->
   <div class="modal-overlay" id="modal-deck">
     <div class="modal">
@@ -2627,7 +2699,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.8</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.9</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6241,196 +6313,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         showScreen('screen-deck-detail');
         renderWordList();
       }
-    }
-
-    // =========================================================================
-    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN & 50% PENALTY (v0.0.8.12)
-    // =========================================================================
-    let quizIsAnswered = false;
-    let quizStartTime = 0;
-    let quizCorrectCount = 0;
-    let quizWrongCount = 0;
-    let quizPointsEarned = 0;
-    let quizHintsUsed = 0;
-    let quizTotalQuestions = 0;
-    let fireworksAnimationId = null;
-
-    function startQuizMode(useSelectionOnly = false) {
-      let deckWords = getFilteredDeckWords();
-      if (useSelectionOnly && selectedWordIds.size > 0) {
-        deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (selectedWordIds.size > 0) {
-        deckWords = words.filter(w => selectedWordIds.has(w.id));
-      }
-
-      if (deckWords.length < 2) {
-        alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
-        return;
-      }
-
-      if (isStudyShuffle) {
-        quizList = [...deckWords].sort(() => Math.random() - 0.5);
-      } else {
-        quizList = [...deckWords];
-      }
-      quizIndex = 0;
-      quizScore = 0;
-      quizIsAnswered = false;
-
-      // Track statistics for result modal
-      quizStartTime = Date.now();
-      quizCorrectCount = 0;
-      quizWrongCount = 0;
-      quizPointsEarned = 0;
-      quizHintsUsed = 0;
-      quizTotalQuestions = quizList.length;
-
-      loadQuizQuestion();
-      showScreen('screen-quiz');
-    }
-
-    function shuffleCurrentQuiz() {
-      if (!quizList || quizList.length === 0) return;
-      quizList = [...quizList].sort(() => Math.random() - 0.5);
-      quizIndex = 0;
-      quizScore = 0;
-      quizIsAnswered = false;
-
-      quizStartTime = Date.now();
-      quizCorrectCount = 0;
-      quizWrongCount = 0;
-      quizPointsEarned = 0;
-      quizHintsUsed = 0;
-      quizTotalQuestions = quizList.length;
-
-      loadQuizQuestion();
-      showToast('🔀 Đã xáo trộn ngẫu nhiên bộ câu hỏi Quiz!');
-    }
-
-    function generateSmartDistractors(questionWord) {
-      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
-      const currentPos = (questionWord.partOfSpeech || 'noun').toLowerCase().trim();
-      const currentDeckId = questionWord.deckId;
-
-      const otherWords = words.filter(w => w.id !== questionWord.id && (w.definitionVi || w.definition || '').trim() && (w.definitionVi || w.definition || '').trim().toLowerCase() !== correctDef.toLowerCase());
-      const chosenDefs = new Set();
-
-      // 1. Priority 1: Same Part of Speech + Same Deck
-      const samePosSameDeck = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && w.deckId === currentDeckId);
-      samePosSameDeck.sort(() => Math.random() - 0.5).forEach(w => {
-        if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
-      });
-
-      // 2. Priority 2: Same Part of Speech + Other Decks
-      if (chosenDefs.size < 3) {
-        const samePosOtherDecks = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
-        samePosOtherDecks.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
-        });
-      }
-
-      // 3. Priority 3: Same Deck (Any POS)
-      if (chosenDefs.size < 3) {
-        const sameDeckAnyPos = otherWords.filter(w => w.deckId === currentDeckId && !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
-        sameDeckAnyPos.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
-        });
-      }
-
-      // 4. Priority 4: Any other word across the app
-      if (chosenDefs.size < 3) {
-        const remainingWords = otherWords.filter(w => !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
-        remainingWords.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
-        });
-      }
-
-      // 5. Priority 5: High-Quality Category / POS Fallback Pool
-      if (chosenDefs.size < 3) {
-        const posFallbackPools = {
-          noun: [
-            'Sự chuyển hóa và biến đổi cấu trúc phân tử',
-            'Hiện tượng khuếch tán và dẫn truyền năng lượng',
-            'Quá trình phân tách các thành phần trong hỗn hợp',
-            'Quy luật bảo toàn và trạng thái cân bằng động',
-            'Phương pháp định lượng và đo lường thực nghiệm',
-            'Chỉ số biểu thị nồng độ hoặc hiệu suất phản ứng',
-            'Cơ chế tác động và kiểm soát phản hồi sinh học',
-            'Nguyên lý tương tác giữa các yếu tố trong hệ thống'
-          ],
-          verb: [
-            'Duy trì trạng thái cân bằng trong hệ thống',
-            'Tiến hành phân tích và đo lường nồng độ',
-            'Kích hoạt quá trình biến đổi và trao đổi chất',
-            'Làm suy giảm tốc độ hoặc kìm hãm phản ứng',
-            'Thiết lập mối tương quan giữa các thông số',
-            'Thúc đẩy quá trình tái tạo và phát triển',
-            'Điều chỉnh thông số cho phù hợp với tiêu chuẩn'
-          ],
-          adjective: [
-            'Có khả năng thích ứng và phản ứng nhanh',
-            'Đặc trưng bởi tính ổn định và tính liên tục',
-            'Tương thích với các điều kiện môi trường xung quanh',
-            'Đóng vai trò chủ đạo và mang tính quyết định',
-            'Dễ bị phân hủy dưới tác động ngoại cảnh',
-            'Có xu hướng tích lũy và gia tăng theo thời gian'
-          ],
-          adverb: [
-            'Một cách tuần tự và có hệ thống rõ ràng',
-            'Tương đối đồng đều trên toàn bộ bề mặt',
-            'Đột ngột và không thể dự đoán trước',
-            'Một cách triệt để và toàn diện nhất'
-          ],
-          phrase: [
-            'Dẫn đến sự thay đổi rõ rệt về cấu trúc',
-            'Đóng vai trò trung gian trong toàn bộ chu trình',
-            'Phụ thuộc mật thiết vào điều kiện ban đầu'
-          ]
-        };
-
-        const fallbackList = posFallbackPools[currentPos] || posFallbackPools.noun;
-        const shuffledFallbacks = [...fallbackList].sort(() => Math.random() - 0.5);
-        shuffledFallbacks.forEach(fb => {
-          if (chosenDefs.size < 3 && fb !== correctDef && !chosenDefs.has(fb)) {
-            chosenDefs.add(fb);
-          }
-        });
-      }
-
-      return Array.from(chosenDefs).slice(0, 3);
-    }
-
-    function loadQuizQuestion() {
-      quizIsAnswered = false;
-      document.getElementById('quiz-next-container').style.display = 'none';
-      const hintBox = document.getElementById('quiz-hint-box');
-      if (hintBox) hintBox.style.display = 'none';
-
-      const questionWord = quizList[quizIndex];
-      const total = quizList.length;
-
-      document.getElementById('quiz-counter').textContent = 'Câu ' + (quizIndex + 1) + ' / ' + total;
-      document.getElementById('quiz-score').textContent = 'Điểm: ' + quizScore;
-      document.getElementById('quiz-question-term').textContent = questionWord.term;
-      document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
-
-      const distractors = generateSmartDistractors(questionWord);
-      const choices = [questionWord.definitionVi || questionWord.definition || '', ...distractors].sort(() => Math.random() - 0.5);
-
-      const optionsContainer = document.getElementById('quiz-options-container');
-      optionsContainer.innerHTML = '';
-
-      choices.forEach(choice => {
-        const opt = document.createElement('button');
-        opt.className = 'quiz-option';
-        opt.textContent = choice;
-        opt.onclick = () => checkQuizAnswer(opt, choice === (questionWord.definitionVi || questionWord.definition));
-        optionsContainer.appendChild(opt);
-      });
-
-      setTimeout(() => {
-        speakQuizTerm();
-      }, 150);
     }
 
     function getQuizPointDelta(cefrLevel, isCorrect) {
