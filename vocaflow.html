@@ -1585,7 +1585,10 @@
       </div>
 
       <div class="quiz-container">
-        <div class="quiz-question-card">
+        <div class="quiz-question-card" style="position: relative;">
+          <button class="btn btn-outline btn-icon" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer;">
+            <span style="font-size: 17px; font-weight: 800; line-height: 1;">❓</span>
+          </button>
           <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Chọn định nghĩa đúng cho từ:</div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;">
             <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin: 0;">Term</h2>
@@ -1594,6 +1597,9 @@
             </button>
           </div>
           <div id="quiz-question-phonetic" style="font-family: monospace; color: var(--text-muted);">/phonetic/</div>
+          <div id="quiz-hint-box" style="display: none; margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); border: 1px dashed rgba(245, 158, 11, 0.4); color: #fef08a; font-size: 13px; text-align: center; animation: fadeIn 0.2s ease;">
+            <span id="quiz-hint-text">💡 Gợi ý ngữ cảnh...</span>
+          </div>
         </div>
 
         <div class="quiz-options" id="quiz-options-container">
@@ -4172,6 +4178,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function loadQuizQuestion() {
       document.getElementById('quiz-next-container').style.display = 'none';
+      const hintBox = document.getElementById('quiz-hint-box');
+      if (hintBox) hintBox.style.display = 'none';
+
       const questionWord = quizList[quizIndex];
       const total = quizList.length;
 
@@ -4194,6 +4203,85 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         opt.onclick = () => checkQuizAnswer(opt, choice === questionWord.definitionVi);
         optionsContainer.appendChild(opt);
       });
+
+      // Auto-pronounce English Term upon question load (Duolingo style)
+      setTimeout(() => {
+        speakQuizTerm();
+      }, 150);
+    }
+
+    async function showQuizAiHint() {
+      if (!quizList || quizList.length === 0 || quizIndex >= quizList.length) return;
+      const questionWord = quizList[quizIndex];
+      if (!questionWord) return;
+
+      const hintBox = document.getElementById('quiz-hint-box');
+      const hintText = document.getElementById('quiz-hint-text');
+      if (!hintBox || !hintText) return;
+
+      if (hintBox.style.display === 'block') {
+        hintBox.style.display = 'none';
+        return;
+      }
+
+      hintBox.style.display = 'block';
+
+      // 1. Check local rich metadata for instant smart cloze hint
+      let localHint = '';
+      if (questionWord.exampleSentence) {
+        // Replace question term in example sentence with [ ... ]
+        const termRegex = new RegExp(questionWord.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const clozeEx = questionWord.exampleSentence.replace(termRegex, '[ ... ]');
+        localHint = `💡 Ví dụ ngữ cảnh: "${clozeEx}"`;
+      } else if (questionWord.collocations && questionWord.collocations.length) {
+        localHint = `💡 Cụm từ đi kèm: ${questionWord.collocations.join(', ')}`;
+      } else if (questionWord.synonyms && questionWord.synonyms.length) {
+        localHint = `💡 Từ gần nghĩa (Synonym): ${questionWord.synonyms.join(', ')}`;
+      }
+
+      const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
+      if (!geminiApiKey) {
+        hintText.innerHTML = localHint || `💡 Từ này thuộc loại: <strong>${(questionWord.partOfSpeech || 'từ vựng').toUpperCase()}</strong> (Cấp độ: ${questionWord.cefrLevel || 'Chung'})`;
+        return;
+      }
+
+      // If user has Gemini API Key, generate an intelligent, ultra-short riddle hint!
+      hintText.innerHTML = '✨ <em>AI đang tạo gợi ý ngữ cảnh...</em>';
+
+      try {
+        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
+        const prompt = `Từ vựng tiếng Anh: "${questionWord.term}". Nghĩa tiếng Việt: "${questionWord.definitionVi}".
+Hãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp người học đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "${questionWord.definitionVi}" hay từ "${questionWord.term}".
+Ví dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."
+Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${cachedModel}:generateContent?key=${geminiApiKey.trim()}`, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 60, temperature: 0.3 }
+          })
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+          if (rawHint) {
+            hintText.innerHTML = `✨ <strong>AI Gợi ý:</strong> ${escapeHtml(rawHint)}`;
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('AI Hint generation error:', err);
+      }
+
+      hintText.innerHTML = localHint || `💡 Từ này thuộc loại: <strong>${(questionWord.partOfSpeech || 'từ vựng').toUpperCase()}</strong> (Cấp độ: ${questionWord.cefrLevel || 'Chung'})`;
     }
 
     function checkQuizAnswer(selectedButton, isCorrect) {
@@ -4865,6 +4953,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           statusEl.style.color = '#38bdf8';
         }
 
+        // Preload upcoming words audio in the background to prevent 429 rate limits & delays
+        preloadUpcomingAudio(autoFlashcardIndex);
+
         await new Promise(r => setTimeout(r, 500));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
@@ -4916,9 +5007,48 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     // =========================================================================
-    // AUDIO ENGINE - NATURAL STREAMING, ZERO ROBOTIC NOISE, PRECISE PACING
+    // AUDIO ENGINE - NATURAL STREAMING, SMART PRELOAD & BLOB CACHE
     // =========================================================================
     let currentActiveAudio = null;
+    const audioBlobCache = new Map();
+
+    function preloadUpcomingAudio(currentIndex) {
+      if (!autoFlashcardList || autoFlashcardList.length === 0) return;
+      for (let i = 1; i <= 3; i++) {
+        const nextIdx = (currentIndex + i) % autoFlashcardList.length;
+        const nextWord = autoFlashcardList[nextIdx];
+        if (nextWord) {
+          if (nextWord.term) preloadAudioBlob(nextWord.term, 'en-US');
+          if (nextWord.definitionVi) preloadAudioBlob(nextWord.definitionVi, 'vi');
+        }
+      }
+    }
+
+    async function preloadAudioBlob(text, lang = 'en-US') {
+      const clean = cleanTextForSpeech(text);
+      if (!clean) return;
+      const targetLang = (lang === 'vi' || lang.startsWith('vi')) ? 'vi' : ((lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US');
+      const cacheKey = `${targetLang}_${clean}`;
+      if (audioBlobCache.has(cacheKey)) return;
+
+      const encoded = encodeURIComponent(clean);
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(url, { signal: controller.signal, referrerPolicy: 'no-referrer' });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const blob = await res.blob();
+          if (blob && blob.size > 200) {
+            audioBlobCache.set(cacheKey, URL.createObjectURL(blob));
+          }
+        }
+      } catch (e) {
+        // Fallback gracefully without throwing
+      }
+    }
 
     function stopAllAudio() {
       if (currentActiveAudio) {
@@ -4986,20 +5116,22 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
     }
 
-    function playAudioAsync(text, lang = 'en-US', speed = 1.0) {
+    async function playAudioAsync(text, lang = 'en-US', speed = 1.0) {
+      const clean = cleanTextForSpeech(text);
+      if (!clean) return;
+
+      stopAllAudio();
+
+      const targetLang = (lang === 'vi' || lang.startsWith('vi')) ? 'vi' : ((lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US');
+      const cacheKey = `${targetLang}_${clean}`;
+      const encoded = encodeURIComponent(clean);
+
+      let audioSrc = audioBlobCache.get(cacheKey);
+      if (!audioSrc) {
+        audioSrc = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
+      }
+
       return new Promise((resolve) => {
-        const clean = cleanTextForSpeech(text);
-        if (!clean) {
-          resolve();
-          return;
-        }
-
-        stopAllAudio();
-
-        const targetLang = (lang === 'vi' || lang.startsWith('vi')) ? 'vi' : ((lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US');
-        const encoded = encodeURIComponent(clean);
-        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
-
         let isResolved = false;
         let safetyTimer = null;
         const audio = new Audio();
@@ -5030,7 +5162,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         };
 
         audio.onerror = (e) => {
-          console.warn('Google TTS stream primary unavailable, attempting fallback:', e);
+          console.warn('Primary audio stream error, attempting fallback:', e);
           _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
         };
 
@@ -5040,7 +5172,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           finish();
         }, estimatedDurationMs);
 
-        audio.src = googleUrl;
+        audio.src = audioSrc;
 
         const playPromise = audio.play();
         if (playPromise !== undefined) {
