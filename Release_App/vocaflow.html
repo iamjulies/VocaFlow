@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.0</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1469,7 +1469,7 @@
         <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
       </button>
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
-        👤 <span id="user-display-name" class="user-display-truncate">Khách</span>
+        <span id="user-avatar-icon" style="font-size: 16px;">👤</span> <span id="user-display-name" class="user-display-truncate">Khách</span>
       </button>
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
         ⚙️ <span>Cài đặt</span>
@@ -1508,7 +1508,7 @@
             </div>
           </div>
           <div class="dropdown-item" onclick="openProfileModal(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">👤</span>
+            <span id="user-avatar-icon-mobile" style="font-size: 16px;">👤</span>
             <div>
               <div style="font-weight: 600; font-size: 13px;" id="user-display-name-mobile">Tài khoản (Khách)</div>
               <small style="color: var(--text-muted); font-size: 10.5px;">Hồ sơ & Đăng nhập</small>
@@ -2343,16 +2343,34 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 18px;">
-        <div id="profile-avatar" style="width: 54px; height: 54px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: white;">
-          V
+      <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 14px;">
+        <div id="profile-avatar" style="width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;" onclick="toggleAvatarPicker()" title="Bấm để đổi ảnh đại diện / Avatar">
+          🦊
         </div>
         <div style="flex: 1;">
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
             <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
           </div>
           <p id="profile-email" style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+          <button type="button" class="btn btn-outline btn-sm" onclick="toggleAvatarPicker()" style="font-size: 11px; padding: 2px 8px; margin-top: 6px; color: #a5b4fc; border-color: rgba(99,102,241,0.3);">
+            🎭 Đổi Avatar
+          </button>
+        </div>
+      </div>
+
+      <!-- AVATAR PICKER DRAWER -->
+      <div id="profile-avatar-picker" style="display: none; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <span>🎨 Chọn Biểu Tượng Đại Diện Của Bạn:</span>
+          <span style="font-size: 11px; color: var(--text-muted);">(Tự động lưu & Sync)</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 10px;" id="avatar-presets-container">
+          <!-- Populated by JS -->
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="custom-avatar-input" class="form-input" placeholder="Hoặc nhập emoji / URL ảnh..." style="font-size: 12px; padding: 4px 8px; flex: 1;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="applyCustomAvatar()" style="font-size: 11px;">Áp Dụng</button>
         </div>
       </div>
 
@@ -2389,6 +2407,27 @@
     </div>
   </div>
 
+  <!-- MODAL: ADMIN VIEW STUDENT DECKS (BEAUTIFUL MODAL v0.0.9.1) -->
+  <div class="modal-overlay" id="modal-student-decks-detail">
+    <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="student-modal-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; flex-shrink: 0;"></div>
+          <div>
+            <strong id="student-modal-title" style="font-size: 16px; color: var(--text);">Bộ từ của học viên</strong>
+            <div id="student-modal-subtitle" style="font-size: 11.5px; color: var(--text-muted);"></div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-student-decks-detail')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div id="student-modal-decks-container" style="flex: 1; overflow-y: auto; padding: 4px; display: flex; flex-direction: column; gap: 10px;">
+        <!-- Populated by JS -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary" onclick="closeModal('modal-student-decks-detail')">Đóng</button>
+      </div>
+    </div>
+  </div>
   <!-- MODAL: SETTINGS -->
   <div class="modal-overlay" id="modal-settings">
     <div class="modal">
@@ -2480,7 +2519,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.0</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3435,6 +3474,67 @@
     // PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE)
     // =========================================================================
     let adminStudentsData = [];
+    const AVATAR_PRESETS = ['🦊', '🦉', '🐱', '🦁', '🐼', '🦄', '🐲', '🚀', '👑', '🎓', '⚡', '🌸', '💎', '🔥', '🌟', '🎮'];
+
+    function toggleAvatarPicker() {
+      const picker = document.getElementById('profile-avatar-picker');
+      if (!picker) return;
+      if (picker.style.display === 'none') {
+        picker.style.display = 'block';
+        renderAvatarPresets();
+      } else {
+        picker.style.display = 'none';
+      }
+    }
+
+    function renderAvatarPresets() {
+      const container = document.getElementById('avatar-presets-container');
+      if (!container) return;
+      container.innerHTML = '';
+      const currentAv = getUserAvatar();
+
+      AVATAR_PRESETS.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.cssText = 'font-size: 20px; padding: 6px; border-radius: 8px; border: 1px solid ' + (currentAv === emoji ? '#a855f7' : 'var(--border)') + '; background: ' + (currentAv === emoji ? 'rgba(168,85,247,0.2)' : 'var(--surface-elevated)') + '; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s;';
+        btn.textContent = emoji;
+        btn.onclick = () => selectUserAvatar(emoji);
+        container.appendChild(btn);
+      });
+    }
+
+    function getUserAvatar(userObj = null) {
+      const target = userObj || currentUser;
+      if (target && target.avatar) return target.avatar;
+      if (target && target.profile && target.profile.avatar) return target.profile.avatar;
+      const saved = localStorage.getItem('vocaflow_user_avatar');
+      if (saved) return saved;
+      const name = (target && (target.displayName || target.email)) || 'VocaFlow';
+      return name[0].toUpperCase();
+    }
+
+    function selectUserAvatar(avatar) {
+      if (!avatar) return;
+      localStorage.setItem('vocaflow_user_avatar', avatar);
+      if (currentUser) {
+        currentUser.avatar = avatar;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        if (currentUser.uid) {
+          pushCurrentDatabaseToCloud();
+        }
+      }
+      updateAuthUI();
+      renderAvatarPresets();
+      showToast('🎭 Đã cập nhật ảnh đại diện: ' + avatar);
+    }
+
+    function applyCustomAvatar() {
+      const input = document.getElementById('custom-avatar-input');
+      const val = (input ? input.value : '').trim();
+      if (!val) return;
+      selectUserAvatar(val);
+      if (input) input.value = '';
+    }
 
     function openPublisherModal(defaultTab = 'students') {
       openModal('modal-publisher');
@@ -3493,25 +3593,53 @@
           return;
         }
 
-        adminStudentsData = Object.entries(data).map(([uid, uData]) => {
+        const studentsList = [];
+        for (const [uid, uData] of Object.entries(data)) {
+          if (!uData || typeof uData !== 'object') continue;
           const u = uData || {};
           const prof = u.profile || {};
+          const email = prof.email || u.email || '';
+
+          // Filter out dummy/root nodes (must have registered email)
+          if (!email || typeof email !== 'string' || !email.includes('@')) {
+            continue;
+          }
+
           const eco = u.economy || {};
+          let points = 0;
+          if (typeof eco.points === 'number') points = eco.points;
+          else if (typeof u.points === 'number') points = u.points;
+          else if (typeof prof.points === 'number') points = prof.points;
+          else if (eco.points !== undefined) points = parseInt(eco.points, 10) || 0;
+          else if (u.points !== undefined) points = parseInt(u.points, 10) || 0;
+
+          let hints = 5;
+          if (typeof eco.hints === 'number') hints = eco.hints;
+          else if (typeof u.hints === 'number') hints = u.hints;
+          else if (typeof prof.hints === 'number') hints = prof.hints;
+          else if (eco.hints !== undefined) hints = parseInt(eco.hints, 10) || 0;
+          else if (u.hints !== undefined) hints = parseInt(u.hints, 10) || 0;
+
           const uDecks = Array.isArray(u.decks) ? u.decks : (u.decks ? Object.values(u.decks) : []);
           const uWords = Array.isArray(u.words) ? u.words : (u.words ? Object.values(u.words) : []);
+          const avatar = prof.avatar || u.avatar || '';
 
-          return {
+          studentsList.push({
             uid: uid,
-            displayName: prof.displayName || (prof.email ? prof.email.split('@')[0] : 'Học viên ' + uid.slice(0, 5)),
-            email: prof.email || 'Chưa đăng ký email',
-            points: typeof eco.points === 'number' ? eco.points : (parseInt(eco.points, 10) || 0),
-            hints: typeof eco.hints === 'number' ? eco.hints : (parseInt(eco.hints, 10) || 0),
+            displayName: prof.displayName || email.split('@')[0],
+            email: email,
+            avatar: avatar,
+            points: points,
+            hints: hints,
             deckCount: uDecks.length,
             wordCount: uWords.length,
             lastSync: prof.lastSync || u.lastSync || '',
-            rawDecks: uDecks
-          };
-        });
+            rawDecks: uDecks,
+            rawWords: uWords
+          });
+        }
+
+        adminStudentsData = studentsList;
 
         const totalStudents = adminStudentsData.length;
         const totalDecks = adminStudentsData.reduce((sum, s) => sum + s.deckCount, 0);
@@ -3555,47 +3683,53 @@
         return;
       }
 
-      let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+      let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
       filtered.forEach(s => {
-        const avatarLetter = (s.displayName ? s.displayName.trim()[0] : 'U').toUpperCase();
+        const avatarDisplay = s.avatar || (s.displayName ? s.displayName.trim()[0] : 'U').toUpperCase();
         const formattedDate = s.lastSync ? formatDateTime(s.lastSync) : 'Chưa đồng bộ';
 
         html += `
-          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1;">
-              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0;">
-                ${escapeHtml(avatarLetter)}
-              </div>
-              <div>
-                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
-                  <span>${escapeHtml(s.displayName)}</span>
-                  <span style="font-size: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 5px; border-radius: 4px; font-family: monospace;">UID: ${escapeHtml(s.uid.slice(0, 6))}...</span>
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- ROW 1: USER INFO -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: ${s.avatar ? '20px' : '16px'}; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15);">
+                  ${escapeHtml(avatarDisplay)}
                 </div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">
-                  ✉️ ${escapeHtml(s.email)} • 🕒 ${formattedDate}
+                <div>
+                  <div style="font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>${escapeHtml(s.displayName)}</span>
+                    <span style="font-size: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 6px; border-radius: 4px; font-family: monospace;">UID: ${escapeHtml(s.uid.slice(0, 6))}...</span>
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
+                    ✉️ ${escapeHtml(s.email)} • 🕒 ${formattedDate}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span class="badge" style="background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25);">
-                📚 ${s.deckCount} bộ (${s.wordCount} từ)
-              </span>
-              <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25);">
-                💰 ${s.points}đ
-              </span>
-              <span class="badge" style="background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25);">
-                💡 ${s.hints} gợi ý
-              </span>
-            </div>
+            <!-- ROW 2: METRICS & ACTION BUTTONS ON DEDICATED ROW -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span class="badge" style="background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); font-size: 11.5px; padding: 3px 8px;">
+                  📚 ${s.deckCount} bộ (${s.wordCount} từ)
+                </span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); font-size: 11.5px; padding: 3px 8px;">
+                  💰 ${s.points}đ
+                </span>
+                <span class="badge" style="background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25); font-size: 11.5px; padding: 3px 8px;">
+                  💡 ${s.hints} gợi ý
+                </span>
+              </div>
 
-            <div style="display: flex; gap: 6px;">
-              <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11px; padding: 4px 8px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08);" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
-                🎁 Sửa Ví
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11px; padding: 4px 8px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc;" title="Xem các bộ từ của học viên này">
-                👁️ Xem Bộ Từ
-              </button>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 10px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 600;" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
+                  🎁 Sửa Ví
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 10px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); font-weight: 600;" title="Xem các bộ từ của học viên này">
+                  👁️ Xem Bộ Từ (${s.deckCount})
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -3658,16 +3792,63 @@
       const student = adminStudentsData.find(s => s.uid === uid);
       if (!student) return;
 
+      const titleEl = document.getElementById('student-modal-title');
+      const subEl = document.getElementById('student-modal-subtitle');
+      const avEl = document.getElementById('student-modal-avatar');
+      const container = document.getElementById('student-modal-decks-container');
+
+      if (titleEl) titleEl.textContent = 'Bộ Từ Của ' + displayName;
+      if (subEl) subEl.textContent = '✉️ ' + student.email + ' • UID: ' + student.uid;
+      if (avEl) avEl.textContent = student.avatar || (displayName ? displayName[0].toUpperCase() : 'U');
+
+      if (!container) return;
+
       if (!student.rawDecks || student.rawDecks.length === 0) {
-        alert('Học viên "' + displayName + '" chưa tạo bộ từ nào trên Cloud.');
+        container.innerHTML = '<div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;"><span style="font-size: 32px; display: block; margin-bottom: 8px;">📭</span>Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
+        openModal('modal-student-decks-detail');
         return;
       }
 
-      let msg = '📚 DANH SÁCH BỘ TỪ CỦA HỌC VIÊN "' + displayName + '" (' + student.rawDecks.length + ' bộ):\n\n';
-      student.rawDecks.forEach((d, idx) => {
-        msg += (idx + 1) + '. ' + (d.title || 'Chưa đặt tên') + ' (' + (d.description || 'Không có mô tả') + ')\n';
+      let html = '';
+      student.rawDecks.forEach((deck, idx) => {
+        const dWords = (student.rawWords || []).filter(w => w.deckId === deck.id);
+        const wCount = dWords.length;
+        const mastered = dWords.filter(w => w.status === 'mastered' || (w.masteryScore >= 100)).length;
+        const avgScore = wCount ? Math.round(dWords.reduce((sum, w) => sum + getWordScore(w), 0) / wCount) : 0;
+        const color = deck.color || '#6366f1';
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-left: 4px solid ${color}; border-radius: 10px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+              <div>
+                <strong style="font-size: 14.5px; color: var(--text);">${idx + 1}. ${escapeHtml(deck.title || 'Chưa đặt tên')}</strong>
+                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">${escapeHtml(deck.description || 'Không có mô tả')}</p>
+              </div>
+              <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; flex-shrink: 0; font-size: 11.5px;">
+                ${wCount} từ vựng
+              </span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 8px; margin-bottom: 4px;">
+              <span>Mức độ thuộc: <strong style="color: #34d399;">${avgScore}%</strong> (${mastered}/${wCount} đã thuộc)</span>
+              <span>🕒 ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+            </div>
+            <div class="progress-bar-bg" style="height: 5px;">
+              <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
+            </div>
+
+            ${dWords.length > 0 ? `
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px;">
+                ${dWords.slice(0, 8).map(w => '<span style="font-size: 10.5px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--text);">' + escapeHtml(w.term) + '</span>').join('')}
+                ${dWords.length > 8 ? '<span style="font-size: 10.5px; color: var(--text-muted);">+' + (dWords.length - 8) + ' từ nữa...</span>' : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
       });
-      alert(msg);
+
+      container.innerHTML = html;
+      openModal('modal-student-decks-detail');
     }
 
     function openPublisherModal_Legacy() {
@@ -3903,7 +4084,12 @@
           profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
           profileBadgeEl.style.color = '#34d399';
         }
-        if (profileAvatarEl) profileAvatarEl.textContent = (displayName[0] || 'U').toUpperCase();
+        const userAvatar = getUserAvatar(currentUser);
+        if (profileAvatarEl) profileAvatarEl.textContent = userAvatar;
+        const headerAvatarIcon = document.getElementById('user-avatar-icon');
+        if (headerAvatarIcon) headerAvatarIcon.textContent = userAvatar;
+        const mobileAvatarIcon = document.getElementById('user-avatar-icon-mobile');
+        if (mobileAvatarIcon) mobileAvatarIcon.textContent = userAvatar;
         if (authActionBtn) {
           authActionBtn.textContent = '🚪 Đăng xuất tài khoản';
           authActionBtn.style.color = '#ef4444';
@@ -4141,6 +4327,11 @@
           words: words,
           deletedWordIds: Array.from(deletedWordIds),
           deletedDeckIds: Array.from(deletedDeckIds),
+          economy: {
+            points: getUserPoints(),
+            hints: getUserHints(),
+            updatedAt: new Date().toISOString()
+          },
           lastSync: new Date().toISOString()
         };
 
