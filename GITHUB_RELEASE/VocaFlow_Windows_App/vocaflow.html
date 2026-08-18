@@ -2187,7 +2187,7 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử...';
-      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-2.5-flash', 'gemini-1.5-flash'];
       let connected = false;
       let lastErr = '';
       let successfulModel = '';
@@ -2199,7 +2199,13 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: "Say OK" }] }],
-              generationConfig: { maxOutputTokens: 10 }
+              generationConfig: { maxOutputTokens: 10 },
+              safetySettings: [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+              ]
             })
           });
           const data = await testRes.json();
@@ -3782,7 +3788,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const standardModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-2.5-flash', 'gemini-1.5-flash'];
       const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const m of models) {
@@ -3795,8 +3801,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.2,
-                maxOutputTokens: 500
-              }
+                maxOutputTokens: 600
+              },
+              safetySettings: [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+              ]
             })
           });
 
