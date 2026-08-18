@@ -3711,7 +3711,11 @@
 
         // 2. Fallback to Free Dictionary API if Gemini unavailable
         if (!result) {
-          result = await fetchWordFromDictionary(rawTerm);
+          try {
+            result = await fetchWordFromDictionary(rawTerm);
+          } catch (dictErr) {
+            console.warn('Dictionary fallback note:', dictErr);
+          }
         }
 
         if (result) {
@@ -3742,11 +3746,11 @@
 
           showToast('✨ AI đã tư duy & hoàn thiện thông tin từ vựng!');
         } else {
-          alert('Không tìm thấy thông tin tự động cho từ này. Bạn vui lòng nhập thủ công nhé!');
+          alert('Không thể kết nối AI hoặc Từ điển (mạng gián đoạn hoặc chưa có API Key). Bạn vui lòng kiểm tra Cài đặt API Key hoặc nhập thủ công nhé!');
         }
       } catch (err) {
         console.error('AI Generate error:', err);
-        alert('Lỗi khi tải thông tin: ' + err.message);
+        alert('Lỗi khi tải thông tin: ' + (err.message || 'Mạng không ổn định'));
       } finally {
         isAiGenerating = false;
         if (aiIcon) aiIcon.textContent = '✨';
@@ -3756,6 +3760,8 @@
     }
 
     async function fetchWordFromGemini(term, key, userContext = {}) {
+      if (!key || !key.trim()) return null;
+
       let contextNote = '';
       if (userContext.definitionVi) contextNote += `\n- Nghĩa người dùng đã viết: "${userContext.definitionVi}"`;
       if (userContext.exampleSentence) contextNote += `\n- Câu ví dụ người dùng đã viết: "${userContext.exampleSentence}"`;
@@ -3788,13 +3794,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+      const standardModels = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
       const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const m of models) {
         try {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6500);
+
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key.trim()}`, {
             method: 'POST',
+            signal: controller.signal,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: prompt }] }],
@@ -3811,8 +3821,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               ]
             })
           });
+          clearTimeout(timeoutId);
 
-          if (!res.ok) continue;
+          if (!res.ok) {
+            console.warn(`Model ${m} returned HTTP status ${res.status}`);
+            continue;
+          }
 
           const data = await res.json();
           const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
