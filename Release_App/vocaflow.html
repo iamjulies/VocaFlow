@@ -1507,6 +1507,9 @@
           </div>
           
           <div class="selection-study-actions">
+            <button class="btn btn-outline btn-sm" id="btn-toggle-study-shuffle" onclick="toggleStudyShuffle()" title="Bật/Tắt chế độ Trộn ngẫu nhiên (Flashcard, Auto FC, Quiz)">
+              🔀 <span class="hide-on-mobile">Trộn</span>
+            </button>
             <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected" title="Học Flashcard lật thẻ">
               <svg class="icon icon-sm"><use href="#i-cards"/></svg> <span>Flashcard</span><span id="fc-count-label"></span>
             </button>
@@ -1544,9 +1547,14 @@
           <svg class="icon"><use href="#i-arrow-back"/></svg>
         </button>
         <div id="fc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</div>
-        <button class="btn btn-outline btn-sm" onclick="speakText(currentFlashcardWord?.term)">
-          <svg class="icon icon-sm"><use href="#i-volume"/></svg> Phát âm
-        </button>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentFlashcard()" title="Xáo trộn ngẫu nhiên thứ tự các thẻ">
+            🔀 <span class="hide-on-mobile">Trộn thẻ</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="speakText(currentFlashcardWord?.term)">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
+          </button>
+        </div>
       </div>
 
       <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 10px;">
@@ -1611,8 +1619,11 @@
           <svg class="icon"><use href="#i-arrow-back"/></svg>
         </button>
         <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 10px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentQuiz()" title="Xáo trộn ngẫu nhiên bộ câu hỏi Quiz">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
             🏪 <span id="quiz-wallet-points">0đ</span>
           </button>
           <button class="btn btn-outline btn-sm" onclick="speakQuizTerm()" title="Phát âm từ vựng">
@@ -1720,6 +1731,9 @@
           </button>
           <button class="btn btn-outline btn-icon" id="btn-autofc-loop" onclick="toggleAutoFlashcardLoop()" title="Lặp vô tận danh sách">
             <svg class="icon"><use href="#i-repeat"/></svg>
+          </button>
+          <button class="btn btn-outline btn-icon" id="btn-autofc-shuffle" onclick="shuffleCurrentAutoFlashcard()" title="Trộn ngẫu nhiên danh sách phát">
+            <span style="font-size: 14px;">🔀</span>
           </button>
         </div>
 
@@ -1997,6 +2011,16 @@
             Đổi (180đ)
           </button>
         </div>
+      </div>
+
+      <!-- Gift / Redeem Code Section -->
+      <div style="margin-bottom: 16px; padding: 12px; border-radius: 12px; background: var(--surface-elevated); border: 1px dashed var(--border);">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng / Khôi phục:</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã (ví dụ: JULIESVIP)..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
+          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap;">Áp dụng</button>
+        </div>
+        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 4px; display: none;"></div>
       </div>
 
       <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
@@ -2727,12 +2751,76 @@
       }
     }
 
+    function redeemShopGiftCode() {
+      const input = document.getElementById('shop-gift-code-input');
+      const msg = document.getElementById('shop-gift-msg');
+      if (!input || !msg) return;
+      const code = (input.value || '').trim().toUpperCase();
+      if (!code) return;
+
+      const usedCodes = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
+      if (usedCodes.includes(code)) {
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = '❌ Mã này đã được sử dụng trước đó rồi!';
+        return;
+      }
+
+      if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
+        usedCodes.push(code);
+        localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
+        setUserHints(getUserHints() + 150);
+        setUserPoints(getUserPoints() + 500);
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 Lượt Gợi Ý AI & +500đ Ví!';
+        input.value = '';
+        showToast('🎁 Chúc mừng! Đã nhận +150 Lượt gợi ý & +500đ ví!');
+      } else {
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = '❌ Mã không hợp lệ hoặc đã hết hạn!';
+      }
+    }
+
+    // =========================================================================
+    // STUDY SHUFFLE MODE ENGINE (v0.0.8)
+    // =========================================================================
+    let isStudyShuffle = localStorage.getItem('vocaflow_study_shuffle') === 'true';
+
+    function toggleStudyShuffle() {
+      isStudyShuffle = !isStudyShuffle;
+      localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false');
+      updateStudyShuffleUI();
+      showToast(isStudyShuffle ? '🔀 Đã BẬT Trộn ngẫu nhiên (Flashcard, Auto FC, Quiz)!' : '➡️ Đã TẮT Trộn ngẫu nhiên (Học theo thứ tự gốc).');
+    }
+
+    function updateStudyShuffleUI() {
+      const btn = document.getElementById('btn-toggle-study-shuffle');
+      if (btn) {
+        if (isStudyShuffle) {
+          btn.classList.add('active');
+          btn.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
+          btn.style.color = '#ffffff';
+          btn.style.borderColor = 'transparent';
+          btn.title = 'Trộn Ngẫu Nhiên: ĐANG BẬT (Click để tắt)';
+        } else {
+          btn.classList.remove('active');
+          btn.style.background = 'transparent';
+          btn.style.color = 'var(--text-muted)';
+          btn.style.borderColor = 'var(--border)';
+          btn.title = 'Trộn Ngẫu Nhiên: ĐANG TẮT (Click để bật)';
+        }
+      }
+    }
+
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
       loadDatabase();
       loadAuthState();
       updateEconomyUI();
+      updateStudyShuffleUI();
       if (decks.length === 0) {
         seedSampleData();
       }
@@ -4246,10 +4334,22 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      flashcardList = [...deckWords];
+      if (isStudyShuffle) {
+        flashcardList = [...deckWords].sort(() => Math.random() - 0.5);
+      } else {
+        flashcardList = [...deckWords];
+      }
       flashcardIndex = 0;
       loadFlashcard(flashcardIndex);
       showScreen('screen-flashcard');
+    }
+
+    function shuffleCurrentFlashcard() {
+      if (!flashcardList || flashcardList.length === 0) return;
+      flashcardList = [...flashcardList].sort(() => Math.random() - 0.5);
+      flashcardIndex = 0;
+      loadFlashcard(flashcardIndex);
+      showToast('🔀 Đã xáo trộn ngẫu nhiên danh sách thẻ Flashcard!');
     }
 
     function loadFlashcard(index) {
@@ -4356,12 +4456,26 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      quizList = [...deckWords].sort(() => Math.random() - 0.5);
+      if (isStudyShuffle) {
+        quizList = [...deckWords].sort(() => Math.random() - 0.5);
+      } else {
+        quizList = [...deckWords];
+      }
       quizIndex = 0;
       quizScore = 0;
       quizIsAnswered = false;
       loadQuizQuestion();
       showScreen('screen-quiz');
+    }
+
+    function shuffleCurrentQuiz() {
+      if (!quizList || quizList.length === 0) return;
+      quizList = [...quizList].sort(() => Math.random() - 0.5);
+      quizIndex = 0;
+      quizScore = 0;
+      quizIsAnswered = false;
+      loadQuizQuestion();
+      showToast('🔀 Đã xáo trộn ngẫu nhiên bộ câu hỏi Quiz!');
     }
 
     function generateSmartDistractors(questionWord) {
@@ -5101,12 +5215,27 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         return;
       }
 
-      autoFlashcardList = [...deckWords];
+      if (isStudyShuffle) {
+        autoFlashcardList = [...deckWords].sort(() => Math.random() - 0.5);
+      } else {
+        autoFlashcardList = [...deckWords];
+      }
       autoFlashcardIndex = 0;
       isAutoPlaying = true;
       showScreen('screen-autofc');
       syncAutoFlashcardControlsUI();
       runAutoFlashcardLoop();
+    }
+
+    function shuffleCurrentAutoFlashcard() {
+      if (!autoFlashcardList || autoFlashcardList.length === 0) return;
+      autoFlashcardList = [...autoFlashcardList].sort(() => Math.random() - 0.5);
+      autoFlashcardIndex = 0;
+      showToast('🔀 Đã xáo trộn ngẫu nhiên thứ tự phát Auto FC!');
+      loadAutoCardData(autoFlashcardIndex);
+      if (isAutoPlaying) {
+        runAutoFlashcardLoop();
+      }
     }
 
     function syncAutoFlashcardControlsUI() {
