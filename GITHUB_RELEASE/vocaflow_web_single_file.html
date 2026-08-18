@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.10</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.11</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2229,9 +2229,22 @@
                 <strong style="font-size: 14px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
                 <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10.5px;">x2.0 Siêu Cấp Điểm</span>
               </div>
-              <span class="tooltip-trigger" title="Thử thách đỉnh cao! AI tạo 2-3 phương án bẫy chuyên nghiệp đòi hỏi nắm chắc sắc thái từ. Điểm thưởng và độ thuộc bài tăng gấp đôi (x2.0)!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+              <span class="tooltip-trigger" title="Thử thách lớn! AI tạo 2 phương án bẫy chuyên nghiệp đòi hỏi nắm chắc sắc thái từ. Điểm thưởng và độ thuộc bài tăng gấp đôi (x2.0)!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #f87171;">2-3 bẫy AI cao cấp</strong>. Điểm thưởng & Thuộc bài nhân đôi (x2.0)!</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #f87171;">2 bẫy AI cao cấp</strong> + 1 từ kho. Điểm thưởng & Thuộc bài nhân đôi (x2.0)!</p>
+          </div>
+
+          <!-- 4. CỰC KHÓ (EXTREME) -->
+          <div class="quiz-diff-card" id="quiz-diff-card-extreme" onclick="selectQuizSetupDifficulty('extreme')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🟣</span>
+                <strong style="font-size: 14px; color: #c084fc;">Cấp độ CỰC KHÓ (Extreme)</strong>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10.5px;">x2.5 Siêu Cực Hạn</span>
+              </div>
+              <span class="tooltip-trigger" title="Mức độ ác mộng đỉnh cao! CẢ 3 phương án sai 100% đều do AI Gemini tạo bẫy tinh vi đánh lừa thị giác. Điểm ví & Độ thuộc bài tăng vọt 2.5 lần!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #c084fc;">CẢ 3 bẫy AI 100%</strong>. Điểm thưởng & Thuộc bài gấp <strong style="color: #c084fc;">2.5 lần (x2.5)</strong>!</p>
           </div>
         </div>
       </div>
@@ -2699,7 +2712,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.10</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.11</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6313,7 +6326,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     // =========================================================================
-    // QUIZ MODE ENGINE (DIFFICULTY SELECTOR, MODAL SETUP, AI DISTRACTORS) (v0.0.9.10)
+    // QUIZ MODE ENGINE (EASY, MEDIUM, HARD, EXTREME + AI PREFETCH & CACHE) (v0.0.9.11)
     // =========================================================================
     let quizList = [];
     let quizIndex = 0;
@@ -6330,15 +6343,31 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let currentQuizDifficulty = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
     let quizSetupUseSelection = false;
     let selectedSetupDifficulty = 'easy';
-    const quizAiDistractorCache = {};
+
+    // Persistent LocalStorage + Session AI Distractors Cache to minimize API quota
+    let quizAiDistractorCache = {};
+    try {
+      const savedAiCache = localStorage.getItem('vocaflow_ai_distractors_cache_v1');
+      if (savedAiCache) quizAiDistractorCache = JSON.parse(savedAiCache);
+    } catch (e) {
+      quizAiDistractorCache = {};
+    }
+
+    function saveAiDistractorCache() {
+      try {
+        localStorage.setItem('vocaflow_ai_distractors_cache_v1', JSON.stringify(quizAiDistractorCache));
+      } catch (e) {}
+    }
 
     function getDifficultyLabel(diff) {
+      if (diff === 'extreme') return '🟣 Cực Khó (x2.5)';
       if (diff === 'hard') return '🔴 Khó (x2.0)';
       if (diff === 'medium') return '🟡 Bình thường (x1.5)';
       return '🟢 Dễ (x1.0)';
     }
 
     function getDifficultyMultiplier(diff = currentQuizDifficulty) {
+      if (diff === 'extreme') return 2.5;
       if (diff === 'hard') return 2.0;
       if (diff === 'medium') return 1.5;
       return 1.0;
@@ -6374,11 +6403,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function selectQuizSetupDifficulty(diff) {
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
       const cards = {
         easy: document.getElementById('quiz-diff-card-easy'),
         medium: document.getElementById('quiz-diff-card-medium'),
-        hard: document.getElementById('quiz-diff-card-hard')
+        hard: document.getElementById('quiz-diff-card-hard'),
+        extreme: document.getElementById('quiz-diff-card-extreme')
       };
 
       Object.keys(cards).forEach(k => {
@@ -6397,6 +6428,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             c.style.borderColor = '#f87171';
             c.style.background = 'rgba(239, 68, 68, 0.12)';
             c.style.boxShadow = '0 0 16px rgba(239, 68, 68, 0.25)';
+          } else if (k === 'extreme') {
+            c.style.borderColor = '#c084fc';
+            c.style.background = 'rgba(168, 85, 247, 0.14)';
+            c.style.boxShadow = '0 0 18px rgba(168, 85, 247, 0.35)';
           }
         } else {
           c.style.borderColor = 'var(--border)';
@@ -6421,7 +6456,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function setQuizDifficulty(diff) {
-      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentQuizDifficulty = diff;
       localStorage.setItem('vocaflow_quiz_difficulty', diff);
       updateQuizDifficultyUI();
@@ -6429,7 +6464,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function cycleQuizDifficulty() {
-      const order = ['easy', 'medium', 'hard'];
+      const order = ['easy', 'medium', 'hard', 'extreme'];
       const nextIdx = (order.indexOf(currentQuizDifficulty) + 1) % order.length;
       setQuizDifficulty(order[nextIdx]);
       if (quizList && quizList.length > 0 && quizIndex < quizList.length) {
@@ -6441,7 +6476,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const badge = document.getElementById('quiz-difficulty-badge');
       if (badge) {
         badge.textContent = getDifficultyLabel(currentQuizDifficulty);
-        if (currentQuizDifficulty === 'hard') {
+        if (currentQuizDifficulty === 'extreme') {
+          badge.style.background = 'rgba(168, 85, 247, 0.15)';
+          badge.style.color = '#c084fc';
+          badge.style.borderColor = 'rgba(168, 85, 247, 0.35)';
+        } else if (currentQuizDifficulty === 'hard') {
           badge.style.background = 'rgba(239, 68, 68, 0.15)';
           badge.style.color = '#f87171';
           badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
@@ -6460,8 +6499,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     async function fetchAiDistractors(questionWord, count) {
       if (!count || count <= 0) return [];
       const cacheKey = questionWord.id + '_' + count;
-      if (quizAiDistractorCache[cacheKey]) {
-        return quizAiDistractorCache[cacheKey];
+      if (quizAiDistractorCache[cacheKey] && quizAiDistractorCache[cacheKey].length >= count) {
+        return quizAiDistractorCache[cacheKey].slice(0, count);
       }
 
       const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
@@ -6481,7 +6520,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           'Yêu cầu bắt buộc:\n' +
           '1. Tuyệt đối KHÔNG được chứa nghĩa đúng "' + correctDef + '".\n' +
           '2. Phải cùng từ loại (' + pos + '), cùng độ dài và cấu trúc ngữ pháp với nghĩa đúng.\n' +
-          '3. Trả về DUY NHẤT một JSON Array dạng: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + ']';
+          '3. Trả về DUY NHẤT một JSON Array dạng: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + (count > 2 ? ', "phương án sai 3"' : '') + ']';
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3500);
@@ -6493,7 +6532,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              maxOutputTokens: 120,
+              maxOutputTokens: 140,
               temperature: 0.4,
               responseMimeType: "application/json"
             },
@@ -6517,15 +6556,35 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               const cleanDistractors = parsed.map(s => (s || '').toString().trim()).filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
               if (cleanDistractors.length > 0) {
                 quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
+                saveAiDistractorCache();
                 return quizAiDistractorCache[cacheKey];
               }
             }
           }
         }
       } catch (err) {
-        console.warn('AI Distractors generation note:', err);
+        console.warn('AI Distractors note:', err);
       }
       return [];
+    }
+
+    function prefetchNextAiDistractors() {
+      if (!quizList || quizList.length === 0) return;
+      let count = 0;
+      if (currentQuizDifficulty === 'extreme') count = 3;
+      else if (currentQuizDifficulty === 'hard') count = 2;
+      else if (currentQuizDifficulty === 'medium') count = 1;
+      if (count <= 0) return;
+
+      // Asynchronously prefetch next 2 questions in background without blocking UI
+      [quizIndex + 1, quizIndex + 2].forEach(idx => {
+        if (idx < quizList.length) {
+          const nextWord = quizList[idx];
+          if (nextWord) {
+            fetchAiDistractors(nextWord, count).catch(() => {});
+          }
+        }
+      });
     }
 
     function startQuizMode(useSelectionOnly = false) {
@@ -6715,8 +6774,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       // Determine AI distractor count based on difficulty
       let aiDistractorCount = 0;
-      if (currentQuizDifficulty === 'medium') aiDistractorCount = 1;
+      if (currentQuizDifficulty === 'extreme') aiDistractorCount = 3;
       else if (currentQuizDifficulty === 'hard') aiDistractorCount = 2;
+      else if (currentQuizDifficulty === 'medium') aiDistractorCount = 1;
 
       let aiDistractors = [];
       if (aiDistractorCount > 0) {
@@ -6739,12 +6799,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         optionsContainer.appendChild(opt);
       });
 
+      // Background prefetch next questions for zero-latency quiz progression
+      prefetchNextAiDistractors();
+
       setTimeout(() => {
         speakQuizTerm();
       }, 150);
     }
-
-
 
     function getQuizPointDelta(cefrLevel, isCorrect) {
       let level = (cefrLevel || '').toUpperCase().trim();
