@@ -2017,7 +2017,7 @@
       <div style="margin-bottom: 16px; padding: 12px; border-radius: 12px; background: var(--surface-elevated); border: 1px dashed var(--border);">
         <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng / Khôi phục:</label>
         <div style="display: flex; gap: 8px;">
-          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã (ví dụ: JULIESVIP)..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
           <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap;">Áp dụng</button>
         </div>
         <div id="shop-gift-msg" style="font-size: 11px; margin-top: 4px; display: none;"></div>
@@ -2231,14 +2231,89 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
+        </div>
+        <div style="margin-top: 10px; text-align: right;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="openPublisherModal()" style="font-size: 11px; color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
+            👑 Cổng Quản Trị Nhà Phát Hành (Publisher Portal)
+          </button>
         </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
         <button class="btn btn-primary" onclick="closeModal('modal-settings')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PUBLISHER / ADMIN PORTAL (DÀNH CHO NHÀ PHÁT HÀNH) -->
+  <div class="modal-overlay" id="modal-publisher">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">👑</span>
+          <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị Nhà Phát Hành (Publisher Portal)</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GOD MODE: WALLET OVERRIDE -->
+      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted);">Điểm ví (Points):</label>
+            <input type="number" id="admin-set-points-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted);">Lượt Gợi Ý AI (Hints):</label>
+            <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none;">⚡ Áp Dụng Ví Ngay</button>
+          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200)">+200 Gợi Ý & +500đ</button>
+          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000)">+1000 Gợi Ý & +2000đ</button>
+        </div>
+      </div>
+
+      <!-- GIFT CODE STUDIO -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
+            <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted);">Số Gợi Ý:</label>
+            <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted);">Số Điểm:</label>
+            <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
+          </div>
+        </div>
+        <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
+          🚀 Phát Hành Mã Quà Tặng Lên Cloud
+        </button>
+      </div>
+
+      <!-- ACTIVE CLOUD CODES LIST -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
+          <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+        </div>
+        <div id="admin-active-codes-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
+          <em>Đang tải danh sách mã...</em>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-publisher')">Đóng</button>
       </div>
     </div>
   </div>
@@ -2751,21 +2826,61 @@
       }
     }
 
-    function redeemShopGiftCode() {
+    async function redeemShopGiftCode() {
       const input = document.getElementById('shop-gift-code-input');
       const msg = document.getElementById('shop-gift-msg');
       if (!input || !msg) return;
       const code = (input.value || '').trim().toUpperCase();
       if (!code) return;
 
+      // Secret Developer Command to open Publisher Portal
+      if (code === '/ADMIN' || code === 'DEV' || code === 'JULIESADMIN' || code === 'ADMIN') {
+        input.value = '';
+        closeModal('modal-shop');
+        openPublisherModal();
+        return;
+      }
+
       const usedCodes = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
       if (usedCodes.includes(code)) {
         msg.style.display = 'block';
         msg.style.color = '#ef4444';
-        msg.textContent = '❌ Mã này đã được sử dụng trước đó rồi!';
+        msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi!';
         return;
       }
 
+      msg.style.display = 'block';
+      msg.style.color = '#38bdf8';
+      msg.textContent = '⏳ Đang kiểm tra mã quà tặng...';
+
+      // 1. Try checking Cloud Firebase Gift Codes
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      try {
+        const res = await fetch(`${rtdbUrl}/giftCodes/${encodeURIComponent(code)}.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object' && data.isActive !== false) {
+            const hts = parseInt(data.hints, 10) || 0;
+            const pts = parseInt(data.points, 10) || 0;
+            
+            usedCodes.push(code);
+            localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
+            if (hts > 0) setUserHints(getUserHints() + hts);
+            if (pts > 0) setUserPoints(getUserPoints() + pts);
+
+            msg.style.display = 'block';
+            msg.style.color = '#10b981';
+            msg.textContent = `🎉 Áp dụng thành công! Tặng ngay +${hts} Gợi Ý & +${pts}đ Ví!`;
+            input.value = '';
+            showToast(`🎁 Quà tặng VocaFlow: +${hts} Gợi Ý & +${pts}đ!`);
+            return;
+          }
+        }
+      } catch (cloudErr) {
+        console.warn('Cloud gift check error:', cloudErr);
+      }
+
+      // 2. Built-in Master Publisher Codes
       if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
         usedCodes.push(code);
         localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
@@ -2776,10 +2891,158 @@
         msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 Lượt Gợi Ý AI & +500đ Ví!';
         input.value = '';
         showToast('🎁 Chúc mừng! Đã nhận +150 Lượt gợi ý & +500đ ví!');
+        return;
+      }
+
+      msg.style.display = 'block';
+      msg.style.color = '#ef4444';
+      msg.textContent = '❌ Mã không hợp lệ hoặc đã hết hạn!';
+    }
+
+    // =========================================================================
+    // PUBLISHER / ADMIN PORTAL LOGIC (v0.0.8)
+    // =========================================================================
+    function openPublisherModal() {
+      const setPts = document.getElementById('admin-set-points-input');
+      const setHts = document.getElementById('admin-set-hints-input');
+      if (setPts) setPts.value = getUserPoints();
+      if (setHts) setHts.value = getUserHints();
+      openModal('modal-publisher');
+      refreshAdminGiftCodesList();
+    }
+
+    function applyAdminWalletChanges() {
+      const pts = parseInt(document.getElementById('admin-set-points-input')?.value, 10);
+      const hts = parseInt(document.getElementById('admin-set-hints-input')?.value, 10);
+      if (!isNaN(pts)) setUserPoints(pts);
+      if (!isNaN(hts)) setUserHints(hts);
+      showToast(`⚡ Đã cập nhật ví: ${getUserPoints()}đ & ${getUserHints()} gợi ý!`);
+    }
+
+    function quickAddAdminRewards(ptsToAdd, htsToAdd) {
+      setUserPoints(getUserPoints() + ptsToAdd);
+      setUserHints(getUserHints() + htsToAdd);
+      const setPts = document.getElementById('admin-set-points-input');
+      const setHts = document.getElementById('admin-set-hints-input');
+      if (setPts) setPts.value = getUserPoints();
+      if (setHts) setHts.value = getUserHints();
+      showToast(`⚡ Đã cộng nhanh +${htsToAdd} Gợi Ý & +${ptsToAdd}đ!`);
+    }
+
+    async function createAdminGiftCode() {
+      const nameInput = document.getElementById('admin-code-name');
+      const htsInput = document.getElementById('admin-code-hints');
+      const ptsInput = document.getElementById('admin-code-points');
+      if (!nameInput || !htsInput || !ptsInput) return;
+
+      let rawCode = (nameInput.value || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      if (!rawCode) {
+        alert('Vui lòng nhập tên mã code (ví dụ: HOCVIEN2026)!');
+        return;
+      }
+
+      const hints = parseInt(htsInput.value, 10) || 0;
+      const points = parseInt(ptsInput.value, 10) || 0;
+      if (hints <= 0 && points <= 0) {
+        alert('Phải tặng ít nhất gợi ý hoặc điểm thưởng!');
+        return;
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const payload = {
+          code: rawCode,
+          hints: hints,
+          points: points,
+          isActive: true,
+          createdAt: new Date().toISOString()
+        };
+
+        const res = await fetch(`${rtdbUrl}/giftCodes/${rawCode}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast(`🚀 Đã phát hành mã "${rawCode}" lên Cloud thành công!`);
+          nameInput.value = '';
+          refreshAdminGiftCodesList();
+        } else {
+          alert('Không thể lưu lên Cloud. Kiểm tra quyền hoặc kết nối!');
+        }
+      } catch (err) {
+        alert('Lỗi tạo mã: ' + err.message);
+      }
+    }
+
+    async function refreshAdminGiftCodesList() {
+      const listContainer = document.getElementById('admin-active-codes-list');
+      if (!listContainer) return;
+      listContainer.innerHTML = '<em>Đang kết nối Cloud tải danh sách...</em>';
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/giftCodes.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!data || Object.keys(data).length === 0) {
+            listContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 10px;">Chưa có mã quà tặng nào trên Cloud. Hãy tạo mã đầu tiên ở trên!</div>';
+            return;
+          }
+
+          let html = '<div style="display: flex; flex-direction: column; gap: 6px;">';
+          for (const [codeKey, codeData] of Object.entries(data)) {
+            if (!codeData) continue;
+            html += `
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-elevated); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                <div>
+                  <strong style="color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(codeData.code || codeKey)}</strong>
+                  <span style="font-size: 11px; color: var(--text-muted); margin-left: 8px;">(+${codeData.hints || 0} Gợi Ý, +${codeData.points || 0}đ)</span>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 10px;" onclick="copyGiftCodeToClipboard('${escapeHtml(codeData.code || codeKey)}')">📋 Copy</button>
+                  <button class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 10px; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteAdminGiftCode('${escapeHtml(codeKey)}')">🗑️ Xóa</button>
+                </div>
+              </div>
+            `;
+          }
+          html += '</div>';
+          listContainer.innerHTML = html;
+        } else {
+          listContainer.innerHTML = '<div style="color: var(--danger);">Không tải được danh sách từ Cloud.</div>';
+        }
+      } catch (err) {
+        listContainer.innerHTML = `<div style="color: var(--text-muted);">Lỗi kết nối: ${err.message}</div>`;
+      }
+    }
+
+    function copyGiftCodeToClipboard(code) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code);
+        showToast(`📋 Đã sao chép mã "${code}" vào bộ nhớ tạm!`);
       } else {
-        msg.style.display = 'block';
-        msg.style.color = '#ef4444';
-        msg.textContent = '❌ Mã không hợp lệ hoặc đã hết hạn!';
+        prompt('Copy mã quà tặng:', code);
+      }
+    }
+
+    async function deleteAdminGiftCode(codeKey) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa mã "${codeKey}" khỏi Cloud? Người học sẽ không dùng được mã này nữa.`)) return;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        await fetch(`${rtdbUrl}/giftCodes/${encodeURIComponent(codeKey)}.json${authParam}`, {
+          method: 'DELETE'
+        });
+        showToast(`🗑️ Đã xóa mã "${codeKey}"!`);
+        refreshAdminGiftCodesList();
+      } catch (err) {
+        alert('Lỗi xóa mã: ' + err.message);
       }
     }
 
