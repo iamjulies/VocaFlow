@@ -34,6 +34,12 @@ class DeckModel {
   @HiveField(7)
   final bool isDeleted;
 
+  @HiveField(8)
+  final bool isPinned;
+
+  @HiveField(9)
+  final bool isArchived;
+
   const DeckModel({
     required this.id,
     required this.title,
@@ -43,6 +49,8 @@ class DeckModel {
     this.userId = '',
     DateTime? updatedAt,
     this.isDeleted = false,
+    this.isPinned = false,
+    this.isArchived = false,
   }) : updatedAt = updatedAt ?? createdAt;
 
   /// Creates a copy of [DeckModel] with optional mutated fields.
@@ -55,6 +63,8 @@ class DeckModel {
     String? userId,
     DateTime? updatedAt,
     bool? isDeleted,
+    bool? isPinned,
+    bool? isArchived,
   }) {
     return DeckModel(
       id: id ?? this.id,
@@ -65,6 +75,8 @@ class DeckModel {
       userId: userId ?? this.userId,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      isPinned: isPinned ?? this.isPinned,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
@@ -87,6 +99,8 @@ class DeckModel {
           ? (DateTime.tryParse(json['updatedAt'].toString()) ?? created)
           : created,
       isDeleted: json['isDeleted'] as bool? ?? false,
+      isPinned: json['isPinned'] as bool? ?? false,
+      isArchived: json['isArchived'] as bool? ?? false,
     );
   }
 
@@ -101,6 +115,8 @@ class DeckModel {
       'userId': userId,
       'updatedAt': updatedAt.toIso8601String(),
       'isDeleted': isDeleted,
+      'isPinned': isPinned,
+      'isArchived': isArchived,
     };
   }
 
@@ -115,6 +131,8 @@ class DeckModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'isDeleted': isDeleted,
+      'isPinned': isPinned,
+      'isArchived': isArchived,
     };
   }
 
@@ -137,6 +155,8 @@ class DeckModel {
           ? (DateTime.tryParse(data['updatedAt'].toString()) ?? created)
           : created,
       isDeleted: data['isDeleted'] as bool? ?? false,
+      isPinned: data['isPinned'] as bool? ?? false,
+      isArchived: data['isArchived'] as bool? ?? false,
     );
   }
 
@@ -152,7 +172,9 @@ class DeckModel {
           createdAt == other.createdAt &&
           userId == other.userId &&
           updatedAt == other.updatedAt &&
-          isDeleted == other.isDeleted;
+          isDeleted == other.isDeleted &&
+          isPinned == other.isPinned &&
+          isArchived == other.isArchived;
 
   @override
   int get hashCode =>
@@ -163,10 +185,12 @@ class DeckModel {
       createdAt.hashCode ^
       userId.hashCode ^
       updatedAt.hashCode ^
-      isDeleted.hashCode;
+      isDeleted.hashCode ^
+      isPinned.hashCode ^
+      isArchived.hashCode;
 
   @override
   String toString() {
-    return 'DeckModel(id: $id, userId: $userId, title: $title, isDeleted: $isDeleted, updatedAt: $updatedAt)';
+    return 'DeckModel(id: $id, userId: $userId, title: $title, isPinned: $isPinned, isArchived: $isArchived, isDeleted: $isDeleted, updatedAt: $updatedAt)';
   }
 }
