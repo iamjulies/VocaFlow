@@ -1107,10 +1107,53 @@
 
 
     /* RESPONSIVE DESIGN FOR MOBILE */
+    /* MOBILE HEADER MORE DROPDOWN (v0.0.8.6) */
+    .mobile-more-wrapper {
+      position: relative;
+    }
+    .header-more-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 230px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      animation: fadeInDropdown 0.15s ease-out;
+    }
+    @keyframes fadeInDropdown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12.5px;
+      color: var(--text);
+      transition: background 0.15s ease;
+      text-align: left;
+    }
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 6px;
+    }
+
     @media (max-width: 768px) {
       header {
-        padding: 6px 8px;
-        gap: 4px;
+        padding: 6px 10px;
+        gap: 6px;
         min-height: 48px;
       }
       .brand {
@@ -1127,16 +1170,16 @@
         height: 14px;
       }
       .header-actions {
-        gap: 3px;
+        gap: 6px;
         flex-shrink: 0;
         display: flex;
         align-items: center;
       }
-      .header-actions .btn {
-        padding: 4px 6px;
-        font-size: 11px;
-        border-radius: 7px;
-        gap: 2px;
+      .desktop-only-action {
+        display: none !important;
+      }
+      .mobile-more-btn {
+        display: inline-flex !important;
       }
       .hide-on-mobile {
         display: none !important;
@@ -1400,23 +1443,25 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
         🏪 <span id="header-points-display">0đ</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text" class="hide-on-mobile">Đồng bộ</span>
+
+      <!-- Desktop Action Buttons (Hidden on mobile) -->
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
+        <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
         👤 <span id="user-display-name" class="user-display-truncate">Khách</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
-        ⚙️ <span class="hide-on-mobile">Cài đặt</span>
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
+        ⚙️ <span>Cài đặt</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
-        📲 <span class="hide-on-mobile">Cài App</span>
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
+        📲 <span>Cài App</span>
       </button>
       <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
         <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
@@ -1424,6 +1469,53 @@
       <button class="btn btn-primary btn-sm hide-on-mobile" id="btn-header-add" onclick="openDeckModal()">
         <svg class="icon icon-sm"><use href="#i-add"/></svg> Tạo Bộ Từ
       </button>
+
+      <!-- Mobile 3-Dots Dropdown Menu (Visible only on mobile <= 768px) -->
+      <div class="mobile-more-wrapper">
+        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: none; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text);">
+          ⋮
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
+          <div class="dropdown-item" onclick="handleManualSync(); closeHeaderMoreMenu();">
+            <span id="sync-icon-mobile" style="font-size: 16px;">☁️</span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Đồng bộ Cloud</div>
+              <small id="sync-text-mobile" style="color: var(--text-muted); font-size: 10.5px;">Sao lưu dữ liệu tức thì</small>
+            </div>
+          </div>
+          <div class="dropdown-item" onclick="openProfileModal(); closeHeaderMoreMenu();">
+            <span style="font-size: 16px;">👤</span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px;" id="user-display-name-mobile">Tài khoản (Khách)</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Hồ sơ & Đăng nhập</small>
+            </div>
+          </div>
+          <div class="dropdown-item" onclick="openSettingsModal(); closeHeaderMoreMenu();">
+            <span style="font-size: 16px;">⚙️</span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Cài đặt & Giao diện</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Chủ đề, giọng đọc, AI Key</small>
+            </div>
+          </div>
+          <div class="dropdown-item" onclick="triggerPwaInstall(); closeHeaderMoreMenu();">
+            <span style="font-size: 16px;">📲</span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Cài đặt ứng dụng (PWA)</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Chạy mượt như app gốc</small>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="exportAllBackup(); closeHeaderMoreMenu();">
+            <span style="font-size: 16px;">💾</span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px;">Xuất file sao lưu</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Tải về file JSON dự phòng</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -2231,7 +2323,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -2574,6 +2666,28 @@
       const tsCheckbox = document.getElementById('settings-timestamp-checkbox');
       if (tsCheckbox) tsCheckbox.checked = showTimestampSetting;
     }
+
+    // Mobile Header 3-Dots Menu Logic (v0.0.8.6)
+    function toggleHeaderMoreMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('header-more-dropdown');
+      if (!menu) return;
+      const isOpen = menu.style.display === 'block';
+      menu.style.display = isOpen ? 'none' : 'block';
+    }
+
+    function closeHeaderMoreMenu() {
+      const menu = document.getElementById('header-more-dropdown');
+      if (menu) menu.style.display = 'none';
+    }
+
+    // Auto close header dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const wrapper = document.querySelector('.mobile-more-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeHeaderMoreMenu();
+      }
+    });
 
     // In-memory Database State
     let decks = [];
@@ -3124,9 +3238,11 @@
       const profileAvatarEl = document.getElementById('profile-avatar');
       const authActionBtn = document.getElementById('btn-profile-auth-action');
 
+      const nameMobileEl = document.getElementById('user-display-name-mobile');
       if (currentUser && currentUser.email) {
         const displayName = currentUser.displayName || currentUser.email.split('@')[0];
         if (nameEl) nameEl.textContent = displayName;
+        if (nameMobileEl) nameMobileEl.textContent = `Tài khoản (${displayName})`;
         if (profileNameEl) profileNameEl.textContent = displayName;
         if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
         if (profileBadgeEl) {
@@ -3142,6 +3258,7 @@
         }
       } else {
         if (nameEl) nameEl.textContent = 'Khách';
+        if (nameMobileEl) nameMobileEl.textContent = 'Tài khoản (Khách)';
         if (profileNameEl) profileNameEl.textContent = 'Khách (Offline)';
         if (profileEmailEl) profileEmailEl.textContent = 'Dữ liệu lưu trữ nội bộ trên máy này.';
         if (profileBadgeEl) {
@@ -3389,9 +3506,13 @@
 
       const syncIcon = document.getElementById('sync-icon');
       const syncText = document.getElementById('sync-text');
+      const syncIconMob = document.getElementById('sync-icon-mobile');
+      const syncTextMob = document.getElementById('sync-text-mobile');
       const syncBadge = document.getElementById('sync-status-badge');
       if (syncIcon) syncIcon.textContent = '🔄';
       if (syncText) syncText.textContent = 'Đang đồng bộ...';
+      if (syncIconMob) syncIconMob.textContent = '🔄';
+      if (syncTextMob) syncTextMob.textContent = 'Đang đồng bộ...';
       if (syncBadge) {
         syncBadge.textContent = 'Đang kết nối Cloud...';
         syncBadge.style.color = '#38bdf8';
@@ -3558,6 +3679,8 @@
 
         if (syncIcon) syncIcon.textContent = '☁️';
         if (syncText) syncText.textContent = 'Đã đồng bộ';
+        if (syncIconMob) syncIconMob.textContent = '☁️';
+        if (syncTextMob) syncTextMob.textContent = 'Đã đồng bộ tức thì';
         if (syncBadge) {
           syncBadge.textContent = 'Đã đồng bộ Cloud';
           syncBadge.style.color = '#10b981';
@@ -3567,6 +3690,8 @@
         console.error('Sync general error:', e);
         if (syncIcon) syncIcon.textContent = '☁️';
         if (syncText) syncText.textContent = 'Ngoại tuyến';
+        if (syncIconMob) syncIconMob.textContent = '☁️';
+        if (syncTextMob) syncTextMob.textContent = 'Dữ liệu cục bộ';
         if (syncBadge) {
           syncBadge.textContent = 'Đang dùng bộ nhớ cục bộ';
           syncBadge.style.color = '#fbbf24';
