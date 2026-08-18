@@ -1,2679 +1,4 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VocaFlow - Học Từ Vựng Tiếng Anh Cá Nhân Hóa (Offline-First)</title>
-  
-  <!-- PWA & Mobile Optimization -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4f46e5">
-  <meta name="referrer" content="no-referrer">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="VocaFlow">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <link rel="icon" type="image/png" href="icons/Icon-192.png">
-
-  <script src="xlsx.full.min.js"></script>
-  
-  <style>
-    :root, [data-theme="dark"] {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --primary-light: rgba(79, 70, 229, 0.14);
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface-elevated: #334155;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --success: #10b981;
-      --success-light: rgba(16, 185, 129, 0.15);
-      --warning: #f59e0b;
-      --warning-light: rgba(245, 158, 11, 0.15);
-      --danger: #ef4444;
-      --danger-light: rgba(239, 68, 68, 0.15);
-      --purple: #8b5cf6;
-      --purple-light: rgba(139, 92, 246, 0.15);
-      --card-bg-gradient: linear-gradient(145deg, #1e293b, #0f172a);
-      --header-bg: rgba(30, 41, 59, 0.95);
-      --radius: 16px;
-    }
-
-    [data-theme="light"] {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --primary-light: rgba(79, 70, 229, 0.1);
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-elevated: #f1f5f9;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: #cbd5e1;
-      --success: #059669;
-      --success-light: rgba(16, 185, 129, 0.12);
-      --warning: #d97706;
-      --warning-light: rgba(245, 158, 11, 0.12);
-      --danger: #dc2626;
-      --danger-light: rgba(239, 68, 68, 0.12);
-      --purple: #7c3aed;
-      --purple-light: rgba(139, 92, 246, 0.12);
-      --card-bg-gradient: linear-gradient(145deg, #ffffff, #f1f5f9);
-      --header-bg: rgba(255, 255, 255, 0.95);
-      --radius: 16px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      transition: background-color 0.25s ease, color 0.25s ease;
-    }
-
-    /* SVG ICONS */
-    .icon {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
-      display: inline-block;
-      vertical-align: middle;
-      flex-shrink: 0;
-    }
-    .icon-sm { width: 15px; height: 15px; }
-    .icon-lg { width: 32px; height: 32px; }
-    .icon-xl { width: 56px; height: 56px; }
-
-    /* HEADER */
-    header {
-      background-color: var(--header-bg);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      backdrop-filter: blur(8px);
-      transition: background-color 0.25s ease, border-color 0.25s ease;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 20px;
-      color: var(--text);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .brand-icon {
-      background: linear-gradient(135deg, #4f46e5, #06b6d4);
-      color: white;
-      padding: 6px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 16px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      user-select: none;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-    }
-    .btn-outline:hover {
-      background-color: var(--surface-elevated);
-      border-color: var(--text-muted);
-    }
-
-    .btn-success {
-      background-color: var(--success);
-      color: white;
-    }
-    .btn-danger {
-      background-color: var(--danger);
-      color: white;
-    }
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 8px;
-    }
-    .btn-icon {
-      padding: 8px;
-      border-radius: 10px;
-    }
-
-    /* MAIN CONTAINER */
-    main {
-      flex: 1;
-      max-width: 1100px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 24px 16px 60px;
-    }
-
-    .screen {
-      display: none;
-      animation: fadeIn 0.25s ease forwards;
-    }
-    .screen.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* TOP BAR / BREADCRUMB */
-    .top-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .screen-title {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* DECK TABS (ACTIVE VS ARCHIVED STORAGE) */
-    .deck-tabs-container {
-      margin-bottom: 18px;
-    }
-    .deck-tabs {
-      display: inline-flex;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 4px;
-      gap: 4px;
-    }
-    .deck-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      user-select: none;
-    }
-    .deck-tab:hover {
-      color: var(--text);
-      background: var(--surface-elevated);
-    }
-    .deck-tab.active {
-      background: var(--primary);
-      color: white;
-    }
-    .deck-tab-badge {
-      background: rgba(255, 255, 255, 0.18);
-      color: inherit;
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    /* DECK GRID */
-    .deck-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 18px;
-    }
-
-    .deck-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      box-sizing: border-box;
-      width: 100%;
-    }
-    .deck-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--primary);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-    }
-    .deck-card.pinned {
-      border-color: #6366f1;
-      background: linear-gradient(155deg, var(--surface) 0%, rgba(99, 102, 241, 0.07) 100%);
-      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
-    }
-    .deck-card.archived {
-      opacity: 0.88;
-      border-style: dashed;
-    }
-    .deck-card-strip {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-    }
-
-    .deck-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-      gap: 8px;
-    }
-    .deck-title {
-      font-size: 18px;
-      font-weight: 700;
-      word-break: break-word;
-    }
-    .deck-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      line-height: 1.5;
-      flex: 1;
-      word-break: break-word;
-    }
-
-    .progress-bar-bg {
-      background-color: rgba(255, 255, 255, 0.08);
-      height: 7px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4f46e5, #10b981);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .deck-stats {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    /* DECK CARD ACTIONS FOOTER */
-    .deck-card-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .deck-card-actions-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .deck-card-actions-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .active-pin-btn {
-      color: #818cf8 !important;
-      border-color: #6366f1 !important;
-      background: rgba(99, 102, 241, 0.12) !important;
-    }
-    .badge-pinned {
-      background: rgba(99, 102, 241, 0.18);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      font-weight: 700;
-    }
-
-    /* BADGES */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .badge-cefr {
-      background-color: var(--purple-light);
-      color: #a78bfa;
-      border: 1px solid rgba(139, 92, 246, 0.3);
-    }
-    .badge-pos {
-      background-color: var(--primary-light);
-      color: #818cf8;
-      font-style: italic;
-    }
-    .badge-new {
-      background-color: rgba(148, 163, 184, 0.15);
-      color: #94a3b8;
-    }
-    .badge-learning {
-      background-color: var(--warning-light);
-      color: var(--warning);
-    }
-    .badge-mastered {
-      background-color: var(--success-light);
-      color: var(--success);
-    }
-
-    /* ULTRA-COMPACT SEARCH & FILTER BAR */
-    .filter-bar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 2px;
-      flex-wrap: wrap;
-    }
-    .search-input {
-      flex: 1;
-      min-width: 180px;
-      height: 32px;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px 10px;
-      color: var(--text);
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
-    .chip-group {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding: 2px 2px 4px;
-      max-width: 100%;
-      white-space: nowrap;
-      flex: 1;
-    }
-    .chip-group::-webkit-scrollbar {
-      display: none;
-    }
-    .chip {
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11.5px;
-      font-weight: 600;
-      height: 30px;
-      display: inline-flex;
-      align-items: center;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .chip:hover {
-      border-color: var(--primary);
-      color: var(--text);
-    }
-    .chip.active {
-      background: linear-gradient(135deg, #4f46e5, #6366f1);
-      color: white;
-      border-color: #4f46e5;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-    }
-
-    /* WORD LIST & CARD REDESIGN */
-    .word-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .word-item {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: all 0.2s ease;
-      overflow: hidden;
-      box-sizing: border-box;
-      width: 100%;
-    }
-    .word-item.selected {
-      border-color: #6366f1;
-      background-color: rgba(99, 102, 241, 0.06);
-    }
-    .word-item:hover {
-      border-color: var(--surface-elevated);
-    }
-    .word-item-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      width: 100%;
-      flex-wrap: wrap;
-    }
-    .word-item-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      flex: 1;
-      min-width: 0;
-    }
-    .word-select-checkbox {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-      accent-color: #6366f1;
-      flex-shrink: 0;
-    }
-    .word-term {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      word-break: break-word;
-    }
-    .btn-speaker {
-      padding: 4px 6px;
-      border-radius: 6px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .btn-speaker:hover {
-      background: var(--surface-elevated);
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-    .word-item-right {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .word-item-right .badge {
-      font-size: 11px;
-      padding: 2px 7px;
-      white-space: nowrap;
-    }
-    .word-item-right .btn-icon {
-      padding: 5px;
-    }
-    .word-item-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding-left: 24px;
-    }
-    .word-phonetic {
-      font-family: monospace;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .word-def {
-      font-size: 14px;
-      line-height: 1.45;
-      color: var(--text);
-    }
-    .word-example {
-      font-size: 12px;
-      font-style: italic;
-      color: var(--text-muted);
-    }
-    .word-tags {
-      display: flex;
-      gap: 8px;
-      font-size: 12px;
-      flex-wrap: wrap;
-      margin-top: 2px;
-    }
-    .tag-syn { color: #38bdf8; }
-    .tag-ant { color: #f87171; }
-    .tag-coll { color: #34d399; }
-
-    .word-mastery-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .word-mastery-track {
-      background-color: rgba(255, 255, 255, 0.08);
-      height: 6px;
-      border-radius: 4px;
-      overflow: hidden;
-      width: 120px;
-    }
-    [data-theme="light"] .word-mastery-track {
-      background-color: rgba(0, 0, 0, 0.08);
-    }
-    .word-mastery-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: linear-gradient(90deg, #6366f1, #10b981);
-      transition: width 0.4s ease;
-    }
-    .word-mastery-score-text {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-    .badge-mastery {
-      background: rgba(16, 185, 129, 0.12);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      font-weight: 700;
-    }
-
-    /* ULTRA-COMPACT STICKY FREEZE PANE IN DECK DETAIL */
-    .deck-detail-sticky-pane {
-      position: sticky;
-      top: 57px;
-      z-index: 35;
-      background-color: var(--bg);
-      padding: 4px 0 6px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 8px;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      transition: background-color 0.25s ease, border-color 0.25s ease;
-    }
-    .deck-detail-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-    .deck-detail-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-    .deck-title-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: nowrap;
-    }
-    .deck-title-group .screen-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 240px;
-    }
-    .deck-quick-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .deck-detail-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      flex-shrink: 0;
-    }
-    .deck-detail-right .btn {
-      padding: 4px 10px;
-      font-size: 12px;
-      height: 30px;
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* TIMESTAMPS DISPLAY (DECKS & WORDS) */
-    .deck-timestamp, .word-timestamp {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 0;
-    }
-    body.hide-timestamps .deck-timestamp,
-    body.hide-timestamps .word-timestamp {
-      display: none !important;
-    }
-
-    /* SLIM SELECTION & STUDY BAR */
-    .selection-study-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px 10px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .selection-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .selection-checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      user-select: none;
-    }
-    .selection-study-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .selection-study-actions .btn {
-      padding: 3px 9px;
-      font-size: 12px;
-      height: 28px;
-      border-radius: 7px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* AUTO FLASHCARD (HANDS-FREE AUDIO LOOP) */
-    .autofc-controls-panel {
-      max-width: 540px;
-      margin: 0 auto;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-    .autofc-main-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-    }
-    .autofc-speed-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .autofc-speed-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .autofc-speed-item label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-    .autofc-speed-item input[type="range"] {
-      width: 100%;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    /* FLASHCARD 3D */
-    .flashcard-container {
-      perspective: 1200px;
-      max-width: 540px;
-      height: 380px;
-      margin: 20px auto 30px;
-      cursor: pointer;
-    }
-    .flashcard {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 24px;
-    }
-    .flashcard.flipped {
-      transform: rotateY(180deg);
-    }
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 24px;
-      background: var(--card-bg-gradient);
-      border: 2px solid var(--border);
-      padding: 32px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
-    }
-    .card-face.card-back {
-      transform: rotateY(180deg);
-      border-color: var(--primary);
-    }
-    .card-term-large {
-      font-size: 32px;
-      font-weight: 800;
-      margin: 12px 0 6px;
-      letter-spacing: -0.5px;
-    }
-    .card-def-large {
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 1.4;
-      margin-bottom: 12px;
-    }
-
-    /* QUIZ */
-    .quiz-container {
-      max-width: 580px;
-      margin: 0 auto;
-    }
-    .quiz-question-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .quiz-hint-box {
-      margin-top: 14px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: var(--surface-elevated);
-      border: 1px dashed var(--warning);
-      color: var(--text);
-      font-size: 13.5px;
-      line-height: 1.5;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      animation: fadeIn 0.25s ease;
-    }
-    body.theme-light .quiz-hint-box {
-      background: #fffbeb !important;
-      border-color: #f59e0b !important;
-      color: #92400e !important;
-    }
-    body.theme-dark .quiz-hint-box {
-      background: rgba(245, 158, 11, 0.12) !important;
-      border-color: rgba(245, 158, 11, 0.4) !important;
-      color: #fef08a !important;
-    }
-    .quiz-options {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-    .quiz-option {
-      background-color: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 20px;
-      font-size: 15px;
-      font-weight: 600;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .quiz-option:hover:not(.disabled) {
-      border-color: var(--primary);
-      background-color: var(--surface-elevated);
-      transform: translateX(3px);
-    }
-    .quiz-option.disabled {
-      pointer-events: none !important;
-      cursor: default !important;
-      opacity: 0.85;
-    }
-    .quiz-option.correct {
-      background-color: var(--success-light) !important;
-      border-color: var(--success) !important;
-      color: var(--success) !important;
-    }
-    .quiz-option.wrong {
-      background-color: var(--danger-light) !important;
-      border-color: var(--danger) !important;
-      color: var(--danger) !important;
-    }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      max-width: 580px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    }
-    .modal-title {
-      font-size: 19px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-    .form-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .form-input, .form-select, .form-textarea {
-      width: 100%;
-      background-color: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--primary);
-    }
-    .form-row {
-      display: flex;
-      gap: 12px;
-    }
-    .form-row > * {
-      flex: 1;
-    }
-
-    /* THEME PICKER GRID IN SETTINGS */
-    .theme-picker-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-    }
-    .theme-card {
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      background: var(--surface-elevated);
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    .theme-card input {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      accent-color: var(--primary);
-    }
-    .theme-card.active {
-      border-color: var(--primary);
-      background: var(--primary-light);
-    }
-    .theme-icon {
-      font-size: 22px;
-      margin-bottom: 2px;
-    }
-
-    /* IPA KEYBOARD CONTAINER */
-    .ipa-keyboard-panel {
-      background-color: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 8px;
-    }
-    .ipa-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-      overflow-x: auto;
-    }
-    .ipa-tab {
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .ipa-tab.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    .ipa-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-      gap: 6px;
-    }
-    .ipa-key {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 4px;
-      font-family: monospace;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-      cursor: pointer;
-      text-align: center;
-      user-select: none;
-      transition: all 0.1s ease;
-    }
-    .ipa-key:hover {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background-color: var(--surface-elevated);
-      color: var(--text);
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
-      z-index: 200;
-      display: none;
-      animation: slideUp 0.2s ease;
-      border-left: 4px solid var(--primary);
-    }
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-
-
-    /* RESPONSIVE DESIGN FOR MOBILE */
-    /* MOBILE HEADER MORE DROPDOWN (v0.0.8.6) */
-    .mobile-more-wrapper {
-      position: relative;
-    }
-    .header-more-dropdown {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      width: 230px;
-      background: var(--surface-elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 6px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
-      z-index: 1000;
-      backdrop-filter: blur(12px);
-      animation: fadeInDropdown 0.15s ease-out;
-    }
-    @keyframes fadeInDropdown {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12.5px;
-      color: var(--text);
-      transition: background 0.15s ease;
-      text-align: left;
-    }
-    .dropdown-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .dropdown-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 4px 6px;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        padding: 6px 10px;
-        gap: 6px;
-        min-height: 48px;
-      }
-      .brand {
-        font-size: 15px;
-        gap: 4px;
-        flex-shrink: 0;
-      }
-      .brand-icon {
-        padding: 3px;
-        border-radius: 6px;
-      }
-      .brand-icon .icon {
-        width: 14px;
-        height: 14px;
-      }
-      .header-actions {
-        gap: 6px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-      }
-      .desktop-only-action {
-        display: none !important;
-      }
-      .mobile-more-btn {
-        display: inline-flex !important;
-      }
-      .hide-on-mobile {
-        display: none !important;
-      }
-      .user-display-truncate {
-        max-width: 50px;
-        display: inline-block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        vertical-align: middle;
-      }
-      main {
-        padding: 12px 10px 60px;
-      }
-      .deck-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .top-nav {
-        margin-bottom: 12px;
-      }
-      .screen-title {
-        font-size: 18px;
-      }
-      .top-nav .btn {
-        padding: 7px 12px;
-        font-size: 12px;
-      }
-      .modal {
-        padding: 16px 14px;
-        border-radius: 16px;
-      }
-      .word-item {
-        padding: 12px 12px;
-      }
-      .word-item-body {
-        padding-left: 0;
-      }
-      .theme-picker-grid {
-        grid-template-columns: 1fr;
-      }
-      .deck-tabs {
-        width: 100%;
-        display: flex;
-      }
-      .deck-tab {
-        flex: 1;
-        justify-content: center;
-        padding: 8px 8px;
-        font-size: 12px;
-      }
-      .deck-card-actions {
-        gap: 6px;
-      }
-      .deck-card-actions-left .btn, .deck-card-actions-right .btn {
-        padding: 5px 7px;
-        font-size: 11px;
-      }
-
-      /* DECK DETAIL STICKY PANE (MOBILE REFINEMENT) */
-      .deck-detail-nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        margin-bottom: 6px;
-      }
-      .deck-detail-left {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-        flex-wrap: nowrap;
-      }
-      .deck-title-group {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .deck-title-group .screen-title {
-        font-size: 16px;
-        max-width: 140px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .deck-quick-actions {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-        flex-shrink: 0;
-      }
-      .deck-quick-actions .btn {
-        padding: 4px;
-        width: 28px;
-        height: 28px;
-      }
-
-      .deck-detail-right {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr;
-        gap: 6px;
-        width: 100%;
-      }
-      .deck-detail-right .btn {
-        width: 100%;
-        padding: 6px 2px;
-        font-size: 11px;
-        font-weight: 600;
-        justify-content: center;
-        height: 32px;
-        white-space: nowrap;
-      }
-
-      .selection-study-bar {
-        padding: 6px 8px;
-        gap: 6px;
-        margin-bottom: 6px;
-      }
-      .selection-bar-left {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .selection-study-actions {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 5px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .selection-study-actions .btn {
-        width: 100%;
-        min-width: 0;
-        padding: 6px 2px;
-        font-size: 11px;
-        font-weight: 600;
-        justify-content: center;
-        height: 32px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        box-sizing: border-box;
-      }
-      .selection-study-actions .btn span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-      }
-      .search-input {
-        width: 100%;
-        min-width: 100%;
-        box-sizing: border-box;
-      }
-      .chip-group {
-        width: 100%;
-        display: flex;
-        gap: 5px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 2px;
-      }
-      .chip {
-        flex-shrink: 0;
-        padding: 4px 10px;
-        font-size: 11px;
-      }
-
-      /* AUTO FLASHCARD (FIX HORIZONTAL OVERFLOW & HEIGHT FIT) */
-      .flashcard-container {
-        height: 320px;
-        margin: 10px auto 14px;
-      }
-      .card-face {
-        padding: 16px 12px;
-        border-radius: 18px;
-      }
-      .card-term-large {
-        font-size: 22px;
-        margin: 6px 0 4px;
-      }
-      .card-def-large {
-        font-size: 16px;
-      }
-      .autofc-controls-panel {
-        padding: 12px 10px;
-        gap: 10px;
-        border-radius: 16px;
-      }
-      .autofc-speed-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-        padding-top: 10px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .autofc-speed-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .autofc-speed-item label {
-        font-size: 11px;
-        min-width: 130px;
-        flex-shrink: 0;
-        white-space: nowrap;
-      }
-      .autofc-speed-item input[type="range"] {
-        flex: 1;
-        min-width: 0;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- SVG ICON SPRITE -->
-  <svg style="display: none;">
-    <defs>
-      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></symbol>
-      <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
-      <symbol id="i-arrow-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
-      <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></symbol>
-      <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></symbol>
-      <symbol id="i-download" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
-      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></symbol>
-      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></symbol>
-      <symbol id="i-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
-      <symbol id="i-cards" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></symbol>
-      <symbol id="i-quiz" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm1.7-5.2c-.39.3-.7.59-.7 1.2h-2c0-1.09.61-1.74 1.21-2.2.49-.37.79-.6.79-1.1 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5H7.5c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.14-.62 1.9-1.8 2.6z"/></symbol>
-      <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
-      <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></symbol>
-      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M16 9V4l1 0c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1l1 0v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></symbol>
-      <symbol id="i-archive" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></symbol>
-      <symbol id="i-unarchive" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.81-1h12l.94 1H5.12z"/></symbol>
-      <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2a7 7 0 0 1 14 0v2h-4v8h3c1.66 0 3-1.34 3-3v-7a9 9 0 0 0-9-9z"/></symbol>
-      <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></symbol>
-      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
-      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></symbol>
-      <symbol id="i-skip-next" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></symbol>
-      <symbol id="i-skip-prev" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></symbol>
-    </defs>
-  </svg>
-
-  <!-- APP HEADER -->
-  <header>
-    <div class="brand" onclick="showScreen('screen-decks')">
-      <div class="brand-icon">
-        <svg class="icon"><use href="#i-book"/></svg>
-      </div>
-      <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.10</span>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
-        🏪 <span id="header-points-display">0đ</span>
-      </button>
-
-      <!-- Desktop Action Buttons (Hidden on mobile) -->
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
-      </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
-        👤 <span id="user-display-name" class="user-display-truncate">Khách</span>
-      </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
-        ⚙️ <span>Cài đặt</span>
-      </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
-        📲 <span>Cài App</span>
-      </button>
-      <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
-        <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
-      </button>
-      <button class="btn btn-primary btn-sm hide-on-mobile" id="btn-header-add" onclick="openDeckModal()">
-        <svg class="icon icon-sm"><use href="#i-add"/></svg> Tạo Bộ Từ
-      </button>
-
-      <!-- Mobile 3-Dots Dropdown Menu (Visible only on mobile <= 768px) -->
-      <div class="mobile-more-wrapper">
-        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: none; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text);">
-          ⋮
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
-          <div class="dropdown-item" onclick="openLibraryModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
-            <span style="font-size: 16px;">📚</span>
-            <div>
-              <div style="font-weight: 700; font-size: 13px; color: #a5b4fc;">Thư Viện Từ Vựng</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Kho từ mẫu THPT 10, 11, 12</small>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" onclick="handleManualSync(); closeHeaderMoreMenu();">
-            <span id="sync-icon-mobile" style="font-size: 16px;">☁️</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;">Đồng bộ Cloud</div>
-              <small id="sync-text-mobile" style="color: var(--text-muted); font-size: 10.5px;">Sao lưu dữ liệu tức thì</small>
-            </div>
-          </div>
-          <div class="dropdown-item" onclick="openProfileModal(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">👤</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;" id="user-display-name-mobile">Tài khoản (Khách)</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Hồ sơ & Đăng nhập</small>
-            </div>
-          </div>
-          <div class="dropdown-item" onclick="openSettingsModal(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">⚙️</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;">Cài đặt & Giao diện</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Chủ đề, giọng đọc, AI Key</small>
-            </div>
-          </div>
-          <div class="dropdown-item" onclick="triggerPwaInstall(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">📲</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;">Cài đặt ứng dụng (PWA)</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Chạy mượt như app gốc</small>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" onclick="exportAllBackup(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">💾</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;">Xuất file sao lưu</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Tải về file JSON dự phòng</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main>
-    <!-- SCREEN 1: DECK LIST -->
-    <section id="screen-decks" class="screen active">
-      <div class="top-nav">
-        <div>
-          <h1 class="screen-title" style="margin-bottom: 2px;">Bộ Từ Vựng Của Bạn</h1>
-          <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Quản lý và ôn tập các bộ từ thông minh</p>
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn btn-outline" onclick="openLibraryModal()" style="border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.1); font-weight: 700;">
-            📚 Thư Viện Từ Vựng
-          </button>
-          <button class="btn btn-primary" onclick="openDeckModal()">
-            <svg class="icon"><use href="#i-add"/></svg> Thêm Bộ Từ
-          </button>
-        </div>
-      </div>
-
-      <!-- DECK FILTER TABS (ACTIVE VS ARCHIVED STORAGE) -->
-      <div class="deck-tabs-container">
-        <div class="deck-tabs">
-          <button class="deck-tab active" id="tab-active-decks" onclick="setDeckTab('active')">
-            <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Đang học</span> (<span id="count-active-decks">0</span>)
-          </button>
-          <button class="deck-tab" id="tab-archived-decks" onclick="setDeckTab('archived')">
-            <svg class="icon icon-sm"><use href="#i-archive"/></svg> <span>Kho Lưu Trữ</span> (<span id="count-archived-decks">0</span>)
-          </button>
-        </div>
-      </div>
-
-      <div class="deck-grid" id="deck-grid">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- SCREEN 2: DECK DETAIL -->
-    <section id="screen-deck-detail" class="screen">
-      <div class="deck-detail-sticky-pane" id="deck-detail-sticky-pane">
-        <!-- ROW 1: HEADER & PRIMARY ACTION BUTTONS -->
-        <div class="deck-detail-nav">
-          <div class="deck-detail-left">
-            <button class="btn btn-outline btn-icon btn-sm" onclick="showScreen('screen-decks')" title="Quay lại danh sách bộ từ">
-              <svg class="icon icon-sm"><use href="#i-arrow-back"/></svg>
-            </button>
-            <div class="deck-title-group">
-              <h1 class="screen-title" id="deck-detail-title">Deck Title</h1>
-              <div class="deck-quick-actions">
-                <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-pin" onclick="togglePinDeck(currentDeckId)" title="Ghim / Bỏ ghim"><svg class="icon icon-sm"><use href="#i-pin"/></svg></button>
-                <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-archive" onclick="toggleArchiveDeck(currentDeckId)" title="Lưu trữ / Khôi phục"><svg class="icon icon-sm"><use href="#i-archive"/></svg></button>
-                <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-                <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
-              </div>
-            </div>
-            <span id="deck-detail-desc" style="display: none;"></span>
-            <span id="deck-detail-timestamp" class="deck-timestamp hide-on-mobile"></span>
-          </div>
-
-          <div class="deck-detail-right">
-            <button class="btn btn-primary btn-sm" onclick="openWordModal()" title="Thêm từ vựng mới vào bộ này">
-              <svg class="icon icon-sm"><use href="#i-add"/></svg> <span>Thêm Từ</span>
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="importExcelModal()" title="Nhập danh sách từ vựng từ Excel">
-              <svg class="icon icon-sm"><use href="#i-upload"/></svg> <span>Nhập Excel</span>
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()" title="Xuất bộ từ ra file Excel (.xlsx)">
-              <svg class="icon icon-sm"><use href="#i-download"/></svg> <span>Xuất Excel</span>
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="shareCurrentDeckToLibrary()" title="Đóng góp bộ từ này lên Thư Viện Cộng Đồng" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
-              <span>🚀</span> <span>Chia sẻ Thư Viện</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2: SLIM SELECTION & STUDY BAR -->
-        <div id="selection-study-bar" class="selection-study-bar">
-          <div class="selection-bar-left">
-            <label class="selection-checkbox-label" title="Chọn/Bỏ chọn tất cả từ trong bộ này">
-              <input type="checkbox" id="select-all-words-checkbox" onchange="toggleSelectAllWords(this.checked)" class="word-select-checkbox">
-              <span>Chọn tất cả</span>
-            </label>
-            <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600; font-size: 11px;">0 từ</span>
-            <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3); padding: 2px 7px; font-size: 11px;">
-              <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa
-            </button>
-          </div>
-          
-          <div class="selection-study-actions">
-            <button class="btn btn-outline btn-sm" id="btn-toggle-study-shuffle" onclick="toggleStudyShuffle()" title="Bật/Tắt chế độ Trộn ngẫu nhiên (Flashcard, Auto FC, Quiz)">
-              🔀 <span class="hide-on-mobile">Trộn</span>
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected" title="Học Flashcard lật thẻ">
-              <svg class="icon icon-sm"><use href="#i-cards"/></svg> <span>Flashcard</span><span id="fc-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
-              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto FC</span><span id="autofc-count-label"></span>
-            </button>
-            <button class="btn btn-outline btn-sm" style="border-color: var(--primary); color: #818cf8;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span><span id="quiz-count-label"></span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER -->
-        <div class="filter-bar">
-          <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()">
-          <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
-            🎚️ <span class="hide-on-mobile">Lọc điểm</span>
-          </button>
-          <div class="chip-group" id="deck-word-filter-chips">
-            <div class="chip active" onclick="setWordFilter('all', this)">🎓 Tất cả (<span id="chip-count-all">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('0', this)">🌱 Mới 0% (<span id="chip-count-0">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('1-25', this)">🐣 Vừa học 1-25% (<span id="chip-count-1-25">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('26-50', this)">🌿 Hơi thuộc 26-50% (<span id="chip-count-26-50">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('51-75', this)">🌳 Khá thuộc 51-75% (<span id="chip-count-51-75">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('76-99', this)">⭐ Sắp thuộc 76-99% (<span id="chip-count-76-99">0</span>)</div>
-            <div class="chip" onclick="setWordFilter('100', this)">👑 Đã thuộc 100% (<span id="chip-count-100">0</span>)</div>
-          </div>
-        </div>
-
-        <!-- EXPANDABLE RANGE SLIDER FILTER PANEL -->
-        <div id="mastery-slider-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
-              <span>🎚️</span> Thanh Trượt Lọc Mức Độ Thuộc: <span id="slider-range-val" style="color: #818cf8; font-family: monospace; font-size: 13px;">0% - 100%</span>
-            </div>
-            <button class="btn btn-outline btn-sm" onclick="resetMasterySlider()" style="font-size: 11px; padding: 2px 8px;">🔄 Đặt lại (0 - 100%)</button>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
-                <span>Điểm tối thiểu (Min):</span>
-                <strong id="label-min-score" style="color: #818cf8;">0%</strong>
-              </div>
-              <input type="range" id="mastery-min-slider" min="0" max="100" value="0" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #6366f1;">
-            </div>
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
-                <span>Điểm tối đa (Max):</span>
-                <strong id="label-max-score" style="color: #10b981;">100%</strong>
-              </div>
-              <input type="range" id="mastery-max-slider" min="0" max="100" value="100" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #10b981;">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WORD LIST -->
-      <div class="word-list" id="word-list-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- SCREEN 3: FLASHCARD MODE -->
-    <section id="screen-flashcard" class="screen">
-      <div class="top-nav">
-        <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
-          <svg class="icon"><use href="#i-arrow-back"/></svg>
-        </button>
-        <div id="fc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentFlashcard()" title="Xáo trộn ngẫu nhiên thứ tự các thẻ">
-            🔀 <span class="hide-on-mobile">Trộn thẻ</span>
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="speakText(currentFlashcardWord?.term)">
-            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 10px;">
-        <div class="progress-bar-fill" id="fc-progress-bar" style="width: 10%;"></div>
-      </div>
-
-      <div class="flashcard-container" onclick="toggleCardFlip()">
-        <div class="flashcard" id="flashcard-element">
-          <!-- Front Face -->
-          <div class="card-face card-front">
-            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 10px;">
-              <div id="fc-front-cefr" class="badge badge-cefr" style="display: none;">B2</div>
-              <div id="fc-front-pos" class="badge badge-pos">NOUN</div>
-              <div id="fc-front-mastery-badge" class="badge badge-mastery">🎯 0%</div>
-            </div>
-            <div class="card-term-large" id="fc-front-term">Ubiquitous</div>
-            <div class="word-phonetic" id="fc-front-phonetic">/juːˈbɪk.wə.təs/</div>
-            
-            <div style="margin-top: 24px; width: 100%; max-width: 220px;">
-              <div class="word-mastery-track" style="width: 100%; margin: 0 auto 6px;">
-                <div class="word-mastery-fill" id="fc-front-mastery-fill" style="width: 0%;"></div>
-              </div>
-              <div id="fc-front-mastery-sub" style="font-size: 11px; color: var(--text-muted);">Mức độ thuộc: 0/100</div>
-            </div>
-
-            <div style="margin-top: 20px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-              <span>Chạm để lật mặt sau</span>
-            </div>
-          </div>
-
-          <!-- Back Face -->
-          <div class="card-face card-back">
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
-              <div id="fc-back-term" style="font-size: 18px; font-weight: 700; color: var(--primary);">Ubiquitous</div>
-              <div id="fc-back-mastery-badge" class="badge badge-mastery">🎯 0%</div>
-            </div>
-            <div class="card-def-large" id="fc-back-def">Có mặt ở khắp mọi nơi</div>
-            <div id="fc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px;"></div>
-            
-            <div id="fc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 6px;">
-              <!-- Synonyms, Antonyms, Collocations -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div style="display: flex; justify-content: center; gap: 16px; max-width: 540px; margin: 0 auto;">
-        <button class="btn btn-outline btn-danger" id="fc-btn-no" style="flex: 1; padding: 14px;" onclick="markFlashcardMastery(false)">
-          <svg class="icon"><use href="#i-close"/></svg> Chưa thuộc (-1đ)
-        </button>
-        <button class="btn btn-success" id="fc-btn-yes" style="flex: 1; padding: 14px;" onclick="markFlashcardMastery(true)">
-          <svg class="icon"><use href="#i-check"/></svg> Thuộc rồi (+6đ)
-        </button>
-      </div>
-    </section>
-
-    <!-- SCREEN 4: QUIZ MODE -->
-    <section id="screen-quiz" class="screen">
-      <div class="top-nav">
-        <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
-          <svg class="icon"><use href="#i-arrow-back"/></svg>
-        </button>
-        <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentQuiz()" title="Xáo trộn ngẫu nhiên bộ câu hỏi Quiz">
-            🔀 <span class="hide-on-mobile">Trộn</span>
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
-            🏪 <span id="quiz-wallet-points">0đ</span>
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="speakQuizTerm()" title="Phát âm từ vựng">
-            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
-          </button>
-          <div id="quiz-score" style="font-weight: 700; color: var(--success);">Bài: 0đ</div>
-        </div>
-      </div>
-
-      <div class="quiz-container">
-        <div class="quiz-question-card" style="position: relative;">
-          <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="position: absolute; top: 12px; right: 12px; border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-            <span style="font-size: 14px; line-height: 1;">❓</span>
-            <span id="quiz-card-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
-          </button>
-          <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Chọn định nghĩa đúng cho từ:</div>
-          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;">
-            <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin: 0;">Term</h2>
-            <button class="btn btn-outline btn-icon" id="btn-quiz-speak" onclick="speakQuizTerm()" title="Phát âm từ vựng" style="width: 38px; height: 38px; border-radius: 50%; color: var(--primary); border-color: rgba(99, 102, 241, 0.3);">
-              <svg class="icon"><use href="#i-volume"/></svg>
-            </button>
-          </div>
-          <div id="quiz-question-phonetic" style="font-family: monospace; color: var(--text-muted);">/phonetic/</div>
-          <div id="quiz-hint-box" class="quiz-hint-box" style="display: none;">
-            <span id="quiz-hint-text">💡 Gợi ý ngữ cảnh...</span>
-          </div>
-        </div>
-
-        <div class="quiz-options" id="quiz-options-container">
-          <!-- 4 Multiple Choices -->
-        </div>
-
-        <div id="quiz-next-container" style="text-align: center; margin-top: 20px; display: none;">
-          <button class="btn btn-primary" style="padding: 12px 32px;" onclick="nextQuizQuestion()">Câu tiếp theo ➔</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-    <section id="screen-autofc" class="screen">
-      <div class="top-nav">
-        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()">
-          <svg class="icon"><use href="#i-arrow-back"/></svg>
-        </button>
-        <div style="text-align: center;">
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">🎧 Auto Flashcard</span>
-            <span id="autofc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</span>
-          </div>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Đóng">
-          <svg class="icon"><use href="#i-close"/></svg>
-        </button>
-      </div>
-
-      <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 12px;">
-        <div class="progress-bar-fill" id="autofc-progress-bar" style="width: 10%; background: linear-gradient(90deg, #10b981, #38bdf8);"></div>
-      </div>
-
-      <!-- Auto Flashcard 3D Card Display -->
-      <div class="flashcard-container" onclick="handleAutoCardManualFlip()" title="Chạm để lật thẻ (khi tạm dừng)" style="cursor: pointer;">
-        <div class="flashcard" id="autofc-card-element">
-          <!-- Front Face -->
-          <div class="card-face card-front">
-            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 10px;">
-              <div id="autofc-front-cefr" class="badge badge-cefr" style="display: none;">B2</div>
-              <div id="autofc-front-pos" class="badge badge-pos">NOUN</div>
-              <div id="autofc-status-indicator" class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🔊 Đang đọc tiếng Anh...</div>
-            </div>
-            <div class="card-term-large" id="autofc-front-term">Term</div>
-            <div class="word-phonetic" id="autofc-front-phonetic">/phonetic/</div>
-
-            <div style="margin-top: 24px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <span id="autofc-hint-text">⏳ Tự động lật và đọc tiếng Việt sau khi phát âm</span>
-            </div>
-          </div>
-
-          <!-- Back Face -->
-          <div class="card-face card-back">
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
-              <div id="autofc-back-term" style="font-size: 20px; font-weight: 700; color: var(--primary);">Term</div>
-              <div class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">🔊 Đọc tiếng Việt</div>
-            </div>
-            <div class="card-def-large" id="autofc-back-def">Định nghĩa tiếng Việt</div>
-            <div id="autofc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px;"></div>
-            
-            <div id="autofc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-top: 6px;">
-              <!-- Meta tags -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Auto Control Bar -->
-      <div class="autofc-controls-panel">
-        <div class="autofc-main-controls">
-          <button class="btn btn-outline btn-icon" onclick="prevAutoFlashcard()" title="Thẻ trước">
-            <svg class="icon"><use href="#i-skip-prev"/></svg>
-          </button>
-          <button class="btn btn-primary btn-icon" id="btn-autofc-playpause" onclick="toggleAutoFlashcardPlayPause()" style="width: 48px; height: 48px; border-radius: 50%; font-size: 18px;" title="Tạm dừng / Tiếp tục">
-            <svg class="icon" id="icon-autofc-playpause"><use href="#i-pause"/></svg>
-          </button>
-          <button class="btn btn-outline btn-icon" onclick="nextAutoFlashcard()" title="Thẻ tiếp theo">
-            <svg class="icon"><use href="#i-skip-next"/></svg>
-          </button>
-          <button class="btn btn-outline btn-icon" id="btn-autofc-loop" onclick="toggleAutoFlashcardLoop()" title="Lặp vô tận danh sách">
-            <svg class="icon"><use href="#i-repeat"/></svg>
-          </button>
-          <button class="btn btn-outline btn-icon" id="btn-autofc-shuffle" onclick="shuffleCurrentAutoFlashcard()" title="Trộn ngẫu nhiên danh sách phát">
-            <span style="font-size: 14px;">🔀</span>
-          </button>
-        </div>
-
-        <!-- Speed & Delay Controls -->
-        <div class="autofc-speed-grid">
-          <div class="autofc-speed-item">
-            <label>🇬🇧 Tốc độ Tiếng Anh: <strong id="autofc-speed-en-label">0.9x</strong></label>
-            <input type="range" min="0.5" max="1.5" step="0.1" value="0.9" id="autofc-speed-en-slider" oninput="updateSpeechRateEn(this.value)">
-          </div>
-          <div class="autofc-speed-item">
-            <label>🇻🇳 Tốc độ Tiếng Việt: <strong id="autofc-speed-vi-label">1.0x</strong></label>
-            <input type="range" min="0.5" max="1.5" step="0.1" value="1.0" id="autofc-speed-vi-slider" oninput="updateSpeechRateVi(this.value)">
-          </div>
-          <div class="autofc-speed-item">
-            <label>⏱️ Thời gian nghỉ: <strong id="autofc-delay-label">1.0s</strong></label>
-            <input type="range" min="0.5" max="4.0" step="0.5" value="1.0" id="autofc-delay-slider" oninput="updateAutoDelay(this.value)">
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL: ADD / EDIT WORD -->
-  <div class="modal-overlay" id="modal-word">
-    <div class="modal">
-      <div class="modal-title">
-        <span id="modal-word-title">Thêm Từ Vựng Mới</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-word')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
-        ✍️ <strong>Thêm thủ công:</strong> Điền các thông tin bạn muốn rồi bấm <strong>Lưu từ vựng</strong>.<br>
-        ✨ <strong>Dùng AI:</strong> Gõ từ tiếng Anh rồi bấm nút <strong>AI Điền Tự Động</strong> để gợi ý phiên âm & nghĩa.
-      </div>
-
-      <form id="word-form" onsubmit="saveWordForm(event)">
-        <input type="hidden" id="word-id">
-        
-        <div class="form-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="margin-bottom: 0;">Từ vựng tiếng Anh *</label>
-            <button type="button" class="btn btn-primary btn-sm" id="btn-ai-generate" onclick="handleAiGenerateWord()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 11px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
-              <span id="ai-btn-icon">✨</span> <span id="ai-btn-text">AI Điền Tự Động</span>
-            </button>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Từ loại</label>
-            <select id="word-pos" class="form-select">
-              <option value="noun">noun (danh từ)</option>
-              <option value="verb">verb (động từ)</option>
-              <option value="adjective">adjective (tính từ)</option>
-              <option value="adverb">adverb (trạng từ)</option>
-              <option value="phrase">phrase (cụm từ)</option>
-              <option value="idiom">idiom (thành ngữ)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Cấp độ CEFR</label>
-            <select id="word-cefr" class="form-select">
-              <option value="">Không có</option>
-              <option value="A1">A1 - Beginner</option>
-              <option value="A2">A2 - Elementary</option>
-              <option value="B1">B1 - Intermediate</option>
-              <option value="B2">B2 - Upper Intermediate</option>
-              <option value="C1">C1 - Advanced</option>
-              <option value="C2">C2 - Mastery</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="margin-bottom: 0;">Phiên âm IPA</label>
-            <button type="button" class="btn btn-outline btn-sm" onclick="toggleIpaKeyboard()">
-              <svg class="icon icon-sm"><use href="#i-keyboard"/></svg> Bàn phím ảo IPA
-            </button>
-          </div>
-          <input type="text" id="word-phonetic" class="form-input" placeholder="/rɪˈzɪl.jənt/">
-          
-          <!-- EMBEDDED IPA KEYBOARD -->
-          <div id="ipa-keyboard-panel" class="ipa-keyboard-panel" style="display: none;">
-            <div class="ipa-tabs">
-              <div class="ipa-tab active" onclick="switchIpaTab('mono', this)">Nguyên âm đơn</div>
-              <div class="ipa-tab" onclick="switchIpaTab('dip', this)">Nguyên âm đôi</div>
-              <div class="ipa-tab" onclick="switchIpaTab('cons', this)">Phụ âm</div>
-              <div class="ipa-tab" onclick="switchIpaTab('spec', this)">Trọng âm & ký tự</div>
-            </div>
-            <div class="ipa-grid" id="ipa-keys-container">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Định nghĩa tiếng Việt *</label>
-          <textarea id="word-def" class="form-textarea" rows="2" placeholder="Nghĩa tiếng Việt của từ..." required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Câu ví dụ</label>
-          <textarea id="word-example" class="form-textarea" rows="2" placeholder="Ví dụ: She remained resilient in difficult times."></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Từ đồng nghĩa (Synonyms)</label>
-            <input type="text" id="word-synonyms" class="form-input" placeholder="tough, adaptable (phân tách dấu phẩy)">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Từ trái nghĩa (Antonyms)</label>
-            <input type="text" id="word-antonyms" class="form-input" placeholder="fragile, weak">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Cụm từ đi kèm (Collocations)</label>
-          <input type="text" id="word-collocations" class="form-input" placeholder="resilient economy, highly resilient">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Ghi chú thêm</label>
-          <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
-        </div>
-
-        <div class="form-group" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="margin-bottom: 0;">Mức độ thuộc từ:</label>
-            <span id="modal-word-mastery-badge" class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);">🌱 Mới 0%</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="range" id="word-mastery-slider" min="0" max="100" step="5" value="0" oninput="updateWordModalMasteryPreview(this.value)" style="flex: 1; accent-color: #6366f1;">
-            <span id="modal-word-mastery-val" style="font-size: 13px; font-weight: 700; font-family: monospace; color: #818cf8; width: 42px; text-align: right;">0%</span>
-          </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-          <button type="button" class="btn btn-outline" onclick="closeModal('modal-word')">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu từ vựng</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: ADD / EDIT DECK -->
-  <div class="modal-overlay" id="modal-deck">
-    <div class="modal">
-      <div class="modal-title">
-        <span id="modal-deck-title">Tạo Bộ Từ Mới</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-deck')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <form id="deck-form" onsubmit="saveDeckForm(event)">
-        <input type="hidden" id="deck-id">
-        <div class="form-group">
-          <label class="form-label">Tên bộ từ *</label>
-          <input type="text" id="deck-title" class="form-input" placeholder="Ví dụ: IELTS Band 7.0+, TOEIC 600..." required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Mô tả</label>
-          <textarea id="deck-desc" class="form-textarea" rows="2" placeholder="Ghi chú mục tiêu hoặc chủ đề..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Màu sắc chủ đề</label>
-          <div style="display: flex; gap: 10px; margin-top: 6px;">
-            <label><input type="radio" name="deck-color" value="#4f46e5" checked> <span style="display:inline-block;width:24px;height:24px;background:#4f46e5;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#059669"> <span style="display:inline-block;width:24px;height:24px;background:#059669;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#d97706"> <span style="display:inline-block;width:24px;height:24px;background:#d97706;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#dc2626"> <span style="display:inline-block;width:24px;height:24px;background:#dc2626;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#8b5cf6"> <span style="display:inline-block;width:24px;height:24px;background:#8b5cf6;border-radius:50%;vertical-align:middle;"></span></label>
-          </div>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-          <button type="button" class="btn btn-outline" onclick="closeModal('modal-deck')">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu bộ từ</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: EXCEL IMPORT -->
-  <div class="modal-overlay" id="modal-import">
-    <div class="modal">
-      <div class="modal-title">
-        <span>Nhập Từ Vựng Từ File Excel / CSV</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-import')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-        Hỗ trợ định dạng Excel (.xlsx, .csv) với từng thông tin là 1 cột riêng biệt:<br>
-        <code style="display:block;margin-top:6px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-size:11px;color:#38bdf8;">Term | PartOfSpeech | Phonetic | Definition | CEFR | Example | Synonyms | Antonyms | Collocations | Note | Status</code>
-      </p>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(79,70,229,0.08); padding:10px 14px; border-radius:10px; border:1px solid rgba(79,70,229,0.2);">
-        <span style="font-size:13px; font-weight:600; color:#818cf8;">Chưa có file mẫu? Tải mẫu chuẩn tại đây:</span>
-        <button class="btn btn-outline btn-sm" style="border-color:#818cf8; color:#818cf8;" onclick="downloadSampleExcelTemplate()">
-          <svg class="icon icon-sm"><use href="#i-download"/></svg> Tải File Mẫu (.xlsx)
-        </button>
-      </div>
-
-      <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 16px;">
-        <input type="file" id="excel-file-input" accept=".csv,.xlsx" style="display: none;" onchange="handleExcelFileUpload(event)">
-        <button class="btn btn-outline" onclick="document.getElementById('excel-file-input').click()">
-          <svg class="icon"><use href="#i-upload"/></svg> Chọn file Excel / CSV từ máy tính
-        </button>
-        <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Hoặc dán nội dung từng dòng bên dưới</div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Dán nội dung bảng tính (Copy từ Excel / CSV):</label>
-        <textarea id="import-text-area" class="form-textarea" rows="4" placeholder="Term,PartOfSpeech,Phonetic,Definition,CEFR,Example,Synonyms,Antonyms,Collocations,Note,Status&#10;Resilient,adjective,/rɪˈzɪl.jənt/,Kiên cường,B2,She was resilient,tough,weak,resilient economy,Mẹo nhớ,Đang học"></textarea>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn btn-outline" onclick="closeModal('modal-import')">Đóng</button>
-        <button type="button" class="btn btn-primary" onclick="processTextImport()">Nhập từ vựng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-  <div class="modal-overlay" id="modal-shop">
-    <div class="modal" style="max-width: 480px;">
-      <div class="modal-title">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 20px;">🏪</span>
-          <strong style="font-size: 17px;">Cửa Hàng Điểm Thưởng (VocaShop)</strong>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-shop')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <!-- Wallet Balance Card -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 16px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
-        <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 10px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Điểm tích lũy</div>
-          <div id="shop-user-points" style="font-size: 26px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Kiếm từ làm Quiz</div>
-        </div>
-        <div style="text-align: center; padding-left: 10px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">💡 Lượt gợi ý AI</div>
-          <div id="shop-user-hints" style="font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 4px;">0</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Dùng trong Quiz</div>
-        </div>
-      </div>
-
-      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📦 Các Gói Đổi Gợi Ý AI</div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-        <!-- Package 1 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
-          <div>
-            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 1 Lượt Gợi Ý AI</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá: 20 điểm</div>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(1, 20)">
-            Đổi (20đ)
-          </button>
-        </div>
-
-        <!-- Package 2 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
-          <div>
-            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 5 Lượt Gợi Ý AI</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá: 100 điểm</div>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(5, 100)">
-            Đổi (100đ)
-          </button>
-        </div>
-
-        <!-- Package 3 (Discount) -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(99,102,241,0.1)); border: 1px solid rgba(16,185,129,0.3);">
-          <div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-weight: 700; font-size: 14px; color: var(--text);">💡 10 Lượt Gợi Ý AI</span>
-              <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">TIẾT KIỆM 20đ</span>
-            </div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 180 điểm</div>
-          </div>
-          <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 180)">
-            Đổi (180đ)
-          </button>
-        </div>
-      </div>
-
-      <!-- Gift / Redeem Code Section -->
-      <div style="margin-bottom: 16px; padding: 12px; border-radius: 12px; background: var(--surface-elevated); border: 1px dashed var(--border);">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng / Khôi phục:</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
-          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap;">Áp dụng</button>
-        </div>
-        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 4px; display: none;"></div>
-      </div>
-
-      <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-        ℹ️ <strong>Quy tắc điểm Quiz:</strong><br>
-        • Đúng: A1 (+2đ), A2 (+4đ), B1 (+6đ), B2 (+8đ), C1 (+10đ), C2 (+12đ)<br>
-        • Sai: A1 (-6đ), A2 (-5đ), B1 (-4đ), B2 (-3đ), C1 (-2đ), C2 (-1đ)<br>
-        • Thành viên mới đăng ký được tặng sẵn <strong>5 lượt gợi ý miễn phí</strong>!
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
-  <div class="modal-overlay" id="modal-auth">
-    <div class="modal" style="max-width: 440px;">
-      <div class="modal-title">
-        <span id="auth-modal-title">Đăng nhập VocaFlow</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-auth')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-      
-      <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-        <button type="button" class="btn btn-sm btn-primary" id="tab-btn-login" onclick="switchAuthTab('login')">Đăng nhập</button>
-        <button type="button" class="btn btn-sm btn-outline" id="tab-btn-register" onclick="switchAuthTab('register')">Đăng ký tài khoản</button>
-      </div>
-
-      <!-- TAB: LOGIN -->
-      <form id="form-login" onsubmit="handleFormLogin(event)">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="login-email" class="form-input" placeholder="example@email.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Mật khẩu</label>
-          <input type="password" id="login-password" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <a href="javascript:void(0)" onclick="handleForgotPassword()" style="font-size: 13px; color: #818cf8; text-decoration: none;">Quên mật khẩu?</a>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Đăng nhập</button>
-        <button type="button" class="btn btn-outline" style="width: 100%;" onclick="closeModal('modal-auth')">Tiếp tục chế độ Khách (Offline)</button>
-      </form>
-
-      <!-- TAB: REGISTER -->
-      <form id="form-register" style="display: none;" onsubmit="handleFormRegister(event)">
-        <div class="form-group">
-          <label class="form-label">Tên hiển thị / Nickname</label>
-          <input type="text" id="reg-name" class="form-input" placeholder="Ví dụ: Julie, Alex...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="reg-email" class="form-input" placeholder="example@email.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Mật khẩu</label>
-          <input type="password" id="reg-password" class="form-input" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Xác nhận mật khẩu</label>
-          <input type="password" id="reg-confirm-password" class="form-input" placeholder="Nhập lại mật khẩu" minlength="6" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">Tạo tài khoản</button>
-        <button type="button" class="btn btn-outline" style="width: 100%;" onclick="closeModal('modal-auth')">Tiếp tục chế độ Khách (Offline)</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: PROFILE & CLOUD SYNC -->
-  <div class="modal-overlay" id="modal-profile">
-    <div class="modal" style="max-width: 500px;">
-      <div class="modal-title">
-        <span>Hồ Sơ & Đồng Bộ Cloud</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 18px;">
-        <div id="profile-avatar" style="width: 54px; height: 54px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: white;">
-          V
-        </div>
-        <div style="flex: 1;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
-            <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
-          </div>
-          <p id="profile-email" style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">Dữ liệu lưu trữ nội bộ trên máy này.</p>
-        </div>
-      </div>
-
-      <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-            ☁️ Trạng thái Cloud Firestore
-          </span>
-          <span id="sync-status-badge" style="font-size: 12px; color: #10b981; font-weight: 600;">Sẵn sàng</span>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted);">Tổng số bộ từ:</div>
-            <div id="profile-stat-decks" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 bộ</div>
-          </div>
-          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted);">Tổng số từ vựng:</div>
-            <div id="profile-stat-words" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 từ</div>
-          </div>
-        </div>
-        <div style="font-size: 12px; color: var(--text-muted);">
-          Lần đồng bộ gần nhất: <strong id="profile-last-sync" style="color: var(--text);">Chưa đồng bộ</strong>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button type="button" class="btn btn-primary" id="btn-profile-sync" onclick="handleManualSync()">
-          🔄 Đồng bộ ngay (Sync Now)
-        </button>
-        <button type="button" class="btn btn-outline" id="btn-profile-auth-action" style="color: #ef4444; border-color: rgba(239,68,68,0.4);" onclick="handleAuthActionFromProfile()">
-          Đăng nhập / Đăng ký tài khoản
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: SETTINGS -->
-  <div class="modal-overlay" id="modal-settings">
-    <div class="modal">
-      <div class="modal-title">
-        <span>⚙️ Cài Đặt Ứng Dụng</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-settings')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text);">🌓 Giao Diện & Chủ Đề</label>
-        <div class="theme-picker-grid">
-          <label class="theme-card" onclick="setAppTheme('dark')">
-            <input type="radio" name="app-theme" value="dark" id="theme-dark-radio">
-            <span class="theme-icon">🌙</span>
-            <strong style="font-size: 13px;">Giao diện Tối</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Mặc định, êm dịu mắt</small>
-          </label>
-
-          <label class="theme-card" onclick="setAppTheme('light')">
-            <input type="radio" name="app-theme" value="light" id="theme-light-radio">
-            <span class="theme-icon">☀️</span>
-            <strong style="font-size: 13px;">Giao diện Sáng</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Rõ ràng, tương phản cao</small>
-          </label>
-
-          <label class="theme-card" onclick="setAppTheme('system')">
-            <input type="radio" name="app-theme" value="system" id="theme-system-radio">
-            <span class="theme-icon">🌓</span>
-            <strong style="font-size: 13px;">Theo thiết bị</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Tự động theo hệ điều hành</small>
-          </label>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🔊 Tốc Độ Phát Âm (Text-to-Speech)</label>
-        
-        <div style="margin-bottom: 10px;">
-          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-            <span>🇬🇧 Tiếng Anh (English):</span>
-            <strong id="settings-speech-en-label" style="color: var(--primary);">0.9x</strong>
-          </div>
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <input type="range" id="settings-speech-en-slider" min="0.5" max="1.5" step="0.1" value="0.9" style="flex: 1; accent-color: var(--primary);" oninput="updateSpeechRateEn(this.value)">
-          </div>
-        </div>
-
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-            <span>🇻🇳 Tiếng Việt (Vietnamese):</span>
-            <strong id="settings-speech-vi-label" style="color: #10b981;">1.0x</strong>
-          </div>
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <input type="range" id="settings-speech-vi-slider" min="0.5" max="1.5" step="0.1" value="1.0" style="flex: 1; accent-color: #10b981;" oninput="updateSpeechRateVi(this.value)">
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🕒 Hiển Thị Thời Gian (Date & Timestamps)</label>
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <input type="checkbox" id="settings-timestamp-checkbox" checked onchange="toggleShowTimestampSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
-          <div>
-            <div style="font-size: 13px; font-weight: 600; color: var(--text);">Hiện ngày tạo & chỉnh sửa</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng bộ từ và thẻ từ vựng</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
-            🔑 Lấy Key 30s
-          </a>
-        </div>
-        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4;">
-          Nhập Gemini API Key cá nhân để mở khóa AI tự động phân tích nghĩa tiếng Việt, câu ví dụ, collocations khi thêm từ mới.
-        </p>
-        <div style="display: flex; gap: 8px;">
-          <input type="password" id="gemini-api-key-input" class="form-input" placeholder="Dán Gemini API Key (AIzaSy...)" style="flex: 1;" onchange="saveGeminiApiKey(this.value)">
-          <button type="button" class="btn btn-outline btn-sm" onclick="testGeminiConnection()" id="btn-test-gemini" title="Kiểm tra kết nối">
-            🧪 Thử kết nối
-          </button>
-        </div>
-        <div id="gemini-status-text" style="font-size: 11px; margin-top: 6px; color: var(--text-muted);"></div>
-      </div>
-
-      <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
-        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.10</strong></div>
-          <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
-          <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
-        </div>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
-        <button class="btn btn-primary" onclick="closeModal('modal-settings')">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: PUBLISHER / ADMIN PORTAL (DÀNH CHO NHÀ PHÁT HÀNH) -->
-  <div class="modal-overlay" id="modal-publisher">
-    <div class="modal" style="max-width: 540px;">
-      <div class="modal-title">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">👑</span>
-          <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị Nhà Phát Hành (Publisher Portal)</strong>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <!-- GOD MODE: WALLET OVERRIDE -->
-      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Điểm ví (Points):</label>
-            <input type="number" id="admin-set-points-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Lượt Gợi Ý AI (Hints):</label>
-            <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
-          </div>
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none;">⚡ Áp Dụng Ví Ngay</button>
-          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200)">+200 Gợi Ý & +500đ</button>
-          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000)">+1000 Gợi Ý & +2000đ</button>
-        </div>
-      </div>
-
-      <!-- GIFT CODE STUDIO -->
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
-            <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Số Gợi Ý:</label>
-            <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Số Điểm:</label>
-            <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
-          </div>
-        </div>
-        <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
-          🚀 Phát Hành Mã Quà Tặng Lên Cloud
-        </button>
-      </div>
-
-      <!-- ACTIVE CLOUD CODES LIST -->
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
-          <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
-        </div>
-        <div id="admin-active-codes-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
-          <em>Đang tải danh sách mã...</em>
-        </div>
-      </div>
-
-      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(168, 85, 247, 0.4); display: flex; justify-content: space-between; align-items: center;">
-        <button class="btn btn-outline btn-sm" onclick="openPublisherDeckUploadModal()" style="font-size: 11px; color: #c084fc; border-color: rgba(192, 132, 252, 0.5);">
-          🚀 Phát Hành Bộ Từ Excel Mới Lên Thư Viện
-        </button>
-        <button class="btn btn-outline btn-sm" onclick="closeModal('modal-publisher')">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: VOCAFLOW COMMUNITY & OFFICIAL LIBRARY -->
-  <div class="modal-overlay" id="modal-library">
-    <div class="modal" style="max-width: 720px; max-height: 90vh; display: flex; flex-direction: column;">
-      <div class="modal-title">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">📚</span>
-          <div>
-            <strong style="font-size: 17px; color: var(--text);">Thư Viện Từ Vựng (VocaLibrary)</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Kho từ vựng chuẩn THPT & Quốc Tế có sẵn - Tải về học ngay 1-Click</div>
-          </div>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-library')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <!-- SEARCH & FILTER TABS -->
-      <div style="margin-bottom: 12px;">
-        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm bộ từ hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px;">
-          <button class="btn btn-outline btn-sm" onclick="fetchCloudLibraryDecks()" title="Làm mới từ Cloud" style="white-space: nowrap;">
-            🔄 Làm mới
-          </button>
-        </div>
-
-        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;" id="lib-category-tabs">
-          <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="10" onclick="setLibraryCategory('10')">📘 Lớp 10</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="11" onclick="setLibraryCategory('11')">📙 Lớp 11</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="12" onclick="setLibraryCategory('12')">📕 Lớp 12</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')">☁️ Cộng Đồng</button>
-        </div>
-      </div>
-
-      <!-- LIBRARY DECK LIST -->
-      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; padding-right: 4px; margin-bottom: 14px; max-height: 460px;">
-        <!-- Rendered via JS -->
-      </div>
-
-      <!-- COMMUNITY DECK CONTRIBUTION BANNER (CHO TẤT CẢ MỌI NGƯỜI) -->
-      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12)); border: 1px dashed rgba(168, 85, 247, 0.45); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div style="flex: 1; min-width: 220px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
-            <span>✨</span> <strong>Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
-          </div>
-          <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0; line-height: 1.4;">
-            Mọi thành viên đều có thể tải lên file Excel hoặc chia sẻ bộ từ của mình để cùng nhau xây dựng kho học tập lớn mạnh!
-          </p>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="openCommunityDeckUploadModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 7px 14px; font-size: 12px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);">
-          🚀 Đóng Góp Bộ Từ Mới
-        </button>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
-        <button class="btn btn-outline" onclick="closeModal('modal-library')">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: LIBRARY DECK PREVIEW -->
-  <div class="modal-overlay" id="modal-library-preview">
-    <div class="modal" style="max-width: 620px; max-height: 85vh; display: flex; flex-direction: column;">
-      <div class="modal-title">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span id="lib-preview-icon" style="font-size: 20px;">📘</span>
-          <strong id="lib-preview-title" style="font-size: 16px;">Xem Trước Bộ Từ</strong>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-library-preview')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <div style="margin-bottom: 12px;">
-        <p id="lib-preview-desc" style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px;"></p>
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-          <span id="lib-preview-count" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700;">60 từ vựng</span>
-          <span id="lib-preview-category" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">THPT</span>
-        </div>
-      </div>
-
-      <!-- WORD PREVIEW LIST -->
-      <div id="lib-preview-words-container" style="flex: 1; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 10px; border: 1px solid var(--border); font-size: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 380px;">
-        <!-- Words rendered via JS -->
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-        <button class="btn btn-outline" onclick="closeModal('modal-library-preview')">Đóng</button>
-        <button class="btn btn-primary" id="btn-lib-preview-install" onclick="installPreviewedDeck()">
-          📥 Thêm Vào Bộ Từ Của Tôi
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: COMMUNITY DECK CONTRIBUTION (OPEN FOR EVERYONE) -->
-  <div class="modal-overlay" id="modal-community-upload">
-    <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
-      <div class="modal-title">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">🚀</span>
-          <div>
-            <strong style="font-size: 16px;">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
-          </div>
-        </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label class="form-label">Tên Người Đóng Góp (Tác giả hiển thị):</label>
-        <input type="text" id="pub-deck-author" class="form-input" placeholder="Tên hoặc biệt danh của bạn (VD: Julie, Thầy Hùng, Minh Anh...)">
-      </div>
-
-      <!-- SOURCE SELECTION TABS -->
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label class="form-label">Chọn nguồn dữ liệu bộ từ:</label>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button type="button" class="btn btn-sm btn-primary" id="btn-pub-source-file" onclick="setPublisherUploadSource('file')" style="font-size: 12px;">
-            📁 Tải lên File Excel / JSON
-          </button>
-          <button type="button" class="btn btn-sm btn-outline" id="btn-pub-source-deck" onclick="setPublisherUploadSource('deck')" style="font-size: 12px;">
-            📚 Chọn từ Bộ từ của tôi
-          </button>
-        </div>
-      </div>
-
-      <!-- SOURCE 1: FILE PICKER -->
-      <div id="pub-source-file-section" class="form-group" style="margin-bottom: 12px;">
-        <label class="form-label">Chọn File Excel (.xlsx/.xls) hoặc JSON từ máy:</label>
-        <input type="file" id="pub-upload-file-input" class="form-input" accept=".xlsx, .xls, .json" onchange="handlePublisherFileSelected(event)">
-        <small style="color: var(--text-muted); font-size: 10.5px; display: block; margin-top: 4px;">
-          💡 Hệ thống tự động nhận diện các cột: Từ vựng, Nghĩa, Phiên âm, Ví dụ, Loại từ... và lọc bỏ các sheet phụ.
-        </small>
-      </div>
-
-      <!-- SOURCE 2: LOCAL DECK SELECTOR -->
-      <div id="pub-source-deck-section" class="form-group" style="display: none; margin-bottom: 12px;">
-        <label class="form-label">Chọn 1 bộ từ đang có trong máy của bạn:</label>
-        <select id="pub-local-deck-select" class="form-input" onchange="handlePublisherLocalDeckSelected(this.value)">
-          <!-- Populated dynamically -->
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Tên Bộ Từ Hiển Thị:</label>
-        <input type="text" id="pub-deck-title" class="form-input" placeholder="VD: Tiếng Anh 10 - Kết Nối Tri Thức, 500 Từ Vựng IELTS Thường Gặp...">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Mô Tả Bộ Từ:</label>
-        <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
-        <div>
-          <label class="form-label">Danh Mục / Cấp Độ:</label>
-          <select id="pub-deck-category" class="form-input">
-            <option value="THPT">THPT (Lớp 10-12)</option>
-            <option value="10">Lớp 10</option>
-            <option value="11">Lớp 11</option>
-            <option value="12">Lớp 12</option>
-            <option value="IELTS">IELTS</option>
-            <option value="TOEIC">TOEIC</option>
-            <option value="GIAOTIEP">Giao Tiếp Đời Sống</option>
-            <option value="CHUYENNGANH">Chuyên Ngành</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Icon / Màu Sắc:</label>
-          <select id="pub-deck-icon" class="form-input">
-            <option value="📘">📘 Xanh Dương</option>
-            <option value="📙">📙 Cam / Hổ Phách</option>
-            <option value="📕">📕 Đỏ / Hồng</option>
-            <option value="📗">📗 Xanh Lá</option>
-            <option value="⭐">⭐ Ngôi Sao Vàng</option>
-            <option value="🎓">🎓 Mũ Tốt Nghiệp</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="pub-upload-preview-status" style="font-size: 11.5px; margin-bottom: 12px; color: #10b981; font-weight: 600; display: none; background: rgba(16, 185, 129, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25);"></div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-        <button class="btn btn-outline" onclick="closeModal('modal-community-upload')">Hủy</button>
-        <button class="btn btn-primary" id="btn-pub-do-upload" onclick="doPublishDeckToCloud()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
-          🚀 Đóng Góp Lên Thư Viện Ngay
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="toast">Đã lưu thành công!</div>
-
-  <!-- JAVASCRIPT LOGIC ENGINE -->
-  <script>
+﻿
     const STORAGE_KEY_DECKS = 'vocaflow_decks';
     const STORAGE_KEY_WORDS = 'vocaflow_words';
     const STORAGE_KEY_THEME = 'vocaflow_theme';
@@ -4097,7 +1422,7 @@
     }
 
     // =========================================================================
-    // MULTI-SELECTION, MULTI-TIER MASTERY & SLIDER FILTER ENGINE (v0.0.8.10)
+    // MULTI-SELECTION, MULTI-TIER MASTERY & SLIDER FILTER ENGINE (v0.0.8.9)
     // =========================================================================
     let selectedWordIds = new Set();
     let currentWordFilter = 'all'; // 'all' | '0' | '1-25' | '26-50' | '51-75' | '76-99' | '100' | 'custom-range'
@@ -4105,7 +1430,6 @@
     let customMaxScore = 100;
 
     function getWordScore(w) {
-      if (!w) return 0;
       if (typeof w.masteryScore === 'number') return w.masteryScore;
       if (w.status === 'mastered') return 100;
       if (w.status === 'learning') return 40;
@@ -4115,8 +1439,8 @@
     function getWordMasteryInfo(score) {
       if (score >= 100) {
         return {
-          label: '👑 Đã thuộc (100%)',
-          shortLabel: '100% Đã thuộc',
+          label: 'ðŸ‘‘ ÄÃ£ thuá»™c (100%)',
+          shortLabel: '100% ÄÃ£ thuá»™c',
           tier: 'mastered',
           badgeStyle: 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);',
           trackColor: '#10b981'
@@ -4124,8 +1448,8 @@
       }
       if (score >= 76) {
         return {
-          label: '⭐ Sắp thuộc (' + score + '%)',
-          shortLabel: score + '% Sắp thuộc',
+          label: `â­ Sáº¯p thuá»™c (${score}%)`,
+          shortLabel: `${score}% Sáº¯p thuá»™c`,
           tier: 'tier4',
           badgeStyle: 'background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35);',
           trackColor: '#8b5cf6'
@@ -4133,8 +1457,8 @@
       }
       if (score >= 51) {
         return {
-          label: '🌳 Khá thuộc (' + score + '%)',
-          shortLabel: score + '% Khá thuộc',
+          label: `ðŸŒ³ KhÃ¡ thuá»™c (${score}%)`,
+          shortLabel: `${score}% KhÃ¡ thuá»™c`,
           tier: 'tier3',
           badgeStyle: 'background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35);',
           trackColor: '#3b82f6'
@@ -4142,8 +1466,8 @@
       }
       if (score >= 26) {
         return {
-          label: '🌿 Hơi thuộc (' + score + '%)',
-          shortLabel: score + '% Hơi thuộc',
+          label: `ðŸŒ¿ HÆ¡i thuá»™c (${score}%)`,
+          shortLabel: `${score}% HÆ¡i thuá»™c`,
           tier: 'tier2',
           badgeStyle: 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);',
           trackColor: '#f59e0b'
@@ -4151,16 +1475,16 @@
       }
       if (score >= 1) {
         return {
-          label: '🐣 Vừa học (' + score + '%)',
-          shortLabel: score + '% Vừa học',
+          label: `ðŸ£ Vá»«a há»c (${score}%)`,
+          shortLabel: `${score}% Vá»«a há»c`,
           tier: 'tier1',
           badgeStyle: 'background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.35);',
           trackColor: '#06b6d4'
         };
       }
       return {
-        label: '🌱 Mới (0%)',
-        shortLabel: '0% Mới',
+        label: 'ðŸŒ± Má»›i (0%)',
+        shortLabel: '0% Má»›i',
         tier: 'new',
         badgeStyle: 'background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);',
         trackColor: '#64748b'
@@ -4168,8 +1492,7 @@
     }
 
     function getFilteredDeckWords() {
-      const searchEl = document.getElementById('word-search-input');
-      const query = (searchEl ? searchEl.value : '').toLowerCase().trim();
+      const query = (document.getElementById('word-search-input')?.value || '').toLowerCase().trim();
       let deckWords = words.filter(w => w.deckId === currentDeckId);
 
       // Filter by mastery tier / range
@@ -4259,9 +1582,9 @@
       const labelMin = document.getElementById('label-min-score');
       const labelMax = document.getElementById('label-max-score');
 
-      if (rangeVal) rangeVal.textContent = min + '% - ' + max + '%';
-      if (labelMin) labelMin.textContent = min + '%';
-      if (labelMax) labelMax.textContent = max + '%';
+      if (rangeVal) rangeVal.textContent = `${min}% - ${max}%`;
+      if (labelMin) labelMin.textContent = `${min}%`;
+      if (labelMax) labelMax.textContent = `${max}%`;
 
       currentWordFilter = 'custom-range';
       document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
@@ -4302,7 +1625,7 @@
       val = parseInt(val, 10) || 0;
       const valEl = document.getElementById('modal-word-mastery-val');
       const badgeEl = document.getElementById('modal-word-mastery-badge');
-      if (valEl) valEl.textContent = val + '%';
+      if (valEl) valEl.textContent = `${val}%`;
       if (badgeEl) {
         const info = getWordMasteryInfo(val);
         badgeEl.textContent = info.label;
@@ -4324,7 +1647,7 @@
       w.updatedAt = new Date().toISOString();
       saveDatabase(true);
       renderWordList();
-      showToast('🎯 Đã cập nhật "' + w.term + '": ' + next + '% (' + getWordMasteryInfo(next).shortLabel + ')');
+      showToast(`ðŸŽ¯ ÄÃ£ cáº­p nháº­t "${w.term}": ${next}% (${getWordMasteryInfo(next).shortLabel})`);
     }
 
     function toggleWordSelect(wordId, isChecked) {
@@ -4333,7 +1656,7 @@
       } else {
         selectedWordIds.delete(wordId);
       }
-      const item = document.getElementById('word-item-' + wordId);
+      const item = document.getElementById(`word-item-${wordId}`);
       if (item) {
         item.classList.toggle('selected', isChecked);
       }
@@ -4360,8 +1683,8 @@
       const btnDeleteSelected = document.getElementById('btn-delete-selected');
       const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
 
-      if (countBadge) countBadge.textContent = count > 0 ? count + ' từ được chọn' : '0 từ được chọn';
-      const countSuffix = count > 0 ? ' (' + count + ')' : '';
+      if (countBadge) countBadge.textContent = count > 0 ? `${count} tá»« Ä‘Æ°á»£c chá»n` : '0 tá»« Ä‘Æ°á»£c chá»n';
+      const countSuffix = count > 0 ? ` (${count})` : '';
       if (fcLabel) fcLabel.textContent = countSuffix;
       if (autofcLabel) autofcLabel.textContent = countSuffix;
       if (quizLabel) quizLabel.textContent = countSuffix;
@@ -4375,14 +1698,14 @@
 
     function deleteSelectedWords() {
       if (selectedWordIds.size === 0) return;
-      if (!confirm('Bạn có chắc chắn muốn xóa ' + selectedWordIds.size + ' từ vựng đã chọn?')) return;
+      if (!confirm(`Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a ${selectedWordIds.size} tá»« vá»±ng Ä‘Ã£ chá»n?`)) return;
 
       words = words.filter(w => !selectedWordIds.has(w.id));
       selectedWordIds.clear();
       saveDatabase(true);
       renderWordList();
       updateSelectionUI();
-      showToast('Đã xóa các từ đã chọn!');
+      showToast('ÄÃ£ xÃ³a cÃ¡c tá»« Ä‘Ã£ chá»n!');
     }
 
     // =========================================================================
@@ -4454,7 +1777,7 @@
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isPinned ? '📌 Đã ghim bộ từ "' + deck.title + '" lên đầu!' : 'Đã bỏ ghim bộ từ "' + deck.title + '"');
+      showToast(deck.isPinned ? `ðŸ“Œ ÄÃ£ ghim bá»™ tá»« "${deck.title}" lÃªn Ä‘áº§u!` : `ÄÃ£ bá» ghim bá»™ tá»« "${deck.title}"`);
     }
 
     function toggleArchiveDeck(deckId) {
@@ -4478,7 +1801,7 @@
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isArchived ? '📦 Đã cất bộ từ "' + deck.title + '" vào Kho Lưu Trữ!' : '🔄 Đã khôi phục bộ từ "' + deck.title + '" về danh sách đang học!');
+      showToast(deck.isArchived ? `ðŸ“¦ ÄÃ£ cáº¥t bá»™ tá»« "${deck.title}" vÃ o Kho LÆ°u Trá»¯!` : `ðŸ”„ ÄÃ£ khÃ´i phá»¥c bá»™ tá»« "${deck.title}" vá» danh sÃ¡ch Ä‘ang há»c!`);
     }
 
     function updateDeckDetailHeader() {
@@ -4488,13 +1811,13 @@
       const pinBtn = document.getElementById('btn-detail-pin');
       if (pinBtn) {
         pinBtn.classList.toggle('active-pin-btn', !!deck.isPinned);
-        pinBtn.title = deck.isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu';
+        pinBtn.title = deck.isPinned ? 'Bá» ghim bá»™ tá»«' : 'Ghim bá»™ tá»« lÃªn Ä‘áº§u';
       }
 
       const archiveBtn = document.getElementById('btn-detail-archive');
       if (archiveBtn) {
-        archiveBtn.innerHTML = '<svg class="icon icon-sm"><use href="#' + (deck.isArchived ? 'i-unarchive' : 'i-archive') + '"/></svg>';
-        archiveBtn.title = deck.isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất bộ từ này)';
+        archiveBtn.innerHTML = `<svg class="icon icon-sm"><use href="#${deck.isArchived ? 'i-unarchive' : 'i-archive'}"/></svg>`;
+        archiveBtn.title = deck.isArchived ? 'KhÃ´i phá»¥c vá» danh sÃ¡ch Ä‘ang há»c' : 'LÆ°u trá»¯ (Cáº¥t bá»™ tá»« nÃ y)';
       }
     }
 
@@ -4507,7 +1830,7 @@
       container.innerHTML = '';
 
       const activeDecks = decks.filter(d => !d.isArchived);
-      const archivedDecks = decks.filter(d => !!d.isArchived);
+      const archivedDecks = decks.filter(d => !d.isArchived);
 
       const countActive = document.getElementById('count-active-decks');
       const countArchived = document.getElementById('count-archived-decks');
@@ -4530,17 +1853,17 @@
         if (currentDeckTab === 'active') {
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
-              <div style="font-size: 40px; margin-bottom: 10px;">📚</div>
-              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Bạn Chưa Có Bộ Từ Vựng Nào</h3>
+              <div style="font-size: 40px; margin-bottom: 10px;">ðŸ“š</div>
+              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Báº¡n ChÆ°a CÃ³ Bá»™ Tá»« Vá»±ng NÃ o</h3>
               <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px; max-width: 460px; margin-inline: auto; line-height: 1.5;">
-                Khám phá ngay Kho từ vựng Tiếng Anh <strong>Lớp 10, 11, 12 Trọng tâm</strong> có sẵn trong Thư Viện để bắt đầu ôn luyện ngay chỉ với 1-Click!
+                KhÃ¡m phÃ¡ ngay Kho tá»« vá»±ng Tiáº¿ng Anh <strong>Lá»›p 10, 11, 12 Trá»ng tÃ¢m</strong> cÃ³ sáºµn trong ThÆ° Viá»‡n Ä‘á»ƒ báº¯t Ä‘áº§u Ã´n luyá»‡n ngay chá»‰ vá»›i 1-Click!
               </p>
               <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="openLibraryModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 18px;">
-                  📚 Khám Phá Thư Viện Từ Vựng (1-Click)
+                  ðŸ“š KhÃ¡m PhÃ¡ ThÆ° Viá»‡n Tá»« Vá»±ng (1-Click)
                 </button>
                 <button class="btn btn-outline" onclick="openDeckModal()">
-                  <svg class="icon"><use href="#i-add"/></svg> Tạo Bộ Từ Riêng
+                  <svg class="icon"><use href="#i-add"/></svg> Táº¡o Bá»™ Tá»« RiÃªng
                 </button>
               </div>
             </div>
@@ -4549,8 +1872,8 @@
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
               <svg class="icon icon-xl" style="fill: var(--text-muted); margin-bottom: 12px;"><use href="#i-archive"/></svg>
-              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho lưu trữ đang trống</h3>
-              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi học xong một bộ từ hoặc muốn tạm ẩn đi cho gọn gàng, bạn hãy bấm nút <strong>"Lưu trữ"</strong> ở bộ từ đó nhé!</p>
+              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho lÆ°u trá»¯ Ä‘ang trá»‘ng</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi há»c xong má»™t bá»™ tá»« hoáº·c muá»‘n táº¡m áº©n Ä‘i cho gá»n gÃ ng, báº¡n hÃ£y báº¥m nÃºt <strong>"LÆ°u trá»¯"</strong> á»Ÿ bá»™ tá»« Ä‘Ã³ nhÃ©!</p>
             </div>
           `;
         }
@@ -4578,32 +1901,32 @@
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
-              ${isPinned ? '<span class="badge badge-pinned" title="Bộ từ đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
-              ${isArchived ? '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>' : ''}
+              ${isPinned ? `<span class="badge badge-pinned" title="Bá»™ tá»« Ä‘Ã£ Ä‘Æ°á»£c ghim lÃªn Ä‘áº§u"><svg class="icon icon-sm"><use href="#i-pin"/></svg> ÄÃ£ ghim</span>` : ''}
+              ${isArchived ? `<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> ÄÃ£ lÆ°u trá»¯</span>` : ''}
             </div>
-            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} từ</span>
+            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} tá»«</span>
           </div>
-          <p class="deck-desc">${escapeHtml(deck.description || 'Chưa có mô tả')}</p>
+          <p class="deck-desc">${escapeHtml(deck.description || 'ChÆ°a cÃ³ mÃ´ táº£')}</p>
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
           </div>
           <div class="deck-stats">
-            <span>Mức độ thuộc: ${avgScore}%</span>
-            <span>Đã thuộc: ${mastered}/${total}</span>
+            <span>Má»©c Ä‘á»™ thuá»™c: ${avgScore}%</span>
+            <span>ÄÃ£ thuá»™c: ${mastered}/${total}</span>
           </div>
           <div class="deck-timestamp">
-            <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+            <span>ðŸ•’ Cáº­p nháº­t: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
           </div>
 
           <div class="deck-actions-grid">
-            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sửa thông tin bộ từ">
-              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span class="hide-on-mobile">Sửa</span>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sá»­a thÃ´ng tin bá»™ tá»«">
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span class="hide-on-mobile">Sá»­a</span>
             </button>
-            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất bộ từ)'}">
-              <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'Khôi phục' : 'Lưu trữ'}</span>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'KhÃ´i phá»¥c vá» danh sÃ¡ch Ä‘ang há»c' : 'LÆ°u trá»¯ (Cáº¥t bá»™ tá»«)'}">
+              <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'KhÃ´i phá»¥c' : 'LÆ°u trá»¯'}</span>
             </button>
-            <button class="btn btn-primary btn-sm" onclick="openDeckDetail('${deck.id}')" title="Mở danh sách từ vựng">
-              <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Xem Bộ Từ</span>
+            <button class="btn btn-primary btn-sm" onclick="openDeckDetail('${deck.id}')" title="Má»Ÿ danh sÃ¡ch tá»« vá»±ng">
+              <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Xem Bá»™ Tá»«</span>
             </button>
           </div>
         `;
@@ -4623,10 +1946,10 @@
       document.getElementById('deck-title').value = deck.title;
       document.getElementById('deck-desc').value = deck.description || '';
 
-      const colorRadio = document.querySelector('input[name="deck-color"][value="' + (deck.color || '#4f46e5') + '"]');
+      const colorRadio = document.querySelector(`input[name="deck-color"][value="${deck.color || '#4f46e5'}"]`);
       if (colorRadio) colorRadio.checked = true;
 
-      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
+      document.getElementById('modal-deck-title').textContent = 'Chá»‰nh Sá»­a Bá»™ Tá»«';
       openModal('modal-deck');
     }
 
@@ -4634,7 +1957,7 @@
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      if (!confirm('Bạn có chắc chắn muốn xóa bộ từ "' + deck.title + '" và toàn bộ từ vựng bên trong?')) {
+      if (!confirm(`Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a bá»™ tá»« "${deck.title}" vÃ  toÃ n bá»™ tá»« vá»±ng bÃªn trong?`)) {
         return;
       }
 
@@ -4646,7 +1969,7 @@
       if (currentDeckId === deckId) {
         showScreen('screen-decks');
       }
-      showToast('Đã xóa bộ từ "' + deck.title + '"!');
+      showToast(`ÄÃ£ xÃ³a bá»™ tá»« "${deck.title}"!`);
     }
 
     // OPEN DECK DETAIL
@@ -4660,7 +1983,7 @@
       document.getElementById('deck-detail-desc').textContent = deck.description || '';
       const timeEl = document.getElementById('deck-detail-timestamp');
       if (timeEl) {
-        timeEl.textContent = '🕒 Tạo: ' + formatDateOnly(deck.createdAt || deck.updatedAt);
+        timeEl.textContent = `ðŸ•’ Táº¡o: ${formatDateOnly(deck.createdAt || deck.updatedAt)}`;
       }
       document.getElementById('word-search-input').value = '';
       currentWordFilter = 'all';
@@ -4684,7 +2007,6 @@
     // RENDER WORD LIST WITH MULTI-TIER MASTERY CARDS
     function renderWordList() {
       const container = document.getElementById('word-list-container');
-      if (!container) return;
       container.innerHTML = '';
 
       updateMasteryChipCounts();
@@ -4693,11 +2015,11 @@
       if (deckWords.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
-            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Không tìm thấy từ vựng nào</p>
-            <p style="font-size: 12px; margin-bottom: 16px;">Không có từ nào phù hợp với bộ lọc hoặc tìm kiếm hiện tại.</p>
+            <div style="font-size: 32px; margin-bottom: 8px;">ðŸ“–</div>
+            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">KhÃ´ng tÃ¬m tháº¥y tá»« vá»±ng nÃ o</p>
+            <p style="font-size: 12px; margin-bottom: 16px;">KhÃ´ng cÃ³ tá»« nÃ o phÃ¹ há»£p vá»›i bá»™ lá»c hoáº·c tÃ¬m kiáº¿m hiá»‡n táº¡i.</p>
             <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
-              <svg class="icon"><use href="#i-add"/></svg> Thêm Từ Vựng Mới
+              <svg class="icon"><use href="#i-add"/></svg> ThÃªm Tá»« Vá»±ng Má»›i
             </button>
           </div>
         `;
@@ -4708,49 +2030,49 @@
       deckWords.forEach(w => {
         const item = document.createElement('div');
         item.className = 'word-item' + (selectedWordIds.has(w.id) ? ' selected' : '');
-        item.id = 'word-item-' + w.id;
+        item.id = `word-item-${w.id}`;
 
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
 
-        const cefrBadge = w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : '';
-        const synText = w.synonyms && w.synonyms.length ? '<span class="tag-syn">≈ ' + escapeHtml(w.synonyms.slice(0, 3).join(', ')) + '</span>' : '';
-        const antText = w.antonyms && w.antonyms.length ? '<span class="tag-ant">≠ ' + escapeHtml(w.antonyms.slice(0, 2).join(', ')) + '</span>' : '';
-        const collText = w.collocations && w.collocations.length ? '<span class="tag-coll">• ' + escapeHtml(w.collocations.slice(0, 2).join(', ')) + '</span>' : '';
+        const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
+        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">â‰ˆ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
+        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">â‰  ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
+        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">â€¢ ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
 
         item.innerHTML = `
           <div class="word-item-header">
             <div class="word-item-left">
-              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
+              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chá»n tá»« nÃ y Ä‘á»ƒ há»c">
               <span class="word-term">${escapeHtml(w.term)}</span>
               ${cefrBadge}
-              ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
-              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Phát âm">
+              ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
+              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="PhÃ¡t Ã¢m">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
             </div>
             <div class="word-item-right">
-              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Bấm để đổi nhanh mức độ thuộc (0% -> 25% -> 50% -> 75% -> 90% -> 100%)">
+              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Báº¥m Ä‘á»ƒ Ä‘á»•i nhanh má»©c Ä‘á»™ thuá»™c (0% -> 25% -> 50% -> 75% -> 90% -> 100%)">
                 ${masteryInfo.label}
               </span>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sá»­a"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="XÃ³a"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
             </div>
           </div>
 
           <div class="word-item-body">
-            ${w.phonetic ? '<div class="word-phonetic">' + escapeHtml(w.phonetic) + '</div>' : ''}
+            ${w.phonetic ? `<div class="word-phonetic">${escapeHtml(w.phonetic)}</div>` : ''}
             <div class="word-def">${escapeHtml(w.definitionVi || w.definition || '')}</div>
-            ${w.exampleSentence ? '<div class="word-example">“' + escapeHtml(w.exampleSentence) + '”</div>' : ''}
+            ${w.exampleSentence ? `<div class="word-example">â€œ${escapeHtml(w.exampleSentence)}â€</div>` : ''}
             
-            ${(synText || antText || collText) ? '<div class="word-tags">' + synText + ' ' + antText + ' ' + collText + '</div>' : ''}
+            ${(synText || antText || collText) ? `<div class="word-tags">${synText} ${antText} ${collText}</div>` : ''}
 
             <div class="word-mastery-row">
-              <div class="word-mastery-track" style="cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Bấm để tăng mức độ thuộc">
+              <div class="word-mastery-track" style="cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Báº¥m Ä‘á»ƒ tÄƒng má»©c Ä‘á»™ thuá»™c">
                 <div class="word-mastery-fill" style="width: ${score}%; background: ${masteryInfo.trackColor};"></div>
               </div>
-              <span class="word-mastery-score-text" style="color: ${masteryInfo.trackColor}; font-weight: 700;">${score}/100đ</span>
-              <span class="word-timestamp">🕒 ${formatDateTime(w.updatedAt || w.createdAt)}</span>
+              <span class="word-mastery-score-text" style="color: ${masteryInfo.trackColor}; font-weight: 700;">${score}/100Ä‘</span>
+              <span class="word-timestamp">ðŸ•’ ${formatDateTime(w.updatedAt || w.createdAt)}</span>
             </div>
           </div>
         `;
@@ -4773,7 +2095,7 @@
       document.getElementById('deck-id').value = '';
       document.getElementById('deck-title').value = '';
       document.getElementById('deck-desc').value = '';
-      document.getElementById('modal-deck-title').textContent = 'Tạo Bộ Từ Mới';
+      document.getElementById('modal-deck-title').textContent = 'Táº¡o Bá»™ Tá»« Má»›i';
       openModal('modal-deck');
     }
 
@@ -4799,7 +2121,7 @@
       saveDatabase(true);
       renderDecks();
       closeModal('modal-deck');
-      showToast('Đã lưu bộ từ vựng!');
+      showToast('ÄÃ£ lÆ°u bá»™ tá»« vá»±ng!');
     }
 
     // WORD MODAL
@@ -4819,7 +2141,7 @@
       if (slider) slider.value = 0;
       updateWordModalMasteryPreview(0);
 
-      document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
+      document.getElementById('modal-word-title').textContent = 'ThÃªm Tá»« Vá»±ng Má»›i';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
       openModal('modal-word');
     }
@@ -4846,7 +2168,7 @@
       if (slider) slider.value = score;
       updateWordModalMasteryPreview(score);
 
-      document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
+      document.getElementById('modal-word-title').textContent = 'Chá»‰nh Sá»­a Tá»« Vá»±ng';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
       openModal('modal-word');
     }
@@ -4897,9 +2219,8 @@
       saveDatabase(true);
       renderWordList();
       closeModal('modal-word');
-      showToast('Đã lưu từ vựng thành công!');
+      showToast('ÄÃ£ lÆ°u tá»« vá»±ng thÃ nh cÃ´ng!');
     }
-
     // =========================================================================
     // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
     // =========================================================================
@@ -9595,6 +6916,4 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         if (btn) btn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
       }
     }
-  </script>
-</body>
-</html>
+  

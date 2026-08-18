@@ -1,0 +1,890 @@
+﻿diff --git a/vocaflow.html b/vocaflow.html
+index 173f55c..bf7cf91 100644
+--- a/vocaflow.html
++++ b/vocaflow.html
+@@ -459,17 +459,24 @@
+ 
+     .chip-group {
+       display: flex;
+-      gap: 4px;
++      gap: 6px;
+       overflow-x: auto;
+-      padding-bottom: 0;
+-      flex-shrink: 0;
++      scrollbar-width: none;
++      -webkit-overflow-scrolling: touch;
++      padding: 2px 2px 4px;
++      max-width: 100%;
++      white-space: nowrap;
++      flex: 1;
++    }
++    .chip-group::-webkit-scrollbar {
++      display: none;
+     }
+     .chip {
+-      padding: 3px 9px;
+-      border-radius: 6px;
+-      font-size: 11px;
++      padding: 4px 10px;
++      border-radius: 8px;
++      font-size: 11.5px;
+       font-weight: 600;
+-      height: 28px;
++      height: 30px;
+       display: inline-flex;
+       align-items: center;
+       background-color: var(--surface);
+@@ -479,11 +486,18 @@
+       user-select: none;
+       transition: all 0.2s ease;
+       white-space: nowrap;
++      flex-shrink: 0;
++    }
++    .chip:hover {
++      border-color: var(--primary);
++      color: var(--text);
+     }
+     .chip.active {
+-      background-color: var(--primary);
++      background: linear-gradient(135deg, #4f46e5, #6366f1);
+       color: white;
+-      border-color: var(--primary);
++      border-color: #4f46e5;
++      font-weight: 700;
++      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+     }
+ 
+     /* WORD LIST & CARD REDESIGN */
+@@ -1443,7 +1457,7 @@
+         <svg class="icon"><use href="#i-book"/></svg>
+       </div>
+       <span>VocaFlow</span>
+-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.8</span>
++      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.9</span>
+     </div>
+     <div class="header-actions">
+       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cß╗¡a h├áng ─Éß╗òi ─Éiß╗âm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+@@ -1630,14 +1644,46 @@
+           </div>
+         </div>
+ 
+-        <!-- ROW 3: SLIM FILTER & SEARCH BAR -->
++        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER -->
+         <div class="filter-bar">
+           <input type="text" id="word-search-input" class="search-input" placeholder="≡ƒöì T├¼m tß╗½ vß╗▒ng, ─æß╗ïnh ngh─⌐a, tß╗½ ─æß╗ông ngh─⌐a..." oninput="renderWordList()">
+-          <div class="chip-group">
+-            <div class="chip active" onclick="setWordFilter('all', this)">Tß║Ñt cß║ú</div>
+-            <div class="chip" onclick="setWordFilter('newWord', this)">Mß╗¢i (0%)</div>
+-            <div class="chip" onclick="setWordFilter('learning', this)">─Éang hß╗ìc (1-99%)</div>
+-            <div class="chip" onclick="setWordFilter('mastered', this)">─É├ú thuß╗Öc (100%)</div>
++          <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bß╗Ö lß╗ìc thanh tr╞░ß╗út mß╗⌐c ─æß╗Ö thuß╗Öc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
++            ≡ƒÄÜ∩╕Å <span class="hide-on-mobile">Lß╗ìc ─æiß╗âm</span>
++          </button>
++          <div class="chip-group" id="deck-word-filter-chips">
++            <div class="chip active" onclick="setWordFilter('all', this)">≡ƒÄô Tß║Ñt cß║ú (<span id="chip-count-all">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('0', this)">≡ƒî▒ Mß╗¢i 0% (<span id="chip-count-0">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('1-25', this)">≡ƒÉú Vß╗½a hß╗ìc 1-25% (<span id="chip-count-1-25">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('26-50', this)">≡ƒî┐ H╞íi thuß╗Öc 26-50% (<span id="chip-count-26-50">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('51-75', this)">≡ƒî│ Kh├í thuß╗Öc 51-75% (<span id="chip-count-51-75">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('76-99', this)">Γ¡É Sß║»p thuß╗Öc 76-99% (<span id="chip-count-76-99">0</span>)</div>
++            <div class="chip" onclick="setWordFilter('100', this)">≡ƒææ ─É├ú thuß╗Öc 100% (<span id="chip-count-100">0</span>)</div>
++          </div>
++        </div>
++
++        <!-- EXPANDABLE RANGE SLIDER FILTER PANEL -->
++        <div id="mastery-slider-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
++          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
++            <div style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
++              <span>≡ƒÄÜ∩╕Å</span> Thanh Tr╞░ß╗út Lß╗ìc Mß╗⌐c ─Éß╗Ö Thuß╗Öc: <span id="slider-range-val" style="color: #818cf8; font-family: monospace; font-size: 13px;">0% - 100%</span>
++            </div>
++            <button class="btn btn-outline btn-sm" onclick="resetMasterySlider()" style="font-size: 11px; padding: 2px 8px;">≡ƒöä ─Éß║╖t lß║íi (0 - 100%)</button>
++          </div>
++          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
++            <div>
++              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
++                <span>─Éiß╗âm tß╗æi thiß╗âu (Min):</span>
++                <strong id="label-min-score" style="color: #818cf8;">0%</strong>
++              </div>
++              <input type="range" id="mastery-min-slider" min="0" max="100" value="0" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #6366f1;">
++            </div>
++            <div>
++              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
++                <span>─Éiß╗âm tß╗æi ─æa (Max):</span>
++                <strong id="label-max-score" style="color: #10b981;">100%</strong>
++              </div>
++              <input type="range" id="mastery-max-slider" min="0" max="100" value="100" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #10b981;">
++            </div>
+           </div>
+         </div>
+       </div>
+@@ -1973,6 +2019,17 @@
+           <input type="text" id="word-note" class="form-input" placeholder="Mß║╣o nhß╗¢, ngß╗» cß║únh...">
+         </div>
+ 
++        <div class="form-group" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
++          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
++            <label class="form-label" style="margin-bottom: 0;">Mß╗⌐c ─æß╗Ö thuß╗Öc tß╗½:</label>
++            <span id="modal-word-mastery-badge" class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);">≡ƒî▒ Mß╗¢i 0%</span>
++          </div>
++          <div style="display: flex; align-items: center; gap: 10px;">
++            <input type="range" id="word-mastery-slider" min="0" max="100" step="5" value="0" oninput="updateWordModalMasteryPreview(this.value)" style="flex: 1; accent-color: #6366f1;">
++            <span id="modal-word-mastery-val" style="font-size: 13px; font-weight: 700; font-family: monospace; color: #818cf8; width: 42px; text-align: right;">0%</span>
++          </div>
++        </div>
++
+         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+           <button type="button" class="btn btn-outline" onclick="closeModal('modal-word')">Hß╗ºy</button>
+           <button type="submit" class="btn btn-primary">L╞░u tß╗½ vß╗▒ng</button>
+@@ -2339,7 +2396,7 @@
+       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
+         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">≡ƒôª Th├┤ng Tin ß╗¿ng Dß╗Ñng</label>
+         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+-          <div>Phi├¬n bß║ún: <strong style="color: var(--text);">VocaFlow v0.0.8.8</strong></div>
++          <div>Phi├¬n bß║ún: <strong style="color: var(--text);">VocaFlow v0.0.8.9</strong></div>
+           <div>M├┤i tr╞░ß╗¥ng: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
+           <div>L╞░u trß╗»: <span style="color: var(--text);">Cß╗Ñc bß╗Ö + ─Éß╗ông bß╗Ö Cloud Realtime</span></div>
+         </div>
+@@ -4040,28 +4097,234 @@
+     }
+ 
+     // =========================================================================
+-    // MULTI-SELECTION & FILTER ENGINE
++    // MULTI-SELECTION, MULTI-TIER MASTERY & SLIDER FILTER ENGINE (v0.0.8.9)
+     // =========================================================================
+     let selectedWordIds = new Set();
++    let currentWordFilter = 'all'; // 'all' | '0' | '1-25' | '26-50' | '51-75' | '76-99' | '100' | 'custom-range'
++    let customMinScore = 0;
++    let customMaxScore = 100;
++
++    function getWordScore(w) {
++      if (typeof w.masteryScore === 'number') return w.masteryScore;
++      if (w.status === 'mastered') return 100;
++      if (w.status === 'learning') return 40;
++      return 0;
++    }
++
++    function getWordMasteryInfo(score) {
++      if (score >= 100) {
++        return {
++          label: '├░┼╕ΓÇÿΓÇÿ ├ä┬É├â┬ú thu├í┬╗Γäóc (100%)',
++          shortLabel: '100% ├ä┬É├â┬ú thu├í┬╗Γäóc',
++          tier: 'mastered',
++          badgeStyle: 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);',
++          trackColor: '#10b981'
++        };
++      }
++      if (score >= 76) {
++        return {
++          label: `├ó┬¡┬É S├í┬║┬»p thu├í┬╗Γäóc (${score}%)`,
++          shortLabel: `${score}% S├í┬║┬»p thu├í┬╗Γäóc`,
++          tier: 'tier4',
++          badgeStyle: 'background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35);',
++          trackColor: '#8b5cf6'
++        };
++      }
++      if (score >= 51) {
++        return {
++          label: `├░┼╕┼Æ┬│ Kh├â┬í thu├í┬╗Γäóc (${score}%)`,
++          shortLabel: `${score}% Kh├â┬í thu├í┬╗Γäóc`,
++          tier: 'tier3',
++          badgeStyle: 'background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35);',
++          trackColor: '#3b82f6'
++        };
++      }
++      if (score >= 26) {
++        return {
++          label: `├░┼╕┼Æ┬┐ H├å┬íi thu├í┬╗Γäóc (${score}%)`,
++          shortLabel: `${score}% H├å┬íi thu├í┬╗Γäóc`,
++          tier: 'tier2',
++          badgeStyle: 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);',
++          trackColor: '#f59e0b'
++        };
++      }
++      if (score >= 1) {
++        return {
++          label: `├░┼╕┬É┬ú V├í┬╗┬½a h├í┬╗┬ìc (${score}%)`,
++          shortLabel: `${score}% V├í┬╗┬½a h├í┬╗┬ìc`,
++          tier: 'tier1',
++          badgeStyle: 'background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.35);',
++          trackColor: '#06b6d4'
++        };
++      }
++      return {
++        label: '├░┼╕┼Æ┬▒ M├í┬╗ΓÇ║i (0%)',
++        shortLabel: '0% M├í┬╗ΓÇ║i',
++        tier: 'new',
++        badgeStyle: 'background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);',
++        trackColor: '#64748b'
++      };
++    }
+ 
+     function getFilteredDeckWords() {
+       const query = (document.getElementById('word-search-input')?.value || '').toLowerCase().trim();
+       let deckWords = words.filter(w => w.deckId === currentDeckId);
+ 
+-      if (currentWordFilter !== 'all') {
+-        deckWords = deckWords.filter(w => w.status === currentWordFilter);
++      // Filter by mastery tier / range
++      if (currentWordFilter === '0') {
++        deckWords = deckWords.filter(w => getWordScore(w) === 0);
++      } else if (currentWordFilter === '1-25') {
++        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 1 && s <= 25; });
++      } else if (currentWordFilter === '26-50') {
++        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 26 && s <= 50; });
++      } else if (currentWordFilter === '51-75') {
++        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 51 && s <= 75; });
++      } else if (currentWordFilter === '76-99') {
++        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 76 && s <= 99; });
++      } else if (currentWordFilter === '100') {
++        deckWords = deckWords.filter(w => getWordScore(w) >= 100);
++      } else if (currentWordFilter === 'custom-range') {
++        deckWords = deckWords.filter(w => {
++          const s = getWordScore(w);
++          return s >= customMinScore && s <= customMaxScore;
++        });
+       }
+ 
+       if (query) {
+         deckWords = deckWords.filter(w => 
+-          w.term.toLowerCase().includes(query) ||
+-          w.definitionVi.toLowerCase().includes(query) ||
+-          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query)))
++          (w.term || '').toLowerCase().includes(query) ||
++          (w.definitionVi || w.definition || '').toLowerCase().includes(query) ||
++          (w.exampleSentence || w.example || '').toLowerCase().includes(query) ||
++          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query))) ||
++          (w.collocations && w.collocations.some(c => c.toLowerCase().includes(query)))
+         );
+       }
+       return deckWords;
+     }
+ 
++    function updateMasteryChipCounts() {
++      const allDeckWords = words.filter(w => w.deckId === currentDeckId);
++      const countAll = allDeckWords.length;
++      let count0 = 0, count1_25 = 0, count26_50 = 0, count51_75 = 0, count76_99 = 0, count100 = 0;
++
++      allDeckWords.forEach(w => {
++        const s = getWordScore(w);
++        if (s === 0) count0++;
++        else if (s <= 25) count1_25++;
++        else if (s <= 50) count26_50++;
++        else if (s <= 75) count51_75++;
++        else if (s <= 99) count76_99++;
++        else count100++;
++      });
++
++      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
++      setTxt('chip-count-all', countAll);
++      setTxt('chip-count-0', count0);
++      setTxt('chip-count-1-25', count1_25);
++      setTxt('chip-count-26-50', count26_50);
++      setTxt('chip-count-51-75', count51_75);
++      setTxt('chip-count-76-99', count76_99);
++      setTxt('chip-count-100', count100);
++    }
++
++    function toggleMasterySliderPanel() {
++      const panel = document.getElementById('mastery-slider-panel');
++      if (!panel) return;
++      const isHidden = panel.style.display === 'none' || !panel.style.display;
++      panel.style.display = isHidden ? 'block' : 'none';
++      const btn = document.getElementById('btn-toggle-mastery-slider');
++      if (btn) {
++        btn.style.background = isHidden ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.08)';
++      }
++    }
++
++    function handleMasterySliderChange() {
++      const minSlider = document.getElementById('mastery-min-slider');
++      const maxSlider = document.getElementById('mastery-max-slider');
++      if (!minSlider || !maxSlider) return;
++
++      let min = parseInt(minSlider.value, 10);
++      let max = parseInt(maxSlider.value, 10);
++      if (min > max) {
++        min = max;
++        minSlider.value = min;
++      }
++
++      customMinScore = min;
++      customMaxScore = max;
++
++      const rangeVal = document.getElementById('slider-range-val');
++      const labelMin = document.getElementById('label-min-score');
++      const labelMax = document.getElementById('label-max-score');
++
++      if (rangeVal) rangeVal.textContent = `${min}% - ${max}%`;
++      if (labelMin) labelMin.textContent = `${min}%`;
++      if (labelMax) labelMax.textContent = `${max}%`;
++
++      currentWordFilter = 'custom-range';
++      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
++      renderWordList();
++    }
++
++    function resetMasterySlider() {
++      const minSlider = document.getElementById('mastery-min-slider');
++      const maxSlider = document.getElementById('mastery-max-slider');
++      if (minSlider) minSlider.value = 0;
++      if (maxSlider) maxSlider.value = 100;
++      customMinScore = 0;
++      customMaxScore = 100;
++
++      const rangeVal = document.getElementById('slider-range-val');
++      const labelMin = document.getElementById('label-min-score');
++      const labelMax = document.getElementById('label-max-score');
++
++      if (rangeVal) rangeVal.textContent = '0% - 100%';
++      if (labelMin) labelMin.textContent = '0%';
++      if (labelMax) labelMax.textContent = '100%';
++
++      currentWordFilter = 'all';
++      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
++      const firstChip = document.querySelector('#deck-word-filter-chips .chip');
++      if (firstChip) firstChip.classList.add('active');
++      renderWordList();
++    }
++
++    function setWordFilter(filter, el) {
++      currentWordFilter = filter;
++      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
++      if (el) el.classList.add('active');
++      renderWordList();
++    }
++
++    function updateWordModalMasteryPreview(val) {
++      val = parseInt(val, 10) || 0;
++      const valEl = document.getElementById('modal-word-mastery-val');
++      const badgeEl = document.getElementById('modal-word-mastery-badge');
++      if (valEl) valEl.textContent = `${val}%`;
++      if (badgeEl) {
++        const info = getWordMasteryInfo(val);
++        badgeEl.textContent = info.label;
++        badgeEl.setAttribute('style', info.badgeStyle);
++      }
++    }
++
++    function quickAdjustWordScore(wordId) {
++      const w = words.find(item => item.id === wordId);
++      if (!w) return;
++      const cur = getWordScore(w);
++      const tiers = [0, 25, 50, 75, 90, 100];
++      let next = 0;
++      for (let i = 0; i < tiers.length; i++) {
++        if (tiers[i] > cur) { next = tiers[i]; break; }
++      }
++      w.masteryScore = next;
++      w.status = next >= 100 ? 'mastered' : (next > 0 ? 'learning' : 'newWord');
++      w.updatedAt = new Date().toISOString();
++      saveDatabase(true);
++      renderWordList();
++      showToast(`├░┼╕┼╜┬» ├ä┬É├â┬ú c├í┬║┬¡p nh├í┬║┬¡t "${w.term}": ${next}% (${getWordMasteryInfo(next).shortLabel})`);
++    }
++
+     function toggleWordSelect(wordId, isChecked) {
+       if (isChecked) {
+         selectedWordIds.add(wordId);
+@@ -4095,7 +4358,7 @@
+       const btnDeleteSelected = document.getElementById('btn-delete-selected');
+       const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
+ 
+-      if (countBadge) countBadge.textContent = count > 0 ? `${count} tß╗½ ─æ╞░ß╗úc chß╗ìn` : '0 tß╗½ ─æ╞░ß╗úc chß╗ìn';
++      if (countBadge) countBadge.textContent = count > 0 ? `${count} t├í┬╗┬½ ├äΓÇÿ├å┬░├í┬╗┬úc ch├í┬╗┬ìn` : '0 t├í┬╗┬½ ├äΓÇÿ├å┬░├í┬╗┬úc ch├í┬╗┬ìn';
+       const countSuffix = count > 0 ? ` (${count})` : '';
+       if (fcLabel) fcLabel.textContent = countSuffix;
+       if (autofcLabel) autofcLabel.textContent = countSuffix;
+@@ -4110,14 +4373,14 @@
+ 
+     function deleteSelectedWords() {
+       if (selectedWordIds.size === 0) return;
+-      if (!confirm(`Bß║ín c├│ chß║»c chß║»n muß╗æn x├│a ${selectedWordIds.size} tß╗½ vß╗▒ng ─æ├ú chß╗ìn?`)) return;
++      if (!confirm(`B├í┬║┬ín c├â┬│ ch├í┬║┬»c ch├í┬║┬»n mu├í┬╗ΓÇÿn x├â┬│a ${selectedWordIds.size} t├í┬╗┬½ v├í┬╗┬▒ng ├äΓÇÿ├â┬ú ch├í┬╗┬ìn?`)) return;
+ 
+       words = words.filter(w => !selectedWordIds.has(w.id));
+       selectedWordIds.clear();
+       saveDatabase(true);
+       renderWordList();
+       updateSelectionUI();
+-      showToast('─É├ú x├│a c├íc tß╗½ ─æ├ú chß╗ìn!');
++      showToast('├ä┬É├â┬ú x├â┬│a c├â┬íc t├í┬╗┬½ ├äΓÇÿ├â┬ú ch├í┬╗┬ìn!');
+     }
+ 
+     // =========================================================================
+@@ -4138,9 +4401,7 @@
+         gain = Math.round(baseGain * 1.5);
+       }
+ 
+-      // Penalty is 50% of the gain, rounded up (e.g. 6*0.5=3, 5*0.5=2.5->3, 1*0.5=0.5->1)
+       const penalty = Math.ceil(gain * 0.5);
+-
+       return { gain, penalty };
+     }
+ 
+@@ -4191,7 +4452,7 @@
+       }
+ 
+       pushCurrentDatabaseToCloud();
+-      showToast(deck.isPinned ? `≡ƒôî ─É├ú ghim bß╗Ö tß╗½ "${deck.title}" l├¬n ─æß║ºu!` : `─É├ú bß╗Å ghim bß╗Ö tß╗½ "${deck.title}"`);
++      showToast(deck.isPinned ? `├░┼╕ΓÇ£┼Æ ├ä┬É├â┬ú ghim b├í┬╗Γäó t├í┬╗┬½ "${deck.title}" l├â┬¬n ├äΓÇÿ├í┬║┬ºu!` : `├ä┬É├â┬ú b├í┬╗┬Å ghim b├í┬╗Γäó t├í┬╗┬½ "${deck.title}"`);
+     }
+ 
+     function toggleArchiveDeck(deckId) {
+@@ -4200,7 +4461,7 @@
+ 
+       deck.isArchived = !deck.isArchived;
+       if (deck.isArchived) {
+-        deck.isPinned = false; // Unpin automatically when archiving
++        deck.isPinned = false;
+       }
+       deck.updatedAt = new Date().toISOString();
+       saveDatabase(true);
+@@ -4215,7 +4476,7 @@
+       }
+ 
+       pushCurrentDatabaseToCloud();
+-      showToast(deck.isArchived ? `≡ƒôª ─É├ú cß║Ñt bß╗Ö tß╗½ "${deck.title}" v├áo Kho L╞░u Trß╗»!` : `≡ƒöä ─É├ú kh├┤i phß╗Ñc bß╗Ö tß╗½ "${deck.title}" vß╗ü danh s├ích ─æang hß╗ìc!`);
++      showToast(deck.isArchived ? `├░┼╕ΓÇ£┬ª ├ä┬É├â┬ú c├í┬║┬Ñt b├í┬╗Γäó t├í┬╗┬½ "${deck.title}" v├â┬áo Kho L├å┬░u Tr├í┬╗┬»!` : `├░┼╕ΓÇ¥ΓÇ₧ ├ä┬É├â┬ú kh├â┬┤i ph├í┬╗┬Ñc b├í┬╗Γäó t├í┬╗┬½ "${deck.title}" v├í┬╗┬ü danh s├â┬ích ├äΓÇÿang h├í┬╗┬ìc!`);
+     }
+ 
+     function updateDeckDetailHeader() {
+@@ -4225,13 +4486,13 @@
+       const pinBtn = document.getElementById('btn-detail-pin');
+       if (pinBtn) {
+         pinBtn.classList.toggle('active-pin-btn', !!deck.isPinned);
+-        pinBtn.title = deck.isPinned ? 'Bß╗Å ghim bß╗Ö tß╗½' : 'Ghim bß╗Ö tß╗½ l├¬n ─æß║ºu';
++        pinBtn.title = deck.isPinned ? 'B├í┬╗┬Å ghim b├í┬╗Γäó t├í┬╗┬½' : 'Ghim b├í┬╗Γäó t├í┬╗┬½ l├â┬¬n ├äΓÇÿ├í┬║┬ºu';
+       }
+ 
+       const archiveBtn = document.getElementById('btn-detail-archive');
+       if (archiveBtn) {
+         archiveBtn.innerHTML = `<svg class="icon icon-sm"><use href="#${deck.isArchived ? 'i-unarchive' : 'i-archive'}"/></svg>`;
+-        archiveBtn.title = deck.isArchived ? 'Kh├┤i phß╗Ñc vß╗ü danh s├ích ─æang hß╗ìc' : 'L╞░u trß╗» (Cß║Ñt bß╗Ö tß╗½ n├áy)';
++        archiveBtn.title = deck.isArchived ? 'Kh├â┬┤i ph├í┬╗┬Ñc v├í┬╗┬ü danh s├â┬ích ├äΓÇÿang h├í┬╗┬ìc' : 'L├å┬░u tr├í┬╗┬» (C├í┬║┬Ñt b├í┬╗Γäó t├í┬╗┬½ n├â┬áy)';
+       }
+     }
+ 
+@@ -4244,15 +4505,7 @@
+       container.innerHTML = '';
+ 
+       const activeDecks = decks.filter(d => !d.isArchived);
+-      const archivedDecks = decks.filter(d => !!d.isArchived);
+-
+-      // Update Tab Badges & Active State
+-      const tabActive = document.getElementById('tab-active-decks');
+-      const tabArchived = document.getElementById('tab-archived-decks');
+-      if (tabActive && tabArchived) {
+-        tabActive.classList.toggle('active', currentDeckTab === 'active');
+-        tabArchived.classList.toggle('active', currentDeckTab === 'archived');
+-      }
++      const archivedDecks = decks.filter(d => !d.isArchived);
+ 
+       const countActive = document.getElementById('count-active-decks');
+       const countArchived = document.getElementById('count-archived-decks');
+@@ -4261,15 +4514,13 @@
+ 
+       let displayDecks = [];
+       if (currentDeckTab === 'active') {
+-        // Pinned decks first, then newest updated
+         displayDecks = [...activeDecks].sort((a, b) => {
+-          if (!!a.isPinned !== !!b.isPinned) {
++          if (!!a.isPinned !== !b.isPinned) {
+             return a.isPinned ? -1 : 1;
+           }
+           return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+         });
+       } else {
+-        // Archived decks sorted newest first
+         displayDecks = [...archivedDecks].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+       }
+ 
+@@ -4277,17 +4528,17 @@
+         if (currentDeckTab === 'active') {
+           container.innerHTML = `
+             <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
+-              <div style="font-size: 40px; margin-bottom: 10px;">≡ƒôÜ</div>
+-              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Bß║ín Ch╞░a C├│ Bß╗Ö Tß╗½ Vß╗▒ng N├áo</h3>
++              <div style="font-size: 40px; margin-bottom: 10px;">├░┼╕ΓÇ£┼í</div>
++              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">B├í┬║┬ín Ch├å┬░a C├â┬│ B├í┬╗Γäó T├í┬╗┬½ V├í┬╗┬▒ng N├â┬áo</h3>
+               <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px; max-width: 460px; margin-inline: auto; line-height: 1.5;">
+-                Kh├ím ph├í ngay Kho tß╗½ vß╗▒ng Tiß║┐ng Anh <strong>Lß╗¢p 10, 11, 12 Trß╗ìng t├óm</strong> c├│ sß║╡n trong Th╞░ Viß╗çn ─æß╗â bß║»t ─æß║ºu ├┤n luyß╗çn ngay chß╗ë vß╗¢i 1-Click!
++                Kh├â┬ím ph├â┬í ngay Kho t├í┬╗┬½ v├í┬╗┬▒ng Ti├í┬║┬┐ng Anh <strong>L├í┬╗ΓÇ║p 10, 11, 12 Tr├í┬╗┬ìng t├â┬óm</strong> c├â┬│ s├í┬║┬╡n trong Th├å┬░ Vi├í┬╗ΓÇín ├äΓÇÿ├í┬╗╞Æ b├í┬║┬»t ├äΓÇÿ├í┬║┬ºu ├â┬┤n luy├í┬╗ΓÇín ngay ch├í┬╗ΓÇ░ v├í┬╗ΓÇ║i 1-Click!
+               </p>
+               <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                 <button class="btn btn-primary" onclick="openLibraryModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 18px;">
+-                  ≡ƒôÜ Kh├ím Ph├í Th╞░ Viß╗çn Tß╗½ Vß╗▒ng (1-Click)
++                  ├░┼╕ΓÇ£┼í Kh├â┬ím Ph├â┬í Th├å┬░ Vi├í┬╗ΓÇín T├í┬╗┬½ V├í┬╗┬▒ng (1-Click)
+                 </button>
+                 <button class="btn btn-outline" onclick="openDeckModal()">
+-                  <svg class="icon"><use href="#i-add"/></svg> Tß║ío Bß╗Ö Tß╗½ Ri├¬ng
++                  <svg class="icon"><use href="#i-add"/></svg> T├í┬║┬ío B├í┬╗Γäó T├í┬╗┬½ Ri├â┬¬ng
+                 </button>
+               </div>
+             </div>
+@@ -4296,8 +4547,8 @@
+           container.innerHTML = `
+             <div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
+               <svg class="icon icon-xl" style="fill: var(--text-muted); margin-bottom: 12px;"><use href="#i-archive"/></svg>
+-              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho l╞░u trß╗» ─æang trß╗æng</h3>
+-              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi hß╗ìc xong mß╗Öt bß╗Ö tß╗½ hoß║╖c muß╗æn tß║ím ß║⌐n ─æi cho gß╗ìn g├áng, bß║ín h├úy bß║Ñm n├║t <strong>"L╞░u trß╗»"</strong> ß╗ƒ bß╗Ö tß╗½ ─æ├│ nh├⌐!</p>
++              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho l├å┬░u tr├í┬╗┬» ├äΓÇÿang tr├í┬╗ΓÇÿng</h3>
++              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi h├í┬╗┬ìc xong m├í┬╗Γäót b├í┬╗Γäó t├í┬╗┬½ ho├í┬║┬╖c mu├í┬╗ΓÇÿn t├í┬║┬ím ├í┬║┬⌐n ├äΓÇÿi cho g├í┬╗┬ìn g├â┬áng, b├í┬║┬ín h├â┬úy b├í┬║┬Ñm n├â┬║t <strong>"L├å┬░u tr├í┬╗┬»"</strong> ├í┬╗┼╕ b├í┬╗Γäó t├í┬╗┬½ ├äΓÇÿ├â┬│ nh├â┬⌐!</p>
+             </div>
+           `;
+         }
+@@ -4307,14 +4558,11 @@
+       displayDecks.forEach(deck => {
+         const deckWords = words.filter(w => w.deckId === deck.id);
+         const total = deckWords.length;
+-        const mastered = deckWords.filter(w => w.status === 'mastered').length;
++        const mastered = deckWords.filter(w => getWordScore(w) >= 100).length;
+ 
+         let avgScore = 0;
+         if (total > 0) {
+-          const totalScore = deckWords.reduce((sum, w) => {
+-            const s = typeof w.masteryScore === 'number' ? w.masteryScore : (w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0));
+-            return sum + s;
+-          }, 0);
++          const totalScore = deckWords.reduce((sum, w) => sum + getWordScore(w), 0);
+           avgScore = Math.round(totalScore / total);
+         }
+ 
+@@ -4328,44 +4576,39 @@
+           <div class="deck-header">
+             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
+               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
+-              ${isPinned ? `<span class="badge badge-pinned" title="Bß╗Ö tß╗½ ─æ├ú ─æ╞░ß╗úc ghim l├¬n ─æß║ºu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> ─É├ú ghim</span>` : ''}
+-              ${isArchived ? `<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> ─É├ú l╞░u trß╗»</span>` : ''}
++              ${isPinned ? `<span class="badge badge-pinned" title="B├í┬╗Γäó t├í┬╗┬½ ├äΓÇÿ├â┬ú ├äΓÇÿ├å┬░├í┬╗┬úc ghim l├â┬¬n ├äΓÇÿ├í┬║┬ºu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> ├ä┬É├â┬ú ghim</span>` : ''}
++              ${isArchived ? `<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> ├ä┬É├â┬ú l├å┬░u tr├í┬╗┬»</span>` : ''}
+             </div>
+-            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} tß╗½</span>
++            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} t├í┬╗┬½</span>
+           </div>
+-          <p class="deck-desc">${escapeHtml(deck.description || 'Ch╞░a c├│ m├┤ tß║ú')}</p>
++          <p class="deck-desc">${escapeHtml(deck.description || 'Ch├å┬░a c├â┬│ m├â┬┤ t├í┬║┬ú')}</p>
+           <div class="progress-bar-bg">
+             <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
+           </div>
+           <div class="deck-stats">
+-            <span>Mß╗⌐c ─æß╗Ö thuß╗Öc: ${avgScore}%</span>
+-            <span>─É├ú thuß╗Öc: ${mastered}/${total}</span>
++            <span>M├í┬╗┬⌐c ├äΓÇÿ├í┬╗Γäó thu├í┬╗Γäóc: ${avgScore}%</span>
++            <span>├ä┬É├â┬ú thu├í┬╗Γäóc: ${mastered}/${total}</span>
+           </div>
+           <div class="deck-timestamp">
+-            <span>≡ƒòÆ Cß║¡p nhß║¡t: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
++            <span>├░┼╕ΓÇóΓÇÖ C├í┬║┬¡p nh├í┬║┬¡t: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+           </div>
+ 
+-          <!-- Responsive Deck Actions Footer -->
+-          <div class="deck-card-actions" onclick="event.stopPropagation()">
+-            <div class="deck-card-actions-left">
+-              ${!isArchived ? `
+-                <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="togglePinDeck('${deck.id}')" title="${isPinned ? 'Bß╗Å ghim bß╗Ö tß╗½' : 'Ghim bß╗Ö tß╗½ l├¬n ─æß║ºu'}">
+-                  <svg class="icon icon-sm"><use href="#i-pin"/></svg>
+-                  <span>${isPinned ? 'Bß╗Å ghim' : 'Ghim'}</span>
+-                </button>
+-              ` : ''}
+-            </div>
+-            <div class="deck-card-actions-right">
+-              <button class="btn btn-outline btn-sm" onclick="toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Kh├┤i phß╗Ñc vß╗ü danh s├ích ─æang hß╗ìc' : 'Cß║Ñt bß╗Ö tß╗½ v├áo kho l╞░u trß╗»'}">
+-                <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg>
+-                <span>${isArchived ? 'Kh├┤i phß╗Ñc' : 'L╞░u trß╗»'}</span>
+-              </button>
+-              <button class="btn btn-outline btn-sm" onclick="editDeck('${deck.id}')" title="Sß╗¡a bß╗Ö tß╗½"><svg class="icon icon-sm"><use href="#i-edit"/></svg> Sß╗¡a</button>
+-              <button class="btn btn-outline btn-sm" onclick="deleteDeck('${deck.id}')" title="X├│a bß╗Ö tß╗½" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> X├│a</button>
+-            </div>
++          <div class="deck-actions-grid">
++            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="S├í┬╗┬¡a th├â┬┤ng tin b├í┬╗Γäó t├í┬╗┬½">
++              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span class="hide-on-mobile">S├í┬╗┬¡a</span>
++            </button>
++            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Kh├â┬┤i ph├í┬╗┬Ñc v├í┬╗┬ü danh s├â┬ích ├äΓÇÿang h├í┬╗┬ìc' : 'L├å┬░u tr├í┬╗┬» (C├í┬║┬Ñt b├í┬╗Γäó t├í┬╗┬½)'}">
++              <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'Kh├â┬┤i ph├í┬╗┬Ñc' : 'L├å┬░u tr├í┬╗┬»'}</span>
++            </button>
++            <button class="btn btn-primary btn-sm" onclick="openDeckDetail('${deck.id}')" title="M├í┬╗┼╕ danh s├â┬ích t├í┬╗┬½ v├í┬╗┬▒ng">
++              <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Xem B├í┬╗Γäó T├í┬╗┬½</span>
++            </button>
+           </div>
+         `;
+-        card.onclick = () => openDeckDetail(deck.id);
++        card.addEventListener('click', (e) => {
++          if (e.target.closest('button')) return;
++          openDeckDetail(deck.id);
++        });
+         container.appendChild(card);
+       });
+     }
+@@ -4377,13 +4620,11 @@
+       document.getElementById('deck-id').value = deck.id;
+       document.getElementById('deck-title').value = deck.title;
+       document.getElementById('deck-desc').value = deck.description || '';
+-      
+-      const colorRadios = document.querySelectorAll('input[name="deck-color"]');
+-      colorRadios.forEach(r => {
+-        r.checked = (r.value === (deck.color || '#4f46e5'));
+-      });
+ 
+-      document.getElementById('modal-deck-title').textContent = 'Chß╗ënh Sß╗¡a Bß╗Ö Tß╗½';
++      const colorRadio = document.querySelector(`input[name="deck-color"][value="${deck.color || '#4f46e5'}"]`);
++      if (colorRadio) colorRadio.checked = true;
++
++      document.getElementById('modal-deck-title').textContent = 'Ch├í┬╗ΓÇ░nh S├í┬╗┬¡a B├í┬╗Γäó T├í┬╗┬½';
+       openModal('modal-deck');
+     }
+ 
+@@ -4391,7 +4632,7 @@
+       const deck = decks.find(d => d.id === deckId);
+       if (!deck) return;
+ 
+-      if (!confirm(`Bß║ín c├│ chß║»c chß║»n muß╗æn x├│a bß╗Ö tß╗½ "${deck.title}" v├á to├án bß╗Ö tß╗½ vß╗▒ng b├¬n trong?`)) {
++      if (!confirm(`B├í┬║┬ín c├â┬│ ch├í┬║┬»c ch├í┬║┬»n mu├í┬╗ΓÇÿn x├â┬│a b├í┬╗Γäó t├í┬╗┬½ "${deck.title}" v├â┬á to├â┬án b├í┬╗Γäó t├í┬╗┬½ v├í┬╗┬▒ng b├â┬¬n trong?`)) {
+         return;
+       }
+ 
+@@ -4403,7 +4644,7 @@
+       if (currentDeckId === deckId) {
+         showScreen('screen-decks');
+       }
+-      showToast(`─É├ú x├│a bß╗Ö tß╗½ "${deck.title}"!`);
++      showToast(`├ä┬É├â┬ú x├â┬│a b├í┬╗Γäó t├í┬╗┬½ "${deck.title}"!`);
+     }
+ 
+     // OPEN DECK DETAIL
+@@ -4417,32 +4658,43 @@
+       document.getElementById('deck-detail-desc').textContent = deck.description || '';
+       const timeEl = document.getElementById('deck-detail-timestamp');
+       if (timeEl) {
+-        timeEl.textContent = `≡ƒòÆ Tß║ío: ${formatDateOnly(deck.createdAt || deck.updatedAt)}`;
++        timeEl.textContent = `├░┼╕ΓÇóΓÇÖ T├í┬║┬ío: ${formatDateOnly(deck.createdAt || deck.updatedAt)}`;
+       }
+       document.getElementById('word-search-input').value = '';
+       currentWordFilter = 'all';
+ 
++      // Reset slider panel
++      const panel = document.getElementById('mastery-slider-panel');
++      if (panel) panel.style.display = 'none';
++      const minSlider = document.getElementById('mastery-min-slider');
++      const maxSlider = document.getElementById('mastery-max-slider');
++      if (minSlider) minSlider.value = 0;
++      if (maxSlider) maxSlider.value = 100;
++      customMinScore = 0;
++      customMaxScore = 100;
++
+       updateDeckDetailHeader();
+       renderWordList();
+       updateSelectionUI();
+       showScreen('screen-deck-detail');
+     }
+ 
+-    // RENDER WORD LIST WITH MOBILE-OPTIMIZED RESPONSIVE CARDS
++    // RENDER WORD LIST WITH MULTI-TIER MASTERY CARDS
+     function renderWordList() {
+       const container = document.getElementById('word-list-container');
+       container.innerHTML = '';
+ 
++      updateMasteryChipCounts();
+       const deckWords = getFilteredDeckWords();
+ 
+       if (deckWords.length === 0) {
+         container.innerHTML = `
+-          <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
+-            <div style="font-size: 32px; margin-bottom: 8px;">≡ƒôû</div>
+-            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Ch╞░a c├│ tß╗½ vß╗▒ng n├áo trong bß╗Ö n├áy</p>
+-            <p style="font-size: 12px; margin-bottom: 16px;">H├úy bß║Ñm n├║t b├¬n d╞░ß╗¢i ─æß╗â th├¬m tß╗½ vß╗▒ng mß╗¢i (nhß║¡p tay hoß║╖c d├╣ng AI ─æiß╗ün tß╗▒ ─æß╗Öng)!</p>
+-            <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;">
+-              <svg class="icon"><use href="#i-add"/></svg> Th├¬m Tß╗½ Vß╗▒ng Mß╗¢i
++          <div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
++            <div style="font-size: 32px; margin-bottom: 8px;">├░┼╕ΓÇ£ΓÇô</div>
++            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Kh├â┬┤ng t├â┬¼m th├í┬║┬Ñy t├í┬╗┬½ v├í┬╗┬▒ng n├â┬áo</p>
++            <p style="font-size: 12px; margin-bottom: 16px;">Kh├â┬┤ng c├â┬│ t├í┬╗┬½ n├â┬áo ph├â┬╣ h├í┬╗┬úp v├í┬╗ΓÇ║i b├í┬╗Γäó l├í┬╗┬ìc ho├í┬║┬╖c t├â┬¼m ki├í┬║┬┐m hi├í┬╗ΓÇín t├í┬║┬íi.</p>
++            <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
++              <svg class="icon"><use href="#i-add"/></svg> Th├â┬¬m T├í┬╗┬½ V├í┬╗┬▒ng M├í┬╗ΓÇ║i
+             </button>
+           </div>
+         `;
+@@ -4455,50 +4707,47 @@
+         item.className = 'word-item' + (selectedWordIds.has(w.id) ? ' selected' : '');
+         item.id = `word-item-${w.id}`;
+ 
+-        const score = typeof w.masteryScore === 'number' ? w.masteryScore : (
+-          w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0)
+-        );
+-
+-        let statusBadge = `<span class="badge badge-new">${score}%</span>`;
+-        if (score >= 100 || w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">≡ƒÄ» 100%</span>`;
+-        else if (score > 0 || w.status === 'learning') statusBadge = `<span class="badge badge-learning">ΓÜí ${score}%</span>`;
++        const score = getWordScore(w);
++        const masteryInfo = getWordMasteryInfo(score);
+ 
+         const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
+-        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">Γëê ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
+-        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">Γëá ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
+-        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">ΓÇó ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
++        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">├óΓÇ░╦å ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
++        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">├óΓÇ░┬á ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
++        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">├óΓé¼┬ó ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
+ 
+         item.innerHTML = `
+           <div class="word-item-header">
+             <div class="word-item-left">
+-              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chß╗ìn tß╗½ n├áy ─æß╗â hß╗ìc">
++              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Ch├í┬╗┬ìn t├í┬╗┬½ n├â┬áy ├äΓÇÿ├í┬╗╞Æ h├í┬╗┬ìc">
+               <span class="word-term">${escapeHtml(w.term)}</span>
+               ${cefrBadge}
+               ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
+-              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Ph├ít ├óm">
++              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Ph├â┬ít ├â┬óm">
+                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+               </button>
+             </div>
+             <div class="word-item-right">
+-              ${statusBadge}
+-              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sß╗¡a"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+-              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="X├│a"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
++              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="B├í┬║┬Ñm ├äΓÇÿ├í┬╗╞Æ ├äΓÇÿ├í┬╗ΓÇói nhanh m├í┬╗┬⌐c ├äΓÇÿ├í┬╗Γäó thu├í┬╗Γäóc (0% -> 25% -> 50% -> 75% -> 90% -> 100%)">
++                ${masteryInfo.label}
++              </span>
++              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="S├í┬╗┬¡a"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
++              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="X├â┬│a"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+             </div>
+           </div>
+ 
+           <div class="word-item-body">
+             ${w.phonetic ? `<div class="word-phonetic">${escapeHtml(w.phonetic)}</div>` : ''}
+-            <div class="word-def">${escapeHtml(w.definitionVi)}</div>
+-            ${w.exampleSentence ? `<div class="word-example">ΓÇ£${escapeHtml(w.exampleSentence)}ΓÇ¥</div>` : ''}
++            <div class="word-def">${escapeHtml(w.definitionVi || w.definition || '')}</div>
++            ${w.exampleSentence ? `<div class="word-example">├óΓé¼┼ô${escapeHtml(w.exampleSentence)}├óΓé¼┬¥</div>` : ''}
+             
+             ${(synText || antText || collText) ? `<div class="word-tags">${synText} ${antText} ${collText}</div>` : ''}
+ 
+             <div class="word-mastery-row">
+-              <div class="word-mastery-track">
+-                <div class="word-mastery-fill" style="width: ${score}%;"></div>
++              <div class="word-mastery-track" style="cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="B├í┬║┬Ñm ├äΓÇÿ├í┬╗╞Æ t├ä╞Æng m├í┬╗┬⌐c ├äΓÇÿ├í┬╗Γäó thu├í┬╗Γäóc">
++                <div class="word-mastery-fill" style="width: ${score}%; background: ${masteryInfo.trackColor};"></div>
+               </div>
+-              <span class="word-mastery-score-text">${score}/100─æ</span>
+-              <span class="word-timestamp">≡ƒòÆ ${formatDateTime(w.updatedAt || w.createdAt)}</span>
++              <span class="word-mastery-score-text" style="color: ${masteryInfo.trackColor}; font-weight: 700;">${score}/100├äΓÇÿ</span>
++              <span class="word-timestamp">├░┼╕ΓÇóΓÇÖ ${formatDateTime(w.updatedAt || w.createdAt)}</span>
+             </div>
+           </div>
+         `;
+@@ -4508,13 +4757,6 @@
+       updateSelectionUI();
+     }
+ 
+-    function setWordFilter(filter, el) {
+-      currentWordFilter = filter;
+-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+-      el.classList.add('active');
+-      renderWordList();
+-    }
+-
+     // MODAL CONTROL
+     function openModal(id) {
+       document.getElementById(id).classList.add('active');
+@@ -4528,7 +4770,7 @@
+       document.getElementById('deck-id').value = '';
+       document.getElementById('deck-title').value = '';
+       document.getElementById('deck-desc').value = '';
+-      document.getElementById('modal-deck-title').textContent = 'Tß║ío Bß╗Ö Tß╗½ Mß╗¢i';
++      document.getElementById('modal-deck-title').textContent = 'T├í┬║┬ío B├í┬╗Γäó T├í┬╗┬½ M├í┬╗ΓÇ║i';
+       openModal('modal-deck');
+     }
+ 
+@@ -4554,7 +4796,7 @@
+       saveDatabase(true);
+       renderDecks();
+       closeModal('modal-deck');
+-      showToast('─É├ú l╞░u bß╗Ö tß╗½ vß╗▒ng!');
++      showToast('├ä┬É├â┬ú l├å┬░u b├í┬╗Γäó t├í┬╗┬½ v├í┬╗┬▒ng!');
+     }
+ 
+     // WORD MODAL
+@@ -4570,7 +4812,11 @@
+       document.getElementById('word-antonyms').value = '';
+       document.getElementById('word-collocations').value = '';
+       document.getElementById('word-note').value = '';
+-      document.getElementById('modal-word-title').textContent = 'Th├¬m Tß╗½ Vß╗▒ng Mß╗¢i';
++      const slider = document.getElementById('word-mastery-slider');
++      if (slider) slider.value = 0;
++      updateWordModalMasteryPreview(0);
++
++      document.getElementById('modal-word-title').textContent = 'Th├â┬¬m T├í┬╗┬½ V├í┬╗┬▒ng M├í┬╗ΓÇ║i';
+       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+       openModal('modal-word');
+     }
+@@ -4579,18 +4825,25 @@
+       const w = words.find(item => item.id === id);
+       if (!w) return;
+ 
++      const score = getWordScore(w);
++
+       document.getElementById('word-id').value = w.id;
+       document.getElementById('word-term').value = w.term;
+       document.getElementById('word-pos').value = w.partOfSpeech || 'noun';
+       document.getElementById('word-cefr').value = w.cefrLevel || '';
+       document.getElementById('word-phonetic').value = w.phonetic || '';
+-      document.getElementById('word-def').value = w.definitionVi;
+-      document.getElementById('word-example').value = w.exampleSentence || '';
++      document.getElementById('word-def').value = w.definitionVi || w.definition || '';
++      document.getElementById('word-example').value = w.exampleSentence || w.example || '';
+       document.getElementById('word-synonyms').value = (w.synonyms || []).join(', ');
+       document.getElementById('word-antonyms').value = (w.antonyms || []).join(', ');
+       document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
+       document.getElementById('word-note').value = w.note || '';
+-      document.getElementById('modal-word-title').textContent = 'Chß╗ënh Sß╗¡a Tß╗½ Vß╗▒ng';
++
++      const slider = document.getElementById('word-mastery-slider');
++      if (slider) slider.value = score;
++      updateWordModalMasteryPreview(score);
++
++      document.getElementById('modal-word-title').textContent = 'Ch├í┬╗ΓÇ░nh S├í┬╗┬¡a T├í┬╗┬½ V├í┬╗┬▒ng';
+       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+       openModal('modal-word');
+     }
+@@ -4608,6 +4861,10 @@
+       const ant = parseList(document.getElementById('word-antonyms').value);
+       const coll = parseList(document.getElementById('word-collocations').value);
+       const note = document.getElementById('word-note').value.trim();
++      
++      const slider = document.getElementById('word-mastery-slider');
++      const score = slider ? parseInt(slider.value, 10) : 0;
++      const status = score >= 100 ? 'mastered' : (score > 0 ? 'learning' : 'newWord');
+       const nowIso = new Date().toISOString();
+ 
+       const existingIndex = words.findIndex(w => w.id === id);
+@@ -4617,6 +4874,8 @@
+           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
+           definitionVi: def, exampleSentence: example,
+           synonyms: syn, antonyms: ant, collocations: coll, note,
++          masteryScore: score,
++          status: status,
+           updatedAt: nowIso
+         };
+       } else {
+@@ -4625,8 +4884,8 @@
+           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
+           definitionVi: def, exampleSentence: example,
+           synonyms: syn, antonyms: ant, collocations: coll, note,
+-          status: 'newWord',
+-          masteryScore: 0,
++          status: status,
++          masteryScore: score,
+           createdAt: nowIso,
+           updatedAt: nowIso
+         });
+@@ -4635,9 +4894,8 @@
+       saveDatabase(true);
+       renderWordList();
+       closeModal('modal-word');
+-      showToast('─É├ú l╞░u tß╗½ vß╗▒ng th├ánh c├┤ng!');
++      showToast('├ä┬É├â┬ú l├å┬░u t├í┬╗┬½ v├í┬╗┬▒ng th├â┬ánh c├â┬┤ng!');
+     }
+-
+     // =========================================================================
+     // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
+     // =========================================================================
