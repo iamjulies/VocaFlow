@@ -22,3 +22,4 @@ C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\obj\Release\net8.0-wind
 C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\obj\Release\net8.0-windows\win-x64\VocaFlow.pdb
 C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\obj\Release\net8.0-windows\win-x64\VocaFlow.genruntimeconfig.cache
 C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\obj\Release\net8.0-windows\win-x64\ref\VocaFlow.dll
+C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\obj\Release\net8.0-windows\win-x64\VocaFlow.sourcelink.json

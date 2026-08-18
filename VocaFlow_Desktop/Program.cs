@@ -36,6 +36,16 @@ namespace VocaFlow
                 Icon = new System.Drawing.Icon(iconPath);
             }
 
+            KeyPreview = true;
+            KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.F5 || (e.Control && e.KeyCode == Keys.R))
+                {
+                    _webView?.CoreWebView2?.Reload();
+                    e.Handled = true;
+                }
+            };
+
             InitializeWebView();
         }
 
@@ -58,9 +68,8 @@ namespace VocaFlow
                 var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
                 await _webView.EnsureCoreWebView2Async(env);
 
-                // Disable devtools and context menus for a clean native app feel
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
-                _webView.CoreWebView2.Settings.AreDevToolsEnabled = false;
+                _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
 
                 // Path to local vocaflow.html
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;

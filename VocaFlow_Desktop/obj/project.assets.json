@@ -1,7 +1,7 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
-    "net8.0-windows": {
+    "net8.0-windows7.0": {
       "Microsoft.NET.ILLink.Tasks/8.0.28": {
         "type": "package",
         "build": {
@@ -29,7 +29,7 @@
         }
       }
     },
-    "net8.0-windows/win-x64": {
+    "net8.0-windows7.0/win-x64": {
       "Microsoft.NET.ILLink.Tasks/8.0.28": {
         "type": "package",
         "build": {
@@ -198,7 +198,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net8.0-windows": [
+    "net8.0-windows7.0": [
       "Microsoft.NET.ILLink.Tasks >= 8.0.28",
       "Microsoft.Web.WebView2 >= 1.0.2903.40"
     ]
@@ -216,19 +216,16 @@
       "outputPath": "C:\\Users\\DELL\\Documents\\Modding\\browser\\VocaFlow_Desktop\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0-windows"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net8.0-windows": {
-          "framework": "net8.0-windows7.0",
+        "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "projectReferences": {}
         }
@@ -242,12 +239,10 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "10.0.300"
+      }
     },
     "frameworks": {
-      "net8.0-windows": {
-        "framework": "net8.0-windows7.0",
+      "net8.0-windows7.0": {
         "targetAlias": "net8.0-windows",
         "dependencies": {
           "Microsoft.NET.ILLink.Tasks": {
@@ -272,20 +267,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-            "version": "[8.0.28, 8.0.28]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.win-x64",
-            "version": "[8.0.28, 8.0.28]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-            "version": "[8.0.28, 8.0.28]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -294,7 +275,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
       }
     },
     "runtimes": {
