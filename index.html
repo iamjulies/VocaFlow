@@ -2235,11 +2235,6 @@
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
-        <div style="margin-top: 10px; text-align: right;">
-          <button type="button" class="btn btn-outline btn-sm" onclick="openPublisherModal()" style="font-size: 11px; color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
-            👑 Cổng Quản Trị Nhà Phát Hành (Publisher Portal)
-          </button>
-        </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
@@ -2830,16 +2825,22 @@
       const input = document.getElementById('shop-gift-code-input');
       const msg = document.getElementById('shop-gift-msg');
       if (!input || !msg) return;
-      const code = (input.value || '').trim().toUpperCase();
-      if (!code) return;
 
-      // Secret Developer Command to open Publisher Portal
-      if (code === '/ADMIN' || code === 'DEV' || code === 'JULIESADMIN' || code === 'ADMIN') {
+      const rawText = (input.value || '').trim();
+      if (!rawText) return;
+
+      // Secret Minecraft Cheat Command to enter God Mode / Publisher Portal
+      const cleanLower = rawText.toLowerCase().replace(/\s+/g, ' ');
+      if (cleanLower === '/gamemode creative' || cleanLower === '/gamemode 1' || cleanLower === '/gamemode c') {
         input.value = '';
+        msg.style.display = 'none';
         closeModal('modal-shop');
+        showToast('🕹️ Set game mode to Creative Mode! (Chào mừng Nhà Phát Hành!)');
         openPublisherModal();
         return;
       }
+
+      const code = rawText.toUpperCase();
 
       const usedCodes = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
       if (usedCodes.includes(code)) {
