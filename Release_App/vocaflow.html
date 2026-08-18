@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.14</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.15</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2480,7 +2480,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.14</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.15</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3831,6 +3831,7 @@
             lastSync: new Date().toISOString()
           },
           geminiApiKey: geminiApiKey || '',
+          deckSort: currentDeckSort,
           decks: decks,
           words: words,
           lastSync: new Date().toISOString()
@@ -3901,6 +3902,13 @@
 
                 const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
                 const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
+
+                if (cloudData.deckSort) {
+                  currentDeckSort = cloudData.deckSort;
+                  localStorage.setItem('vocaflow_deck_sort', currentDeckSort);
+                  const sortSelect = document.getElementById('deck-sort-select');
+                  if (sortSelect) sortSelect.value = currentDeckSort;
+                }
 
                 if (remoteDecks.length > 0) {
                   // If local only has the initial starter deck and cloud has real decks, remove starter deck
@@ -4002,6 +4010,7 @@
                 email: currentUser.email,
                 lastSync: new Date().toISOString()
               },
+              deckSort: currentDeckSort,
               decks: decks,
               words: words,
               economy: {
@@ -4585,11 +4594,15 @@
     // =========================================================================
     // DECK RENDERING & CUSTOMIZATION (EDIT / DELETE / PIN / ARCHIVE)
     // =========================================================================
-    let currentDeckSort = 'recent';
+    let currentDeckSort = localStorage.getItem('vocaflow_deck_sort') || 'recent';
 
     function setDeckSort(sortKey) {
       currentDeckSort = sortKey;
+      localStorage.setItem('vocaflow_deck_sort', sortKey);
       renderDecks();
+      if (currentUser && currentUser.uid) {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function renderDecks() {
@@ -4605,12 +4618,16 @@
       if (countActive) countActive.textContent = activeDecks.length;
       if (countArchived) countArchived.textContent = archivedDecks.length;
 
-      function sortDeckList(list) {
-        return [...list].sort((a, b) => {
-          if (currentDeckTab === 'active' && !!a.isPinned !== !b.isPinned) {
-            return a.isPinned ? -1 : 1;
-          }
+      const sortSelect = document.getElementById('deck-sort-select');
+      if (sortSelect && sortSelect.value !== currentDeckSort) {
+        sortSelect.value = currentDeckSort;
+      }
 
+      function sortDeckList(list) {
+        const pinnedList = list.filter(d => currentDeckTab === 'active' && !!d.isPinned);
+        const unpinnedList = list.filter(d => currentDeckTab !== 'active' || !d.isPinned);
+
+        function compareCriteria(a, b) {
           if (currentDeckSort === 'name_asc') {
             return (a.title || '').localeCompare(b.title || '', 'vi', { sensitivity: 'base' });
           } else if (currentDeckSort === 'name_desc') {
@@ -4618,19 +4635,26 @@
           } else if (currentDeckSort === 'count_desc') {
             const countA = words.filter(w => w.deckId === a.id).length;
             const countB = words.filter(w => w.deckId === b.id).length;
-            return countB - countA;
+            if (countB !== countA) return countB - countA;
+            return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
           } else if (currentDeckSort === 'mastery_desc') {
             const wordsA = words.filter(w => w.deckId === a.id);
             const wordsB = words.filter(w => w.deckId === b.id);
             const scoreA = wordsA.length ? Math.round(wordsA.reduce((s, w) => s + getWordScore(w), 0) / wordsA.length) : 0;
             const scoreB = wordsB.length ? Math.round(wordsB.reduce((s, w) => s + getWordScore(w), 0) / wordsB.length) : 0;
-            return scoreB - scoreA;
+            if (scoreB !== scoreA) return scoreB - scoreA;
+            return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
           } else if (currentDeckSort === 'created_desc') {
             return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
           } else {
             return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
           }
-        });
+        }
+
+        pinnedList.sort(compareCriteria);
+        unpinnedList.sort(compareCriteria);
+
+        return [...pinnedList, ...unpinnedList];
       }
 
       let displayDecks = [];
