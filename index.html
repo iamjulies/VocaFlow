@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.12</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.13</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1629,17 +1629,14 @@
           </div>
           
           <div class="selection-study-actions">
-            <button class="btn btn-outline btn-sm" id="btn-toggle-study-shuffle" onclick="toggleStudyShuffle()" title="Bật/Tắt chế độ Trộn ngẫu nhiên (Flashcard, Auto FC, Quiz)">
+            <button class="btn btn-outline btn-sm" id="btn-toggle-study-shuffle" onclick="toggleStudyShuffle()" title="Bật/Tắt chế độ Trộn ngẫu nhiên (Auto FC, Quiz)">
               🔀 <span class="hide-on-mobile">Trộn</span>
             </button>
-            <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected" title="Học Flashcard lật thẻ">
-              <svg class="icon icon-sm"><use href="#i-cards"/></svg> <span>Flashcard</span><span id="fc-count-label"></span>
-            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
-              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto FC</span><span id="autofc-count-label"></span>
+              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
-            <button class="btn btn-outline btn-sm" style="border-color: var(--primary); color: #818cf8;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span><span id="quiz-count-label"></span>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
+              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
             </button>
           </div>
         </div>
@@ -1942,6 +1939,7 @@
           <div class="form-group">
             <label class="form-label">Từ loại</label>
             <select id="word-pos" class="form-select">
+              <option value="">(Tự động nhận diện / Không chọn)</option>
               <option value="noun">noun (danh từ)</option>
               <option value="verb">verb (động từ)</option>
               <option value="adjective">adjective (tính từ)</option>
@@ -2467,7 +2465,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.12</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.13</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4801,7 +4799,7 @@
               </button>
             </div>
             <div class="word-item-right">
-              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Bấm để đổi nhanh mức độ thuộc (0% -> 25% -> 50% -> 75% -> 90% -> 100%)">
+              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700;">
                 ${masteryInfo.label}
               </span>
               <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
@@ -4817,7 +4815,7 @@
             ${(synText || antText || collText) ? '<div class="word-tags">' + synText + ' ' + antText + ' ' + collText + '</div>' : ''}
 
             <div class="word-mastery-row">
-              <div class="word-mastery-track" style="cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Bấm để tăng mức độ thuộc">
+              <div class="word-mastery-track">
                 <div class="word-mastery-fill" style="width: ${score}%; background: ${masteryInfo.trackColor};"></div>
               </div>
               <span class="word-mastery-score-text" style="color: ${masteryInfo.trackColor}; font-weight: 700;">${score}/100đ</span>
@@ -4877,7 +4875,7 @@
     function openWordModal() {
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
-      document.getElementById('word-pos').value = 'noun';
+      document.getElementById('word-pos').value = '';
       document.getElementById('word-cefr').value = '';
       document.getElementById('word-phonetic').value = '';
       document.getElementById('word-def').value = '';
@@ -4903,7 +4901,7 @@
 
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
-      document.getElementById('word-pos').value = w.partOfSpeech || 'noun';
+      document.getElementById('word-pos').value = w.partOfSpeech || '';
       document.getElementById('word-cefr').value = w.cefrLevel || '';
       document.getElementById('word-phonetic').value = w.phonetic || '';
       document.getElementById('word-def').value = w.definitionVi || w.definition || '';
@@ -5055,6 +5053,9 @@
           if (result.synonyms) document.getElementById('word-synonyms').value = Array.isArray(result.synonyms) ? result.synonyms.join(', ') : result.synonyms;
           if (result.antonyms) document.getElementById('word-antonyms').value = Array.isArray(result.antonyms) ? result.antonyms.join(', ') : result.antonyms;
           if (result.collocations) document.getElementById('word-collocations').value = Array.isArray(result.collocations) ? result.collocations.join(', ') : result.collocations;
+          if (result.note && document.getElementById('word-note')) {
+            document.getElementById('word-note').value = result.note;
+          }
 
           showToast('✨ AI đã tư duy & hoàn thiện thông tin từ vựng!');
         } else {
@@ -5087,10 +5088,14 @@
 Người dùng đang học từ vựng tiếng Anh: "${term}".
 ${contextNote ? `\nNgười dùng ĐÃ NHẬP SẴN một số thông tin sau:${contextNote}\n
 HƯỚNG DẪN TƯ DUY & XỬ LÝ DỮ LIỆU:
-1. TÔN TRỌNG Ý ĐỊNH NGƯỜI DÙNG: Xem kỹ nét nghĩa mà người dùng đã nhập (kể cả tiếng lóng, khẩu ngữ, học thuật, hoặc từ nhạy cảm đời thực) để giữ đúng ngữ cảnh đó!
-2. NÂNG CẤP & MỞ RỘNG: Nếu thông tin người dùng nhập đã đúng, hãy phát triển cho hay hơn, trau chuốt câu từ và bổ sung thêm các collocations, từ đồng nghĩa/trái nghĩa chất lượng.
-3. SỬA LỖI: Nếu thông tin người dùng có lỗi ngữ pháp, chính tả hoặc hiểu sai nghĩa, hãy sửa lại cho chuẩn xác nhất.
-4. TỰ ĐIỀN ĐỦ: Điền đầy đủ phiên âm IPA chuẩn Anh-Mỹ, phân loại CEFR, ví dụ tự nhiên kèm dịch tiếng Việt.` : `Hãy phân tích toàn diện từ "${term}": phiên âm IPA chuẩn Anh-Mỹ, từ loại, cấp độ CEFR, định nghĩa tiếng Việt ngắn gọn xúc tích và sát ngữ cảnh, câu ví dụ tiếng Anh tự nhiên kèm dịch nghĩa, từ đồng nghĩa, từ trái nghĩa, collocations.`}
+1. TỰ ĐỘNG XÁC ĐỊNH TỪ LOẠI CHUẨN XÁC: Nếu người dùng chưa chọn từ loại hoặc chọn sai, hãy tự động nhận diện từ loại chuẩn xác nhất (noun, verb, adjective, adverb, phrase, hoặc idiom), TUYỆT ĐỐI KHÔNG ép buộc nghĩa theo từ loại sai!
+2. ĐỊNH NGHĨA SIÊU GỌN GÀNG: "definition" chỉ ghi nghĩa cốt lõi, cô đọng (dưới 8 từ, ví dụ: "kiên cường, bất khuất" hoặc "sự bền bỉ"). TUYỆT ĐỐI KHÔNG viết lan man giải thích dài dòng ở ô định nghĩa!
+3. THÔNG TIN MỞ RỘNG ĐƯA VÀO GHI CHÚ: Mọi giải thích ngữ cảnh, sắc thái, mẹo ghi nhớ hay thông tin phụ hãy đưa vào trường "note".
+4. TỰ ĐIỀN ĐỦ: Điền đầy đủ phiên âm IPA chuẩn Anh-Mỹ, phân loại CEFR, ví dụ tự nhiên kèm dịch tiếng Việt, collocations, từ đồng nghĩa/trái nghĩa.` : `Hãy phân tích từ vựng "${term}":
+- Tự động nhận diện từ loại chính xác nhất (noun/verb/adjective/adverb/phrase/idiom).
+- Định nghĩa tiếng Việt "definition" thật ngắn gọn, cô đọng, súc tích (dưới 8 từ).
+- Thông tin mở rộng, ngữ cảnh hay mẹo nhớ đưa vào trường "note".
+- Phiên âm IPA chuẩn Anh-Mỹ, CEFR, ví dụ tự nhiên kèm dịch nghĩa, từ đồng nghĩa/trái nghĩa, collocations.`}
 
 Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON) theo cấu trúc:
 {
@@ -5098,7 +5103,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
   "pos": "noun/verb/adjective/adverb/phrase/idiom",
   "ipa": "/phiên âm IPA chuẩn Anh-Mỹ/",
   "cefrLevel": "A1/A2/B1/B2/C1/C2",
-  "definition": "Định nghĩa tiếng Việt gãy gọn, chuẩn xác và sát ngữ cảnh",
+  "definition": "Nghĩa tiếng Việt cốt lõi ngắn gọn dưới 8 từ",
+  "note": "Mẹo nhớ, sắc thái ngữ cảnh hoặc thông tin mở rộng",
   "example": "1 câu ví dụ tiếng Anh tự nhiên kèm nghĩa tiếng Việt",
   "synonyms": ["từ đồng nghĩa 1", "từ đồng nghĩa 2"],
   "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2"],
