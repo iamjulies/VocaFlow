@@ -2306,6 +2306,13 @@
         seedSampleData();
       }
       renderDecks();
+      // Pre-warm SpeechSynthesis natural voice engine
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      }
       // Auto-trigger sync on load if logged in
       if (currentUser && currentUser.uid) {
         handleManualSync();
@@ -4418,8 +4425,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (isAutoPlaying) {
         isAutoPlaying = false;
         autoFlashcardStepId++;
-        if (currentActiveAudio) currentActiveAudio.pause();
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        stopAllAudio();
         const statusEl = document.getElementById('autofc-status-indicator');
         if (statusEl) {
           statusEl.textContent = '⏸️ Đã tạm dừng';
@@ -4440,8 +4446,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function nextAutoFlashcard() {
       autoFlashcardStepId++;
-      if (currentActiveAudio) currentActiveAudio.pause();
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      stopAllAudio();
 
       autoFlashcardIndex++;
       if (autoFlashcardIndex >= autoFlashcardList.length) {
@@ -4456,8 +4461,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function prevAutoFlashcard() {
       autoFlashcardStepId++;
-      if (currentActiveAudio) currentActiveAudio.pause();
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      stopAllAudio();
 
       autoFlashcardIndex--;
       if (autoFlashcardIndex < 0) {
@@ -4473,8 +4477,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitAutoFlashcard() {
       isAutoPlaying = false;
       autoFlashcardStepId++;
-      if (currentActiveAudio) currentActiveAudio.pause();
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      stopAllAudio();
       showScreen('screen-deck-detail');
       renderWordList();
     }
@@ -4541,15 +4544,15 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           statusEl.style.color = '#38bdf8';
         }
 
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 400));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 2. Speak English Term
+        // 2. Speak English Term completely
         await playAudioAsync(word.term, 'en-US', currentSpeechRateEn);
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 3. Short pause before flip (0.6s)
-        await new Promise(r => setTimeout(r, 600));
+        // 3. Short pause before flip (0.7s)
+        await new Promise(r => setTimeout(r, 700));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
         // 4. Flip to Back
@@ -4559,21 +4562,21 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           statusEl.style.color = '#34d399';
         }
 
-        await new Promise(r => setTimeout(r, 350));
+        await new Promise(r => setTimeout(r, 400));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 5. Speak Vietnamese Definition
+        // 5. Speak Vietnamese Definition completely
         if (word.definitionVi) {
           await playAudioAsync(word.definitionVi, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 6. Rest period (e.g. 1.0s)
+        // 6. Rest period (configured delay)
         if (statusEl) {
           statusEl.textContent = '⏱️ Nghỉ ngắt nhịp...';
           statusEl.style.color = 'var(--text-muted)';
         }
-        await new Promise(r => setTimeout(r, autoDelaySeconds * 1000));
+        await new Promise(r => setTimeout(r, Math.max(0.5, autoDelaySeconds) * 1000));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
         // 7. Move to next card
@@ -4581,45 +4584,142 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
     }
 
+    // =========================================================================
+    // AUDIO ENGINE - NATURAL STREAMING, ZERO ROBOTIC NOISE, PRECISE PACING
+    // =========================================================================
+    let currentActiveAudio = null;
+
+    function stopAllAudio() {
+      if (currentActiveAudio) {
+        try {
+          currentActiveAudio.onended = null;
+          currentActiveAudio.onerror = null;
+          currentActiveAudio.pause();
+          currentActiveAudio.currentTime = 0;
+          currentActiveAudio.src = '';
+        } catch (e) {}
+        currentActiveAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
+      }
+    }
+
+    function cleanTextForSpeech(text) {
+      if (!text) return '';
+      let str = String(text).trim();
+      // Remove emoji characters
+      str = str.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '');
+      // Strip phonetic slashes e.g. /.../
+      str = str.replace(/^\/[^\/]+\/\s*/g, '');
+      // Normalize smart quotes and dashes
+      str = str.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, '-');
+      // Strip technical prefix brackets e.g. (n), (adj), (v), (Hóa học)
+      str = str.replace(/^\([A-Za-zÀ-ỹ\s]+\)\s*/i, '');
+      // Remove symbols
+      str = str.replace(/[≈≠•*~_#@^&]/g, ' ');
+      // Replace semicolon with comma for natural speech pauses
+      str = str.replace(/;/g, ',');
+      return str.replace(/\s+/g, ' ').trim();
+    }
+
+    function getBestVoiceForLang(lang) {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (voices.length === 0) return null;
+
+      const isVi = (lang === 'vi' || lang.startsWith('vi'));
+
+      if (isVi) {
+        // Priority for Vietnamese: Natural Online > Google Tiếng Việt > Enhanced > Apple Linh > Any Vietnamese voice
+        return voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && (v.name.includes('Natural') || v.name.includes('Online')))
+          || voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && v.name.includes('Google'))
+          || voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Linh') || v.name.includes('An')))
+          || voices.find(v => v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi') || v.name.toLowerCase().includes('vietnam') || v.name.toLowerCase().includes('vietnamese'))
+          || null;
+      } else {
+        // Priority for English: Natural Online (Jenny, Guy, Aria) > Google US/UK > Enhanced > Exact Match
+        const targetLang = (lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US';
+        return voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && (v.name.includes('Natural') || v.name.includes('Online')))
+          || voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && v.name.includes('Google'))
+          || voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && (v.name.includes('Enhanced') || v.name.includes('Premium')))
+          || voices.find(v => v.lang === targetLang)
+          || voices.find(v => v.lang.startsWith('en'))
+          || null;
+      }
+    }
+
     function playAudioAsync(text, lang = 'en-US', speed = 1.0) {
       return new Promise((resolve) => {
-        if (!text || !String(text).trim()) {
+        const clean = cleanTextForSpeech(text);
+        if (!clean) {
           resolve();
           return;
         }
 
-        let clean = String(text).trim().replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
-        const encoded = encodeURIComponent(clean);
-        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
+        stopAllAudio();
 
-        let audio = new Audio();
-        audio.referrerPolicy = 'no-referrer';
-        audio.src = googleUrl;
-        audio.playbackRate = speed || 1.0;
+        const targetLang = (lang === 'vi' || lang.startsWith('vi')) ? 'vi' : ((lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US');
+        const encoded = encodeURIComponent(clean);
+        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
+
+        let isResolved = false;
+        let safetyTimer = null;
+        const audio = new Audio();
         currentActiveAudio = audio;
 
-        let hasEnded = false;
         const finish = () => {
-          if (!hasEnded) {
-            hasEnded = true;
-            resolve();
+          if (!isResolved) {
+            isResolved = true;
+            if (safetyTimer) clearTimeout(safetyTimer);
+            if (currentActiveAudio === audio) currentActiveAudio = null;
+            // Short 120ms buffer after completion for natural cadence
+            setTimeout(resolve, 120);
           }
         };
 
-        audio.onended = finish;
-        audio.onerror = () => {
-          _fallbackSpeechSynthesisAsync(clean, lang, speed).then(finish);
+        audio.preload = 'auto';
+        audio.referrerPolicy = 'no-referrer';
+
+        // Apply rate on metadata loaded so playback timing is 100% accurate
+        audio.onloadedmetadata = () => {
+          try {
+            audio.playbackRate = Math.max(0.6, Math.min(1.6, speed || 1.0));
+          } catch (e) {}
         };
 
-        // Safety timeout in case audio stalls
-        const timeoutId = setTimeout(() => {
+        audio.onended = () => {
           finish();
-        }, 12000);
+        };
 
-        audio.play().catch(() => {
-          clearTimeout(timeoutId);
-          _fallbackSpeechSynthesisAsync(clean, lang, speed).then(finish);
-        });
+        audio.onerror = (e) => {
+          console.warn('Google TTS stream unavailable, attempting fallback:', e);
+          _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
+        };
+
+        // Safety timeout (prevents hang if audio never fires ended)
+        const estimatedDurationMs = Math.max(2500, Math.ceil((clean.length / 8) * 1000 / (speed || 1.0)) + 3500);
+        safetyTimer = setTimeout(() => {
+          finish();
+        }, estimatedDurationMs);
+
+        audio.src = googleUrl;
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            try {
+              audio.playbackRate = Math.max(0.6, Math.min(1.6, speed || 1.0));
+            } catch (e) {}
+          }).catch((err) => {
+            console.warn('Audio play() could not start, invoking fallback:', err);
+            if (!isResolved) {
+              _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
+            }
+          });
+        }
       });
     }
 
@@ -4629,15 +4729,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           resolve();
           return;
         }
+
+        const bestVoice = getBestVoiceForLang(lang);
+        const isVi = (lang === 'vi' || lang.startsWith('vi'));
+
+        // If requesting Vietnamese but no Vietnamese voice exists on device, do NOT use a robotic English voice to pronounce Vietnamese
+        if (isVi && !bestVoice) {
+          console.warn('No Vietnamese SpeechSynthesis voice available on device.');
+          resolve();
+          return;
+        }
+
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
-        utterance.rate = speed || 1.0;
+        utterance.rate = Math.max(0.6, Math.min(1.5, speed || 1.0));
 
-        const voices = window.speechSynthesis.getVoices();
-        if (voices && voices.length > 0) {
-          const match = voices.find(v => v.lang === lang || v.lang.startsWith(lang.slice(0, 2)));
-          if (match) utterance.voice = match;
+        if (bestVoice) {
+          utterance.voice = bestVoice;
         }
 
         let finished = false;
@@ -4650,16 +4759,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         utterance.onend = done;
         utterance.onerror = done;
-        setTimeout(done, 10000);
+        setTimeout(done, Math.max(3000, Math.ceil((text.length / 8) * 1000) + 2000));
 
         window.speechSynthesis.speak(utterance);
       });
     }
 
-    // UTILS - NATURAL GOOGLE AUDIO STREAMING & HIGH-FIDELITY VOICE ENGINE
-    const audioStreamCache = new Map();
-    let currentActiveAudio = null;
-
+    // SINGLE-CLICK SPEAKER ON WORD CARDS
     function speakWordById(wordId) {
       const w = words.find(item => item.id === wordId);
       if (w && w.term) {
@@ -4668,69 +4774,59 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function speakText(text, accent = 'en-US') {
-      if (!text) return;
-      let clean = String(text).trim();
+      const clean = cleanTextForSpeech(text);
       if (!clean) return;
 
-      // Normalize smart/curly quotes
-      clean = clean.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+      stopAllAudio();
 
       try {
-        if (currentActiveAudio) {
-          currentActiveAudio.pause();
-          currentActiveAudio = null;
-        }
-
+        const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : (accent === 'vi' ? 'vi' : 'en-US');
         const encoded = encodeURIComponent(clean);
-        const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : 'en-US';
         const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
 
-        let audio = audioStreamCache.get(googleUrl);
-        if (!audio) {
-          audio = document.createElement('audio');
-          audio.referrerPolicy = 'no-referrer';
-          audio.src = googleUrl;
-          audioStreamCache.set(googleUrl, audio);
-        } else {
-          audio.currentTime = 0;
-        }
+        let audio = new Audio();
+        audio.preload = 'auto';
+        audio.referrerPolicy = 'no-referrer';
 
-        audio.playbackRate = currentSpeechRateEn || 1.0;
+        audio.onloadedmetadata = () => {
+          try {
+            audio.playbackRate = currentSpeechRateEn || 0.9;
+          } catch (e) {}
+        };
+
         currentActiveAudio = audio;
 
+        audio.onerror = () => {
+          _fallbackNaturalSpeechSynthesis(clean, lang);
+        };
+
+        audio.src = googleUrl;
         const playPromise = audio.play();
         if (playPromise !== undefined) {
-          playPromise.catch(err => {
-            console.warn('Direct audio stream failed, fallback to natural SpeechSynthesis:', err);
+          playPromise.then(() => {
+            try {
+              audio.playbackRate = currentSpeechRateEn || 0.9;
+            } catch (e) {}
+          }).catch(err => {
             _fallbackNaturalSpeechSynthesis(clean, lang);
           });
         }
       } catch (e) {
-        console.warn('Audio streaming exception, fallback to natural SpeechSynthesis:', e);
         _fallbackNaturalSpeechSynthesis(clean, 'en-US');
       }
     }
 
     function _fallbackNaturalSpeechSynthesis(text, lang = 'en-US') {
       if (!('speechSynthesis' in window)) return;
+      const bestVoice = getBestVoiceForLang(lang);
+      const isVi = (lang === 'vi' || lang.startsWith('vi'));
+      if (isVi && !bestVoice) return;
+
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       utterance.rate = currentSpeechRateEn || 0.9;
-
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        const bestVoice = voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && (v.name.includes('Natural') || v.name.includes('Online')))
-          || voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && v.name.includes('Google'))
-          || voices.find(v => (v.lang === lang || v.lang.startsWith(lang.slice(0, 2))) && (v.name.includes('Enhanced') || v.name.includes('Premium')))
-          || voices.find(v => v.lang === lang)
-          || voices.find(v => v.lang.startsWith('en'));
-
-        if (bestVoice) {
-          utterance.voice = bestVoice;
-        }
-      }
-
+      if (bestVoice) utterance.voice = bestVoice;
       window.speechSynthesis.speak(utterance);
     }
 
