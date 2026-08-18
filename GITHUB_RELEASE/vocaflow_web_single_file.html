@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.15</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.0</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2480,7 +2480,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.15</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.0</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -2492,75 +2492,134 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLISHER / ADMIN PORTAL (DÀNH CHO NHÀ PHÁT HÀNH) -->
+  <!-- MODAL: PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE) -->
   <div class="modal-overlay" id="modal-publisher">
-    <div class="modal" style="max-width: 540px;">
+    <div class="modal" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px;">👑</span>
-          <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị Nhà Phát Hành (Publisher Portal)</strong>
+          <div>
+            <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị & Quản Lý Học Viên (Publisher Portal)</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Quản lý toàn bộ học viên, ví điểm, mã quà tặng và kho thư viện trên Firebase Cloud</div>
+          </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GOD MODE: WALLET OVERRIDE -->
-      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Điểm ví (Points):</label>
-            <input type="number" id="admin-set-points-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Lượt Gợi Ý AI (Hints):</label>
-            <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
-          </div>
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none;">⚡ Áp Dụng Ví Ngay</button>
-          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200)">+200 Gợi Ý & +500đ</button>
-          <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000)">+1000 Gợi Ý & +2000đ</button>
-        </div>
-      </div>
-
-      <!-- GIFT CODE STUDIO -->
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
-            <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Số Gợi Ý:</label>
-            <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
-          </div>
-          <div>
-            <label style="font-size: 11px; color: var(--text-muted);">Số Điểm:</label>
-            <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
-          </div>
-        </div>
-        <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
-          🚀 Phát Hành Mã Quà Tặng Lên Cloud
+      <!-- PORTAL TABS -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap;">
+        <button class="btn btn-sm btn-primary" id="pub-tab-btn-students" onclick="switchPublisherTab('students')" style="display: flex; align-items: center; gap: 6px;">
+          <span>👥</span> <strong>Quản Lý Học Viên</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-codes" onclick="switchPublisherTab('codes')" style="display: flex; align-items: center; gap: 6px;">
+          <span>🎁</span> <strong>Mã Quà Tặng</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 6px;">
+          <span>⚡</span> <strong>Ví Của Bạn & Thư Viện</strong>
         </button>
       </div>
 
-      <!-- ACTIVE CLOUD CODES LIST -->
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
-          <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+      <!-- TAB 1: STUDENT MANAGEMENT PORTAL -->
+      <div id="pub-tab-content-students" style="flex: 1; overflow-y: auto;">
+        <!-- OVERVIEW METRICS DASHBOARD -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;">
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #818cf8; font-weight: 700; margin-bottom: 2px;">👥 Tổng Học Viên</div>
+            <div id="admin-stat-total-students" style="font-size: 17px; font-weight: 800; color: var(--text);">0 người</div>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px;">📚 Tổng Bộ & Từ Vựng</div>
+            <div id="admin-stat-total-decks" style="font-size: 15px; font-weight: 800; color: #10b981;">0 bộ (0 từ)</div>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px;">💰 Điểm & Gợi Ý Lưu Hành</div>
+            <div id="admin-stat-total-points" style="font-size: 15px; font-weight: 800; color: #f59e0b;">0đ (0 gợi ý)</div>
+          </div>
         </div>
-        <div id="admin-active-codes-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
-          <em>Đang tải danh sách mã...</em>
+
+        <!-- SEARCH & ACTION BAR -->
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" id="admin-students-search-input" class="form-input" placeholder="🔍 Tìm kiếm học viên theo Tên, Email hoặc UID..." style="flex: 1; font-size: 12.5px;" oninput="filterAdminStudents(this.value)">
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminStudentsList()" style="white-space: nowrap; display: flex; align-items: center; gap: 4px;">
+            🔄 Làm Mới
+          </button>
+        </div>
+
+        <!-- STUDENTS LIST CONTAINER -->
+        <div id="admin-students-list-container" style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 8px; border: 1px solid var(--border);">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+            <em>Đang tải dữ liệu học viên từ Firebase Cloud...</em>
+          </div>
         </div>
       </div>
 
-      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(168, 85, 247, 0.4); display: flex; justify-content: space-between; align-items: center;">
-        <button class="btn btn-outline btn-sm" onclick="openPublisherDeckUploadModal()" style="font-size: 11px; color: #c084fc; border-color: rgba(192, 132, 252, 0.5);">
-          🚀 Phát Hành Bộ Từ Excel Mới Lên Thư Viện
-        </button>
-        <button class="btn btn-outline btn-sm" onclick="closeModal('modal-publisher')">Đóng</button>
+      <!-- TAB 2: GIFT CODE STUDIO -->
+      <div id="pub-tab-content-codes" style="display: none; flex: 1; overflow-y: auto;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
+              <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Gợi Ý:</label>
+              <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Điểm:</label>
+              <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
+            🚀 Phát Hành Mã Quà Tặng Lên Cloud
+          </button>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
+            <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+          </div>
+          <div id="admin-active-codes-list" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
+            <em>Đang tải danh sách mã...</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: GOD MODE WALLET & LIBRARY PUBLISHER -->
+      <div id="pub-tab-content-wallet" style="display: none; flex: 1; overflow-y: auto;">
+        <!-- GOD MODE: WALLET OVERRIDE -->
+        <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Điểm ví (Points):</label>
+              <input type="number" id="admin-set-points-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Lượt Gợi Ý AI (Hints):</label>
+              <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none;">⚡ Áp Dụng Ví Ngay</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200)">+200 Gợi Ý & +500đ</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000)">+1000 Gợi Ý & +2000đ</button>
+          </div>
+        </div>
+
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📚 Phát Hành Bộ Từ Lên Thư Viện Toàn Cầu</div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Đưa các bộ từ vựng chính thức (Lớp 10, 11, 12, IELTS, TOEIC) lên Cloud để tất cả học viên có thể tải về chỉ với 1-Click.</p>
+          <button class="btn btn-outline btn-sm" onclick="openPublisherDeckUploadModal()" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.5);">
+            🚀 Mở Giao Diện Phát Hành Thư Viện
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary" onclick="closeModal('modal-publisher')">Đóng Cổng Quản Trị</button>
       </div>
     </div>
   </div>
@@ -3372,7 +3431,246 @@
     // =========================================================================
     // PUBLISHER / ADMIN PORTAL LOGIC (v0.0.8)
     // =========================================================================
-    function openPublisherModal() {
+    // =========================================================================
+    // PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE)
+    // =========================================================================
+    let adminStudentsData = [];
+
+    function openPublisherModal(defaultTab = 'students') {
+      openModal('modal-publisher');
+      switchPublisherTab(defaultTab);
+      refreshAdminPublisherWalletUI();
+      if (defaultTab === 'students') {
+        fetchAdminStudentsList();
+      }
+    }
+
+    function switchPublisherTab(tab) {
+      const isStudents = tab === 'students';
+      const isCodes = tab === 'codes';
+      const isWallet = tab === 'wallet';
+
+      const sContent = document.getElementById('pub-tab-content-students');
+      const cContent = document.getElementById('pub-tab-content-codes');
+      const wContent = document.getElementById('pub-tab-content-wallet');
+      if (sContent) sContent.style.display = isStudents ? 'block' : 'none';
+      if (cContent) cContent.style.display = isCodes ? 'block' : 'none';
+      if (wContent) wContent.style.display = isWallet ? 'block' : 'none';
+
+      const sBtn = document.getElementById('pub-tab-btn-students');
+      const cBtn = document.getElementById('pub-tab-btn-codes');
+      const wBtn = document.getElementById('pub-tab-btn-wallet');
+      if (sBtn) sBtn.className = isStudents ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      if (cBtn) cBtn.className = isCodes ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      if (wBtn) wBtn.className = isWallet ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+
+      if (isStudents && adminStudentsData.length === 0) {
+        fetchAdminStudentsList();
+      }
+      if (isCodes) {
+        refreshAdminGiftCodesList();
+      }
+    }
+
+    async function fetchAdminStudentsList() {
+      const container = document.getElementById('admin-students-list-container');
+      if (!container) return;
+      container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);"><span style="font-size: 24px; display: block; margin-bottom: 8px;">⏳</span>Đang tải dữ liệu học viên từ Firebase Cloud...</div>';
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      try {
+        const res = await fetch(rtdbUrl + '/users.json' + authParam);
+        if (!res.ok) {
+          container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">⚠️ Không thể tải danh sách học viên (Mã lỗi ' + res.status + '). Vui lòng kiểm tra quyền truy cập hoặc kết nối mạng.</div>';
+          return;
+        }
+
+        const data = await res.json();
+        if (!data || typeof data !== 'object') {
+          container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có học viên nào đăng ký trên hệ thống.</div>';
+          return;
+        }
+
+        adminStudentsData = Object.entries(data).map(([uid, uData]) => {
+          const u = uData || {};
+          const prof = u.profile || {};
+          const eco = u.economy || {};
+          const uDecks = Array.isArray(u.decks) ? u.decks : (u.decks ? Object.values(u.decks) : []);
+          const uWords = Array.isArray(u.words) ? u.words : (u.words ? Object.values(u.words) : []);
+
+          return {
+            uid: uid,
+            displayName: prof.displayName || (prof.email ? prof.email.split('@')[0] : 'Học viên ' + uid.slice(0, 5)),
+            email: prof.email || 'Chưa đăng ký email',
+            points: typeof eco.points === 'number' ? eco.points : (parseInt(eco.points, 10) || 0),
+            hints: typeof eco.hints === 'number' ? eco.hints : (parseInt(eco.hints, 10) || 0),
+            deckCount: uDecks.length,
+            wordCount: uWords.length,
+            lastSync: prof.lastSync || u.lastSync || '',
+            rawDecks: uDecks
+          };
+        });
+
+        const totalStudents = adminStudentsData.length;
+        const totalDecks = adminStudentsData.reduce((sum, s) => sum + s.deckCount, 0);
+        const totalWords = adminStudentsData.reduce((sum, s) => sum + s.wordCount, 0);
+        const totalPoints = adminStudentsData.reduce((sum, s) => sum + s.points, 0);
+        const totalHints = adminStudentsData.reduce((sum, s) => sum + s.hints, 0);
+
+        const sCountEl = document.getElementById('admin-stat-total-students');
+        const dCountEl = document.getElementById('admin-stat-total-decks');
+        const pCountEl = document.getElementById('admin-stat-total-points');
+
+        if (sCountEl) sCountEl.textContent = totalStudents + ' người';
+        if (dCountEl) dCountEl.textContent = totalDecks + ' bộ (' + totalWords + ' từ)';
+        if (pCountEl) pCountEl.textContent = totalPoints + 'đ (' + totalHints + ' gợi ý)';
+
+        renderAdminStudentsTable();
+      } catch (err) {
+        console.error('Fetch students error:', err);
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Lỗi khi tải dữ liệu học viên: ' + escapeHtml(err.message || 'Lỗi không xác định') + '</div>';
+      }
+    }
+
+    function filterAdminStudents(query) {
+      renderAdminStudentsTable(query);
+    }
+
+    function renderAdminStudentsTable(filterQuery = '') {
+      const container = document.getElementById('admin-students-list-container');
+      if (!container) return;
+
+      const searchInput = document.getElementById('admin-students-search-input');
+      const q = (filterQuery || (searchInput ? searchInput.value : '')).toLowerCase().trim();
+
+      const filtered = adminStudentsData.filter(s => {
+        if (!q) return true;
+        return s.displayName.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.uid.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">Không tìm thấy học viên nào phù hợp với từ khóa "' + escapeHtml(q) + '".</div>';
+        return;
+      }
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+      filtered.forEach(s => {
+        const avatarLetter = (s.displayName ? s.displayName.trim()[0] : 'U').toUpperCase();
+        const formattedDate = s.lastSync ? formatDateTime(s.lastSync) : 'Chưa đồng bộ';
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0;">
+                ${escapeHtml(avatarLetter)}
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                  <span>${escapeHtml(s.displayName)}</span>
+                  <span style="font-size: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 5px; border-radius: 4px; font-family: monospace;">UID: ${escapeHtml(s.uid.slice(0, 6))}...</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">
+                  ✉️ ${escapeHtml(s.email)} • 🕒 ${formattedDate}
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span class="badge" style="background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25);">
+                📚 ${s.deckCount} bộ (${s.wordCount} từ)
+              </span>
+              <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25);">
+                💰 ${s.points}đ
+              </span>
+              <span class="badge" style="background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25);">
+                💡 ${s.hints} gợi ý
+              </span>
+            </div>
+
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11px; padding: 4px 8px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08);" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
+                🎁 Sửa Ví
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11px; padding: 4px 8px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc;" title="Xem các bộ từ của học viên này">
+                👁️ Xem Bộ Từ
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    async function adjustStudentWalletOnCloud(uid, displayName) {
+      const student = adminStudentsData.find(s => s.uid === uid);
+      if (!student) return;
+
+      const newPointsStr = prompt('💰 Nhập số điểm ví mới cho học viên "' + displayName + '":', student.points);
+      if (newPointsStr === null) return;
+      const newPoints = parseInt(newPointsStr, 10);
+      if (isNaN(newPoints)) {
+        alert('Điểm phải là một con số hợp lệ!');
+        return;
+      }
+
+      const newHintsStr = prompt('💡 Nhập số lượt gợi ý AI mới cho học viên "' + displayName + '":', student.hints);
+      if (newHintsStr === null) return;
+      const newHints = parseInt(newHintsStr, 10);
+      if (isNaN(newHints)) {
+        alert('Số gợi ý phải là một con số hợp lệ!');
+        return;
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      try {
+        const payload = {
+          points: newPoints,
+          hints: newHints,
+          updatedAt: new Date().toISOString(),
+          updatedBy: 'Admin (Publisher Portal)'
+        };
+
+        const res = await fetch(rtdbUrl + '/users/' + uid + '/economy.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          student.points = newPoints;
+          student.hints = newHints;
+          renderAdminStudentsTable();
+          showToast('🎉 Đã cập nhật ví cho học viên "' + displayName + '" thành công!');
+        } else {
+          alert('Không thể lưu lên Cloud! Vui lòng thử lại.');
+        }
+      } catch (err) {
+        alert('Lỗi cập nhật: ' + err.message);
+      }
+    }
+
+    function viewStudentDecksModal(uid, displayName) {
+      const student = adminStudentsData.find(s => s.uid === uid);
+      if (!student) return;
+
+      if (!student.rawDecks || student.rawDecks.length === 0) {
+        alert('Học viên "' + displayName + '" chưa tạo bộ từ nào trên Cloud.');
+        return;
+      }
+
+      let msg = '📚 DANH SÁCH BỘ TỪ CỦA HỌC VIÊN "' + displayName + '" (' + student.rawDecks.length + ' bộ):\n\n';
+      student.rawDecks.forEach((d, idx) => {
+        msg += (idx + 1) + '. ' + (d.title || 'Chưa đặt tên') + ' (' + (d.description || 'Không có mô tả') + ')\n';
+      });
+      alert(msg);
+    }
+
+    function openPublisherModal_Legacy() {
       const setPts = document.getElementById('admin-set-points-input');
       const setHts = document.getElementById('admin-set-hints-input');
       if (setPts) setPts.value = getUserPoints();
