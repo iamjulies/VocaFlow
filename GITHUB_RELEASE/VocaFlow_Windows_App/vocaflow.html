@@ -1092,7 +1092,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
@@ -1328,8 +1328,15 @@
         <input type="hidden" id="word-id">
         
         <div class="form-group">
-          <label class="form-label">Từ vựng tiếng Anh *</label>
-          <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent..." required>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Từ vựng tiếng Anh *</label>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-ai-generate" onclick="handleAiGenerateWord()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 11px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+              <span id="ai-btn-icon">✨</span> <span id="ai-btn-text">AI Điền Tự Động</span>
+            </button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); handleAiGenerateWord(); }">
+          </div>
         </div>
 
         <div class="form-row">
@@ -1646,10 +1653,29 @@
         </div>
       </div>
 
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
+            🔑 Lấy Key 30s
+          </a>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4;">
+          Nhập Gemini API Key cá nhân để mở khóa AI tự động phân tích nghĩa tiếng Việt, câu ví dụ, collocations khi thêm từ mới.
+        </p>
+        <div style="display: flex; gap: 8px;">
+          <input type="password" id="gemini-api-key-input" class="form-input" placeholder="Dán Gemini API Key (AIzaSy...)" style="flex: 1;" onchange="saveGeminiApiKey(this.value)">
+          <button type="button" class="btn btn-outline btn-sm" onclick="testGeminiConnection()" id="btn-test-gemini" title="Kiểm tra kết nối">
+            🧪 Thử kết nối
+          </button>
+        </div>
+        <div id="gemini-status-text" style="font-size: 11px; margin-top: 6px; color: var(--text-muted);"></div>
+      </div>
+
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -1670,6 +1696,72 @@
     const STORAGE_KEY_WORDS = 'vocaflow_words';
     const STORAGE_KEY_THEME = 'vocaflow_theme';
     const STORAGE_KEY_SPEECH_RATE = 'vocaflow_speech_rate';
+    const STORAGE_KEY_GEMINI_KEY = 'vocaflow_gemini_api_key';
+
+    // Gemini AI State
+    let geminiApiKey = localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '';
+
+    function saveGeminiApiKey(val) {
+      geminiApiKey = (val || '').trim();
+      localStorage.setItem(STORAGE_KEY_GEMINI_KEY, geminiApiKey);
+      const statusText = document.getElementById('gemini-status-text');
+      if (statusText) {
+        if (geminiApiKey) {
+          statusText.textContent = '💾 Đã lưu Gemini API Key cá nhân!';
+          statusText.style.color = '#34d399';
+        } else {
+          statusText.textContent = 'ℹ️ Chưa cấu hình Key. Sẽ dùng từ điển mặc định khi tạo từ.';
+          statusText.style.color = 'var(--text-muted)';
+        }
+      }
+    }
+
+    async function testGeminiConnection() {
+      const input = document.getElementById('gemini-api-key-input');
+      const key = (input ? input.value : geminiApiKey).trim();
+      const statusText = document.getElementById('gemini-status-text');
+      const btn = document.getElementById('btn-test-gemini');
+
+      if (!key) {
+        if (statusText) {
+          statusText.textContent = '⚠️ Vui lòng dán API Key trước khi kiểm tra!';
+          statusText.style.color = '#f87171';
+        }
+        return;
+      }
+
+      if (btn) btn.textContent = '⏳ Đang thử...';
+      try {
+        const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Trả lời duy nhất chữ 'OK'" }] }]
+          })
+        });
+        const data = await testRes.json();
+        if (data.candidates && data.candidates.length > 0) {
+          saveGeminiApiKey(key);
+          if (statusText) {
+            statusText.textContent = '✅ Kết nối Gemini AI thành công rực rỡ!';
+            statusText.style.color = '#34d399';
+          }
+          showToast('✅ Kết nối Gemini AI thành công!');
+        } else {
+          if (statusText) {
+            statusText.textContent = '❌ Lỗi kết nối: ' + (data.error?.message || 'Key không hợp lệ.');
+            statusText.style.color = '#f87171';
+          }
+        }
+      } catch (err) {
+        if (statusText) {
+          statusText.textContent = '❌ Lỗi mạng: ' + err.message;
+          statusText.style.color = '#f87171';
+        }
+      } finally {
+        if (btn) btn.textContent = '🧪 Thử kết nối';
+      }
+    }
 
     // Theme Engine
     let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
@@ -1714,6 +1806,19 @@
       const label = document.getElementById('speech-rate-label');
       if (slider) slider.value = currentSpeechRate;
       if (label) label.textContent = `${currentSpeechRate}x`;
+
+      const geminiInput = document.getElementById('gemini-api-key-input');
+      if (geminiInput) geminiInput.value = geminiApiKey || '';
+      const geminiStatus = document.getElementById('gemini-status-text');
+      if (geminiStatus) {
+        if (geminiApiKey) {
+          geminiStatus.textContent = '🔑 Đã cài đặt Gemini API Key cá nhân.';
+          geminiStatus.style.color = '#34d399';
+        } else {
+          geminiStatus.textContent = 'ℹ️ Chưa nhập Key riêng (đang dùng từ điển mặc định).';
+          geminiStatus.style.color = 'var(--text-muted)';
+        }
+      }
       openModal('modal-settings');
     }
 
@@ -2984,6 +3089,178 @@
       renderWordList();
       closeModal('modal-word');
       showToast('Đã lưu từ vựng thành công!');
+    }
+
+    // =========================================================================
+    // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
+    // =========================================================================
+    let isAiGenerating = false;
+
+    async function handleAiGenerateWord() {
+      if (isAiGenerating) return;
+      const termInput = document.getElementById('word-term');
+      const rawTerm = (termInput ? termInput.value : '').trim();
+
+      if (!rawTerm) {
+        alert('Vui lòng gõ từ vựng tiếng Anh vào ô trước khi bấm AI Tạo Tự Động!');
+        if (termInput) termInput.focus();
+        return;
+      }
+
+      isAiGenerating = true;
+      const aiBtn = document.getElementById('btn-ai-generate');
+      const aiIcon = document.getElementById('ai-btn-icon');
+      const aiText = document.getElementById('ai-btn-text');
+
+      if (aiIcon) aiIcon.textContent = '⏳';
+      if (aiText) aiText.textContent = 'Đang phân tích...';
+      if (aiBtn) aiBtn.disabled = true;
+
+      try {
+        let result = null;
+
+        // 1. Try Google Gemini API first if configured
+        if (geminiApiKey) {
+          try {
+            result = await fetchWordFromGemini(rawTerm, geminiApiKey);
+          } catch (geminiErr) {
+            console.warn('Gemini AI API note, fallback to Dictionary Engine:', geminiErr);
+          }
+        }
+
+        // 2. Fallback to Free Dictionary API if Gemini unavailable
+        if (!result) {
+          result = await fetchWordFromDictionary(rawTerm);
+        }
+
+        if (result) {
+          // Fill form fields
+          if (result.term && termInput) termInput.value = result.term;
+          if (result.ipa) document.getElementById('word-phonetic').value = result.ipa;
+          if (result.pos) {
+            const posSelect = document.getElementById('word-pos');
+            if (posSelect) {
+              const cleanPos = result.pos.toLowerCase();
+              const matchPos = Array.from(posSelect.options).find(opt => opt.value.toLowerCase() === cleanPos || cleanPos.includes(opt.value.toLowerCase()));
+              if (matchPos) posSelect.value = matchPos.value;
+            }
+          }
+          if (result.cefrLevel) {
+            const cefrSelect = document.getElementById('word-cefr');
+            if (cefrSelect) {
+              const cleanCefr = result.cefrLevel.toUpperCase().trim();
+              const matchCefr = Array.from(cefrSelect.options).find(opt => opt.value === cleanCefr);
+              if (matchCefr) cefrSelect.value = matchCefr.value;
+            }
+          }
+          if (result.definition) document.getElementById('word-def').value = result.definition;
+          if (result.example) document.getElementById('word-example').value = result.example;
+          if (result.synonyms) document.getElementById('word-synonyms').value = Array.isArray(result.synonyms) ? result.synonyms.join(', ') : result.synonyms;
+          if (result.antonyms) document.getElementById('word-antonyms').value = Array.isArray(result.antonyms) ? result.antonyms.join(', ') : result.antonyms;
+          if (result.collocations) document.getElementById('word-collocations').value = Array.isArray(result.collocations) ? result.collocations.join(', ') : result.collocations;
+
+          showToast('✨ AI đã điền thông tin từ vựng thành công!');
+        } else {
+          alert('Không tìm thấy thông tin tự động cho từ này. Bạn vui lòng nhập thủ công nhé!');
+        }
+      } catch (err) {
+        console.error('AI Generate error:', err);
+        alert('Lỗi khi tải thông tin: ' + err.message);
+      } finally {
+        isAiGenerating = false;
+        if (aiIcon) aiIcon.textContent = '✨';
+        if (aiText) aiText.textContent = 'AI Điền Tự Động';
+        if (aiBtn) aiBtn.disabled = false;
+      }
+    }
+
+    async function fetchWordFromGemini(term, key) {
+      const prompt = `Phân tích từ vựng tiếng Anh "${term}" cho người học tiếng Anh Việt Nam.
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown, không giải thích ngoài JSON) theo cấu trúc sau:
+{
+  "term": "${term}",
+  "pos": "noun/verb/adjective/adverb/phrase/idiom",
+  "ipa": "/phiên âm IPA chuẩn Anh-Mỹ/",
+  "cefrLevel": "A1/A2/B1/B2/C1/C2",
+  "definition": "Định nghĩa tiếng Việt ngắn gọn, xúc tích, sát ngữ cảnh nhất",
+  "example": "1 câu ví dụ tiếng Anh tự nhiên kèm nghĩa tiếng Việt",
+  "synonyms": ["từ đồng nghĩa 1", "từ đồng nghĩa 2"],
+  "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2"],
+  "collocations": ["cụm từ đi kèm 1", "cụm từ đi kèm 2"]
+}`;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            response_mime_type: "application/json",
+            temperature: 0.2
+          }
+        })
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error?.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) return null;
+
+      const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleanJson);
+    }
+
+    async function fetchWordFromDictionary(term) {
+      const clean = encodeURIComponent(term.toLowerCase().trim());
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${clean}`);
+      if (!res.ok) return null;
+
+      const list = await res.json();
+      if (!list || !list.length) return null;
+
+      const item = list[0];
+      let ipa = item.phonetic || '';
+      if (!ipa && item.phonetics && item.phonetics.length > 0) {
+        const pWithText = item.phonetics.find(p => p.text);
+        if (pWithText) ipa = pWithText.text;
+      }
+
+      let pos = 'noun';
+      let def = '';
+      let ex = '';
+      let syns = [];
+      let ants = [];
+
+      if (item.meanings && item.meanings.length > 0) {
+        const firstMeaning = item.meanings[0];
+        pos = firstMeaning.partOfSpeech || 'noun';
+        if (firstMeaning.synonyms) syns.push(...firstMeaning.synonyms);
+        if (firstMeaning.antonyms) ants.push(...firstMeaning.antonyms);
+
+        if (firstMeaning.definitions && firstMeaning.definitions.length > 0) {
+          const firstDef = firstMeaning.definitions[0];
+          def = firstDef.definition || '';
+          ex = firstDef.example || '';
+          if (firstDef.synonyms) syns.push(...firstDef.synonyms);
+          if (firstDef.antonyms) ants.push(...firstDef.antonyms);
+        }
+      }
+
+      return {
+        term: item.word || term,
+        pos: pos,
+        ipa: ipa,
+        cefrLevel: 'B1',
+        definition: def ? `(EN) ${def}` : '',
+        example: ex,
+        synonyms: syns.slice(0, 4),
+        antonyms: ants.slice(0, 3),
+        collocations: []
+      };
     }
 
     function deleteWord(id) {
