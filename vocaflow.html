@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -1443,7 +1443,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.7</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.8</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1594,6 +1594,9 @@
             </button>
             <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()" title="Xuất bộ từ ra file Excel (.xlsx)">
               <svg class="icon icon-sm"><use href="#i-download"/></svg> <span>Xuất Excel</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="shareCurrentDeckToLibrary()" title="Đóng góp bộ từ này lên Thư Viện Cộng Đồng" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
+              <span>🚀</span> <span>Chia sẻ Thư Viện</span>
             </button>
           </div>
         </div>
@@ -2336,7 +2339,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.8</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -2454,17 +2457,22 @@
       </div>
 
       <!-- LIBRARY DECK LIST -->
-      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding-right: 4px; margin-bottom: 12px; max-height: 420px;">
+      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; padding-right: 4px; margin-bottom: 14px; max-height: 460px;">
         <!-- Rendered via JS -->
       </div>
 
-      <!-- PUBLISHER CLOUD UPLOAD BAR -->
-      <div style="background: rgba(168, 85, 247, 0.08); border: 1px dashed rgba(168, 85, 247, 0.4); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-        <div style="font-size: 12px; color: var(--text);">
-          👑 <strong>Nhà phát hành / Giáo viên:</strong> Muốn chia sẻ thêm bộ từ Excel mới lên Thư Viện toàn cầu?
+      <!-- COMMUNITY DECK CONTRIBUTION BANNER (CHO TẤT CẢ MỌI NGƯỜI) -->
+      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12)); border: 1px dashed rgba(168, 85, 247, 0.45); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="flex: 1; min-width: 220px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+            <span>✨</span> <strong>Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0; line-height: 1.4;">
+            Mọi thành viên đều có thể tải lên file Excel hoặc chia sẻ bộ từ của mình để cùng nhau xây dựng kho học tập lớn mạnh!
+          </p>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="openPublisherDeckUploadModal()" style="font-size: 11px; color: #c084fc; border-color: rgba(192, 132, 252, 0.5);">
-          🚀 Đăng Bộ Từ Lên Cloud Thư Viện
+        <button class="btn btn-primary btn-sm" onclick="openCommunityDeckUploadModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 7px 14px; font-size: 12px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);">
+          🚀 Đóng Góp Bộ Từ Mới
         </button>
       </div>
 
@@ -2507,34 +2515,63 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLISHER DECK UPLOADER (XLSX TO GLOBAL CLOUD) -->
-  <div class="modal-overlay" id="modal-publisher-upload">
-    <div class="modal" style="max-width: 520px;">
+  <!-- MODAL: COMMUNITY DECK CONTRIBUTION (OPEN FOR EVERYONE) -->
+  <div class="modal-overlay" id="modal-community-upload">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 20px;">🚀</span>
-          <strong>Phát Hành Bộ Từ Lên Thư Viện Toàn Cầu</strong>
+          <span style="font-size: 22px;">🚀</span>
+          <div>
+            <strong style="font-size: 16px;">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
+          </div>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-        Tải lên file Excel (.xlsx) hoặc JSON. Hệ thống sẽ tự động lọc bỏ các sheet phụ, bóc tách toàn bộ từ vựng và phát hành lên Cloud để mọi người học đều tải được!
-      </p>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">Tên Người Đóng Góp (Tác giả hiển thị):</label>
+        <input type="text" id="pub-deck-author" class="form-input" placeholder="Tên hoặc biệt danh của bạn (VD: Julie, Thầy Hùng, Minh Anh...)">
+      </div>
 
-      <div class="form-group">
-        <label class="form-label">Chọn File Excel / JSON từ máy:</label>
+      <!-- SOURCE SELECTION TABS -->
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">Chọn nguồn dữ liệu bộ từ:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-pub-source-file" onclick="setPublisherUploadSource('file')" style="font-size: 12px;">
+            📁 Tải lên File Excel / JSON
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-pub-source-deck" onclick="setPublisherUploadSource('deck')" style="font-size: 12px;">
+            📚 Chọn từ Bộ từ của tôi
+          </button>
+        </div>
+      </div>
+
+      <!-- SOURCE 1: FILE PICKER -->
+      <div id="pub-source-file-section" class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">Chọn File Excel (.xlsx/.xls) hoặc JSON từ máy:</label>
         <input type="file" id="pub-upload-file-input" class="form-input" accept=".xlsx, .xls, .json" onchange="handlePublisherFileSelected(event)">
+        <small style="color: var(--text-muted); font-size: 10.5px; display: block; margin-top: 4px;">
+          💡 Hệ thống tự động nhận diện các cột: Từ vựng, Nghĩa, Phiên âm, Ví dụ, Loại từ... và lọc bỏ các sheet phụ.
+        </small>
+      </div>
+
+      <!-- SOURCE 2: LOCAL DECK SELECTOR -->
+      <div id="pub-source-deck-section" class="form-group" style="display: none; margin-bottom: 12px;">
+        <label class="form-label">Chọn 1 bộ từ đang có trong máy của bạn:</label>
+        <select id="pub-local-deck-select" class="form-input" onchange="handlePublisherLocalDeckSelected(this.value)">
+          <!-- Populated dynamically -->
+        </select>
       </div>
 
       <div class="form-group">
         <label class="form-label">Tên Bộ Từ Hiển Thị:</label>
-        <input type="text" id="pub-deck-title" class="form-input" placeholder="VD: Tiếng Anh 10 - Kết Nối Tri Thức, IELTS 500...">
+        <input type="text" id="pub-deck-title" class="form-input" placeholder="VD: Tiếng Anh 10 - Kết Nối Tri Thức, 500 Từ Vựng IELTS Thường Gặp...">
       </div>
 
       <div class="form-group">
         <label class="form-label">Mô Tả Bộ Từ:</label>
-        <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, số lượng từ, giáo trình..."></textarea>
+        <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
@@ -2564,11 +2601,13 @@
         </div>
       </div>
 
-      <div id="pub-upload-preview-status" style="font-size: 11px; margin-bottom: 12px; color: #10b981; display: none;"></div>
+      <div id="pub-upload-preview-status" style="font-size: 11.5px; margin-bottom: 12px; color: #10b981; font-weight: 600; display: none; background: rgba(16, 185, 129, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25);"></div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-        <button class="btn btn-outline" onclick="closeModal('modal-publisher-upload')">Hủy</button>
-        <button class="btn btn-success" id="btn-pub-do-upload" onclick="doPublishDeckToCloud()">🚀 Phát Hành Ngay</button>
+        <button class="btn btn-outline" onclick="closeModal('modal-community-upload')">Hủy</button>
+        <button class="btn btn-primary" id="btn-pub-do-upload" onclick="doPublishDeckToCloud()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
+          🚀 Đóng Góp Lên Thư Viện Ngay
+        </button>
       </div>
     </div>
   </div>
@@ -8836,17 +8875,19 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         if (query) {
           const matchTitle = deck.title.toLowerCase().includes(query);
           const matchDesc = (deck.description || '').toLowerCase().includes(query);
+          const matchAuthor = (deck.author || '').toLowerCase().includes(query);
           const matchWords = Array.isArray(deck.words) && deck.words.some(w => (w.term || '').toLowerCase().includes(query) || (w.definition || '').toLowerCase().includes(query));
-          return matchTitle || matchDesc || matchWords;
+          return matchTitle || matchDesc || matchAuthor || matchWords;
         }
         return true;
       });
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 30px 10px; color: var(--text-muted);">
-            <div style="font-size: 30px; margin-bottom: 8px;">🔍</div>
-            <div>Không tìm thấy bộ từ nào phù hợp với bộ lọc hiện tại.</div>
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+            <div style="font-size: 14px; font-weight: 600;">Không tìm thấy bộ từ nào phù hợp</div>
+            <div style="font-size: 12px; margin-top: 4px;">Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút làm mới.</div>
           </div>
         `;
         return;
@@ -8858,33 +8899,37 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         const wordCount = Array.isArray(deck.words) ? deck.words.length : 0;
         const color = deck.color || '#4f46e5';
         const icon = deck.icon || '📘';
+        const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng');
 
         html += `
-          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 16px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.18);">
             <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color};"></div>
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 20px;">${icon}</span>
-                  <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                  <span style="font-size: 22px; flex-shrink: 0;">${icon}</span>
+                  <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
                 </div>
-                <span class="badge" style="background: rgba(255,255,255,0.06); font-size: 10.5px; flex-shrink: 0;">${wordCount} từ</span>
+                <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700; flex-shrink: 0;">${wordCount} từ</span>
               </div>
-              <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+              <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
                 <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
               </div>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                <span>👤</span> <span>Đóng góp:</span> <strong style="color: var(--text);">${escapeHtml(authorName)}</strong>
+              </div>
             </div>
 
-            <div style="display: flex; gap: 6px;">
-              <button class="btn btn-outline btn-sm" style="flex: 1; font-size: 11.5px; padding: 5px 8px;" onclick="previewLibraryDeck('${deck.id}')">
+            <div style="display: grid; grid-template-columns: 1fr 1.25fr; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
                 👁️ Xem trước
               </button>
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="flex: 1; font-size: 11.5px; padding: 5px 8px; font-weight: 700;" onclick="installLibraryDeck('${deck.id}')">
-                ${isImported ? '🔄 Tải thêm' : '📥 Tải về học'}
+              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+                📥 ${isImported ? 'Tải thêm' : 'Tải về học'}
               </button>
             </div>
           </div>
@@ -8900,11 +8945,13 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       if (!deck) return;
       currentPreviewDeck = deck;
 
+      const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Official' : 'Cộng đồng');
+
       document.getElementById('lib-preview-icon').textContent = deck.icon || '📘';
       document.getElementById('lib-preview-title').textContent = deck.title;
       document.getElementById('lib-preview-desc').textContent = deck.description || '';
       document.getElementById('lib-preview-count').textContent = `${(deck.words || []).length} từ vựng`;
-      document.getElementById('lib-preview-category').textContent = deck.category || 'THPT';
+      document.getElementById('lib-preview-category').textContent = `${deck.category || 'THPT'} • Đóng góp: ${authorName}`;
 
       const wordsList = document.getElementById('lib-preview-words-container');
       if (wordsList) {
@@ -9000,15 +9047,117 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
     }
 
     // =========================================================================
-    // PUBLISHER CLOUD DECK UPLOADER (DÀNH CHO NHÀ PHÁT HÀNH / GIÁO VIÊN)
+    // COMMUNITY DECK CONTRIBUTION ENGINE (DÀNH CHO TẤT CẢ MỌI NGƯỜI)
     // =========================================================================
-    function openPublisherDeckUploadModal() {
+    let currentUploadSource = 'file';
+
+    function openCommunityDeckUploadModal(prefillDeckId = null) {
       pendingPublisherDeck = null;
       const fileInput = document.getElementById('pub-upload-file-input');
       const statusEl = document.getElementById('pub-upload-preview-status');
+      const authorInput = document.getElementById('pub-deck-author');
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      const localDeckSelect = document.getElementById('pub-local-deck-select');
+
       if (fileInput) fileInput.value = '';
       if (statusEl) statusEl.style.display = 'none';
-      openModal('modal-publisher-upload');
+
+      // Set author name
+      if (authorInput) {
+        authorInput.value = (currentUser && currentUser.displayName && currentUser.displayName !== 'Khách') ? currentUser.displayName : (authorInput.value || 'Thành viên VocaFlow');
+      }
+
+      // Populate local decks select
+      if (localDeckSelect) {
+        let optsHtml = '<option value="">-- Chọn 1 bộ từ của bạn --</option>';
+        decks.forEach(d => {
+          const count = words.filter(w => w.deckId === d.id).length;
+          optsHtml += `<option value="${d.id}">${escapeHtml(d.title)} (${count} từ)</option>`;
+        });
+        localDeckSelect.innerHTML = optsHtml;
+      }
+
+      if (prefillDeckId) {
+        setPublisherUploadSource('deck');
+        if (localDeckSelect) localDeckSelect.value = prefillDeckId;
+        handlePublisherLocalDeckSelected(prefillDeckId);
+      } else {
+        setPublisherUploadSource('file');
+        if (titleInput) titleInput.value = '';
+        if (descInput) descInput.value = '';
+      }
+
+      openModal('modal-community-upload');
+    }
+
+    // Legacy alias
+    function openPublisherDeckUploadModal() {
+      openCommunityDeckUploadModal();
+    }
+
+    function shareCurrentDeckToLibrary() {
+      if (currentDeckId) {
+        openCommunityDeckUploadModal(currentDeckId);
+      }
+    }
+
+    function setPublisherUploadSource(source) {
+      currentUploadSource = source;
+      const fileSection = document.getElementById('pub-source-file-section');
+      const deckSection = document.getElementById('pub-source-deck-section');
+      const btnFile = document.getElementById('btn-pub-source-file');
+      const btnDeck = document.getElementById('btn-pub-source-deck');
+
+      if (source === 'file') {
+        if (fileSection) fileSection.style.display = 'block';
+        if (deckSection) deckSection.style.display = 'none';
+        if (btnFile) { btnFile.className = 'btn btn-sm btn-primary'; }
+        if (btnDeck) { btnDeck.className = 'btn btn-sm btn-outline'; }
+      } else {
+        if (fileSection) fileSection.style.display = 'none';
+        if (deckSection) deckSection.style.display = 'block';
+        if (btnFile) { btnFile.className = 'btn btn-sm btn-outline'; }
+        if (btnDeck) { btnDeck.className = 'btn btn-sm btn-primary'; }
+      }
+    }
+
+    function handlePublisherLocalDeckSelected(deckId) {
+      if (!deckId) return;
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const deckWords = words.filter(w => w.deckId === deckId);
+      if (deckWords.length === 0) {
+        alert('Bộ từ này hiện chưa có từ vựng nào để chia sẻ!');
+        return;
+      }
+
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      const statusEl = document.getElementById('pub-upload-preview-status');
+
+      if (titleInput) titleInput.value = deck.title;
+      if (descInput) descInput.value = deck.description || `Bộ từ vựng chia sẻ bởi ${document.getElementById('pub-deck-author')?.value || 'Thành viên VocaFlow'}`;
+
+      pendingPublisherDeck = {
+        title: deck.title,
+        description: deck.description || '',
+        words: deckWords.map(w => ({
+          term: w.term,
+          definition: w.definitionVi || w.definition || '',
+          partOfSpeech: w.partOfSpeech || '',
+          phonetic: w.phonetic || '',
+          example: w.exampleSentence || w.example || '',
+          topic: w.topic || '',
+          level: w.cefrLevel || w.level || 'B1'
+        }))
+      };
+
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.textContent = `✅ Đã sẵn sàng phát hành "${deck.title}" với ${deckWords.length} từ vựng!`;
+      }
     }
 
     function handlePublisherFileSelected(e) {
@@ -9126,7 +9275,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
 
     async function doPublishDeckToCloud() {
       if (!pendingPublisherDeck || !pendingPublisherDeck.words || pendingPublisherDeck.words.length === 0) {
-        alert('Vui lòng chọn file Excel hoặc JSON hợp lệ trước!');
+        alert('Vui lòng chọn file Excel hoặc chọn 1 bộ từ hợp lệ trước!');
         return;
       }
 
@@ -9134,21 +9283,24 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       const descInput = document.getElementById('pub-deck-desc');
       const catSelect = document.getElementById('pub-deck-category');
       const iconSelect = document.getElementById('pub-deck-icon');
+      const authorInput = document.getElementById('pub-deck-author');
 
-      const title = (titleInput.value || '').trim();
+      const title = (titleInput?.value || '').trim();
       if (!title) {
         alert('Vui lòng nhập tên bộ từ!');
         return;
       }
 
+      const author = (authorInput?.value || '').trim() || (currentUser && currentUser.displayName) || 'Cộng đồng VocaFlow';
       const deckId = 'pub_deck_' + Date.now();
       const payload = {
         id: deckId,
         title: title,
-        description: descInput.value.trim() || 'Bộ từ vựng chia sẻ bởi Nhà Phát Hành VocaFlow',
-        category: catSelect.value || 'THPT',
-        icon: iconSelect.value || '📘',
-        color: iconSelect.value === '📙' ? '#f59e0b' : (iconSelect.value === '📕' ? '#ec4899' : (iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
+        description: (descInput?.value || '').trim() || `Bộ từ vựng chia sẻ bởi ${author}`,
+        author: author,
+        category: catSelect ? catSelect.value : 'THPT',
+        icon: iconSelect ? iconSelect.value : '📘',
+        color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
         totalWords: pendingPublisherDeck.words.length,
         words: pendingPublisherDeck.words,
         publishedAt: new Date().toISOString()
@@ -9159,7 +9311,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
 
       try {
         const btn = document.getElementById('btn-pub-do-upload');
-        if (btn) btn.textContent = '⏳ Đang tải lên Cloud...';
+        if (btn) btn.textContent = '⏳ Đang tải lên Thư Viện...';
 
         const res = await fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}.json${authParam}`, {
           method: 'PUT',
@@ -9168,8 +9320,8 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         });
 
         if (res.ok) {
-          showToast(`🚀 Đã phát hành thành công bộ từ "${title}" lên Thư Viện toàn cầu!`);
-          closeModal('modal-publisher-upload');
+          showToast(`🚀 Đã đóng góp thành công bộ từ "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện toàn cầu!`);
+          closeModal('modal-community-upload');
           fetchCloudLibraryDecks();
         } else {
           alert('Không thể lưu lên Cloud. Kiểm tra quyền hoặc kết nối!');
@@ -9178,7 +9330,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         alert('Lỗi phát hành: ' + err.message);
       } finally {
         const btn = document.getElementById('btn-pub-do-upload');
-        if (btn) btn.textContent = '🚀 Phát Hành Ngay';
+        if (btn) btn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
       }
     }
   </script>
