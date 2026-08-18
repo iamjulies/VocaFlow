@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.6</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.7</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2613,7 +2613,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.6</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5801,6 +5801,7 @@
       if (!w) return;
       if (!confirm('Bạn có chắc chắn muốn xóa từ "' + w.term + '"?')) return;
 
+      // Register Tombstone to permanently prevent zombie resurrection
       deletedWordIds.add(wordId);
       saveDeletedTombstones();
 
@@ -5809,8 +5810,9 @@
 
       saveDatabase(true);
       renderWordList();
+      renderDecks();
       updateSelectionUI();
-      showToast('Đã xóa từ "' + w.term + '"!');
+      showToast('🗑️ Đã xóa từ "' + w.term + '"!');
     }
 
     // =========================================================================
@@ -6063,16 +6065,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       };
     }
 
-    function deleteWord(id) {
-      if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
-        words = words.filter(w => w.id !== id);
-        selectedWordIds.delete(id);
-        saveDatabase(true);
-        renderWordList();
-        updateSelectionUI();
-        showToast('Đã xóa từ vựng!');
-      }
-    }
+// duplicate deleteWord permanently removed for v0.0.9.7 tombstone integrity
 
     // IPA VIRTUAL KEYBOARD
     function toggleIpaKeyboard() {
