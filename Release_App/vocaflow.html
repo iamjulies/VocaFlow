@@ -2972,7 +2972,7 @@
               <span class="word-term">${escapeHtml(w.term)}</span>
               ${cefrBadge}
               ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
-              <button class="btn-speaker" onclick="speakText('${escapeHtml(w.term)}')" title="Phát âm">
+              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Phát âm">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
             </div>
@@ -4004,10 +4004,20 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     const audioStreamCache = new Map();
     let currentActiveAudio = null;
 
+    function speakWordById(wordId) {
+      const w = words.find(item => item.id === wordId);
+      if (w && w.term) {
+        speakText(w.term);
+      }
+    }
+
     function speakText(text, accent = 'en-US') {
       if (!text) return;
-      const clean = text.trim();
+      let clean = String(text).trim();
       if (!clean) return;
+
+      // Normalize smart/curly quotes
+      clean = clean.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
 
       try {
         if (currentActiveAudio) {
