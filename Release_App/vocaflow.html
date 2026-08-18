@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.11</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.12</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2038,6 +2038,77 @@
     </div>
   </div>
 
+  <!-- MODAL: QUIZ CELEBRATION RESULT POPUP (v0.0.8.12) -->
+  <div class="modal-overlay" id="modal-quiz-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="quiz-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="quiz-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
+        <h2 id="quiz-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Xuất Sắc Hoàn Thành!</h2>
+        <p id="quiz-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Bạn đã hoàn thành xuất sắc toàn bộ bài trắc nghiệm!</p>
+
+        <!-- 5-Tile Stats Dashboard (màu mè, gọn gàng, siêu đẹp) -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Số câu đúng -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Kết quả đúng
+            </div>
+            <div id="quiz-res-score-ratio" style="font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace;">10/10 (100%)</div>
+          </div>
+
+          <!-- 2. Điểm ví nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> Điểm nhận được
+            </div>
+            <div id="quiz-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+60 điểm</div>
+          </div>
+
+          <!-- 3. Tổng thời gian -->
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="quiz-res-duration" style="font-size: 16px; font-weight: 800; color: #3b82f6; font-family: monospace;">45 giây</div>
+          </div>
+
+          <!-- 4. Tốc độ SPQ (Seconds Per Question) -->
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Tốc độ (SPQ)
+            </div>
+            <div id="quiz-res-spq" style="font-size: 16px; font-weight: 800; color: #8b5cf6; font-family: monospace;">4.5s / câu</div>
+          </div>
+        </div>
+
+        <!-- 5. Gợi ý đã dùng (Full width tile) -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+          <div style="font-size: 12px; color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <span>💡</span> Gợi ý AI đã dùng trong bài:
+          </div>
+          <div id="quiz-res-hints" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 lượt</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="retryQuizFromModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 9px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon"><use href="#i-repeat"/></svg> Làm Lại Quiz
+          </button>
+          <button class="btn btn-outline" onclick="exitQuizToDeck()" style="padding: 9px 14px;">
+            <svg class="icon"><use href="#i-book"/></svg> Xem Bộ Từ
+          </button>
+          <button class="btn btn-outline" onclick="exitQuizToHome()" style="padding: 9px 14px;">
+            🏠 Tủ Sách
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ADD / EDIT DECK -->
   <div class="modal-overlay" id="modal-deck">
     <div class="modal">
@@ -2396,7 +2467,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.11</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.12</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5306,9 +5377,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     // =========================================================================
-    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN & 50% PENALTY
+    // QUIZ TRẮC NGHIỆM MODE WITH CEFR 150% MASTERY GAIN & 50% PENALTY (v0.0.8.12)
     // =========================================================================
     let quizIsAnswered = false;
+    let quizStartTime = 0;
+    let quizCorrectCount = 0;
+    let quizWrongCount = 0;
+    let quizPointsEarned = 0;
+    let quizHintsUsed = 0;
+    let quizTotalQuestions = 0;
+    let fireworksAnimationId = null;
 
     function startQuizMode(useSelectionOnly = false) {
       let deckWords = getFilteredDeckWords();
@@ -5331,6 +5409,15 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       quizIndex = 0;
       quizScore = 0;
       quizIsAnswered = false;
+
+      // Track statistics for result modal
+      quizStartTime = Date.now();
+      quizCorrectCount = 0;
+      quizWrongCount = 0;
+      quizPointsEarned = 0;
+      quizHintsUsed = 0;
+      quizTotalQuestions = quizList.length;
+
       loadQuizQuestion();
       showScreen('screen-quiz');
     }
@@ -5341,51 +5428,57 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       quizIndex = 0;
       quizScore = 0;
       quizIsAnswered = false;
+
+      quizStartTime = Date.now();
+      quizCorrectCount = 0;
+      quizWrongCount = 0;
+      quizPointsEarned = 0;
+      quizHintsUsed = 0;
+      quizTotalQuestions = quizList.length;
+
       loadQuizQuestion();
       showToast('🔀 Đã xáo trộn ngẫu nhiên bộ câu hỏi Quiz!');
     }
 
     function generateSmartDistractors(questionWord) {
-      const correctDef = (questionWord.definitionVi || '').trim();
+      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
       const currentPos = (questionWord.partOfSpeech || 'noun').toLowerCase().trim();
       const currentDeckId = questionWord.deckId;
 
-      // Pool of all valid other words (excluding current word and identical definitions)
-      const otherWords = words.filter(w => w.id !== questionWord.id && (w.definitionVi || '').trim() && (w.definitionVi || '').trim().toLowerCase() !== correctDef.toLowerCase());
-
+      const otherWords = words.filter(w => w.id !== questionWord.id && (w.definitionVi || w.definition || '').trim() && (w.definitionVi || w.definition || '').trim().toLowerCase() !== correctDef.toLowerCase());
       const chosenDefs = new Set();
 
-      // 1. Priority 1: Same Part of Speech + Same Deck (Highest match & contextual confusion)
+      // 1. Priority 1: Same Part of Speech + Same Deck
       const samePosSameDeck = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && w.deckId === currentDeckId);
       samePosSameDeck.sort(() => Math.random() - 0.5).forEach(w => {
-        if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+        if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
       });
 
       // 2. Priority 2: Same Part of Speech + Other Decks
       if (chosenDefs.size < 3) {
-        const samePosOtherDecks = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && !chosenDefs.has(w.definitionVi.trim()));
+        const samePosOtherDecks = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
         samePosOtherDecks.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
         });
       }
 
       // 3. Priority 3: Same Deck (Any POS)
       if (chosenDefs.size < 3) {
-        const sameDeckAnyPos = otherWords.filter(w => w.deckId === currentDeckId && !chosenDefs.has(w.definitionVi.trim()));
+        const sameDeckAnyPos = otherWords.filter(w => w.deckId === currentDeckId && !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
         sameDeckAnyPos.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
         });
       }
 
       // 4. Priority 4: Any other word across the app
       if (chosenDefs.size < 3) {
-        const remainingWords = otherWords.filter(w => !chosenDefs.has(w.definitionVi.trim()));
+        const remainingWords = otherWords.filter(w => !chosenDefs.has((w.definitionVi || w.definition || '').trim()));
         remainingWords.sort(() => Math.random() - 0.5).forEach(w => {
-          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+          if (chosenDefs.size < 3) chosenDefs.add((w.definitionVi || w.definition || '').trim());
         });
       }
 
-      // 5. Priority 5: High-Quality Category / POS Fallback Pool (Guarantees smart choices even in small 2-word decks)
+      // 5. Priority 5: High-Quality Category / POS Fallback Pool
       if (chosenDefs.size < 3) {
         const posFallbackPools = {
           noun: [
@@ -5449,14 +5542,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const questionWord = quizList[quizIndex];
       const total = quizList.length;
 
-      document.getElementById('quiz-counter').textContent = `Câu ${quizIndex + 1} / ${total}`;
-      document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+      document.getElementById('quiz-counter').textContent = 'Câu ' + (quizIndex + 1) + ' / ' + total;
+      document.getElementById('quiz-score').textContent = 'Điểm: ' + quizScore;
       document.getElementById('quiz-question-term').textContent = questionWord.term;
       document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
 
-      // Generate 3 Smart Category/POS-matched Distractors
       const distractors = generateSmartDistractors(questionWord);
-      const choices = [questionWord.definitionVi, ...distractors].sort(() => Math.random() - 0.5);
+      const choices = [questionWord.definitionVi || questionWord.definition || '', ...distractors].sort(() => Math.random() - 0.5);
 
       const optionsContainer = document.getElementById('quiz-options-container');
       optionsContainer.innerHTML = '';
@@ -5465,11 +5557,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const opt = document.createElement('button');
         opt.className = 'quiz-option';
         opt.textContent = choice;
-        opt.onclick = () => checkQuizAnswer(opt, choice === questionWord.definitionVi);
+        opt.onclick = () => checkQuizAnswer(opt, choice === (questionWord.definitionVi || questionWord.definition));
         optionsContainer.appendChild(opt);
       });
 
-      // Auto-pronounce English Term upon question load (Duolingo style)
       setTimeout(() => {
         speakQuizTerm();
       }, 150);
@@ -5506,6 +5597,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
+      quizHintsUsed++;
+
       // 1. RULE: Only logged in users can use Hints
       if (!currentUser || !currentUser.email) {
         alert('🔒 Tính năng Gợi ý AI chỉ dành cho thành viên đã đăng nhập/đăng ký.\n\nVui lòng đăng nhập hoặc đăng ký tài khoản để nhận ngay 5 lượt gợi ý miễn phí!');
@@ -5524,7 +5617,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       // 3. RULE: Must have hints available
       const currentHints = getUserHints();
       if (currentHints <= 0) {
-        if (confirm(`🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ${getUserPoints()} điểm.\n\nBạn có muốn mở Cửa hàng để đổi 20 điểm lấy 1 lượt gợi ý mới không?`)) {
+        if (confirm('🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ' + getUserPoints() + ' điểm.\n\nBạn có muốn mở Cửa hàng để đổi 20 điểm lấy 1 lượt gợi ý mới không?')) {
           openShopModal();
         }
         return;
@@ -5535,15 +5628,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       try {
         const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
-        const prompt = `Từ vựng tiếng Anh: "${questionWord.term}". Nghĩa tiếng Việt: "${questionWord.definitionVi}".
-Hãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp người học đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "${questionWord.definitionVi}" hay từ "${questionWord.term}".
-Ví dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."
-Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
+        const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp người học đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${cachedModel}:generateContent?key=${geminiApiKey.trim()}`, {
+        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
           method: 'POST',
           signal: controller.signal,
           headers: { 'Content-Type': 'application/json' },
@@ -5565,8 +5655,8 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
           const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (rawHint) {
             setUserHints(currentHints - 1);
-            hintText.innerHTML = `✨ <strong>AI Gợi ý:</strong> ${escapeHtml(rawHint)}`;
-            showToast(`💡 Đã dùng 1 gợi ý AI (còn ${getUserHints()} lượt).`);
+            hintText.innerHTML = '✨ <strong>AI Gợi ý:</strong> ' + escapeHtml(rawHint);
+            showToast('💡 Đã dùng 1 gợi ý AI (còn ' + getUserHints() + ' lượt).');
             return;
           }
         }
@@ -5579,20 +5669,20 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       if (questionWord.exampleSentence) {
         const termRegex = new RegExp(questionWord.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         const clozeEx = questionWord.exampleSentence.replace(termRegex, '[ ... ]');
-        localHint = `💡 Ví dụ ngữ cảnh: "${clozeEx}"`;
+        localHint = '💡 Ví dụ ngữ cảnh: "' + clozeEx + '"';
       } else if (questionWord.collocations && questionWord.collocations.length) {
-        localHint = `💡 Cụm từ đi kèm: ${questionWord.collocations.join(', ')}`;
+        localHint = '💡 Cụm từ đi kèm: ' + questionWord.collocations.join(', ');
       } else if (questionWord.synonyms && questionWord.synonyms.length) {
-        localHint = `💡 Từ gần nghĩa (Synonym): ${questionWord.synonyms.join(', ')}`;
+        localHint = '💡 Từ gần nghĩa (Synonym): ' + questionWord.synonyms.join(', ');
       }
 
       setUserHints(currentHints - 1);
-      hintText.innerHTML = localHint || `💡 Từ này thuộc loại: <strong>${(questionWord.partOfSpeech || 'từ vựng').toUpperCase()}</strong> (Cấp độ: ${questionWord.cefrLevel || 'Chung'})`;
-      showToast(`💡 Đã dùng 1 gợi ý (còn ${getUserHints()} lượt).`);
+      hintText.innerHTML = localHint || ('💡 Từ này thuộc loại: <strong>' + (questionWord.partOfSpeech || 'từ vựng').toUpperCase() + '</strong> (Cấp độ: ' + (questionWord.cefrLevel || 'Chung') + ')');
+      showToast('💡 Đã dùng 1 gợi ý (còn ' + getUserHints() + ' lượt).');
     }
 
     function checkQuizAnswer(selectedButton, isCorrect) {
-      if (quizIsAnswered) return; // Prevent duplicate scoring or clicking after answer!
+      if (quizIsAnswered) return;
       quizIsAnswered = true;
 
       const allButtons = document.querySelectorAll('.quiz-option');
@@ -5606,11 +5696,13 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       const currentPts = getUserPoints();
       const newTotalPoints = Math.max(0, currentPts + delta);
       setUserPoints(newTotalPoints);
+      quizPointsEarned += delta;
 
       if (isCorrect) {
+        quizCorrectCount++;
         selectedButton.classList.add('correct');
         quizScore += delta;
-        document.getElementById('quiz-score').textContent = `Bài: ${quizScore >= 0 ? '+' : ''}${quizScore}đ`;
+        document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
         if (questionWord) {
           const { gain } = calculateMasteryPoints(questionWord.cefrLevel, true);
@@ -5622,12 +5714,13 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
             words[idx].updatedAt = questionWord.updatedAt;
           }
           saveDatabase(true);
-          showToast(`🎉 Đúng rồi (+${delta}đ ví, Tổng: ${newTotalPoints}đ)! Thuộc bài: ${newScore}%`);
+          showToast('🎉 Đúng rồi (+' + delta + 'đ ví, Tổng: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
         }
       } else {
+        quizWrongCount++;
         selectedButton.classList.add('wrong');
         quizScore += delta;
-        document.getElementById('quiz-score').textContent = `Bài: ${quizScore >= 0 ? '+' : ''}${quizScore}đ`;
+        document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
         if (questionWord) {
           const { penalty } = calculateMasteryPoints(questionWord.cefrLevel, true);
@@ -5641,11 +5734,11 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
           saveDatabase(true);
 
           allButtons.forEach(btn => {
-            if (btn.textContent === questionWord.definitionVi) {
+            if (btn.textContent === (questionWord.definitionVi || questionWord.definition)) {
               btn.classList.add('correct');
             }
           });
-          showToast(`⚠️ Chưa đúng (${delta}đ ví, Còn: ${newTotalPoints}đ)! Thuộc bài: ${newScore}%`);
+          showToast('⚠️ Chưa đúng (' + delta + 'đ ví, Còn: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
         }
       }
 
@@ -5657,10 +5750,162 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       if (quizIndex < quizList.length) {
         loadQuizQuestion();
       } else {
-        alert(`Bạn đã hoàn thành bài Quiz!\nTổng điểm đạt được: ${quizScore}/${quizList.length * 10}`);
-        showScreen('screen-deck-detail');
-        renderWordList();
+        finishQuizAndShowResult();
       }
+    }
+
+    function finishQuizAndShowResult() {
+      const durationMs = Date.now() - (quizStartTime || Date.now());
+      const totalSeconds = Math.max(1, Math.round(durationMs / 1000));
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
+      const durationText = mins > 0 ? (mins + 'm ' + secs + 's') : (secs + ' giây');
+
+      const total = quizTotalQuestions || quizList.length || 1;
+      const accuracyPct = Math.round((quizCorrectCount / total) * 100);
+      const spq = (totalSeconds / total).toFixed(1);
+
+      const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
+      const pointsEl = document.getElementById('quiz-res-points');
+      const durationEl = document.getElementById('quiz-res-duration');
+      const spqEl = document.getElementById('quiz-res-spq');
+      const hintsEl = document.getElementById('quiz-res-hints');
+      const badgeIconEl = document.getElementById('quiz-res-badge-icon');
+      const titleEl = document.getElementById('quiz-res-title');
+      const subtitleEl = document.getElementById('quiz-res-subtitle');
+
+      if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
+      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' điểm ví';
+      if (durationEl) durationEl.textContent = durationText;
+      if (spqEl) spqEl.textContent = spq + 's / câu';
+      if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
+
+      if (accuracyPct >= 100) {
+        if (badgeIconEl) badgeIconEl.textContent = '🏆';
+        if (titleEl) titleEl.textContent = 'Tuyệt Đối Xuất Sắc!';
+        if (subtitleEl) subtitleEl.textContent = 'Bạn đã trả lời đúng 100% tất cả câu hỏi!';
+      } else if (accuracyPct >= 80) {
+        if (badgeIconEl) badgeIconEl.textContent = '🌟';
+        if (titleEl) titleEl.textContent = 'Quá Đỉnh! Rất Thành Thạo!';
+        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ của bạn về bộ từ này đang cực kỳ tốt!';
+      } else if (accuracyPct >= 50) {
+        if (badgeIconEl) badgeIconEl.textContent = '🌿';
+        if (titleEl) titleEl.textContent = 'Làm Tốt Lắm!';
+        if (subtitleEl) subtitleEl.textContent = 'Hãy tiếp tục ôn tập để nâng cao độ thành thạo nhé!';
+      } else {
+        if (badgeIconEl) badgeIconEl.textContent = '💪';
+        if (titleEl) titleEl.textContent = 'Cố Lên Nào!';
+        if (subtitleEl) subtitleEl.textContent = 'Luyện tập thêm một vài lượt nữa là thuộc làu ngay!';
+      }
+
+      openModal('modal-quiz-result');
+
+      const intensity = accuracyPct / 100;
+      setTimeout(() => {
+        launchFireworks(intensity);
+      }, 100);
+    }
+
+    function launchFireworks(intensity) {
+      if (typeof intensity !== 'number') intensity = 1.0;
+      const canvas = document.getElementById('quiz-fireworks-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = canvas.parentElement.clientWidth || 480;
+      canvas.height = canvas.parentElement.clientHeight || 420;
+
+      if (fireworksAnimationId) {
+        cancelAnimationFrame(fireworksAnimationId);
+        fireworksAnimationId = null;
+      }
+
+      const particles = [];
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#38bdf8', '#fbbf24', '#a855f7', '#f43f5e'];
+      const count = Math.min(180, Math.floor(40 + intensity * 120));
+
+      function createExplosion(x, y, power) {
+        for (let i = 0; i < power; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = (Math.random() * 5 + 2) * (0.8 + intensity * 0.4);
+          particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 1.5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            radius: Math.random() * 3.5 + 1.5,
+            alpha: 1,
+            decay: Math.random() * 0.015 + 0.01,
+            gravity: 0.12
+          });
+        }
+      }
+
+      createExplosion(canvas.width * 0.5, canvas.height * 0.35, Math.floor(count * 0.5));
+      setTimeout(() => createExplosion(canvas.width * 0.25, canvas.height * 0.4, Math.floor(count * 0.3)), 150);
+      setTimeout(() => createExplosion(canvas.width * 0.75, canvas.height * 0.4, Math.floor(count * 0.3)), 300);
+
+      if (intensity >= 0.8) {
+        setTimeout(() => createExplosion(canvas.width * 0.5, canvas.height * 0.25, Math.floor(count * 0.4)), 550);
+      }
+
+      let frames = 0;
+      function animate() {
+        frames++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.vx *= 0.98;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0 || p.y > canvas.height + 20) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        if (particles.length > 0 && frames < 240) {
+          fireworksAnimationId = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          fireworksAnimationId = null;
+        }
+      }
+
+      fireworksAnimationId = requestAnimationFrame(animate);
+    }
+
+    function retryQuizFromModal() {
+      closeModal('modal-quiz-result');
+      startQuizMode();
+    }
+
+    function exitQuizToDeck() {
+      closeModal('modal-quiz-result');
+      showScreen('screen-deck-detail');
+      renderWordList();
+    }
+
+    function exitQuizToHome() {
+      closeModal('modal-quiz-result');
+      showScreen('screen-decks');
+      renderDecks();
     }
 
     function speakQuizTerm() {
