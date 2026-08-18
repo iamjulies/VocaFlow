@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vocaflow-pwa-v0.0.6';
+const CACHE_NAME = 'vocaflow-pwa-v0.0.6.1';
 const ASSETS = [
   './',
   './index.html',
@@ -38,6 +38,11 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Direct pass-through for external APIs (Firebase, Gemini AI, Google Translate TTS)
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
 
   // Network-first for HTML page navigation so users always see latest updates immediately
   if (event.request.mode === 'navigate' || event.request.headers.get('accept')?.includes('text/html')) {

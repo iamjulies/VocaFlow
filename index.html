@@ -1324,6 +1324,11 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-word')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+        ✍️ <strong>Thêm thủ công:</strong> Điền các thông tin bạn muốn rồi bấm <strong>Lưu từ vựng</strong>.<br>
+        ✨ <strong>Dùng AI:</strong> Gõ từ tiếng Anh rồi bấm nút <strong>AI Điền Tự Động</strong> để gợi ý phiên âm & nghĩa.
+      </div>
+
       <form id="word-form" onsubmit="saveWordForm(event)">
         <input type="hidden" id="word-id">
         
@@ -1335,7 +1340,7 @@
             </button>
           </div>
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); handleAiGenerateWord(); }">
+            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;">
           </div>
         </div>
 
@@ -1713,6 +1718,9 @@
           statusText.textContent = 'ℹ️ Chưa cấu hình Key. Sẽ dùng từ điển mặc định khi tạo từ.';
           statusText.style.color = 'var(--text-muted)';
         }
+      }
+      if (currentUser && currentUser.uid) {
+        pushCurrentDatabaseToCloud();
       }
     }
 
@@ -2221,8 +2229,10 @@
           profile: {
             displayName: currentUser.displayName || currentUser.email.split('@')[0],
             email: currentUser.email,
+            geminiApiKey: geminiApiKey || '',
             lastSync: new Date().toISOString()
           },
+          geminiApiKey: geminiApiKey || '',
           decks: decks,
           words: words,
           lastSync: new Date().toISOString()
@@ -2268,6 +2278,25 @@
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
+                // Sync API Key from Cloud
+                const remoteKey = cloudData.geminiApiKey || (cloudData.profile && cloudData.profile.geminiApiKey);
+                if (remoteKey) {
+                  const cleanKey = remoteKey.trim();
+                  if (cleanKey && (!geminiApiKey || geminiApiKey !== cleanKey)) {
+                    geminiApiKey = cleanKey;
+                    localStorage.setItem(STORAGE_KEY_GEMINI_KEY, geminiApiKey);
+                    const gemInput = document.getElementById('gemini-api-key-input');
+                    if (gemInput) gemInput.value = geminiApiKey;
+                    const gemStatus = document.getElementById('gemini-status-text');
+                    if (gemStatus) {
+                      gemStatus.textContent = '🔑 Đã đồng bộ Gemini API Key từ Cloud!';
+                      gemStatus.style.color = '#34d399';
+                    }
+                  }
+                } else if (geminiApiKey) {
+                  cloudData.geminiApiKey = geminiApiKey;
+                }
+
                 const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
                 const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
 
@@ -2905,8 +2934,13 @@
 
       if (deckWords.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-            <p>Không có từ vựng nào phù hợp.</p>
+          <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Chưa có từ vựng nào trong bộ này</p>
+            <p style="font-size: 12px; margin-bottom: 16px;">Hãy bấm nút bên dưới để thêm từ vựng mới (nhập tay hoặc dùng AI điền tự động)!</p>
+            <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;">
+              <svg class="icon"><use href="#i-add"/></svg> Thêm Từ Vựng Mới
+            </button>
           </div>
         `;
         updateSelectionUI();
