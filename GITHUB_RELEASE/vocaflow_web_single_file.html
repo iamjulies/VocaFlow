@@ -962,6 +962,49 @@
     .modal-overlay.sub-modal-overlay {
       z-index: 1200 !important;
     }
+    #user-avatar-icon, #user-avatar-icon-mobile {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      max-width: 24px;
+      max-height: 24px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+    #user-avatar-icon img, #user-avatar-icon-mobile img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 50% !important;
+      display: block !important;
+    }
+    #profile-avatar {
+      width: 58px;
+      height: 58px;
+      min-width: 58px;
+      min-height: 58px;
+      max-width: 58px;
+      max-height: 58px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #profile-avatar img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 50% !important;
+      display: block !important;
+    }
     .modal {
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -1460,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2585,7 +2628,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -2620,7 +2663,7 @@
           <span>🎁</span> <strong>Mã Quà Tặng</strong>
         </button>
         <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 6px;">
-          <span>⚡</span> <strong>Ví Của Bạn & Thư Viện</strong>
+          <span>⚡</span> <strong>God Mode Ví Của Bạn</strong>
         </button>
       </div>
 
@@ -2692,34 +2735,27 @@
         </div>
       </div>
 
-      <!-- TAB 3: GOD MODE WALLET & LIBRARY PUBLISHER -->
+      <!-- TAB 3: GOD MODE WALLET OVERRIDE -->
       <div id="pub-tab-content-wallet" style="display: none; flex: 1; overflow-y: auto;">
         <!-- GOD MODE: WALLET OVERRIDE -->
-        <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-          <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+        <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 14px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tùy ý nạp điểm ví và lượt gợi ý AI không giới hạn cho tài khoản quản trị của bạn.</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
             <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Điểm ví (Points):</label>
-              <input type="number" id="admin-set-points-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Điểm ví (Points):</label>
+              <input type="number" id="admin-set-points-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #fbbf24;">
             </div>
             <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Lượt Gợi Ý AI (Hints):</label>
-              <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 6px 10px; font-size: 13px;">
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💡 Lượt Gợi Ý AI (Hints):</label>
+              <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #f472b6;">
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none;">⚡ Áp Dụng Ví Ngay</button>
+            <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">⚡ Áp Dụng Ví Ngay</button>
             <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200)">+200 Gợi Ý & +500đ</button>
             <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000)">+1000 Gợi Ý & +2000đ</button>
           </div>
-        </div>
-
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📚 Phát Hành Bộ Từ Lên Thư Viện Toàn Cầu</div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Đưa các bộ từ vựng chính thức (Lớp 10, 11, 12, IELTS, TOEIC) lên Cloud để tất cả học viên có thể tải về chỉ với 1-Click.</p>
-          <button class="btn btn-outline btn-sm" onclick="openPublisherDeckUploadModal()" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.5);">
-            🚀 Mở Giao Diện Phát Hành Thư Viện
-          </button>
         </div>
       </div>
 
@@ -3411,14 +3447,8 @@
           if (data && typeof data === 'object') {
             const remotePoints = typeof data.points === 'number' ? data.points : parseInt(data.points, 10);
             const remoteHints = typeof data.hints === 'number' ? data.hints : parseInt(data.hints, 10);
-            const remoteTime = new Date(data.updatedAt || 0).getTime();
-            const localTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
-
-            if (remoteTime > localTime || localTime === 0) {
-              if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
-              if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
-              localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, remoteTime.toString());
-            }
+            if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
+            if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
             updateEconomyUI();
           }
         }
@@ -3543,12 +3573,12 @@
     let editingStudentUid = null;
     const AVATAR_PRESETS = ['🦊', '🦉', '🐱', '🦁', '🐼', '🦄', '🐲', '🚀', '👑', '🎓', '⚡', '🌸', '💎', '🔥', '🌟', '🎮'];
 
-    function renderAvatarHtml(avatarVal, size = 40, fontSize = 18) {
-      if (!avatarVal) return 'V';
+    function renderAvatarHtml(avatarVal, size = 28, fontSize = 14) {
+      if (!avatarVal) return '<span style="font-size: ' + fontSize + 'px;">👤</span>';
       if (typeof avatarVal === 'string' && (avatarVal.startsWith('data:image') || avatarVal.startsWith('http'))) {
-        return '<img src="' + escapeHtml(avatarVal) + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;" alt="Avatar" />';
+        return '<img src="' + escapeHtml(avatarVal) + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: inline-block; vertical-align: middle;" alt="Avatar" />';
       }
-      return '<span style="font-size: ' + fontSize + 'px; line-height: 1;">' + escapeHtml(avatarVal) + '</span>';
+      return '<span style="font-size: ' + fontSize + 'px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: ' + size + 'px; height: ' + size + 'px;">' + escapeHtml(avatarVal) + '</span>';
     }
 
     function toggleAvatarPicker() {
@@ -3721,6 +3751,18 @@
         if (res.ok) {
           student.points = newPoints;
           student.hints = newHints;
+          // Also sync to root keys for backwards-compatibility
+          fetch(rtdbUrl + '/users/' + editingStudentUid + '/points.json' + authParam, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newPoints)
+          }).catch(() => {});
+          fetch(rtdbUrl + '/users/' + editingStudentUid + '/hints.json' + authParam, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newHints)
+          }).catch(() => {});
+
           renderAdminStudentsTable();
           closeModal('modal-admin-adjust-wallet');
           showToast('🎉 Đã cập nhật ví cho học viên "' + student.displayName + '" thành công!');
@@ -3934,119 +3976,6 @@
       });
       html += '</div>';
       container.innerHTML = html;
-    }
-
-    async function adjustStudentWalletOnCloud(uid, displayName) {
-      const student = adminStudentsData.find(s => s.uid === uid);
-      if (!student) return;
-
-      const newPointsStr = prompt('💰 Nhập số điểm ví mới cho học viên "' + displayName + '":', student.points);
-      if (newPointsStr === null) return;
-      const newPoints = parseInt(newPointsStr, 10);
-      if (isNaN(newPoints)) {
-        alert('Điểm phải là một con số hợp lệ!');
-        return;
-      }
-
-      const newHintsStr = prompt('💡 Nhập số lượt gợi ý AI mới cho học viên "' + displayName + '":', student.hints);
-      if (newHintsStr === null) return;
-      const newHints = parseInt(newHintsStr, 10);
-      if (isNaN(newHints)) {
-        alert('Số gợi ý phải là một con số hợp lệ!');
-        return;
-      }
-
-      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-
-      try {
-        const payload = {
-          points: newPoints,
-          hints: newHints,
-          updatedAt: new Date().toISOString(),
-          updatedBy: 'Admin (Publisher Portal)'
-        };
-
-        const res = await fetch(rtdbUrl + '/users/' + uid + '/economy.json' + authParam, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          student.points = newPoints;
-          student.hints = newHints;
-          renderAdminStudentsTable();
-          showToast('🎉 Đã cập nhật ví cho học viên "' + displayName + '" thành công!');
-        } else {
-          alert('Không thể lưu lên Cloud! Vui lòng thử lại.');
-        }
-      } catch (err) {
-        alert('Lỗi cập nhật: ' + err.message);
-      }
-    }
-
-    function viewStudentDecksModal(uid, displayName) {
-      const student = adminStudentsData.find(s => s.uid === uid);
-      if (!student) return;
-
-      const titleEl = document.getElementById('student-modal-title');
-      const subEl = document.getElementById('student-modal-subtitle');
-      const avEl = document.getElementById('student-modal-avatar');
-      const container = document.getElementById('student-modal-decks-container');
-
-      if (titleEl) titleEl.textContent = 'Bộ Từ Của ' + displayName;
-      if (subEl) subEl.textContent = '✉️ ' + student.email + ' • UID: ' + student.uid;
-      if (avEl) avEl.innerHTML = renderAvatarHtml(student.avatar || (displayName ? displayName[0].toUpperCase() : 'U'), 40, 18);
-
-      if (!container) return;
-
-      if (!student.rawDecks || student.rawDecks.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;"><span style="font-size: 32px; display: block; margin-bottom: 8px;">📭</span>Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
-        openModal('modal-student-decks-detail');
-        return;
-      }
-
-      let html = '';
-      student.rawDecks.forEach((deck, idx) => {
-        const dWords = (student.rawWords || []).filter(w => w.deckId === deck.id);
-        const wCount = dWords.length;
-        const mastered = dWords.filter(w => w.status === 'mastered' || (w.masteryScore >= 100)).length;
-        const avgScore = wCount ? Math.round(dWords.reduce((sum, w) => sum + getWordScore(w), 0) / wCount) : 0;
-        const color = deck.color || '#6366f1';
-
-        html += `
-          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-left: 4px solid ${color}; border-radius: 10px; padding: 12px 14px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
-              <div>
-                <strong style="font-size: 14.5px; color: var(--text);">${idx + 1}. ${escapeHtml(deck.title || 'Chưa đặt tên')}</strong>
-                <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">${escapeHtml(deck.description || 'Không có mô tả')}</p>
-              </div>
-              <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; flex-shrink: 0; font-size: 11.5px;">
-                ${wCount} từ vựng
-              </span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 8px; margin-bottom: 4px;">
-              <span>Mức độ thuộc: <strong style="color: #34d399;">${avgScore}%</strong> (${mastered}/${wCount} đã thuộc)</span>
-              <span>🕒 ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
-            </div>
-            <div class="progress-bar-bg" style="height: 5px;">
-              <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
-            </div>
-
-            ${dWords.length > 0 ? `
-              <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px;">
-                ${dWords.slice(0, 8).map(w => '<span style="font-size: 10.5px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--text);">' + escapeHtml(w.term) + '</span>').join('')}
-                ${dWords.length > 8 ? '<span style="font-size: 10.5px; color: var(--text-muted);">+' + (dWords.length - 8) + ' từ nữa...</span>' : ''}
-              </div>
-            ` : ''}
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-      openModal('modal-student-decks-detail');
     }
 
     function openPublisherModal_Legacy() {
