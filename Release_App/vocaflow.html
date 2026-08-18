@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.9</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.10</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2699,7 +2699,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.9</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.10</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3326,10 +3326,7 @@
     let flashcardIndex = 0;
     let currentFlashcardWord = null;
 
-    // Quiz State
-    let quizList = [];
-    let quizIndex = 0;
-    let quizScore = 0;
+    // Quiz State (declared in Quiz Engine)
 
     // IPA Symbols Database
     const ipaData = {
@@ -6314,6 +6311,440 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         renderWordList();
       }
     }
+
+    // =========================================================================
+    // QUIZ MODE ENGINE (DIFFICULTY SELECTOR, MODAL SETUP, AI DISTRACTORS) (v0.0.9.10)
+    // =========================================================================
+    let quizList = [];
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizIsAnswered = false;
+    let quizStartTime = 0;
+    let quizCorrectCount = 0;
+    let quizWrongCount = 0;
+    let quizPointsEarned = 0;
+    let quizHintsUsed = 0;
+    let quizTotalQuestions = 0;
+    let fireworksAnimationId = null;
+
+    let currentQuizDifficulty = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+    let quizSetupUseSelection = false;
+    let selectedSetupDifficulty = 'easy';
+    const quizAiDistractorCache = {};
+
+    function getDifficultyLabel(diff) {
+      if (diff === 'hard') return '🔴 Khó (x2.0)';
+      if (diff === 'medium') return '🟡 Bình thường (x1.5)';
+      return '🟢 Dễ (x1.0)';
+    }
+
+    function getDifficultyMultiplier(diff = currentQuizDifficulty) {
+      if (diff === 'hard') return 2.0;
+      if (diff === 'medium') return 1.5;
+      return 1.0;
+    }
+
+    function openQuizSetupModal(useSelectionOnly = false) {
+      quizSetupUseSelection = useSelectionOnly;
+      let deckWords = getFilteredDeckWords();
+      if (useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
+      if (deckWords.length < 2) {
+        alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
+        return;
+      }
+
+      const deck = decks.find(d => d.id === currentDeckId);
+      const subtitle = document.getElementById('quiz-setup-subtitle');
+      if (subtitle) {
+        subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số câu: ' + deckWords.length + ' câu hỏi';
+      }
+
+      const savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+      selectQuizSetupDifficulty(savedDiff);
+
+      const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
+      if (shuffleCb) shuffleCb.checked = isStudyShuffle;
+
+      openModal('modal-quiz-setup');
+    }
+
+    function selectQuizSetupDifficulty(diff) {
+      selectedSetupDifficulty = diff;
+      const cards = {
+        easy: document.getElementById('quiz-diff-card-easy'),
+        medium: document.getElementById('quiz-diff-card-medium'),
+        hard: document.getElementById('quiz-diff-card-hard')
+      };
+
+      Object.keys(cards).forEach(k => {
+        const c = cards[k];
+        if (!c) return;
+        if (k === diff) {
+          if (k === 'easy') {
+            c.style.borderColor = '#10b981';
+            c.style.background = 'rgba(16, 185, 129, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(16, 185, 129, 0.25)';
+          } else if (k === 'medium') {
+            c.style.borderColor = '#fbbf24';
+            c.style.background = 'rgba(245, 158, 11, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(245, 158, 11, 0.25)';
+          } else if (k === 'hard') {
+            c.style.borderColor = '#f87171';
+            c.style.background = 'rgba(239, 68, 68, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(239, 68, 68, 0.25)';
+          }
+        } else {
+          c.style.borderColor = 'var(--border)';
+          c.style.background = 'var(--surface-elevated)';
+          c.style.boxShadow = 'none';
+        }
+      });
+    }
+
+    function confirmStartQuizFromModal() {
+      currentQuizDifficulty = selectedSetupDifficulty;
+      localStorage.setItem('vocaflow_quiz_difficulty', currentQuizDifficulty);
+
+      const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
+      if (shuffleCb) {
+        isStudyShuffle = shuffleCb.checked;
+        localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false');
+      }
+
+      closeModal('modal-quiz-setup');
+      startQuizMode(quizSetupUseSelection);
+    }
+
+    function setQuizDifficulty(diff) {
+      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      currentQuizDifficulty = diff;
+      localStorage.setItem('vocaflow_quiz_difficulty', diff);
+      updateQuizDifficultyUI();
+      showToast('🎯 Đã chọn độ khó Quiz: ' + getDifficultyLabel(diff));
+    }
+
+    function cycleQuizDifficulty() {
+      const order = ['easy', 'medium', 'hard'];
+      const nextIdx = (order.indexOf(currentQuizDifficulty) + 1) % order.length;
+      setQuizDifficulty(order[nextIdx]);
+      if (quizList && quizList.length > 0 && quizIndex < quizList.length) {
+        loadQuizQuestion();
+      }
+    }
+
+    function updateQuizDifficultyUI() {
+      const badge = document.getElementById('quiz-difficulty-badge');
+      if (badge) {
+        badge.textContent = getDifficultyLabel(currentQuizDifficulty);
+        if (currentQuizDifficulty === 'hard') {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.color = '#f87171';
+          badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+        } else if (currentQuizDifficulty === 'medium') {
+          badge.style.background = 'rgba(245, 158, 11, 0.15)';
+          badge.style.color = '#fbbf24';
+          badge.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+        } else {
+          badge.style.background = 'rgba(16, 185, 129, 0.15)';
+          badge.style.color = '#34d399';
+          badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+        }
+      }
+    }
+
+    async function fetchAiDistractors(questionWord, count) {
+      if (!count || count <= 0) return [];
+      const cacheKey = questionWord.id + '_' + count;
+      if (quizAiDistractorCache[cacheKey]) {
+        return quizAiDistractorCache[cacheKey];
+      }
+
+      const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
+      if (!geminiApiKey || !geminiApiKey.trim()) {
+        return [];
+      }
+
+      try {
+        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
+        const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+        const pos = (questionWord.partOfSpeech || 'từ vựng').trim();
+        
+        const prompt = 'Bạn là chuyên gia ra đề thi tiếng Anh (Multiple-choice distractor generator).\n' +
+          'Từ tiếng Anh: "' + questionWord.term + '" (' + pos + ').\n' +
+          'Nghĩa đúng tiếng Việt: "' + correctDef + '".\n' +
+          'Nhiệm vụ: Tạo chính xác ' + count + ' phương án SAI tiếng Việt (distractors) có vẻ rất hợp lý, bẫy tinh vi đánh lừa người học (ví dụ: nghĩa gần giống, nhầm lẫn tiền tố/hậu tố, nghĩa đen giả định, hoặc cùng trường chủ đề nhưng sai bản chất).\n' +
+          'Yêu cầu bắt buộc:\n' +
+          '1. Tuyệt đối KHÔNG được chứa nghĩa đúng "' + correctDef + '".\n' +
+          '2. Phải cùng từ loại (' + pos + '), cùng độ dài và cấu trúc ngữ pháp với nghĩa đúng.\n' +
+          '3. Trả về DUY NHẤT một JSON Array dạng: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + ']';
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              maxOutputTokens: 120,
+              temperature: 0.4,
+              responseMimeType: "application/json"
+            },
+            safetySettings: [
+              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ]
+          })
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+          if (rawText) {
+            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(rawText);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const cleanDistractors = parsed.map(s => (s || '').toString().trim()).filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
+              if (cleanDistractors.length > 0) {
+                quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
+                return quizAiDistractorCache[cacheKey];
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('AI Distractors generation note:', err);
+      }
+      return [];
+    }
+
+    function startQuizMode(useSelectionOnly = false) {
+      let deckWords = getFilteredDeckWords();
+      if (useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
+      if (deckWords.length < 2) {
+        alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
+        return;
+      }
+
+      if (isStudyShuffle) {
+        quizList = [...deckWords].sort(() => Math.random() - 0.5);
+      } else {
+        quizList = [...deckWords];
+      }
+      quizIndex = 0;
+      quizScore = 0;
+      quizIsAnswered = false;
+
+      // Track statistics for result modal
+      quizStartTime = Date.now();
+      quizCorrectCount = 0;
+      quizWrongCount = 0;
+      quizPointsEarned = 0;
+      quizHintsUsed = 0;
+      quizTotalQuestions = quizList.length;
+
+      loadQuizQuestion();
+      showScreen('screen-quiz');
+    }
+
+    function shuffleCurrentQuiz() {
+      if (!quizList || quizList.length === 0) return;
+      quizList = [...quizList].sort(() => Math.random() - 0.5);
+      quizIndex = 0;
+      quizScore = 0;
+      quizIsAnswered = false;
+
+      quizStartTime = Date.now();
+      quizCorrectCount = 0;
+      quizWrongCount = 0;
+      quizPointsEarned = 0;
+      quizHintsUsed = 0;
+      quizTotalQuestions = quizList.length;
+
+      loadQuizQuestion();
+      showToast('🔀 Đã xáo trộn ngẫu nhiên bộ câu hỏi Quiz!');
+    }
+
+    function generateSmartDistractors(questionWord, countNeeded = 3, existingDistractors = []) {
+      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+      const currentPos = (questionWord.partOfSpeech || 'noun').toLowerCase().trim();
+      const currentDeckId = questionWord.deckId;
+
+      const chosenDefs = new Set(existingDistractors.map(d => (d || '').trim().toLowerCase()));
+      chosenDefs.add(correctDef.toLowerCase());
+
+      const otherWords = words.filter(w => {
+        const d = (w.definitionVi || w.definition || '').trim().toLowerCase();
+        return w.id !== questionWord.id && d && !chosenDefs.has(d);
+      });
+
+      const resultList = [];
+
+      // 1. Priority 1: Same Part of Speech + Same Deck
+      const samePosSameDeck = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && w.deckId === currentDeckId);
+      samePosSameDeck.sort(() => Math.random() - 0.5).forEach(w => {
+        const d = (w.definitionVi || w.definition || '').trim();
+        if (resultList.length < countNeeded && !chosenDefs.has(d.toLowerCase())) {
+          chosenDefs.add(d.toLowerCase());
+          resultList.push(d);
+        }
+      });
+
+      // 2. Priority 2: Same Part of Speech + Other Decks
+      if (resultList.length < countNeeded) {
+        const samePosOtherDecks = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && !chosenDefs.has((w.definitionVi || w.definition || '').trim().toLowerCase()));
+        samePosOtherDecks.sort(() => Math.random() - 0.5).forEach(w => {
+          const d = (w.definitionVi || w.definition || '').trim();
+          if (resultList.length < countNeeded && !chosenDefs.has(d.toLowerCase())) {
+            chosenDefs.add(d.toLowerCase());
+            resultList.push(d);
+          }
+        });
+      }
+
+      // 3. Priority 3: Same Deck (Any POS)
+      if (resultList.length < countNeeded) {
+        const sameDeckAnyPos = otherWords.filter(w => w.deckId === currentDeckId && !chosenDefs.has((w.definitionVi || w.definition || '').trim().toLowerCase()));
+        sameDeckAnyPos.sort(() => Math.random() - 0.5).forEach(w => {
+          const d = (w.definitionVi || w.definition || '').trim();
+          if (resultList.length < countNeeded && !chosenDefs.has(d.toLowerCase())) {
+            chosenDefs.add(d.toLowerCase());
+            resultList.push(d);
+          }
+        });
+      }
+
+      // 4. Priority 4: Any other word across the app
+      if (resultList.length < countNeeded) {
+        const remainingWords = otherWords.filter(w => !chosenDefs.has((w.definitionVi || w.definition || '').trim().toLowerCase()));
+        remainingWords.sort(() => Math.random() - 0.5).forEach(w => {
+          const d = (w.definitionVi || w.definition || '').trim();
+          if (resultList.length < countNeeded && !chosenDefs.has(d.toLowerCase())) {
+            chosenDefs.add(d.toLowerCase());
+            resultList.push(d);
+          }
+        });
+      }
+
+      // 5. Priority 5: High-Quality Category / POS Fallback Pool
+      if (resultList.length < countNeeded) {
+        const posFallbackPools = {
+          noun: [
+            'Sự chuyển hóa và biến đổi cấu trúc phân tử',
+            'Hiện tượng khuếch tán và dẫn truyền năng lượng',
+            'Quá trình phân tách các thành phần trong hỗn hợp',
+            'Quy luật bảo toàn và trạng thái cân bằng động',
+            'Phương pháp định lượng và đo lường thực nghiệm',
+            'Chỉ số biểu thị nồng độ hoặc hiệu suất phản ứng',
+            'Cơ chế tác động và kiểm soát phản hồi sinh học',
+            'Nguyên lý tương tác giữa các yếu tố trong hệ thống'
+          ],
+          verb: [
+            'Duy trì trạng thái cân bằng trong hệ thống',
+            'Tiến hành phân tích và đo lường nồng độ',
+            'Kích hoạt quá trình biến đổi và trao đổi chất',
+            'Làm suy giảm tốc độ hoặc kìm hãm phản ứng',
+            'Thiết lập mối tương quan giữa các thông số',
+            'Thúc đẩy quá trình tái tạo và phát triển',
+            'Điều chỉnh thông số cho phù hợp với tiêu chuẩn'
+          ],
+          adjective: [
+            'Có khả năng thích ứng và phản ứng nhanh',
+            'Đặc trưng bởi tính ổn định và tính liên tục',
+            'Tương thích với các điều kiện môi trường xung quanh',
+            'Đóng vai trò chủ đạo và mang tính quyết định',
+            'Dễ bị phân hủy dưới tác động ngoại cảnh',
+            'Có xu hướng tích lũy và gia tăng theo thời gian'
+          ],
+          adverb: [
+            'Một cách tuần tự và có hệ thống rõ ràng',
+            'Tương đối đồng đều trên toàn bộ bề mặt',
+            'Đột ngột và không thể dự đoán trước',
+            'Một cách triệt để và toàn diện nhất'
+          ],
+          phrase: [
+            'Dẫn đến sự thay đổi rõ rệt về cấu trúc',
+            'Đóng vai trò trung gian trong toàn bộ chu trình',
+            'Phụ thuộc mật thiết vào điều kiện ban đầu'
+          ]
+        };
+
+        const fallbackList = posFallbackPools[currentPos] || posFallbackPools.noun;
+        const shuffledFallbacks = [...fallbackList].sort(() => Math.random() - 0.5);
+        shuffledFallbacks.forEach(fb => {
+          if (resultList.length < countNeeded && fb.toLowerCase() !== correctDef.toLowerCase() && !chosenDefs.has(fb.toLowerCase())) {
+            chosenDefs.add(fb.toLowerCase());
+            resultList.push(fb);
+          }
+        });
+      }
+
+      return resultList;
+    }
+
+    async function loadQuizQuestion() {
+      quizIsAnswered = false;
+      document.getElementById('quiz-next-container').style.display = 'none';
+      const hintBox = document.getElementById('quiz-hint-box');
+      if (hintBox) hintBox.style.display = 'none';
+
+      const questionWord = quizList[quizIndex];
+      const total = quizList.length;
+
+      document.getElementById('quiz-counter').textContent = 'Câu ' + (quizIndex + 1) + ' / ' + total;
+      document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
+      document.getElementById('quiz-question-term').textContent = questionWord.term;
+      document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
+
+      updateQuizDifficultyUI();
+
+      // Determine AI distractor count based on difficulty
+      let aiDistractorCount = 0;
+      if (currentQuizDifficulty === 'medium') aiDistractorCount = 1;
+      else if (currentQuizDifficulty === 'hard') aiDistractorCount = 2;
+
+      let aiDistractors = [];
+      if (aiDistractorCount > 0) {
+        aiDistractors = await fetchAiDistractors(questionWord, aiDistractorCount);
+      }
+
+      const regularNeeded = 3 - aiDistractors.length;
+      const regularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
+      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+      const choices = [correctDef, ...aiDistractors, ...regularDistractors].slice(0, 4).sort(() => Math.random() - 0.5);
+
+      const optionsContainer = document.getElementById('quiz-options-container');
+      optionsContainer.innerHTML = '';
+
+      choices.forEach(choice => {
+        const opt = document.createElement('button');
+        opt.className = 'quiz-option';
+        opt.textContent = choice;
+        opt.onclick = () => checkQuizAnswer(opt, choice === correctDef);
+        optionsContainer.appendChild(opt);
+      });
+
+      setTimeout(() => {
+        speakQuizTerm();
+      }, 150);
+    }
+
+
 
     function getQuizPointDelta(cefrLevel, isCorrect) {
       let level = (cefrLevel || '').toUpperCase().trim();
