@@ -1109,36 +1109,40 @@
     /* RESPONSIVE DESIGN FOR MOBILE */
     @media (max-width: 768px) {
       header {
-        padding: 8px 10px;
+        padding: 6px 8px;
         gap: 4px;
-        min-height: 52px;
+        min-height: 48px;
       }
       .brand {
-        font-size: 16px;
-        gap: 5px;
-      }
-      .brand-icon {
-        padding: 4px;
-        border-radius: 8px;
-      }
-      .brand-icon .icon {
-        width: 15px;
-        height: 15px;
-      }
-      .header-actions {
+        font-size: 15px;
         gap: 4px;
         flex-shrink: 0;
       }
+      .brand-icon {
+        padding: 3px;
+        border-radius: 6px;
+      }
+      .brand-icon .icon {
+        width: 14px;
+        height: 14px;
+      }
+      .header-actions {
+        gap: 3px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+      }
       .header-actions .btn {
-        padding: 5px 8px;
+        padding: 4px 6px;
         font-size: 11px;
-        border-radius: 8px;
+        border-radius: 7px;
+        gap: 2px;
       }
       .hide-on-mobile {
         display: none !important;
       }
       .user-display-truncate {
-        max-width: 60px;
+        max-width: 50px;
         display: inline-block;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -2581,6 +2585,7 @@
     // Economy & Hint Shop State (v0.0.8)
     const STORAGE_KEY_USER_POINTS = 'vocaflow_user_points';
     const STORAGE_KEY_USER_HINTS = 'vocaflow_user_hints';
+    const STORAGE_KEY_ECONOMY_TIME = 'vocaflow_economy_time';
 
     function getUserPoints() {
       const p = localStorage.getItem(STORAGE_KEY_USER_POINTS);
@@ -2602,6 +2607,7 @@
     function setUserPoints(val) {
       const clean = Math.max(0, parseInt(val, 10) || 0);
       localStorage.setItem(STORAGE_KEY_USER_POINTS, clean.toString());
+      localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateEconomyUI();
       syncEconomyToCloud();
     }
@@ -2609,8 +2615,16 @@
     function setUserHints(val) {
       const clean = Math.max(0, parseInt(val, 10) || 0);
       localStorage.setItem(STORAGE_KEY_USER_HINTS, clean.toString());
+      localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateEconomyUI();
       syncEconomyToCloud();
+    }
+
+    function formatPointsCompact(pts) {
+      if (pts >= 100000) {
+        return (pts / 1000).toFixed(0) + 'kđ';
+      }
+      return pts + 'đ';
     }
 
     function updateEconomyUI() {
@@ -2618,7 +2632,7 @@
       const hints = getUserHints();
 
       const headerPoints = document.getElementById('header-points-display');
-      if (headerPoints) headerPoints.textContent = `${points}đ`;
+      if (headerPoints) headerPoints.textContent = formatPointsCompact(points);
 
       const shopPoints = document.getElementById('shop-user-points');
       if (shopPoints) shopPoints.textContent = points;
@@ -2642,14 +2656,15 @@
     }
 
     async function syncEconomyToCloud() {
-      if (!currentUser || !currentUser.uid || !currentUser.idToken || !firebaseConfig.databaseURL) return;
+      if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
       try {
         const payload = {
           points: getUserPoints(),
           hints: getUserHints(),
           updatedAt: new Date().toISOString()
         };
-        await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json?auth=${currentUser.idToken}`, {
+        await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -2660,18 +2675,29 @@
     }
 
     async function loadEconomyFromCloud() {
-      if (!currentUser || !currentUser.uid || !currentUser.idToken || !firebaseConfig.databaseURL) return;
+      if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
       try {
-        const res = await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json?auth=${currentUser.idToken}`);
+        const res = await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`);
         if (res.ok) {
           const data = await res.json();
-          if (data) {
-            if (typeof data.points === 'number') localStorage.setItem(STORAGE_KEY_USER_POINTS, data.points.toString());
-            if (typeof data.hints === 'number') localStorage.setItem(STORAGE_KEY_USER_HINTS, data.hints.toString());
+          if (data && typeof data === 'object') {
+            const remotePoints = typeof data.points === 'number' ? data.points : parseInt(data.points, 10);
+            const remoteHints = typeof data.hints === 'number' ? data.hints : parseInt(data.hints, 10);
+            const remoteTime = new Date(data.updatedAt || 0).getTime();
+            const localTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+
+            if (remoteTime > localTime || localTime === 0) {
+              if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
+              if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
+              localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, remoteTime.toString());
+            }
             updateEconomyUI();
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Load economy error:', e);
+      }
     }
 
     function openShopModal() {
@@ -3122,6 +3148,20 @@
                   }
                 }
 
+                if (cloudData.economy && typeof cloudData.economy === 'object') {
+                  const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
+                  const remoteHints = typeof cloudData.economy.hints === 'number' ? cloudData.economy.hints : parseInt(cloudData.economy.hints, 10);
+                  const remoteTime = new Date(cloudData.economy.updatedAt || 0).getTime();
+                  const localTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+
+                  if (remoteTime > localTime || localTime === 0) {
+                    if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
+                    if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
+                    localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, remoteTime.toString());
+                  }
+                  updateEconomyUI();
+                }
+
                 saveDatabase(false);
                 renderDecks();
               }
@@ -3143,6 +3183,11 @@
               },
               decks: decks,
               words: words,
+              economy: {
+                points: getUserPoints(),
+                hints: getUserHints(),
+                updatedAt: new Date().toISOString()
+              },
               lastSync: new Date().toISOString()
             };
 
@@ -4450,7 +4495,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function getQuizPointDelta(cefrLevel, isCorrect) {
-      const level = (cefrLevel || '').toUpperCase().trim();
+      let level = (cefrLevel || '').toUpperCase().trim();
+      const match = level.match(/[ABC][12]/);
+      if (match) {
+        level = match[0];
+      }
+
       const correctMap = { 'A1': 2, 'A2': 4, 'B1': 6, 'B2': 8, 'C1': 10, 'C2': 12 };
       const wrongMap = { 'A1': -6, 'A2': -5, 'B1': -4, 'B2': -3, 'C1': -2, 'C2': -1 };
 
@@ -4572,13 +4622,14 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
 
       const questionWord = quizList[quizIndex];
       const delta = getQuizPointDelta(questionWord?.cefrLevel, isCorrect);
-      const newTotalPoints = Math.max(0, getUserPoints() + delta);
+      const currentPts = getUserPoints();
+      const newTotalPoints = Math.max(0, currentPts + delta);
       setUserPoints(newTotalPoints);
 
       if (isCorrect) {
         selectedButton.classList.add('correct');
-        quizScore += Math.max(1, delta);
-        document.getElementById('quiz-score').textContent = `Bài: +${quizScore}đ`;
+        quizScore += delta;
+        document.getElementById('quiz-score').textContent = `Bài: ${quizScore >= 0 ? '+' : ''}${quizScore}đ`;
 
         if (questionWord) {
           const { gain } = calculateMasteryPoints(questionWord.cefrLevel, true);
@@ -4590,10 +4641,13 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
             words[idx].updatedAt = questionWord.updatedAt;
           }
           saveDatabase(true);
-          showToast(`🎉 Đúng rồi (+${delta}đ ví)! Thuộc bài: ${newScore}%`);
+          showToast(`🎉 Đúng rồi (+${delta}đ ví, Tổng: ${newTotalPoints}đ)! Thuộc bài: ${newScore}%`);
         }
       } else {
         selectedButton.classList.add('wrong');
+        quizScore += delta;
+        document.getElementById('quiz-score').textContent = `Bài: ${quizScore >= 0 ? '+' : ''}${quizScore}đ`;
+
         if (questionWord) {
           const { penalty } = calculateMasteryPoints(questionWord.cefrLevel, true);
           const { newScore } = updateWordMasteryScore(questionWord, -penalty);
@@ -4610,7 +4664,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
               btn.classList.add('correct');
             }
           });
-          showToast(`⚠️ Chưa đúng (${delta}đ ví)! Thuộc bài: ${newScore}%`);
+          showToast(`⚠️ Chưa đúng (${delta}đ ví, Còn: ${newTotalPoints}đ)! Thuộc bài: ${newScore}%`);
         }
       }
 
