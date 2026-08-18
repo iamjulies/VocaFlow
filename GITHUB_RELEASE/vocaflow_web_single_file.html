@@ -2072,8 +2072,18 @@
       }
     }
 
+    function sanitizeDecks(arr) {
+      return (arr || []).map(d => ({
+        ...d,
+        isPinned: d.isPinned === true,
+        isArchived: d.isArchived === true,
+        updatedAt: d.updatedAt || d.createdAt || new Date().toISOString()
+      }));
+    }
+
     let autoSyncTimer = null;
     function saveDatabase(triggerAutoSync = true) {
+      decks = sanitizeDecks(decks);
       localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
       localStorage.setItem(STORAGE_KEY_WORDS, JSON.stringify(words));
       
@@ -2081,7 +2091,7 @@
         if (autoSyncTimer) clearTimeout(autoSyncTimer);
         autoSyncTimer = setTimeout(() => {
           pushCurrentDatabaseToCloud();
-        }, 500);
+        }, 300);
       }
     }
 
@@ -2092,6 +2102,7 @@
       const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
 
       try {
+        decks = sanitizeDecks(decks);
         const payload = {
           profile: {
             displayName: currentUser.displayName || currentUser.email.split('@')[0],
@@ -2153,19 +2164,34 @@
                     words = words.filter(w => w.deckId !== 'deck-oxford-starter');
                   }
 
-                  // Merge decks by ID (Last-Write-Wins)
+                  // Merge decks by ID (Last-Write-Wins with explicit isPinned & isArchived preservation)
                   for (const remoteDeck of remoteDecks) {
                     if (!remoteDeck || !remoteDeck.id) continue;
+                    const cleanRemote = {
+                      ...remoteDeck,
+                      isPinned: remoteDeck.isPinned === true,
+                      isArchived: remoteDeck.isArchived === true
+                    };
                     const localIdx = decks.findIndex(d => d.id === remoteDeck.id);
                     if (localIdx >= 0) {
                       const localDeck = decks[localIdx];
                       const localTime = new Date(localDeck.updatedAt || localDeck.createdAt || 0).getTime();
                       const remoteTime = new Date(remoteDeck.updatedAt || remoteDeck.createdAt || 0).getTime();
-                      if (remoteTime >= localTime) {
-                        decks[localIdx] = { ...localDeck, ...remoteDeck };
+                      if (remoteTime > localTime) {
+                        decks[localIdx] = { ...localDeck, ...cleanRemote };
+                      } else if (localTime > remoteTime) {
+                        // Local is newer: keep local deck
+                      } else {
+                        // Equal timestamp: merge with boolean preservation
+                        decks[localIdx] = {
+                          ...localDeck,
+                          ...cleanRemote,
+                          isPinned: (localDeck.isPinned === true) || (cleanRemote.isPinned === true),
+                          isArchived: (localDeck.isArchived === true) || (cleanRemote.isArchived === true)
+                        };
                       }
                     } else {
-                      decks.push(remoteDeck);
+                      decks.push(cleanRemote);
                     }
                   }
                 }
@@ -2210,6 +2236,7 @@
           // PHASE 2: PUSH TO CLOUD (Đẩy toàn bộ trạng thái đã merge lên Cloud)
           // -----------------------------------------------------------
           try {
+            decks = sanitizeDecks(decks);
             const payload = {
               profile: {
                 displayName: currentUser.displayName || currentUser.email.split('@')[0],
@@ -2533,6 +2560,7 @@
         updateDeckDetailHeader();
       }
 
+      pushCurrentDatabaseToCloud();
       showToast(deck.isPinned ? `📌 Đã ghim bộ từ "${deck.title}" lên đầu!` : `Đã bỏ ghim bộ từ "${deck.title}"`);
     }
 
@@ -2556,6 +2584,7 @@
         }
       }
 
+      pushCurrentDatabaseToCloud();
       showToast(deck.isArchived ? `📦 Đã cất bộ từ "${deck.title}" vào Kho Lưu Trữ!` : `🔄 Đã khôi phục bộ từ "${deck.title}" về danh sách đang học!`);
     }
 

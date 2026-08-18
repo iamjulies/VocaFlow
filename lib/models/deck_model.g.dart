@@ -24,14 +24,16 @@ class DeckModelAdapter extends TypeAdapter<DeckModel> {
       createdAt: fields[4] as DateTime,
       userId: fields[5] as String,
       updatedAt: fields[6] as DateTime?,
-      isDeleted: fields[7] as bool,
+      isDeleted: fields[7] as bool? ?? false,
+      isPinned: fields[8] as bool? ?? false,
+      isArchived: fields[9] as bool? ?? false,
     );
   }
 
   @override
   void write(BinaryWriter writer, DeckModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +49,11 @@ class DeckModelAdapter extends TypeAdapter<DeckModel> {
       ..writeByte(6)
       ..write(obj.updatedAt)
       ..writeByte(7)
-      ..write(obj.isDeleted);
+      ..write(obj.isDeleted)
+      ..writeByte(8)
+      ..write(obj.isPinned)
+      ..writeByte(9)
+      ..write(obj.isArchived);
   }
 
   @override
