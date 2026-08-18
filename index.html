@@ -2187,7 +2187,7 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử...';
-      const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-flash-latest', 'gemini-pro-latest'];
       let connected = false;
       let lastErr = '';
       let successfulModel = '';
@@ -2198,7 +2198,8 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              contents: [{ parts: [{ text: "Say OK" }] }]
+              contents: [{ parts: [{ text: "Say OK" }] }],
+              generationConfig: { maxOutputTokens: 10 }
             })
           });
           const data = await testRes.json();
@@ -2206,8 +2207,9 @@
             connected = true;
             successfulModel = m;
             saveGeminiApiKey(key);
+            localStorage.setItem('vocaflow_gemini_working_model', m);
             if (statusText) {
-              statusText.textContent = `✅ Kết nối Gemini AI (${m}) thành công rực rỡ!`;
+              statusText.textContent = `✅ Kết nối Gemini AI (${m}) thành công siêu tốc!`;
               statusText.style.color = '#34d399';
             }
             showToast('✅ Kết nối Gemini AI thành công!');
@@ -3779,7 +3781,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
   "collocations": ["cụm từ đi kèm 1", "cụm từ đi kèm 2"]
 }`;
 
-      const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
+      const standardModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+
       for (const m of models) {
         try {
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
@@ -3789,7 +3794,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               contents: [{ parts: [{ text: prompt }] }],
               generationConfig: {
                 responseMimeType: "application/json",
-                temperature: 0.25
+                temperature: 0.2,
+                maxOutputTokens: 500
               }
             })
           });
@@ -3800,6 +3806,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (!rawText) continue;
 
+          localStorage.setItem('vocaflow_gemini_working_model', m);
           const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
           return JSON.parse(cleanJson);
         } catch (err) {
@@ -4042,6 +4049,101 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       showScreen('screen-quiz');
     }
 
+    function generateSmartDistractors(questionWord) {
+      const correctDef = (questionWord.definitionVi || '').trim();
+      const currentPos = (questionWord.partOfSpeech || 'noun').toLowerCase().trim();
+      const currentDeckId = questionWord.deckId;
+
+      // Pool of all valid other words (excluding current word and identical definitions)
+      const otherWords = words.filter(w => w.id !== questionWord.id && (w.definitionVi || '').trim() && (w.definitionVi || '').trim().toLowerCase() !== correctDef.toLowerCase());
+
+      const chosenDefs = new Set();
+
+      // 1. Priority 1: Same Part of Speech + Same Deck (Highest match & contextual confusion)
+      const samePosSameDeck = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && w.deckId === currentDeckId);
+      samePosSameDeck.sort(() => Math.random() - 0.5).forEach(w => {
+        if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+      });
+
+      // 2. Priority 2: Same Part of Speech + Other Decks
+      if (chosenDefs.size < 3) {
+        const samePosOtherDecks = otherWords.filter(w => (w.partOfSpeech || 'noun').toLowerCase().trim() === currentPos && !chosenDefs.has(w.definitionVi.trim()));
+        samePosOtherDecks.sort(() => Math.random() - 0.5).forEach(w => {
+          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+        });
+      }
+
+      // 3. Priority 3: Same Deck (Any POS)
+      if (chosenDefs.size < 3) {
+        const sameDeckAnyPos = otherWords.filter(w => w.deckId === currentDeckId && !chosenDefs.has(w.definitionVi.trim()));
+        sameDeckAnyPos.sort(() => Math.random() - 0.5).forEach(w => {
+          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+        });
+      }
+
+      // 4. Priority 4: Any other word across the app
+      if (chosenDefs.size < 3) {
+        const remainingWords = otherWords.filter(w => !chosenDefs.has(w.definitionVi.trim()));
+        remainingWords.sort(() => Math.random() - 0.5).forEach(w => {
+          if (chosenDefs.size < 3) chosenDefs.add(w.definitionVi.trim());
+        });
+      }
+
+      // 5. Priority 5: High-Quality Category / POS Fallback Pool (Guarantees smart choices even in small 2-word decks)
+      if (chosenDefs.size < 3) {
+        const posFallbackPools = {
+          noun: [
+            'Sự chuyển hóa và biến đổi cấu trúc phân tử',
+            'Hiện tượng khuếch tán và dẫn truyền năng lượng',
+            'Quá trình phân tách các thành phần trong hỗn hợp',
+            'Quy luật bảo toàn và trạng thái cân bằng động',
+            'Phương pháp định lượng và đo lường thực nghiệm',
+            'Chỉ số biểu thị nồng độ hoặc hiệu suất phản ứng',
+            'Cơ chế tác động và kiểm soát phản hồi sinh học',
+            'Nguyên lý tương tác giữa các yếu tố trong hệ thống'
+          ],
+          verb: [
+            'Duy trì trạng thái cân bằng trong hệ thống',
+            'Tiến hành phân tích và đo lường nồng độ',
+            'Kích hoạt quá trình biến đổi và trao đổi chất',
+            'Làm suy giảm tốc độ hoặc kìm hãm phản ứng',
+            'Thiết lập mối tương quan giữa các thông số',
+            'Thúc đẩy quá trình tái tạo và phát triển',
+            'Điều chỉnh thông số cho phù hợp với tiêu chuẩn'
+          ],
+          adjective: [
+            'Có khả năng thích ứng và phản ứng nhanh',
+            'Đặc trưng bởi tính ổn định và tính liên tục',
+            'Tương thích với các điều kiện môi trường xung quanh',
+            'Đóng vai trò chủ đạo và mang tính quyết định',
+            'Dễ bị phân hủy dưới tác động ngoại cảnh',
+            'Có xu hướng tích lũy và gia tăng theo thời gian'
+          ],
+          adverb: [
+            'Một cách tuần tự và có hệ thống rõ ràng',
+            'Tương đối đồng đều trên toàn bộ bề mặt',
+            'Đột ngột và không thể dự đoán trước',
+            'Một cách triệt để và toàn diện nhất'
+          ],
+          phrase: [
+            'Dẫn đến sự thay đổi rõ rệt về cấu trúc',
+            'Đóng vai trò trung gian trong toàn bộ chu trình',
+            'Phụ thuộc mật thiết vào điều kiện ban đầu'
+          ]
+        };
+
+        const fallbackList = posFallbackPools[currentPos] || posFallbackPools.noun;
+        const shuffledFallbacks = [...fallbackList].sort(() => Math.random() - 0.5);
+        shuffledFallbacks.forEach(fb => {
+          if (chosenDefs.size < 3 && fb !== correctDef && !chosenDefs.has(fb)) {
+            chosenDefs.add(fb);
+          }
+        });
+      }
+
+      return Array.from(chosenDefs).slice(0, 3);
+    }
+
     function loadQuizQuestion() {
       document.getElementById('quiz-next-container').style.display = 'none';
       const questionWord = quizList[quizIndex];
@@ -4052,9 +4154,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       document.getElementById('quiz-question-term').textContent = questionWord.term;
       document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
 
-      // Create 4 choices
-      const allOtherDefs = words.filter(w => w.id !== questionWord.id).map(w => w.definitionVi);
-      const distractors = allOtherDefs.sort(() => Math.random() - 0.5).slice(0, 3);
+      // Generate 3 Smart Category/POS-matched Distractors
+      const distractors = generateSmartDistractors(questionWord);
       const choices = [questionWord.definitionVi, ...distractors].sort(() => Math.random() - 0.5);
 
       const optionsContainer = document.getElementById('quiz-options-container');
