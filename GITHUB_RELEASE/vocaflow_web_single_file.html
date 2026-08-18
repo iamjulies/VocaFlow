@@ -1470,7 +1470,7 @@
       </div>
 
       <!-- Auto Flashcard 3D Card Display -->
-      <div class="flashcard-container">
+      <div class="flashcard-container" onclick="handleAutoCardManualFlip()" title="Chạm để lật thẻ (khi tạm dừng)" style="cursor: pointer;">
         <div class="flashcard" id="autofc-card-element">
           <!-- Front Face -->
           <div class="card-face card-front">
@@ -1483,7 +1483,7 @@
             <div class="word-phonetic" id="autofc-front-phonetic">/phonetic/</div>
 
             <div style="margin-top: 24px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <span>⏳ Tự động lật và đọc tiếng Việt sau khi phát âm</span>
+              <span id="autofc-hint-text">⏳ Tự động lật và đọc tiếng Việt sau khi phát âm</span>
             </div>
           </div>
 
@@ -4421,6 +4421,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (delayLbl) delayLbl.textContent = `${autoDelaySeconds.toFixed(1)}s`;
     }
 
+    function handleAutoCardManualFlip() {
+      if (isAutoPlaying) {
+        // When active auto loop is speaking/running, ignore manual click to keep sequence clean
+        return;
+      }
+      const cardEl = document.getElementById('autofc-card-element');
+      if (cardEl) {
+        cardEl.classList.toggle('flipped');
+      }
+    }
+
     function toggleAutoFlashcardPlayPause() {
       if (isAutoPlaying) {
         isAutoPlaying = false;
@@ -4431,8 +4442,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           statusEl.textContent = '⏸️ Đã tạm dừng';
           statusEl.style.color = 'var(--warning)';
         }
+        const hintEl = document.getElementById('autofc-hint-text');
+        if (hintEl) {
+          hintEl.textContent = '👆 Chạm vào thẻ để lật xem mặt trước / sau';
+        }
       } else {
         isAutoPlaying = true;
+        const hintEl = document.getElementById('autofc-hint-text');
+        if (hintEl) {
+          hintEl.textContent = '⏳ Tự động lật và đọc tiếng Việt sau khi phát âm';
+        }
         runAutoFlashcardLoop();
       }
       syncAutoFlashcardControlsUI();
@@ -4489,6 +4508,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       document.getElementById('autofc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
       document.getElementById('autofc-progress-bar').style.width = `${Math.round(((index + 1) / total) * 100)}%`;
+
+      const cardEl = document.getElementById('autofc-card-element');
+      if (cardEl) cardEl.classList.remove('flipped');
+
+      const hintEl = document.getElementById('autofc-hint-text');
+      if (hintEl) {
+        hintEl.textContent = isAutoPlaying ? '⏳ Tự động lật và đọc tiếng Việt sau khi phát âm' : '👆 Chạm vào thẻ để lật xem mặt trước / sau';
+      }
 
       // Front
       const cefrEl = document.getElementById('autofc-front-cefr');
