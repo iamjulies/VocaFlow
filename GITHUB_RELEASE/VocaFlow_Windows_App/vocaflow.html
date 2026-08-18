@@ -1457,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.13</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.14</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1560,15 +1560,30 @@
         </div>
       </div>
 
-      <!-- DECK FILTER TABS (ACTIVE VS ARCHIVED STORAGE) -->
-      <div class="deck-tabs-container">
-        <div class="deck-tabs">
+      <!-- DECK FILTER TABS WITH LIVE SORT SELECTOR (v0.0.8.14) -->
+      <div class="deck-tabs-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+        <div class="deck-tabs" style="margin-bottom: 0;">
           <button class="deck-tab active" id="tab-active-decks" onclick="setDeckTab('active')">
             <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Đang học</span> (<span id="count-active-decks">0</span>)
           </button>
           <button class="deck-tab" id="tab-archived-decks" onclick="setDeckTab('archived')">
             <svg class="icon icon-sm"><use href="#i-archive"/></svg> <span>Kho Lưu Trữ</span> (<span id="count-archived-decks">0</span>)
           </button>
+        </div>
+
+        <!-- SORT CONTROLS -->
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label for="deck-sort-select" style="font-size: 12px; color: var(--text-muted); font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 4px;">
+            <span>🔀 Sắp xếp:</span>
+          </label>
+          <select id="deck-sort-select" class="form-select" onchange="setDeckSort(this.value)" style="padding: 6px 10px; font-size: 12px; height: 34px; border-radius: 8px; background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); cursor: pointer;">
+            <option value="recent">🕒 Cập nhật gần nhất</option>
+            <option value="name_asc">🔤 Tên bộ từ (A ➔ Z)</option>
+            <option value="name_desc">🔤 Tên bộ từ (Z ➔ A)</option>
+            <option value="count_desc">📚 Số lượng từ (Nhiều ➔ Ít)</option>
+            <option value="mastery_desc">👑 Mức độ thuộc (Cao ➔ Thấp)</option>
+            <option value="created_desc">📅 Ngày tạo mới nhất</option>
+          </select>
         </div>
       </div>
 
@@ -2465,7 +2480,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.13</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.14</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4570,6 +4585,13 @@
     // =========================================================================
     // DECK RENDERING & CUSTOMIZATION (EDIT / DELETE / PIN / ARCHIVE)
     // =========================================================================
+    let currentDeckSort = 'recent';
+
+    function setDeckSort(sortKey) {
+      currentDeckSort = sortKey;
+      renderDecks();
+    }
+
     function renderDecks() {
       const container = document.getElementById('deck-grid');
       if (!container) return;
@@ -4583,16 +4605,39 @@
       if (countActive) countActive.textContent = activeDecks.length;
       if (countArchived) countArchived.textContent = archivedDecks.length;
 
-      let displayDecks = [];
-      if (currentDeckTab === 'active') {
-        displayDecks = [...activeDecks].sort((a, b) => {
-          if (!!a.isPinned !== !b.isPinned) {
+      function sortDeckList(list) {
+        return [...list].sort((a, b) => {
+          if (currentDeckTab === 'active' && !!a.isPinned !== !b.isPinned) {
             return a.isPinned ? -1 : 1;
           }
-          return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+
+          if (currentDeckSort === 'name_asc') {
+            return (a.title || '').localeCompare(b.title || '', 'vi', { sensitivity: 'base' });
+          } else if (currentDeckSort === 'name_desc') {
+            return (b.title || '').localeCompare(a.title || '', 'vi', { sensitivity: 'base' });
+          } else if (currentDeckSort === 'count_desc') {
+            const countA = words.filter(w => w.deckId === a.id).length;
+            const countB = words.filter(w => w.deckId === b.id).length;
+            return countB - countA;
+          } else if (currentDeckSort === 'mastery_desc') {
+            const wordsA = words.filter(w => w.deckId === a.id);
+            const wordsB = words.filter(w => w.deckId === b.id);
+            const scoreA = wordsA.length ? Math.round(wordsA.reduce((s, w) => s + getWordScore(w), 0) / wordsA.length) : 0;
+            const scoreB = wordsB.length ? Math.round(wordsB.reduce((s, w) => s + getWordScore(w), 0) / wordsB.length) : 0;
+            return scoreB - scoreA;
+          } else if (currentDeckSort === 'created_desc') {
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          } else {
+            return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+          }
         });
+      }
+
+      let displayDecks = [];
+      if (currentDeckTab === 'active') {
+        displayDecks = sortDeckList(activeDecks);
       } else {
-        displayDecks = [...archivedDecks].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+        displayDecks = sortDeckList(archivedDecks);
       }
 
       if (displayDecks.length === 0) {
@@ -4660,7 +4705,7 @@
             <span>Mức độ thuộc: ${avgScore}%</span>
             <span>Đã thuộc: ${mastered}/${total}</span>
           </div>
-          <div class="deck-timestamp">
+          <div class="deck-timestamp" style="margin: 8px 0 12px 0; padding-top: 4px; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
             <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
           </div>
 
@@ -5035,9 +5080,19 @@
           if (result.pos) {
             const posSelect = document.getElementById('word-pos');
             if (posSelect) {
-              const cleanPos = result.pos.toLowerCase();
-              const matchPos = Array.from(posSelect.options).find(opt => opt.value.toLowerCase() === cleanPos || cleanPos.includes(opt.value.toLowerCase()));
-              if (matchPos) posSelect.value = matchPos.value;
+              const cleanPos = result.pos.toLowerCase().trim();
+              let targetVal = cleanPos;
+              if (cleanPos.startsWith('n') && !cleanPos.includes('verb')) targetVal = 'noun';
+              else if (cleanPos.startsWith('v')) targetVal = 'verb';
+              else if (cleanPos.startsWith('adj')) targetVal = 'adjective';
+              else if (cleanPos.startsWith('adv')) targetVal = 'adverb';
+              else if (cleanPos.includes('idiom')) targetVal = 'idiom';
+              else if (cleanPos.includes('phrase')) targetVal = 'phrase';
+
+              const matchPos = Array.from(posSelect.options).find(opt => opt.value && (opt.value === targetVal || cleanPos === opt.value.toLowerCase() || cleanPos.includes(opt.value.toLowerCase()) || opt.value.toLowerCase().includes(cleanPos)));
+              if (matchPos) {
+                posSelect.value = matchPos.value;
+              }
             }
           }
           if (result.cefrLevel) {
