@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2613,7 +2613,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3851,7 +3851,7 @@
           const uDecks = Array.isArray(u.decks) ? u.decks : (u.decks ? Object.values(u.decks) : []);
           const uWords = Array.isArray(u.words) ? u.words : (u.words ? Object.values(u.words) : []);
           const rawAv = prof.avatar || u.avatar || '';
-          const avatar = (rawAv && typeof rawAv === 'string' && (rawAv.startsWith('data:image') || rawAv.startsWith('http'))) ? rawAv : '';
+          const avatar = (typeof rawAv === 'string' && (rawAv.startsWith('data:image') || rawAv.startsWith('http'))) ? rawAv : '';
 
           studentsList.push({
             uid: uid,
@@ -4363,12 +4363,22 @@
           }
 
           let finalDisplayName = data.displayName;
-          if (!finalDisplayName && firebaseConfig.databaseURL) {
+          let finalAvatar = '';
+          let finalAvatarTime = 0;
+          if (firebaseConfig.databaseURL) {
             try {
-              const pRes = await fetch(`${firebaseConfig.databaseURL}/users/${data.localId}/profile.json?auth=${data.idToken}`);
+              const pRes = await fetch(`${firebaseConfig.databaseURL}/users/${data.localId}.json?auth=${data.idToken}`);
               if (pRes.ok) {
-                const pData = await pRes.json();
-                if (pData && pData.displayName) finalDisplayName = pData.displayName;
+                const uData = await pRes.json();
+                if (uData && typeof uData === 'object') {
+                  const prof = uData.profile || {};
+                  if (prof.displayName) finalDisplayName = prof.displayName;
+                  const av = prof.avatar || uData.avatar;
+                  if (av && (av.startsWith('data:image') || av.startsWith('http'))) {
+                    finalAvatar = av;
+                    finalAvatarTime = parseInt(prof.avatarTime || uData.avatarTime || Date.now().toString(), 10);
+                  }
+                }
               }
             } catch (pErr) {}
           }
@@ -4378,8 +4388,14 @@
             uid: data.localId,
             email: data.email,
             displayName: finalDisplayName,
+            avatar: finalAvatar,
+            avatarTime: finalAvatarTime,
             idToken: data.idToken
           };
+          if (finalAvatar) {
+            localStorage.setItem('vocaflow_user_avatar', finalAvatar);
+            localStorage.setItem('vocaflow_avatar_time', finalAvatarTime.toString());
+          }
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         } catch (err) {
           console.log('Firebase Auth error fallback:', err);
@@ -4493,15 +4509,21 @@
 
       try {
         decks = sanitizeDecks(decks);
+        const currentAv = getUserAvatar();
+        const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
+        const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
+
         const payload = {
           profile: {
             displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
             email: currentUser.email || '',
-            avatar: getUserAvatar(),
-            avatarTime: parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10),
+            avatar: avToSave,
+            avatarTime: avTimeToSave,
             geminiApiKey: geminiApiKey || '',
             lastSync: new Date().toISOString()
           },
+          avatar: avToSave,
+          avatarTime: avTimeToSave,
           geminiApiKey: geminiApiKey || '',
           deckSort: currentDeckSort,
           decks: decks,
@@ -4582,12 +4604,13 @@
                 const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
                 const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
 
-                if (cloudData.profile && cloudData.profile.avatar) {
-                  const remoteAvatar = cloudData.profile.avatar;
-                  const remoteAvatarTime = parseInt(cloudData.profile.avatarTime || '0', 10);
-                  const localAvatarTime = parseInt(localStorage.getItem('vocaflow_avatar_time') || '0', 10);
+                const remoteAvatar = (cloudData.profile && cloudData.profile.avatar) || cloudData.avatar;
+                const remoteAvatarTime = parseInt((cloudData.profile && cloudData.profile.avatarTime) || cloudData.avatarTime || '0', 10);
+                const localAvatar = localStorage.getItem('vocaflow_user_avatar');
+                const localAvatarTime = parseInt(localStorage.getItem('vocaflow_avatar_time') || '0', 10);
 
-                  if (remoteAvatarTime >= localAvatarTime || localAvatarTime === 0) {
+                if (remoteAvatar && typeof remoteAvatar === 'string' && (remoteAvatar.startsWith('data:image') || remoteAvatar.startsWith('http'))) {
+                  if (remoteAvatarTime >= localAvatarTime || localAvatarTime === 0 || !localAvatar) {
                     localStorage.setItem('vocaflow_user_avatar', remoteAvatar);
                     localStorage.setItem('vocaflow_avatar_time', remoteAvatarTime.toString());
                     if (currentUser) {
@@ -4596,25 +4619,12 @@
                       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
                     }
                     updateAuthUI();
-                  } else if (localAvatarTime > remoteAvatarTime) {
-                    // Local is newer, push local avatar to Cloud
-                    if (currentUser && currentUser.uid) {
-                      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-                      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-                      const localAv = localStorage.getItem('vocaflow_user_avatar');
-                      if (localAv) {
-                        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatar.json' + authParam, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(localAv)
-                        }).catch(() => {});
-                        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/avatarTime.json' + authParam, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(localAvatarTime)
-                        }).catch(() => {});
-                      }
-                    }
+                  }
+                } else if (localAvatar && (localAvatar.startsWith('data:image') || localAvatar.startsWith('http'))) {
+                  if (currentUser) {
+                    currentUser.avatar = localAvatar;
+                    currentUser.avatarTime = localAvatarTime || Date.now();
+                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
                   }
                 }
 
@@ -4732,12 +4742,22 @@
           // -----------------------------------------------------------
           try {
             decks = sanitizeDecks(decks);
+            const currentAv = getUserAvatar();
+            const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
+            const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
+
             const payload = {
               profile: {
                 displayName: currentUser.displayName || currentUser.email.split('@')[0],
                 email: currentUser.email,
+                avatar: avToSave,
+                avatarTime: avTimeToSave,
+                geminiApiKey: geminiApiKey || '',
                 lastSync: new Date().toISOString()
               },
+              avatar: avToSave,
+              avatarTime: avTimeToSave,
+              geminiApiKey: geminiApiKey || '',
               deckSort: currentDeckSort,
               decks: decks,
               words: words,
