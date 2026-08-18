@@ -1731,36 +1731,45 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử...';
-      try {
-        const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: "Trả lời duy nhất chữ 'OK'" }] }]
-          })
-        });
-        const data = await testRes.json();
-        if (data.candidates && data.candidates.length > 0) {
-          saveGeminiApiKey(key);
-          if (statusText) {
-            statusText.textContent = '✅ Kết nối Gemini AI thành công rực rỡ!';
-            statusText.style.color = '#34d399';
+      const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+      let connected = false;
+      let lastErr = '';
+      let successfulModel = '';
+
+      for (const m of models) {
+        try {
+          const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: "Say OK" }] }]
+            })
+          });
+          const data = await testRes.json();
+          if (data.candidates && data.candidates.length > 0) {
+            connected = true;
+            successfulModel = m;
+            saveGeminiApiKey(key);
+            if (statusText) {
+              statusText.textContent = `✅ Kết nối Gemini AI (${m}) thành công rực rỡ!`;
+              statusText.style.color = '#34d399';
+            }
+            showToast('✅ Kết nối Gemini AI thành công!');
+            break;
+          } else if (data.error) {
+            lastErr = data.error.message;
           }
-          showToast('✅ Kết nối Gemini AI thành công!');
-        } else {
-          if (statusText) {
-            statusText.textContent = '❌ Lỗi kết nối: ' + (data.error?.message || 'Key không hợp lệ.');
-            statusText.style.color = '#f87171';
-          }
+        } catch (err) {
+          lastErr = err.message;
         }
-      } catch (err) {
-        if (statusText) {
-          statusText.textContent = '❌ Lỗi mạng: ' + err.message;
-          statusText.style.color = '#f87171';
-        }
-      } finally {
-        if (btn) btn.textContent = '🧪 Thử kết nối';
       }
+
+      if (!connected && statusText) {
+        statusText.textContent = '❌ Lỗi kết nối: ' + (lastErr || 'Key không hợp lệ.');
+        statusText.style.color = '#f87171';
+      }
+
+      if (btn) btn.textContent = '🧪 Thử kết nối';
     }
 
     // Theme Engine
@@ -3176,7 +3185,7 @@
 
     async function fetchWordFromGemini(term, key) {
       const prompt = `Phân tích từ vựng tiếng Anh "${term}" cho người học tiếng Anh Việt Nam.
-Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown, không giải thích ngoài JSON) theo cấu trúc sau:
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON) theo cấu trúc:
 {
   "term": "${term}",
   "pos": "noun/verb/adjective/adverb/phrase/idiom",
@@ -3189,29 +3198,34 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown, không gi�
   "collocations": ["cụm từ đi kèm 1", "cụm từ đi kèm 2"]
 }`;
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            response_mime_type: "application/json",
-            temperature: 0.2
-          }
-        })
-      });
+      const models = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+      for (const m of models) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                temperature: 0.2
+              }
+            })
+          });
 
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.error?.message || `HTTP ${res.status}`);
+          if (!res.ok) continue;
+
+          const data = await res.json();
+          const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!rawText) continue;
+
+          const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          return JSON.parse(cleanJson);
+        } catch (err) {
+          console.warn(`Model ${m} failed:`, err);
+        }
       }
-
-      const data = await res.json();
-      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) return null;
-
-      const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(cleanJson);
+      return null;
     }
 
     async function fetchWordFromDictionary(term) {
