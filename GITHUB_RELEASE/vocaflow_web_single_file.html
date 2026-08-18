@@ -4865,42 +4865,52 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           statusEl.style.color = '#38bdf8';
         }
 
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 500));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
         // 2. Speak English Term completely
         await playAudioAsync(word.term, 'en-US', currentSpeechRateEn);
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 3. Short pause before flip (0.7s)
-        await new Promise(r => setTimeout(r, 700));
+        // 3. Calm thinking & recall pause (1.4s) so learner can absorb and guess the meaning
+        if (statusEl) {
+          statusEl.textContent = '🧠 Ghi nhớ nghĩa từ...';
+          statusEl.style.color = 'var(--text-muted)';
+        }
+        await new Promise(r => setTimeout(r, 1400));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 4. Flip to Back
+        // 4. Flip to Back smoothly
         if (cardEl) cardEl.classList.add('flipped');
         if (statusEl) {
-          statusEl.textContent = '🇻🇳 Đang đọc nghĩa tiếng Việt...';
+          statusEl.textContent = '🇻🇳 Chuẩn bị đọc nghĩa...';
           statusEl.style.color = '#34d399';
         }
 
-        await new Promise(r => setTimeout(r, 400));
+        // 5. Post-flip settle pause (850ms) to let the 3D flip animation finish completely
+        await new Promise(r => setTimeout(r, 850));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 5. Speak Vietnamese Definition completely
+        // 6. Speak Vietnamese Definition completely
         if (word.definitionVi) {
+          if (statusEl) {
+            statusEl.textContent = '🇻🇳 Đang đọc tiếng Việt...';
+            statusEl.style.color = '#34d399';
+          }
           await playAudioAsync(word.definitionVi, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 6. Rest period (configured delay)
+        // 7. Rest period before next word (user configured delay + buffer)
         if (statusEl) {
           statusEl.textContent = '⏱️ Nghỉ ngắt nhịp...';
           statusEl.style.color = 'var(--text-muted)';
         }
-        await new Promise(r => setTimeout(r, Math.max(0.5, autoDelaySeconds) * 1000));
+        const restDurationMs = (Math.max(0.6, autoDelaySeconds) + 0.5) * 1000;
+        await new Promise(r => setTimeout(r, restDurationMs));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 7. Move to next card
+        // 8. Move to next card
         autoFlashcardIndex++;
       }
     }
@@ -4935,12 +4945,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       str = str.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '');
       // Strip phonetic slashes e.g. /.../
       str = str.replace(/^\/[^\/]+\/\s*/g, '');
+      // Strip (EN) prefix
+      str = str.replace(/^\(EN\)\s*/i, '');
       // Normalize smart quotes and dashes
       str = str.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, '-');
       // Strip technical prefix brackets e.g. (n), (adj), (v), (Hóa học)
-      str = str.replace(/^\([A-Za-zÀ-ỹ\s]+\)\s*/i, '');
+      str = str.replace(/^\([A-Za-zÀ-ỹ0-9\s.,-]+\)\s*/i, '');
+      // Remove numbered list prefixes
+      str = str.replace(/^\d+[.)]\s*/, '');
       // Remove symbols
-      str = str.replace(/[≈≠•*~_#@^&]/g, ' ');
+      str = str.replace(/[≈≠•*~_#@^&/\\|]/g, ' ');
       // Replace semicolon with comma for natural speech pauses
       str = str.replace(/;/g, ',');
       return str.replace(/\s+/g, ' ').trim();
@@ -4996,8 +5010,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             isResolved = true;
             if (safetyTimer) clearTimeout(safetyTimer);
             if (currentActiveAudio === audio) currentActiveAudio = null;
-            // Short 120ms buffer after completion for natural cadence
-            setTimeout(resolve, 120);
+            // Short 200ms buffer after completion for natural, calm cadence
+            setTimeout(resolve, 200);
           }
         };
 
@@ -5016,12 +5030,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         };
 
         audio.onerror = (e) => {
-          console.warn('Google TTS stream unavailable, attempting fallback:', e);
+          console.warn('Google TTS stream primary unavailable, attempting fallback:', e);
           _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
         };
 
         // Safety timeout (prevents hang if audio never fires ended)
-        const estimatedDurationMs = Math.max(2500, Math.ceil((clean.length / 8) * 1000 / (speed || 1.0)) + 3500);
+        const estimatedDurationMs = Math.max(2800, Math.ceil((clean.length / 7) * 1000 / (speed || 1.0)) + 3000);
         safetyTimer = setTimeout(() => {
           finish();
         }, estimatedDurationMs);
@@ -5050,6 +5064,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           resolve();
           return;
         }
+
+        try {
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+        } catch (e) {}
 
         const bestVoice = getBestVoiceForLang(lang);
         const isVi = (lang === 'vi' || lang.startsWith('vi'));
@@ -5080,7 +5100,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         utterance.onend = done;
         utterance.onerror = done;
-        setTimeout(done, Math.max(3000, Math.ceil((text.length / 8) * 1000) + 2000));
+        setTimeout(done, Math.max(3000, Math.ceil((text.length / 7) * 1000) + 2500));
 
         window.speechSynthesis.speak(utterance);
       });
