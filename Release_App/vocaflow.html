@@ -3037,9 +3037,16 @@
       }
     });
 
-    // In-memory Database State
+    // In-memory Database State & Tombstone Tracking (v0.0.8.15)
     let decks = [];
     let words = [];
+    let deletedWordIds = new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_words') || '[]'));
+    let deletedDeckIds = new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_decks') || '[]'));
+
+    function saveDeletedTombstones() {
+      localStorage.setItem('vocaflow_deleted_words', JSON.stringify(Array.from(deletedWordIds)));
+      localStorage.setItem('vocaflow_deleted_decks', JSON.stringify(Array.from(deletedDeckIds)));
+    }
     let currentDeckId = null;
     let currentWordFilter = 'all';
 
@@ -3834,6 +3841,8 @@
           deckSort: currentDeckSort,
           decks: decks,
           words: words,
+          deletedWordIds: Array.from(deletedWordIds),
+          deletedDeckIds: Array.from(deletedDeckIds),
           lastSync: new Date().toISOString()
         };
 
@@ -3910,6 +3919,19 @@
                   if (sortSelect) sortSelect.value = currentDeckSort;
                 }
 
+                // Merge deleted tombstones from cloud
+                if (cloudData.deletedWordIds && Array.isArray(cloudData.deletedWordIds)) {
+                  cloudData.deletedWordIds.forEach(id => deletedWordIds.add(id));
+                }
+                if (cloudData.deletedDeckIds && Array.isArray(cloudData.deletedDeckIds)) {
+                  cloudData.deletedDeckIds.forEach(id => deletedDeckIds.add(id));
+                }
+                saveDeletedTombstones();
+
+                // Purge local deleted items
+                decks = decks.filter(d => !deletedDeckIds.has(d.id));
+                words = words.filter(w => !deletedWordIds.has(w.id) && !deletedDeckIds.has(w.deckId));
+
                 if (remoteDecks.length > 0) {
                   // If local only has the initial starter deck and cloud has real decks, remove starter deck
                   if (decks.length === 1 && decks[0].id === 'deck-oxford-starter') {
@@ -3919,7 +3941,7 @@
 
                   // Merge decks by ID (Last-Write-Wins with explicit isPinned & isArchived preservation)
                   for (const remoteDeck of remoteDecks) {
-                    if (!remoteDeck || !remoteDeck.id) continue;
+                    if (!remoteDeck || !remoteDeck.id || deletedDeckIds.has(remoteDeck.id)) continue;
                     const cleanRemote = {
                       ...remoteDeck,
                       isPinned: remoteDeck.isPinned === true,
@@ -3952,7 +3974,7 @@
                 if (remoteWords.length > 0) {
                   // Merge words by ID (Last-Write-Wins with learning progress protection)
                   for (const remoteWord of remoteWords) {
-                    if (!remoteWord || !remoteWord.id) continue;
+                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id) || deletedDeckIds.has(remoteWord.deckId)) continue;
                     const localIdx = words.findIndex(w => w.id === remoteWord.id);
                     if (localIdx >= 0) {
                       const localWord = words[localIdx];
@@ -4013,6 +4035,8 @@
               deckSort: currentDeckSort,
               decks: decks,
               words: words,
+              deletedWordIds: Array.from(deletedWordIds),
+              deletedDeckIds: Array.from(deletedDeckIds),
               economy: {
                 points: getUserPoints(),
                 hints: getUserHints(),
@@ -4470,6 +4494,9 @@
       if (selectedWordIds.size === 0) return;
       if (!confirm('Bạn có chắc chắn muốn xóa ' + selectedWordIds.size + ' từ vựng đã chọn?')) return;
 
+      selectedWordIds.forEach(id => deletedWordIds.add(id));
+      saveDeletedTombstones();
+
       words = words.filter(w => !selectedWordIds.has(w.id));
       selectedWordIds.clear();
       saveDatabase(true);
@@ -4776,6 +4803,11 @@
         return;
       }
 
+      deletedDeckIds.add(deckId);
+      const deckWords = words.filter(w => w.deckId === deckId);
+      deckWords.forEach(w => deletedWordIds.add(w.id));
+      saveDeletedTombstones();
+
       decks = decks.filter(d => d.id !== deckId);
       words = words.filter(w => w.deckId !== deckId);
       saveDatabase(true);
@@ -5036,6 +5068,23 @@
       renderWordList();
       closeModal('modal-word');
       showToast('Đã lưu từ vựng thành công!');
+    }
+
+    function deleteWord(wordId) {
+      const w = words.find(item => item.id === wordId);
+      if (!w) return;
+      if (!confirm('Bạn có chắc chắn muốn xóa từ "' + w.term + '"?')) return;
+
+      deletedWordIds.add(wordId);
+      saveDeletedTombstones();
+
+      words = words.filter(item => item.id !== wordId);
+      selectedWordIds.delete(wordId);
+
+      saveDatabase(true);
+      renderWordList();
+      updateSelectionUI();
+      showToast('Đã xóa từ "' + w.term + '"!');
     }
 
     // =========================================================================
