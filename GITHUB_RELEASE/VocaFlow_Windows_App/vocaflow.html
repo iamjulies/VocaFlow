@@ -866,6 +866,29 @@
       margin-bottom: 20px;
       text-align: center;
     }
+    .quiz-hint-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--surface-elevated);
+      border: 1px dashed var(--warning);
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.5;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.25s ease;
+    }
+    body.theme-light .quiz-hint-box {
+      background: #fffbeb !important;
+      border-color: #f59e0b !important;
+      color: #92400e !important;
+    }
+    body.theme-dark .quiz-hint-box {
+      background: rgba(245, 158, 11, 0.12) !important;
+      border-color: rgba(245, 158, 11, 0.4) !important;
+      color: #fef08a !important;
+    }
     .quiz-options {
       display: grid;
       grid-template-columns: 1fr;
@@ -1368,9 +1391,12 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.7</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8</span>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+        🏪 <span id="header-points-display">0đ</span>
+      </button>
       <button class="btn btn-outline btn-sm" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
         <span id="sync-icon">☁️</span> <span id="sync-text" class="hide-on-mobile">Đồng bộ</span>
       </button>
@@ -1577,10 +1603,13 @@
         </button>
         <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="btn btn-outline btn-sm" onclick="speakQuizTerm()" title="Phát âm từ vựng">
-            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Phát âm</span>
+          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
+            🏪 <span id="quiz-wallet-points">0đ</span> (<span id="quiz-wallet-hints">0</span>💡)
           </button>
-          <div id="quiz-score" style="font-weight: 700; color: var(--success);">Điểm: 0</div>
+          <button class="btn btn-outline btn-sm" onclick="speakQuizTerm()" title="Phát âm từ vựng">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
+          </button>
+          <div id="quiz-score" style="font-weight: 700; color: var(--success);">Bài: 0đ</div>
         </div>
       </div>
 
@@ -1597,7 +1626,7 @@
             </button>
           </div>
           <div id="quiz-question-phonetic" style="font-family: monospace; color: var(--text-muted);">/phonetic/</div>
-          <div id="quiz-hint-box" style="display: none; margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); border: 1px dashed rgba(245, 158, 11, 0.4); color: #fef08a; font-size: 13px; text-align: center; animation: fadeIn 0.2s ease;">
+          <div id="quiz-hint-box" class="quiz-hint-box" style="display: none;">
             <span id="quiz-hint-text">💡 Gợi ý ngữ cảnh...</span>
           </div>
         </div>
@@ -1891,6 +1920,80 @@
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" class="btn btn-outline" onclick="closeModal('modal-import')">Đóng</button>
         <button type="button" class="btn btn-primary" onclick="processTextImport()">Nhập từ vựng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
+  <div class="modal-overlay" id="modal-shop">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">🏪</span>
+          <strong style="font-size: 17px;">Cửa Hàng Điểm Thưởng (VocaShop)</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-shop')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- Wallet Balance Card -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 16px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
+        <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 10px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Điểm tích lũy</div>
+          <div id="shop-user-points" style="font-size: 26px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Kiếm từ làm Quiz</div>
+        </div>
+        <div style="text-align: center; padding-left: 10px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">💡 Lượt gợi ý AI</div>
+          <div id="shop-user-hints" style="font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 4px;">0</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Dùng trong Quiz</div>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📦 Các Gói Đổi Gợi Ý AI</div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <!-- Package 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 1 Lượt Gợi Ý AI</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 20 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(1, 20)">
+            Đổi (20đ)
+          </button>
+        </div>
+
+        <!-- Package 2 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 5 Lượt Gợi Ý AI</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 100 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(5, 100)">
+            Đổi (100đ)
+          </button>
+        </div>
+
+        <!-- Package 3 (Discount) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(99,102,241,0.1)); border: 1px solid rgba(16,185,129,0.3);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 14px; color: var(--text);">💡 10 Lượt Gợi Ý AI</span>
+              <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">TIẾT KIỆM 20đ</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 180 điểm</div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 180)">
+            Đổi (180đ)
+          </button>
+        </div>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+        ℹ️ <strong>Quy tắc điểm Quiz:</strong><br>
+        • Đúng: A1 (+2đ), A2 (+4đ), B1 (+6đ), B2 (+8đ), C1 (+10đ), C2 (+12đ)<br>
+        • Sai: A1 (-6đ), A2 (-5đ), B1 (-4đ), B2 (-3đ), C1 (-2đ), C2 (-1đ)<br>
+        • Thành viên mới đăng ký được tặng sẵn <strong>5 lượt gợi ý miễn phí</strong>!
       </div>
     </div>
   </div>
@@ -2469,11 +2572,132 @@
     };
     let isSyncing = false;
 
+    // Economy & Hint Shop State (v0.0.8)
+    const STORAGE_KEY_USER_POINTS = 'vocaflow_user_points';
+    const STORAGE_KEY_USER_HINTS = 'vocaflow_user_hints';
+
+    function getUserPoints() {
+      const p = localStorage.getItem(STORAGE_KEY_USER_POINTS);
+      return p !== null ? parseInt(p, 10) || 0 : 0;
+    }
+
+    function getUserHints() {
+      const h = localStorage.getItem(STORAGE_KEY_USER_HINTS);
+      if (h !== null) {
+        return parseInt(h, 10) || 0;
+      }
+      if (currentUser && currentUser.email) {
+        localStorage.setItem(STORAGE_KEY_USER_HINTS, '5');
+        return 5;
+      }
+      return 0;
+    }
+
+    function setUserPoints(val) {
+      const clean = Math.max(0, parseInt(val, 10) || 0);
+      localStorage.setItem(STORAGE_KEY_USER_POINTS, clean.toString());
+      updateEconomyUI();
+      syncEconomyToCloud();
+    }
+
+    function setUserHints(val) {
+      const clean = Math.max(0, parseInt(val, 10) || 0);
+      localStorage.setItem(STORAGE_KEY_USER_HINTS, clean.toString());
+      updateEconomyUI();
+      syncEconomyToCloud();
+    }
+
+    function updateEconomyUI() {
+      const points = getUserPoints();
+      const hints = getUserHints();
+
+      const headerPoints = document.getElementById('header-points-display');
+      if (headerPoints) headerPoints.textContent = `${points}đ`;
+
+      const shopPoints = document.getElementById('shop-user-points');
+      if (shopPoints) shopPoints.textContent = points;
+
+      const shopHints = document.getElementById('shop-user-hints');
+      if (shopHints) shopHints.textContent = hints;
+
+      const quizWalletPoints = document.getElementById('quiz-wallet-points');
+      if (quizWalletPoints) quizWalletPoints.textContent = `${points}đ`;
+
+      const quizWalletHints = document.getElementById('quiz-wallet-hints');
+      if (quizWalletHints) quizWalletHints.textContent = hints;
+
+      const quizHintBtn = document.getElementById('btn-quiz-hint');
+      if (quizHintBtn) {
+        quizHintBtn.title = `Gợi ý thông minh (Còn ${hints} lượt)`;
+      }
+    }
+
+    async function syncEconomyToCloud() {
+      if (!currentUser || !currentUser.uid || !currentUser.idToken || !firebaseConfig.databaseURL) return;
+      try {
+        const payload = {
+          points: getUserPoints(),
+          hints: getUserHints(),
+          updatedAt: new Date().toISOString()
+        };
+        await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json?auth=${currentUser.idToken}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.warn('Sync economy to cloud note:', e);
+      }
+    }
+
+    async function loadEconomyFromCloud() {
+      if (!currentUser || !currentUser.uid || !currentUser.idToken || !firebaseConfig.databaseURL) return;
+      try {
+        const res = await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json?auth=${currentUser.idToken}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (typeof data.points === 'number') localStorage.setItem(STORAGE_KEY_USER_POINTS, data.points.toString());
+            if (typeof data.hints === 'number') localStorage.setItem(STORAGE_KEY_USER_HINTS, data.hints.toString());
+            updateEconomyUI();
+          }
+        }
+      } catch (e) {}
+    }
+
+    function openShopModal() {
+      updateEconomyUI();
+      openModal('modal-shop');
+    }
+
+    function buyHintsPackage(hintCount, costPoints) {
+      if (!currentUser || !currentUser.email) {
+        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
+        closeModal('modal-shop');
+        openAuthModal('login');
+        return;
+      }
+
+      const currentPoints = getUserPoints();
+      if (currentPoints < costPoints) {
+        alert(`❌ Không đủ điểm!\nBạn đang có ${currentPoints} điểm, nhưng gói này cần ${costPoints} điểm.\nHãy làm thêm Quiz để tích lũy thêm điểm nhé!`);
+        return;
+      }
+
+      if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${hintCount} Lượt Gợi Ý AI?`)) {
+        setUserPoints(currentPoints - costPoints);
+        setUserHints(getUserHints() + hintCount);
+        showToast(`🎉 Đã đổi thành công +${hintCount} lượt gợi ý AI!`);
+        updateEconomyUI();
+      }
+    }
+
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
       loadDatabase();
       loadAuthState();
+      updateEconomyUI();
       if (decks.length === 0) {
         seedSampleData();
       }
@@ -2488,6 +2712,7 @@
       // Auto-trigger sync on load if logged in
       if (currentUser && currentUser.uid) {
         handleManualSync();
+        loadEconomyFromCloud();
       }
     });
 
@@ -2501,6 +2726,7 @@
         console.error('Error loading auth state:', e);
       }
       updateAuthUI();
+      updateEconomyUI();
     }
 
     function updateAuthUI() {
@@ -4210,6 +4436,18 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }, 150);
     }
 
+    function getQuizPointDelta(cefrLevel, isCorrect) {
+      const level = (cefrLevel || '').toUpperCase().trim();
+      const correctMap = { 'A1': 2, 'A2': 4, 'B1': 6, 'B2': 8, 'C1': 10, 'C2': 12 };
+      const wrongMap = { 'A1': -6, 'A2': -5, 'B1': -4, 'B2': -3, 'C1': -2, 'C2': -1 };
+
+      if (isCorrect) {
+        return correctMap[level] !== undefined ? correctMap[level] : 6;
+      } else {
+        return wrongMap[level] !== undefined ? wrongMap[level] : -4;
+      }
+    }
+
     async function showQuizAiHint() {
       if (!quizList || quizList.length === 0 || quizIndex >= quizList.length) return;
       const questionWord = quizList[quizIndex];
@@ -4224,28 +4462,31 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      hintBox.style.display = 'block';
-
-      // 1. Check local rich metadata for instant smart cloze hint
-      let localHint = '';
-      if (questionWord.exampleSentence) {
-        // Replace question term in example sentence with [ ... ]
-        const termRegex = new RegExp(questionWord.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-        const clozeEx = questionWord.exampleSentence.replace(termRegex, '[ ... ]');
-        localHint = `💡 Ví dụ ngữ cảnh: "${clozeEx}"`;
-      } else if (questionWord.collocations && questionWord.collocations.length) {
-        localHint = `💡 Cụm từ đi kèm: ${questionWord.collocations.join(', ')}`;
-      } else if (questionWord.synonyms && questionWord.synonyms.length) {
-        localHint = `💡 Từ gần nghĩa (Synonym): ${questionWord.synonyms.join(', ')}`;
-      }
-
-      const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
-      if (!geminiApiKey) {
-        hintText.innerHTML = localHint || `💡 Từ này thuộc loại: <strong>${(questionWord.partOfSpeech || 'từ vựng').toUpperCase()}</strong> (Cấp độ: ${questionWord.cefrLevel || 'Chung'})`;
+      // 1. RULE: Only logged in users can use Hints
+      if (!currentUser || !currentUser.email) {
+        alert('🔒 Tính năng Gợi ý AI chỉ dành cho thành viên đã đăng nhập/đăng ký.\n\nVui lòng đăng nhập hoặc đăng ký tài khoản để nhận ngay 5 lượt gợi ý miễn phí!');
+        openAuthModal('login');
         return;
       }
 
-      // If user has Gemini API Key, generate an intelligent, ultra-short riddle hint!
+      // 2. RULE: Must have Gemini API Key configured
+      const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
+      if (!geminiApiKey || !geminiApiKey.trim()) {
+        alert('⚠️ Bạn chưa cấu hình Gemini API Key!\n\nVui lòng vào Cài đặt để thêm API Key trước khi sử dụng AI.');
+        openSettingsModal();
+        return;
+      }
+
+      // 3. RULE: Must have hints available
+      const currentHints = getUserHints();
+      if (currentHints <= 0) {
+        if (confirm(`🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ${getUserPoints()} điểm.\n\nBạn có muốn mở Cửa hàng để đổi 20 điểm lấy 1 lượt gợi ý mới không?`)) {
+          openShopModal();
+        }
+        return;
+      }
+
+      hintBox.style.display = 'block';
       hintText.innerHTML = '✨ <em>AI đang tạo gợi ý ngữ cảnh...</em>';
 
       try {
@@ -4264,7 +4505,13 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 60, temperature: 0.3 }
+            generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
+            safetySettings: [
+              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ]
           })
         });
         clearTimeout(timeoutId);
@@ -4273,7 +4520,9 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
           const data = await res.json();
           const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (rawHint) {
+            setUserHints(currentHints - 1);
             hintText.innerHTML = `✨ <strong>AI Gợi ý:</strong> ${escapeHtml(rawHint)}`;
+            showToast(`💡 Đã dùng 1 gợi ý AI (còn ${getUserHints()} lượt).`);
             return;
           }
         }
@@ -4281,7 +4530,21 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
         console.warn('AI Hint generation error:', err);
       }
 
+      // Fallback local smart cloze hint if AI fails
+      let localHint = '';
+      if (questionWord.exampleSentence) {
+        const termRegex = new RegExp(questionWord.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const clozeEx = questionWord.exampleSentence.replace(termRegex, '[ ... ]');
+        localHint = `💡 Ví dụ ngữ cảnh: "${clozeEx}"`;
+      } else if (questionWord.collocations && questionWord.collocations.length) {
+        localHint = `💡 Cụm từ đi kèm: ${questionWord.collocations.join(', ')}`;
+      } else if (questionWord.synonyms && questionWord.synonyms.length) {
+        localHint = `💡 Từ gần nghĩa (Synonym): ${questionWord.synonyms.join(', ')}`;
+      }
+
+      setUserHints(currentHints - 1);
       hintText.innerHTML = localHint || `💡 Từ này thuộc loại: <strong>${(questionWord.partOfSpeech || 'từ vựng').toUpperCase()}</strong> (Cấp độ: ${questionWord.cefrLevel || 'Chung'})`;
+      showToast(`💡 Đã dùng 1 gợi ý (còn ${getUserHints()} lượt).`);
     }
 
     function checkQuizAnswer(selectedButton, isCorrect) {
@@ -4289,11 +4552,14 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
       allButtons.forEach(btn => btn.classList.add('disabled'));
 
       const questionWord = quizList[quizIndex];
+      const delta = getQuizPointDelta(questionWord?.cefrLevel, isCorrect);
+      const newTotalPoints = Math.max(0, getUserPoints() + delta);
+      setUserPoints(newTotalPoints);
 
       if (isCorrect) {
         selectedButton.classList.add('correct');
-        quizScore += 10;
-        document.getElementById('quiz-score').textContent = `Điểm: ${quizScore}`;
+        quizScore += Math.max(1, delta);
+        document.getElementById('quiz-score').textContent = `Bài: +${quizScore}đ`;
 
         if (questionWord) {
           const { gain } = calculateMasteryPoints(questionWord.cefrLevel, true);
@@ -4305,7 +4571,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
             words[idx].updatedAt = questionWord.updatedAt;
           }
           saveDatabase(true);
-          showToast(`Chính xác! +${gain} điểm thuộc bài (${newScore}%)`);
+          showToast(`🎉 Đúng rồi (+${delta}đ ví)! Thuộc bài: ${newScore}%`);
         }
       } else {
         selectedButton.classList.add('wrong');
@@ -4325,7 +4591,7 @@ Chỉ trả về DUY NHẤT 1 câu gợi ý đó.`;
               btn.classList.add('correct');
             }
           });
-          showToast(`Chưa đúng! -${penalty} điểm (${newScore}%)`);
+          showToast(`⚠️ Chưa đúng (${delta}đ ví)! Thuộc bài: ${newScore}%`);
         }
       }
 

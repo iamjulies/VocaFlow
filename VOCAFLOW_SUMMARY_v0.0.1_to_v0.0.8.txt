@@ -1,0 +1,95 @@
+﻿================================================================================
+  VOCALFLOW - THE NEXT-GEN SMART VOCABULARY & FLASHCARD LEARNING ECOSYSTEM
+              TÓM TẮT HÀNH TRÌNH PHÁT TRIỂN & TÍNH NĂNG (v0.0.1 -> v0.0.8)
+================================================================================
+
+✨ TỔNG QUAN VỀ VOCAFLOW:
+VocaFlow là ứng dụng học từ vựng tiếng Anh thông minh thế hệ mới, kết hợp phương pháp lặp lại ngắt quãng (Spaced Repetition), trí tuệ nhân tạo (Gemini AI), phát âm giọng bản xứ đa ngữ và đồng bộ đám mây đa nền tảng (Windows Portable, Web App, Mobile PWA).
+
+--------------------------------------------------------------------------------
+📌 LỘ TRÌNH PHÁT TRIỂN & CÁC TÍNH NĂNG ĐỘT PHÁ THEO TỪNG PHIÊN BẢN
+--------------------------------------------------------------------------------
+
+🚀 [v0.0.1] - NỀN TẢNG CỐT LÕI & KIẾN TRÚC OFFLINE-FIRST
+• Kiến trúc Single-File SPA siêu nhẹ, tải trang tức thì, không phụ thuộc máy chủ trung gian.
+• Quản lý Bộ từ vựng (Decks): Tạo, sửa, gán màu sắc, biểu tượng emoji, gắn nhãn phân loại.
+• Hệ thống dữ liệu từ vựng chuyên sâu:
+  - Thuật ngữ (Term), Phiên âm chuẩn quốc tế (IPA), Từ loại (Noun, Verb, Adj, Phrasal Verb...).
+  - Định nghĩa tiếng Việt súc tích, câu ví dụ thực tế kèm bản dịch.
+  - Phân loại chuẩn khung tham chiếu Châu Âu (CEFR: A1, A2, B1, B2, C1, C2).
+• Chế độ Flashcard 3D: Lật thẻ tương tác hai mặt mượt mà.
+• Lưu trữ an toàn cục bộ (LocalStorage) với khả năng hoạt động 100% khi không có mạng (Offline-Ready).
+
+--------------------------------------------------------------------------------
+🔍 [v0.0.2] - TÌM KIẾM THÔNG MINH & BỘ LỌC TẬP TRUNG
+• Bộ máy tìm kiếm tức thời (Instant Search): Tìm theo từ vựng, phiên âm, định nghĩa tiếng Việt, từ đồng nghĩa/trái nghĩa.
+• Phân nhóm từ vựng theo tiến độ học tập:
+  - 🆕 Mới (0% điểm thuộc)
+  - 📖 Đang học (1% - 99%)
+  - 🎯 Đã thuộc (100% Mastery)
+• Thuật toán tính điểm tinh thông (Mastery Score Engine) theo trọng số độ khó CEFR.
+
+--------------------------------------------------------------------------------
+📥 [v0.0.3] - NHẬP / XUẤT EXCEL LINH HOẠT & SAO LƯU TOÀN DIỆN
+• Nhập dữ liệu hàng loạt từ Excel (.xlsx, .xls) và CSV với tính năng tự động nhận diện cột thông minh (Auto Column Mapping).
+• Xuất dữ liệu bộ từ ra file Excel (.xlsx) chuẩn hóa định dạng để in ấn hoặc chia sẻ cho bạn bè.
+• Hệ thống Sao lưu & Phục hồi cơ sở dữ liệu (JSON Backup & Restore) chỉ với 1 click.
+
+--------------------------------------------------------------------------------
+🎮 [v0.0.4] - CHẾ ĐỘ QUIZ TRẮC NGHIỆM TƯƠNG TÁC CAO
+• Phòng luyện trắc nghiệm 4 đáp án thông minh (Smart Distractor Engine):
+  - Tự động lấy các phương án sai cùng từ loại (Noun vs Noun, Verb vs Verb).
+  - Ưu tiên các từ trong cùng bộ bài hoặc cùng nhóm nghĩa để tạo bẫy câu hỏi chân thực, không thể đoán mò.
+• Hệ thống chấm điểm trực quan và cập nhật tiến độ thuộc bài ngay trong lúc làm bài.
+
+--------------------------------------------------------------------------------
+🤖 [v0.0.5] - TRÍ TUỆ NHÂN TẠO GEMINI AI SIÊU TỐC & KHÔNG GIỚI HẠN
+• Tích hợp Gemini 3.5 Flash Lite siêu tốc (1.7s phản hồi, tiết kiệm quota tối đa).
+• Tra cứu và điền tự động toàn bộ thông tin từ vựng (IPA, Part of speech, CEFR, nghĩa, ví dụ, từ đồng/trái nghĩa, collocations).
+• Tự động vượt qua bộ lọc an toàn để xử lý mượt mà cả tiếng lóng (slang), từ ngữ đời thường hoặc thuật ngữ nhạy cảm.
+
+--------------------------------------------------------------------------------
+☁️ [v0.0.6] - ĐỒNG BỘ ĐÁM MÂY TỰ ĐỘNG & PWA ĐA NỀN TẢNG
+• Đồng bộ 2 chiều thời gian thực với Firebase Realtime Database.
+• Tự động hợp nhất dữ liệu thông minh (Two-way Smart Conflict Resolution) chống mất dữ liệu khi dùng trên nhiều thiết bị.
+• Đăng nhập bảo mật, đăng ký tài khoản miễn phí.
+• Cài đặt làm ứng dụng độc lập (PWA) trên iPhone, iPad, Android, Windows, Mac.
+
+--------------------------------------------------------------------------------
+🎧 [v0.0.7] - AUTO FLASHCARD RẢNH TAY & AUDIO PRELOAD BUFFER (60+ TỪ)
+• Chế độ học thụ động Auto Flashcard (Hands-Free Passive Learning):
+  - Tự động phát âm tiếng Anh chuẩn ➡️ dừng ngắt nhịp 1.4s ➡️ tự lật mặt sau ➡️ phát âm nghĩa tiếng Việt ➡️ tự chuyển từ tiếp theo.
+  - Tùy chỉnh độc lập tốc độ đọc tiếng Anh (0.5x - 1.5x) và tiếng Việt (0.5x - 1.5x).
+• Bộ đệm âm thanh & Tải trước chạy ngầm (Audio Preload Buffer & Blob Cache):
+  - Tự động tải trước 3 từ tiếp theo ở chế độ nền.
+  - Khắc phục triệt để tình trạng nghẽn mạng/mất tiếng khi học các bộ từ dài 60+ từ.
+• Quiz tự động cất giọng đọc câu hỏi kiểu Duolingo ngay khi chuyển câu.
+
+--------------------------------------------------------------------------------
+🏪 [v0.0.8] - CỬA HÀNG ĐỔI ĐIỂM (VOCASHOP) & HỆ THỐNG GỢI Ý AI THÔNG MINH
+• Hệ sinh thái Điểm thưởng Quiz theo cấp độ CEFR chuẩn quốc tế:
+  - Trả lời ĐÚNG: A1 (+2đ), A2 (+4đ), B1 (+6đ), B2 (+8đ), C1 (+10đ), C2 (+12đ).
+  - Trả lời SAI: A1 (-6đ), A2 (-5đ), B1 (-4đ), B2 (-3đ), C1 (-2đ), C2 (-1đ).
+• Cửa Hàng VocaShop:
+  - Đổi điểm tích lũy lấy Lượt Gợi Ý AI (20 điểm = 1 gợi ý).
+  - Gói ưu đãi tiết kiệm: 10 lượt = 180 điểm (Tiết kiệm 20 điểm).
+• Nút Gợi Ý AI (AI Hint) trong Quiz:
+  - Tặng sẵn 5 lượt gợi ý miễn phí cho thành viên mới đăng ký.
+  - AI tạo 1 câu đố ngữ cảnh bí ẩn dưới 15 từ giúp kích thích tư duy người học mà không làm lộ đáp án.
+  - Phân quyền chặt chẽ: Yêu cầu đăng nhập tài khoản và có Gemini API Key để kích hoạt AI.
+• Nâng cấp giao diện: Khắc phục độ tương phản màu chữ Gợi ý ở Giao diện Sáng (Light Theme) và Tối (Dark Theme).
+
+================================================================================
+💎 TỔNG KẾT CÁC ĐIỂM NỔI BẬT NHẤT CỦA VOCAFLOW ĐỂ QUẢNG BÁ:
+1. 🧠 Có AI thông minh hỗ trợ tạo từ, gợi ý Quiz và giải nghĩa câu đố độc đáo.
+2. 🏪 Hệ sinh thái Shop tích điểm theo độ khó CEFR kích thích học tập như chơi game.
+3. 🎧 Chế độ Auto Flashcard đọc song ngữ EN-VI rảnh tay có bộ đệm âm thanh chạy ngầm mượt mà.
+4. ☁️ Đồng bộ đám mây mượt mà: Học trên máy tính, ôn lại trên điện thoại mọi lúc mọi nơi.
+5. 🎮 Trắc nghiệm Quiz tương tác cao, bẫy phương án cùng từ loại, theo dõi độ nhớ từ từ 0% đến 100%.
+6. 📂 Tương thích hoàn toàn với Excel: Nhập và xuất dữ liệu dễ dàng trong 3 giây.
+7. ⚡ Dung lượng siêu nhẹ, chạy mượt, giao diện Dark/Light Mode hiện đại, hỗ trợ PWA offline 100%.
+
+================================================================================
+🌐 TRẢI NGHIỆM TRỰC TUYẾN: https://iamjulies.github.io/VocaFlow/
+💻 BẢN WINDOWS PORTABLE: Tải trực tiếp trong thư mục GITHUB_RELEASE
+================================================================================
