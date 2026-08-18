@@ -459,17 +459,24 @@
 
     .chip-group {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       overflow-x: auto;
-      padding-bottom: 0;
-      flex-shrink: 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 2px 4px;
+      max-width: 100%;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .chip-group::-webkit-scrollbar {
+      display: none;
     }
     .chip {
-      padding: 3px 9px;
-      border-radius: 6px;
-      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
       font-weight: 600;
-      height: 28px;
+      height: 30px;
       display: inline-flex;
       align-items: center;
       background-color: var(--surface);
@@ -479,11 +486,18 @@
       user-select: none;
       transition: all 0.2s ease;
       white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .chip:hover {
+      border-color: var(--primary);
+      color: var(--text);
     }
     .chip.active {
-      background-color: var(--primary);
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
       color: white;
-      border-color: var(--primary);
+      border-color: #4f46e5;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
     }
 
     /* WORD LIST & CARD REDESIGN */
@@ -1443,7 +1457,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.8</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.8.9</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1630,14 +1644,46 @@
           </div>
         </div>
 
-        <!-- ROW 3: SLIM FILTER & SEARCH BAR -->
+        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER -->
         <div class="filter-bar">
           <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()">
-          <div class="chip-group">
-            <div class="chip active" onclick="setWordFilter('all', this)">Tất cả</div>
-            <div class="chip" onclick="setWordFilter('newWord', this)">Mới (0%)</div>
-            <div class="chip" onclick="setWordFilter('learning', this)">Đang học (1-99%)</div>
-            <div class="chip" onclick="setWordFilter('mastered', this)">Đã thuộc (100%)</div>
+          <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
+            🎚️ <span class="hide-on-mobile">Lọc điểm</span>
+          </button>
+          <div class="chip-group" id="deck-word-filter-chips">
+            <div class="chip active" onclick="setWordFilter('all', this)">🎓 Tất cả (<span id="chip-count-all">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('0', this)">🌱 Mới 0% (<span id="chip-count-0">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('1-25', this)">🐣 Vừa học 1-25% (<span id="chip-count-1-25">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('26-50', this)">🌿 Hơi thuộc 26-50% (<span id="chip-count-26-50">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('51-75', this)">🌳 Khá thuộc 51-75% (<span id="chip-count-51-75">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('76-99', this)">⭐ Sắp thuộc 76-99% (<span id="chip-count-76-99">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('100', this)">👑 Đã thuộc 100% (<span id="chip-count-100">0</span>)</div>
+          </div>
+        </div>
+
+        <!-- EXPANDABLE RANGE SLIDER FILTER PANEL -->
+        <div id="mastery-slider-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>🎚️</span> Thanh Trượt Lọc Mức Độ Thuộc: <span id="slider-range-val" style="color: #818cf8; font-family: monospace; font-size: 13px;">0% - 100%</span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="resetMasterySlider()" style="font-size: 11px; padding: 2px 8px;">🔄 Đặt lại (0 - 100%)</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
+                <span>Điểm tối thiểu (Min):</span>
+                <strong id="label-min-score" style="color: #818cf8;">0%</strong>
+              </div>
+              <input type="range" id="mastery-min-slider" min="0" max="100" value="0" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #6366f1;">
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
+                <span>Điểm tối đa (Max):</span>
+                <strong id="label-max-score" style="color: #10b981;">100%</strong>
+              </div>
+              <input type="range" id="mastery-max-slider" min="0" max="100" value="100" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #10b981;">
+            </div>
           </div>
         </div>
       </div>
@@ -1971,6 +2017,17 @@
         <div class="form-group">
           <label class="form-label">Ghi chú thêm</label>
           <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
+        </div>
+
+        <div class="form-group" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Mức độ thuộc từ:</label>
+            <span id="modal-word-mastery-badge" class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);">🌱 Mới 0%</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="range" id="word-mastery-slider" min="0" max="100" step="5" value="0" oninput="updateWordModalMasteryPreview(this.value)" style="flex: 1; accent-color: #6366f1;">
+            <span id="modal-word-mastery-val" style="font-size: 13px; font-weight: 700; font-family: monospace; color: #818cf8; width: 42px; text-align: right;">0%</span>
+          </div>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
@@ -2339,7 +2396,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.8</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.8.9</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4040,26 +4097,232 @@
     }
 
     // =========================================================================
-    // MULTI-SELECTION & FILTER ENGINE
+    // MULTI-SELECTION, MULTI-TIER MASTERY & SLIDER FILTER ENGINE (v0.0.8.9)
     // =========================================================================
     let selectedWordIds = new Set();
+    let currentWordFilter = 'all'; // 'all' | '0' | '1-25' | '26-50' | '51-75' | '76-99' | '100' | 'custom-range'
+    let customMinScore = 0;
+    let customMaxScore = 100;
+
+    function getWordScore(w) {
+      if (typeof w.masteryScore === 'number') return w.masteryScore;
+      if (w.status === 'mastered') return 100;
+      if (w.status === 'learning') return 40;
+      return 0;
+    }
+
+    function getWordMasteryInfo(score) {
+      if (score >= 100) {
+        return {
+          label: 'ðŸ‘‘ ÄÃ£ thuá»™c (100%)',
+          shortLabel: '100% ÄÃ£ thuá»™c',
+          tier: 'mastered',
+          badgeStyle: 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);',
+          trackColor: '#10b981'
+        };
+      }
+      if (score >= 76) {
+        return {
+          label: `â­ Sáº¯p thuá»™c (${score}%)`,
+          shortLabel: `${score}% Sáº¯p thuá»™c`,
+          tier: 'tier4',
+          badgeStyle: 'background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35);',
+          trackColor: '#8b5cf6'
+        };
+      }
+      if (score >= 51) {
+        return {
+          label: `ðŸŒ³ KhÃ¡ thuá»™c (${score}%)`,
+          shortLabel: `${score}% KhÃ¡ thuá»™c`,
+          tier: 'tier3',
+          badgeStyle: 'background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35);',
+          trackColor: '#3b82f6'
+        };
+      }
+      if (score >= 26) {
+        return {
+          label: `ðŸŒ¿ HÆ¡i thuá»™c (${score}%)`,
+          shortLabel: `${score}% HÆ¡i thuá»™c`,
+          tier: 'tier2',
+          badgeStyle: 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);',
+          trackColor: '#f59e0b'
+        };
+      }
+      if (score >= 1) {
+        return {
+          label: `ðŸ£ Vá»«a há»c (${score}%)`,
+          shortLabel: `${score}% Vá»«a há»c`,
+          tier: 'tier1',
+          badgeStyle: 'background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.35);',
+          trackColor: '#06b6d4'
+        };
+      }
+      return {
+        label: 'ðŸŒ± Má»›i (0%)',
+        shortLabel: '0% Má»›i',
+        tier: 'new',
+        badgeStyle: 'background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);',
+        trackColor: '#64748b'
+      };
+    }
 
     function getFilteredDeckWords() {
       const query = (document.getElementById('word-search-input')?.value || '').toLowerCase().trim();
       let deckWords = words.filter(w => w.deckId === currentDeckId);
 
-      if (currentWordFilter !== 'all') {
-        deckWords = deckWords.filter(w => w.status === currentWordFilter);
+      // Filter by mastery tier / range
+      if (currentWordFilter === '0') {
+        deckWords = deckWords.filter(w => getWordScore(w) === 0);
+      } else if (currentWordFilter === '1-25') {
+        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 1 && s <= 25; });
+      } else if (currentWordFilter === '26-50') {
+        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 26 && s <= 50; });
+      } else if (currentWordFilter === '51-75') {
+        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 51 && s <= 75; });
+      } else if (currentWordFilter === '76-99') {
+        deckWords = deckWords.filter(w => { const s = getWordScore(w); return s >= 76 && s <= 99; });
+      } else if (currentWordFilter === '100') {
+        deckWords = deckWords.filter(w => getWordScore(w) >= 100);
+      } else if (currentWordFilter === 'custom-range') {
+        deckWords = deckWords.filter(w => {
+          const s = getWordScore(w);
+          return s >= customMinScore && s <= customMaxScore;
+        });
       }
 
       if (query) {
         deckWords = deckWords.filter(w => 
-          w.term.toLowerCase().includes(query) ||
-          w.definitionVi.toLowerCase().includes(query) ||
-          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query)))
+          (w.term || '').toLowerCase().includes(query) ||
+          (w.definitionVi || w.definition || '').toLowerCase().includes(query) ||
+          (w.exampleSentence || w.example || '').toLowerCase().includes(query) ||
+          (w.synonyms && w.synonyms.some(s => s.toLowerCase().includes(query))) ||
+          (w.collocations && w.collocations.some(c => c.toLowerCase().includes(query)))
         );
       }
       return deckWords;
+    }
+
+    function updateMasteryChipCounts() {
+      const allDeckWords = words.filter(w => w.deckId === currentDeckId);
+      const countAll = allDeckWords.length;
+      let count0 = 0, count1_25 = 0, count26_50 = 0, count51_75 = 0, count76_99 = 0, count100 = 0;
+
+      allDeckWords.forEach(w => {
+        const s = getWordScore(w);
+        if (s === 0) count0++;
+        else if (s <= 25) count1_25++;
+        else if (s <= 50) count26_50++;
+        else if (s <= 75) count51_75++;
+        else if (s <= 99) count76_99++;
+        else count100++;
+      });
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setTxt('chip-count-all', countAll);
+      setTxt('chip-count-0', count0);
+      setTxt('chip-count-1-25', count1_25);
+      setTxt('chip-count-26-50', count26_50);
+      setTxt('chip-count-51-75', count51_75);
+      setTxt('chip-count-76-99', count76_99);
+      setTxt('chip-count-100', count100);
+    }
+
+    function toggleMasterySliderPanel() {
+      const panel = document.getElementById('mastery-slider-panel');
+      if (!panel) return;
+      const isHidden = panel.style.display === 'none' || !panel.style.display;
+      panel.style.display = isHidden ? 'block' : 'none';
+      const btn = document.getElementById('btn-toggle-mastery-slider');
+      if (btn) {
+        btn.style.background = isHidden ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.08)';
+      }
+    }
+
+    function handleMasterySliderChange() {
+      const minSlider = document.getElementById('mastery-min-slider');
+      const maxSlider = document.getElementById('mastery-max-slider');
+      if (!minSlider || !maxSlider) return;
+
+      let min = parseInt(minSlider.value, 10);
+      let max = parseInt(maxSlider.value, 10);
+      if (min > max) {
+        min = max;
+        minSlider.value = min;
+      }
+
+      customMinScore = min;
+      customMaxScore = max;
+
+      const rangeVal = document.getElementById('slider-range-val');
+      const labelMin = document.getElementById('label-min-score');
+      const labelMax = document.getElementById('label-max-score');
+
+      if (rangeVal) rangeVal.textContent = `${min}% - ${max}%`;
+      if (labelMin) labelMin.textContent = `${min}%`;
+      if (labelMax) labelMax.textContent = `${max}%`;
+
+      currentWordFilter = 'custom-range';
+      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
+      renderWordList();
+    }
+
+    function resetMasterySlider() {
+      const minSlider = document.getElementById('mastery-min-slider');
+      const maxSlider = document.getElementById('mastery-max-slider');
+      if (minSlider) minSlider.value = 0;
+      if (maxSlider) maxSlider.value = 100;
+      customMinScore = 0;
+      customMaxScore = 100;
+
+      const rangeVal = document.getElementById('slider-range-val');
+      const labelMin = document.getElementById('label-min-score');
+      const labelMax = document.getElementById('label-max-score');
+
+      if (rangeVal) rangeVal.textContent = '0% - 100%';
+      if (labelMin) labelMin.textContent = '0%';
+      if (labelMax) labelMax.textContent = '100%';
+
+      currentWordFilter = 'all';
+      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
+      const firstChip = document.querySelector('#deck-word-filter-chips .chip');
+      if (firstChip) firstChip.classList.add('active');
+      renderWordList();
+    }
+
+    function setWordFilter(filter, el) {
+      currentWordFilter = filter;
+      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderWordList();
+    }
+
+    function updateWordModalMasteryPreview(val) {
+      val = parseInt(val, 10) || 0;
+      const valEl = document.getElementById('modal-word-mastery-val');
+      const badgeEl = document.getElementById('modal-word-mastery-badge');
+      if (valEl) valEl.textContent = `${val}%`;
+      if (badgeEl) {
+        const info = getWordMasteryInfo(val);
+        badgeEl.textContent = info.label;
+        badgeEl.setAttribute('style', info.badgeStyle);
+      }
+    }
+
+    function quickAdjustWordScore(wordId) {
+      const w = words.find(item => item.id === wordId);
+      if (!w) return;
+      const cur = getWordScore(w);
+      const tiers = [0, 25, 50, 75, 90, 100];
+      let next = 0;
+      for (let i = 0; i < tiers.length; i++) {
+        if (tiers[i] > cur) { next = tiers[i]; break; }
+      }
+      w.masteryScore = next;
+      w.status = next >= 100 ? 'mastered' : (next > 0 ? 'learning' : 'newWord');
+      w.updatedAt = new Date().toISOString();
+      saveDatabase(true);
+      renderWordList();
+      showToast(`ðŸŽ¯ ÄÃ£ cáº­p nháº­t "${w.term}": ${next}% (${getWordMasteryInfo(next).shortLabel})`);
     }
 
     function toggleWordSelect(wordId, isChecked) {
@@ -4095,7 +4358,7 @@
       const btnDeleteSelected = document.getElementById('btn-delete-selected');
       const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
 
-      if (countBadge) countBadge.textContent = count > 0 ? `${count} từ được chọn` : '0 từ được chọn';
+      if (countBadge) countBadge.textContent = count > 0 ? `${count} tá»« Ä‘Æ°á»£c chá»n` : '0 tá»« Ä‘Æ°á»£c chá»n';
       const countSuffix = count > 0 ? ` (${count})` : '';
       if (fcLabel) fcLabel.textContent = countSuffix;
       if (autofcLabel) autofcLabel.textContent = countSuffix;
@@ -4110,14 +4373,14 @@
 
     function deleteSelectedWords() {
       if (selectedWordIds.size === 0) return;
-      if (!confirm(`Bạn có chắc chắn muốn xóa ${selectedWordIds.size} từ vựng đã chọn?`)) return;
+      if (!confirm(`Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a ${selectedWordIds.size} tá»« vá»±ng Ä‘Ã£ chá»n?`)) return;
 
       words = words.filter(w => !selectedWordIds.has(w.id));
       selectedWordIds.clear();
       saveDatabase(true);
       renderWordList();
       updateSelectionUI();
-      showToast('Đã xóa các từ đã chọn!');
+      showToast('ÄÃ£ xÃ³a cÃ¡c tá»« Ä‘Ã£ chá»n!');
     }
 
     // =========================================================================
@@ -4138,9 +4401,7 @@
         gain = Math.round(baseGain * 1.5);
       }
 
-      // Penalty is 50% of the gain, rounded up (e.g. 6*0.5=3, 5*0.5=2.5->3, 1*0.5=0.5->1)
       const penalty = Math.ceil(gain * 0.5);
-
       return { gain, penalty };
     }
 
@@ -4191,7 +4452,7 @@
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isPinned ? `📌 Đã ghim bộ từ "${deck.title}" lên đầu!` : `Đã bỏ ghim bộ từ "${deck.title}"`);
+      showToast(deck.isPinned ? `ðŸ“Œ ÄÃ£ ghim bá»™ tá»« "${deck.title}" lÃªn Ä‘áº§u!` : `ÄÃ£ bá» ghim bá»™ tá»« "${deck.title}"`);
     }
 
     function toggleArchiveDeck(deckId) {
@@ -4200,7 +4461,7 @@
 
       deck.isArchived = !deck.isArchived;
       if (deck.isArchived) {
-        deck.isPinned = false; // Unpin automatically when archiving
+        deck.isPinned = false;
       }
       deck.updatedAt = new Date().toISOString();
       saveDatabase(true);
@@ -4215,7 +4476,7 @@
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isArchived ? `📦 Đã cất bộ từ "${deck.title}" vào Kho Lưu Trữ!` : `🔄 Đã khôi phục bộ từ "${deck.title}" về danh sách đang học!`);
+      showToast(deck.isArchived ? `ðŸ“¦ ÄÃ£ cáº¥t bá»™ tá»« "${deck.title}" vÃ o Kho LÆ°u Trá»¯!` : `ðŸ”„ ÄÃ£ khÃ´i phá»¥c bá»™ tá»« "${deck.title}" vá» danh sÃ¡ch Ä‘ang há»c!`);
     }
 
     function updateDeckDetailHeader() {
@@ -4225,13 +4486,13 @@
       const pinBtn = document.getElementById('btn-detail-pin');
       if (pinBtn) {
         pinBtn.classList.toggle('active-pin-btn', !!deck.isPinned);
-        pinBtn.title = deck.isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu';
+        pinBtn.title = deck.isPinned ? 'Bá» ghim bá»™ tá»«' : 'Ghim bá»™ tá»« lÃªn Ä‘áº§u';
       }
 
       const archiveBtn = document.getElementById('btn-detail-archive');
       if (archiveBtn) {
         archiveBtn.innerHTML = `<svg class="icon icon-sm"><use href="#${deck.isArchived ? 'i-unarchive' : 'i-archive'}"/></svg>`;
-        archiveBtn.title = deck.isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất bộ từ này)';
+        archiveBtn.title = deck.isArchived ? 'KhÃ´i phá»¥c vá» danh sÃ¡ch Ä‘ang há»c' : 'LÆ°u trá»¯ (Cáº¥t bá»™ tá»« nÃ y)';
       }
     }
 
@@ -4244,15 +4505,7 @@
       container.innerHTML = '';
 
       const activeDecks = decks.filter(d => !d.isArchived);
-      const archivedDecks = decks.filter(d => !!d.isArchived);
-
-      // Update Tab Badges & Active State
-      const tabActive = document.getElementById('tab-active-decks');
-      const tabArchived = document.getElementById('tab-archived-decks');
-      if (tabActive && tabArchived) {
-        tabActive.classList.toggle('active', currentDeckTab === 'active');
-        tabArchived.classList.toggle('active', currentDeckTab === 'archived');
-      }
+      const archivedDecks = decks.filter(d => !d.isArchived);
 
       const countActive = document.getElementById('count-active-decks');
       const countArchived = document.getElementById('count-archived-decks');
@@ -4261,15 +4514,13 @@
 
       let displayDecks = [];
       if (currentDeckTab === 'active') {
-        // Pinned decks first, then newest updated
         displayDecks = [...activeDecks].sort((a, b) => {
-          if (!!a.isPinned !== !!b.isPinned) {
+          if (!!a.isPinned !== !b.isPinned) {
             return a.isPinned ? -1 : 1;
           }
           return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
         });
       } else {
-        // Archived decks sorted newest first
         displayDecks = [...archivedDecks].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
       }
 
@@ -4277,17 +4528,17 @@
         if (currentDeckTab === 'active') {
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
-              <div style="font-size: 40px; margin-bottom: 10px;">📚</div>
-              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Bạn Chưa Có Bộ Từ Vựng Nào</h3>
+              <div style="font-size: 40px; margin-bottom: 10px;">ðŸ“š</div>
+              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Báº¡n ChÆ°a CÃ³ Bá»™ Tá»« Vá»±ng NÃ o</h3>
               <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px; max-width: 460px; margin-inline: auto; line-height: 1.5;">
-                Khám phá ngay Kho từ vựng Tiếng Anh <strong>Lớp 10, 11, 12 Trọng tâm</strong> có sẵn trong Thư Viện để bắt đầu ôn luyện ngay chỉ với 1-Click!
+                KhÃ¡m phÃ¡ ngay Kho tá»« vá»±ng Tiáº¿ng Anh <strong>Lá»›p 10, 11, 12 Trá»ng tÃ¢m</strong> cÃ³ sáºµn trong ThÆ° Viá»‡n Ä‘á»ƒ báº¯t Ä‘áº§u Ã´n luyá»‡n ngay chá»‰ vá»›i 1-Click!
               </p>
               <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="openLibraryModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 18px;">
-                  📚 Khám Phá Thư Viện Từ Vựng (1-Click)
+                  ðŸ“š KhÃ¡m PhÃ¡ ThÆ° Viá»‡n Tá»« Vá»±ng (1-Click)
                 </button>
                 <button class="btn btn-outline" onclick="openDeckModal()">
-                  <svg class="icon"><use href="#i-add"/></svg> Tạo Bộ Từ Riêng
+                  <svg class="icon"><use href="#i-add"/></svg> Táº¡o Bá»™ Tá»« RiÃªng
                 </button>
               </div>
             </div>
@@ -4296,8 +4547,8 @@
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
               <svg class="icon icon-xl" style="fill: var(--text-muted); margin-bottom: 12px;"><use href="#i-archive"/></svg>
-              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho lưu trữ đang trống</h3>
-              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi học xong một bộ từ hoặc muốn tạm ẩn đi cho gọn gàng, bạn hãy bấm nút <strong>"Lưu trữ"</strong> ở bộ từ đó nhé!</p>
+              <h3 style="font-size: 18px; margin-bottom: 6px;">Kho lÆ°u trá»¯ Ä‘ang trá»‘ng</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi há»c xong má»™t bá»™ tá»« hoáº·c muá»‘n táº¡m áº©n Ä‘i cho gá»n gÃ ng, báº¡n hÃ£y báº¥m nÃºt <strong>"LÆ°u trá»¯"</strong> á»Ÿ bá»™ tá»« Ä‘Ã³ nhÃ©!</p>
             </div>
           `;
         }
@@ -4307,14 +4558,11 @@
       displayDecks.forEach(deck => {
         const deckWords = words.filter(w => w.deckId === deck.id);
         const total = deckWords.length;
-        const mastered = deckWords.filter(w => w.status === 'mastered').length;
+        const mastered = deckWords.filter(w => getWordScore(w) >= 100).length;
 
         let avgScore = 0;
         if (total > 0) {
-          const totalScore = deckWords.reduce((sum, w) => {
-            const s = typeof w.masteryScore === 'number' ? w.masteryScore : (w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0));
-            return sum + s;
-          }, 0);
+          const totalScore = deckWords.reduce((sum, w) => sum + getWordScore(w), 0);
           avgScore = Math.round(totalScore / total);
         }
 
@@ -4328,44 +4576,39 @@
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
-              ${isPinned ? `<span class="badge badge-pinned" title="Bộ từ đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>` : ''}
-              ${isArchived ? `<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>` : ''}
+              ${isPinned ? `<span class="badge badge-pinned" title="Bá»™ tá»« Ä‘Ã£ Ä‘Æ°á»£c ghim lÃªn Ä‘áº§u"><svg class="icon icon-sm"><use href="#i-pin"/></svg> ÄÃ£ ghim</span>` : ''}
+              ${isArchived ? `<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> ÄÃ£ lÆ°u trá»¯</span>` : ''}
             </div>
-            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} từ</span>
+            <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} tá»«</span>
           </div>
-          <p class="deck-desc">${escapeHtml(deck.description || 'Chưa có mô tả')}</p>
+          <p class="deck-desc">${escapeHtml(deck.description || 'ChÆ°a cÃ³ mÃ´ táº£')}</p>
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" style="width: ${avgScore}%;"></div>
           </div>
           <div class="deck-stats">
-            <span>Mức độ thuộc: ${avgScore}%</span>
-            <span>Đã thuộc: ${mastered}/${total}</span>
+            <span>Má»©c Ä‘á»™ thuá»™c: ${avgScore}%</span>
+            <span>ÄÃ£ thuá»™c: ${mastered}/${total}</span>
           </div>
           <div class="deck-timestamp">
-            <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+            <span>ðŸ•’ Cáº­p nháº­t: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
           </div>
 
-          <!-- Responsive Deck Actions Footer -->
-          <div class="deck-card-actions" onclick="event.stopPropagation()">
-            <div class="deck-card-actions-left">
-              ${!isArchived ? `
-                <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu'}">
-                  <svg class="icon icon-sm"><use href="#i-pin"/></svg>
-                  <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
-                </button>
-              ` : ''}
-            </div>
-            <div class="deck-card-actions-right">
-              <button class="btn btn-outline btn-sm" onclick="toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Khôi phục về danh sách đang học' : 'Cất bộ từ vào kho lưu trữ'}">
-                <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg>
-                <span>${isArchived ? 'Khôi phục' : 'Lưu trữ'}</span>
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="editDeck('${deck.id}')" title="Sửa bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg> Sửa</button>
-              <button class="btn btn-outline btn-sm" onclick="deleteDeck('${deck.id}')" title="Xóa bộ từ" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa</button>
-            </div>
+          <div class="deck-actions-grid">
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sá»­a thÃ´ng tin bá»™ tá»«">
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span class="hide-on-mobile">Sá»­a</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'KhÃ´i phá»¥c vá» danh sÃ¡ch Ä‘ang há»c' : 'LÆ°u trá»¯ (Cáº¥t bá»™ tá»«)'}">
+              <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'KhÃ´i phá»¥c' : 'LÆ°u trá»¯'}</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openDeckDetail('${deck.id}')" title="Má»Ÿ danh sÃ¡ch tá»« vá»±ng">
+              <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Xem Bá»™ Tá»«</span>
+            </button>
           </div>
         `;
-        card.onclick = () => openDeckDetail(deck.id);
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
+          openDeckDetail(deck.id);
+        });
         container.appendChild(card);
       });
     }
@@ -4377,13 +4620,11 @@
       document.getElementById('deck-id').value = deck.id;
       document.getElementById('deck-title').value = deck.title;
       document.getElementById('deck-desc').value = deck.description || '';
-      
-      const colorRadios = document.querySelectorAll('input[name="deck-color"]');
-      colorRadios.forEach(r => {
-        r.checked = (r.value === (deck.color || '#4f46e5'));
-      });
 
-      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
+      const colorRadio = document.querySelector(`input[name="deck-color"][value="${deck.color || '#4f46e5'}"]`);
+      if (colorRadio) colorRadio.checked = true;
+
+      document.getElementById('modal-deck-title').textContent = 'Chá»‰nh Sá»­a Bá»™ Tá»«';
       openModal('modal-deck');
     }
 
@@ -4391,7 +4632,7 @@
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      if (!confirm(`Bạn có chắc chắn muốn xóa bộ từ "${deck.title}" và toàn bộ từ vựng bên trong?`)) {
+      if (!confirm(`Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a bá»™ tá»« "${deck.title}" vÃ  toÃ n bá»™ tá»« vá»±ng bÃªn trong?`)) {
         return;
       }
 
@@ -4403,7 +4644,7 @@
       if (currentDeckId === deckId) {
         showScreen('screen-decks');
       }
-      showToast(`Đã xóa bộ từ "${deck.title}"!`);
+      showToast(`ÄÃ£ xÃ³a bá»™ tá»« "${deck.title}"!`);
     }
 
     // OPEN DECK DETAIL
@@ -4417,10 +4658,20 @@
       document.getElementById('deck-detail-desc').textContent = deck.description || '';
       const timeEl = document.getElementById('deck-detail-timestamp');
       if (timeEl) {
-        timeEl.textContent = `🕒 Tạo: ${formatDateOnly(deck.createdAt || deck.updatedAt)}`;
+        timeEl.textContent = `ðŸ•’ Táº¡o: ${formatDateOnly(deck.createdAt || deck.updatedAt)}`;
       }
       document.getElementById('word-search-input').value = '';
       currentWordFilter = 'all';
+
+      // Reset slider panel
+      const panel = document.getElementById('mastery-slider-panel');
+      if (panel) panel.style.display = 'none';
+      const minSlider = document.getElementById('mastery-min-slider');
+      const maxSlider = document.getElementById('mastery-max-slider');
+      if (minSlider) minSlider.value = 0;
+      if (maxSlider) maxSlider.value = 100;
+      customMinScore = 0;
+      customMaxScore = 100;
 
       updateDeckDetailHeader();
       renderWordList();
@@ -4428,21 +4679,22 @@
       showScreen('screen-deck-detail');
     }
 
-    // RENDER WORD LIST WITH MOBILE-OPTIMIZED RESPONSIVE CARDS
+    // RENDER WORD LIST WITH MULTI-TIER MASTERY CARDS
     function renderWordList() {
       const container = document.getElementById('word-list-container');
       container.innerHTML = '';
 
+      updateMasteryChipCounts();
       const deckWords = getFilteredDeckWords();
 
       if (deckWords.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
-            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Chưa có từ vựng nào trong bộ này</p>
-            <p style="font-size: 12px; margin-bottom: 16px;">Hãy bấm nút bên dưới để thêm từ vựng mới (nhập tay hoặc dùng AI điền tự động)!</p>
-            <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;">
-              <svg class="icon"><use href="#i-add"/></svg> Thêm Từ Vựng Mới
+          <div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; margin-top: 10px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">ðŸ“–</div>
+            <p style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">KhÃ´ng tÃ¬m tháº¥y tá»« vá»±ng nÃ o</p>
+            <p style="font-size: 12px; margin-bottom: 16px;">KhÃ´ng cÃ³ tá»« nÃ o phÃ¹ há»£p vá»›i bá»™ lá»c hoáº·c tÃ¬m kiáº¿m hiá»‡n táº¡i.</p>
+            <button class="btn btn-primary" onclick="openWordModal()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
+              <svg class="icon"><use href="#i-add"/></svg> ThÃªm Tá»« Vá»±ng Má»›i
             </button>
           </div>
         `;
@@ -4455,50 +4707,47 @@
         item.className = 'word-item' + (selectedWordIds.has(w.id) ? ' selected' : '');
         item.id = `word-item-${w.id}`;
 
-        const score = typeof w.masteryScore === 'number' ? w.masteryScore : (
-          w.status === 'mastered' ? 100 : (w.status === 'learning' ? 40 : 0)
-        );
-
-        let statusBadge = `<span class="badge badge-new">${score}%</span>`;
-        if (score >= 100 || w.status === 'mastered') statusBadge = `<span class="badge badge-mastered">🎯 100%</span>`;
-        else if (score > 0 || w.status === 'learning') statusBadge = `<span class="badge badge-learning">⚡ ${score}%</span>`;
+        const score = getWordScore(w);
+        const masteryInfo = getWordMasteryInfo(score);
 
         const cefrBadge = w.cefrLevel ? `<span class="badge badge-cefr">${w.cefrLevel}</span>` : '';
-        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">≈ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
-        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">≠ ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
-        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">• ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
+        const synText = w.synonyms && w.synonyms.length ? `<span class="tag-syn">â‰ˆ ${escapeHtml(w.synonyms.slice(0, 3).join(', '))}</span>` : '';
+        const antText = w.antonyms && w.antonyms.length ? `<span class="tag-ant">â‰  ${escapeHtml(w.antonyms.slice(0, 2).join(', '))}</span>` : '';
+        const collText = w.collocations && w.collocations.length ? `<span class="tag-coll">â€¢ ${escapeHtml(w.collocations.slice(0, 2).join(', '))}</span>` : '';
 
         item.innerHTML = `
           <div class="word-item-header">
             <div class="word-item-left">
-              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
+              <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chá»n tá»« nÃ y Ä‘á»ƒ há»c">
               <span class="word-term">${escapeHtml(w.term)}</span>
               ${cefrBadge}
               ${w.partOfSpeech ? `<span class="badge badge-pos">${w.partOfSpeech}</span>` : ''}
-              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Phát âm">
+              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="PhÃ¡t Ã¢m">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
             </div>
             <div class="word-item-right">
-              ${statusBadge}
-              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+              <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Báº¥m Ä‘á»ƒ Ä‘á»•i nhanh má»©c Ä‘á»™ thuá»™c (0% -> 25% -> 50% -> 75% -> 90% -> 100%)">
+                ${masteryInfo.label}
+              </span>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sá»­a"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="XÃ³a"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
             </div>
           </div>
 
           <div class="word-item-body">
             ${w.phonetic ? `<div class="word-phonetic">${escapeHtml(w.phonetic)}</div>` : ''}
-            <div class="word-def">${escapeHtml(w.definitionVi)}</div>
-            ${w.exampleSentence ? `<div class="word-example">“${escapeHtml(w.exampleSentence)}”</div>` : ''}
+            <div class="word-def">${escapeHtml(w.definitionVi || w.definition || '')}</div>
+            ${w.exampleSentence ? `<div class="word-example">â€œ${escapeHtml(w.exampleSentence)}â€</div>` : ''}
             
             ${(synText || antText || collText) ? `<div class="word-tags">${synText} ${antText} ${collText}</div>` : ''}
 
             <div class="word-mastery-row">
-              <div class="word-mastery-track">
-                <div class="word-mastery-fill" style="width: ${score}%;"></div>
+              <div class="word-mastery-track" style="cursor: pointer;" onclick="quickAdjustWordScore('${w.id}')" title="Báº¥m Ä‘á»ƒ tÄƒng má»©c Ä‘á»™ thuá»™c">
+                <div class="word-mastery-fill" style="width: ${score}%; background: ${masteryInfo.trackColor};"></div>
               </div>
-              <span class="word-mastery-score-text">${score}/100đ</span>
-              <span class="word-timestamp">🕒 ${formatDateTime(w.updatedAt || w.createdAt)}</span>
+              <span class="word-mastery-score-text" style="color: ${masteryInfo.trackColor}; font-weight: 700;">${score}/100Ä‘</span>
+              <span class="word-timestamp">ðŸ•’ ${formatDateTime(w.updatedAt || w.createdAt)}</span>
             </div>
           </div>
         `;
@@ -4506,13 +4755,6 @@
       });
 
       updateSelectionUI();
-    }
-
-    function setWordFilter(filter, el) {
-      currentWordFilter = filter;
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      el.classList.add('active');
-      renderWordList();
     }
 
     // MODAL CONTROL
@@ -4528,7 +4770,7 @@
       document.getElementById('deck-id').value = '';
       document.getElementById('deck-title').value = '';
       document.getElementById('deck-desc').value = '';
-      document.getElementById('modal-deck-title').textContent = 'Tạo Bộ Từ Mới';
+      document.getElementById('modal-deck-title').textContent = 'Táº¡o Bá»™ Tá»« Má»›i';
       openModal('modal-deck');
     }
 
@@ -4554,7 +4796,7 @@
       saveDatabase(true);
       renderDecks();
       closeModal('modal-deck');
-      showToast('Đã lưu bộ từ vựng!');
+      showToast('ÄÃ£ lÆ°u bá»™ tá»« vá»±ng!');
     }
 
     // WORD MODAL
@@ -4570,7 +4812,11 @@
       document.getElementById('word-antonyms').value = '';
       document.getElementById('word-collocations').value = '';
       document.getElementById('word-note').value = '';
-      document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
+      const slider = document.getElementById('word-mastery-slider');
+      if (slider) slider.value = 0;
+      updateWordModalMasteryPreview(0);
+
+      document.getElementById('modal-word-title').textContent = 'ThÃªm Tá»« Vá»±ng Má»›i';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
       openModal('modal-word');
     }
@@ -4579,18 +4825,25 @@
       const w = words.find(item => item.id === id);
       if (!w) return;
 
+      const score = getWordScore(w);
+
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
       document.getElementById('word-pos').value = w.partOfSpeech || 'noun';
       document.getElementById('word-cefr').value = w.cefrLevel || '';
       document.getElementById('word-phonetic').value = w.phonetic || '';
-      document.getElementById('word-def').value = w.definitionVi;
-      document.getElementById('word-example').value = w.exampleSentence || '';
+      document.getElementById('word-def').value = w.definitionVi || w.definition || '';
+      document.getElementById('word-example').value = w.exampleSentence || w.example || '';
       document.getElementById('word-synonyms').value = (w.synonyms || []).join(', ');
       document.getElementById('word-antonyms').value = (w.antonyms || []).join(', ');
       document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
       document.getElementById('word-note').value = w.note || '';
-      document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
+
+      const slider = document.getElementById('word-mastery-slider');
+      if (slider) slider.value = score;
+      updateWordModalMasteryPreview(score);
+
+      document.getElementById('modal-word-title').textContent = 'Chá»‰nh Sá»­a Tá»« Vá»±ng';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
       openModal('modal-word');
     }
@@ -4608,6 +4861,10 @@
       const ant = parseList(document.getElementById('word-antonyms').value);
       const coll = parseList(document.getElementById('word-collocations').value);
       const note = document.getElementById('word-note').value.trim();
+      
+      const slider = document.getElementById('word-mastery-slider');
+      const score = slider ? parseInt(slider.value, 10) : 0;
+      const status = score >= 100 ? 'mastered' : (score > 0 ? 'learning' : 'newWord');
       const nowIso = new Date().toISOString();
 
       const existingIndex = words.findIndex(w => w.id === id);
@@ -4617,6 +4874,8 @@
           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
           definitionVi: def, exampleSentence: example,
           synonyms: syn, antonyms: ant, collocations: coll, note,
+          masteryScore: score,
+          status: status,
           updatedAt: nowIso
         };
       } else {
@@ -4625,8 +4884,8 @@
           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
           definitionVi: def, exampleSentence: example,
           synonyms: syn, antonyms: ant, collocations: coll, note,
-          status: 'newWord',
-          masteryScore: 0,
+          status: status,
+          masteryScore: score,
           createdAt: nowIso,
           updatedAt: nowIso
         });
@@ -4635,9 +4894,8 @@
       saveDatabase(true);
       renderWordList();
       closeModal('modal-word');
-      showToast('Đã lưu từ vựng thành công!');
+      showToast('ÄÃ£ lÆ°u tá»« vá»±ng thÃ nh cÃ´ng!');
     }
-
     // =========================================================================
     // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
     // =========================================================================
