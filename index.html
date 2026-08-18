@@ -1503,7 +1503,7 @@
         <svg class="icon"><use href="#i-book"/></svg>
       </div>
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.7</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.8</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1696,6 +1696,14 @@
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
+            <div style="display: inline-flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 2px 6px;">
+              <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🎯 Độ khó:</span>
+              <select id="deck-quiz-difficulty-select" onchange="setQuizDifficulty(this.value)" style="background: transparent; border: none; color: var(--text); font-size: 11.5px; font-weight: 700; cursor: pointer; outline: none; padding: 2px 2px;">
+                <option value="easy" style="background: #1e1b4b; color: #34d399;">🟢 Dễ (x1.0 thưởng)</option>
+                <option value="medium" style="background: #1e1b4b; color: #fbbf24;">🟡 Bình thường (x1.5 + AI bẫy)</option>
+                <option value="hard" style="background: #1e1b4b; color: #f87171;">🔴 Khó (x2.0 + AI bẫy cao cấp)</option>
+              </select>
+            </div>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
             </button>
@@ -1830,7 +1838,10 @@
         <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
           <svg class="icon"><use href="#i-arrow-back"/></svg>
         </button>
-        <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
+          <span id="quiz-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.3);" onclick="cycleQuizDifficulty()" title="Bấm để chuyển đổi nhanh độ khó (Dễ / Bình thường / Khó)">🟢 Dễ (x1.0)</span>
+        </div>
         <div style="display: flex; align-items: center; gap: 6px;">
           <button class="btn btn-outline btn-sm" onclick="shuffleCurrentQuiz()" title="Xáo trộn ngẫu nhiên bộ câu hỏi Quiz">
             🔀 <span class="hide-on-mobile">Trộn</span>
@@ -2107,7 +2118,10 @@
         <!-- Top Icon & Header -->
         <div id="quiz-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
         <h2 id="quiz-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Xuất Sắc Hoàn Thành!</h2>
-        <p id="quiz-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Bạn đã hoàn thành xuất sắc toàn bộ bài trắc nghiệm!</p>
+        <p id="quiz-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành xuất sắc toàn bộ bài trắc nghiệm!</p>
+        <div style="margin-bottom: 16px;">
+          <span id="quiz-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">🎯 Cấp độ: Dễ (x1.0 Điểm)</span>
+        </div>
 
         <!-- 5-Tile Stats Dashboard (màu mè, gọn gàng, siêu đẹp) -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
@@ -2613,7 +2627,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.8</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6627,6 +6641,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const titleEl = document.getElementById('quiz-res-title');
       const subtitleEl = document.getElementById('quiz-res-subtitle');
 
+      const diffBadgeEl = document.getElementById('quiz-res-difficulty-badge');
+      if (diffBadgeEl) {
+        const mult = getDifficultyMultiplier();
+        diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty) + ' (Hệ số x' + mult + ' Điểm)';
+      }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
       if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' điểm ví';
       if (durationEl) durationEl.textContent = durationText;
