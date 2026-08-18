@@ -40,6 +40,7 @@ VocaFlow là ứng dụng học từ vựng tiếng Anh thông minh thế hệ m
 • Phòng luyện trắc nghiệm 4 đáp án thông minh: Tự động tạo phương án gây nhiễu (Distractors) hợp lý từ chính kho từ vựng.
 • Tính điểm thời gian thực, hiển thị thanh tiến trình trực quan, hiệu ứng âm thanh và huy hiệu chúc mừng khi hoàn thành bài test.
 • Tăng giảm điểm thuộc từ vựng chính xác dựa trên kết quả trả lời đúng/sai của từng câu.
+• Tích hợp nút phát âm giọng bản xứ chuẩn xác ngay tại từng câu hỏi Quiz để vừa luyện nhìn mặt chữ vừa luyện nghe.
 
 --------------------------------------------------------------------------------
 ☁️ [v0.0.5] - ĐỒNG BỘ ĐÁM MÂY ĐA NỀN TẢNG (REALTIME CLOUD SYNC & PWA)
