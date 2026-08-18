@@ -1233,18 +1233,27 @@
       }
       .selection-study-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 5px;
         width: 100%;
+        box-sizing: border-box;
       }
       .selection-study-actions .btn {
         width: 100%;
+        min-width: 0;
         padding: 6px 2px;
         font-size: 11px;
         font-weight: 600;
         justify-content: center;
         height: 32px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+      }
+      .selection-study-actions .btn span {
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .filter-bar {
@@ -1464,13 +1473,13 @@
           
           <div class="selection-study-actions">
             <button class="btn btn-primary btn-sm" onclick="startFlashcardMode(true)" id="btn-study-flashcard-selected" title="Học Flashcard lật thẻ">
-              <svg class="icon icon-sm"><use href="#i-cards"/></svg> Flashcard (<span id="fc-count-label">Tất cả</span>)
+              <svg class="icon icon-sm"><use href="#i-cards"/></svg> <span>Flashcard</span><span id="fc-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
-              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> Auto Flashcard (<span id="autofc-count-label">Tất cả</span>)
+              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto FC</span><span id="autofc-count-label"></span>
             </button>
             <button class="btn btn-outline btn-sm" style="border-color: var(--primary); color: #818cf8;" onclick="startQuizMode(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> Quiz (<span id="quiz-count-label">Tất cả</span>)
+              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span><span id="quiz-count-label"></span>
             </button>
           </div>
         </div>
@@ -3098,10 +3107,11 @@
       const btnDeleteSelected = document.getElementById('btn-delete-selected');
       const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
 
-      if (countBadge) countBadge.textContent = `${count} từ được chọn`;
-      if (fcLabel) fcLabel.textContent = count > 0 ? `${count} từ` : 'Tất cả';
-      if (autofcLabel) autofcLabel.textContent = count > 0 ? `${count} từ` : 'Tất cả';
-      if (quizLabel) quizLabel.textContent = count > 0 ? `${count} từ` : 'Tất cả';
+      if (countBadge) countBadge.textContent = count > 0 ? `${count} từ được chọn` : '0 từ được chọn';
+      const countSuffix = count > 0 ? ` (${count})` : '';
+      if (fcLabel) fcLabel.textContent = countSuffix;
+      if (autofcLabel) autofcLabel.textContent = countSuffix;
+      if (quizLabel) quizLabel.textContent = countSuffix;
       if (btnDeleteSelected) btnDeleteSelected.style.display = count > 0 ? 'inline-flex' : 'none';
 
       const currentFiltered = getFilteredDeckWords();
