@@ -6318,7 +6318,7 @@
           alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
           return;
         }
-        startQuizMode(false, targetList);
+        openQuizSetupModal(false, targetList);
       }
     }
 
@@ -6658,6 +6658,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     let currentQuizDifficulty = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
     let quizSetupUseSelection = false;
+    let quizSetupCustomWordList = null;
     let selectedSetupDifficulty = 'easy';
 
     // Persistent LocalStorage + Session AI Distractors Cache to minimize API quota
@@ -6689,12 +6690,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       return 1.0;
     }
 
-    function openQuizSetupModal(useSelectionOnly = false) {
+    function openQuizSetupModal(useSelectionOnly = false, customWordList = null) {
       quizSetupUseSelection = useSelectionOnly;
-      let deckWords = getFilteredDeckWords();
-      if (useSelectionOnly && selectedWordIds.size > 0) {
+      quizSetupCustomWordList = customWordList;
+
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (selectedWordIds.size > 0) {
+      } else if (!customWordList && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
@@ -6706,7 +6709,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const deck = decks.find(d => d.id === currentDeckId);
       const subtitle = document.getElementById('quiz-setup-subtitle');
       if (subtitle) {
-        subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số câu: ' + deckWords.length + ' câu hỏi';
+        if (customWordList) {
+          subtitle.textContent = '🔔 Hàng đợi ôn tập hôm nay • Tổng số câu: ' + deckWords.length + ' câu hỏi';
+        } else {
+          subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số câu: ' + deckWords.length + ' câu hỏi';
+        }
       }
 
       const savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
@@ -6768,7 +6775,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       closeModal('modal-quiz-setup');
-      startQuizMode(quizSetupUseSelection);
+      startQuizMode(quizSetupUseSelection, quizSetupCustomWordList);
     }
 
     function setQuizDifficulty(diff) {
