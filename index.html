@@ -1070,33 +1070,34 @@
     /* THEME PICKER GRID IN SETTINGS */
     .theme-picker-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 6px !important;
     }
     .theme-card {
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 6px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 2px;
       background: var(--surface-elevated);
       transition: all 0.2s ease;
       position: relative;
     }
     .theme-card input {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      accent-color: var(--primary);
+      display: none;
     }
     .theme-card.active {
       border-color: var(--primary);
-      background: var(--primary-light);
+      background: rgba(99, 102, 241, 0.14);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
     }
     .theme-icon {
-      font-size: 22px;
+      font-size: 18px;
       margin-bottom: 2px;
     }
 
@@ -1290,9 +1291,7 @@
       .word-item-body {
         padding-left: 0;
       }
-      .theme-picker-grid {
-        grid-template-columns: 1fr;
-      }
+
       .deck-tabs {
         width: 100%;
         display: flex;
@@ -1714,7 +1713,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2j</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2k</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3355,33 +3354,70 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-settings')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text);">🌓 Giao Diện & Chủ Đề</label>
+      <!-- 1. GIAO DIỆN & CHỦ ĐỀ (1-ROW 3-TILE PICKER) -->
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🌓 Giao Diện & Chủ Đề</label>
         <div class="theme-picker-grid">
           <label class="theme-card" onclick="setAppTheme('dark')">
             <input type="radio" name="app-theme" value="dark" id="theme-dark-radio">
             <span class="theme-icon">🌙</span>
-            <strong style="font-size: 13px;">Giao diện Tối</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Mặc định, êm dịu mắt</small>
+            <strong>Giao diện Tối</strong>
+            <small>Êm dịu mắt</small>
           </label>
 
           <label class="theme-card" onclick="setAppTheme('light')">
             <input type="radio" name="app-theme" value="light" id="theme-light-radio">
             <span class="theme-icon">☀️</span>
-            <strong style="font-size: 13px;">Giao diện Sáng</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Rõ ràng, tương phản cao</small>
+            <strong>Giao diện Sáng</strong>
+            <small>Tương phản cao</small>
           </label>
 
           <label class="theme-card" onclick="setAppTheme('system')">
             <input type="radio" name="app-theme" value="system" id="theme-system-radio">
             <span class="theme-icon">🌓</span>
-            <strong style="font-size: 13px;">Theo thiết bị</strong>
-            <small style="font-size: 11px; color: var(--text-muted);">Tự động theo hệ điều hành</small>
+            <strong>Theo thiết bị</strong>
+            <small>Tự động HĐH</small>
           </label>
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+      <!-- 2. GOOGLE GEMINI AI (MOVED UP FOR QUICK ACCESS) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeminiKeyGuide(event)" title="Xem hướng dẫn lấy API Key" style="font-size: 11px; padding: 2px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); font-weight: 700; cursor: pointer;">
+              ❓ Hướng dẫn
+            </button>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
+              🔑 Lấy Key 30s
+            </a>
+          </div>
+        </div>
+        <!-- HƯỚNG DẪN LẤY KEY 3 BƯỚC (v0.0.9.17) -->
+        <div id="gemini-key-guide-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.6; color: var(--text);">
+          <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span>📖 Hướng dẫn lấy Gemini API Key (Miễn phí 100%):</span>
+            <span onclick="toggleGeminiKeyGuide(event)" style="cursor: pointer; opacity: 0.7; font-size: 13px;">✕</span>
+          </div>
+          <div><strong style="color: #fbbf24;">Bước 1:</strong> Nhấn nút <strong>"🔑 Lấy Key 30s"</strong> (nếu chưa đăng nhập Gmail thì tiến hành đăng nhập tài khoản Google).</div>
+          <div><strong style="color: #fbbf24;">Bước 2:</strong> Nhấn nút <strong>"Create API key"</strong> màu xanh, sau đó chọn <strong>"Copy"</strong> để sao chép chuỗi mã Key.</div>
+          <div><strong style="color: #fbbf24;">Bước 3:</strong> Dán mã vừa copy vào ô bên dưới và nhấn <strong>"🧪 Thử kết nối"</strong> để hoàn tất.</div>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4;">
+          Nhập Gemini API Key cá nhân để mở khóa AI tự động phân tích nghĩa tiếng Việt, câu ví dụ, collocations khi thêm từ mới.
+        </p>
+        <div style="display: flex; gap: 8px;">
+          <input type="password" id="gemini-api-key-input" class="form-input" placeholder="Dán Gemini API Key (AIzaSy...)" style="flex: 1;" onchange="saveGeminiApiKey(this.value)">
+          <button type="button" class="btn btn-outline btn-sm" onclick="testGeminiConnection()" id="btn-test-gemini" title="Kiểm tra kết nối">
+            🧪 Thử kết nối
+          </button>
+        </div>
+        <div id="gemini-status-text" style="font-size: 11px; margin-top: 6px; color: var(--text-muted);"></div>
+      </div>
+
+      <!-- 3. TỐC ĐỘ PHÁT ÂM (TEXT-TO-SPEECH) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🔊 Tốc Độ Phát Âm (Text-to-Speech)</label>
         
         <div style="margin-bottom: 10px;">
@@ -3405,19 +3441,8 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🕒 Hiển Thị Thời Gian (Date & Timestamps)</label>
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <input type="checkbox" id="settings-timestamp-checkbox" checked onchange="toggleShowTimestampSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
-          <div>
-            <div style="font-size: 13px; font-weight: 600; color: var(--text);">Hiện ngày tạo & chỉnh sửa</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng bộ từ và thẻ từ vựng</div>
-          </div>
-        </label>
-      </div>
-
-      <!-- BỘ LỌC & TÙY BIẾN GIAO DIỆN (v0.0.10.2g) -->
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+      <!-- 4. BỘ LỌC & TÙY BIẾN GIAO DIỆN (v0.0.10.2g) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎛️ Tùy Biến Bộ Lọc & Hàng Đợi Ôn Tập</label>
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <!-- 1. Review Queue Toggle -->
@@ -3458,44 +3483,22 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeminiKeyGuide(event)" title="Xem hướng dẫn lấy API Key" style="font-size: 11px; padding: 2px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); font-weight: 700; cursor: pointer;">
-              ❓ Hướng dẫn
-            </button>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
-              🔑 Lấy Key 30s
-            </a>
+      <!-- 5. HIỂN THỊ THỜI GIAN -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🕒 Hiển Thị Thời Gian (Date & Timestamps)</label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+          <input type="checkbox" id="settings-timestamp-checkbox" checked onchange="toggleShowTimestampSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text);">Hiện ngày tạo & chỉnh sửa</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng bộ từ và thẻ từ vựng</div>
           </div>
-        </div>
-        <!-- HƯỚNG DẪN LẤY KEY 3 BƯỚC (v0.0.9.17) -->
-        <div id="gemini-key-guide-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.6; color: var(--text);">
-          <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
-            <span>📖 Hướng dẫn lấy Gemini API Key (Miễn phí 100%):</span>
-            <span onclick="toggleGeminiKeyGuide(event)" style="cursor: pointer; opacity: 0.7; font-size: 13px;">✕</span>
-          </div>
-          <div><strong style="color: #fbbf24;">Bước 1:</strong> Nhấn nút <strong>"🔑 Lấy Key 30s"</strong> (nếu chưa đăng nhập Gmail thì tiến hành đăng nhập tài khoản Google).</div>
-          <div><strong style="color: #fbbf24;">Bước 2:</strong> Nhấn nút <strong>"Create API key"</strong> màu xanh, sau đó chọn <strong>"Copy"</strong> để sao chép chuỗi mã Key.</div>
-          <div><strong style="color: #fbbf24;">Bước 3:</strong> Dán mã vừa copy vào ô bên dưới và nhấn <strong>"🧪 Thử kết nối"</strong> để hoàn tất.</div>
-        </div>
-        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4;">
-          Nhập Gemini API Key cá nhân để mở khóa AI tự động phân tích nghĩa tiếng Việt, câu ví dụ, collocations khi thêm từ mới.
-        </p>
-        <div style="display: flex; gap: 8px;">
-          <input type="password" id="gemini-api-key-input" class="form-input" placeholder="Dán Gemini API Key (AIzaSy...)" style="flex: 1;" onchange="saveGeminiApiKey(this.value)">
-          <button type="button" class="btn btn-outline btn-sm" onclick="testGeminiConnection()" id="btn-test-gemini" title="Kiểm tra kết nối">
-            🧪 Thử kết nối
-          </button>
-        </div>
-        <div id="gemini-status-text" style="font-size: 11px; margin-top: 6px; color: var(--text-muted);"></div>
+        </label>
       </div>
 
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2j</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2k</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3674,17 +3677,12 @@
       </div>
 
       <!-- COMMUNITY DECK CONTRIBUTION BANNER (CHO TẤT CẢ MỌI NGƯỜI) -->
-      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12)); border: 1px dashed rgba(168, 85, 247, 0.45); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div style="flex: 1; min-width: 220px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
-            <span>✨</span> <strong>Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
-          </div>
-          <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0; line-height: 1.4;">
-            Mọi thành viên đều có thể tải lên file Excel hoặc chia sẻ bộ từ của mình để cùng nhau xây dựng kho học tập lớn mạnh!
-          </p>
+      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)); border: 1px dashed rgba(168, 85, 247, 0.35); border-radius: 10px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          <span>✨</span> <strong style="color: var(--text);">Đóng góp bộ từ:</strong> Tải Excel hoặc chia sẻ bộ từ của bạn
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openCommunityDeckUploadModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 7px 14px; font-size: 12px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);">
-          🚀 Đóng Góp Bộ Từ Mới
+        <button class="btn btn-primary btn-sm" onclick="openCommunityDeckUploadModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 4px 10px; font-size: 11.5px; border-radius: 8px;">
+          🚀 Đóng Góp Mới
         </button>
       </div>
 
@@ -6828,10 +6826,9 @@
       const selectAllCheckbox = document.getElementById('select-all-words-checkbox');
 
       if (countBadge) countBadge.textContent = count > 0 ? count + ' từ được chọn' : '0 từ được chọn';
-      const countSuffix = count > 0 ? ' (' + count + ')' : '';
-      if (fcLabel) fcLabel.textContent = countSuffix;
-      if (autofcLabel) autofcLabel.textContent = countSuffix;
-      if (quizLabel) quizLabel.textContent = countSuffix;
+      if (fcLabel) fcLabel.textContent = '';
+      if (autofcLabel) autofcLabel.textContent = '';
+      if (quizLabel) quizLabel.textContent = '';
       if (btnDeleteSelected) btnDeleteSelected.style.display = count > 0 ? 'inline-flex' : 'none';
 
       const currentFiltered = getFilteredDeckWords();
@@ -7127,8 +7124,9 @@
             <span>Mức độ thuộc: ${avgScore}%</span>
             <span>Đã thuộc: ${mastered}/${total}</span>
           </div>
-          <div class="deck-timestamp">
+          <div class="deck-timestamp" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
             <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+            ${deck.author ? `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(deck.author)}</span>` : ''}
           </div>
 
           <div class="deck-actions-grid">
@@ -7201,7 +7199,12 @@
       document.getElementById('deck-detail-desc').textContent = deck.description || '';
       const timeEl = document.getElementById('deck-detail-timestamp');
       if (timeEl) {
-        timeEl.textContent = '🕒 Tạo: ' + formatDateOnly(deck.createdAt || deck.updatedAt);
+        let timeText = '🕒 Tạo: ' + formatDateOnly(deck.createdAt || deck.updatedAt);
+        if (deck.author) {
+          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: <span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}')" title="Xem hồ sơ người đóng góp">${escapeHtml(deck.author)}</span>`;
+        } else {
+          timeEl.textContent = timeText;
+        }
       }
       document.getElementById('word-search-input').value = '';
       currentWordFilter = 'all';
@@ -13899,11 +13902,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
+      const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng');
+      const authorUid = deck.authorUid || '';
+
       const newDeckId = 'deck_' + Date.now();
       const newDeck = {
         id: newDeckId,
         title: deck.title,
-        description: deck.description || 'Bộ từ chuẩn từ Thư Viện VocaFlow',
+        description: deck.description || 'Bộ từ từ Thư Viện VocaFlow',
+        author: authorName,
+        authorUid: authorUid,
         color: deck.color || '#4f46e5',
         isPinned: false,
         isArchived: false,

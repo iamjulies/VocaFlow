@@ -181,7 +181,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
-• 👤 v0.0.10.2 (a -> j): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc, Đồng Bộ Cloud Toàn Diện & Tối Ưu Tab Danh Mục Thư Viện
+• 👤 v0.0.10.2 (a -> k): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc, Đồng Bộ Cloud Toàn Diện, Ghi Công Tác Giả & Tối Ưu Gọn Nhẹ Giao Diện
   - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
     * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
     * Giao diện Hồ sơ gọn gàng: Luôn hiển thị Khung Ghi chú & Mục tiêu học tập (`profile-bio-box`), form sửa chỉ hiện khi bấm nút ✏️ Sửa Tên & Bio.
@@ -208,10 +208,12 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Tối ưu Modal Hàng Đợi Ôn Tập**: Bỏ khung giải thích thuật toán cồng kềnh, đưa toàn bộ nút học và danh sách từ vựng lên trên cùng trực quan.
     * **Chống đè chữ nút Gợi ý (❓) & Bỏ qua (⏭️)** trong màn hình Quiz và Luyện Viết (Spelling): Tách bạch tiêu đề câu hỏi và cụm nút bằng cấu trúc Flexbox độc lập, tuyệt đối không bị chồng lấn văn bản.
     * **Co giãn ô chữ Luyện Viết linh hoạt (Responsive Letter Boxes & Word Wrap)**: Ứng dụng CSS `clamp()` và ngắt từ tự động theo dấu cách, dấu gạch nối `-`, gạch chéo `/`, đảm bảo các từ dài từ 10-15 ký tự luôn nằm vừa vặn 100% trong khung nhìn điện thoại mà không bị tràn màn hình.
-  - ☁️ Đồng Bộ Cài Đặt 2 Chiều & Khắc Phục Ẩn Hiện Banner Ôn Tập (`v0.0.10.2i/j`):
-    * **Triệt tiêu lỗi banner ôn tập "thoắt ẩn thoắt hiện"**: `renderDailyReviewBanner()` kiểm tra nghiêm ngặt `showReviewQueueSetting` ngay từ đầu vào. Khi người dùng tắt trong cài đặt, banner sẽ ẩn vĩnh viễn và không bị render lại khi danh sách bộ từ làm mới.
-    * **Tối ưu thanh Tab Danh mục Thư Viện (`v0.0.10.2j`)**: Đổi nhãn nút ngắn gọn thành **`🏫 Cấp 2`** và **`📘 Cấp 3`**; kích hoạt chế độ **Cuộn ngang cảm ứng mượt mà (Touch Horizontal Scroll)** ẩn thanh cuộn thô trên mobile, giải quyết triệt để lỗi ngắt chữ xấu xí trên màn hình hẹp.
-    * Ràng buộc 2 chiều (Two-Way Binding) chính xác 100% giữa giao diện hộp thoại Cài Đặt (`modal-settings`) và trạng thái thực tế.
+  - 🎨 Tinh Gọn Giao Diện Cài Đặt, Thư Viện & Ghi Công Tác Giả (`v0.0.10.2k`):
+    * **Ghi công tác giả (Author Credit)**: Khi tải bất kỳ bộ từ nào từ Thư Viện về máy, hệ thống tự động lưu trữ thông tin tác giả và hiển thị huy hiệu `👤 Đóng góp: [Tên tác giả]` trên thẻ bộ từ ngoài trang chủ và trong tiêu đề chi tiết bộ từ (click vào để mở ngay Profile tác giả).
+    * **Bố cục Chọn Giao Diện 1 Dòng 3 Ô (1-Row Theme Tiles)**: Thu gọn 3 tùy chọn Tối / Sáng / Theo thiết bị thành 3 ô tile nằm ngang trên cùng 1 dòng duy nhất cả trên desktop và mobile, loại bỏ hoàn toàn việc chiếm nhiều dòng dọc.
+    * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
+    * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
+    * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
 • 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
