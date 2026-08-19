@@ -182,6 +182,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
 • 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).
+• 🤖 [v0.0.10.3]: AI Deck Generator Studio - Tạo bộ từ vựng thông minh bằng AI Gemini theo chủ đề, cấp độ, đoạn văn trích xuất và mục tiêu học (Dự kiến).
 
 ================================================================================
 🌐 TRẢI NGHIỆM TRỰC TUYẾN: https://iamjulies.github.io/VocaFlow/
