@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1d</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1e</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2551,11 +2551,11 @@
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">🟢</span>
                 <strong style="font-size: 14px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
-                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px;">x1.0 Điểm ví</span>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px;">+3% Thuộc • +3đ Ví</span>
               </div>
-              <span class="tooltip-trigger" title="Phương án sai được chọn ngẫu nhiên từ các từ vựng trong kho/bộ từ. Phù hợp cho việc làm quen từ mới." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+              <span class="tooltip-trigger" title="3 phương án sai ngẫu nhiên trong kho từ. Thưởng +3% thuộc bài, +3đ ví (Sai: -2đ)." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + 3 phương án ngẫu nhiên trong kho từ. Thưởng/phạt điểm chuẩn.</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + 3 phương án ngẫu nhiên trong kho từ. Thưởng: <strong style="color: #34d399;">+3% thuộc, +3đ ví</strong> (Sai: -2đ).</p>
           </div>
 
           <!-- 2. BÌNH THƯỜNG (MEDIUM) -->
@@ -2564,11 +2564,11 @@
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">🟡</span>
                 <strong style="font-size: 14px; color: #fbbf24;">Cấp độ BÌNH THƯỜNG (Medium)</strong>
-                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10.5px;">x1.5 Điểm thưởng</span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10.5px;">+5% Thuộc • +5đ Ví</span>
               </div>
-              <span class="tooltip-trigger" title="AI Gemini sẽ tạo 1 phương án bẫy tinh vi (nghĩa gần giống hoặc nhầm lẫn ngữ cảnh) để thử thách độ tập trung. Điểm thưởng & độ thuộc bài tăng 1.5 lần!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+              <span class="tooltip-trigger" title="AI Gemini tạo 1 phương án bẫy tinh vi. Thưởng +5% thuộc bài, +5đ ví (Sai: -3đ)." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #fbbf24;">1 bẫy AI tinh vi</strong> + 2 phương án từ kho. Thưởng điểm x1.5!</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #fbbf24;">1 bẫy AI tinh vi</strong> + 2 từ kho. Thưởng: <strong style="color: #fbbf24;">+5% thuộc, +5đ ví</strong> (Sai: -3đ).</p>
           </div>
 
           <!-- 3. KHÓ (HARD) -->
@@ -2577,11 +2577,11 @@
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">🔴</span>
                 <strong style="font-size: 14px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
-                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10.5px;">x2.0 Siêu Cấp Điểm</span>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10.5px;">+8% Thuộc • +8đ Ví</span>
               </div>
-              <span class="tooltip-trigger" title="Thử thách lớn! AI tạo 2 phương án bẫy chuyên nghiệp đòi hỏi nắm chắc sắc thái từ. Điểm thưởng và độ thuộc bài tăng gấp đôi (x2.0)!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+              <span class="tooltip-trigger" title="Thử thách cao! AI tạo 2 phương án bẫy chuyên sâu. Thưởng +8% thuộc bài, +8đ ví (Sai: -4đ)." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #f87171;">2 bẫy AI cao cấp</strong> + 1 từ kho. Điểm thưởng & Thuộc bài nhân đôi (x2.0)!</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #f87171;">2 bẫy AI cao cấp</strong> + 1 từ kho. Thưởng: <strong style="color: #f87171;">+8% thuộc, +8đ ví</strong> (Sai: -4đ).</p>
           </div>
 
           <!-- 4. CỰC KHÓ (EXTREME) -->
@@ -2590,11 +2590,11 @@
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">🟣</span>
                 <strong style="font-size: 14px; color: #c084fc;">Cấp độ CỰC KHÓ (Extreme)</strong>
-                <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10.5px;">x2.5 Siêu Cực Hạn</span>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10.5px;">+10% Thuộc • +10đ Ví</span>
               </div>
-              <span class="tooltip-trigger" title="Mức độ ác mộng đỉnh cao! CẢ 3 phương án sai 100% đều do AI Gemini tạo bẫy tinh vi đánh lừa thị giác. Điểm ví & Độ thuộc bài tăng vọt 2.5 lần!" style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
+              <span class="tooltip-trigger" title="Mức độ ác mộng! CẢ 3 phương án sai 100% đều do AI Gemini tạo bẫy. Thưởng +10% thuộc bài, +10đ ví (Sai: -5đ)." style="cursor: help; font-size: 15px; color: var(--text-muted); padding: 2px 6px;">❓</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #c084fc;">CẢ 3 bẫy AI 100%</strong>. Điểm thưởng & Thuộc bài gấp <strong style="color: #c084fc;">2.5 lần (x2.5)</strong>!</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">1 đáp án đúng + <strong style="color: #c084fc;">CẢ 3 bẫy AI 100%</strong>. Thưởng siêu cấp: <strong style="color: #c084fc;">+10% thuộc, +10đ ví</strong> (Sai: -5đ)!</p>
           </div>
         </div>
       </div>
@@ -2812,11 +2812,13 @@
         <div id="shop-gift-msg" style="font-size: 11px; margin-top: 4px; display: none;"></div>
       </div>
 
-      <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-        ℹ️ <strong>Quy tắc điểm Quiz:</strong><br>
-        • Đúng: A1 (+2đ), A2 (+4đ), B1 (+6đ), B2 (+8đ), C1 (+10đ), C2 (+12đ)<br>
-        • Sai: A1 (-6đ), A2 (-5đ), B1 (-4đ), B2 (-3đ), C1 (-2đ), C2 (-1đ)<br>
-        • Thành viên mới đăng ký được tặng sẵn <strong>5 lượt gợi ý miễn phí</strong>!
+      <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.45;">
+        ℹ️ <strong>Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - v0.0.10.1e):</strong><br>
+        • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3đ ví) • Sai (-2% thuộc, -2đ ví)<br>
+        • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5đ ví) • Sai (-3% thuộc, -3đ ví)<br>
+        • 🔴 <strong>Khó:</strong> Đúng (+8% thuộc, +8đ ví) • Sai (-4% thuộc, -4đ ví)<br>
+        • 🟣 <strong>Cực khó:</strong> Đúng (+10% thuộc, +10đ ví) • Sai (-5% thuộc, -5đ ví)<br>
+        • Tặng sẵn <strong>5 lượt Gợi Ý AI</strong> và <strong>3 lượt Bỏ Qua</strong> miễn phí cho tài khoản mới!
       </div>
     </div>
   </div>
@@ -3182,7 +3184,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1d</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1e</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8481,21 +8483,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }, 150);
     }
 
-    function getQuizPointDelta(cefrLevel, isCorrect) {
-      let level = (cefrLevel || '').toUpperCase().trim();
-      const match = level.match(/[ABC][12]/);
-      if (match) {
-        level = match[0];
-      }
-
-      const correctMap = { 'A1': 2, 'A2': 4, 'B1': 6, 'B2': 8, 'C1': 10, 'C2': 12 };
-      const wrongMap = { 'A1': -6, 'A2': -5, 'B1': -4, 'B2': -3, 'C1': -2, 'C2': -1 };
-
+    function getQuizScoringDeltas(difficulty, isCorrect) {
+      const diff = difficulty || currentQuizDifficulty || 'easy';
       if (isCorrect) {
-        return correctMap[level] !== undefined ? correctMap[level] : 6;
+        if (diff === 'extreme') return { masteryGain: 10, walletDelta: 10 };
+        if (diff === 'hard') return { masteryGain: 8, walletDelta: 8 };
+        if (diff === 'medium') return { masteryGain: 5, walletDelta: 5 };
+        return { masteryGain: 3, walletDelta: 3 }; // easy
       } else {
-        return wrongMap[level] !== undefined ? wrongMap[level] : -4;
+        if (diff === 'extreme') return { masteryPenalty: 5, walletDelta: -5 };
+        if (diff === 'hard') return { masteryPenalty: 4, walletDelta: -4 };
+        if (diff === 'medium') return { masteryPenalty: 3, walletDelta: -3 };
+        return { masteryPenalty: 2, walletDelta: -2 }; // easy
       }
+    }
+
+    function getQuizPointDelta(cefrLevel, isCorrect) {
+      const { walletDelta } = getQuizScoringDeltas(currentQuizDifficulty, isCorrect);
+      return walletDelta;
     }
 
     async function showQuizAiHint() {
