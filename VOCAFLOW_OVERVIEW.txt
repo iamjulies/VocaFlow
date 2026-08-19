@@ -122,18 +122,20 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
   - Điều hướng ngữ cảnh thông minh (Context-Aware Navigation): Thoát ôn tập tự động quay về Trang Chủ và cập nhật tiến độ.
   - Loại bỏ hoàn toàn Flashcard thủ công cũ thừa code để tối ưu hóa hiệu năng 100%.
 
-• ✍️ v0.0.10.1a: Chế Độ Luyện Viết Chính Tả & Điền Khuyết (Spelling & Fill-in-the-Blank Mode)
+• ✍️ v0.0.10.1 (a -> b): Chế Độ Luyện Viết Chính Tả & Điền Khuyết (Spelling & Fill-in-the-Blank Mode)
   - Luyện trí nhớ cơ bắp (Muscle Memory) giúp người học viết chính xác 100% không sai một ký tự.
   - 3 Cấp độ Thử thách:
     * 🟢 Dễ (Easy - x1.0 Điểm): Ẩn 1/3 ký tự ngẫu nhiên (hiển thị 2/3 chữ cái gợi ý sẵn).
     * 🟡 Trung bình (Medium - x1.5 Điểm): Ẩn 2/3 ký tự ngẫu nhiên (hiển thị 1/3 chữ cái gợi ý sẵn).
     * 🔴 Khó (Hard / Mastery - x2.0 Điểm): Ẩn 100% ký tự (gõ toàn bộ từ vựng).
   - Tùy chọn Manh Mối Hiển Thị ("Known-thing Clues"): Tự do bật/tắt Nghĩa tiếng Việt, Phiên âm IPA, và Phát âm thanh (bắt buộc >= 1).
-  - Giao diện Interactive Letter Boxes: Nhập từng ô mượt mà, tự động chuyển ô khi gõ, phím Backspace lùi ô, phím Enter kiểm tra / sang từ tiếp theo.
-  - Cơ chế Thưởng Phạt & Rung Lắc Động (Dynamic Shake FX):
-    * Đúng: Hộp chữ phát sáng xanh lá, âm thanh chiến thắng, thưởng điểm tinh thông & điểm ví nhân hệ số độ khó.
-    * Sai: Rung nhẹ khi sai 1-2 lần (shake-mild), rung dữ dội khi sai >= 3 lần (shake-intense), trừ 1 điểm tinh thông & 1 điểm ví.
-    * Nút Gợi Ý ❓: Mở ngay chữ cái tiếp theo (tiêu tốn 1 lượt gợi ý hoặc 50đ ví).
+  - Giao diện Interactive Letter Boxes & Word-Block Grouping: Nhóm từ thông minh tránh ngắt dòng giữa chừng từng từ, tự động chuyển ô khi gõ, phím Backspace lùi ô.
+  - Điều khiển Phím Enter 2 Nhịp chuẩn xác: Enter lần 1 kiểm tra kết quả và hiển thị thông báo chúc mừng / nút "Từ Tiếp Theo", Enter lần 2 mới chuyển câu tiếp theo.
+  - Công Thức Điểm Mới Chính Xác Theo Ô:
+    * Gõ đúng 100%: Tổng số ô điền * Hệ số độ khó (làm tròn lên nếu là 0.5), cộng cả điểm tinh thông và điểm ví.
+    * Gõ có ô sai: Số ô sai * Hệ số độ khó (làm tròn lên), trừ cả điểm tinh thông và điểm ví.
+  - Giọng đọc Google TTS nguyên bản tự nhiên, loại bỏ tạp âm robot.
+  - Cơ chế Rung Lắc Động (Dynamic Shake FX) khi gõ sai và Nút Gợi Ý ❓ mở ký tự tiếp theo.
   - Modal Tổng Kết Luyện Viết (modal-spelling-result) kèm pháo hoa động ăn mừng.
 
 • 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).
