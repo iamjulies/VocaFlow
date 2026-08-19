@@ -1473,6 +1473,50 @@
         flex: 1;
         min-width: 0;
       }
+      /* MOBILE COMPACT FILTER BAR */
+      .filter-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: stretch;
+      }
+      #word-search-input {
+        width: 100%;
+        min-width: 100%;
+        box-sizing: border-box;
+      }
+      .deck-filter-controls-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 6px !important;
+        width: 100% !important;
+        align-items: center !important;
+      }
+      #filter-word-pos-select {
+        flex: 1 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        height: 34px !important;
+        font-size: 11px !important;
+        padding: 0 4px !important;
+      }
+      #filter-word-cefr-select {
+        flex: 1 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        height: 34px !important;
+        font-size: 11px !important;
+        padding: 0 4px !important;
+      }
+      #btn-toggle-mastery-slider {
+        flex-shrink: 0 !important;
+        width: 36px !important;
+        height: 34px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
     }
     /* KEYBOARD SHORTCUT BADGES (v0.0.9.18) */
     .key-shortcut-badge {
@@ -1513,28 +1557,55 @@
     /* =========================================================================
        SPELLING & FILL-IN-THE-BLANK MODE STYLES (v0.0.10.1a)
        ========================================================================= */
-        .spelling-word-block {
-      display: inline-flex;
-      flex-wrap: nowrap;
+        .spelling-boxes-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 6px;
+      margin-bottom: 24px;
+      padding: 6px;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+    .spelling-word-block {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px;
       align-items: center;
-      margin: 4px 6px;
+      justify-content: center;
+      margin: 3px 4px;
+      max-width: 100%;
     }
     .spelling-letter-box {
-      width: 44px;
-      height: 52px;
-      font-size: 22px;
+      width: clamp(26px, 6.8vw, 42px);
+      height: clamp(34px, 8.8vw, 50px);
+      font-size: clamp(14px, 4.4vw, 22px);
       font-weight: 800;
       text-align: center;
       text-transform: uppercase;
       border: 2px solid var(--border);
-      border-radius: 10px;
+      border-radius: 8px;
       background: var(--surface-elevated);
       color: var(--text);
       transition: all 0.15s ease;
       outline: none;
       box-sizing: border-box;
       caret-color: #f59e0b;
+      padding: 0;
+      flex-shrink: 1;
+    }
+    @media (max-width: 600px) {
+      .spelling-letter-box {
+        width: clamp(22px, 6vw, 32px);
+        height: clamp(30px, 7.8vw, 40px);
+        font-size: clamp(13px, 3.8vw, 17px);
+        border-radius: 6px;
+      }
+      .spelling-word-block {
+        gap: 3px;
+        margin: 2px 3px;
+      }
     }
     .spelling-letter-box:focus {
       border-color: #f59e0b;
@@ -1640,7 +1711,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2g</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2h</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1844,36 +1915,38 @@
         <div class="filter-bar" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
           <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()" style="flex: 1; min-width: 140px;">
           
-          <!-- Dropdown Lọc Theo Từ Loại -->
-          <select id="filter-word-pos-select" class="form-select" onchange="setWordPosFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo từ loại">
-            <option value="all">🏷️ Tất cả từ loại</option>
-            <option value="noun">noun (danh từ)</option>
-            <option value="verb">verb (động từ)</option>
-            <option value="adjective">adjective (tính từ)</option>
-            <option value="adverb">adverb (trạng từ)</option>
-            <option value="noun phrase">noun phrase (cụm danh từ)</option>
-            <option value="phrasal verb">phrasal verb (cụm động từ)</option>
-            <option value="phrase">phrase (cụm từ chung)</option>
-            <option value="idiom">idiom (thành ngữ)</option>
-            <option value="preposition">preposition (giới từ)</option>
-            <option value="conjunction">conjunction (liên từ)</option>
-            <option value="other">khác (other)</option>
-          </select>
+          <div class="deck-filter-controls-row" style="display: flex; gap: 6px; align-items: center;">
+            <!-- Dropdown Lọc Theo Từ Loại -->
+            <select id="filter-word-pos-select" class="form-select" onchange="setWordPosFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo từ loại">
+              <option value="all">🏷️ Tất cả từ loại</option>
+              <option value="noun">noun (danh từ)</option>
+              <option value="verb">verb (động từ)</option>
+              <option value="adjective">adjective (tính từ)</option>
+              <option value="adverb">adverb (trạng từ)</option>
+              <option value="noun phrase">noun phrase (cụm danh từ)</option>
+              <option value="phrasal verb">phrasal verb (cụm động từ)</option>
+              <option value="phrase">phrase (cụm từ chung)</option>
+              <option value="idiom">idiom (thành ngữ)</option>
+              <option value="preposition">preposition (giới từ)</option>
+              <option value="conjunction">conjunction (liên từ)</option>
+              <option value="other">khác (other)</option>
+            </select>
 
-          <!-- Dropdown Lọc Theo Cấp Độ CEFR -->
-          <select id="filter-word-cefr-select" class="form-select" onchange="setWordCefrFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo cấp độ CEFR">
-            <option value="all">🎯 Tất cả cấp độ</option>
-            <option value="A1">A1 (Beginner)</option>
-            <option value="A2">A2 (Elementary)</option>
-            <option value="B1">B1 (Intermediate)</option>
-            <option value="B2">B2 (Upper Intermediate)</option>
-            <option value="C1">C1 (Advanced)</option>
-            <option value="C2">C2 (Mastery / Proficiency)</option>
-          </select>
+            <!-- Dropdown Lọc Theo Cấp Độ CEFR -->
+            <select id="filter-word-cefr-select" class="form-select" onchange="setWordCefrFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo cấp độ CEFR">
+              <option value="all">🎯 Tất cả cấp độ</option>
+              <option value="A1">A1 (Beginner)</option>
+              <option value="A2">A2 (Elementary)</option>
+              <option value="B1">B1 (Intermediate)</option>
+              <option value="B2">B2 (Upper Intermediate)</option>
+              <option value="C1">C1 (Advanced)</option>
+              <option value="C2">C2 (Mastery / Proficiency)</option>
+            </select>
 
-          <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
-            🎚️ <span class="hide-on-mobile">Lọc điểm</span>
-          </button>
+            <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
+              🎚️ <span class="hide-on-mobile">Lọc điểm</span>
+            </button>
+          </div>
           <div class="chip-group" id="deck-word-filter-chips">
             <div class="chip active" onclick="setWordFilter('all', this)">🎓 Tất cả (<span id="chip-count-all">0</span>)</div>
             <div class="chip" onclick="setWordFilter('0', this)">🌱 Mới 0% (<span id="chip-count-0">0</span>)</div>
@@ -1945,18 +2018,23 @@
       </div>
 
       <div class="quiz-container">
-        <div class="quiz-question-card" style="position: relative;">
-          <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 6px;">
-            <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-              <span style="font-size: 14px; line-height: 1;">❓</span>
-              <span id="quiz-card-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
-            </button>
-            <button class="btn btn-outline btn-sm" id="btn-quiz-skip" onclick="useQuizSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-              <span style="font-size: 14px; line-height: 1;">⏭️</span>
-              <span id="quiz-card-skips-count" style="font-size: 12px; color: #818cf8;">3</span>
-            </button>
+        <div class="quiz-question-card" style="position: relative; padding: 18px 16px;">
+          <!-- Top Flex Row: Title + Hint/Skip Buttons (Never Overlap) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; text-align: left;">
+              CHỌN ĐỊNH NGHĨA ĐÚNG:
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
+              <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">❓</span>
+                <span id="quiz-card-hints-count" style="font-size: 11.5px; color: #fbbf24;">5</span>
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-quiz-skip" onclick="useQuizSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">⏭️</span>
+                <span id="quiz-card-skips-count" style="font-size: 11.5px; color: #818cf8;">3</span>
+              </button>
+            </div>
           </div>
-          <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Chọn định nghĩa đúng cho từ:</div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;">
             <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin: 0;">Term</h2>
             <button class="btn btn-outline btn-icon" id="btn-quiz-speak" onclick="speakQuizTerm()" title="Phát âm từ vựng" style="width: 38px; height: 38px; border-radius: 50%; color: var(--primary); border-color: rgba(99, 102, 241, 0.3);">
@@ -2036,21 +2114,22 @@
 
       <div class="spelling-container" style="max-width: 680px; margin: 20px auto; padding: 0 16px;">
         <!-- Card Hiển Thị Manh Mối (Clues Card) -->
-        <div class="spelling-clue-card" id="spelling-clue-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px; text-align: center; position: relative; margin-bottom: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
-          <!-- Nút Gợi Ý Hint ? & Nút Skip ⏭️ (v0.0.10.1c) -->
-          <div style="position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 6px;">
-            <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (50đ ví hoặc 1 lượt)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-              <span style="font-size: 14px; line-height: 1;">❓</span>
-              <span id="spelling-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
-            </button>
-            <button class="btn btn-outline btn-sm" id="btn-spelling-skip" onclick="useSpellingSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-              <span style="font-size: 14px; line-height: 1;">⏭️</span>
-              <span id="spelling-skips-count" style="font-size: 12px; color: #818cf8;">3</span>
-            </button>
-          </div>
-
-          <div style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; font-weight: 700;">
-            ✍️ HÃY GÕ CHÍNH TẢ TỪ TIẾNG ANH:
+        <div class="spelling-clue-card" id="spelling-clue-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px 18px; text-align: center; position: relative; margin-bottom: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
+          <!-- Top Flex Row: Title + Hint/Skip Buttons (Never Overlap) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; text-align: left;">
+              ✍️ HÃY GÕ CHÍNH TẢ:
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
+              <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (50đ ví hoặc 1 lượt)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">❓</span>
+                <span id="spelling-hints-count" style="font-size: 11.5px; color: #fbbf24;">5</span>
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-spelling-skip" onclick="useSpellingSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">⏭️</span>
+                <span id="spelling-skips-count" style="font-size: 11.5px; color: #818cf8;">3</span>
+              </button>
+            </div>
           </div>
 
           <!-- Nghĩa Tiếng Việt Clue -->
@@ -2934,14 +3013,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-review-queue')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 4px;">
-          🧠 Thuật toán Chu kỳ Quên (Spaced Repetition System)
-        </div>
-        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">
-          Hệ thống tự động tính toán thời điểm vàng để ôn lại từ trước khi não bộ lãng quên (Mới & Vừa học: 1 ngày • Hơi thuộc: 3 ngày • Khá thuộc: 7 ngày • Sắp thuộc: 14 ngày • Đã thuộc: 30 ngày).
-        </div>
-      </div>
+
 
       <!-- Quick Action Buttons for Due Words -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
@@ -3420,7 +3492,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2g</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2h</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7998,6 +8070,12 @@
           symDiv.className = 'spelling-symbol-badge';
           symDiv.textContent = c;
           currentWordBlock.appendChild(symDiv);
+          // If hyphen or slash, allow next word to be in its own wrap block
+          if (c === '-' || c === '/') {
+            currentWordBlock = document.createElement('div');
+            currentWordBlock.className = 'spelling-word-block';
+            container.appendChild(currentWordBlock);
+          }
         } else if (!currentSpellingHiddenIndices.has(idx)) {
           // Pre-filled given letter
           const preInput = document.createElement('input');
