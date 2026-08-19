@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2c</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2d</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3384,7 +3384,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2c</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2d</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5152,6 +5152,39 @@
       }
       updateAuthUI();
       updateEconomyUI();
+
+      // Proactively fetch latest profile from Cloud in background
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && firebaseConfig.databaseURL) {
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}.json${authParam}`)
+          .then(res => res.ok ? res.json() : null)
+          .then(uData => {
+            if (uData && typeof uData === 'object' && currentUser) {
+              const prof = uData.profile || {};
+              let changed = false;
+              if (prof.displayName && prof.displayName !== currentUser.displayName) {
+                currentUser.displayName = prof.displayName;
+                changed = true;
+              }
+              const remoteBio = (prof.bio !== undefined) ? prof.bio : uData.bio;
+              if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
+                currentUser.bio = remoteBio;
+                changed = true;
+              }
+              const remoteAv = prof.avatar || uData.avatar;
+              if (remoteAv && remoteAv !== currentUser.avatar) {
+                currentUser.avatar = remoteAv;
+                changed = true;
+              }
+              if (changed) {
+                localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+                updateAuthUI();
+                renderLibraryDecks();
+              }
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     function updateAuthUI() {
@@ -5605,6 +5638,7 @@
           let finalDisplayName = data.displayName;
           let finalAvatar = '';
           let finalAvatarTime = 0;
+          let finalBio = '';
           if (firebaseConfig.databaseURL) {
             try {
               const pRes = await fetch(`${firebaseConfig.databaseURL}/users/${data.localId}.json?auth=${data.idToken}`);
@@ -5613,6 +5647,8 @@
                 if (uData && typeof uData === 'object') {
                   const prof = uData.profile || {};
                   if (prof.displayName) finalDisplayName = prof.displayName;
+                  if (prof.bio !== undefined) finalBio = prof.bio;
+                  else if (uData.bio !== undefined) finalBio = uData.bio;
                   const av = prof.avatar || uData.avatar;
                   if (av && (av.startsWith('data:image') || av.startsWith('http'))) {
                     finalAvatar = av;
@@ -5628,6 +5664,7 @@
             uid: data.localId,
             email: data.email,
             displayName: finalDisplayName,
+            bio: finalBio,
             avatar: finalAvatar,
             avatarTime: finalAvatarTime,
             idToken: data.idToken
@@ -5756,12 +5793,15 @@
         const payload = {
           profile: {
             displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
+            bio: currentUser.bio || '',
             email: currentUser.email || '',
             avatar: avToSave,
             avatarTime: avTimeToSave,
             geminiApiKey: geminiApiKey || '',
             lastSync: new Date().toISOString()
           },
+          displayName: currentUser.displayName || '',
+          bio: currentUser.bio || '',
           avatar: avToSave,
           avatarTime: avTimeToSave,
           geminiApiKey: geminiApiKey || '',
@@ -5822,6 +5862,26 @@
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
+                // Sync Profile DisplayName & Bio from Cloud
+                const remoteProf = cloudData.profile || {};
+                const remoteName = remoteProf.displayName || cloudData.displayName;
+                const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
+                if (currentUser) {
+                  let profChanged = false;
+                  if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
+                    currentUser.displayName = remoteName.trim();
+                    profChanged = true;
+                  }
+                  if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
+                    currentUser.bio = remoteBio;
+                    profChanged = true;
+                  }
+                  if (profChanged) {
+                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+                    updateAuthUI();
+                  }
+                }
+
                 // Sync API Key from Cloud
                 const remoteKey = cloudData.geminiApiKey || (cloudData.profile && cloudData.profile.geminiApiKey);
                 if (remoteKey) {
