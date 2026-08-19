@@ -217,7 +217,14 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 🤖 v0.0.10.3: AI Deck Generator Studio - Xưởng Tạo & Làm Giàu Bộ Từ Vựng Thông Minh Bằng Google Gemini AI
+• 🤖 v0.0.10.3 (a/b): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI) & Bộ Nhớ Tạm Clipboard Đa Năng (Copy, Cut, Paste Từ Vựng)
+  - 📋 Bộ Nhớ Tạm VocaFlow Clipboard Đa Năng (`v0.0.10.3b`):
+    * **Sao chép (Copy) & Cắt (Cut) từng từ vựng**: Thêm 2 biểu tượng `📋` và `✂️` ngay trên từng thẻ từ trong danh sách giúp nhanh chóng sao chép hoặc di chuyển từ sang bộ từ khác mà không cần nhập lại.
+    * **Thao tác hàng loạt (Bulk Copy/Cut/Paste)**: Khi tick chọn nhiều từ vựng, thanh công cụ xuất hiện các nút `📋 Sao chép`, `✂️ Cắt` và `📋 Dán từ (X)`.
+    * **Dán thông minh (Smart Paste Engine)**: Tự động nhân bản từ với ID mới khi Copy, hoặc cập nhật thuộc tính `deckId` khi Cắt (Cut) và dọn sạch bộ nhớ tạm sau khi di chuyển.
+  - 🏆 Điều Chỉnh Cơ Chế Thưởng Tự Học & Mở Rộng Giới Hạn AI (`v0.0.10.3b`):
+    * **Thưởng tự học theo từ**: Tự thêm 1 từ mới thủ công được thưởng ngay **`+10đ ví / 1 từ`** (loại bỏ thưởng tạo bộ từ trống để đảm bảo công bằng).
+    * **Mở rộng số lượng từ AI**: Cho phép tạo tối đa lên tới **`50 từ / 1 lần`** (các mốc 5, 10, 15, 20, 30, 40, 50 từ).
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
   - 3 Chế độ đầu vào: Theo Chủ đề (Topic Prompt), Trích xuất từ Đoạn văn/Bài báo (Passage), và Chuẩn hóa dãy từ khô (Raw Words).

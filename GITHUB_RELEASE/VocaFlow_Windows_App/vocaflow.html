@@ -1683,6 +1683,9 @@
   <!-- SVG ICON SPRITE -->
   <svg style="display: none;">
     <defs>
+            <symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
+      <symbol id="i-cut" viewBox="0 0 24 24"><path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zM19 3l-6 6 2 2 7-7V3h-3z"/></symbol>
+      <symbol id="i-paste" viewBox="0 0 24 24"><path d="M19 2h-4.18C14.4 0.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/></symbol>
       <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></symbol>
       <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
       <symbol id="i-arrow-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
@@ -1714,7 +1717,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3b</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1898,6 +1901,18 @@
               <span>Chọn tất cả</span>
             </label>
             <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600; font-size: 11px;">0 từ</span>
+            
+            <!-- CLIPBOARD MULTI ACTION BUTTONS -->
+            <button class="btn btn-outline btn-sm" onclick="copySelectedWords()" id="btn-copy-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08);" title="Sao chép các từ đã chọn">
+              <svg class="icon icon-sm"><use href="#i-copy"/></svg> Sao chép
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="cutSelectedWords()" id="btn-cut-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08);" title="Cắt các từ đã chọn để chuyển sang bộ khác">
+              <svg class="icon icon-sm"><use href="#i-cut"/></svg> Cắt
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="pasteWordsFromClipboard()" id="btn-paste-words" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.1);" title="Dán từ vựng từ bộ nhớ tạm vào bộ này">
+              <svg class="icon icon-sm"><use href="#i-paste"/></svg> <span id="paste-words-label">Dán từ</span>
+            </button>
+
             <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3); padding: 2px 7px; font-size: 11px;">
               <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa
             </button>
@@ -2859,6 +2874,8 @@
                 <option value="15">15 từ (300đ ví)</option>
                 <option value="20">20 từ (400đ ví)</option>
                 <option value="30">30 từ (600đ ví)</option>
+                <option value="40">40 từ (800đ ví)</option>
+                <option value="50">50 từ (1000đ ví)</option>
               </select>
             </div>
           </div>
@@ -2877,6 +2894,8 @@
               <option value="10" selected>10 từ trọng tâm (200đ)</option>
               <option value="15">15 từ trọng tâm (300đ)</option>
               <option value="20">20 từ trọng tâm (400đ)</option>
+              <option value="30">30 từ trọng tâm (600đ)</option>
+              <option value="50">50 từ trọng tâm (1000đ)</option>
             </select>
           </div>
         </div>
@@ -3659,7 +3678,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3b</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7012,6 +7031,11 @@
       if (autofcLabel) autofcLabel.textContent = '';
       if (quizLabel) quizLabel.textContent = '';
       if (btnDeleteSelected) btnDeleteSelected.style.display = count > 0 ? 'inline-flex' : 'none';
+      const btnCopySel = document.getElementById('btn-copy-selected');
+      const btnCutSel = document.getElementById('btn-cut-selected');
+      if (btnCopySel) btnCopySel.style.display = count > 0 ? 'inline-flex' : 'none';
+      if (btnCutSel) btnCutSel.style.display = count > 0 ? 'inline-flex' : 'none';
+      updateClipboardUI();
 
       const currentFiltered = getFilteredDeckWords();
       if (selectAllCheckbox) {
@@ -7466,6 +7490,8 @@
               <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 11px; font-weight: 700;">
                 ${masteryInfo.label}
               </span>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="copySingleWord('${w.id}')" title="Sao chép từ này"><svg class="icon icon-sm"><use href="#i-copy"/></svg></button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="cutSingleWord('${w.id}')" title="Cắt từ này (chuyển sang bộ khác)"><svg class="icon icon-sm"><use href="#i-cut"/></svg></button>
               <button class="btn btn-outline btn-icon btn-sm" onclick="editWord('${w.id}')" title="Sửa"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
               <button class="btn btn-outline btn-icon btn-sm" onclick="deleteWord('${w.id}')" title="Xóa"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
             </div>
@@ -7648,6 +7674,8 @@
           createdAt: nowIso,
           updatedAt: nowIso
         });
+        setUserPoints(getUserPoints() + 10);
+        showToast('🎉 Đã thêm từ vựng mới (+10đ ví thưởng tự soạn)!');
       }
 
       saveDatabase(true);
@@ -14998,6 +15026,142 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost}đ ví)`);
       renderDecks();
       openDeckDetail(targetDeckId);
+    }
+
+    // =========================================================================
+    // VOCAFLOW CLIPBOARD ENGINE: COPY, CUT & PASTE (v0.0.10.3b)
+    // =========================================================================
+    let vocaClipboard = {
+      action: null, // 'copy' or 'cut'
+      words: [],
+      sourceDeckId: null
+    };
+
+    function copySelectedWords() {
+      if (selectedWordIds.size === 0) return;
+      const targetWords = words.filter(w => selectedWordIds.has(w.id));
+      if (targetWords.length === 0) return;
+
+      vocaClipboard = {
+        action: 'copy',
+        words: JSON.parse(JSON.stringify(targetWords)),
+        sourceDeckId: currentDeckId
+      };
+
+      showToast(`📋 Đã sao chép ${targetWords.length} từ vựng vào bộ nhớ tạm!`);
+      updateClipboardUI();
+    }
+
+    function cutSelectedWords() {
+      if (selectedWordIds.size === 0) return;
+      const targetWords = words.filter(w => selectedWordIds.has(w.id));
+      if (targetWords.length === 0) return;
+
+      vocaClipboard = {
+        action: 'cut',
+        words: JSON.parse(JSON.stringify(targetWords)),
+        sourceDeckId: currentDeckId
+      };
+
+      showToast(`✂️ Đã cắt ${targetWords.length} từ vựng (chuyển tới bộ từ khác và bấm "Dán")!`);
+      updateClipboardUI();
+    }
+
+    function copySingleWord(wordId) {
+      const w = words.find(item => item.id === wordId);
+      if (!w) return;
+
+      vocaClipboard = {
+        action: 'copy',
+        words: [JSON.parse(JSON.stringify(w))],
+        sourceDeckId: currentDeckId
+      };
+
+      showToast(`📋 Đã sao chép từ "${w.term}" vào bộ nhớ tạm!`);
+      updateClipboardUI();
+    }
+
+    function cutSingleWord(wordId) {
+      const w = words.find(item => item.id === wordId);
+      if (!w) return;
+
+      vocaClipboard = {
+        action: 'cut',
+        words: [JSON.parse(JSON.stringify(w))],
+        sourceDeckId: currentDeckId
+      };
+
+      showToast(`✂️ Đã cắt từ "${w.term}" (hãy mở bộ từ khác và bấm "Dán")!`);
+      updateClipboardUI();
+    }
+
+    function pasteWordsFromClipboard() {
+      if (!vocaClipboard || !vocaClipboard.words || vocaClipboard.words.length === 0) {
+        alert('Bộ nhớ tạm trống! Hãy chọn từ và bấm "Sao chép" hoặc "Cắt" trước.');
+        return;
+      }
+
+      if (!currentDeckId) {
+        alert('Vui lòng mở một bộ từ để dán từ vựng vào!');
+        return;
+      }
+
+      if (vocaClipboard.action === 'cut') {
+        if (vocaClipboard.sourceDeckId === currentDeckId) {
+          alert('⚠️ Các từ này đang nằm sẵn trong bộ từ hiện tại!');
+          return;
+        }
+
+        const count = vocaClipboard.words.length;
+        vocaClipboard.words.forEach(cw => {
+          const liveWord = words.find(w => w.id === cw.id);
+          if (liveWord) {
+            liveWord.deckId = currentDeckId;
+            liveWord.updatedAt = new Date().toISOString();
+          }
+        });
+
+        vocaClipboard = { action: null, words: [], sourceDeckId: null };
+        saveDatabase(true);
+        renderWordList();
+        renderDecks();
+        updateSelectionUI();
+        updateClipboardUI();
+        showToast(`✂️ Đã di chuyển thành công ${count} từ vựng sang bộ từ này!`);
+      } else {
+        // Copy action: Clone words with new IDs
+        const newWordObjects = vocaClipboard.words.map((w, idx) => ({
+          ...w,
+          id: 'w_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 4),
+          deckId: currentDeckId,
+          status: 'newWord',
+          masteryScore: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }));
+
+        words.push(...newWordObjects);
+        saveDatabase(true);
+        renderWordList();
+        renderDecks();
+        updateSelectionUI();
+        updateClipboardUI();
+        showToast(`📋 Đã dán thành công ${newWordObjects.length} từ vựng vào bộ từ này!`);
+      }
+    }
+
+    function updateClipboardUI() {
+      const btnPaste = document.getElementById('btn-paste-words');
+      const labelPaste = document.getElementById('paste-words-label');
+      const hasClipboard = vocaClipboard && vocaClipboard.words && vocaClipboard.words.length > 0;
+
+      if (btnPaste) {
+        btnPaste.style.display = hasClipboard ? 'inline-flex' : 'none';
+      }
+      if (labelPaste && hasClipboard) {
+        const actLabel = vocaClipboard.action === 'cut' ? '✂️ Di chuyển' : '📋 Dán';
+        labelPaste.textContent = `${actLabel} (${vocaClipboard.words.length})`;
+      }
     }
 
   </script>
