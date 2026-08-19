@@ -1512,7 +1512,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.16</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.17</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2415,7 +2415,7 @@
 
       <!-- Gift / Redeem Code Section -->
       <div style="margin-bottom: 16px; padding: 12px; border-radius: 12px; background: var(--surface-elevated); border: 1px dashed var(--border);">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng / Khôi phục:</label>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng:</label>
         <div style="display: flex; gap: 8px;">
           <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
           <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap;">Áp dụng</button>
@@ -2699,9 +2699,24 @@
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
           <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
-            🔑 Lấy Key 30s
-          </a>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeminiKeyGuide(event)" title="Xem hướng dẫn lấy API Key" style="font-size: 11px; padding: 2px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); font-weight: 700; cursor: pointer;">
+              ❓ Hướng dẫn
+            </button>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
+              🔑 Lấy Key 30s
+            </a>
+          </div>
+        </div>
+        <!-- HƯỚNG DẪN LẤY KEY 3 BƯỚC (v0.0.9.17) -->
+        <div id="gemini-key-guide-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.6; color: var(--text);">
+          <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span>📖 Hướng dẫn lấy Gemini API Key (Miễn phí 100%):</span>
+            <span onclick="toggleGeminiKeyGuide(event)" style="cursor: pointer; opacity: 0.7; font-size: 13px;">✕</span>
+          </div>
+          <div><strong style="color: #fbbf24;">Bước 1:</strong> Nhấn nút <strong>"🔑 Lấy Key 30s"</strong> (nếu chưa đăng nhập Gmail thì tiến hành đăng nhập tài khoản Google).</div>
+          <div><strong style="color: #fbbf24;">Bước 2:</strong> Nhấn nút <strong>"Create API key"</strong> màu xanh, sau đó chọn <strong>"Copy"</strong> để sao chép chuỗi mã Key.</div>
+          <div><strong style="color: #fbbf24;">Bước 3:</strong> Dán mã vừa copy vào ô bên dưới và nhấn <strong>"🧪 Thử kết nối"</strong> để hoàn tất.</div>
         </div>
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4;">
           Nhập Gemini API Key cá nhân để mở khóa AI tự động phân tích nghĩa tiếng Việt, câu ví dụ, collocations khi thêm từ mới.
@@ -2718,7 +2733,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.16</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.17</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3572,6 +3587,9 @@
     }
 
     async function redeemShopGiftCode() {
+      if (!requireLogin('tính năng Nhập Mã Quà Tặng')) {
+        return;
+      }
       const input = document.getElementById('shop-gift-code-input');
       const msg = document.getElementById('shop-gift-msg');
       if (!input || !msg) return;
@@ -4408,6 +4426,24 @@
     }
 
     // Modal Switchers
+    // Global Login Guard for Guest vs Member Features (v0.0.9.17)
+    function requireLogin(featureName = 'tính năng này') {
+      if (currentUser && currentUser.email && currentUser.email.trim().length > 0) {
+        return true;
+      }
+      alert('🔒 Vui lòng đăng ký hoặc đăng nhập tài khoản để sử dụng ' + featureName + '!');
+      openAuthModal('login');
+      return false;
+    }
+
+    function toggleGeminiKeyGuide(e) {
+      if (e) e.preventDefault();
+      const box = document.getElementById('gemini-key-guide-box');
+      if (box) {
+        box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
+      }
+    }
+
     function openProfileModal() {
       updateAuthUI();
       openModal('modal-profile');
@@ -10584,6 +10620,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let pendingPublisherDeck = null;
 
     function openLibraryModal() {
+      if (!requireLogin('Thư Viện Từ Vựng')) {
+        return;
+      }
       currentLibraryCategory = 'all';
       const searchInput = document.getElementById('library-search-input');
       if (searchInput) searchInput.value = '';
