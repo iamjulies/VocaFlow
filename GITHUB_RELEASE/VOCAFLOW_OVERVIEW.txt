@@ -181,7 +181,14 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
-• 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).
+• 👤 v0.0.10.2a: Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio) & Thẻ Hồ Sơ Thành Viên (Public Profile)
+  - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
+    * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
+    * Tự động đồng bộ ngay lập tức lên Header, LocalStorage và Cloud Firestore / Firebase Database 2 chiều.
+  - 👥 Thẻ Hồ Sơ Người Dùng Công Khai (Public User Profile Modal - `modal-public-profile`):
+    * Khi bấm vào Tên Tác Giả trong Thư Viện Toàn Cầu hoặc Tên Học Viên trong Phòng Quản Trị, hệ thống mở Thẻ hồ sơ cá nhân sắc nét.
+    * Hiển thị: Avatar lớn, Tên hiển thị, Huy hiệu đóng góp, Ghi chú/Mục tiêu cá nhân (Bio), Thống kê số bộ từ, tổng từ vựng, điểm uy tín và danh sách các bộ từ do người đó chia sẻ.
+    * Tích hợp nút xem trước và tải về trực tiếp từ hồ sơ tác giả.
 • 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).

@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1m</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2a</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3024,6 +3024,68 @@
     </div>
   </div>
 
+  <!-- MODAL: PUBLIC PROFILE CARD (v0.0.10.2a) -->
+  <div class="modal-overlay" id="modal-public-profile" style="z-index: 10005;">
+    <div class="modal" style="max-width: 500px; position: relative;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">👤</span>
+          <strong style="font-size: 16px;">Hồ Sơ Người Dùng</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-public-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- HERO BANNER & AVATAR -->
+      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 20px 16px; text-align: center; margin-bottom: 16px; position: relative;">
+        <div id="pub-view-avatar" style="width: 72px; height: 72px; min-width: 72px; min-height: 72px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; margin: 0 auto 10px; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 6px 18px rgba(168, 85, 247, 0.4); overflow: hidden;">
+          👤
+        </div>
+        <h3 id="pub-view-name" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: var(--text);">Người dùng VocaFlow</h3>
+        <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+          <span id="pub-view-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">🌟 Tác Giả Đóng Góp</span>
+          <span id="pub-view-sub-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Thành Viên VocaFlow</span>
+        </div>
+        
+        <!-- BIO / PERSONAL GOALS -->
+        <div id="pub-view-bio-box" style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); text-align: left;">
+          <div style="font-size: 11px; color: #a5b4fc; font-weight: 700; margin-bottom: 2px;">🎯 Ghi chú & Mục tiêu:</div>
+          <p id="pub-view-bio-text" style="margin: 0; font-size: 12.5px; color: var(--text); font-style: italic; line-height: 1.45;">Chưa có ghi chú cá nhân.</p>
+        </div>
+      </div>
+
+      <!-- 3-TILE STATS -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">📚 Bộ từ</div>
+          <div id="pub-view-stat-decks" style="font-size: 18px; font-weight: 800; color: #818cf8; margin-top: 2px;">0</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">📝 Từ vựng</div>
+          <div id="pub-view-stat-words" style="font-size: 18px; font-weight: 800; color: #34d399; margin-top: 2px;">0</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">💰 Điểm / Uy tín</div>
+          <div id="pub-view-stat-points" style="font-size: 18px; font-weight: 800; color: #fbbf24; margin-top: 2px;">+0đ</div>
+        </div>
+      </div>
+
+      <!-- AUTHOR PUBLIC DECKS LIST -->
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <span>📂 Các Bộ Từ Đã Chia Sẻ:</span>
+          <span id="pub-view-decks-count" style="font-size: 11px; color: var(--text-muted);"></span>
+        </div>
+        <div id="pub-view-decks-list" style="max-height: 200px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-public-profile')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: PROFILE & CLOUD SYNC -->
   <div class="modal-overlay" id="modal-profile">
     <div class="modal" style="max-width: 500px;">
@@ -3047,25 +3109,46 @@
         </button>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-        <div id="profile-avatar" style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden;" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
-          👤
+      <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+          <div id="profile-avatar" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden; box-shadow: 0 4px 12px rgba(168,85,247,0.3);" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
+            👤
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
+              <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
+            </div>
+            <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12.5px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+            <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+              <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
+              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatar-file-input').click()" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                <span>📷</span> Đổi Avatar
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-remove-avatar" onclick="removeUserAvatar()" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
+                🗑️ Xóa Ảnh
+              </button>
+            </div>
+          </div>
         </div>
-        <div style="flex: 1;">
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
-            <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
+
+        <!-- EDIT DISPLAY NAME & BIO (v0.0.10.2a) -->
+        <div id="profile-custom-fields-container" style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+          <div>
+            <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <span>✏️</span> Tên Hiển Thị (Nickname):
+            </label>
+            <input type="text" id="profile-display-name-input" class="form-input" placeholder="Nhập tên hoặc biệt danh của bạn..." style="font-size: 13px; padding: 7px 10px;">
           </div>
-          <p id="profile-email" style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">Dữ liệu lưu trữ nội bộ trên máy này.</p>
-          <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
-            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
-            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatar-file-input').click()" style="font-size: 12px; padding: 5px 12px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-              <span>📷</span> Tải Ảnh Đại Diện Từ Thiết Bị
-            </button>
-            <button type="button" class="btn btn-outline btn-sm" id="btn-remove-avatar" onclick="removeUserAvatar()" style="font-size: 11.5px; padding: 5px 10px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
-              🗑️ Xóa Ảnh
-            </button>
+          <div>
+            <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #34d399; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Ghi Chú Cá Nhân & Mục Tiêu Học Tập (Bio):
+            </label>
+            <textarea id="profile-bio-input" class="form-textarea" rows="2" placeholder="Ví dụ: Mục tiêu IELTS 8.0 trước tháng 12 • Mỗi ngày học 20 từ mới • Don't give up!..." style="font-size: 12px;"></textarea>
           </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="saveUserProfileCustomFields()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 7px 14px; align-self: flex-end; display: flex; align-items: center; gap: 6px;">
+            <span>💾</span> Lưu Thông Tin Cá Nhân
+          </button>
         </div>
       </div>
 
@@ -3286,7 +3369,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1m</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2a</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4717,13 +4800,13 @@
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
             <!-- ROW 1: USER INFO -->
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1;">
-                <div style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15); overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1; cursor: pointer;" onclick="openPublicProfileByStudent('${escapeHtml(s.uid)}')">
+                <div style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15); overflow: hidden;" title="Bấm để xem hồ sơ học viên">
                   ${renderAvatarHtml(s.avatar || s.displayName, 40, 16)}
                 </div>
                 <div>
                   <div style="font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span>${escapeHtml(s.displayName)}</span>
+                    <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ học viên">${escapeHtml(s.displayName)}</span>
                     <span style="font-size: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 6px; border-radius: 4px; font-family: monospace;">UID: ${escapeHtml(s.uid.slice(0, 6))}...</span>
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
@@ -5121,6 +5204,127 @@
       if (box) {
         box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
       }
+    }
+
+    async function saveUserProfileCustomFields() {
+      const nameInput = document.getElementById('profile-display-name-input');
+      const bioInput = document.getElementById('profile-bio-input');
+      const newName = (nameInput?.value || '').trim() || 'Người dùng VocaFlow';
+      const newBio = (bioInput?.value || '').trim();
+
+      if (!currentUser) {
+        currentUser = {
+          displayName: newName,
+          bio: newBio,
+          email: '',
+          uid: 'guest_' + Date.now()
+        };
+      } else {
+        currentUser.displayName = newName;
+        currentUser.bio = newBio;
+      }
+
+      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      updateAuthUI();
+
+      // If logged in, push to Cloud
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
+      }
+
+      showToast('✨ Đã lưu thông tin hồ sơ và mục tiêu học tập thành công!');
+    }
+
+    function openPublicProfileByAuthor(authorName, deckId) {
+      if (!authorName) return;
+      const allDecks = getAllLibraryDecks();
+      const authorDecks = allDecks.filter(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+      const firstDeck = authorDecks.find(d => d.id === deckId) || authorDecks[0];
+
+      const nameEl = document.getElementById('pub-view-name');
+      const avEl = document.getElementById('pub-view-avatar');
+      const bioEl = document.getElementById('pub-view-bio-text');
+      const statDecksEl = document.getElementById('pub-view-stat-decks');
+      const statWordsEl = document.getElementById('pub-view-stat-words');
+      const statPointsEl = document.getElementById('pub-view-stat-points');
+      const decksListEl = document.getElementById('pub-view-decks-list');
+      const decksCountEl = document.getElementById('pub-view-decks-count');
+
+      const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
+
+      if (nameEl) nameEl.textContent = authorName;
+      if (avEl) avEl.innerHTML = renderAvatarHtml(firstDeck?.authorAvatar || authorName, 72, 28);
+      if (bioEl) bioEl.textContent = firstDeck?.authorBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+      if (statDecksEl) statDecksEl.textContent = authorDecks.length;
+      if (statWordsEl) statWordsEl.textContent = totalWords;
+      if (statPointsEl) statPointsEl.textContent = '+' + (authorDecks.length * 100) + 'đ';
+
+      if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' bộ từ';
+      if (decksListEl) {
+        if (authorDecks.length === 0) {
+          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có bộ từ công khai nào.</div>';
+        } else {
+          let h = '';
+          authorDecks.forEach(d => {
+            h += `
+              <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-weight: 700; font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.icon || '📘'} ${escapeHtml(d.title)}</div>
+                  <div style="font-size: 10.5px; color: var(--text-muted);">${Array.isArray(d.words) ? d.words.length : 0} từ • ${escapeHtml(d.category || 'THPT')}</div>
+                </div>
+                <button class="btn btn-outline btn-sm" style="font-size: 11px; padding: 3px 8px;" onclick="closeModal('modal-public-profile'); previewLibraryDeck('${d.id}')">👁️ Xem</button>
+              </div>
+            `;
+          });
+          decksListEl.innerHTML = h;
+        }
+      }
+
+      openModal('modal-public-profile');
+    }
+
+    function openPublicProfileByStudent(uid) {
+      const s = adminStudentsData.find(st => st.uid === uid);
+      if (!s) return;
+
+      const nameEl = document.getElementById('pub-view-name');
+      const avEl = document.getElementById('pub-view-avatar');
+      const bioEl = document.getElementById('pub-view-bio-text');
+      const statDecksEl = document.getElementById('pub-view-stat-decks');
+      const statWordsEl = document.getElementById('pub-view-stat-words');
+      const statPointsEl = document.getElementById('pub-view-stat-points');
+      const decksListEl = document.getElementById('pub-view-decks-list');
+      const decksCountEl = document.getElementById('pub-view-decks-count');
+
+      if (nameEl) nameEl.textContent = s.displayName;
+      if (avEl) avEl.innerHTML = renderAvatarHtml(s.avatar || s.displayName, 72, 28);
+      if (bioEl) bioEl.textContent = s.bio || `Học viên VocaFlow • Đã tham gia học tập và sở hữu ${s.deckCount} bộ từ vựng.`;
+      if (statDecksEl) statDecksEl.textContent = s.deckCount;
+      if (statWordsEl) statWordsEl.textContent = s.wordCount;
+      if (statPointsEl) statPointsEl.textContent = s.points + 'đ';
+
+      if (decksCountEl) decksCountEl.textContent = (s.rawDecks?.length || 0) + ' bộ từ';
+      if (decksListEl) {
+        if (!s.rawDecks || s.rawDecks.length === 0) {
+          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
+        } else {
+          let h = '';
+          s.rawDecks.forEach(d => {
+            const dWords = (s.rawWords || []).filter(w => w.deckId === d.id);
+            h += `
+              <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-weight: 700; font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📘 ${escapeHtml(d.title || 'Bộ từ')}</div>
+                  <div style="font-size: 10.5px; color: var(--text-muted);">${dWords.length} từ vựng</div>
+                </div>
+              </div>
+            `;
+          });
+          decksListEl.innerHTML = h;
+        }
+      }
+
+      openModal('modal-public-profile');
     }
 
     function openProfileModal() {
@@ -12929,7 +13133,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
               </div>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-                <span>👤</span> <span>Đóng góp:</span> <strong style="color: var(--text);">${escapeHtml(authorName)}</strong>
+                <span>👤</span> <span>Đóng góp:</span> <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>
               </div>
             </div>
 
@@ -13323,6 +13527,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         title: title,
         description: (descInput?.value || '').trim() || `Bộ từ vựng chia sẻ bởi ${author}`,
         author: author,
+        authorUid: (currentUser && currentUser.uid) || '',
+        authorAvatar: (currentUser && currentUser.avatar) || '',
+        authorBio: (currentUser && currentUser.bio) || '',
         category: finalCategory,
         icon: iconSelect ? iconSelect.value : '📘',
         color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
