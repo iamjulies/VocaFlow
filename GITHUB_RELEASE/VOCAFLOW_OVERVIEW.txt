@@ -217,7 +217,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 🤖 v0.0.10.3 (a -> e): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
+• 🤖 v0.0.10.3 (a -> f): AI Deck Studio & Cửa Sổ Thu Nhỏ Auto Flashcard (Picture-in-Picture Mini-Player) AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
   - 🎓 Huấn Luyện AI Chuyên Sâu, Chạy Ngầm & Tối Ưu UX Studio (`v0.0.10.3e`):
     * **Chuẩn hóa chữ thường & Dạng gốc của từ**: Tất cả từ vựng tạo ra đều đồng bộ chữ thường (trừ danh từ riêng), động từ luôn ở dạng nguyên thể không chia (`mitigate`, không lấy `mitigating`/`mitigated`), danh từ luôn ở số ít (`strategy`, không lấy `strategies`).
     * **Trích xuất từ báo/bài đọc ưu tiên từ khó & học thuật**: Yêu cầu AI tập trung trích xuất các từ vựng nâng cao có cấp độ CEFR cao (B2, C1, C2), bỏ qua các từ cơ bản (A1, A2).

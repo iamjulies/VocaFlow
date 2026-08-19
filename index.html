@@ -1676,6 +1676,134 @@
     .shake-intense {
       animation: shake-intense 0.65s cubic-bezier(.36,.07,.19,.97) both;
     }
+      /* FLOATING MINI AUTO FLASHCARD PLAYER (PiP - v0.0.10.3f) */
+    .autofc-mini-player {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 260px;
+      background: rgba(18, 22, 36, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(168, 85, 247, 0.25);
+      border-radius: 16px;
+      overflow: hidden;
+      z-index: 10001;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      user-select: none;
+      animation: floatIn 0.3s ease forwards;
+    }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .autofc-mini-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .autofc-mini-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .autofc-mini-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+    }
+    .autofc-mini-card-container {
+      padding: 8px 10px;
+      perspective: 600px;
+      cursor: pointer;
+      height: 86px;
+    }
+    .autofc-mini-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .autofc-mini-card.flipped {
+      transform: rotateY(180deg);
+    }
+    .autofc-mini-face {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-sizing: border-box;
+    }
+    .autofc-mini-back {
+      transform: rotateY(180deg);
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+    .autofc-mini-controls {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 4px 10px 8px;
+      background: rgba(0, 0, 0, 0.25);
+    }
+    .autofc-mini-btn-ctrl {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .autofc-mini-btn-ctrl:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.05);
+    }
+    .autofc-mini-play-btn {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+    @media (max-width: 600px) {
+      .autofc-mini-player {
+        bottom: 74px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: 340px;
+        margin: 0 auto;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1709,6 +1837,8 @@
       <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></symbol>
       <symbol id="i-skip-next" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></symbol>
       <symbol id="i-skip-prev" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></symbol>
+      <symbol id="i-minimize" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></symbol>
     </defs>
   </svg>
 
@@ -1717,7 +1847,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3f</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2217,7 +2347,7 @@
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
     <section id="screen-autofc" class="screen">
       <div class="top-nav">
-        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()">
+        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Thoát">
           <svg class="icon"><use href="#i-arrow-back"/></svg>
         </button>
         <div style="text-align: center;">
@@ -2226,9 +2356,15 @@
             <span id="autofc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</span>
           </div>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Đóng">
-          <svg class="icon"><use href="#i-close"/></svg>
-        </button>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="minimizeAutoFlashcardToPip()" title="Thu nhỏ dạng cửa sổ nổi (Picture-in-Picture)" style="font-size: 11.5px; padding: 5px 9px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(168,85,247,0.5); color: #c084fc; background: rgba(168,85,247,0.1); font-weight: 600;">
+            <svg class="icon icon-xs" style="width: 13px; height: 13px;"><use href="#i-minimize"/></svg>
+            <span>Thu nhỏ</span>
+          </button>
+          <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Đóng">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 12px;">
@@ -2804,6 +2940,70 @@
           🚀 Bắt Đầu Làm Quiz Ngay
         </button>
       </div>
+    </div>
+  </div>
+
+    <!-- FLOATING MINI AUTO FLASHCARD PLAYER (v0.0.10.3f PiP) -->
+  <div id="autofc-mini-player" class="autofc-mini-player" style="display: none;">
+    <!-- MINI HEADER BAR -->
+    <div class="autofc-mini-header">
+      <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        <span style="font-size: 13px;">🎧</span>
+        <span id="autofc-mini-title" style="font-size: 11px; font-weight: 700; color: #34d399;">Auto FC (1/10)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 3px;">
+        <button class="autofc-mini-btn" onclick="maximizeAutoFcMiniPlayer()" title="Phóng to toàn màn hình">
+          <svg class="icon icon-xs" style="width: 13px; height: 13px;"><use href="#i-expand"/></svg>
+        </button>
+        <button class="autofc-mini-btn" onclick="closeAutoFcMiniPlayer()" title="Tắt Auto Flashcard">
+          <svg class="icon icon-xs" style="width: 13px; height: 13px;"><use href="#i-close"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- MINI PROGRESS LINE -->
+    <div style="height: 3px; background: rgba(255,255,255,0.1); width: 100%; overflow: hidden;">
+      <div id="autofc-mini-progress" style="height: 100%; width: 10%; background: linear-gradient(90deg, #10b981, #38bdf8); transition: width 0.3s ease;"></div>
+    </div>
+
+    <!-- MINI 3D FLIPPING CARD -->
+    <div class="autofc-mini-card-container" onclick="toggleAutoFlashcardPlayPause()" title="Chạm để Tạm dừng / Tiếp tục">
+      <div class="autofc-mini-card" id="autofc-mini-card-element">
+        <!-- Mini Front -->
+        <div class="autofc-mini-face autofc-mini-front">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px;">
+            <span id="autofc-mini-pos" class="badge" style="font-size: 8.5px; padding: 1px 4px; background: rgba(99,102,241,0.2); color: #a5b4fc;">noun</span>
+            <span id="autofc-mini-status" class="badge" style="font-size: 8.5px; padding: 1px 4px; background: rgba(56,189,248,0.2); color: #38bdf8;">🔊 EN</span>
+          </div>
+          <div id="autofc-mini-front-term" style="font-size: 14.5px; font-weight: 800; color: var(--text); line-height: 1.2; margin: 2px 0;">term</div>
+          <div id="autofc-mini-front-phonetic" style="font-size: 10.5px; color: var(--text-muted);">/phonetic/</div>
+        </div>
+
+        <!-- Mini Back -->
+        <div class="autofc-mini-face autofc-mini-back">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px;">
+            <span id="autofc-mini-back-term" style="font-size: 11px; font-weight: 700; color: #818cf8;">term</span>
+            <span class="badge" style="font-size: 8.5px; padding: 1px 4px; background: rgba(16,185,129,0.2); color: #34d399;">🔊 VI</span>
+          </div>
+          <div id="autofc-mini-back-def" style="font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Định nghĩa tiếng Việt</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINI CONTROLS BAR -->
+    <div class="autofc-mini-controls">
+      <button class="autofc-mini-btn-ctrl" onclick="prevAutoFlashcard()" title="Thẻ trước">
+        <svg class="icon icon-xs" style="width: 12px; height: 12px;"><use href="#i-skip-prev"/></svg>
+      </button>
+      <button class="autofc-mini-btn-ctrl autofc-mini-play-btn" id="btn-autofc-mini-playpause" onclick="toggleAutoFlashcardPlayPause()" title="Phát / Dừng">
+        <svg class="icon icon-xs" id="icon-autofc-mini-playpause" style="width: 13px; height: 13px;"><use href="#i-pause"/></svg>
+      </button>
+      <button class="autofc-mini-btn-ctrl" onclick="nextAutoFlashcard()" title="Thẻ tiếp theo">
+        <svg class="icon icon-xs" style="width: 12px; height: 12px;"><use href="#i-skip-next"/></svg>
+      </button>
+      <button class="autofc-mini-btn-ctrl" id="btn-autofc-mini-loop" onclick="toggleAutoFlashcardLoop()" title="Lặp vô tận">
+        <svg class="icon icon-xs" style="width: 12px; height: 12px;"><use href="#i-repeat"/></svg>
+      </button>
     </div>
   </div>
 
@@ -3662,7 +3862,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10751,8 +10951,47 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let autoFlashcardList = [];
     let autoFlashcardIndex = 0;
     let autoFlashcardStepId = 0;
+    let isAutoFcMiniMode = false;
+    let lastScreenBeforeAutoFc = 'screen-decks';
+
+    function minimizeAutoFlashcardToPip() {
+      isAutoFcMiniMode = true;
+      const miniEl = document.getElementById('autofc-mini-player');
+      if (miniEl) miniEl.style.display = 'flex';
+
+      const targetScreen = lastScreenBeforeAutoFc || 'screen-deck-detail';
+      showScreen(targetScreen);
+      refreshActiveScreenData();
+      syncAutoFlashcardControlsUI();
+      showToast('🗗 Đã thu nhỏ Auto Flashcard! Bạn có thể vừa nghe vừa thao tác ứng dụng.');
+    }
+
+    function maximizeAutoFcMiniPlayer() {
+      isAutoFcMiniMode = false;
+      const miniEl = document.getElementById('autofc-mini-player');
+      if (miniEl) miniEl.style.display = 'none';
+
+      showScreen('screen-autofc');
+      syncAutoFlashcardControlsUI();
+      renderAutoCardOnly(autoFlashcardIndex);
+    }
+
+    function closeAutoFcMiniPlayer() {
+      isAutoFcMiniMode = false;
+      const miniEl = document.getElementById('autofc-mini-player');
+      if (miniEl) miniEl.style.display = 'none';
+
+      isAutoPlaying = false;
+      autoFlashcardStepId++;
+      stopAllAudio();
+      showToast('⏹️ Đã tắt Auto Flashcard.');
+    }
 
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
+      lastScreenBeforeAutoFc = document.querySelector('.screen.active')?.id || 'screen-decks';
+      isAutoFcMiniMode = false;
+      const miniEl = document.getElementById('autofc-mini-player');
+      if (miniEl) miniEl.style.display = 'none';
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
@@ -10791,9 +11030,18 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function syncAutoFlashcardControlsUI() {
       const playIcon = document.getElementById('icon-autofc-playpause');
+      const miniPlayIcon = document.getElementById('icon-autofc-mini-playpause');
       const loopBtn = document.getElementById('btn-autofc-loop');
+      const miniLoopBtn = document.getElementById('btn-autofc-mini-loop');
+
       if (playIcon) {
         playIcon.innerHTML = `<use href="#${isAutoPlaying ? 'i-pause' : 'i-play'}"/>`;
+      }
+      if (miniPlayIcon) {
+        miniPlayIcon.innerHTML = `<use href="#${isAutoPlaying ? 'i-pause' : 'i-play'}"/>`;
+      }
+      if (miniLoopBtn) {
+        miniLoopBtn.style.color = isAutoLoop ? '#34d399' : 'var(--text-muted)';
       }
       if (loopBtn) {
         if (isAutoLoop) {
@@ -10897,8 +11145,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitAutoFlashcard() {
       checkAndApplyPendingAppUpdate();
       isAutoPlaying = false;
+      isAutoFcMiniMode = false;
       autoFlashcardStepId++;
       stopAllAudio();
+      const miniEl = document.getElementById('autofc-mini-player');
+      if (miniEl) miniEl.style.display = 'none';
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
         refreshActiveScreenData();
@@ -10948,6 +11199,30 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}</div>`;
       if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
       metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
+
+      // Sync Mini Player (PiP)
+      const miniTitle = document.getElementById('autofc-mini-title');
+      const miniProg = document.getElementById('autofc-mini-progress');
+      const miniPos = document.getElementById('autofc-mini-pos');
+      const miniFrontTerm = document.getElementById('autofc-mini-front-term');
+      const miniFrontPhonetic = document.getElementById('autofc-mini-front-phonetic');
+      const miniBackTerm = document.getElementById('autofc-mini-back-term');
+      const miniBackDef = document.getElementById('autofc-mini-back-def');
+      const miniCardEl = document.getElementById('autofc-mini-card-element');
+      const miniStatus = document.getElementById('autofc-mini-status');
+
+      if (miniTitle) miniTitle.textContent = `Auto FC (${index + 1}/${total})`;
+      if (miniProg) miniProg.style.width = `${Math.round(((index + 1) / total) * 100)}%`;
+      if (miniPos) miniPos.textContent = (word.partOfSpeech || 'WORD').toLowerCase();
+      if (miniFrontTerm) miniFrontTerm.textContent = word.term;
+      if (miniFrontPhonetic) miniFrontPhonetic.textContent = word.phonetic || '';
+      if (miniBackTerm) miniBackTerm.textContent = word.term;
+      if (miniBackDef) miniBackDef.textContent = word.definitionVi;
+      if (miniCardEl) miniCardEl.classList.remove('flipped');
+      if (miniStatus) {
+        miniStatus.textContent = '🔊 EN';
+        miniStatus.style.color = '#38bdf8';
+      }
     }
 
     async function runAutoFlashcardLoop() {
@@ -10998,6 +11273,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         // 4. Flip to Back smoothly
         if (cardEl) cardEl.classList.add('flipped');
+        const miniCardEl = document.getElementById('autofc-mini-card-element');
+        const miniStatusEl = document.getElementById('autofc-mini-status');
+        if (miniCardEl) miniCardEl.classList.add('flipped');
+        if (miniStatusEl) {
+          miniStatusEl.textContent = '🔊 VI';
+          miniStatusEl.style.color = '#34d399';
+        }
         if (statusEl) {
           statusEl.textContent = '🇻🇳 Chuẩn bị đọc nghĩa...';
           statusEl.style.color = '#34d399';
