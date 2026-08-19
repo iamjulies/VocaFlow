@@ -7117,10 +7117,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         aiDistractors = await fetchAiDistractors(questionWord, aiDistractorCount);
       }
 
+      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
       const regularNeeded = 3 - aiDistractors.length;
       const rawRegularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
       const regularDistractors = rawRegularDistractors.map(d => chameleonStyleMatching(d, correctDef));
-      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
       const choices = [correctDef, ...aiDistractors, ...regularDistractors].slice(0, 4).sort(() => Math.random() - 0.5);
 
       const optionsContainer = document.getElementById('quiz-options-container');
