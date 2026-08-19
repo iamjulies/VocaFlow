@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1i</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1k</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2536,38 +2536,82 @@
     </div>
   </div>
 
-  <!-- MODAL: SPELLING RESULT SUMMARY (v0.0.10.1a) -->
-  <div class="modal-overlay" id="modal-spelling-result">
-    <div class="modal" style="max-width: 520px; text-align: center; position: relative;">
-      <canvas id="spelling-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; border-radius: 16px; z-index: 10;"></canvas>
-      
-      <div style="font-size: 48px; margin-bottom: 8px; animation: bounce 1s infinite alternate;" id="spelling-result-icon">🎉</div>
-      <h2 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;" id="spelling-result-title">Xuất Sắc! Hoàn Thành Luyện Viết!</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;" id="spelling-result-sub">Bạn đã rèn luyện trí nhớ cơ bắp chính tả thành công!</p>
+  <!-- MODAL: SPELLING CELEBRATION RESULT POPUP (v0.0.10.1k) -->
+  <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="spelling-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
 
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Số từ hoàn thành</div>
-          <div style="font-size: 22px; font-weight: 800; color: #34d399;" id="spelling-result-correct">10 / 10</div>
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="spelling-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
+        <h2 id="spelling-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Tuyệt Đối Xuất Sắc!</h2>
+        <p id="spelling-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã gõ đúng 100% tất cả các từ vựng!</p>
+        
+        <div style="margin-bottom: 16px;">
+          <span id="spelling-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">✍️ Cấp độ: Khó (x2.0) (Hệ số x2.0 Điểm)</span>
         </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Điểm thưởng nhận được</div>
-          <div style="font-size: 22px; font-weight: 800; color: #fbbf24;" id="spelling-result-points">+50đ</div>
-        </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Số lần gõ sai</div>
-          <div style="font-size: 22px; font-weight: 800; color: #f87171;" id="spelling-result-wrong">0</div>
-        </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Thời gian hoàn thành</div>
-          <div style="font-size: 22px; font-weight: 800; color: #818cf8;" id="spelling-result-time">00:45</div>
-        </div>
-      </div>
 
-      <div class="modal-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn btn-outline" onclick="retrySpellingFromModal()" style="flex: 1;">🔄 Luyện Lại</button>
-        <button class="btn btn-outline" onclick="exitSpellingToDeck()" style="flex: 1;" id="btn-spelling-result-deck">📂 Về Bộ Từ</button>
-        <button class="btn btn-primary" onclick="exitSpellingToHome()" style="flex: 1; background: linear-gradient(135deg, #6366f1, #ec4899); border: none;">🏠 Trang Chủ</button>
+        <!-- 5-Tile Stats Dashboard -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Số từ đúng -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Kết quả đúng
+            </div>
+            <div id="spelling-res-score-ratio" style="font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace;">13/13 (100%)</div>
+          </div>
+
+          <!-- 2. Điểm nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> Điểm nhận được
+            </div>
+            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 điểm ví</div>
+          </div>
+
+          <!-- 3. Tổng thời gian -->
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="spelling-res-duration" style="font-size: 16px; font-weight: 800; color: #3b82f6; font-family: monospace;">02:43</div>
+          </div>
+
+          <!-- 4. Tốc độ SPW (Seconds Per Word) -->
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Tốc độ (SPW)
+            </div>
+            <div id="spelling-res-spw" style="font-size: 16px; font-weight: 800; color: #8b5cf6; font-family: monospace;">12.5s / từ</div>
+          </div>
+        </div>
+
+        <!-- 5. Chi tiết gõ sai / gợi ý / bỏ qua (Full width tile) -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
+          <div style="color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>💡</span> Gợi ý: <strong id="spelling-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
+          </div>
+          <div style="color: #818cf8; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>⏭️</span> Bỏ qua: <strong id="spelling-res-skips" style="color: #6366f1; font-family: monospace;">0 từ</strong>
+          </div>
+          <div style="color: #f87171; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>❌</span> Gõ sai: <strong id="spelling-res-wrongs" style="color: #ef4444; font-family: monospace;">0 lần</strong>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="retrySpellingFromModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; padding: 9px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon"><use href="#i-repeat"/></svg> Làm Lại Luyện Viết
+          </button>
+          <button class="btn btn-outline" onclick="exitSpellingToDeck()" style="padding: 9px 14px;" id="btn-spelling-result-deck">
+            <svg class="icon"><use href="#i-book"/></svg> Xem Bộ Từ
+          </button>
+          <button class="btn btn-outline" onclick="exitSpellingToHome()" style="padding: 9px 14px;">
+            🏠 Tủ Sách
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -3232,7 +3276,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1i</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1k</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3902,19 +3946,38 @@
       }
     }
 
+    let hasPendingAppUpdate = false;
+    function isUserInActiveStudySession() {
+      const quizActive = document.getElementById('screen-quiz')?.classList.contains('active');
+      const spellingActive = document.getElementById('screen-spelling')?.classList.contains('active');
+      const autoFcActive = document.getElementById('screen-autofc')?.classList.contains('active');
+      return !!(quizActive || spellingActive || autoFcActive);
+    }
+
+    function checkAndApplyPendingAppUpdate() {
+      if (hasPendingAppUpdate) {
+        showToast('🔄 Đang tải phiên bản cập nhật mới...');
+        setTimeout(() => window.location.reload(), 800);
+      }
+    }
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
           console.log('SW Registered successfully:', reg.scope);
-          // Check for worker updates
           reg.update().catch(() => {});
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             if (installingWorker) {
               installingWorker.onstatechange = () => {
                 if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  showToast('Đã phát hiện phiên bản mới! Đang tải lại...');
-                  setTimeout(() => window.location.reload(), 1000);
+                  if (isUserInActiveStudySession()) {
+                    hasPendingAppUpdate = true;
+                    showToast('✨ Đã có bản cập nhật mới! Sẽ tự động làm mới khi bạn hoàn tất bài học.');
+                  } else {
+                    showToast('Đã phát hiện phiên bản mới! Đang tải lại...');
+                    setTimeout(() => window.location.reload(), 1000);
+                  }
                 }
               };
             }
@@ -3924,8 +3987,13 @@
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
+            if (isUserInActiveStudySession()) {
+              hasPendingAppUpdate = true;
+              console.log('Service Worker updated in background. Postponing reload until session exit.');
+            } else {
+              refreshing = true;
+              window.location.reload();
+            }
           }
         });
       });
@@ -6834,6 +6902,7 @@
     let spellingWrongAttemptsForCurrentWord = 0;
     let spellingPointsEarned = 0;
     let spellingHintsUsed = 0;
+    let spellingSkipCount = 0;
     let spellingTotalQuestions = 0;
     let spellingFireworksAnimationId = null;
 
@@ -7512,6 +7581,7 @@
       }
 
       spellingIsAnswered = true;
+      spellingSkipCount++;
       updateSpellingWalletPointsDisplay();
 
       // Reveal full word in letter boxes with muted color
@@ -7667,74 +7737,140 @@
     }
 
     function finishSpellingMode() {
-      const elapsedSec = Math.round((Date.now() - spellingStartTime) / 1000);
+      const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
+      const elapsedSec = Math.max(1, Math.round((Date.now() - spellingStartTime) / 1000));
       const mins = Math.floor(elapsedSec / 60);
       const secs = elapsedSec % 60;
-      const timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+      const durationText = mins > 0 ? (mins + ' phút ' + secs + ' giây') : (secs + ' giây');
+      const spw = (elapsedSec / totalWords).toFixed(1);
+      const accuracyPct = Math.round((spellingCorrectCount / totalWords) * 100);
 
-      document.getElementById('spelling-result-correct').textContent = spellingCorrectCount + ' / ' + spellingTotalQuestions;
-      document.getElementById('spelling-result-points').textContent = '+' + spellingPointsEarned + 'đ';
-      document.getElementById('spelling-result-wrong').textContent = spellingWrongCount;
-      document.getElementById('spelling-result-time').textContent = timeStr;
+      const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
+      const pointsEl = document.getElementById('spelling-res-points');
+      const durationEl = document.getElementById('spelling-res-duration');
+      const spwEl = document.getElementById('spelling-res-spw');
+      const hintsEl = document.getElementById('spelling-res-hints');
+      const skipsEl = document.getElementById('spelling-res-skips');
+      const wrongsEl = document.getElementById('spelling-res-wrongs');
+      const badgeIconEl = document.getElementById('spelling-res-badge-icon');
+      const titleEl = document.getElementById('spelling-res-title');
+      const subtitleEl = document.getElementById('spelling-res-subtitle');
+      const diffBadgeEl = document.getElementById('spelling-res-difficulty-badge');
+
+      if (diffBadgeEl) {
+        const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
+        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢');
+        diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
+      }
+
+      if (scoreRatioEl) scoreRatioEl.textContent = spellingCorrectCount + '/' + totalWords + ' (' + accuracyPct + '%)';
+      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' điểm ví';
+      if (durationEl) durationEl.textContent = durationText;
+      if (spwEl) spwEl.textContent = spw + 's / từ';
+      if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
+      if (skipsEl) skipsEl.textContent = spellingSkipCount + ' từ';
+      if (wrongsEl) wrongsEl.textContent = spellingWrongCount + ' lần';
+
+      if (accuracyPct >= 100) {
+        if (badgeIconEl) badgeIconEl.textContent = '🏆';
+        if (titleEl) titleEl.textContent = 'Tuyệt Đối Xuất Sắc!';
+        if (subtitleEl) subtitleEl.textContent = 'Bạn đã gõ đúng 100% tất cả các từ vựng!';
+      } else if (accuracyPct >= 80) {
+        if (badgeIconEl) badgeIconEl.textContent = '🌟';
+        if (titleEl) titleEl.textContent = 'Quá Đỉnh! Luyện Viết Thành Thạo!';
+        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ cơ bắp của bạn về bộ từ này đang cực kỳ tốt!';
+      } else if (accuracyPct >= 50) {
+        if (badgeIconEl) badgeIconEl.textContent = '🌿';
+        if (titleEl) titleEl.textContent = 'Làm Tốt Lắm!';
+        if (subtitleEl) subtitleEl.textContent = 'Hãy tiếp tục rèn luyện để viết chuẩn xác 100% nhé!';
+      } else {
+        if (badgeIconEl) badgeIconEl.textContent = '💪';
+        if (titleEl) titleEl.textContent = 'Cố Lên Nào!';
+        if (subtitleEl) subtitleEl.textContent = 'Luyện tập thêm một vài lượt nữa là nhớ sâu từng ký tự ngay!';
+      }
 
       const deckBtn = document.getElementById('btn-spelling-result-deck');
       if (deckBtn) {
-        deckBtn.style.display = (studySourceContext === 'review-queue' || !currentDeckId) ? 'none' : 'block';
+        deckBtn.style.display = (studySourceContext === 'review-queue' || !currentDeckId) ? 'none' : 'inline-flex';
       }
 
       openModal('modal-spelling-result');
-      startSpellingFireworks();
+
+      const intensity = accuracyPct / 100;
+      setTimeout(() => {
+        launchSpellingFireworks(intensity);
+      }, 100);
     }
 
-    function startSpellingFireworks() {
+    function launchSpellingFireworks(intensity) {
+      if (typeof intensity !== 'number') intensity = 1.0;
       const canvas = document.getElementById('spelling-fireworks-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      canvas.width = canvas.parentElement.offsetWidth;
-      canvas.height = canvas.parentElement.offsetHeight;
+      if (!ctx) return;
+
+      canvas.width = canvas.parentElement.clientWidth || 480;
+      canvas.height = canvas.parentElement.clientHeight || 420;
+
+      if (spellingFireworksAnimationId) {
+        cancelAnimationFrame(spellingFireworksAnimationId);
+        spellingFireworksAnimationId = null;
+      }
 
       const particles = [];
-      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#3b82f6'];
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#38bdf8', '#fbbf24', '#a855f7', '#f43f5e'];
+      const count = Math.min(180, Math.floor(40 + intensity * 120));
 
-      for (let i = 0; i < 40; i++) {
-        particles.push({
-          x: canvas.width / 2,
-          y: canvas.height / 2,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8 - 2,
-          radius: Math.random() * 3 + 2,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          alpha: 1,
-          decay: Math.random() * 0.02 + 0.015
-        });
+      function createExplosion(x, y, power) {
+        for (let i = 0; i < power; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 5 + 2;
+          particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: Math.random() * 3 + 1.5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 1,
+            decay: Math.random() * 0.02 + 0.015
+          });
+        }
       }
+
+      createExplosion(canvas.width * 0.3, canvas.height * 0.4, Math.floor(count * 0.5));
+      createExplosion(canvas.width * 0.7, canvas.height * 0.35, Math.floor(count * 0.5));
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.15; // gravity
+          p.vy += 0.08;
           p.alpha -= p.decay;
 
-          if (p.alpha > 0) {
-            ctx.save();
-            ctx.globalAlpha = p.alpha;
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
           }
-        });
 
-        if (particles.some(p => p.alpha > 0)) {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        if (particles.length > 0) {
           spellingFireworksAnimationId = requestAnimationFrame(animate);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
       }
-      animate();
+
+      spellingFireworksAnimationId = requestAnimationFrame(animate);
     }
 
     function retrySpellingFromModal() {
@@ -7743,6 +7879,7 @@
     }
 
     function exitSpelling() {
+      checkAndApplyPendingAppUpdate();
       stopAllAudio();
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
@@ -7754,6 +7891,7 @@
     }
 
     function exitSpellingToDeck() {
+      checkAndApplyPendingAppUpdate();
       closeModal('modal-spelling-result');
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
@@ -7765,6 +7903,7 @@
     }
 
     function exitSpellingToHome() {
+      checkAndApplyPendingAppUpdate();
       closeModal('modal-spelling-result');
       showScreen('screen-decks');
       refreshActiveScreenData();
@@ -9127,6 +9266,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitQuiz() {
+      checkAndApplyPendingAppUpdate();
       stopAllAudio();
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
@@ -9138,6 +9278,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitQuizToDeck() {
+      checkAndApplyPendingAppUpdate();
       closeModal('modal-quiz-result');
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
@@ -9149,6 +9290,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitQuizToHome() {
+      checkAndApplyPendingAppUpdate();
       closeModal('modal-quiz-result');
       showScreen('screen-decks');
       refreshActiveScreenData();
@@ -9703,6 +9845,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitAutoFlashcard() {
+      checkAndApplyPendingAppUpdate();
       isAutoPlaying = false;
       autoFlashcardStepId++;
       stopAllAudio();

@@ -122,7 +122,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
   - Điều hướng ngữ cảnh thông minh (Context-Aware Navigation): Thoát ôn tập tự động quay về Trang Chủ và cập nhật tiến độ.
   - Loại bỏ hoàn toàn Flashcard thủ công cũ thừa code để tối ưu hóa hiệu năng 100%.
 
-• ✍️ v0.0.10.1 (a -> i): Chế Độ Luyện Viết Chính Tả (Spelling) & Chuẩn Hóa Điểm Thưởng Trắc Nghiệm (Quiz)
+• ✍️ v0.0.10.1 (a -> k): Chế Độ Luyện Viết Chính Tả (Spelling) & Chuẩn Hóa Điểm Thưởng Trắc Nghiệm (Quiz)
   - Luyện trí nhớ cơ bắp (Muscle Memory) giúp người học viết chính xác 100% không sai một ký tự.
   - 3 Cấp độ Thử thách Luyện Viết:
     * 🟢 Dễ (Easy - x1.0 Điểm): Ẩn 1/3 ký tự ngẫu nhiên (hiển thị 2/3 chữ cái gợi ý sẵn).
@@ -133,6 +133,13 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * 2 Manh mối (Nâng cao): Thưởng x1.2!
     * 3 Manh mối (Toàn diện): Thưởng x1.0 chuẩn!
     * Badge động tự động nhảy màu và hiển thị hệ số tổng (x1.0 -> x3.0) cả trên modal thiết lập và thanh điều hướng Top Nav.
+  - 🏆 Nâng Cấp Toàn Diện Bảng Tổng Kết Luyện Viết (Spelling Celebration Modal - v0.0.10.1k):
+    * Thiết kế đồng bộ chuẩn mực theo bảng tổng kết Quiz: Card bo góc hiện đại, viền phát sáng, icon cúp/ngôi sao động theo độ chính xác.
+    * 5 Khung Thống Kê Thông Minh (5-Tile Dashboard): 🎯 Kết quả đúng (100%), 💰 Điểm nhận được, ⏱️ Tổng thời gian, ⚡ Tốc độ (SPW - Giây/từ), và Khung chi tiết (Gợi ý, Bỏ qua, Gõ sai).
+    * Badge Cấp độ + Hệ số điểm tổng và hệ thống pháo hoa động ăn mừng tưng bừng.
+  - 🛡️ Khắc Phục Triệt Để Lỗi Crash/Tải Lại Giữa Chừng Khi Đang Học (v0.0.10.1k):
+    * Cơ chế Service Worker Guard (`isUserInActiveStudySession`): Khi có bản cập nhật mới trên GitHub Pages / Server, app sẽ KHÔNG tự động reload ngắt quãng khi người học đang làm dở Quiz / Spelling / Auto Flashcard.
+    * Bản cập nhật sẽ được trì hoãn và áp dụng êm ái khi người học hoàn tất hoặc bấm thoát về màn hình chính.
   - 📖 Thẻ Thông Tin Chi Tiết Toàn Diện Sau Khi Trả Lời & Bỏ Qua (v0.0.10.1g, v0.0.10.1i):
     * Cả Luyện Viết (Spelling) và Trắc Nghiệm (Quiz) đều hiển thị đầy đủ thông tin từ vựng ngay khi trả lời HOẶC bấm Bỏ qua (Thuật ngữ, Từ loại, Cấp độ CEFR, Phiên âm IPA, Nghĩa tiếng Việt, Câu ví dụ in nghiêng, Đồng nghĩa, Trái nghĩa, Cụm từ, Ghi chú) giúp người học tiếp thu kiến thức trọn vẹn.
   - ✨ Giải Thích Súc Tích Từ AI Trong Quiz (v0.0.10.1g):
@@ -160,7 +167,6 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Nút Bỏ Qua (⏭️) đặt ngay cạnh nút Gợi Ý (❓) trong cả Luyện Viết và Trắc Nghiệm Quiz.
     * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
-  - Modal Tổng Kết Luyện Viết (modal-spelling-result) kèm pháo hoa động ăn mừng.
 
 • 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).
 
