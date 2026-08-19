@@ -217,7 +217,15 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 🤖 v0.0.10.3 (a -> d): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
+• 🤖 v0.0.10.3 (a -> e): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
+  - 🎓 Huấn Luyện AI Chuyên Sâu, Chạy Ngầm & Tối Ưu UX Studio (`v0.0.10.3e`):
+    * **Chuẩn hóa chữ thường & Dạng gốc của từ**: Tất cả từ vựng tạo ra đều đồng bộ chữ thường (trừ danh từ riêng), động từ luôn ở dạng nguyên thể không chia (`mitigate`, không lấy `mitigating`/`mitigated`), danh từ luôn ở số ít (`strategy`, không lấy `strategies`).
+    * **Trích xuất từ báo/bài đọc ưu tiên từ khó & học thuật**: Yêu cầu AI tập trung trích xuất các từ vựng nâng cao có cấp độ CEFR cao (B2, C1, C2), bỏ qua các từ cơ bản (A1, A2).
+    * **Nhập số lượng từ tùy biến (5 - 50 từ)**: Chuyển đổi sang ô nhập số linh hoạt có cơ chế tự động giới hạn (nhập <5 tự về 5, >50 tự về 50).
+    * **Hỗ trợ tạo ngầm trong nền (Background Generation)**: Trong lúc AI đang tạo từ, người dùng có thể thoải mái đóng Studio để làm việc khác, hệ thống sẽ tự động gửi thông báo khi hoàn thành và giữ nguyên kết quả để vào xem & lưu.
+    * **Tính năng "Tạo Lại" tức thì**: Cho phép người dùng chỉnh sửa thông tin chủ đề, đoạn văn, số lượng từ và bấm tạo lại mà không bị lưu đè dữ liệu cũ.
+    * **Thông báo lỗi hạn mức (Quota / Token) lịch sự & chi tiết**: Báo rõ nguyên nhân kèm lời xin lỗi và hướng dẫn khắc phục khi Google Gemini chạm hạn mức.
+    * **Tinh gọn giao diện Studio**: Bỏ khung nhập Key cồng kềnh (thay bằng cảnh báo nhẹ nếu chưa có Key) và luôn mặc định tạo vào một bộ từ mới riêng biệt.
   - ⚡ Đồng Bộ Danh Sách Mô Hình Gemini Flash Lite & Tự Động Khôi Phục (`v0.0.10.3d`):
     * **Đồng bộ chuẩn xác hệ thống Model Pool**: Loại bỏ hoàn toàn model không hợp lệ (`gemini-1.5-flash-8b`), chuyển toàn bộ AI Studio sang sử dụng các mô hình `Flash Lite` siêu nhẹ và tốc độ cao (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.0-flash-lite`, `gemini-2.0-flash`, `gemini-1.5-flash`) hoàn toàn đồng nhất với công cụ tra từ và tạo phương án trắc nghiệm.
     * **Cơ chế Tự Động Ghi Nhớ & Đổi Model Dự Phòng (Model Fallback Memory)**: Tự động ghi nhớ mô hình hoạt động tốt nhất vào `localStorage` và tự động chuyển đổi sang mô hình kế tiếp nếu một mô hình bất kỳ phản hồi chậm.

@@ -1717,7 +1717,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3d</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3e</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2832,128 +2832,94 @@
         </div>
       </div>
 
-      <!-- INLINE GEMINI API KEY SETUP BANNER (v0.0.10.3c) -->
-      <div id="ai-studio-key-banner" style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px;">
-          <div style="font-size: 12px; color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-            <span>🔑</span> <span id="ai-studio-key-status-label">Cài đặt Gemini API Key (Miễn phí từ Google)</span>
-          </div>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size: 11px; color: #60a5fa; text-decoration: underline; font-weight: 600;">
-            🌐 Lấy Key Miễn Phí (10s) ↗
-          </a>
-        </div>
-        <div style="display: flex; gap: 6px;">
-          <input type="password" id="ai-studio-gemini-key-input" class="form-input" placeholder="Dán Gemini API Key (AIzaSy...)" style="font-size: 11.5px; padding: 5px 10px; flex: 1; border-color: rgba(245, 158, 11, 0.35);">
-          <button type="button" class="btn btn-primary btn-sm" onclick="saveGeminiApiKeyFromStudio()" style="font-size: 11px; padding: 5px 12px; background: #f59e0b; border: none; font-weight: 700; border-radius: 8px;">
-            💾 Lưu Key
-          </button>
-        </div>
+      <!-- SLIM WARNING IF NO KEY (v0.0.10.3e) -->
+      <div id="ai-studio-key-warning" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 7px 12px; margin-bottom: 10px; font-size: 11.5px; color: #f87171; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <span>⚠️ Bạn chưa cài đặt Gemini API Key.</span>
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-ai-deck-studio'); openSettingsModal();" style="font-size: 10.5px; padding: 2px 8px; border-color: rgba(239,68,68,0.4); color: #f87171; background: rgba(239,68,68,0.08);">
+          ⚙️ Mở Cài Đặt
+        </button>
       </div>
 
       <!-- STUDIO MAIN CONTAINER (Scrollable) -->
       <div id="ai-studio-main-body" style="flex: 1; overflow-y: auto; padding-right: 2px;">
-        <!-- 3 MODE TABS -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px;">
-          <button type="button" class="btn btn-sm btn-primary ai-studio-tab-btn" id="ai-tab-topic" onclick="switchAiStudioMode('topic')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
-            🎯 Theo Chủ Đề
-          </button>
-          <button type="button" class="btn btn-sm btn-outline ai-studio-tab-btn" id="ai-tab-passage" onclick="switchAiStudioMode('passage')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
-            📰 Đoạn Văn / Báo
-          </button>
-          <button type="button" class="btn btn-sm btn-outline ai-studio-tab-btn" id="ai-tab-raw" onclick="switchAiStudioMode('raw')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
-            📝 Dãy Từ Khô
-          </button>
-        </div>
-
-        <!-- MODE 1: TOPIC PROMPT -->
-        <div id="ai-mode-topic-sec">
-          <div class="form-group">
-            <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📌 Chủ đề hoặc Mục tiêu học tập:</label>
-            <input type="text" id="ai-topic-input" class="form-input" placeholder="VD: IELTS Writing Task 2 Environment, Từ vựng Giao tiếp Sân bay, IT Frontend React..." style="font-size: 12.5px;">
+        <!-- INPUTS CONTAINER -->
+        <div id="ai-studio-inputs-container">
+          <!-- 3 MODE TABS -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px;">
+            <button type="button" class="btn btn-sm btn-primary ai-studio-tab-btn" id="ai-tab-topic" onclick="switchAiStudioMode('topic')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
+              🎯 Theo Chủ Đề
+            </button>
+            <button type="button" class="btn btn-sm btn-outline ai-studio-tab-btn" id="ai-tab-passage" onclick="switchAiStudioMode('passage')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
+              📰 Đoạn Văn / Báo
+            </button>
+            <button type="button" class="btn btn-sm btn-outline ai-studio-tab-btn" id="ai-tab-raw" onclick="switchAiStudioMode('raw')" style="font-size: 11.5px; font-weight: 700; padding: 6px 4px; justify-content: center;">
+              📝 Dãy Từ Khô
+            </button>
           </div>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-            <div>
-              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🎯 Cấp độ CEFR:</label>
-              <select id="ai-topic-cefr" class="form-select" style="font-size: 12px; padding: 6px 8px;">
-                <option value="auto">🌟 Tự Động (Đa Dạng A2-C1)</option>
-                <option value="A2">A2 - Sơ Cấp (Elementary)</option>
-                <option value="B1">B1 - Trung Cấp (Intermediate)</option>
-                <option value="B2">B2 - Trung Cao (Upper-Int)</option>
-                <option value="C1">C1 - Cao Cấp (Advanced)</option>
-                <option value="C2">C2 - Thành Thạo (Proficiency)</option>
-              </select>
+
+          <!-- MODE 1: TOPIC PROMPT -->
+          <div id="ai-mode-topic-sec">
+            <div class="form-group">
+              <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📌 Chủ đề hoặc Mục tiêu học tập:</label>
+              <input type="text" id="ai-topic-input" class="form-input" placeholder="VD: IELTS Writing Task 2 Environment, Từ vựng Giao tiếp Sân bay, IT Frontend React..." style="font-size: 12.5px;">
             </div>
-            <div>
-              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ cần tạo:</label>
-              <select id="ai-topic-count" class="form-select" onchange="updateAiStudioCost()" style="font-size: 12px; padding: 6px 8px;">
-                <option value="5">5 từ (100đ ví)</option>
-                <option value="10" selected>10 từ (200đ ví)</option>
-                <option value="15">15 từ (300đ ví)</option>
-                <option value="20">20 từ (400đ ví)</option>
-                <option value="30">30 từ (600đ ví)</option>
-                <option value="40">40 từ (800đ ví)</option>
-                <option value="50">50 từ (1000đ ví)</option>
-              </select>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+              <div>
+                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🎯 Cấp độ CEFR:</label>
+                <select id="ai-topic-cefr" class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                  <option value="auto">🌟 Tự Động (Đa Dạng A2-C1)</option>
+                  <option value="A2">A2 - Sơ Cấp (Elementary)</option>
+                  <option value="B1">B1 - Trung Cấp (Intermediate)</option>
+                  <option value="B2">B2 - Trung Cao (Upper-Int)</option>
+                  <option value="C1">C1 - Cao Cấp (Advanced)</option>
+                  <option value="C2">C2 - Thành Thạo (Proficiency)</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ (5 - 50):</label>
+                <input type="number" id="ai-topic-count-input" class="form-input" min="5" max="50" value="10" oninput="handleAiWordCountInput(this)" onchange="handleAiWordCountInput(this)" style="font-size: 12px; padding: 6px 8px;">
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- MODE 2: PASSAGE EXTRACTION -->
-        <div id="ai-mode-passage-sec" style="display: none;">
-          <div class="form-group">
-            <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📰 Dán đoạn văn / bài báo / bài đọc IELTS vào đây:</label>
-            <textarea id="ai-passage-input" class="form-textarea" rows="4" placeholder="Dán đoạn văn tiếng Anh vào đây. AI sẽ tự động phân tích và trích xuất các từ vựng học thuật quan trọng nhất kèm ngữ cảnh..."></textarea>
+          <!-- MODE 2: PASSAGE EXTRACTION -->
+          <div id="ai-mode-passage-sec" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📰 Dán đoạn văn / bài báo / bài đọc IELTS vào đây:</label>
+              <textarea id="ai-passage-input" class="form-textarea" rows="4" placeholder="Dán đoạn văn tiếng Anh vào đây. AI sẽ tự động phân tích và trích xuất các từ vựng học thuật quan trọng nhất kèm ngữ cảnh..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ trích xuất (5 - 50):</label>
+              <input type="number" id="ai-passage-count-input" class="form-input" min="5" max="50" value="10" oninput="handleAiWordCountInput(this)" onchange="handleAiWordCountInput(this)" style="font-size: 12px; padding: 6px 8px;">
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ trích xuất:</label>
-            <select id="ai-passage-count" class="form-select" onchange="updateAiStudioCost()" style="font-size: 12px; padding: 6px 8px;">
-              <option value="5">5 từ trọng tâm (100đ)</option>
-              <option value="10" selected>10 từ trọng tâm (200đ)</option>
-              <option value="15">15 từ trọng tâm (300đ)</option>
-              <option value="20">20 từ trọng tâm (400đ)</option>
-              <option value="30">30 từ trọng tâm (600đ)</option>
-              <option value="50">50 từ trọng tâm (1000đ)</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- MODE 3: RAW WORDS REFINER -->
-        <div id="ai-mode-raw-sec" style="display: none;">
-          <div class="form-group">
-            <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📝 Dán danh sách từ tiếng Anh thô:</label>
-            <textarea id="ai-raw-input" class="form-textarea" rows="4" oninput="updateAiStudioCost()" placeholder="resilient, scrutinize, plausible, ubiquitous, jeopardize (hoặc xuống dòng)..."></textarea>
-            <small style="font-size: 10.5px; color: var(--text-muted);">AI sẽ tự động điền: IPA, Nghĩa tiếng Việt, Loại từ, Cấp độ CEFR, Câu ví dụ, Collocations.</small>
+          <!-- MODE 3: RAW WORDS REFINER -->
+          <div id="ai-mode-raw-sec" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">📝 Dán danh sách từ tiếng Anh thô:</label>
+              <textarea id="ai-raw-input" class="form-textarea" rows="4" oninput="updateAiStudioCost()" placeholder="resilient, scrutinize, plausible, ubiquitous, jeopardize (hoặc xuống dòng)..."></textarea>
+              <small style="font-size: 10.5px; color: var(--text-muted);">AI sẽ tự động điền: IPA, Nghĩa tiếng Việt, Loại từ, Cấp độ CEFR, Câu ví dụ, Collocations.</small>
+            </div>
           </div>
-        </div>
 
-        <!-- DESTINATION SETTING -->
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
-          <label class="form-label" style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 6px;">📂 Đích đến của từ vựng tạo ra:</label>
-          <div style="display: flex; gap: 10px; margin-bottom: 8px; flex-wrap: wrap;">
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;">
-              <input type="radio" name="ai-dest-mode" value="new" checked onchange="toggleAiDestTarget(this.value)" style="accent-color: var(--primary);">
-              <span>Tạo bộ từ mới</span>
-            </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;" id="ai-dest-existing-wrapper">
-              <input type="radio" name="ai-dest-mode" value="existing" onchange="toggleAiDestTarget(this.value)" style="accent-color: var(--primary);">
-              <span id="ai-dest-existing-label">Thêm vào bộ từ hiện tại</span>
-            </label>
+          <!-- TARGET NEW DECK TITLE -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px;">📁 Tên bộ từ mới sẽ tạo:</label>
+            <input type="text" id="ai-new-deck-title" class="form-input" placeholder="Tên bộ từ mới (để trống sẽ tự đặt theo chủ đề)..." style="font-size: 12.5px;">
           </div>
-          <div id="ai-new-deck-fields" style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <input type="text" id="ai-new-deck-title" class="form-input" placeholder="Tên bộ từ mới (VD: IELTS Task 2 Vocab...)" style="flex: 1; min-width: 180px; font-size: 12px;">
-          </div>
-        </div>
 
-        <!-- COST & START BAR -->
-        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border); margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200đ ví</strong></div>
-            <div id="ai-cost-subtext" style="font-size: 10.5px; color: var(--text-muted);">Số dư sau khi tạo: <span id="ai-balance-after" style="color: #34d399;">...</span></div>
+          <!-- COST & START BAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border); margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200đ ví</strong></div>
+              <div id="ai-cost-subtext" style="font-size: 10.5px; color: var(--text-muted);">Số dư sau khi tạo: <span id="ai-balance-after" style="color: #34d399;">...</span></div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-do-generate-ai" onclick="startAiStudioGeneration()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 8px 18px; font-size: 13px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);">
+              🚀 Bắt Đầu Tạo Từ
+            </button>
           </div>
-          <button type="button" class="btn btn-primary" id="btn-do-generate-ai" onclick="startAiStudioGeneration()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 8px 18px; font-size: 13px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);">
-            🚀 Bắt Đầu Tạo Từ
-          </button>
         </div>
 
         <!-- LOADING ANIMATION STATE -->
@@ -2963,7 +2929,7 @@
           <div style="background: rgba(255,255,255,0.1); height: 6px; border-radius: 4px; max-width: 320px; margin: 0 auto; overflow: hidden;">
             <div id="ai-loading-progress-fill" style="width: 30%; height: 100%; background: linear-gradient(90deg, #a855f7, #6366f1); border-radius: 4px; transition: width 0.3s ease;"></div>
           </div>
-          <small style="display: block; font-size: 11px; color: var(--text-muted); margin-top: 6px;">Phao cứu sinh Auto-Repair JSON đang sẵn sàng bảo vệ dữ liệu</small>
+          <small style="display: block; font-size: 11px; color: var(--text-muted); margin-top: 8px;">Bạn có thể đóng cửa sổ này, tiến trình tạo từ vẫn chạy ngầm mượt mà!</small>
         </div>
 
         <!-- PREVIEW & QUICK EDIT SECTION (Rendered after AI finishes) -->
@@ -2972,7 +2938,7 @@
             <strong style="font-size: 13px; color: #34d399;" id="ai-preview-summary-text">🎉 Đã tạo thành công 10 từ vựng!</strong>
             <button type="button" class="btn btn-outline btn-sm" onclick="toggleSelectAllAiPreview(true)" style="font-size: 10.5px; padding: 2px 7px;">Chọn tất cả</button>
           </div>
-          <div id="ai-preview-words-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding-right: 2px;">
+          <div id="ai-preview-words-list" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding-right: 2px;">
             <!-- Rendered via JS -->
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px;">
@@ -3696,7 +3662,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3d</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3e</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -14604,78 +14570,63 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       // (Legacy manual flashcard shortcuts removed)
     });
     // =========================================================================
-    // AI DECK GENERATOR STUDIO ENGINE (v0.0.10.3 UPDATE)
+    // AI DECK GENERATOR STUDIO ENGINE (v0.0.10.3e UPDATE)
     // =========================================================================
     let currentAiStudioMode = 'topic';
     let aiStudioTargetDeckId = null;
     let aiGeneratedWordsCache = [];
+    let isAiStudioGenerating = false;
+    let aiStudioGenStatus = '';
+    let aiStudioGenProgress = 0;
 
-    function refreshAiStudioKeyUI() {
-      const keyInput = document.getElementById('ai-studio-gemini-key-input');
-      const statusLabel = document.getElementById('ai-studio-key-status-label');
-      const keyBanner = document.getElementById('ai-studio-key-banner');
-      
-      const key = geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '';
-      if (keyInput) keyInput.value = key;
-
-      if (statusLabel) {
-        if (key) {
-          statusLabel.innerHTML = `✅ Gemini AI: <span style="color:#34d399;">Đã kết nối Key (••••${key.slice(-4)})</span>`;
-          if (keyBanner) {
-            keyBanner.style.background = 'rgba(16, 185, 129, 0.08)';
-            keyBanner.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-          }
-        } else {
-          statusLabel.innerHTML = `⚠️ <span style="color:#fbbf24;">Chưa cài đặt Gemini API Key (Miễn phí từ Google)</span>`;
-          if (keyBanner) {
-            keyBanner.style.background = 'rgba(245, 158, 11, 0.08)';
-            keyBanner.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-          }
-        }
+    function handleAiWordCountInput(input) {
+      if (!input) return;
+      let val = parseInt(input.value, 10);
+      if (!isNaN(val)) {
+        if (val < 5) val = 5;
+        if (val > 50) val = 50;
+        input.value = val;
       }
-    }
-
-    function saveGeminiApiKeyFromStudio() {
-      const input = document.getElementById('ai-studio-gemini-key-input');
-      const val = (input ? input.value : '').trim();
-      saveGeminiApiKey(val);
-      refreshAiStudioKeyUI();
-      if (val) {
-        showToast('🔑 Đã lưu Gemini API Key cá nhân thành công!');
-      } else {
-        showToast('ℹ️ Đã xóa Gemini API Key.');
-      }
+      updateAiStudioCost();
     }
 
     function openAiDeckStudioModal(optionalDeckId = null) {
-      const activeScreenEl = document.querySelector('.screen.active');
-      const isDeckDetail = activeScreenEl && activeScreenEl.id === 'screen-deck-detail';
-      aiStudioTargetDeckId = optionalDeckId || (isDeckDetail ? currentDeckId : null);
+      aiStudioTargetDeckId = optionalDeckId;
       
       const pts = getUserPoints();
       const ptsLabel = document.getElementById('ai-studio-wallet-pts');
       if (ptsLabel) ptsLabel.textContent = pts + 'đ';
 
-      // Setup target deck radios
-      const existingRadioWrapper = document.getElementById('ai-dest-existing-wrapper');
-      const existingRadioLabel = document.getElementById('ai-dest-existing-label');
-      const destRadios = document.getElementsByName('ai-dest-mode');
+      // Check key warning
+      const warnEl = document.getElementById('ai-studio-key-warning');
+      const key = geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '';
+      if (warnEl) warnEl.style.display = key ? 'none' : 'flex';
 
-      if (aiStudioTargetDeckId) {
-        const targetDeck = decks.find(d => d.id === aiStudioTargetDeckId);
-        if (existingRadioWrapper) existingRadioWrapper.style.display = 'flex';
-        if (existingRadioLabel && targetDeck) existingRadioLabel.textContent = `Thêm vào "${targetDeck.title}"`;
-        if (destRadios && destRadios.length > 1) destRadios[1].checked = true;
-        toggleAiDestTarget('existing');
+      if (isAiStudioGenerating) {
+        // Still generating in background
+        const loadSec = document.getElementById('ai-studio-loading-sec');
+        const prevSec = document.getElementById('ai-studio-preview-sec');
+        const inputsSec = document.getElementById('ai-studio-inputs-container');
+        if (loadSec) loadSec.style.display = 'block';
+        if (prevSec) prevSec.style.display = 'none';
+        if (inputsSec) inputsSec.style.display = 'none';
+        const loadStatus = document.getElementById('ai-loading-status');
+        const loadProgress = document.getElementById('ai-loading-progress-fill');
+        if (loadStatus) loadStatus.textContent = aiStudioGenStatus || 'Đang tạo từ bằng AI...';
+        if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
+      } else if (aiGeneratedWordsCache && aiGeneratedWordsCache.length > 0) {
+        // Already finished, show preview
+        const loadSec = document.getElementById('ai-studio-loading-sec');
+        const prevSec = document.getElementById('ai-studio-preview-sec');
+        const inputsSec = document.getElementById('ai-studio-inputs-container');
+        if (loadSec) loadSec.style.display = 'none';
+        if (inputsSec) inputsSec.style.display = 'none';
+        renderAiStudioPreviewList();
       } else {
-        if (existingRadioWrapper) existingRadioWrapper.style.display = 'none';
-        if (destRadios && destRadios.length > 0) destRadios[0].checked = true;
-        toggleAiDestTarget('new');
+        // Ready for new generation
+        resetAiStudioView();
       }
 
-      refreshAiStudioKeyUI();
-      switchAiStudioMode('topic');
-      resetAiStudioView();
       updateAiStudioCost();
       openModal('modal-ai-deck-studio');
     }
@@ -14700,25 +14651,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       updateAiStudioCost();
     }
 
-    function toggleAiDestTarget(val) {
-      const newDeckFields = document.getElementById('ai-new-deck-fields');
-      if (newDeckFields) {
-        newDeckFields.style.display = val === 'new' ? 'flex' : 'none';
-      }
-    }
-
     function getSelectedAiWordCount() {
       if (currentAiStudioMode === 'topic') {
-        const sel = document.getElementById('ai-topic-count');
-        return sel ? parseInt(sel.value, 10) || 10 : 10;
+        const inp = document.getElementById('ai-topic-count-input');
+        let val = inp ? parseInt(inp.value, 10) : 10;
+        if (isNaN(val) || val < 5) val = 5;
+        if (val > 50) val = 50;
+        return val;
       } else if (currentAiStudioMode === 'passage') {
-        const sel = document.getElementById('ai-passage-count');
-        return sel ? parseInt(sel.value, 10) || 10 : 10;
+        const inp = document.getElementById('ai-passage-count-input');
+        let val = inp ? parseInt(inp.value, 10) : 10;
+        if (isNaN(val) || val < 5) val = 5;
+        if (val > 50) val = 50;
+        return val;
       } else if (currentAiStudioMode === 'raw') {
         const rawText = (document.getElementById('ai-raw-input')?.value || '').trim();
         if (!rawText) return 5;
         const wordsList = rawText.split(/[,\n]+/).map(w => w.trim()).filter(w => w.length > 0);
-        return Math.max(1, wordsList.length);
+        return Math.min(50, Math.max(1, wordsList.length));
       }
       return 10;
     }
@@ -14745,16 +14695,21 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function resetAiStudioView() {
+      aiGeneratedWordsCache = [];
+      isAiStudioGenerating = false;
       const loadSec = document.getElementById('ai-studio-loading-sec');
       const prevSec = document.getElementById('ai-studio-preview-sec');
+      const inputsSec = document.getElementById('ai-studio-inputs-container');
       const genBtn = document.getElementById('btn-do-generate-ai');
 
       if (loadSec) loadSec.style.display = 'none';
       if (prevSec) prevSec.style.display = 'none';
+      if (inputsSec) inputsSec.style.display = 'block';
       if (genBtn) {
         genBtn.disabled = false;
         genBtn.style.opacity = '1';
       }
+      updateAiStudioCost();
     }
 
     function repairAndParseCompactArrayJson(rawText) {
@@ -14770,9 +14725,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       try {
         const parsed = JSON.parse(cleaned);
         if (Array.isArray(parsed)) return parsed.filter(item => Array.isArray(item) && item.length >= 4);
-      } catch (e) {
-        // Continue to repair
-      }
+      } catch (e) {}
 
       // Attempt 2: Auto-repair cut-off array by finding last closed element ']'
       const lastClosed = cleaned.lastIndexOf(']');
@@ -14812,7 +14765,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const userPts = getUserPoints();
 
       if (userPts < requiredCost) {
-        alert(`⚠️ Số dư ví của bạn (${userPts}đ) không đủ để tạo ${count} từ (${requiredCost}đ ví).\n\nHãy nạp mã quà tặng trong VocaShop hoặc thêm bộ từ thủ công để nhận ngay +50đ ví thưởng!`);
+        alert(`⚠️ Số dư ví của bạn (${userPts}đ) không đủ để tạo ${count} từ (${requiredCost}đ ví).\n\nHãy nạp mã quà tặng trong VocaShop hoặc thêm từ thủ công để nhận ngay +10đ ví thưởng!`);
         return;
       }
 
@@ -14826,10 +14779,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
         const cefr = document.getElementById('ai-topic-cefr')?.value || 'auto';
         prompt = `You are a world-class English teacher and lexicographer.
-Generate exactly ${count} unique, high-yield English vocabulary words or phrases specifically for the topic: "${topic}".
+Generate exactly ${count} unique English vocabulary words/phrases for topic: "${topic}".
 Target CEFR Level: ${cefr === 'auto' ? 'Diverse mix (A2, B1, B2, C1, C2)' : cefr}.
-Important: Every single word MUST strictly relate to "${topic}".
-Output MUST be a valid raw JSON 2D array without markdown formatting:
+
+STRICT RULES:
+1. Every "term" MUST be strictly in LOWERCASE (e.g. "resilient", "sustainable energy", "take into account"), unless it is a proper noun.
+2. Nouns MUST be in SINGULAR form (e.g. "strategy", not "strategies").
+3. Verbs MUST be in BASE INFINITIVE form (e.g. "mitigate", not "mitigating" or "mitigated").
+4. Every single word MUST strictly relate to "${topic}".
+
+Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
 ]`;
@@ -14840,10 +14799,17 @@ Output MUST be a valid raw JSON 2D array without markdown formatting:
           document.getElementById('ai-passage-input')?.focus();
           return;
         }
-        prompt = `You are an expert English teacher. Extract the ${count} most important and academic English vocabulary words from this passage:
+        prompt = `You are an expert English teacher. Extract the ${count} most valuable, academic, and higher-level English vocabulary words from this passage:
 """${passage}"""
-Provide accurate Vietnamese definition matching the context.
-Output MUST be a valid raw JSON 2D array without markdown formatting:
+
+STRICT EXTRACTION RULES:
+1. Focus heavily on DIFFICULT, ACADEMIC, and HIGHER CEFR level words (B2, C1, C2). Ignore basic words (A1, A2).
+2. Verbs MUST be converted to their BASE INFINITIVE form (e.g. "scrutinize", not "scrutinizing" or "scrutinized").
+3. Nouns MUST be converted to SINGULAR form (e.g. "phenomenon", not "phenomena").
+4. Terms MUST be strictly LOWERCASE unless proper nouns.
+5. Vietnamese definition MUST accurately match the passage context.
+
+Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
 ]`;
@@ -14855,41 +14821,46 @@ Output MUST be a valid raw JSON 2D array without markdown formatting:
           return;
         }
         prompt = `You are an expert English dictionary engine. For these English words: ${rawWords}
-Generate full phonetic IPA, part of speech, Vietnamese meaning, example sentence, CEFR level, collocations, synonyms, antonyms.
-Output MUST be a valid raw JSON 2D array without markdown formatting:
+STRICT RULES:
+1. Ensure all terms are in LOWERCASE and base form (singular nouns, base infinitive verbs).
+2. Provide full IPA, part of speech, Vietnamese meaning, example sentence, CEFR level, collocations, synonyms, antonyms.
+
+Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
 ]`;
       }
 
+      let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
+
+      if (!key) {
+        alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo bộ từ độc nhất và chính xác theo chủ đề, hãy mở mục Cài Đặt và dán API Key (miễn phí từ Google) vào nhé!');
+        closeModal('modal-ai-deck-studio');
+        openSettingsModal();
+        return;
+      }
+
+      isAiStudioGenerating = true;
+      aiStudioGenStatus = '✨ Đang kết nối Gemini AI Studio...';
+      aiStudioGenProgress = 30;
+
       const loadSec = document.getElementById('ai-studio-loading-sec');
+      const inputsSec = document.getElementById('ai-studio-inputs-container');
       const loadStatus = document.getElementById('ai-loading-status');
       const loadProgress = document.getElementById('ai-loading-progress-fill');
       const genBtn = document.getElementById('btn-do-generate-ai');
 
+      if (inputsSec) inputsSec.style.display = 'none';
       if (loadSec) loadSec.style.display = 'block';
       if (genBtn) {
         genBtn.disabled = true;
         genBtn.style.opacity = '0.5';
       }
 
-      if (loadStatus) loadStatus.textContent = '✨ Đang kết nối Gemini AI Studio...';
-      if (loadProgress) loadProgress.style.width = '35%';
+      if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
+      if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
 
       try {
-        let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || document.getElementById('ai-studio-gemini-key-input')?.value || '').trim();
-
-        if (!key) {
-          if (loadSec) loadSec.style.display = 'none';
-          if (genBtn) {
-            genBtn.disabled = false;
-            genBtn.style.opacity = '1';
-          }
-          alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo bộ từ độc nhất và chính xác theo chủ đề của bạn, hãy dán API Key (miễn phí từ Google) vào ô bên trên và bấm Lưu Key nhé!');
-          document.getElementById('ai-studio-gemini-key-input')?.focus();
-          return;
-        }
-
         let rawResponseText = '';
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
         const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
@@ -14900,8 +14871,10 @@ Output MUST be a valid raw JSON 2D array without markdown formatting:
 
         for (const m of modelsToTry) {
           try {
-            if (loadStatus) loadStatus.textContent = `🧠 Đang sáng tạo bộ từ với mô hình ${m}...`;
-            if (loadProgress) loadProgress.style.width = '65%';
+            aiStudioGenStatus = `🧠 Đang sáng tạo bộ từ với mô hình ${m}...`;
+            aiStudioGenProgress = 65;
+            if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
+            if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
             const res = await fetch(url, {
@@ -14943,67 +14916,87 @@ Output MUST be a valid raw JSON 2D array without markdown formatting:
         }
 
         if (!fetchSuccess || !rawResponseText) {
-          throw new Error(lastErrorMsg || 'Không thể kết nối Gemini API. Vui lòng kiểm tra lại API Key hoặc đường truyền!');
+          throw new Error(lastErrorMsg || 'Không thể kết nối Gemini API.');
         }
 
-        if (loadProgress) loadProgress.style.width = '90%';
-        if (loadStatus) loadStatus.textContent = '🔍 Đang tinh chỉnh ví dụ & collocations...';
+        aiStudioGenProgress = 95;
+        aiStudioGenStatus = '🔍 Đang tinh chỉnh ví dụ & collocations...';
+        if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
+        if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
 
         const parsedArray = repairAndParseCompactArrayJson(rawResponseText);
         if (!parsedArray || parsedArray.length === 0) {
           throw new Error('Không thể phân giải dữ liệu từ AI. Vui lòng thử lại!');
         }
 
-        aiGeneratedWordsCache = parsedArray.map((row, idx) => ({
-          id: 'ai_w_' + Date.now() + '_' + idx,
-          selected: true,
-          term: (row[0] || '').trim(),
-          phonetic: (row[1] || '').trim(),
-          partOfSpeech: (row[2] || 'noun').trim(),
-          definitionVi: (row[3] || '').trim(),
-          example: (row[4] || '').trim(),
-          level: (row[5] || 'B1').trim().toUpperCase(),
-          collocations: (row[6] || '').trim(),
-          synonyms: (row[7] || '').trim(),
-          antonyms: (row[8] || '').trim()
-        })).filter(w => w.term.length > 0);
+        aiGeneratedWordsCache = parsedArray.map((row, idx) => {
+          let termStr = (row[0] || '').trim();
+          // Lowercase unless recognized proper noun
+          if (!['English', 'Vietnamese', 'French', 'German', 'Spanish', 'Japanese', 'Chinese', 'Google', 'IELTS', 'TOEIC', 'TOEFL'].includes(termStr)) {
+            termStr = termStr.toLowerCase();
+          }
 
-        if (loadProgress) loadProgress.style.width = '100%';
+          return {
+            id: 'ai_w_' + Date.now() + '_' + idx,
+            selected: true,
+            term: termStr,
+            phonetic: (row[1] || '').trim(),
+            partOfSpeech: (row[2] || 'noun').trim(),
+            definitionVi: (row[3] || '').trim(),
+            example: (row[4] || '').trim(),
+            level: (row[5] || 'B1').trim().toUpperCase(),
+            collocations: (row[6] || '').trim(),
+            synonyms: (row[7] || '').trim(),
+            antonyms: (row[8] || '').trim()
+          };
+        }).filter(w => w.term.length > 0);
+
+        isAiStudioGenerating = false;
+        aiStudioGenProgress = 100;
+
         if (loadSec) loadSec.style.display = 'none';
 
-        renderAiStudioPreviewList();
+        // Check if modal is active
+        const modalEl = document.getElementById('modal-ai-deck-studio');
+        if (modalEl && modalEl.classList.contains('active')) {
+          renderAiStudioPreviewList();
+        } else {
+          showToast(`✨ AI đã tạo xong ${aiGeneratedWordsCache.length} từ vựng! Nhấn "Tạo Bằng AI" để xem và lưu.`);
+        }
       } catch (err) {
+        isAiStudioGenerating = false;
         console.error('AI Generation Error:', err);
         if (loadSec) loadSec.style.display = 'none';
+        if (inputsSec) inputsSec.style.display = 'block';
         if (genBtn) {
           genBtn.disabled = false;
           genBtn.style.opacity = '1';
         }
-        alert('⚠️ Lỗi khi tạo từ bằng AI: ' + (err.message || 'Vui lòng kiểm tra kết nối mạng hoặc API Key.'));
-      }
-    }
 
-    function generateMockAiDeckData(mode, count) {
-      const pool = [
-        ["resilient", "/rɪˈzɪliənt/", "adj", "kiên cường, có khả năng phục hồi nhanh", "The local economy proved remarkably resilient.", "B2", "highly resilient, resilient economy", "tough", "fragile"],
-        ["scrutiny", "/ˈskruːtəni/", "noun", "sự xem xét, kiểm tra kỹ lưỡng", "Her argument did not stand up to close scrutiny.", "C1", "under close scrutiny, intense scrutiny", "inspection", "neglect"],
-        ["plausible", "/ˈplɔːzəbl/", "adj", "hợp lý, đáng tin cậy", "She could find no plausible explanation for its disappearance.", "B2", "plausible excuse, plausible scenario", "credible", "implausible"],
-        ["ubiquitous", "/juːˈbɪkwɪtəs/", "adj", "phổ biến, có mặt ở khắp mọi nơi", "Smartphones have become ubiquitous in daily life.", "C1", "ubiquitous presence, increasingly ubiquitous", "omnipresent", "rare"],
-        ["jeopardize", "/ˈdʒepədaɪz/", "verb", "gây nguy hiểm, liều mạng", "A poor decision could jeopardize the entire mission.", "B2", "jeopardize future, seriously jeopardize", "endanger", "protect"],
-        ["paramount", "/ˈpærəmaʊnt/", "adj", "tối quan trọng, có ý nghĩa tối cao", "Safety is of paramount importance in aviation.", "C1", "paramount importance, paramount concern", "supreme", "minor"],
-        ["mitigate", "/ˈmɪtɪɡeɪt/", "verb", "giảm nhẹ, làm dịu bớt tác hại", "Steps have been taken to mitigate environmental damage.", "B2", "mitigate risk, mitigate impact", "alleviate", "aggravate"],
-        ["pragmatic", "/præɡˈmætɪk/", "adj", "thực dụng, dựa trên thực tế", "We need to adopt a more pragmatic approach to problem-solving.", "C1", "pragmatic approach, pragmatic solution", "practical", "idealistic"],
-        ["lucrative", "/ˈluːkrətɪv/", "adj", "sinh lời cao, mang lại nhiều tiền", "He landed a lucrative contract with a tech firm.", "B2", "lucrative deal, lucrative business", "profitable", "unprofitable"],
-        ["advocate", "/ˈædvəkeɪt/", "verb", "ủng hộ, tán thành công khai", "Many educators advocate smaller class sizes.", "B2", "strongly advocate, advocate policy", "support", "oppose"]
-      ];
-      return JSON.stringify(pool.slice(0, count));
+        const errMsg = err.message || '';
+        let politeError = '';
+        if (errMsg.includes('429') || errMsg.toLowerCase().includes('quota') || errMsg.toLowerCase().includes('resource_exhausted')) {
+          politeError = '⚠️ Hạn mức gọi Gemini API (Quota) tạm thời đã chạm giới hạn hoặc đang bị quá tải.\n\nXin vui lòng đợi khoảng 30 - 60 giây rồi bấm "Tạo Lại" nhé! Rất xin lỗi bạn vì sự bất tiện này.';
+        } else if (errMsg.includes('400') || errMsg.includes('403') || errMsg.toLowerCase().includes('api_key') || errMsg.toLowerCase().includes('not found')) {
+          politeError = '🔑 Gemini API Key của bạn không hợp lệ hoặc đã bị vô hiệu hóa.\n\nVui lòng vào mục Cài Đặt để kiểm tra hoặc lấy Key miễn phí mới tại aistudio.google.com trong 10 giây.';
+        } else if (errMsg.includes('500') || errMsg.includes('503')) {
+          politeError = '⚠️ Máy chủ Google Gemini tạm thời quá tải hoặc đang bảo trì.\n\nXin vui lòng thử lại sau giây lát nhé!';
+        } else {
+          politeError = `⚠️ Đã xảy ra lỗi khi tạo từ bằng AI: ${errMsg}\n\nXin vui lòng thử lại hoặc kiểm tra kết nối mạng.`;
+        }
+
+        alert(politeError);
+      }
     }
 
     function renderAiStudioPreviewList() {
       const prevSec = document.getElementById('ai-studio-preview-sec');
       const listEl = document.getElementById('ai-preview-words-list');
       const sumText = document.getElementById('ai-preview-summary-text');
+      const inputsSec = document.getElementById('ai-studio-inputs-container');
       if (!prevSec || !listEl) return;
+
+      if (inputsSec) inputsSec.style.display = 'none';
 
       const activeCount = aiGeneratedWordsCache.filter(w => w.selected).length;
       if (sumText) sumText.textContent = `🎉 Đã tạo ${aiGeneratedWordsCache.length} từ (${activeCount} từ được chọn • Chi phí: ${activeCount * 20}đ ví)`;
@@ -15067,36 +15060,31 @@ Output MUST be a valid raw JSON 2D array without markdown formatting:
       // Deduct wallet points
       setUserPoints(currentPts - actualCost);
 
-      const destRadios = document.getElementsByName('ai-dest-mode');
-      const isNewDeck = destRadios.length > 0 && destRadios[0].checked;
-
-      let targetDeckId = aiStudioTargetDeckId;
-
-      if (isNewDeck || !targetDeckId) {
-        const titleInput = document.getElementById('ai-new-deck-title');
-        let deckTitle = titleInput ? titleInput.value.trim() : '';
-        if (!deckTitle) {
-          if (currentAiStudioMode === 'topic') {
-            deckTitle = document.getElementById('ai-topic-input')?.value.trim() || 'Bộ Từ Vựng AI Studio';
-          } else {
-            deckTitle = 'Bộ Từ Vựng AI Studio (' + formatDateOnly(new Date()) + ')';
-          }
+      const titleInput = document.getElementById('ai-new-deck-title');
+      let deckTitle = titleInput ? titleInput.value.trim() : '';
+      if (!deckTitle) {
+        if (currentAiStudioMode === 'topic') {
+          deckTitle = document.getElementById('ai-topic-input')?.value.trim() || 'Bộ Từ Vựng AI Studio';
+        } else if (currentAiStudioMode === 'passage') {
+          deckTitle = 'Từ Vựng Trích Xuất Báo / Đoạn Văn (' + formatDateOnly(new Date()) + ')';
+        } else {
+          deckTitle = 'Bộ Từ Vựng Chuẩn Hóa AI (' + formatDateOnly(new Date()) + ')';
         }
-
-        const newDeckId = 'deck_' + Date.now();
-        const newDeck = {
-          id: newDeckId,
-          title: deckTitle,
-          description: `Bộ từ vựng ${selectedWords.length} từ được tạo tự động bởi Gemini AI Studio.`,
-          color: '#8b5cf6',
-          isPinned: false,
-          isArchived: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        decks.unshift(newDeck);
-        targetDeckId = newDeckId;
       }
+
+      const newDeckId = 'deck_' + Date.now();
+      const newDeck = {
+        id: newDeckId,
+        title: deckTitle,
+        description: `Bộ từ vựng ${selectedWords.length} từ được tạo tự động bởi Gemini AI Studio.`,
+        color: '#8b5cf6',
+        isPinned: false,
+        isArchived: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      decks.unshift(newDeck);
+      const targetDeckId = newDeckId;
 
       const newWordObjects = selectedWords.map((w, idx) => ({
         id: 'w_' + Date.now() + '_' + idx,
