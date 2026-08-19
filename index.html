@@ -1847,7 +1847,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3g</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3h</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2568,7 +2568,8 @@
           <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
         </div>
 
-        <div class="form-group" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
+        <!-- MASTERY SLIDER: ONLY VISIBLE WHEN EDITING EXISTING WORD (v0.0.10.3h) -->
+        <div id="form-word-mastery-group" class="form-group" style="display: none; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <label class="form-label" style="margin-bottom: 0;">Mức độ thuộc từ:</label>
             <span id="modal-word-mastery-badge" class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);">🌱 Mới 0%</span>
@@ -2801,7 +2802,7 @@
             <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
               <span>💰</span> Điểm nhận được
             </div>
-            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 điểm ví</div>
+            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 Xu</div>
           </div>
 
           <!-- 3. Tổng thời gian -->
@@ -3028,7 +3029,7 @@
           <span>💰</span> Ví của bạn: <strong id="ai-studio-wallet-pts" style="color: #fbbf24; font-size: 14px;">0đ</strong>
         </div>
         <div style="font-size: 11.5px; color: #a5b4fc; font-weight: 600;">
-          ⚡ Giá: <strong style="color: #34d399;">20đ ví / 1 từ</strong> (chỉ trừ khi tạo thành công)
+          ⚡ Giá: <strong style="color: #34d399;">20 Xu / 1 từ</strong> (chỉ trừ khi tạo thành công)
         </div>
       </div>
 
@@ -3113,7 +3114,7 @@
           <!-- COST & START BAR -->
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border); margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200đ ví</strong></div>
+              <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200 Xu</strong></div>
               <div id="ai-cost-subtext" style="font-size: 10.5px; color: var(--text-muted);">Số dư sau khi tạo: <span id="ai-balance-after" style="color: #34d399;">...</span></div>
             </div>
             <button type="button" class="btn btn-primary" id="btn-do-generate-ai" onclick="startAiStudioGeneration()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 8px 18px; font-size: 13px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);">
@@ -3171,14 +3172,17 @@
           <textarea id="deck-desc" class="form-textarea" rows="2" placeholder="Ghi chú mục tiêu hoặc chủ đề..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Màu sắc chủ đề</label>
-          <div style="display: flex; gap: 10px; margin-top: 6px;">
-            <label><input type="radio" name="deck-color" value="#4f46e5" checked> <span style="display:inline-block;width:24px;height:24px;background:#4f46e5;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#059669"> <span style="display:inline-block;width:24px;height:24px;background:#059669;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#d97706"> <span style="display:inline-block;width:24px;height:24px;background:#d97706;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#dc2626"> <span style="display:inline-block;width:24px;height:24px;background:#dc2626;border-radius:50%;vertical-align:middle;"></span></label>
-            <label><input type="radio" name="deck-color" value="#8b5cf6"> <span style="display:inline-block;width:24px;height:24px;background:#8b5cf6;border-radius:50%;vertical-align:middle;"></span></label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0; font-weight: 700;">🎨 Màu sắc chủ đề bộ từ</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; color: var(--text-muted);">Tùy chỉnh:</span>
+              <input type="color" id="deck-custom-color-input" value="#6366f1" oninput="selectDeckCustomColor(this.value)" style="width: 28px; height: 28px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: transparent; vertical-align: middle;">
+            </div>
           </div>
+          <div id="deck-color-palette" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; padding: 8px; background: rgba(0,0,0,0.15); border-radius: 10px; border: 1px solid var(--border);">
+            <!-- Populated dynamically by renderDeckColorPalette() -->
+          </div>
+          <input type="hidden" id="deck-selected-color" value="#6366f1">
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
           <button type="button" class="btn btn-outline" onclick="closeModal('modal-deck')">Hủy</button>
@@ -3241,7 +3245,7 @@
       <!-- Wallet Balance Card (3 Columns: Points, Hints, Skips) -->
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 14px 10px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
         <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 6px;">
-          <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Điểm ví</div>
+          <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Số Xu Hiện Có</div>
           <div id="shop-user-points" style="font-size: 22px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
           <div style="font-size: 10px; color: var(--text-muted);">Tích lũy bài học</div>
         </div>
@@ -3673,7 +3677,7 @@
         <!-- POINTS FIELD -->
         <div class="form-group" style="margin-bottom: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <label class="form-label" style="font-weight: 700; color: #fbbf24; margin: 0;">💰 Số Điểm Ví (Points):</label>
+            <label class="form-label" style="font-weight: 700; color: #fbbf24; margin: 0;">💰 Số Xu (Coins):</label>
             <span id="adjust-current-points-badge" style="font-size: 11px; color: var(--text-muted);"></span>
           </div>
           <input type="number" id="adjust-wallet-points-input" class="form-input" style="font-size: 15px; font-weight: 700; color: #fbbf24; margin-bottom: 8px;">
@@ -3877,7 +3881,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3g</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3h</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3954,7 +3958,7 @@
       <div id="pub-tab-content-codes" style="display: none; flex: 1; overflow-y: auto;">
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
           <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 10px;">
             <div>
               <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
               <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
@@ -3964,12 +3968,23 @@
               <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
             </div>
             <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Số Skip:</label>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Bỏ Qua:</label>
               <input type="number" id="admin-code-skips" class="form-input" value="10" style="padding: 6px 10px; font-size: 12px;">
             </div>
             <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Số Điểm:</label>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Xu:</label>
               <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Hạn Sử Dụng:</label>
+              <select id="admin-code-expiry" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                <option value="never">Vô thời hạn</option>
+                <option value="1h">1 Giờ</option>
+                <option value="24h">24 Giờ (1 Ngày)</option>
+                <option value="3d">3 Ngày</option>
+                <option value="7d" selected>7 Ngày (1 Tuần)</option>
+                <option value="30d">30 Ngày (1 Tháng)</option>
+              </select>
             </div>
           </div>
           <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
@@ -3996,7 +4011,7 @@
           <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tùy ý nạp điểm ví và lượt gợi ý AI không giới hạn cho tài khoản quản trị của bạn.</p>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
             <div>
-              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Điểm ví (Points):</label>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Số Xu (Coins):</label>
               <input type="number" id="admin-set-points-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #fbbf24;">
             </div>
             <div>
@@ -4830,9 +4845,9 @@
 
     function formatPointsCompact(pts) {
       if (pts >= 100000) {
-        return (pts / 1000).toFixed(0) + 'kđ';
+        return (pts / 1000).toFixed(0) + 'k Xu';
       }
-      return pts + 'đ';
+      return pts + ' Xu';
     }
 
     function updateEconomyUI() {
@@ -5009,6 +5024,13 @@
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === 'object' && data.isActive !== false) {
+            // Check expiry
+            if (data.expiresAt && new Date(data.expiresAt).getTime() < Date.now()) {
+              msg.style.display = 'block';
+              msg.style.color = '#ef4444';
+              msg.textContent = `❌ Mã quà tặng này đã hết hạn sử dụng lúc ${formatDateTime(data.expiresAt)}!`;
+              return;
+            }
             const hts = parseInt(data.hints, 10) || 0;
             const pts = parseInt(data.points, 10) || 0;
             const sks = parseInt(data.skips, 10) || 0;
@@ -5374,12 +5396,15 @@
           else if (eco.hints !== undefined) hints = parseInt(eco.hints, 10) || 0;
           else if (u.hints !== undefined) hints = parseInt(u.hints, 10) || 0;
 
-          let skips = 3;
-          if (typeof eco.skips === 'number') skips = eco.skips;
+          let skips = 0;
+          if (currentUser && currentUser.uid === uid) {
+            skips = getUserSkips();
+          } else if (typeof eco.skips === 'number') skips = eco.skips;
           else if (typeof u.skips === 'number') skips = u.skips;
           else if (typeof prof.skips === 'number') skips = prof.skips;
           else if (eco.skips !== undefined) skips = parseInt(eco.skips, 10) || 0;
           else if (u.skips !== undefined) skips = parseInt(u.skips, 10) || 0;
+          else skips = 3;
 
           const rawBio = prof.bio || u.bio || prof.userBio || u.userBio || prof.learningGoal || u.learningGoal || '';
           const uDecks = Array.isArray(u.decks) ? u.decks : (u.decks ? Object.values(u.decks) : []);
@@ -5419,7 +5444,7 @@
 
         if (sCountEl) sCountEl.textContent = totalStudents + ' người';
         if (dCountEl) dCountEl.textContent = totalDecks + ' bộ (' + totalWords + ' từ)';
-        if (pCountEl) pCountEl.textContent = totalPoints + 'đ (' + totalHints + ' gợi ý, ' + totalSkips + ' skip)';
+        if (pCountEl) pCountEl.textContent = totalPoints + ' Xu (' + totalHints + ' Lượt gợi ý, ' + totalSkips + ' Lượt bỏ qua)';
 
         renderAdminStudentsTable();
       } catch (err) {
@@ -5481,13 +5506,13 @@
                   📚 ${s.deckCount} bộ (${s.wordCount} từ)
                 </span>
                 <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  💰 ${s.points}đ
+                  💰 ${s.points} Xu
                 </span>
                 <span class="badge" style="background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  💡 ${s.hints} gợi ý
+                  💡 ${s.hints} Lượt gợi ý
                 </span>
                 <span class="badge" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  ⏩ ${s.skips || 0} skip
+                  ⏩ ${s.skips || 0} Lượt bỏ qua
                 </span>
               </div>
 
@@ -5652,11 +5677,20 @@
       const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
 
       try {
+        let expiresAt = null;
+        const expiryVal = document.getElementById('admin-code-expiry')?.value || 'never';
+        if (expiryVal === '1h') expiresAt = new Date(Date.now() + 3600 * 1000).toISOString();
+        else if (expiryVal === '24h') expiresAt = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+        else if (expiryVal === '3d') expiresAt = new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString();
+        else if (expiryVal === '7d') expiresAt = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
+        else if (expiryVal === '30d') expiresAt = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+
         const payload = {
           code: rawCode,
           hints: hints,
           skips: skips,
           points: points,
+          expiresAt: expiresAt,
           isActive: true,
           createdAt: new Date().toISOString()
         };
@@ -6512,8 +6546,12 @@
           economy: {
             points: getUserPoints(),
             hints: getUserHints(),
+            skips: getUserSkips(),
             updatedAt: new Date().toISOString()
           },
+          points: getUserPoints(),
+          hints: getUserHints(),
+          skips: getUserSkips(),
           lastSync: new Date().toISOString()
         };
 
@@ -7615,20 +7653,7 @@
       });
     }
 
-    function editDeck(deckId) {
-      const deck = decks.find(d => d.id === deckId);
-      if (!deck) return;
 
-      document.getElementById('deck-id').value = deck.id;
-      document.getElementById('deck-title').value = deck.title;
-      document.getElementById('deck-desc').value = deck.description || '';
-
-      const colorRadio = document.querySelector('input[name="deck-color"][value="' + (deck.color || '#4f46e5') + '"]');
-      if (colorRadio) colorRadio.checked = true;
-
-      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
-      openModal('modal-deck');
-    }
 
     function deleteDeck(deckId) {
       const deck = decks.find(d => d.id === deckId);
@@ -7787,12 +7812,61 @@
       document.getElementById(id).classList.remove('active');
     }
 
+    // DECK COLOR PALETTE PRESETS (v0.0.10.3h)
+    const DECK_PALETTE_COLORS = [
+      '#6366f1', '#8b5cf6', '#a855f7', '#d946ef',
+      '#ec4899', '#f43f5e', '#ef4444', '#f97316',
+      '#f59e0b', '#eab308', '#84cc16', '#10b981',
+      '#14b8a6', '#06b6d4', '#3b82f6', '#64748b'
+    ];
+
+    function renderDeckColorPalette(activeColor = '#6366f1') {
+      const container = document.getElementById('deck-color-palette');
+      if (!container) return;
+      
+      const customInput = document.getElementById('deck-custom-color-input');
+      const hiddenInput = document.getElementById('deck-selected-color');
+      if (hiddenInput) hiddenInput.value = activeColor;
+      if (customInput) customInput.value = activeColor.startsWith('#') ? activeColor : '#6366f1';
+
+      let html = '';
+      DECK_PALETTE_COLORS.forEach(hex => {
+        const isSel = (activeColor.toLowerCase() === hex.toLowerCase());
+        html += `
+          <div onclick="selectDeckPresetColor('${hex}')" style="width: 28px; height: 28px; border-radius: 50%; background-color: ${hex}; cursor: pointer; border: ${isSel ? '3px solid white' : '2px solid rgba(255,255,255,0.1)'}; box-shadow: ${isSel ? '0 0 10px ' + hex : 'none'}; transition: all 0.2s;" title="${hex}"></div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectDeckPresetColor(hex) {
+      renderDeckColorPalette(hex);
+    }
+
+    function selectDeckCustomColor(hex) {
+      renderDeckColorPalette(hex);
+    }
+
     // DECK MODAL
     function openDeckModal() {
       document.getElementById('deck-id').value = '';
       document.getElementById('deck-title').value = '';
       document.getElementById('deck-desc').value = '';
+      renderDeckColorPalette('#6366f1');
       document.getElementById('modal-deck-title').textContent = 'Tạo Bộ Từ Mới';
+      openModal('modal-deck');
+    }
+
+    function editDeck(deckId) {
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      document.getElementById('deck-id').value = deck.id;
+      document.getElementById('deck-title').value = deck.title;
+      document.getElementById('deck-desc').value = deck.description || '';
+      renderDeckColorPalette(deck.color || '#6366f1');
+
+      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
       openModal('modal-deck');
     }
 
@@ -7801,7 +7875,7 @@
       const id = document.getElementById('deck-id').value || 'deck-' + Date.now();
       const title = document.getElementById('deck-title').value.trim();
       const desc = document.getElementById('deck-desc').value.trim();
-      const color = document.querySelector('input[name="deck-color"]:checked')?.value || '#4f46e5';
+      const color = document.getElementById('deck-selected-color')?.value || '#6366f1';
       const nowIso = new Date().toISOString();
 
       const existingIndex = decks.findIndex(d => d.id === id);
@@ -7834,6 +7908,10 @@
       document.getElementById('word-antonyms').value = '';
       document.getElementById('word-collocations').value = '';
       document.getElementById('word-note').value = '';
+      
+      // Reset & hide mastery slider for brand new word creation (v0.0.10.3h)
+      const masteryGroup = document.getElementById('form-word-mastery-group');
+      if (masteryGroup) masteryGroup.style.display = 'none';
       const slider = document.getElementById('word-mastery-slider');
       if (slider) slider.value = 0;
       updateWordModalMasteryPreview(0);
@@ -7884,6 +7962,9 @@
       document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
       document.getElementById('word-note').value = w.note || '';
 
+      // Show mastery slider when editing existing word
+      const masteryGroup = document.getElementById('form-word-mastery-group');
+      if (masteryGroup) masteryGroup.style.display = 'block';
       const slider = document.getElementById('word-mastery-slider');
       if (slider) slider.value = score;
       updateWordModalMasteryPreview(score);
