@@ -181,7 +181,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
-• 👤 v0.0.10.2 (a -> d): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ & Chỉnh Sửa Bộ Từ Thư Viện
+• 👤 v0.0.10.2 (a -> e): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ & Quản Lý / Xóa Bộ Từ Thư Viện
   - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
     * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
     * Giao diện Hồ sơ gọn gàng: Luôn hiển thị Khung Ghi chú & Mục tiêu học tập (`profile-bio-box`), form sửa chỉ hiện khi bấm nút ✏️ Sửa Tên & Bio.
@@ -194,9 +194,10 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Loại bỏ ô nhập tên tác giả tự do để bảo đảm tính xác thực danh tính.
     * Tự động lấy tên và Avatar thực tế từ Profile cá nhân.
     * Thêm tùy chọn 2 chế độ: 🌐 **Công khai** (Hiển thị tên & mở xem Profile) hoặc 🔒 **Ẩn danh** (Hiển thị "Ẩn danh", không liên kết Profile).
-  - 🛠️ Chỉnh Sửa Bộ Từ Đã Đăng Thư Viện (Edit Public Decks - `v0.0.10.2c`):
-    * Nhận diện chủ sở hữu thông minh: Hiện huy hiệu `TỦ TỪ CỦA TÔI` và nút `✏️ Sửa` riêng cho tác giả đã đăng bộ từ.
-    * Cho phép tác giả cập nhật Tên, Mô tả, Danh mục, Biểu tượng hoặc Tải file/dữ liệu mới thay thế và lưu trực tiếp lên Cloud Thư Viện Toàn Cầu.
+  - 🛠️ Chỉnh Sửa & Xóa Bộ Từ Đã Đăng Thư Viện (Edit & Delete Public Decks - `v0.0.10.2e`):
+    * Nhận diện chủ sở hữu thông minh: Hiện huy hiệu `TỦ TỪ CỦA TÔI` cùng 2 nút chức năng **`✏️ Sửa`** và **`🗑️ Xóa`** riêng cho tác giả đã đăng bộ từ.
+    * Cho phép tác giả cập nhật Tên, Mô tả, Danh mục, Biểu tượng hoặc Tải file/dữ liệu mới thay thế.
+    * Nút **`🗑️ Xóa Khỏi Thư Viện`**: Cho phép gỡ bỏ vĩnh viễn bộ từ khỏi Cloud Thư Viện Toàn Cầu chỉ với 1 cú click xác nhận an toàn.
 • 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).

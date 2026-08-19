@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2d</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2e</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3384,7 +3384,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2d</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2e</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3604,11 +3604,19 @@
         <!-- Words rendered via JS -->
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 8px; flex-wrap: wrap;">
         <button class="btn btn-outline" onclick="closeModal('modal-library-preview')">Đóng</button>
-        <button class="btn btn-primary" id="btn-lib-preview-install" onclick="installPreviewedDeck()">
-          📥 Thêm Vào Bộ Từ Của Tôi
-        </button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-outline btn-sm" id="btn-lib-preview-edit" style="display: none; color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;" onclick="closeModal('modal-library-preview'); openEditPublishedDeckModal(currentPreviewDeck?.id)">
+            ✏️ Sửa Bộ Từ
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-lib-preview-delete" style="display: none; color: #f87171; border-color: rgba(248,113,113,0.4); font-weight: 700;" onclick="deletePublishedDeck(currentPreviewDeck?.id)">
+            🗑️ Xóa Khỏi Thư Viện
+          </button>
+          <button class="btn btn-primary" id="btn-lib-preview-install" onclick="installPreviewedDeck()">
+            📥 Thêm Vào Bộ Từ Của Tôi
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -5388,6 +5396,42 @@
       }
 
       showToast('✨ Đã lưu và đồng bộ hồ sơ cá nhân lên Cloud thành công!');
+    }
+
+        async function deletePublishedDeck(deckId) {
+      if (!requireLogin('Xóa Bộ Từ Đã Đăng')) return;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      if (deck.id.startsWith('lib_deck_')) {
+        alert('❌ Không thể xóa bộ từ chuẩn của hệ thống VocaFlow!');
+        return;
+      }
+
+      if (!confirm(`⚠️ Bạn có chắc chắn muốn xóa vĩnh viễn bộ từ "${deck.title}" khỏi Thư Viện Toàn Cầu không?\n\n(Lưu ý: Bộ từ sẽ được gỡ bỏ ngay lập tức khỏi Thư Viện của tất cả người dùng).`)) {
+        return;
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}.json${authParam}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          cloudLibraryDecks = cloudLibraryDecks.filter(d => d.id !== deckId);
+          renderLibraryDecks();
+          closeModal('modal-library-preview');
+          showToast(`🗑️ Đã xóa thành công bộ từ "${deck.title}" khỏi Thư Viện Toàn Cầu!`);
+        } else {
+          alert('Không thể xóa trên Cloud! Vui lòng thử lại.');
+        }
+      } catch (err) {
+        alert('Lỗi khi xóa: ' + err.message);
+      }
     }
 
     function openEditPublishedDeckModal(deckId) {
@@ -13414,9 +13458,25 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         // Check if current logged in user is the owner/author of this public deck
         const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
           (deck.authorUid && deck.authorUid === currentUser.uid) ||
-          (deck.author && currentUser.displayName && deck.author.toLowerCase() === currentUser.displayName.toLowerCase()) ||
-          (deck.author && (deck.author.toLowerCase() === 'i am julies' || deck.author.toLowerCase() === 'julies') && currentUser.email.includes('julies')) ||
-          (deck.authorEmail && deck.authorEmail === currentUser.email)
+          (deck.author && currentUser.displayName && (
+            deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
+            deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
+            currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
+          )) ||
+          (deck.author && (
+            deck.author.toLowerCase().includes('julies') ||
+            deck.author.toLowerCase().includes('duwchao') ||
+            deck.author.toLowerCase().includes('julie') ||
+            deck.author.toLowerCase().includes('i am julies')
+          ) && (
+            currentUser.email.includes('julies') ||
+            currentUser.email.includes('duwchao') ||
+            (currentUser.displayName || '').toLowerCase().includes('julies') ||
+            (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
+            currentUser.email === 'duwchao@gmail.com'
+          )) ||
+          (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
+          (currentUser.email === 'duwchao@gmail.com')
         );
 
         html += `
@@ -13443,16 +13503,19 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1.25fr' : '1fr 1.25fr'}; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
-              <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
+            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1fr 1.2fr' : '1fr 1.25fr'}; gap: 5px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
                 👁️ Xem
               </button>
               ${isAuthor ? `
-                <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ bạn đã đăng">
+                <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
                   ✏️ Sửa
                 </button>
+                <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
+                  🗑️ Xóa
+                </button>
               ` : ''}
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
                 📥 ${isImported ? 'Tải lại' : 'Tải về'}
               </button>
             </div>
@@ -13468,6 +13531,34 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
       currentPreviewDeck = deck;
+
+      const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
+        (deck.authorUid && deck.authorUid === currentUser.uid) ||
+        (deck.author && currentUser.displayName && (
+          deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
+          deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
+          currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
+        )) ||
+        (deck.author && (
+          deck.author.toLowerCase().includes('julies') ||
+          deck.author.toLowerCase().includes('duwchao') ||
+          deck.author.toLowerCase().includes('julie') ||
+          deck.author.toLowerCase().includes('i am julies')
+        ) && (
+          currentUser.email.includes('julies') ||
+          currentUser.email.includes('duwchao') ||
+          (currentUser.displayName || '').toLowerCase().includes('julies') ||
+          (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
+          currentUser.email === 'duwchao@gmail.com'
+        )) ||
+        (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
+        (currentUser.email === 'duwchao@gmail.com')
+      );
+
+      const btnEdit = document.getElementById('btn-lib-preview-edit');
+      const btnDelete = document.getElementById('btn-lib-preview-delete');
+      if (btnEdit) btnEdit.style.display = isAuthor ? 'inline-flex' : 'none';
+      if (btnDelete) btnDelete.style.display = isAuthor ? 'inline-flex' : 'none';
 
       const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Official' : 'Cộng đồng');
 
