@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1c</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1d</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3182,7 +3182,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1c</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1d</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7262,21 +7262,25 @@
         spellingIsAnswered = true;
         spellingCorrectCount++;
 
-        // Point calculation: Total boxes * multiplier, rounded up if .5
+        // Balanced Point Calculation (v0.0.10.1d):
+        // 1. Wallet Points: Full effort reward = Total boxes * multiplier
         const totalBoxes = editables.length;
-        const pts = Math.ceil(totalBoxes * mult);
-        spellingScore += pts;
-        spellingPointsEarned += pts;
+        const walletPts = Math.ceil(totalBoxes * mult);
+        spellingScore += walletPts;
+        spellingPointsEarned += walletPts;
+
+        // 2. Mastery Score: Balanced scientific scaling (0.35 * boxes * mult, capped at +12%)
+        const masteryGain = Math.min(12, Math.ceil(totalBoxes * 0.35 * mult));
 
         // Update word mastery score & wallet points
-        const { newScore } = updateWordMasteryScore(questionWord, pts);
+        const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
         const idx = words.findIndex(w => w.id === questionWord.id);
         if (idx >= 0) {
           words[idx].masteryScore = newScore;
           words[idx].updatedAt = new Date().toISOString();
         }
 
-        setUserPoints(getUserPoints() + pts);
+        setUserPoints(getUserPoints() + walletPts);
         saveDatabase(true);
 
         // Visual & Natural Google Audio Success (no synth beeps)
@@ -7286,7 +7290,7 @@
         updateSpellingWalletPointsDisplay();
 
         if (feedbackMsg) {
-          feedbackMsg.textContent = '🎉 Tuyệt vời! Chính xác 100% (+' + pts + 'đ tinh thông, +' + pts + 'đ ví)';
+          feedbackMsg.textContent = '🎉 Tuyệt vời! Chính xác 100% (+' + masteryGain + 'đ tinh thông, +' + walletPts + 'đ ví)';
           feedbackMsg.style.color = '#34d399';
         }
 
@@ -7309,10 +7313,11 @@
         spellingWrongCount++;
         spellingWrongAttemptsForCurrentWord++;
 
-        // Penalty calculation: Wrong boxes * multiplier, rounded up
-        const penalty = Math.ceil(wrongCount * mult);
+        // Balanced Penalty calculation:
+        const walletPenalty = Math.ceil(wrongCount * mult);
+        const masteryPenalty = Math.min(8, Math.max(1, Math.ceil(wrongCount * 0.35 * mult)));
 
-        const { newScore } = updateWordMasteryScore(questionWord, -penalty);
+        const { newScore } = updateWordMasteryScore(questionWord, -masteryPenalty);
         const idx = words.findIndex(w => w.id === questionWord.id);
         if (idx >= 0) {
           words[idx].masteryScore = newScore;
@@ -7320,7 +7325,7 @@
         }
 
         const curPts = getUserPoints();
-        if (curPts > 0) setUserPoints(Math.max(0, curPts - penalty));
+        if (curPts > 0) setUserPoints(Math.max(0, curPts - walletPenalty));
         saveDatabase(true);
         updateSpellingWalletPointsDisplay();
 
@@ -7336,7 +7341,7 @@
         }
 
         if (feedbackMsg) {
-          feedbackMsg.textContent = '❌ Có ' + wrongCount + ' ô chưa đúng! (-' + penalty + 'đ tinh thông, -' + penalty + 'đ ví)';
+          feedbackMsg.textContent = '❌ Có ' + wrongCount + ' ô chưa đúng! (-' + masteryPenalty + 'đ tinh thông, -' + walletPenalty + 'đ ví)';
           feedbackMsg.style.color = '#f87171';
         }
 
