@@ -1595,6 +1595,9 @@
       padding: 0;
       flex-shrink: 1;
     }
+    #lib-category-tabs::-webkit-scrollbar {
+      display: none;
+    }
     @media (max-width: 600px) {
       .spelling-letter-box {
         width: clamp(22px, 6vw, 32px);
@@ -1711,7 +1714,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2i</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2j</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3492,7 +3495,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2i</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2j</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3655,10 +3658,10 @@
           </button>
         </div>
 
-        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;" id="lib-category-tabs">
+        <div style="display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; max-width: 100%;" id="lib-category-tabs">
           <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🏫 Cấp 2 (6-9)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📘 Cấp 3 (10-12)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🏫 Cấp 2</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📘 Cấp 3</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📜 Chứng Chỉ</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="life" onclick="setLibraryCategory('life')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">💼 Nghề & Đời Sống</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">☁️ Đóng Góp</button>
@@ -7542,6 +7545,13 @@
     function renderDailyReviewBanner() {
       const container = document.getElementById('daily-review-banner-container');
       if (!container) return;
+
+      if (!showReviewQueueSetting) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+      container.style.display = 'block';
 
       const dueWords = getDueReviewWords();
       reviewDueWordsList = dueWords;
