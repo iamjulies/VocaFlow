@@ -1847,7 +1847,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3i</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3j</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3881,7 +3881,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3i</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3j</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4292,6 +4292,46 @@
 
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
+    // =========================================================================
+    // VOCAFLOW SOUND EFFECTS (SFX) & AUDIO ENGINE (v0.0.10.3j)
+    // =========================================================================
+    const VOCA_SFX = {
+      fireworks: new Audio('./audio/sfx_fireworks.mp3'),
+      correct: new Audio('./audio/sfx_correct.mp3'),
+      wrong: new Audio('./audio/sfx_wrong.mp3'),
+      skip: new Audio('./audio/sfx_skip.mp3'),
+      purchase: new Audio('./audio/sfx_purchase.mp3')
+    };
+
+    function playVocaSfx(name, loop = false) {
+      try {
+        const snd = VOCA_SFX[name];
+        if (snd) {
+          snd.loop = !!loop;
+          snd.currentTime = 0;
+          snd.play().catch(() => {});
+        }
+      } catch (e) {}
+    }
+
+    function stopVocaSfx(name) {
+      try {
+        const snd = VOCA_SFX[name];
+        if (snd) {
+          snd.pause();
+          snd.currentTime = 0;
+        }
+      } catch (e) {}
+    }
+
+    function stopAllAudio() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      Object.keys(VOCA_SFX).forEach(k => stopVocaSfx(k));
+    }
+
+    let studySourceContext = 'deck';
     const STORAGE_KEY_DECKS = 'vocaflow_decks';
     const STORAGE_KEY_WORDS = 'vocaflow_words';
     const STORAGE_KEY_THEME = 'vocaflow_theme';
@@ -4952,6 +4992,7 @@
       }
 
       if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${skipCount} Lượt Bỏ Qua (Skip Pass)?`)) {
+        playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserSkips(getUserSkips() + skipCount);
         showToast(`🎉 Đã đổi thành công +${skipCount} lượt Bỏ Qua!`);
@@ -4974,6 +5015,7 @@
       }
 
       if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${hintCount} Lượt Gợi Ý AI?`)) {
+        playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserHints(getUserHints() + hintCount);
         showToast(`🎉 Đã đổi thành công +${hintCount} lượt gợi ý AI!`);
@@ -7809,7 +7851,11 @@
       document.getElementById(id).classList.add('active');
     }
     function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+      if (id === 'modal-quiz-result' || id === 'modal-spelling-result') {
+        stopVocaSfx('fireworks');
+      }
     }
 
     // DECK COLOR PALETTE PRESETS (v0.0.10.3h)
@@ -8987,6 +9033,7 @@
 
     function useSpellingSkip() {
       if (spellingIsAnswered) return;
+      playVocaSfx('skip');
       const questionWord = spellingList[spellingIndex];
       if (!questionWord) return;
 
@@ -9055,6 +9102,7 @@
 
     function useQuizSkip() {
       if (quizIsAnswered) return;
+      playVocaSfx('skip');
       if (quizQuestionStartTime) {
         quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
         quizQuestionStartTime = null;
@@ -9235,6 +9283,7 @@
       }
 
       openModal('modal-spelling-result');
+      playVocaSfx('fireworks', true);
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -9331,6 +9380,7 @@
     }
 
     function exitSpellingToDeck() {
+      stopVocaSfx('fireworks');
       checkAndApplyPendingAppUpdate();
       closeModal('modal-spelling-result');
       if (studySourceContext === 'review-queue' || !currentDeckId) {
@@ -9343,6 +9393,7 @@
     }
 
     function exitSpellingToHome() {
+      stopVocaSfx('fireworks');
       checkAndApplyPendingAppUpdate();
       closeModal('modal-spelling-result');
       showScreen('screen-decks');
@@ -9355,6 +9406,15 @@
       if (questionWord && questionWord.term) {
         speakText(questionWord.term);
       }
+      // Re-focus the first unfilled or active box after user listens to audio
+      setTimeout(() => {
+        const editables = getEditableSpellingInputs();
+        const target = editables.find(inp => !inp.value || inp.classList.contains('wrong')) || editables[0];
+        if (target) {
+          target.focus();
+          target.select();
+        }
+      }, 60);
     }
 
     function updateSpellingWalletPointsDisplay() {
@@ -10503,6 +10563,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       quizPointsEarned += delta;
 
       if (isCorrect) {
+        playVocaSfx('correct');
         quizCorrectCount++;
         selectedButton.classList.add('correct');
         quizScore += delta;
@@ -10521,6 +10582,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           showToast('🎉 Đúng rồi (+' + delta + 'đ ví, Tổng: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
         }
       } else {
+        playVocaSfx('wrong');
         quizWrongCount++;
         selectedButton.classList.add('wrong');
         quizScore += delta;
@@ -10618,6 +10680,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       openModal('modal-quiz-result');
+      playVocaSfx('fireworks', true);
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -10715,6 +10778,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       startQuizMode();
     }
 
+    window.exitQuizSession = function() { exitQuiz(); };
+    window.exitSpellingSession = function() { exitSpelling(); };
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
@@ -10728,6 +10793,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitQuizToDeck() {
+      stopVocaSfx('fireworks');
       checkAndApplyPendingAppUpdate();
       closeModal('modal-quiz-result');
       if (studySourceContext === 'review-queue' || !currentDeckId) {
@@ -10740,6 +10806,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function exitQuizToHome() {
+      stopVocaSfx('fireworks');
       checkAndApplyPendingAppUpdate();
       closeModal('modal-quiz-result');
       showScreen('screen-decks');
@@ -14994,14 +15061,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const quizScreen = document.getElementById('screen-quiz');
         if (quizScreen && quizScreen.classList.contains('active')) {
           e.preventDefault();
-          exitQuizSession();
+          exitQuiz();
           return;
         }
 
         const spellingScreen = document.getElementById('screen-spelling');
         if (spellingScreen && spellingScreen.classList.contains('active')) {
           e.preventDefault();
-          exitSpellingSession();
+          exitSpelling();
           return;
         }
 
@@ -15052,9 +15119,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      // 2. SPELLING SCREEN SHORTCUTS (v0.0.10.1b)
+      // 2. SPELLING SCREEN SHORTCUTS (v0.0.10.3j)
       const spellingScreen = document.getElementById('screen-spelling');
       if (spellingScreen && spellingScreen.classList.contains('active')) {
+        if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          if (spellingIsAnswered) {
+            nextSpellingQuestion();
+          } else {
+            const editables = getEditableSpellingInputs();
+            const target = editables.find(inp => !inp.value || inp.classList.contains('wrong')) || editables[0];
+            if (target) {
+              target.focus();
+              target.select();
+            }
+          }
+          return;
+        }
+
         if (e.key === 'Enter') {
           if (e.target && e.target.classList && e.target.classList.contains('spelling-letter-box')) {
             return; // Handled locally inside handleSpellingKeyDown
@@ -15679,6 +15761,7 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
 
       words.push(...newWordObjects);
       saveDatabase(true);
+      playVocaSfx('purchase');
 
       closeModal('modal-ai-deck-studio');
       showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost} Xu)`);

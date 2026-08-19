@@ -1,9 +1,15 @@
-const CACHE_NAME = 'vocaflow-pwa-v0.0.10.3i';
+const CACHE_NAME = 'vocaflow-pwa-v0.0.10.3j';
 const ASSETS = [
   './',
   './index.html',
+  './vocaflow.html',
   './manifest.json',
   './xlsx.full.min.js',
+  './audio/sfx_fireworks.mp3',
+  './audio/sfx_correct.mp3',
+  './audio/sfx_wrong.mp3',
+  './audio/sfx_skip.mp3',
+  './audio/sfx_purchase.mp3',
   './icons/Icon-192.png',
   './icons/Icon-512.png',
   './icons/Icon-maskable-192.png',
