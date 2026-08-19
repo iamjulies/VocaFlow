@@ -1830,7 +1830,7 @@
     <!-- SCREEN 4: QUIZ MODE -->
     <section id="screen-quiz" class="screen">
       <div class="top-nav">
-        <button class="btn btn-outline btn-icon" onclick="showScreen('screen-deck-detail')">
+        <button class="btn btn-outline btn-icon" onclick="exitQuiz()" title="Quay lại">
           <svg class="icon"><use href="#i-arrow-back"/></svg>
         </button>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -6914,6 +6914,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function startQuizMode(useSelectionOnly = false, customWordList = null) {
+      studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
@@ -7477,10 +7478,26 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       startQuizMode();
     }
 
+    function exitQuiz() {
+      stopAllAudio();
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        renderDecks();
+      } else {
+        showScreen('screen-deck-detail');
+        renderWordList();
+      }
+    }
+
     function exitQuizToDeck() {
       closeModal('modal-quiz-result');
-      showScreen('screen-deck-detail');
-      renderWordList();
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        renderDecks();
+      } else {
+        showScreen('screen-deck-detail');
+        renderWordList();
+      }
     }
 
     function exitQuizToHome() {
@@ -7896,6 +7913,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let autoFlashcardStepId = 0;
 
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
+      studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
@@ -8040,8 +8058,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       isAutoPlaying = false;
       autoFlashcardStepId++;
       stopAllAudio();
-      showScreen('screen-deck-detail');
-      renderWordList();
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        renderDecks();
+      } else {
+        showScreen('screen-deck-detail');
+        renderWordList();
+      }
     }
 
     function renderAutoCardOnly(index) {
