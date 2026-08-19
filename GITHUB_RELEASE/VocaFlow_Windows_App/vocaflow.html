@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2f</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2g</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1827,9 +1827,7 @@
           </div>
           
           <div class="selection-study-actions">
-            <button class="btn btn-outline btn-sm" id="btn-toggle-study-shuffle" onclick="toggleStudyShuffle()" title="Bật/Tắt chế độ Trộn ngẫu nhiên (Auto FC, Quiz)">
-              🔀 <span class="hide-on-mobile">Trộn</span>
-            </button>
+
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
@@ -3343,6 +3341,48 @@
         </label>
       </div>
 
+      <!-- BỘ LỌC & TÙY BIẾN GIAO DIỆN (v0.0.10.2g) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎛️ Tùy Biến Bộ Lọc & Hàng Đợi Ôn Tập</label>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- 1. Review Queue Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-review-queue-checkbox" checked onchange="toggleShowReviewQueueSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🔁 Hàng Đợi Ôn Tập (Spaced Repetition)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị banner nhắc nhở từ vựng đến chu kỳ ôn tập trên trang chủ</div>
+            </div>
+          </label>
+
+          <!-- 2. POS Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-pos-checkbox" checked onchange="toggleShowFilterPosSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🏷️ Bộ lọc Từ Loại (Part of Speech)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo noun, verb, adjective... trong bộ từ</div>
+            </div>
+          </label>
+
+          <!-- 3. CEFR Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-cefr-checkbox" checked onchange="toggleShowFilterCefrSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🎯 Bộ lọc Cấp Độ CEFR (A1 - C2)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo cấp độ khó quốc tế</div>
+            </div>
+          </label>
+
+          <!-- 4. Score Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-score-checkbox" checked onchange="toggleShowFilterScoreSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🎚️ Nút Lọc Điểm Ghi Nhớ (Slider Panel)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị nút bật thanh trượt lọc mức độ thuộc 0% - 100%</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
           <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0;">✨ Google Gemini AI (Miễn Phí)</label>
@@ -3380,7 +3420,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2f</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2g</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3534,7 +3574,10 @@
       <!-- SEARCH & FILTER TABS -->
       <div style="margin-bottom: 12px;">
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm bộ từ hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px;">
+          <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm bộ từ hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px; flex: 1;">
+          <button class="btn btn-outline btn-sm" id="lib-btn-my-decks" onclick="toggleLibraryMyDecksFilter()" title="Lọc các bộ từ do chính bạn đăng tải" style="white-space: nowrap; font-weight: 700; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); display: inline-flex; align-items: center; gap: 4px;">
+            🌟 CỦA TÔI
+          </button>
           <button class="btn btn-outline btn-sm" onclick="fetchCloudLibraryDecks()" title="Làm mới từ Cloud" style="white-space: nowrap; font-weight: 600;">
             🔄 Làm mới
           </button>
@@ -3551,7 +3594,7 @@
       </div>
 
       <!-- LIBRARY DECK LIST -->
-      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; padding: 4px 6px 14px 2px; margin-bottom: 12px; align-items: stretch; scrollbar-width: thin;">
+      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 4px 14px 2px; margin-bottom: 12px; scrollbar-width: thin;">
         <!-- Rendered via JS -->
       </div>
 
@@ -3788,6 +3831,62 @@
     let currentSpeechRateVi = parseFloat(localStorage.getItem(STORAGE_KEY_SPEECH_RATE_VI)) || 1.0;
     let showTimestampSetting = localStorage.getItem(STORAGE_KEY_SHOW_TIMESTAMP) !== 'false';
     let autoDelaySeconds = parseFloat(localStorage.getItem(STORAGE_KEY_AUTO_DELAY)) || 1.0;
+
+    const STORAGE_KEY_SHOW_REVIEW_QUEUE = 'vocaflow_show_review_queue';
+    const STORAGE_KEY_SHOW_FILTER_POS = 'vocaflow_show_filter_pos';
+    const STORAGE_KEY_SHOW_FILTER_CEFR = 'vocaflow_show_filter_cefr';
+    const STORAGE_KEY_SHOW_FILTER_SCORE = 'vocaflow_show_filter_score';
+
+    let showReviewQueueSetting = localStorage.getItem(STORAGE_KEY_SHOW_REVIEW_QUEUE) !== 'false';
+    let showFilterPosSetting = localStorage.getItem(STORAGE_KEY_SHOW_FILTER_POS) !== 'false';
+    let showFilterCefrSetting = localStorage.getItem(STORAGE_KEY_SHOW_FILTER_CEFR) !== 'false';
+    let showFilterScoreSetting = localStorage.getItem(STORAGE_KEY_SHOW_FILTER_SCORE) !== 'false';
+
+    function toggleShowReviewQueueSetting(val) {
+      showReviewQueueSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
+      applyUiFilterSettings();
+    }
+
+    function toggleShowFilterPosSetting(val) {
+      showFilterPosSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
+      applyUiFilterSettings();
+    }
+
+    function toggleShowFilterCefrSetting(val) {
+      showFilterCefrSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
+      applyUiFilterSettings();
+    }
+
+    function toggleShowFilterScoreSetting(val) {
+      showFilterScoreSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
+      applyUiFilterSettings();
+    }
+
+    function applyUiFilterSettings() {
+      const posSelect = document.getElementById('filter-word-pos-select');
+      const cefrSelect = document.getElementById('filter-word-cefr-select');
+      const scoreBtn = document.getElementById('btn-toggle-mastery-slider');
+      const scorePanel = document.getElementById('mastery-slider-panel');
+      const reviewQueueBanner = document.getElementById('daily-review-banner-container');
+
+      if (posSelect) posSelect.style.display = showFilterPosSetting ? 'inline-block' : 'none';
+      if (cefrSelect) cefrSelect.style.display = showFilterCefrSetting ? 'inline-block' : 'none';
+      if (scoreBtn) scoreBtn.style.display = showFilterScoreSetting ? 'inline-flex' : 'none';
+      if (!showFilterScoreSetting && scorePanel) scorePanel.style.display = 'none';
+
+      if (reviewQueueBanner) {
+        if (!showReviewQueueSetting) {
+          reviewQueueBanner.style.display = 'none';
+        } else {
+          reviewQueueBanner.style.display = 'block';
+          renderDailyReviewBanner();
+        }
+      }
+    }
 
     // Date formatting helpers
     function formatDateTime(isoString) {
@@ -6990,6 +7089,7 @@
       customMaxScore = 100;
 
       updateDeckDetailHeader();
+      applyUiFilterSettings();
       renderWordList();
       updateSelectionUI();
       showScreen('screen-deck-detail');
@@ -13316,8 +13416,26 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 ;
     let cloudLibraryDecks = [];
     let currentLibraryCategory = 'all';
+    let libraryMyDecksOnly = false;
     let currentPreviewDeck = null;
     let pendingPublisherDeck = null;
+
+    function toggleLibraryMyDecksFilter() {
+      libraryMyDecksOnly = !libraryMyDecksOnly;
+      const btn = document.getElementById('lib-btn-my-decks');
+      if (btn) {
+        if (libraryMyDecksOnly) {
+          btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          btn.style.color = '#fff';
+          btn.style.borderColor = '#f59e0b';
+        } else {
+          btn.style.background = 'rgba(245, 158, 11, 0.08)';
+          btn.style.color = '#fbbf24';
+          btn.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        }
+      }
+      renderLibraryDecks();
+    }
 
     function openLibraryModal() {
       if (!requireLogin('Thư Viện Từ Vựng')) {
@@ -13407,6 +13525,33 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const grade = Number(deck.grade);
         const title = (deck.title || '').toLowerCase();
 
+        // My Decks Filter Toggle
+        if (libraryMyDecksOnly) {
+          const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
+            (deck.authorUid && deck.authorUid === currentUser.uid) ||
+            (deck.author && currentUser.displayName && (
+              deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
+              deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
+              currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
+            )) ||
+            (deck.author && (
+              deck.author.toLowerCase().includes('julies') ||
+              deck.author.toLowerCase().includes('duwchao') ||
+              deck.author.toLowerCase().includes('julie') ||
+              deck.author.toLowerCase().includes('i am julies')
+            ) && (
+              currentUser.email.includes('julies') ||
+              currentUser.email.includes('duwchao') ||
+              (currentUser.displayName || '').toLowerCase().includes('julies') ||
+              (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
+              currentUser.email === 'duwchao@gmail.com'
+            )) ||
+            (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
+            (currentUser.email === 'duwchao@gmail.com')
+          );
+          if (!isAuthor) return false;
+        }
+
         // Category Filter
         if (currentLibraryCategory === 'thcs') {
           if (!['THCS', '6', '7', '8', '9'].includes(cat) && ![6, 7, 8, 9].includes(grade) && !['lớp 6', 'lớp 7', 'lớp 8', 'lớp 9', 'thcs'].some(t => title.includes(t))) return false;
@@ -13476,42 +13621,38 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         );
 
         html += `
-          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; min-height: 240px; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.18); box-sizing: border-box;">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color}; border-top-left-radius: 14px; border-bottom-left-radius: 14px;"></div>
-            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; margin-bottom: 14px;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0;">
-                  <span style="font-size: 22px; flex-shrink: 0;">${icon}</span>
-                  <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.35;">${escapeHtml(deck.title)}</h4>
-                  ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
-                </div>
-                <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700; flex-shrink: 0;">${wordCount} từ</span>
-              </div>
-              <p style="font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
-              </p>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: 0 3px 10px rgba(0,0,0,0.12); transition: all 0.2s ease;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>
+            <div style="flex: 1; min-width: 240px; padding-left: 6px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                <span style="font-size: 20px; line-height: 1;">${icon}</span>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
+                <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700;">${wordCount} từ</span>
                 <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
+                ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
               </div>
-              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: auto;">
+              <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
+              </p>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
                 <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1fr 1.25fr' : '1fr 1.25fr'}; gap: 6px; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
-              <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex-shrink: 0;">
+              <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
                 👁️ Xem
               </button>
               ${isAuthor ? `
-                <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
                   ✏️ Sửa
                 </button>
-                <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
                   🗑️ Xóa
                 </button>
               ` : ''}
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
                 📥 ${isImported ? 'Tải lại' : 'Tải về'}
               </button>
             </div>
