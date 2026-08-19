@@ -152,41 +152,44 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Badge Cấp độ + Hệ số điểm tổng và hệ thống pháo hoa động ăn mừng tưng bừng.
   - 🛡️ Khắc Phục Triệt Để Lỗi Crash/Tải Lại Giữa Chừng Khi Đang Học (v0.0.10.1k):
     * Cơ chế Service Worker Guard (`isUserInActiveStudySession`): Khi có bản cập nhật mới trên GitHub Pages / Server, app sẽ KHÔNG tự động reload ngắt quãng khi người học đang làm dở Quiz / Spelling / Auto Flashcard.
-    * Bản cập nhật sẽ được trì hoãn và áp dụng êm ái khi người học hoàn tất hoặc bấm thoát về màn hình chính.
-  - 📖 Thẻ Thông Tin Chi Tiết Toàn Diện Sau Khi Trả Lời & Bỏ Qua (v0.0.10.1g, v0.0.10.1i):
-    * Cả Luyện Viết (Spelling) và Trắc Nghiệm (Quiz) đều hiển thị đầy đủ thông tin từ vựng ngay khi trả lời HOẶC bấm Bỏ qua (Thuật ngữ, Từ loại, Cấp độ CEFR, Phiên âm IPA, Nghĩa tiếng Việt, Câu ví dụ in nghiêng, Đồng nghĩa, Trái nghĩa, Cụm từ, Ghi chú) giúp người học tiếp thu kiến thức trọn vẹn.
-  - ✨ Giải Thích Súc Tích Từ AI Trong Quiz (v0.0.10.1g):
-    * AI Gemini tạo 1-2 câu giải thích siêu ngắn gọn lý do vì sao chọn đáp án đúng và phân biệt sắc thái nghĩa sắc bén so với các phương án gây nhiễu.
-  - 🟠 Nút Tiếp Tục Khi Bỏ Qua Đổi Sang Màu Vàng Cam (v0.0.10.1i):
-    * Khi dùng Bỏ qua (Skip), nút chuyển câu đổi từ xanh lá (thành công kiêu hãnh) sang tone vàng cam ấm áp ("⏭️ Bỏ Qua • Từ Tiếp Theo") tạo động lực học tập và ghi nhớ sâu sắc hơn.
-  - 🔄 Đồng Bộ Điểm Tinh Thông & Cập Nhật Giao Diện Thời Gian Thực (v0.0.10.1h):
-    * Hàm `updateWordMasteryScore` tự động đồng bộ ngay vào mảng từ gốc `words`.
-    * Cơ chế `refreshActiveScreenData` tự động vẽ lại tiến độ bộ từ, danh sách thẻ từ vựng và chip đếm bộ lọc tức thì ngay khi hoàn thành bài học hoặc thoát chế độ mà KHÔNG CẦN refresh trang.
-  - Giao diện Interactive Letter Boxes & Word-Block Grouping: Nhóm từ thông minh tránh ngắt dòng giữa chừng từng từ, tự động chuyển ô khi gõ, phím Backspace lùi ô.
-  - Điều khiển Phím Enter 2 Nhịp chuẩn xác: Enter lần 1 kiểm tra kết quả và hiển thị thông báo chúc mừng / nút "Từ Tiếp Theo", Enter lần 2 mới chuyển câu tiếp theo.
-  - ⚖️ Cơ Chế Điểm Cân Bằng Khoa Học (v0.0.10.1d):
-    * Điểm Ví (VocaPoints 🪙): Thưởng trọn vẹn theo công sức gõ (Tổng số ô * Hệ số tổng).
-    * Điểm Tinh Thông (Mastery Score %): Tỉ lệ co giãn khoa học (min(12, ceil(Tổng số ô * 0.35 * Hệ số tổng))), chặn trần tối đa +12% tránh lạm phát độ thuộc bài ở các từ/cụm từ dài.
-    * Điểm Phạt khi gõ sai: Phạt ví theo ô sai (Số ô sai * Hệ số tổng), phạt tinh thông nhẹ (min(8, ceil(Số ô sai * 0.35 * Hệ số tổng))).
-  - 🎯 Chuẩn Hóa Điểm Thưởng Trắc Nghiệm Quiz Theo Cấp Độ Thử Thách (v0.0.10.1e - Phương án A):
-    * Không phụ thuộc vào nhãn CEFR (tránh sai lệch dữ liệu hoặc cày điểm).
-    * 🟢 Dễ (0 bẫy AI): Đúng (+3% thuộc bài, +3đ ví) • Sai (-2% thuộc bài, -2đ ví).
-    * 🟡 Trung bình (1 bẫy AI): Đúng (+5% thuộc bài, +5đ ví) • Sai (-3% thuộc bài, -3đ ví).
-    * 🔴 Khó (2 bẫy AI): Đúng (+8% thuộc bài, +8đ ví) • Sai (-4% thuộc bài, -4đ ví).
-    * 🟣 Cực khó (3 bẫy AI 100%): Đúng (+10% thuộc bài, +10đ ví) • Sai (-5% thuộc bài, -5đ ví).
-  - Giọng đọc Google TTS nguyên bản tự nhiên, loại bỏ tạp âm robot.
-  - ⏭️ Tính Năng Lượt Bỏ Qua (Skip Pass - v0.0.10.1c):
-    * Tặng miễn phí 3 lượt Bỏ Qua cho thành viên mới đăng ký.
-    * Nút Bỏ Qua (⏭️) đặt ngay cạnh nút Gợi Ý (❓) trong cả Luyện Viết và Trắc Nghiệm Quiz.
-    * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
-    * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
-
-• 👤 v0.0.10.2 (a -> k): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc, Đồng Bộ Cloud Toàn Diện, Ghi Công Tác Giả & Tối Ưu Gọn Nhẹ Giao Diện
+    * Bản cập nhật sẽ được trì hoãn và áp dụng êm ái khi người học hoàn• 👤 v0.0.10.2 (a -> l): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc, Đồng Bộ Cloud Toàn Diện, Ghi Công Tác Giả & Tối Ưu Trải Nghiệm Nhập Liệu
   - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
     * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
     * Giao diện Hồ sơ gọn gàng: Luôn hiển thị Khung Ghi chú & Mục tiêu học tập (`profile-bio-box`), form sửa chỉ hiện khi bấm nút ✏️ Sửa Tên & Bio.
     * Tự động đồng bộ ngay lập tức lên Header, LocalStorage, Cloud Firestore / Firebase Database và toàn bộ các bộ từ trên Thư Viện 2 chiều.
     * Cơ chế đồng bộ Realtime Proactive (`v0.0.10.2d`): Đảm bảo Tên và Bio luôn được nạp tức thì từ Cloud trên mọi thiết bị và giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
+  - 👥 Thẻ Hồ Sơ Người Dùng Công Khai Đa Năng (Public Profile Modal - `v0.0.10.2b/c/d/f`):
+    * Hiển thị thông tin cho "VocaFlow Chuẩn" (hiển thị đủ 3 bộ từ chuẩn, 180 từ vựng và icon nhận diện chính thức).
+    * Dynamic Profile Resolution: Tự động cập nhật tên mới (VD: "julies"), Avatar và Bio mới nhất của tác giả lên toàn bộ các bộ từ đã chia sẻ trước đó mà không bị gán cứng tên cũ.
+    * Cân bằng chỉ số (`v0.0.10.2f`): Loại bỏ hoàn toàn chỉ số "Điểm / Uy tín" gây mất cân bằng, bố cục lại 2 ô thông số cân đối, tinh tế: 📚 **Số Bộ Từ Chia Sẻ** & 📝 **Tổng Số Từ Vựng**.
+  - 🔒 Đóng Góp Thư Viện Ẩn Danh / Công Khai (Anonymous / Public Sharing):
+    * Loại bỏ ô nhập tên tác giả tự do để bảo đảm tính xác thực danh tính.
+    * Tự động lấy tên và Avatar thực tế từ Profile cá nhân.
+    * Thêm tùy chọn 2 chế độ: 🌐 **Công khai** (Hiển thị tên & mở xem Profile) hoặc 🔒 **Ẩn danh** (Hiển thị "Ẩn danh", không liên kết Profile).
+    * Cơ chế đóng góp phi vụ lợi (`v0.0.10.2f`): Không tặng điểm ảo khi tải lên để ngăn chặn hành vi spam/đăng trùng lặp trục lợi.
+  - 🛠️ Chỉnh Sửa & Xóa Bộ Từ Đã Đăng Thư Viện (Edit & Delete Public Decks - `v0.0.10.2e`):
+    * Nhận diện chủ sở hữu thông minh: Hiện huy hiệu `TỦ TỦ CỦA TÔI` cùng 2 nút chức năng **`✏️ Sửa`** và **`🗑️ Xóa`** riêng cho tác giả đã đăng bộ từ.
+    * Cho phép tác giả cập nhật Tên, Mô tả, Danh mục, Biểu tượng hoặc Tải file/dữ liệu mới thay thế.
+    * Nút **`🗑️ Xóa Khỏi Thư Viện`**: Cho phép gỡ bỏ vĩnh viễn bộ từ khỏi Cloud Thư Viện Toàn Cầu chỉ với 1 cú click xác nhận an toàn.
+  - 📐 Bố Cục Thư Viện Danh Sách Ngang & Nút "🌟 CỦA TÔI" (`v0.0.10.2g`):
+    * Chuyển đổi Thư Viện sang dạng **Danh sách 1 dòng (Horizontal Row Card)** cho từng bộ từ: Thông tin bộ từ nằm bên trái, cụm nút bấm thao tác nằm bên phải/dưới liền mạch, co giãn linh hoạt 100% không bị che khuất.
+    * Nút **`🌟 CỦA TÔI`** đặt ngay cạnh nút Làm Mới: 1-click lọc nhanh toàn bộ các bộ từ do chính mình đăng tải.
+  - 📱 Đại Tu Giao Diện Di Động & Khắc Phục Hiển Thị Bộ Lọc (`v0.0.10.2h/i`):
+    * **Hiển thị đầy đủ cả 3 bộ lọc trên điện thoại**: Gỡ bỏ xung đột `!important` trong CSS giúp 2 dropdown `🏷️ Từ loại`, `🎯 Cấp độ` và nút `🎚️ Lọc điểm` xuất hiện đồng thời đầy đủ trên cùng 1 dòng ngang mượt mà.
+    * **Tối ưu Modal Hàng Đợi Ôn Tập**: Bỏ khung giải thích thuật toán cồng kềnh, đưa toàn bộ nút học và danh sách từ vựng lên trên cùng trực quan.
+    * **Chống đè chữ nút Gợi ý (❓) & Bỏ qua (⏭️)** trong màn hình Quiz và Luyện Viết (Spelling): Tách bạch tiêu đề câu hỏi và cụm nút bằng cấu trúc Flexbox độc lập, tuyệt đối không bị chồng lấn văn bản.
+    * **Co giãn ô chữ Luyện Viết linh hoạt (Responsive Letter Boxes & Word Wrap)**: Ứng dụng CSS `clamp()` và ngắt từ tự động theo dấu cách, dấu gạch nối `-`, gạch chéo `/`, đảm bảo các từ dài từ 10-15 ký tự luôn nằm vừa vặn 100% trong khung nhìn điện thoại mà không bị tràn màn hình.
+  - 🎨 Tinh Gọn Giao Diện Cài Đặt, Thư Viện & Ghi Công Tác Giả (`v0.0.10.2k`):
+    * **Ghi công tác giả (Author Credit)**: Khi tải bất kỳ bộ từ nào từ Thư Viện về máy, hệ thống tự động lưu trữ thông tin tác giả và hiển thị huy hiệu `👤 Đóng góp: [Tên tác giả]` trên thẻ bộ từ ngoài trang chủ và trong tiêu đề chi tiết bộ từ (click vào để mở ngay Profile tác giả).
+    * **Bố cục Chọn Giao Diện 1 Dòng 3 Ô (1-Row Theme Tiles)**: Thu gọn 3 tùy chọn Tối / Sáng / Theo thiết bị thành 3 ô tile nằm ngang trên cùng 1 dòng duy nhất cả trên desktop và mobile, loại bỏ hoàn toàn việc chiếm nhiều dòng dọc.
+    * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
+    * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
+    * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
+  - ⚡ Tối Ưu Bàn Phím, Chặn Phím Cách Luyện Viết & Căn Chỉnh Nút Bộ Từ (`v0.0.10.2l`):
+    * **Chặn nhập phím Space trong Luyện Viết (Spelling)**: Ngăn chặn triệt để hành vi vô tình bấm phím cách (Space) khi gõ từ ghép, tự động lọc khoảng trắng giúp người dùng gõ liền mạch mà không lo bị kẹt hoặc phải bấm Backspace xóa tay.
+    * **Hỗ trợ phím Enter khi Nạp Mã Quà Tặng (Gift Code)**: Cho phép nhấn phím `Enter` trực tiếp trong ô nhập mã để nạp thưởng ngay mà không cần dùng chuột bấm nút "Áp dụng".
+    * **Căn thẳng hàng 4 nút Thao Tác Bộ Từ (Deck Toolbar Grid 2x2)**: Sắp xếp 4 nút `[+ Thêm Từ]`, `[⬆ Nhập Excel]`, `[⬇ Xuất Excel]`, `[🚀 Chia sẻ Thư Viện]` thành lưới 2x2 đối xứng hoàn hảo trên màn hình hẹp/di động, chấm dứt hiện tượng lệch hàng 3 trên 1 dưới.
+    * **Xóa bỏ tài khoản rác / Bot kiểm thử & Bổ sung nút Xóa tài khoản**: Đã dọn dẹp triệt để tài khoản bot rác `user_julies` trên Firebase Cloud, đồng thời trang bị nút **`🗑️ Xóa`** trực tiếp trong Cổng Quản Lý Học Viên (`modal-publisher-portal`) cho quản trị viên.� giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
   - 👥 Thẻ Hồ Sơ Người Dùng Công Khai Đa Năng (Public Profile Modal - `v0.0.10.2b/c/d/f`):
     * Hiển thị thông tin cho "VocaFlow Chuẩn" (hiển thị đủ 3 bộ từ chuẩn, 180 từ vựng và icon nhận diện chính thức).
     * Dynamic Profile Resolution: Tự động cập nhật tên mới (VD: "julies"), Avatar và Bio mới nhất của tác giả lên toàn bộ các bộ từ đã chia sẻ trước đó mà không bị gán cứng tên cũ.

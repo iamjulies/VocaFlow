@@ -1353,18 +1353,19 @@
 
       .deck-detail-right {
         display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 6px;
         width: 100%;
       }
       .deck-detail-right .btn {
         width: 100%;
-        padding: 6px 2px;
-        font-size: 11px;
+        padding: 6px 4px;
+        font-size: 11.5px;
         font-weight: 600;
         justify-content: center;
-        height: 32px;
+        height: 34px;
         white-space: nowrap;
+        border-radius: 8px;
       }
 
       .selection-study-bar {
@@ -1713,7 +1714,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2k</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2l</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2897,7 +2898,7 @@
       <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
         <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
         <div style="display: flex; gap: 8px;">
-          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);" onkeydown="if(event.key === 'Enter'){ redeemShopGiftCode(); event.preventDefault(); }">
           <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 700; padding: 0 16px;">Áp dụng</button>
         </div>
         <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
@@ -3498,7 +3499,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2k</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2l</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4941,8 +4942,8 @@
           const prof = u.profile || {};
           const email = prof.email || u.email || '';
 
-          // Filter out dummy/root nodes (must have registered email)
-          if (!email || typeof email !== 'string' || !email.includes('@')) {
+          // Filter out dummy/root nodes and ghost test bot accounts
+          if (!email || typeof email !== 'string' || !email.includes('@') || uid === 'user_julies' || uid === 'u1') {
             continue;
           }
 
@@ -5065,11 +5066,14 @@
               </div>
 
               <div style="display: flex; gap: 6px;">
-                <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 10px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 600;" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
+                <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 600;" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
                   🎁 Sửa Ví
                 </button>
-                <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 10px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); font-weight: 600;" title="Xem các bộ từ của học viên này">
-                  👁️ Xem Bộ Từ (${s.deckCount})
+                <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); font-weight: 600;" title="Xem các bộ từ của học viên này">
+                  👁️ Bộ Từ (${s.deckCount})
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="deleteStudentAccountOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 600;" title="Xóa tài khoản học viên / tài khoản rác này">
+                  🗑️ Xóa
                 </button>
               </div>
             </div>
@@ -5078,6 +5082,24 @@
       });
       html += '</div>';
       container.innerHTML = html;
+    }
+
+    async function deleteStudentAccountOnCloud(uid, displayName) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản "${displayName}" (UID: ${uid}) khỏi hệ thống không?`)) return;
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        const res = await fetch(`${rtdbUrl}/users/${uid}.json${authParam}`, { method: 'DELETE' });
+        if (res.ok) {
+          adminStudentsData = adminStudentsData.filter(s => s.uid !== uid);
+          renderAdminStudentsTable();
+          showToast(`Đã xóa tài khoản "${displayName}" thành công!`);
+        } else {
+          showToast(`Lỗi khi xóa tài khoản: ${res.status}`);
+        }
+      } catch (e) {
+        showToast(`Lỗi: ${e.message}`);
+      }
     }
 
     function viewStudentDecksModal(uid, displayName) {
@@ -8189,7 +8211,7 @@
     function handleSpellingInput(e, idx) {
       if (spellingIsAnswered) return;
       const input = e.target;
-      const val = (input.value || '').trim();
+      const val = (input.value || '').replace(/\s+/g, '');
 
       if (val.length > 0) {
         input.value = val[val.length - 1].toUpperCase();
@@ -8201,6 +8223,8 @@
         if (curPos >= 0 && curPos < editables.length - 1) {
           editables[curPos + 1].focus();
         }
+      } else {
+        input.value = '';
       }
     }
 
@@ -8208,6 +8232,11 @@
       const input = e.target;
       const editables = getEditableSpellingInputs();
       const curPos = editables.indexOf(input);
+
+      if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space') {
+        e.preventDefault();
+        return;
+      }
 
       if (e.key === 'Backspace') {
         if (!input.value && curPos > 0) {
