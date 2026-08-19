@@ -1847,7 +1847,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3j</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3k</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3824,6 +3824,29 @@
         </div>
       </div>
 
+      <!-- 3.1. HIỆU ỨNG ÂM THANH (SFX) (v0.0.10.3k) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎮 Hiệu Ứng Âm Thanh (Sound Effects - SFX)</label>
+        
+        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text);">🔔 Bật Hiệu Ứng Âm Thanh</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Âm thanh trả lời đúng/sai, bỏ qua, pháo hoa ăn mừng & mua sắm</div>
+          </div>
+          <input type="checkbox" id="settings-sfx-enabled-checkbox" checked onchange="toggleSfxSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+        </label>
+
+        <div id="settings-sfx-volume-container">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span>🔊 Âm lượng Hiệu Ứng (Volume):</span>
+            <strong id="settings-sfx-volume-label" style="color: #ec4899;">80%</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="range" id="settings-sfx-volume-slider" min="0" max="100" step="5" value="80" style="flex: 1; accent-color: #ec4899;" oninput="updateSfxVolumeSetting(this.value)">
+          </div>
+        </div>
+      </div>
+
       <!-- 4. BỘ LỌC & TÙY BIẾN GIAO DIỆN (v0.0.10.2g) -->
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎛️ Tùy Biến Bộ Lọc & Hàng Đợi Ôn Tập</label>
@@ -3881,7 +3904,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3j</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3k</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4295,6 +4318,12 @@
     // =========================================================================
     // VOCAFLOW SOUND EFFECTS (SFX) & AUDIO ENGINE (v0.0.10.3j)
     // =========================================================================
+    const STORAGE_KEY_SFX_ENABLED = 'vocaflow_sfx_enabled';
+    const STORAGE_KEY_SFX_VOLUME = 'vocaflow_sfx_volume';
+
+    let sfxEnabledSetting = localStorage.getItem(STORAGE_KEY_SFX_ENABLED) !== 'false';
+    let sfxVolumeSetting = localStorage.getItem(STORAGE_KEY_SFX_VOLUME) !== null ? parseFloat(localStorage.getItem(STORAGE_KEY_SFX_VOLUME)) : 0.8;
+
     const VOCA_SFX = {
       fireworks: new Audio('./audio/sfx_fireworks.mp3'),
       correct: new Audio('./audio/sfx_correct.mp3'),
@@ -4303,13 +4332,42 @@
       purchase: new Audio('./audio/sfx_purchase.mp3')
     };
 
+    function toggleSfxSetting(val) {
+      sfxEnabledSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SFX_ENABLED, sfxEnabledSetting.toString());
+      const volCont = document.getElementById('settings-sfx-volume-container');
+      if (volCont) volCont.style.opacity = sfxEnabledSetting ? '1' : '0.5';
+      if (sfxEnabledSetting) {
+        playVocaSfx('purchase');
+      }
+    }
+
+    function updateSfxVolumeSetting(val) {
+      const num = parseInt(val, 10) || 0;
+      sfxVolumeSetting = Math.max(0, Math.min(100, num)) / 100;
+      localStorage.setItem(STORAGE_KEY_SFX_VOLUME, sfxVolumeSetting.toString());
+      const lbl = document.getElementById('settings-sfx-volume-label');
+      if (lbl) lbl.textContent = Math.round(sfxVolumeSetting * 100) + '%';
+      if (sfxEnabledSetting) {
+        playVocaSfx('correct');
+      }
+    }
+
     function playVocaSfx(name, loop = false) {
+      if (!sfxEnabledSetting) return;
       try {
-        const snd = VOCA_SFX[name];
-        if (snd) {
-          snd.loop = !!loop;
-          snd.currentTime = 0;
-          snd.play().catch(() => {});
+        const baseAudio = VOCA_SFX[name];
+        if (baseAudio) {
+          if (loop) {
+            baseAudio.loop = true;
+            baseAudio.volume = sfxVolumeSetting;
+            baseAudio.currentTime = 0;
+            baseAudio.play().catch(() => {});
+          } else {
+            const snd = baseAudio.cloneNode();
+            snd.volume = sfxVolumeSetting;
+            snd.play().catch(() => {});
+          }
         }
       } catch (e) {}
     }
@@ -8937,6 +8995,7 @@
 
       if (wrongCount === 0) {
         // CORRECT ANSWER (100% CORRECT)!
+        playVocaSfx('correct');
         spellingIsAnswered = true;
         spellingCorrectCount++;
 
@@ -8961,8 +9020,10 @@
         setUserPoints(getUserPoints() + walletPts);
         saveDatabase(true);
 
-        // Visual & Natural Google Audio Success (no synth beeps)
-        speakSpellingTerm();
+        // Visual & Natural Google Audio Success: Wait 500ms so correct SFX plays first
+        setTimeout(() => {
+          speakSpellingTerm();
+        }, 500);
 
         document.getElementById('spelling-score').textContent = 'Bài: +' + spellingScore + 'đ';
         updateSpellingWalletPointsDisplay();
@@ -8989,6 +9050,7 @@
         }
       } else {
         // WRONG ANSWER (1 OR MORE WRONG BOXES)!
+        playVocaSfx('wrong');
         spellingWrongCount++;
         spellingWrongAttemptsForCurrentWord++;
 
@@ -9078,8 +9140,10 @@
         feedbackMsg.style.color = '#f59e0b';
       }
 
-      // Natural speech
-      speakSpellingTerm();
+      // Natural speech with 400ms delay so skip SFX finishes first
+      setTimeout(() => {
+        speakSpellingTerm();
+      }, 400);
 
       // Show Full Word Details Card so user can learn from this skipped word (v0.0.10.1i)
       if (questionWord) {
