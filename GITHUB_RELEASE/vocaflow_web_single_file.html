@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1k</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1l</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3276,7 +3276,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1k</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1l</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6897,6 +6897,8 @@
     let spellingScore = 0;
     let spellingIsAnswered = false;
     let spellingStartTime = 0;
+    let spellingActiveTimeMs = 0;
+    let spellingQuestionStartTime = null;
     let spellingCorrectCount = 0;
     let spellingWrongCount = 0;
     let spellingWrongAttemptsForCurrentWord = 0;
@@ -7180,6 +7182,8 @@
 
       // Track statistics
       spellingStartTime = Date.now();
+      spellingActiveTimeMs = 0;
+      spellingQuestionStartTime = null;
       spellingCorrectCount = 0;
       spellingWrongCount = 0;
       spellingPointsEarned = 0;
@@ -7203,6 +7207,7 @@
 
     function loadSpellingQuestion() {
       spellingIsAnswered = false;
+      spellingQuestionStartTime = Date.now();
       spellingWrongAttemptsForCurrentWord = 0;
 
       const questionWord = spellingList[spellingIndex];
@@ -7581,6 +7586,10 @@
       }
 
       spellingIsAnswered = true;
+      if (spellingQuestionStartTime) {
+        spellingActiveTimeMs += (Date.now() - spellingQuestionStartTime);
+        spellingQuestionStartTime = null;
+      }
       spellingSkipCount++;
       updateSpellingWalletPointsDisplay();
 
@@ -7623,6 +7632,10 @@
 
     function useQuizSkip() {
       if (quizIsAnswered) return;
+      if (quizQuestionStartTime) {
+        quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
+        quizQuestionStartTime = null;
+      }
       const questionWord = quizList[quizIndex];
       if (!questionWord) return;
 
@@ -7737,8 +7750,12 @@
     }
 
     function finishSpellingMode() {
+      if (spellingQuestionStartTime) {
+        spellingActiveTimeMs += (Date.now() - spellingQuestionStartTime);
+        spellingQuestionStartTime = null;
+      }
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
-      const elapsedSec = Math.max(1, Math.round((Date.now() - spellingStartTime) / 1000));
+      const elapsedSec = Math.max(1, Math.round(spellingActiveTimeMs / 1000));
       const mins = Math.floor(elapsedSec / 60);
       const secs = elapsedSec % 60;
       const durationText = mins > 0 ? (mins + ' phút ' + secs + ' giây') : (secs + ' giây');
@@ -8702,6 +8719,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       // Track statistics for result modal
       quizStartTime = Date.now();
+      quizActiveTimeMs = 0;
+      quizQuestionStartTime = null;
       quizCorrectCount = 0;
       quizWrongCount = 0;
       quizPointsEarned = 0;
@@ -8849,6 +8868,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function loadQuizQuestion() {
       quizIsAnswered = false;
+      quizQuestionStartTime = Date.now();
       const quizNextCont = document.getElementById('quiz-next-container');
       if (quizNextCont) {
         quizNextCont.style.display = 'none';
@@ -9041,6 +9061,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function checkQuizAnswer(selectedButton, isCorrect) {
       if (quizIsAnswered) return;
       quizIsAnswered = true;
+      if (quizQuestionStartTime) {
+        quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
+        quizQuestionStartTime = null;
+      }
 
       const allButtons = document.querySelectorAll('.quiz-option');
       allButtons.forEach(btn => {
@@ -9119,8 +9143,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function finishQuizAndShowResult() {
-      const durationMs = Date.now() - (quizStartTime || Date.now());
-      const totalSeconds = Math.max(1, Math.round(durationMs / 1000));
+      if (quizQuestionStartTime) {
+        quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
+        quizQuestionStartTime = null;
+      }
+      const totalSeconds = Math.max(1, Math.round(quizActiveTimeMs / 1000));
       const mins = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
       const durationText = mins > 0 ? (mins + 'm ' + secs + 's') : (secs + ' giây');
