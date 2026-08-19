@@ -1548,7 +1548,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.23</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.0</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1647,6 +1647,9 @@
           </button>
         </div>
       </div>
+
+      <!-- SPACED REPETITION DAILY REVIEW BANNER (v0.0.10.0) -->
+      <div id="daily-review-banner-container" style="margin-bottom: 18px;"></div>
 
       <!-- DECK FILTER TABS WITH LIVE SORT SELECTOR (v0.0.8.14) -->
       <div class="deck-tabs-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
@@ -2513,6 +2516,51 @@
     </div>
   </div>
 
+  <!-- MODAL: SPACED REPETITION REVIEW QUEUE (v0.0.10.0) -->
+  <div class="modal-overlay" id="modal-review-queue">
+    <div class="modal" style="max-width: 680px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🔔 Hàng Đợi Ôn Tập Hôm Nay</span>
+          <span id="review-queue-modal-count-badge" class="badge" style="background: #ef4444; color: #fff; font-size: 11px; font-weight: 700;">0 từ</span>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-review-queue')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
+        <div style="font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 4px;">
+          🧠 Thuật toán Chu kỳ Quên (Spaced Repetition System)
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">
+          Hệ thống tự động tính toán thời điểm vàng để ôn lại từ trước khi não bộ lãng quên (Mới & Vừa học: 1 ngày • Hơi thuộc: 3 ngày • Khá thuộc: 7 ngày • Sắp thuộc: 14 ngày • Đã thuộc: 30 ngày).
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons for Due Words -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('flashcard')" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(59,130,246,0.3);">
+          <svg class="icon icon-sm"><use href="#i-book"/></svg> <span>Flashcard 3D</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span>
+        </button>
+      </div>
+
+      <!-- Due Words Table / List Container -->
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span>📋 Danh sách từ đến hạn ôn tập:</span>
+        <span id="review-queue-summary-text" style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;"></span>
+      </div>
+
+      <div id="review-queue-words-container" style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
   <div class="modal-overlay" id="modal-auth">
     <div class="modal" style="max-width: 440px;">
@@ -2829,7 +2877,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.23</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.0</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5658,6 +5706,7 @@
     }
 
     function renderDecks() {
+      renderDailyReviewBanner();
       const container = document.getElementById('deck-grid');
       if (!container) return;
       container.innerHTML = '';
@@ -6169,7 +6218,186 @@
       return res;
     }
 
-    // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
+    // =========================================================================
+    // SPACED REPETITION SYSTEM (SRS) REVIEW QUEUE ENGINE (v0.0.10.0)
+    // =========================================================================
+    let reviewDueWordsList = [];
+
+    function getReviewIntervalDays(score) {
+      if (score >= 100) return 30;
+      if (score >= 76) return 14;
+      if (score >= 51) return 7;
+      if (score >= 26) return 3;
+      return 1; // 0 - 25%
+    }
+
+    function getDueReviewWords() {
+      const now = Date.now();
+      const msPerDay = 24 * 60 * 60 * 1000;
+      return words.filter(w => {
+        const score = getWordScore(w);
+        const intervalDays = getReviewIntervalDays(score);
+        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        if (!lastTime) return true;
+        const diffDays = (now - lastTime) / msPerDay;
+        return diffDays >= intervalDays;
+      });
+    }
+
+    function renderDailyReviewBanner() {
+      const container = document.getElementById('daily-review-banner-container');
+      if (!container) return;
+
+      const dueWords = getDueReviewWords();
+      reviewDueWordsList = dueWords;
+
+      if (words.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      if (dueWords.length > 0) {
+        container.innerHTML = `
+          <div class="daily-review-banner" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12)); border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 14px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+            <div style="display: flex; align-items: center; gap: 14px; min-width: 240px; flex: 1;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #ec4899); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 3px 12px rgba(99, 102, 241, 0.35);">
+                🔔
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span>Hàng Đợi Ôn Tập Hôm Nay</span>
+                  <span class="badge" style="background: #ef4444; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: 10px; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);">${dueWords.length} từ cần ôn</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+                  Đã đến chu kỳ lặp lại ngắt quãng (Spaced Repetition) để củng cố trí nhớ dài hạn!
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <button class="btn btn-primary" onclick="openReviewQueueModal()" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 8px 18px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 12px rgba(236, 72, 153, 0.35);">
+                ⚡ <span>Ôn Tập Ngay (${dueWords.length})</span>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.08)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 22px;">🎉</span>
+              <div>
+                <span style="font-weight: 700; font-size: 13.5px; color: #34d399;">Trí nhớ tuyệt vời!</span>
+                <span style="font-size: 12px; color: var(--text-muted); margin-left: 6px;">Không có từ vựng nào bị trễ hạn chu kỳ ôn tập hôm nay.</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="openReviewQueueModal()" style="font-size: 11.5px; padding: 4px 10px;">
+              👁️ Xem lịch chu kỳ (${words.length} từ)
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function openReviewQueueModal() {
+      const dueWords = getDueReviewWords();
+      reviewDueWordsList = dueWords.length > 0 ? dueWords : [...words];
+
+      const countBadge = document.getElementById('review-queue-modal-count-badge');
+      if (countBadge) {
+        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${words.length} từ`;
+        countBadge.style.background = dueWords.length > 0 ? '#ef4444' : '#10b981';
+      }
+
+      const summaryText = document.getElementById('review-queue-summary-text');
+      if (summaryText) {
+        summaryText.textContent = dueWords.length > 0 ? `Đang ưu tiên ${dueWords.length} từ trễ hạn` : `Tất cả từ đã ôn tập đúng hạn`;
+      }
+
+      renderReviewQueueModalList(reviewDueWordsList);
+      openModal('modal-review-queue');
+    }
+
+    function renderReviewQueueModalList(list) {
+      const container = document.getElementById('review-queue-words-container');
+      if (!container) return;
+
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Chưa có từ vựng nào trong hệ thống.</div>';
+        return;
+      }
+
+      const now = Date.now();
+      const msPerDay = 24 * 60 * 60 * 1000;
+
+      let htmlRows = '';
+      list.forEach((w, idx) => {
+        const score = getWordScore(w);
+        const masteryInfo = getWordMasteryInfo(score);
+        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        const diffDays = Math.floor((now - lastTime) / msPerDay);
+        const interval = getReviewIntervalDays(score);
+        const isOverdue = diffDays >= interval;
+
+        const deckObj = decks.find(d => d.id === w.deckId);
+        const deckName = deckObj ? deckObj.title : 'Bộ từ';
+
+        htmlRows += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 140px; flex: 1;">
+              <span style="font-size: 11px; color: var(--text-muted); width: 20px;">#${idx + 1}</span>
+              <div>
+                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                  <span>${escapeHtml(w.term)}</span>
+                  ${w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : ''}
+                  ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px;">
+                  ${escapeHtml(w.definitionVi || w.definition || '')}
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+              <div style="text-align: right;">
+                <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 10px; font-weight: 700;">${score}%</span>
+                <div style="font-size: 10.5px; margin-top: 2px; color: ${isOverdue ? '#f87171' : 'var(--text-muted)'}; font-weight: ${isOverdue ? '700' : '400'};">
+                  ${isOverdue ? '⚠️ Trễ ' + diffDays + ' ngày' : 'Đã học ' + diffDays + ' ngày trước'}
+                </div>
+              </div>
+              <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Nghe phát âm" style="margin: 0;">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = htmlRows;
+    }
+
+    function launchReviewDueWords(mode) {
+      closeModal('modal-review-queue');
+      const targetList = reviewDueWordsList && reviewDueWordsList.length > 0 ? reviewDueWordsList : words;
+
+      if (!targetList || targetList.length === 0) {
+        alert('Không có từ vựng nào để ôn tập!');
+        return;
+      }
+
+      if (mode === 'autofc') {
+        startAutoFlashcardMode(false, targetList);
+      } else if (mode === 'flashcard') {
+        startFlashcardMode(false, targetList);
+      } else if (mode === 'quiz') {
+        if (targetList.length < 2) {
+          alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
+          return;
+        }
+        startQuizMode(false, targetList);
+      }
+    }
+
+        // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
     // =========================================================================
     function cleanVietnameseDefinition(def) {
       if (!def || typeof def !== 'string') return '';
@@ -6489,11 +6717,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     // =========================================================================
     // FLASHCARD 3D MODE WITH CEFR MASTERY GAINS
     // =========================================================================
-    function startFlashcardMode(useSelectionOnly = false) {
-      let deckWords = getFilteredDeckWords();
-      if (useSelectionOnly && selectedWordIds.size > 0) {
+    function startFlashcardMode(useSelectionOnly = false, customWordList = null) {
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (selectedWordIds.size > 0) {
+      } else if (!customWordList && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
@@ -6878,11 +7106,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       });
     }
 
-    function startQuizMode(useSelectionOnly = false) {
-      let deckWords = getFilteredDeckWords();
-      if (useSelectionOnly && selectedWordIds.size > 0) {
+    function startQuizMode(useSelectionOnly = false, customWordList = null) {
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (selectedWordIds.size > 0) {
+      } else if (!customWordList && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
@@ -7860,11 +8088,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let autoFlashcardIndex = 0;
     let autoFlashcardStepId = 0;
 
-    function startAutoFlashcardMode(useSelectionOnly = false) {
-      let deckWords = getFilteredDeckWords();
-      if (useSelectionOnly && selectedWordIds.size > 0) {
+    function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (selectedWordIds.size > 0) {
+      } else if (!customWordList && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
