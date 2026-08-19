@@ -217,7 +217,11 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 🤖 v0.0.10.3 (a/b): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI) & Bộ Nhớ Tạm Clipboard Đa Năng (Copy, Cut, Paste Từ Vựng)
+• 🤖 v0.0.10.3 (a -> c): AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
+  - 🔑 Khắc Phục Triệt Để Khởi Tạo Từ Bằng AI & Tích Hợp Nhập Key Nhanh (`v0.0.10.3c`):
+    * **Khung Cài Đặt Key Trực Tiếp Trong AI Studio**: Bổ sung dải banner thông minh ngay trong hộp thoại Studio giúp người dùng dán và lưu Gemini API Key ngay lập tức hoặc bấm link lấy Key miễn phí từ Google (10s) mà không cần vào Cài Đặt.
+    * **Loại bỏ Mock Data tĩnh gây trùng lặp**: Thay vì âm thầm trả về danh sách từ mẫu cũ khi chưa có Key, hệ thống chủ động hướng dẫn người dùng kết nối Key để Gemini AI tạo bộ từ 100% độc nhất, phong phú và bám sát chủ đề yêu cầu.
+    * **Nâng cấp Prompt & Nhiệt độ sáng tạo (Temperature 0.7)**: Giúp Gemini AI sinh các từ vựng chuyên ngành, collocations và câu ví dụ tự nhiên, đa dạng và hấp dẫn hơn gấp nhiều lần.
   - 📋 Bộ Nhớ Tạm VocaFlow Clipboard Đa Năng (`v0.0.10.3b`):
     * **Sao chép (Copy) & Cắt (Cut) từng từ vựng**: Thêm 2 biểu tượng `📋` và `✂️` ngay trên từng thẻ từ trong danh sách giúp nhanh chóng sao chép hoặc di chuyển từ sang bộ từ khác mà không cần nhập lại.
     * **Thao tác hàng loạt (Bulk Copy/Cut/Paste)**: Khi tick chọn nhiều từ vựng, thanh công cụ xuất hiện các nút `📋 Sao chép`, `✂️ Cắt` và `📋 Dán từ (X)`.
