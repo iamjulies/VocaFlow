@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1f</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1g</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1975,6 +1975,34 @@
           <!-- 4 Multiple Choices -->
         </div>
 
+        <!-- WORD FULL DETAILS & AI EXPLANATION CARD (v0.0.10.1g) -->
+        <div id="quiz-word-details-box" style="display: none; margin-top: 18px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <strong id="quiz-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
+              <span id="quiz-detail-pos" class="badge badge-pos">POS</span>
+              <span id="quiz-detail-cefr" class="badge badge-cefr">CEFR</span>
+              <span id="quiz-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
+            </div>
+            <button class="btn btn-outline btn-icon" onclick="speakQuizTerm()" style="width: 32px; height: 32px; border-radius: 50%;" title="Nghe phát âm">
+              <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+            </button>
+          </div>
+
+          <div id="quiz-detail-def" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Định nghĩa tiếng Việt</div>
+          <div id="quiz-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
+          
+          <div id="quiz-detail-meta" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text); margin-bottom: 12px;"></div>
+
+          <!-- AI EXPLANATION FOR QUIZ CHOICES -->
+          <div id="quiz-ai-explanation-box" style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.12)); border: 1px solid rgba(99,102,241,0.35); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: #c7d2fe; line-height: 1.45;">
+            <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              <span>✨</span> <span>Giải thích súc tích từ AI:</span>
+            </div>
+            <div id="quiz-ai-explanation-text">Đang phân tích lý do chọn đáp án...</div>
+          </div>
+        </div>
+
         <div id="quiz-next-container" style="text-align: center; margin-top: 20px; display: none;">
           <button class="btn btn-primary" style="padding: 12px 32px; display: inline-flex; align-items: center; gap: 8px;" onclick="nextQuizQuestion()">
             <span>Câu tiếp theo</span>
@@ -2055,6 +2083,26 @@
         <!-- Feedback & Next Action Bar -->
         <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
           <div id="spelling-feedback-msg" style="font-size: 14px; font-weight: 700; min-height: 24px; text-align: center;"></div>
+
+          <!-- WORD FULL DETAILS CARD (v0.0.10.1g) -->
+          <div id="spelling-word-details-box" style="display: none; width: 100%; max-width: 580px; margin: 0 auto; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <strong id="spelling-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
+                <span id="spelling-detail-pos" class="badge badge-pos">POS</span>
+                <span id="spelling-detail-cefr" class="badge badge-cefr">CEFR</span>
+                <span id="spelling-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
+              </div>
+              <button class="btn btn-outline btn-icon" onclick="speakSpellingTerm()" style="width: 32px; height: 32px; border-radius: 50%;" title="Nghe phát âm">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+            </div>
+
+            <div id="spelling-detail-def" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Định nghĩa tiếng Việt</div>
+            <div id="spelling-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
+            
+            <div id="spelling-detail-meta" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text);"></div>
+          </div>
           
           <div id="spelling-action-container" style="display: flex; gap: 10px; width: 100%; max-width: 360px;">
             <button class="btn btn-primary" id="btn-spelling-check" onclick="checkSpellingAnswer()" style="flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
@@ -3184,7 +3232,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1f</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1g</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7079,6 +7127,8 @@
       // Setup Hint & Feedback
       const hintBox = document.getElementById('spelling-hint-box');
       if (hintBox) hintBox.style.display = 'none';
+      const detailsBox = document.getElementById('spelling-word-details-box');
+      if (detailsBox) detailsBox.style.display = 'none';
       const feedbackMsg = document.getElementById('spelling-feedback-msg');
       if (feedbackMsg) {
         feedbackMsg.textContent = '';
@@ -7353,11 +7403,12 @@
           feedbackMsg.style.color = '#34d399';
         }
 
-        // Disable all inputs
+        // Disable all inputs & show detailed word card (v0.0.10.1g)
         editables.forEach(inp => {
           inp.disabled = true;
           inp.classList.add('correct');
         });
+        renderWordDetailsCard('spelling', questionWord);
 
         // Switch Action buttons
         const checkBtn = document.getElementById('btn-spelling-check');
@@ -7500,6 +7551,13 @@
           btn.classList.add('correct');
         }
       });
+
+      if (questionWord) {
+        const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+        renderWordDetailsCard('quiz', questionWord);
+        loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
+      }
+      document.getElementById('quiz-next-container').style.display = 'block';
 
       showToast('⏭️ Đã bỏ qua câu hỏi!');
     }
@@ -8311,6 +8369,130 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       });
     }
 
+        // =========================================================================
+    // DETAILED WORD CARD & AI QUIZ EXPLANATION ENGINE (v0.0.10.1g)
+    // =========================================================================
+    let currentQuizChoices = [];
+
+    function renderWordDetailsCard(prefix, word) {
+      const container = document.getElementById(prefix + '-word-details-box');
+      if (!container || !word) return;
+
+      const termEl = document.getElementById(prefix + '-detail-term');
+      const posEl = document.getElementById(prefix + '-detail-pos');
+      const cefrEl = document.getElementById(prefix + '-detail-cefr');
+      const phoneticEl = document.getElementById(prefix + '-detail-phonetic');
+      const defEl = document.getElementById(prefix + '-detail-def');
+      const exampleEl = document.getElementById(prefix + '-detail-example');
+      const metaEl = document.getElementById(prefix + '-detail-meta');
+
+      if (termEl) termEl.textContent = word.term || '';
+      if (posEl) {
+        if (word.partOfSpeech) {
+          posEl.textContent = word.partOfSpeech.toUpperCase();
+          posEl.style.display = 'inline-block';
+        } else {
+          posEl.style.display = 'none';
+        }
+      }
+      if (cefrEl) {
+        if (word.cefrLevel) {
+          cefrEl.textContent = word.cefrLevel.toUpperCase();
+          cefrEl.style.display = 'inline-block';
+        } else {
+          cefrEl.style.display = 'none';
+        }
+      }
+      if (phoneticEl) phoneticEl.textContent = word.phonetic || '';
+      if (defEl) defEl.textContent = word.definitionVi || word.definition || '';
+
+      if (exampleEl) {
+        if (word.exampleSentence || word.example) {
+          exampleEl.textContent = `“${word.exampleSentence || word.example}”`;
+          exampleEl.style.display = 'block';
+        } else {
+          exampleEl.style.display = 'none';
+        }
+      }
+
+      if (metaEl) {
+        const metaParts = [];
+        if (word.synonyms && word.synonyms.length > 0) {
+          metaParts.push(`<strong>Đồng nghĩa:</strong> ${escapeHtml(word.synonyms.join(', '))}`);
+        }
+        if (word.antonyms && word.antonyms.length > 0) {
+          metaParts.push(`<strong>Trái nghĩa:</strong> ${escapeHtml(word.antonyms.join(', '))}`);
+        }
+        if (word.collocations && word.collocations.length > 0) {
+          metaParts.push(`<strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}`);
+        }
+        if (word.note && word.note.trim()) {
+          metaParts.push(`<strong>Ghi chú:</strong> ${escapeHtml(word.note.trim())}`);
+        }
+
+        if (metaParts.length > 0) {
+          metaEl.innerHTML = metaParts.join('<br>');
+          metaEl.style.display = 'block';
+        } else {
+          metaEl.style.display = 'none';
+        }
+      }
+
+      container.style.display = 'block';
+    }
+
+    async function loadQuizAiExplanation(questionWord, correctDef, choices) {
+      const expBox = document.getElementById('quiz-ai-explanation-box');
+      const expText = document.getElementById('quiz-ai-explanation-text');
+      if (!expBox || !expText) return;
+
+      expBox.style.display = 'block';
+      expText.innerHTML = '✨ <em>AI đang phân tích lý do chọn đáp án...</em>';
+
+      const geminiApiKey = localStorage.getItem('vocaflow_gemini_api_key') || '';
+      const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
+      const otherChoices = (choices || []).filter(c => c !== correctDef);
+
+      if (geminiApiKey && geminiApiKey.trim()) {
+        try {
+          const prompt = `Từ vựng: "${questionWord.term}" (${questionWord.partOfSpeech || ''}).\nNghĩa đúng: "${correctDef}".\nCác phương án sai: ${otherChoices.map(c => '"' + c + '"').join(', ')}.\nHãy viết 1 câu giải thích SIÊU NGẮN GỌN (dưới 25 từ, bằng tiếng Việt) lý do vì sao "${questionWord.term}" mang nghĩa "${correctDef}" và phân biệt súc tích với các phương án sai.\nChỉ trả về trực tiếp 1 câu giải thích đó.`;
+
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+          const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
+            method: 'POST',
+            signal: controller.signal,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { maxOutputTokens: 70, temperature: 0.2 }
+            })
+          });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            const data = await res.json();
+            const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+            if (rawExp) {
+              expText.innerHTML = escapeHtml(rawExp);
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('AI Quiz Explanation error:', err);
+        }
+      }
+
+      // Fallback smart concise explanation
+      let fallback = `<strong>${escapeHtml(questionWord.term)}</strong> có nghĩa chính xác là <em>"${escapeHtml(correctDef)}"</em>`;
+      if (questionWord.exampleSentence) {
+        fallback += ` (ngữ cảnh: <em>"${escapeHtml(questionWord.exampleSentence)}"</em>)`;
+      }
+      fallback += `. Các lựa chọn còn lại mang nét nghĩa hoặc từ loại khác.`;
+      expText.innerHTML = fallback;
+    }
+
     function startQuizMode(useSelectionOnly = false, customWordList = null) {
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
@@ -8513,6 +8695,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const rawRegularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
       const regularDistractors = rawRegularDistractors.map(d => chameleonStyleMatching(d, correctDef));
       const choices = [correctDef, ...aiDistractors, ...regularDistractors].slice(0, 4).sort(() => Math.random() - 0.5);
+      currentQuizChoices = choices;
+
+      const detailsBox = document.getElementById('quiz-word-details-box');
+      if (detailsBox) detailsBox.style.display = 'none';
 
       const optionsContainer = document.getElementById('quiz-options-container');
       optionsContainer.innerHTML = '';
@@ -8718,6 +8904,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           });
           showToast('⚠️ Chưa đúng (' + delta + 'đ ví, Còn: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
         }
+      }
+
+      if (questionWord) {
+        const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+        renderWordDetailsCard('quiz', questionWord);
+        loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
       }
 
       document.getElementById('quiz-next-container').style.display = 'block';
