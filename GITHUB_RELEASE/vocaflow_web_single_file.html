@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3232,7 +3232,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7159,7 +7159,13 @@
       const checkBtn = document.getElementById('btn-spelling-check');
       const nextBtn = document.getElementById('btn-spelling-next');
       if (checkBtn) checkBtn.style.display = 'block';
-      if (nextBtn) nextBtn.style.display = 'none';
+      if (nextBtn) {
+        nextBtn.style.display = 'none';
+        nextBtn.className = 'btn btn-success';
+        nextBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        nextBtn.style.boxShadow = '0 4px 14px rgba(16,185,129,0.3)';
+        nextBtn.innerHTML = 'Từ Tiếp Theo [Enter ↵]';
+      }
 
       // 1. Render Clues
       const defEl = document.getElementById('spelling-clue-def');
@@ -7482,7 +7488,7 @@
       }
     }
 
-        function useSpellingSkip() {
+    function useSpellingSkip() {
       if (spellingIsAnswered) return;
       const questionWord = spellingList[spellingIndex];
       if (!questionWord) return;
@@ -7520,17 +7526,26 @@
       const feedbackMsg = document.getElementById('spelling-feedback-msg');
       if (feedbackMsg) {
         feedbackMsg.textContent = '⏭️ Đã bỏ qua từ: "' + questionWord.term + '"';
-        feedbackMsg.style.color = '#818cf8';
+        feedbackMsg.style.color = '#f59e0b';
       }
 
       // Natural speech
       speakSpellingTerm();
 
-      // Switch action buttons
+      // Show Full Word Details Card so user can learn from this skipped word (v0.0.10.1i)
+      if (questionWord) {
+        renderWordDetailsCard('spelling', questionWord);
+      }
+
+      // Switch action buttons with humble/cay-cu amber-orange style (v0.0.10.1i)
       const checkBtn = document.getElementById('btn-spelling-check');
       const nextBtn = document.getElementById('btn-spelling-next');
       if (checkBtn) checkBtn.style.display = 'none';
       if (nextBtn) {
+        nextBtn.className = 'btn btn-warning';
+        nextBtn.style.background = 'linear-gradient(135deg, #d97706, #b45309)';
+        nextBtn.style.boxShadow = '0 4px 14px rgba(217,119,6,0.35)';
+        nextBtn.innerHTML = '⏭️ Bỏ Qua • Từ Tiếp Theo [Enter ↵]';
         nextBtn.style.display = 'block';
         nextBtn.focus();
       }
@@ -7577,7 +7592,17 @@
         renderWordDetailsCard('quiz', questionWord);
         loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
       }
-      document.getElementById('quiz-next-container').style.display = 'block';
+      const quizNextCont = document.getElementById('quiz-next-container');
+      if (quizNextCont) {
+        quizNextCont.style.display = 'block';
+        const qNextBtn = quizNextCont.querySelector('button');
+        if (qNextBtn) {
+          qNextBtn.className = 'btn btn-warning';
+          qNextBtn.style.background = 'linear-gradient(135deg, #d97706, #b45309)';
+          qNextBtn.style.boxShadow = '0 4px 14px rgba(217,119,6,0.35)';
+          qNextBtn.innerHTML = '<span>⏭️ Đã Bỏ Qua • Câu tiếp theo</span> <kbd class="key-shortcut-badge">Enter ↵</kbd>';
+        }
+      }
 
       showToast('⏭️ Đã bỏ qua câu hỏi!');
     }
@@ -8685,7 +8710,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function loadQuizQuestion() {
       quizIsAnswered = false;
-      document.getElementById('quiz-next-container').style.display = 'none';
+      const quizNextCont = document.getElementById('quiz-next-container');
+      if (quizNextCont) {
+        quizNextCont.style.display = 'none';
+        const qNextBtn = quizNextCont.querySelector('button');
+        if (qNextBtn) {
+          qNextBtn.className = 'btn btn-primary';
+          qNextBtn.style.background = '';
+          qNextBtn.style.boxShadow = '';
+          qNextBtn.innerHTML = '<span>Câu tiếp theo</span> <kbd class="key-shortcut-badge">Enter ↵</kbd>';
+        }
+      }
       const hintBox = document.getElementById('quiz-hint-box');
       if (hintBox) hintBox.style.display = 'none';
 
