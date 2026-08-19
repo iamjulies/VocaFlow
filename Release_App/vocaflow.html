@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1l</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1m</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2814,6 +2814,16 @@
         </div>
       </div>
 
+      <!-- Gift / Redeem Code Section (Moved to top v0.0.10.1m) -->
+      <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);">
+          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 700; padding: 0 16px;">Áp dụng</button>
+        </div>
+        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
+      </div>
+
       <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📦 Các Gói Đổi Gợi Ý AI</div>
 
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
@@ -2894,23 +2904,23 @@
         </div>
       </div>
 
-      <!-- Gift / Redeem Code Section -->
-      <div style="margin-bottom: 16px; padding: 12px; border-radius: 12px; background: var(--surface-elevated); border: 1px dashed var(--border);">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🎁 Nhập mã quà tặng:</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 6px 10px; text-transform: uppercase;">
-          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap;">Áp dụng</button>
+      <div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
+        <div>
+          <strong style="color: var(--text);">🎯 Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - v0.0.10.1e):</strong><br>
+          • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3đ ví) • Sai (-2% thuộc, -2đ ví)<br>
+          • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5đ ví) • Sai (-3% thuộc, -3đ ví)<br>
+          • 🔴 <strong>Khó:</strong> Đúng (+8% thuộc, +8đ ví) • Sai (-4% thuộc, -4đ ví)<br>
+          • 🟣 <strong>Cực khó:</strong> Đúng (+10% thuộc, +10đ ví) • Sai (-5% thuộc, -5đ ví)
         </div>
-        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 4px; display: none;"></div>
-      </div>
-
-      <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.45;">
-        ℹ️ <strong>Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - v0.0.10.1e):</strong><br>
-        • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3đ ví) • Sai (-2% thuộc, -2đ ví)<br>
-        • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5đ ví) • Sai (-3% thuộc, -3đ ví)<br>
-        • 🔴 <strong>Khó:</strong> Đúng (+8% thuộc, +8đ ví) • Sai (-4% thuộc, -4đ ví)<br>
-        • 🟣 <strong>Cực khó:</strong> Đúng (+10% thuộc, +10đ ví) • Sai (-5% thuộc, -5đ ví)<br>
-        • Tặng sẵn <strong>5 lượt Gợi Ý AI</strong> và <strong>3 lượt Bỏ Qua</strong> miễn phí cho tài khoản mới!
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
+          <strong style="color: var(--text);">✍️ Quy tắc điểm Luyện Viết (Spelling - v0.0.10.1d & v0.0.10.1f):</strong><br>
+          • 💰 <strong>Điểm ví:</strong> +1đ ví cho mỗi ô chữ cái × (Cấp độ: Dễ x1.0, TB x1.5, Khó x2.0) × (Manh mối: 3 manh mối x1.0, 2 manh mối x1.2, 1 manh mối x1.5)<br>
+          • 📈 <strong>Điểm thuộc:</strong> Tăng cân bằng theo số ký tự đúng (tối đa +12%/từ, tránh lạm phát ở từ dài)<br>
+          • ❌ <strong>Gõ sai / Bỏ qua:</strong> Phạt nhẹ theo số ô sai; Bỏ qua không bị trừ điểm phạt.
+        </div>
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px; color: #34d399; font-weight: 600;">
+          🎁 Tặng sẵn <strong>5 lượt Gợi Ý AI</strong> và <strong>3 lượt Bỏ Qua</strong> miễn phí cho tài khoản mới!
+        </div>
       </div>
     </div>
   </div>
@@ -3276,7 +3286,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1l</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1m</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3438,10 +3448,11 @@
 
         <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;" id="lib-category-tabs">
           <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="10" onclick="setLibraryCategory('10')">📘 Lớp 10</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="11" onclick="setLibraryCategory('11')">📙 Lớp 11</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="12" onclick="setLibraryCategory('12')">📕 Lớp 12</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')">☁️ Cộng Đồng</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')">🏫 Cấp 2 (6-9)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')">📘 Cấp 3 (10-12)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')">📜 Chứng Chỉ</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="life" onclick="setLibraryCategory('life')">💼 Nghề & Đời Sống</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')">☁️ Đóng Góp</button>
         </div>
       </div>
 
@@ -3566,15 +3577,41 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
         <div>
           <label class="form-label">Danh Mục / Cấp Độ:</label>
-          <select id="pub-deck-category" class="form-input">
-            <option value="THPT">THPT (Lớp 10-12)</option>
-            <option value="10">Lớp 10</option>
-            <option value="11">Lớp 11</option>
-            <option value="12">Lớp 12</option>
-            <option value="IELTS">IELTS</option>
-            <option value="TOEIC">TOEIC</option>
-            <option value="GIAOTIEP">Giao Tiếp Đời Sống</option>
-            <option value="CHUYENNGANH">Chuyên Ngành</option>
+          <select id="pub-deck-category" class="form-input" onchange="handlePublisherCategoryChange(this.value)">
+            <optgroup label="🏫 Giáo Dục Phổ Thông (K-12)">
+              <option value="THPT">THPT (Lớp 10-12 Tổng hợp)</option>
+              <option value="10">Lớp 10 (THPT)</option>
+              <option value="11">Lớp 11 (THPT)</option>
+              <option value="12">Lớp 12 (THPT)</option>
+              <option value="THCS">THCS (Lớp 6-9 Tổng hợp)</option>
+              <option value="6">Lớp 6 (THCS)</option>
+              <option value="7">Lớp 7 (THCS)</option>
+              <option value="8">Lớp 8 (THCS)</option>
+              <option value="9">Lớp 9 (THCS)</option>
+              <option value="TIEUHOC">Tiểu Học (Lớp 1-5)</option>
+            </optgroup>
+            <optgroup label="📜 Chứng Chỉ Quốc Tế">
+              <option value="IELTS">IELTS</option>
+              <option value="TOEIC">TOEIC</option>
+              <option value="TOEFL">TOEFL</option>
+              <option value="CAMBRIDGE">Cambridge (Starters/Movers/Flyers/KET/PET/FCE)</option>
+              <option value="SAT_GRE">SAT / ACT / GRE / GMAT</option>
+            </optgroup>
+            <optgroup label="💬 Giao Tiếp & Đời Sống">
+              <option value="GIAOTIEP">Giao Tiếp Đời Sống</option>
+              <option value="DULICH">Du Lịch & Khách Sạn</option>
+              <option value="DUHOC">Định Cư & Du Học</option>
+            </optgroup>
+            <optgroup label="💼 Chuyên Ngành & Nghề Nghiệp">
+              <option value="IT">Công Nghệ Thông Tin (IT)</option>
+              <option value="KINHTE">Kinh Tế / Marketing / Kinh Doanh</option>
+              <option value="YKHOA">Y Khoa & Dược Học</option>
+              <option value="KYTHUAT">Kỹ Thuật & Công Nghiệp</option>
+              <option value="CHUYENNGANH">Chuyên Ngành Khác</option>
+            </optgroup>
+            <optgroup label="✨ Khác & Tùy Biến">
+              <option value="CUSTOM">🏷️ Chủ đề khác (Tự nhập tay)...</option>
+            </optgroup>
           </select>
         </div>
         <div>
@@ -3586,8 +3623,20 @@
             <option value="📗">📗 Xanh Lá</option>
             <option value="⭐">⭐ Ngôi Sao Vàng</option>
             <option value="🎓">🎓 Mũ Tốt Nghiệp</option>
+            <option value="💼">💼 Công Việc / Nghề</option>
+            <option value="✈️">✈️ Du Lịch / Du Học</option>
+            <option value="🔬">🔬 Khoa Học / Kỹ Thuật</option>
+            <option value="🏥">🏥 Y Tế / Sức Khỏe</option>
+            <option value="💻">💻 Công Nghệ / IT</option>
+            <option value="🎨">🎨 Nghệ Thuật / Đời Sống</option>
           </select>
         </div>
+      </div>
+
+      <!-- Custom Category Input (shown when CUSTOM selected) -->
+      <div id="pub-custom-category-group" class="form-group" style="display: none; margin-bottom: 12px;">
+        <label class="form-label">Nhập Tên Chủ Đề / Danh Mục Tự Chọn:</label>
+        <input type="text" id="pub-deck-custom-category" class="form-input" placeholder="VD: Sinh Học Phân Tử, Âm Nhạc, Từ Vựng Anime, Luyện Thi HSG...">
       </div>
 
       <div id="pub-upload-preview-status" style="font-size: 11.5px; margin-bottom: 12px; color: #10b981; font-weight: 600; display: none; background: rgba(16, 185, 129, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25);"></div>
@@ -12813,19 +12862,31 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const query = (document.getElementById('library-search-input')?.value || '').toLowerCase().trim();
 
       let filtered = allDecks.filter(deck => {
+        const cat = (deck.category || '').toUpperCase();
+        const grade = Number(deck.grade);
+        const title = (deck.title || '').toLowerCase();
+
         // Category Filter
-        if (currentLibraryCategory === '10' && deck.grade !== 10 && !deck.title.includes('Lớp 10') && !deck.title.includes('10')) return false;
-        if (currentLibraryCategory === '11' && deck.grade !== 11 && !deck.title.includes('Lớp 11') && !deck.title.includes('11')) return false;
-        if (currentLibraryCategory === '12' && deck.grade !== 12 && !deck.title.includes('Lớp 12') && !deck.title.includes('12')) return false;
-        if (currentLibraryCategory === 'cloud' && !deck.id.startsWith('pub_')) return false;
+        if (currentLibraryCategory === 'thcs') {
+          if (!['THCS', '6', '7', '8', '9'].includes(cat) && ![6, 7, 8, 9].includes(grade) && !['lớp 6', 'lớp 7', 'lớp 8', 'lớp 9', 'thcs'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'thpt') {
+          if (!['THPT', '10', '11', '12'].includes(cat) && ![10, 11, 12].includes(grade) && !['lớp 10', 'lớp 11', 'lớp 12', 'thpt'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'cert') {
+          if (!['IELTS', 'TOEIC', 'TOEFL', 'CAMBRIDGE', 'SAT_GRE'].includes(cat) && !['ielts', 'toeic', 'toefl', 'cambridge', 'sat', 'gre'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'life') {
+          if (!['GIAOTIEP', 'DULICH', 'DUHOC', 'IT', 'KINHTE', 'YKHOA', 'KYTHUAT', 'CHUYENNGANH'].includes(cat) && !['giao tiếp', 'du lịch', 'chuyên ngành', 'it', 'kinh tế', 'y khoa'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'cloud') {
+          if (!deck.id.startsWith('pub_')) return false;
+        }
 
         // Search Filter
         if (query) {
-          const matchTitle = deck.title.toLowerCase().includes(query);
+          const matchTitle = (deck.title || '').toLowerCase().includes(query);
           const matchDesc = (deck.description || '').toLowerCase().includes(query);
           const matchAuthor = (deck.author || '').toLowerCase().includes(query);
+          const matchCat = (deck.category || '').toLowerCase().includes(query);
           const matchWords = Array.isArray(deck.words) && deck.words.some(w => (w.term || '').toLowerCase().includes(query) || (w.definition || '').toLowerCase().includes(query));
-          return matchTitle || matchDesc || matchAuthor || matchWords;
+          return matchTitle || matchDesc || matchAuthor || matchCat || matchWords;
         }
         return true;
       });
@@ -13070,6 +13131,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
     }
 
+    function handlePublisherCategoryChange(val) {
+      const customGroup = document.getElementById('pub-custom-category-group');
+      if (customGroup) {
+        customGroup.style.display = (val === 'CUSTOM') ? 'block' : 'none';
+        if (val === 'CUSTOM') {
+          const input = document.getElementById('pub-deck-custom-category');
+          if (input) input.focus();
+        }
+      }
+    }
+
     function handlePublisherLocalDeckSelected(deckId) {
       if (!deckId) return;
       const deck = decks.find(d => d.id === deckId);
@@ -13241,12 +13313,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const author = (authorInput?.value || '').trim() || (currentUser && currentUser.displayName) || 'Cộng đồng VocaFlow';
       const deckId = 'pub_deck_' + Date.now();
+      const customCatInput = document.getElementById('pub-deck-custom-category');
+      let finalCategory = catSelect ? catSelect.value : 'THPT';
+      if (finalCategory === 'CUSTOM') {
+        finalCategory = (customCatInput?.value || '').trim() || 'Chủ đề tự do';
+      }
       const payload = {
         id: deckId,
         title: title,
         description: (descInput?.value || '').trim() || `Bộ từ vựng chia sẻ bởi ${author}`,
         author: author,
-        category: catSelect ? catSelect.value : 'THPT',
+        category: finalCategory,
         icon: iconSelect ? iconSelect.value : '📘',
         color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
         totalWords: pendingPublisherDeck.words.length,
