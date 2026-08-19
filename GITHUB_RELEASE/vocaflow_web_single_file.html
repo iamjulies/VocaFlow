@@ -1510,6 +1510,91 @@
       color: white;
       border-color: var(--primary);
     }
+    /* =========================================================================
+       SPELLING & FILL-IN-THE-BLANK MODE STYLES (v0.0.10.1a)
+       ========================================================================= */
+    .spelling-letter-box {
+      width: 44px;
+      height: 52px;
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-elevated);
+      color: var(--text);
+      transition: all 0.15s ease;
+      outline: none;
+      box-sizing: border-box;
+      caret-color: #f59e0b;
+    }
+    .spelling-letter-box:focus {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+      transform: translateY(-2px);
+    }
+    .spelling-letter-box.prefilled {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border-color: rgba(255, 255, 255, 0.1);
+      cursor: default;
+      user-select: none;
+    }
+    .spelling-letter-box.hint-revealed {
+      border-color: #fbbf24;
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      font-weight: 800;
+    }
+    .spelling-letter-box.correct {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.2) !important;
+      color: #34d399 !important;
+      font-weight: 800;
+    }
+    .spelling-letter-box.wrong {
+      border-color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.18) !important;
+      color: #f87171 !important;
+      animation: shake-mild 0.35s ease;
+    }
+    .spelling-symbol-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 52px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .spelling-space-badge {
+      width: 16px;
+      height: 52px;
+    }
+
+    @keyframes shake-mild {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+    @keyframes shake-intense {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-10px, -4px) rotate(-3deg); }
+      30% { transform: translate(10px, 4px) rotate(3deg); }
+      45% { transform: translate(-10px, 3px) rotate(-2deg); }
+      60% { transform: translate(10px, -3px) rotate(2deg); }
+      75% { transform: translate(-5px, 2px) rotate(-1deg); }
+      90% { transform: translate(5px, -2px) rotate(1deg); }
+    }
+    .shake-mild {
+      animation: shake-mild 0.4s ease-in-out;
+    }
+    .shake-intense {
+      animation: shake-intense 0.65s cubic-bezier(.36,.07,.19,.97) both;
+    }
   </style>
 </head>
 <body>
@@ -1548,7 +1633,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.0</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1a</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1741,6 +1826,9 @@
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span><span id="spelling-count-label"></span>
+            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
             </button>
@@ -1879,6 +1967,84 @@
             <span>Câu tiếp theo</span>
             <kbd class="key-shortcut-badge">Enter ↵</kbd>
           </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: SPELLING & FILL-IN-THE-BLANK MODE (v0.0.10.1a) -->
+    <section id="screen-spelling" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitSpelling()" title="Quay lại">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="spelling-counter" style="font-weight: 700; color: var(--text-muted);">Từ 1 / 10</div>
+          <span id="spelling-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.3);" onclick="cycleSpellingDifficulty()" title="Bấm để chuyển đổi nhanh độ khó (Dễ / Trung bình / Khó)">🟢 Dễ (x1.0)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentSpelling()" title="Xáo trộn ngẫu nhiên danh sách từ">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
+            🏪 <span id="spelling-wallet-points">0đ</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-spelling-speak" onclick="speakSpellingTerm()" title="Phát âm từ vựng">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
+          </button>
+          <div id="spelling-score" style="font-weight: 700; color: var(--success);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="spelling-container" style="max-width: 680px; margin: 20px auto; padding: 0 16px;">
+        <!-- Card Hiển Thị Manh Mối (Clues Card) -->
+        <div class="spelling-clue-card" id="spelling-clue-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px; text-align: center; position: relative; margin-bottom: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
+          <!-- Nút Gợi Ý Hint ? -->
+          <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (AI Hint)" style="position: absolute; top: 14px; right: 14px; border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
+            <span style="font-size: 14px; line-height: 1;">❓</span>
+            <span id="spelling-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
+          </button>
+
+          <div style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; font-weight: 700;">
+            ✍️ HÃY GÕ CHÍNH TẢ TỪ TIẾNG ANH:
+          </div>
+
+          <!-- Nghĩa Tiếng Việt Clue -->
+          <div id="spelling-clue-def" style="font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 8px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Phiên Âm IPA Clue -->
+          <div id="spelling-clue-ipa" style="font-size: 15px; font-family: monospace; color: #818cf8; margin-bottom: 8px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Loa Clue Icon lớn -->
+          <div id="spelling-clue-audio" style="margin-top: 6px; display: inline-flex;">
+            <button class="btn btn-primary btn-sm" onclick="speakSpellingTerm()" style="border-radius: 20px; padding: 6px 16px; font-size: 12px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Nghe lại phát âm</span>
+            </button>
+          </div>
+
+          <div id="spelling-hint-box" style="display: none; margin-top: 14px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 10px; font-size: 12.5px; color: #fbbf24; text-align: left;"></div>
+        </div>
+
+        <!-- Khung Gõ Từ Chữ Cái Dạng Box Vuông (Interactive Letter Boxes) -->
+        <div id="spelling-boxes-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; padding: 10px;">
+          <!-- Dynamically generated letter boxes -->
+        </div>
+
+        <!-- Feedback & Next Action Bar -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+          <div id="spelling-feedback-msg" style="font-size: 14px; font-weight: 700; min-height: 24px; text-align: center;"></div>
+          
+          <div id="spelling-action-container" style="display: flex; gap: 10px; width: 100%; max-width: 360px;">
+            <button class="btn btn-primary" id="btn-spelling-check" onclick="checkSpellingAnswer()" style="flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
+              Kiểm Tra [Enter ↵]
+            </button>
+            <button class="btn btn-success" id="btn-spelling-next" onclick="nextSpellingQuestion()" style="display: none; flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
+              Từ Tiếp Theo [Enter ↵]
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -2194,6 +2360,151 @@
     </div>
   </div>
 
+  <!-- MODAL: SPELLING SETUP (v0.0.10.1a) -->
+  <div class="modal-overlay" id="modal-spelling-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">✍️</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Chế Độ Luyện Viết (Spelling)</strong>
+            <div id="spelling-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách và manh mối gợi ý</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spelling-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          1. Chọn Cấp Độ Thử Thách:
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="spelling-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="spelling-diff-card" id="spelling-diff-card-easy" onclick="selectSpellingSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn ngẫu nhiên 1/3 số chữ cái (gợi ý sẵn 2/3 chữ cái). Phù hợp làm quen từ mới.</p>
+          </div>
+
+          <!-- TRUNG BÌNH -->
+          <div class="spelling-diff-card" id="spelling-diff-card-medium" onclick="selectSpellingSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x1.5 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn ngẫu nhiên 2/3 số chữ cái (gợi ý sẵn 1/3 chữ cái). Thử thách trí nhớ từ.</p>
+          </div>
+
+          <!-- KHÓ -->
+          <div class="spelling-diff-card" id="spelling-diff-card-hard" onclick="selectSpellingSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard / Mastery)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn 100% chữ cái (toàn bộ ô trống). Luyện trí nhớ cơ bắp gõ chính xác 100%!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CHỌN MANH MỐI HIỂN THỊ (KNOWN-THING CLUES) -->
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text);">
+            2. Manh Mối Hiển Thị (Chọn ít nhất 1):
+          </label>
+          <span style="font-size: 11px; color: #a5b4fc;">Bắt buộc >= 1 mục</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <!-- CLUE 1: NGHĨA TIẾNG VIỆT -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-def" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-def" checked onchange="toggleSpellingClue('def')" style="display: none;">
+            <span style="font-size: 18px;">🇻🇳</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Nghĩa TV</span>
+          </label>
+
+          <!-- CLUE 2: PHIÊN ÂM IPA -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-ipa" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-ipa" checked onchange="toggleSpellingClue('ipa')" style="display: none;">
+            <span style="font-size: 18px;">🗣️</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Phiên âm IPA</span>
+          </label>
+
+          <!-- CLUE 3: PHÁT ÂM THANH -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-audio" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-audio" checked onchange="toggleSpellingClue('audio')" style="display: none;">
+            <span style="font-size: 18px;">🔊</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Âm thanh</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. TÙY CHỌN BỔ SUNG (SHUFFLE) -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="spelling-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ</span>
+        </label>
+        <input type="checkbox" id="spelling-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-spelling-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartSpellingFromModal()" style="flex: 2; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
+          🚀 Bắt Đầu Luyện Viết
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SPELLING RESULT SUMMARY (v0.0.10.1a) -->
+  <div class="modal-overlay" id="modal-spelling-result">
+    <div class="modal" style="max-width: 520px; text-align: center; position: relative;">
+      <canvas id="spelling-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; border-radius: 16px; z-index: 10;"></canvas>
+      
+      <div style="font-size: 48px; margin-bottom: 8px; animation: bounce 1s infinite alternate;" id="spelling-result-icon">🎉</div>
+      <h2 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;" id="spelling-result-title">Xuất Sắc! Hoàn Thành Luyện Viết!</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;" id="spelling-result-sub">Bạn đã rèn luyện trí nhớ cơ bắp chính tả thành công!</p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Số từ hoàn thành</div>
+          <div style="font-size: 22px; font-weight: 800; color: #34d399;" id="spelling-result-correct">10 / 10</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Điểm thưởng nhận được</div>
+          <div style="font-size: 22px; font-weight: 800; color: #fbbf24;" id="spelling-result-points">+50đ</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Số lần gõ sai</div>
+          <div style="font-size: 22px; font-weight: 800; color: #f87171;" id="spelling-result-wrong">0</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Thời gian hoàn thành</div>
+          <div style="font-size: 22px; font-weight: 800; color: #818cf8;" id="spelling-result-time">00:45</div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-outline" onclick="retrySpellingFromModal()" style="flex: 1;">🔄 Luyện Lại</button>
+        <button class="btn btn-outline" onclick="exitSpellingToDeck()" style="flex: 1;" id="btn-spelling-result-deck">📂 Về Bộ Từ</button>
+        <button class="btn btn-primary" onclick="exitSpellingToHome()" style="flex: 1; background: linear-gradient(135deg, #6366f1, #ec4899); border: none;">🏠 Trang Chủ</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: QUIZ SETUP & DIFFICULTY SELECTION (v0.0.9.9) -->
   <div class="modal-overlay" id="modal-quiz-setup">
     <div class="modal" style="max-width: 520px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
@@ -2467,11 +2778,14 @@
       </div>
 
       <!-- Quick Action Buttons for Due Words -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 13px; padding: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
-          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard (Rảnh tay)</span>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 13px; padding: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+        <button class="btn btn-primary" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết (Spelling)</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
           <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span>
         </button>
       </div>
@@ -2804,7 +3118,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.0</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1a</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6313,6 +6627,8 @@
 
       if (mode === 'autofc') {
         startAutoFlashcardMode(false, targetList);
+      } else if (mode === 'spelling') {
+        openSpellingSetupModal(false, targetList);
       } else if (mode === 'quiz') {
         if (targetList.length < 2) {
           alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
@@ -6320,6 +6636,805 @@
         }
         openQuizSetupModal(false, targetList);
       }
+    }
+
+        // =========================================================================
+    // SPELLING & FILL-IN-THE-BLANK MODE ENGINE (v0.0.10.1a)
+    // =========================================================================
+    let spellingList = [];
+    let spellingIndex = 0;
+    let spellingScore = 0;
+    let spellingIsAnswered = false;
+    let spellingStartTime = 0;
+    let spellingCorrectCount = 0;
+    let spellingWrongCount = 0;
+    let spellingWrongAttemptsForCurrentWord = 0;
+    let spellingPointsEarned = 0;
+    let spellingHintsUsed = 0;
+    let spellingTotalQuestions = 0;
+    let spellingFireworksAnimationId = null;
+
+    let currentSpellingDifficulty = localStorage.getItem('vocaflow_spelling_difficulty') || 'easy';
+    let spellingSetupUseSelection = false;
+    let spellingSetupCustomWordList = null;
+    let selectedSpellingSetupDifficulty = 'easy';
+
+    let spellingCluesConfig = {
+      def: true,
+      ipa: true,
+      audio: true
+    };
+    try {
+      const savedClues = localStorage.getItem('vocaflow_spelling_clues');
+      if (savedClues) spellingCluesConfig = JSON.parse(savedClues);
+    } catch (e) {}
+
+    let currentSpellingHiddenIndices = new Set();
+    let currentSpellingRevealedIndices = new Set();
+
+    function getSpellingDifficultyLabel(diff) {
+      if (diff === 'hard') return '🔴 Khó (x2.0)';
+      if (diff === 'medium') return '🟡 Trung bình (x1.5)';
+      return '🟢 Dễ (x1.0)';
+    }
+
+    function openSpellingSetupModal(useSelectionOnly = false, customWordList = null) {
+      spellingSetupUseSelection = useSelectionOnly;
+      spellingSetupCustomWordList = customWordList;
+
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (!customWordList && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
+      if (deckWords.length === 0) {
+        alert('Không có từ vựng nào để luyện viết!');
+        return;
+      }
+
+      const deck = decks.find(d => d.id === currentDeckId);
+      const subtitle = document.getElementById('spelling-setup-subtitle');
+      if (subtitle) {
+        if (customWordList) {
+          subtitle.textContent = '🔔 Hàng đợi ôn tập hôm nay • Tổng số: ' + deckWords.length + ' từ';
+        } else {
+          subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
+        }
+      }
+
+      const savedDiff = localStorage.getItem('vocaflow_spelling_difficulty') || 'easy';
+      selectSpellingSetupDifficulty(savedDiff);
+
+      // Restore clue checkboxes
+      ['def', 'ipa', 'audio'].forEach(k => {
+        const chk = document.getElementById('spelling-chk-' + k);
+        if (chk) chk.checked = !!spellingCluesConfig[k];
+        updateSpellingClueUI(k, !!spellingCluesConfig[k]);
+      });
+
+      const shuffleCb = document.getElementById('spelling-setup-shuffle-checkbox');
+      if (shuffleCb) shuffleCb.checked = isStudyShuffle;
+
+      openModal('modal-spelling-setup');
+    }
+
+    function selectSpellingSetupDifficulty(diff) {
+      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      selectedSpellingSetupDifficulty = diff;
+      const cards = {
+        easy: document.getElementById('spelling-diff-card-easy'),
+        medium: document.getElementById('spelling-diff-card-medium'),
+        hard: document.getElementById('spelling-diff-card-hard')
+      };
+
+      Object.keys(cards).forEach(k => {
+        const c = cards[k];
+        if (!c) return;
+        if (k === diff) {
+          if (k === 'easy') {
+            c.style.borderColor = '#10b981';
+            c.style.background = 'rgba(16, 185, 129, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(16, 185, 129, 0.25)';
+          } else if (k === 'medium') {
+            c.style.borderColor = '#fbbf24';
+            c.style.background = 'rgba(245, 158, 11, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(245, 158, 11, 0.25)';
+          } else if (k === 'hard') {
+            c.style.borderColor = '#f87171';
+            c.style.background = 'rgba(239, 68, 68, 0.12)';
+            c.style.boxShadow = '0 0 16px rgba(239, 68, 68, 0.25)';
+          }
+        } else {
+          c.style.borderColor = 'var(--border)';
+          c.style.background = 'var(--surface-elevated)';
+          c.style.boxShadow = 'none';
+        }
+      });
+    }
+
+    function toggleSpellingClue(clueKey) {
+      const chk = document.getElementById('spelling-chk-' + clueKey);
+      if (!chk) return;
+
+      // Ensure at least 1 clue is selected
+      const defOn = document.getElementById('spelling-chk-def')?.checked;
+      const ipaOn = document.getElementById('spelling-chk-ipa')?.checked;
+      const audioOn = document.getElementById('spelling-chk-audio')?.checked;
+
+      if (!defOn && !ipaOn && !audioOn) {
+        chk.checked = true;
+        showToast('⚠️ Bắt buộc phải chọn ít nhất 1 manh mối để nhận diện từ!');
+      }
+
+      spellingCluesConfig[clueKey] = chk.checked;
+      updateSpellingClueUI(clueKey, chk.checked);
+      localStorage.setItem('vocaflow_spelling_clues', JSON.stringify(spellingCluesConfig));
+    }
+
+    function updateSpellingClueUI(clueKey, isChecked) {
+      const toggleBtn = document.getElementById('spelling-clue-toggle-' + clueKey);
+      if (!toggleBtn) return;
+      if (isChecked) {
+        toggleBtn.style.borderColor = '#6366f1';
+        toggleBtn.style.background = 'rgba(99, 102, 241, 0.2)';
+        toggleBtn.style.color = '#fff';
+      } else {
+        toggleBtn.style.borderColor = 'var(--border)';
+        toggleBtn.style.background = 'var(--surface-elevated)';
+        toggleBtn.style.color = 'var(--text-muted)';
+      }
+    }
+
+    function confirmStartSpellingFromModal() {
+      // Validate at least one clue
+      const hasClue = spellingCluesConfig.def || spellingCluesConfig.ipa || spellingCluesConfig.audio;
+      if (!hasClue) {
+        alert('Vui lòng chọn ít nhất 1 manh mối hiển thị (Nghĩa TV, Phiên âm hoặc Âm thanh)!');
+        return;
+      }
+
+      currentSpellingDifficulty = selectedSpellingSetupDifficulty;
+      localStorage.setItem('vocaflow_spelling_difficulty', currentSpellingDifficulty);
+
+      const shuffleCb = document.getElementById('spelling-setup-shuffle-checkbox');
+      if (shuffleCb) {
+        isStudyShuffle = shuffleCb.checked;
+        localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false');
+      }
+
+      closeModal('modal-spelling-setup');
+      startSpellingMode(spellingSetupUseSelection, spellingSetupCustomWordList);
+    }
+
+    function setSpellingDifficulty(diff) {
+      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      currentSpellingDifficulty = diff;
+      localStorage.setItem('vocaflow_spelling_difficulty', diff);
+      updateSpellingDifficultyUI();
+      showToast('🎯 Đã chọn độ khó Luyện Viết: ' + getSpellingDifficultyLabel(diff));
+    }
+
+    function cycleSpellingDifficulty() {
+      const order = ['easy', 'medium', 'hard'];
+      const nextIdx = (order.indexOf(currentSpellingDifficulty) + 1) % order.length;
+      setSpellingDifficulty(order[nextIdx]);
+      if (spellingList && spellingList.length > 0 && spellingIndex < spellingList.length) {
+        loadSpellingQuestion();
+      }
+    }
+
+    function updateSpellingDifficultyUI() {
+      const badge = document.getElementById('spelling-difficulty-badge');
+      if (badge) {
+        badge.textContent = getSpellingDifficultyLabel(currentSpellingDifficulty);
+        if (currentSpellingDifficulty === 'hard') {
+          badge.style.background = 'rgba(239, 68, 68, 0.15)';
+          badge.style.color = '#f87171';
+          badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+        } else if (currentSpellingDifficulty === 'medium') {
+          badge.style.background = 'rgba(245, 158, 11, 0.15)';
+          badge.style.color = '#fbbf24';
+          badge.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+        } else {
+          badge.style.background = 'rgba(16, 185, 129, 0.15)';
+          badge.style.color = '#34d399';
+          badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+        }
+      }
+    }
+
+    function startSpellingMode(useSelectionOnly = false, customWordList = null) {
+      studySourceContext = customWordList ? 'review-queue' : 'deck';
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (!customWordList && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      }
+
+      if (deckWords.length === 0) {
+        alert('Không có từ vựng nào để luyện viết!');
+        return;
+      }
+
+      if (isStudyShuffle) {
+        spellingList = [...deckWords].sort(() => Math.random() - 0.5);
+      } else {
+        spellingList = [...deckWords];
+      }
+      spellingIndex = 0;
+      spellingScore = 0;
+      spellingIsAnswered = false;
+
+      // Track statistics
+      spellingStartTime = Date.now();
+      spellingCorrectCount = 0;
+      spellingWrongCount = 0;
+      spellingPointsEarned = 0;
+      spellingHintsUsed = 0;
+      spellingTotalQuestions = spellingList.length;
+
+      loadSpellingQuestion();
+      showScreen('screen-spelling');
+    }
+
+    function shuffleCurrentSpelling() {
+      if (!spellingList || spellingList.length === 0) return;
+      spellingList = [...spellingList].sort(() => Math.random() - 0.5);
+      spellingIndex = 0;
+      spellingScore = 0;
+      spellingIsAnswered = false;
+
+      loadSpellingQuestion();
+      showToast('🔀 Đã xáo trộn ngẫu nhiên danh sách từ Luyện Viết!');
+    }
+
+    function loadSpellingQuestion() {
+      spellingIsAnswered = false;
+      spellingWrongAttemptsForCurrentWord = 0;
+
+      const questionWord = spellingList[spellingIndex];
+      const total = spellingList.length;
+
+      document.getElementById('spelling-counter').textContent = 'Từ ' + (spellingIndex + 1) + ' / ' + total;
+      document.getElementById('spelling-score').textContent = 'Bài: ' + (spellingScore >= 0 ? '+' : '') + spellingScore + 'đ';
+      updateSpellingWalletPointsDisplay();
+      updateSpellingDifficultyUI();
+
+      // Setup Hint & Feedback
+      const hintBox = document.getElementById('spelling-hint-box');
+      if (hintBox) hintBox.style.display = 'none';
+      const feedbackMsg = document.getElementById('spelling-feedback-msg');
+      if (feedbackMsg) {
+        feedbackMsg.textContent = '';
+        feedbackMsg.style.color = 'var(--text)';
+      }
+
+      // Reset Action Buttons
+      const checkBtn = document.getElementById('btn-spelling-check');
+      const nextBtn = document.getElementById('btn-spelling-next');
+      if (checkBtn) checkBtn.style.display = 'block';
+      if (nextBtn) nextBtn.style.display = 'none';
+
+      // 1. Render Clues
+      const defEl = document.getElementById('spelling-clue-def');
+      const ipaEl = document.getElementById('spelling-clue-ipa');
+      const audioEl = document.getElementById('spelling-clue-audio');
+
+      if (defEl) {
+        if (spellingCluesConfig.def) {
+          defEl.textContent = questionWord.definitionVi || questionWord.definition || '';
+          defEl.style.display = 'block';
+        } else {
+          defEl.style.display = 'none';
+        }
+      }
+
+      if (ipaEl) {
+        if (spellingCluesConfig.ipa && questionWord.phonetic) {
+          ipaEl.textContent = questionWord.phonetic;
+          ipaEl.style.display = 'block';
+        } else {
+          ipaEl.style.display = 'none';
+        }
+      }
+
+      if (audioEl) {
+        audioEl.style.display = spellingCluesConfig.audio ? 'inline-flex' : 'none';
+      }
+
+      // 2. Render Letter Boxes based on difficulty
+      renderSpellingBoxes(questionWord.term, currentSpellingDifficulty);
+
+      // Auto-play audio if audio clue is enabled
+      if (spellingCluesConfig.audio) {
+        setTimeout(() => {
+          speakSpellingTerm();
+        }, 150);
+      }
+    }
+
+    function renderSpellingBoxes(term, difficulty) {
+      const container = document.getElementById('spelling-boxes-container');
+      if (!container) return;
+      container.innerHTML = '';
+      container.className = ''; // remove any shake animation
+
+      const chars = Array.from(term);
+      const letterIndices = [];
+
+      chars.forEach((c, idx) => {
+        if (/[a-zA-Z0-9]/.test(c)) {
+          letterIndices.push(idx);
+        }
+      });
+
+      const totalLetters = letterIndices.length;
+      let hideCount = 0;
+
+      if (difficulty === 'hard') {
+        hideCount = totalLetters; // 100% hidden
+      } else if (difficulty === 'medium') {
+        hideCount = Math.max(1, Math.ceil((totalLetters * 2) / 3)); // 2/3 hidden
+      } else {
+        hideCount = Math.max(1, Math.ceil(totalLetters / 3)); // 1/3 hidden
+      }
+
+      // Shuffle letter indices to pick hidden ones randomly
+      const shuffledIndices = [...letterIndices].sort(() => Math.random() - 0.5);
+      currentSpellingHiddenIndices = new Set(shuffledIndices.slice(0, hideCount));
+      currentSpellingRevealedIndices = new Set();
+
+      let firstInputToFocus = null;
+
+      chars.forEach((c, idx) => {
+        if (c === ' ') {
+          const spaceDiv = document.createElement('div');
+          spaceDiv.className = 'spelling-space-badge';
+          container.appendChild(spaceDiv);
+        } else if (!/[a-zA-Z0-9]/.test(c)) {
+          const symDiv = document.createElement('div');
+          symDiv.className = 'spelling-symbol-badge';
+          symDiv.textContent = c;
+          container.appendChild(symDiv);
+        } else if (!currentSpellingHiddenIndices.has(idx)) {
+          // Pre-filled given letter
+          const preInput = document.createElement('input');
+          preInput.className = 'spelling-letter-box prefilled';
+          preInput.value = c.toUpperCase();
+          preInput.disabled = true;
+          preInput.dataset.index = idx;
+          preInput.dataset.expected = c.toLowerCase();
+          container.appendChild(preInput);
+        } else {
+          // Hidden letter box to be typed
+          const input = document.createElement('input');
+          input.className = 'spelling-letter-box';
+          input.maxLength = 1;
+          input.autocomplete = 'off';
+          input.autocorrect = 'off';
+          input.autocapitalize = 'off';
+          input.spellcheck = false;
+          input.dataset.index = idx;
+          input.dataset.expected = c.toLowerCase();
+
+          input.oninput = (e) => handleSpellingInput(e, idx);
+          input.onkeydown = (e) => handleSpellingKeyDown(e, idx);
+
+          container.appendChild(input);
+          if (!firstInputToFocus) firstInputToFocus = input;
+        }
+      });
+
+      if (firstInputToFocus) {
+        setTimeout(() => firstInputToFocus.focus(), 80);
+      }
+    }
+
+    function getEditableSpellingInputs() {
+      return Array.from(document.querySelectorAll('#spelling-boxes-container .spelling-letter-box:not(.prefilled)'));
+    }
+
+    function handleSpellingInput(e, idx) {
+      if (spellingIsAnswered) return;
+      const input = e.target;
+      const val = (input.value || '').trim();
+
+      if (val.length > 0) {
+        input.value = val[val.length - 1].toUpperCase();
+        input.classList.remove('wrong');
+
+        // Move to next editable input
+        const editables = getEditableSpellingInputs();
+        const curPos = editables.indexOf(input);
+        if (curPos >= 0 && curPos < editables.length - 1) {
+          editables[curPos + 1].focus();
+        }
+      }
+    }
+
+    function handleSpellingKeyDown(e, idx) {
+      const input = e.target;
+      const editables = getEditableSpellingInputs();
+      const curPos = editables.indexOf(input);
+
+      if (e.key === 'Backspace') {
+        if (!input.value && curPos > 0) {
+          e.preventDefault();
+          const prev = editables[curPos - 1];
+          prev.value = '';
+          prev.focus();
+        } else {
+          input.value = '';
+          input.classList.remove('wrong');
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (curPos > 0) {
+          e.preventDefault();
+          editables[curPos - 1].focus();
+        }
+      } else if (e.key === 'ArrowRight') {
+        if (curPos < editables.length - 1) {
+          e.preventDefault();
+          editables[curPos + 1].focus();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (spellingIsAnswered) {
+          nextSpellingQuestion();
+        } else {
+          checkSpellingAnswer();
+        }
+      }
+    }
+
+    function checkSpellingAnswer() {
+      if (spellingIsAnswered) return;
+      const questionWord = spellingList[spellingIndex];
+      if (!questionWord) return;
+
+      const boxesContainer = document.getElementById('spelling-boxes-container');
+      const allLetterBoxes = Array.from(document.querySelectorAll('#spelling-boxes-container .spelling-letter-box'));
+      const editables = getEditableSpellingInputs();
+
+      // Check if all editable boxes have been filled
+      let hasEmpty = false;
+      editables.forEach(input => {
+        if (!input.value) {
+          hasEmpty = true;
+          input.classList.add('wrong');
+        }
+      });
+
+      if (hasEmpty) {
+        showToast('⚠️ Hãy điền đầy đủ các chữ cái còn thiếu!');
+        const firstEmpty = editables.find(inp => !inp.value);
+        if (firstEmpty) firstEmpty.focus();
+        return;
+      }
+
+      // Check user answers letter by letter
+      let isAllCorrect = true;
+      let firstWrongInput = null;
+
+      editables.forEach(input => {
+        const expected = (input.dataset.expected || '').toLowerCase();
+        const userChar = (input.value || '').toLowerCase();
+        if (userChar === expected) {
+          input.classList.remove('wrong');
+          input.classList.add('correct');
+        } else {
+          isAllCorrect = false;
+          input.classList.remove('correct');
+          input.classList.add('wrong');
+          if (!firstWrongInput) firstWrongInput = input;
+        }
+      });
+
+      const feedbackMsg = document.getElementById('spelling-feedback-msg');
+
+      if (isAllCorrect) {
+        // CORRECT ANSWER!
+        spellingIsAnswered = true;
+        spellingCorrectCount++;
+
+        // Determine points multiplier
+        let mult = 1.0;
+        if (currentSpellingDifficulty === 'hard') mult = 2.0;
+        else if (currentSpellingDifficulty === 'medium') mult = 1.5;
+
+        const { gain } = calculateMasteryPoints(questionWord.cefrLevel, false);
+        const pts = Math.round(gain * mult);
+        spellingScore += pts;
+        spellingPointsEarned += pts;
+
+        // Update word mastery score
+        const { newScore } = updateWordMasteryScore(questionWord, pts);
+        const idx = words.findIndex(w => w.id === questionWord.id);
+        if (idx >= 0) {
+          words[idx].masteryScore = newScore;
+          words[idx].updatedAt = new Date().toISOString();
+        }
+
+        // Add bonus wallet point
+        const earnedWalletPts = Math.max(1, Math.round(1 * mult));
+        setUserPoints(getUserPoints() + earnedWalletPts);
+        saveDatabase(true);
+
+        // Visual & Audio Success
+        playSpellingSound(true);
+        speakSpellingTerm();
+
+        document.getElementById('spelling-score').textContent = 'Bài: +' + spellingScore + 'đ';
+        updateSpellingWalletPointsDisplay();
+
+        if (feedbackMsg) {
+          feedbackMsg.textContent = '🎉 Tuyệt vời! Chính xác 100% (+' + pts + 'đ tinh thông, +' + earnedWalletPts + 'đ ví)';
+          feedbackMsg.style.color = '#34d399';
+        }
+
+        // Disable all inputs
+        editables.forEach(inp => {
+          inp.disabled = true;
+          inp.classList.add('correct');
+        });
+
+        // Switch Action buttons
+        const checkBtn = document.getElementById('btn-spelling-check');
+        const nextBtn = document.getElementById('btn-spelling-next');
+        if (checkBtn) checkBtn.style.display = 'none';
+        if (nextBtn) {
+          nextBtn.style.display = 'block';
+          nextBtn.focus();
+        }
+      } else {
+        // WRONG ANSWER!
+        spellingWrongCount++;
+        spellingWrongAttemptsForCurrentWord++;
+
+        // Deduct 1 mastery point & 1 wallet point
+        const { newScore } = updateWordMasteryScore(questionWord, -1);
+        const idx = words.findIndex(w => w.id === questionWord.id);
+        if (idx >= 0) {
+          words[idx].masteryScore = newScore;
+          words[idx].updatedAt = new Date().toISOString();
+        }
+
+        const curPts = getUserPoints();
+        if (curPts > 0) setUserPoints(curPts - 1);
+        saveDatabase(true);
+        updateSpellingWalletPointsDisplay();
+        playSpellingSound(false);
+
+        // Shake Animation
+        if (boxesContainer) {
+          boxesContainer.classList.remove('shake-mild', 'shake-intense');
+          void boxesContainer.offsetWidth; // trigger reflow
+          if (spellingWrongAttemptsForCurrentWord >= 3) {
+            boxesContainer.classList.add('shake-intense');
+          } else {
+            boxesContainer.classList.add('shake-mild');
+          }
+        }
+
+        if (feedbackMsg) {
+          feedbackMsg.textContent = '❌ Chưa chính xác! Hãy gõ lại (-1đ tinh thông, -1đ ví)';
+          feedbackMsg.style.color = '#f87171';
+        }
+
+        if (firstWrongInput) {
+          firstWrongInput.focus();
+          firstWrongInput.select();
+        }
+      }
+    }
+
+    function useSpellingHint() {
+      if (spellingIsAnswered) return;
+      const questionWord = spellingList[spellingIndex];
+      if (!questionWord) return;
+
+      const editables = getEditableSpellingInputs().filter(inp => !inp.classList.contains('hint-revealed') && inp.value.toLowerCase() !== (inp.dataset.expected || '').toLowerCase());
+      if (editables.length === 0) {
+        showToast('💡 Đã mở hết tất cả các ký tự!');
+        return;
+      }
+
+      // Check hint currency / wallet
+      const hintCost = 50;
+      const curHints = getUserHints();
+      const curPts = getUserPoints();
+
+      if (curHints <= 0 && curPts < hintCost) {
+        showToast('🪙 Bạn không đủ điểm ví (cần 50đ để đổi 1 Gợi ý)');
+        openShopModal();
+        return;
+      }
+
+      if (curHints > 0) {
+        setUserHints(curHints - 1);
+      } else {
+        setUserPoints(curPts - hintCost);
+      }
+
+      spellingHintsUsed++;
+      updateSpellingWalletPointsDisplay();
+
+      // Pick next unrevealed box
+      const targetBox = editables[0];
+      const expectedChar = targetBox.dataset.expected || '';
+      targetBox.value = expectedChar.toUpperCase();
+      targetBox.classList.remove('wrong');
+      targetBox.classList.add('hint-revealed');
+      targetBox.disabled = true;
+
+      showToast('💡 Đã mở chữ cái: "' + expectedChar.toUpperCase() + '"');
+
+      // Focus next editable
+      const remainingEditables = getEditableSpellingInputs().filter(inp => !inp.disabled && !inp.classList.contains('hint-revealed'));
+      if (remainingEditables.length > 0) {
+        remainingEditables[0].focus();
+      } else {
+        checkSpellingAnswer();
+      }
+    }
+
+    function nextSpellingQuestion() {
+      spellingIndex++;
+      if (spellingIndex < spellingList.length) {
+        loadSpellingQuestion();
+      } else {
+        finishSpellingMode();
+      }
+    }
+
+    function finishSpellingMode() {
+      const elapsedSec = Math.round((Date.now() - spellingStartTime) / 1000);
+      const mins = Math.floor(elapsedSec / 60);
+      const secs = elapsedSec % 60;
+      const timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+      document.getElementById('spelling-result-correct').textContent = spellingCorrectCount + ' / ' + spellingTotalQuestions;
+      document.getElementById('spelling-result-points').textContent = '+' + spellingPointsEarned + 'đ';
+      document.getElementById('spelling-result-wrong').textContent = spellingWrongCount;
+      document.getElementById('spelling-result-time').textContent = timeStr;
+
+      const deckBtn = document.getElementById('btn-spelling-result-deck');
+      if (deckBtn) {
+        deckBtn.style.display = (studySourceContext === 'review-queue' || !currentDeckId) ? 'none' : 'block';
+      }
+
+      openModal('modal-spelling-result');
+      startSpellingFireworks();
+    }
+
+    function startSpellingFireworks() {
+      const canvas = document.getElementById('spelling-fireworks-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
+
+      const particles = [];
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#3b82f6'];
+
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8 - 2,
+          radius: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.15; // gravity
+          p.alpha -= p.decay;
+
+          if (p.alpha > 0) {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (particles.some(p => p.alpha > 0)) {
+          spellingFireworksAnimationId = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    function retrySpellingFromModal() {
+      closeModal('modal-spelling-result');
+      startSpellingMode();
+    }
+
+    function exitSpelling() {
+      stopAllAudio();
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        renderDecks();
+      } else {
+        showScreen('screen-deck-detail');
+        renderWordList();
+      }
+    }
+
+    function exitSpellingToDeck() {
+      closeModal('modal-spelling-result');
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        renderDecks();
+      } else {
+        showScreen('screen-deck-detail');
+        renderWordList();
+      }
+    }
+
+    function exitSpellingToHome() {
+      closeModal('modal-spelling-result');
+      showScreen('screen-decks');
+      renderDecks();
+    }
+
+    function speakSpellingTerm() {
+      if (!spellingList || spellingList.length === 0) return;
+      const questionWord = spellingList[spellingIndex];
+      if (questionWord && questionWord.term) {
+        speakText(questionWord.term);
+      }
+    }
+
+    function updateSpellingWalletPointsDisplay() {
+      const walletEl = document.getElementById('spelling-wallet-points');
+      if (walletEl) walletEl.textContent = getUserPoints() + 'đ';
+      const hintsEl = document.getElementById('spelling-hints-count');
+      if (hintsEl) hintsEl.textContent = getUserHints() > 0 ? getUserHints() : '50đ';
+    }
+
+    function playSpellingSound(isCorrect) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (isCorrect) {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+          osc.frequency.setValueAtTime(146.83, audioCtx.currentTime + 0.08); // D3
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        }
+      } catch (e) {}
     }
 
         // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
@@ -11506,7 +12621,23 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      // 2. QUIZ SCREEN SHORTCUTS
+      // 2. SPELLING SCREEN SHORTCUTS (v0.0.10.1a)
+      const spellingScreen = document.getElementById('screen-spelling');
+      if (spellingScreen && spellingScreen.classList.contains('active')) {
+        const nextBtn = document.getElementById('btn-spelling-next');
+        const checkBtn = document.getElementById('btn-spelling-check');
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (nextBtn && nextBtn.style.display !== 'none') {
+            nextSpellingQuestion();
+          } else if (checkBtn && checkBtn.style.display !== 'none') {
+            checkSpellingAnswer();
+          }
+        }
+        return;
+      }
+
+      // 3. QUIZ SCREEN SHORTCUTS
       const quizScreen = document.getElementById('screen-quiz');
       if (quizScreen && quizScreen.classList.contains('active')) {
         if (!quizIsAnswered) {
