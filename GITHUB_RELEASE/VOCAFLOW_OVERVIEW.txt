@@ -182,7 +182,12 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
 • 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).
-• 🤖 [v0.0.10.3]: AI Deck Generator Studio - Tạo bộ từ vựng thông minh bằng AI Gemini theo chủ đề, cấp độ, đoạn văn trích xuất và mục tiêu học (Dự kiến).
+• 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
+  - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
+  - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
+  - 3 Chế độ đầu vào: Theo Chủ đề (Topic Prompt), Trích xuất từ Đoạn văn/Bài báo (Passage), và Chuẩn hóa dãy từ khô (Raw Words).
+  - Tối ưu Token mảng nén + Phao cứu sinh Auto-Repair JSON cứu 100% từ đã tạo khi ngắt kết nối/chạm giới hạn.
+  - Thưởng điểm khi tự soạn thủ công (+50đ ví) để kích thích tinh thần tự học.
 
 ================================================================================
 🌐 TRẢI NGHIỆM TRỰC TUYẾN: https://iamjulies.github.io/VocaFlow/
