@@ -122,7 +122,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
   - Điều hướng ngữ cảnh thông minh (Context-Aware Navigation): Thoát ôn tập tự động quay về Trang Chủ và cập nhật tiến độ.
   - Loại bỏ hoàn toàn Flashcard thủ công cũ thừa code để tối ưu hóa hiệu năng 100%.
 
-• ✍️ v0.0.10.1 (a -> b): Chế Độ Luyện Viết Chính Tả & Điền Khuyết (Spelling & Fill-in-the-Blank Mode)
+• ✍️ v0.0.10.1 (a -> c): Chế Độ Luyện Viết Chính Tả & Điền Khuyết (Spelling & Fill-in-the-Blank Mode)
   - Luyện trí nhớ cơ bắp (Muscle Memory) giúp người học viết chính xác 100% không sai một ký tự.
   - 3 Cấp độ Thử thách:
     * 🟢 Dễ (Easy - x1.0 Điểm): Ẩn 1/3 ký tự ngẫu nhiên (hiển thị 2/3 chữ cái gợi ý sẵn).
@@ -135,7 +135,11 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Gõ đúng 100%: Tổng số ô điền * Hệ số độ khó (làm tròn lên nếu là 0.5), cộng cả điểm tinh thông và điểm ví.
     * Gõ có ô sai: Số ô sai * Hệ số độ khó (làm tròn lên), trừ cả điểm tinh thông và điểm ví.
   - Giọng đọc Google TTS nguyên bản tự nhiên, loại bỏ tạp âm robot.
-  - Cơ chế Rung Lắc Động (Dynamic Shake FX) khi gõ sai và Nút Gợi Ý ❓ mở ký tự tiếp theo.
+  - ⏭️ Tính Năng Lượt Bỏ Qua (Skip Pass - v0.0.10.1c):
+    * Tặng miễn phí 3 lượt Bỏ Qua cho thành viên mới đăng ký.
+    * Nút Bỏ Qua (⏭️) đặt ngay cạnh nút Gợi Ý (❓) trong cả Luyện Viết và Trắc Nghiệm Quiz.
+    * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
+    * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
   - Modal Tổng Kết Luyện Viết (modal-spelling-result) kèm pháo hoa động ăn mừng.
 
 • 👤 [v0.0.10.2]: Tùy biến Tên Người Dùng & Ghi chú Profile cá nhân đồng bộ Cloud 2 chiều tức thì (Dự kiến).

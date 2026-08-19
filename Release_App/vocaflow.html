@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1b</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1c</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1948,10 +1948,16 @@
 
       <div class="quiz-container">
         <div class="quiz-question-card" style="position: relative;">
-          <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="position: absolute; top: 12px; right: 12px; border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-            <span style="font-size: 14px; line-height: 1;">❓</span>
-            <span id="quiz-card-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
-          </button>
+          <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; gap: 6px;">
+            <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
+              <span style="font-size: 14px; line-height: 1;">❓</span>
+              <span id="quiz-card-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-quiz-skip" onclick="useQuizSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
+              <span style="font-size: 14px; line-height: 1;">⏭️</span>
+              <span id="quiz-card-skips-count" style="font-size: 12px; color: #818cf8;">3</span>
+            </button>
+          </div>
           <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Chọn định nghĩa đúng cho từ:</div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;">
             <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin: 0;">Term</h2>
@@ -2005,11 +2011,17 @@
       <div class="spelling-container" style="max-width: 680px; margin: 20px auto; padding: 0 16px;">
         <!-- Card Hiển Thị Manh Mối (Clues Card) -->
         <div class="spelling-clue-card" id="spelling-clue-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px; text-align: center; position: relative; margin-bottom: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
-          <!-- Nút Gợi Ý Hint ? -->
-          <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (AI Hint)" style="position: absolute; top: 14px; right: 14px; border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
-            <span style="font-size: 14px; line-height: 1;">❓</span>
-            <span id="spelling-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
-          </button>
+          <!-- Nút Gợi Ý Hint ? & Nút Skip ⏭️ (v0.0.10.1c) -->
+          <div style="position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 6px;">
+            <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (50đ ví hoặc 1 lượt)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
+              <span style="font-size: 14px; line-height: 1;">❓</span>
+              <span id="spelling-hints-count" style="font-size: 12px; color: #fbbf24;">5</span>
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-spelling-skip" onclick="useSpellingSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 700;">
+              <span style="font-size: 14px; line-height: 1;">⏭️</span>
+              <span id="spelling-skips-count" style="font-size: 12px; color: #818cf8;">3</span>
+            </button>
+          </div>
 
           <div style="font-size: 11.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; font-weight: 700;">
             ✍️ HÃY GÕ CHÍNH TẢ TỪ TIẾNG ANH:
@@ -2691,17 +2703,22 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-shop')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- Wallet Balance Card -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 16px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
-        <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 10px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Điểm tích lũy</div>
-          <div id="shop-user-points" style="font-size: 26px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Kiếm từ làm Quiz</div>
+      <!-- Wallet Balance Card (3 Columns: Points, Hints, Skips) -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 14px 10px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
+        <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 6px;">
+          <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Điểm ví</div>
+          <div id="shop-user-points" style="font-size: 22px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Tích lũy bài học</div>
         </div>
-        <div style="text-align: center; padding-left: 10px;">
-          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">💡 Lượt gợi ý AI</div>
-          <div id="shop-user-hints" style="font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 4px;">0</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Dùng trong Quiz</div>
+        <div style="text-align: center; border-right: 1px solid var(--border); padding: 0 6px;">
+          <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">💡 Lượt Gợi Ý</div>
+          <div id="shop-user-hints" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin-top: 4px;">0</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Mở chữ cái / AI</div>
+        </div>
+        <div style="text-align: center; padding-left: 6px;">
+          <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">⏭️ Lượt Bỏ Qua</div>
+          <div id="shop-user-skips" style="font-size: 22px; font-weight: 800; color: #818cf8; margin-top: 4px;">0</div>
+          <div style="font-size: 10px; color: var(--text-muted);">Bỏ qua câu khó</div>
         </div>
       </div>
 
@@ -2741,6 +2758,46 @@
           </div>
           <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 450)">
             Đổi (450đ)
+          </button>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">⏭️ Các Gói Đổi Lượt Bỏ Qua (Skip Pass)</div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <!-- Skip 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 1 Lượt Bỏ Qua</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 100 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buySkipsPackage(1, 100)" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;">
+            Đổi (100đ)
+          </button>
+        </div>
+
+        <!-- Skip 5 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 5 Lượt Bỏ Qua</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 500 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buySkipsPackage(5, 500)" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;">
+            Đổi (500đ)
+          </button>
+        </div>
+
+        <!-- Skip 10 (Discount) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(99,102,241,0.3);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 10 Lượt Bỏ Qua</span>
+              <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 9.5px;">TIẾT KIỆM 100đ</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 900 điểm</div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="buySkipsPackage(10, 900)">
+            Đổi (900đ)
           </button>
         </div>
       </div>
@@ -3125,7 +3182,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1b</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1c</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3841,9 +3898,10 @@
     };
     let isSyncing = false;
 
-    // Economy & Hint Shop State (v0.0.8)
+    // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
     const STORAGE_KEY_USER_POINTS = 'vocaflow_user_points';
     const STORAGE_KEY_USER_HINTS = 'vocaflow_user_hints';
+    const STORAGE_KEY_USER_SKIPS = 'vocaflow_user_skips';
     const STORAGE_KEY_ECONOMY_TIME = 'vocaflow_economy_time';
 
     function getUserPoints() {
@@ -3856,13 +3914,23 @@
       if (h !== null) {
         return parseInt(h, 10) || 0;
       }
-      const guestBanner = document.getElementById('guest-perks-banner');
       if (currentUser && currentUser.email) {
-        if (guestBanner) guestBanner.style.display = 'none';
         localStorage.setItem(STORAGE_KEY_USER_HINTS, '5');
         return 5;
       }
       return 0;
+    }
+
+    function getUserSkips() {
+      const s = localStorage.getItem(STORAGE_KEY_USER_SKIPS);
+      if (s !== null) {
+        return parseInt(s, 10) || 0;
+      }
+      if (currentUser && currentUser.email) {
+        localStorage.setItem(STORAGE_KEY_USER_SKIPS, '3');
+        return 3;
+      }
+      return 3; // Default 3 free skips for new users
     }
 
     function setUserPoints(val) {
@@ -3881,6 +3949,14 @@
       syncEconomyToCloud();
     }
 
+    function setUserSkips(val) {
+      const clean = Math.max(0, parseInt(val, 10) || 0);
+      localStorage.setItem(STORAGE_KEY_USER_SKIPS, clean.toString());
+      localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
+      updateEconomyUI();
+      syncEconomyToCloud();
+    }
+
     function formatPointsCompact(pts) {
       if (pts >= 100000) {
         return (pts / 1000).toFixed(0) + 'kđ';
@@ -3891,6 +3967,7 @@
     function updateEconomyUI() {
       const points = getUserPoints();
       const hints = getUserHints();
+      const skips = getUserSkips();
 
       const headerPoints = document.getElementById('header-points-display');
       if (headerPoints) headerPoints.textContent = formatPointsCompact(points);
@@ -3901,19 +3978,23 @@
       const shopHints = document.getElementById('shop-user-hints');
       if (shopHints) shopHints.textContent = hints;
 
+      const shopSkips = document.getElementById('shop-user-skips');
+      if (shopSkips) shopSkips.textContent = skips;
+
       const quizWalletPoints = document.getElementById('quiz-wallet-points');
       if (quizWalletPoints) quizWalletPoints.textContent = `${points}đ`;
 
-      const quizWalletHints = document.getElementById('quiz-wallet-hints');
-      if (quizWalletHints) quizWalletHints.textContent = hints;
-
       const quizCardHintsCount = document.getElementById('quiz-card-hints-count');
-      if (quizCardHintsCount) quizCardHintsCount.textContent = hints;
+      if (quizCardHintsCount) quizCardHintsCount.textContent = hints > 0 ? hints : '50đ';
 
-      const quizHintBtn = document.getElementById('btn-quiz-hint');
-      if (quizHintBtn) {
-        quizHintBtn.title = `Gợi ý thông minh (Còn ${hints} lượt)`;
-      }
+      const quizCardSkipsCount = document.getElementById('quiz-card-skips-count');
+      if (quizCardSkipsCount) quizCardSkipsCount.textContent = skips > 0 ? skips : '100đ';
+
+      const spellingHintsCount = document.getElementById('spelling-hints-count');
+      if (spellingHintsCount) spellingHintsCount.textContent = hints > 0 ? hints : '50đ';
+
+      const spellingSkipsCount = document.getElementById('spelling-skips-count');
+      if (spellingSkipsCount) spellingSkipsCount.textContent = skips > 0 ? skips : '100đ';
     }
 
     async function syncEconomyToCloud() {
@@ -3923,6 +4004,7 @@
         const payload = {
           points: getUserPoints(),
           hints: getUserHints(),
+          skips: getUserSkips(),
           updatedAt: new Date().toISOString()
         };
         await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`, {
@@ -3945,8 +4027,10 @@
           if (data && typeof data === 'object') {
             const remotePoints = typeof data.points === 'number' ? data.points : parseInt(data.points, 10);
             const remoteHints = typeof data.hints === 'number' ? data.hints : parseInt(data.hints, 10);
+            const remoteSkips = typeof data.skips === 'number' ? data.skips : parseInt(data.skips, 10);
             if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
             if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
+            if (!isNaN(remoteSkips)) localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
             updateEconomyUI();
           }
         }
@@ -3965,6 +4049,28 @@
           giftInput.select();
         }
       }, 60);
+    }
+
+        function buySkipsPackage(skipCount, costPoints) {
+      if (!currentUser || !currentUser.email) {
+        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
+        closeModal('modal-shop');
+        openAuthModal('login');
+        return;
+      }
+
+      const currentPoints = getUserPoints();
+      if (currentPoints < costPoints) {
+        alert(`❌ Không đủ điểm!\nBạn đang có ${currentPoints} điểm, nhưng gói này cần ${costPoints} điểm.\nHãy làm thêm Quiz hoặc Luyện Viết để tích lũy thêm điểm nhé!`);
+        return;
+      }
+
+      if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${skipCount} Lượt Bỏ Qua (Skip Pass)?`)) {
+        setUserPoints(currentPoints - costPoints);
+        setUserSkips(getUserSkips() + skipCount);
+        showToast(`🎉 Đã đổi thành công +${skipCount} lượt Bỏ Qua!`);
+        updateEconomyUI();
+      }
     }
 
     function buyHintsPackage(hintCount, costPoints) {
@@ -7241,6 +7347,99 @@
       }
     }
 
+        function useSpellingSkip() {
+      if (spellingIsAnswered) return;
+      const questionWord = spellingList[spellingIndex];
+      if (!questionWord) return;
+
+      const curSkips = getUserSkips();
+      const curPts = getUserPoints();
+      const skipCost = 100;
+
+      if (curSkips <= 0 && curPts < skipCost) {
+        showToast('🪙 Bạn không đủ điểm ví (cần 100đ để đổi 1 lượt Bỏ Qua)');
+        openShopModal();
+        return;
+      }
+
+      if (curSkips > 0) {
+        setUserSkips(curSkips - 1);
+        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua miễn phí (còn ' + getUserSkips() + ' lượt).');
+      } else {
+        setUserPoints(curPts - skipCost);
+        showToast('⏭️ Đã dùng 100đ ví để Bỏ Qua từ này.');
+      }
+
+      spellingIsAnswered = true;
+      updateSpellingWalletPointsDisplay();
+
+      // Reveal full word in letter boxes with muted color
+      const editables = getEditableSpellingInputs();
+      editables.forEach(inp => {
+        inp.value = (inp.dataset.expected || '').toUpperCase();
+        inp.disabled = true;
+        inp.classList.remove('wrong');
+        inp.classList.add('hint-revealed');
+      });
+
+      const feedbackMsg = document.getElementById('spelling-feedback-msg');
+      if (feedbackMsg) {
+        feedbackMsg.textContent = '⏭️ Đã bỏ qua từ: "' + questionWord.term + '"';
+        feedbackMsg.style.color = '#818cf8';
+      }
+
+      // Natural speech
+      speakSpellingTerm();
+
+      // Switch action buttons
+      const checkBtn = document.getElementById('btn-spelling-check');
+      const nextBtn = document.getElementById('btn-spelling-next');
+      if (checkBtn) checkBtn.style.display = 'none';
+      if (nextBtn) {
+        nextBtn.style.display = 'block';
+        nextBtn.focus();
+      }
+    }
+
+    function useQuizSkip() {
+      if (quizIsAnswered) return;
+      const questionWord = quizList[quizIndex];
+      if (!questionWord) return;
+
+      const curSkips = getUserSkips();
+      const curPts = getUserPoints();
+      const skipCost = 100;
+
+      if (curSkips <= 0 && curPts < skipCost) {
+        showToast('🪙 Bạn không đủ điểm ví (cần 100đ để đổi 1 lượt Bỏ Qua)');
+        openShopModal();
+        return;
+      }
+
+      if (curSkips > 0) {
+        setUserSkips(curSkips - 1);
+        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua miễn phí (còn ' + getUserSkips() + ' lượt).');
+      } else {
+        setUserPoints(curPts - skipCost);
+        showToast('⏭️ Đã dùng 100đ ví để Bỏ Qua câu này.');
+      }
+
+      quizIsAnswered = true;
+      updateEconomyUI();
+
+      // Highlight correct answer button in blue/grey
+      const allButtons = document.querySelectorAll('.quiz-option');
+      allButtons.forEach(btn => {
+        btn.classList.add('disabled');
+        btn.disabled = true;
+        if (btn.dataset.isCorrect === 'true') {
+          btn.classList.add('correct');
+        }
+      });
+
+      showToast('⏭️ Đã bỏ qua câu hỏi!');
+    }
+
     function useSpellingHint() {
       if (spellingIsAnswered) return;
       const questionWord = spellingList[spellingIndex];
@@ -7417,6 +7616,8 @@
       if (walletEl) walletEl.textContent = getUserPoints() + 'đ';
       const hintsEl = document.getElementById('spelling-hints-count');
       if (hintsEl) hintsEl.textContent = getUserHints() > 0 ? getUserHints() : '50đ';
+      const skipsEl = document.getElementById('spelling-skips-count');
+      if (skipsEl) skipsEl.textContent = getUserSkips() > 0 ? getUserSkips() : '100đ';
     }
 
     function playSpellingSound(isCorrect) {
