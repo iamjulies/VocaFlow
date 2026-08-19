@@ -1548,7 +1548,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.19</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.20</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2795,7 +2795,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.19</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.20</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6033,6 +6033,31 @@
     }
 
     // =========================================================================
+    function chameleonStyleMatching(distractor, targetCorrectDef) {
+      if (!distractor || typeof distractor !== 'string') return '';
+      if (!targetCorrectDef || typeof targetCorrectDef !== 'string') return distractor.trim();
+
+      let res = distractor.trim();
+      const targetTrimmed = targetCorrectDef.trim();
+      const isTargetCap = /^[A-ZÀ-Ỹ]/.test(targetTrimmed);
+      const hasTargetDot = /\.$/.test(targetTrimmed);
+
+      // 1. Match first letter capitalization
+      if (isTargetCap && res.length > 0) {
+        res = res.charAt(0).toUpperCase() + res.slice(1);
+      } else if (!isTargetCap && res.length > 0) {
+        res = res.charAt(0).toLowerCase() + res.slice(1);
+      }
+
+      // 2. Match trailing period
+      res = res.replace(/\.+$/, '');
+      if (hasTargetDot) {
+        res += '.';
+      }
+
+      return res;
+    }
+
     // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
     // =========================================================================
     function cleanVietnameseDefinition(def) {
@@ -6492,7 +6517,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     // Persistent LocalStorage + Session AI Distractors Cache to minimize API quota
     let quizAiDistractorCache = {};
     try {
-      const savedAiCache = localStorage.getItem('vocaflow_ai_distractors_cache_v2');
+      const savedAiCache = localStorage.getItem('vocaflow_ai_distractors_cache_v3');
       if (savedAiCache) quizAiDistractorCache = JSON.parse(savedAiCache);
     } catch (e) {
       quizAiDistractorCache = {};
@@ -6500,7 +6525,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function saveAiDistractorCache() {
       try {
-        localStorage.setItem('vocaflow_ai_distractors_cache_v2', JSON.stringify(quizAiDistractorCache));
+        localStorage.setItem('vocaflow_ai_distractors_cache_v3', JSON.stringify(quizAiDistractorCache));
       } catch (e) {}
     }
 
@@ -6658,22 +6683,27 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
         const pos = (questionWord.partOfSpeech || 'từ vựng').trim();
         
-        const prompt = 'Bạn là chuyên gia biên soạn đề thi trắc nghiệm tiếng Anh chuẩn quốc tế (SAT/IELTS distractor generator).\n' +
+        const hasParens = /\([^)]+\)/.test(correctDef);
+        const isCap = /^[A-ZÀ-Ỹ]/.test(correctDef);
+        const hasDot = /\.$/.test(correctDef);
+        const wordCount = correctDef.split(/\s+/).length;
+
+        const prompt = 'Bạn là chuyên gia biên soạn đề thi trắc nghiệm tiếng Anh chuẩn quốc tế (SAT/IELTS Chameleon Distractor Generator).\n' +
           'Từ tiếng Anh mục tiêu: "' + questionWord.term + '" (' + pos + ').\n' +
-          'Nghĩa đúng quy định: "' + correctDef + '".\n\n' +
-          'NHIỆM VỤ: Tạo chính xác ' + count + ' phương án SAI HOÀN TOÀN (distractors) bằng tiếng Việt cho bài thi trắc nghiệm 4 lựa chọn.\n\n' +
-          'QUY TẮC BẮT BUỘC ĐỂ ĐẢM BẢO TÍNH ĐÚNG ĐẮN CỦA ĐỀ THI:\n' +
-          '1. TUYỆT ĐỐI KHÔNG PHẢI LÀ BẤT KỲ NGHĨA NÀO CỦA TỪ "' + questionWord.term + '":\n' +
-          '   - CẤM dùng nghĩa đen, nghĩa bóng, nghĩa phụ, tiếng lóng hay nghĩa thứ hai trong từ điển của từ "' + questionWord.term + '" làm phương án sai (Ví dụ: Từ "bitch" thì "con chó cái", "kẻ đáng ghét" đều là nghĩa thật -> TUYỆT ĐỐI CẤM dùng làm phương án sai; Từ "bank" thì "bờ sông" là nghĩa thật -> CẤM dùng làm phương án sai; Từ "spring" thì "lò xo", "suối" là nghĩa thật -> CẤM dùng làm phương án sai).\n' +
-          '2. PHƯƠNG ÁN SAI PHẢI HOÀN TOÀN SAI ĐỐI VỚI TỪ "' + questionWord.term + '" nhưng tạo bẫy thông minh:\n' +
-          '   - Là nghĩa của từ phát âm gần giống hoặc dễ nhầm lẫn (Similar sounding words, ví dụ: pitch, ditch, beach).\n' +
-          '   - Là nghĩa của từ có tiền tố/hậu tố dễ nhầm (False friends / Root word confusion).\n' +
-          '   - Là nghĩa của từ cùng ngữ cảnh chủ đề nhưng sai bản chất.\n' +
-          '3. HÌNH THỨC: Cùng từ loại (' + pos + '), cùng cấu trúc/văn phong với nghĩa đúng, dùng dấu phẩy (,) phân tách nét nghĩa, TUYỆT ĐỐI KHÔNG có dấu chấm (.) ở cuối.\n' +
-          '4. ĐỊNH DẠNG: Trả về DUY NHẤT một JSON Array dạng: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + (count > 2 ? ', "phương án sai 3"' : '') + ']';
+          'Đáp án đúng chuẩn: "' + correctDef + '".\n\n' +
+          'NHIỆM VỤ: Tạo chính xác ' + count + ' phương án SAI HOÀN TOÀN (distractors) bằng tiếng Việt có phong cách trình bày MẠO DANH HOÀN HẢO ĐÁP ÁN ĐÚNG.\n\n' +
+          'QUY TẮC BẮT BUỘC ĐỂ MẠO DANH & ĐẢM BẢO ĐỀ THI ĐẲNG CẤP:\n' +
+          '1. TUYỆT ĐỐI KHÔNG ĐƯỢC LÀ BẤT KỲ NÉT NGHĨA NÀO CỦA TỪ "' + questionWord.term + '" (Cấm nghĩa đen, nghĩa bóng, nghĩa lóng, nghĩa phụ của từ này).\n' +
+          '2. PHƯƠNG ÁN SAI PHẢI HOÀN TOÀN SAI ĐỐI VỚI TỪ "' + questionWord.term + '" nhưng tạo bẫy thông minh (nghĩa của từ phát âm tương tự, tiền tố/hậu tố dễ nhầm, từ cùng chủ đề).\n' +
+          '3. MẠO DANH 100% PHONG CÁCH TRÌNH BÀY CỦA ĐÁP ÁN ĐÚNG:\n' +
+          '   - Viết hoa: ' + (isCap ? 'BẮT BUỘC VIẾT HOA chữ cái đầu tiên (như đáp án đúng)' : 'viết thường chữ cái đầu tiên (như đáp án đúng)') + '.\n' +
+          '   - Dấu ngoặc đơn: ' + (hasParens ? 'BẮT BUỘC PHẢI CÓ phần giải thích sắc thái trong dấu ngoặc đơn (...) tương tự độ dài đáp án đúng' : 'KHÔNG dùng dấu ngoặc đơn') + '.\n' +
+          '   - Độ dài & cấu trúc: Xấp xỉ ' + wordCount + ' từ, cấu trúc câu tương đương đáp án đúng.\n' +
+          '   - Dấu chấm cuối: ' + (hasDot ? 'BẮT BUỘC có dấu chấm (.) ở cuối' : 'KHÔNG có dấu chấm ở cuối') + '.\n' +
+          '4. ĐỊNH DẠNG: Trả về DUY NHẤT một JSON Array chuỗi tiếng Việt: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + (count > 2 ? ', "phương án sai 3"' : '') + ']';
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const timeoutId = setTimeout(() => controller.abort(), 4500);
 
         const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
           method: 'POST',
@@ -6682,7 +6712,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              maxOutputTokens: 140,
+              maxOutputTokens: 500,
               temperature: 0.4,
               responseMimeType: "application/json"
             },
@@ -6703,7 +6733,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
             const parsed = JSON.parse(rawText);
             if (Array.isArray(parsed) && parsed.length > 0) {
-              const cleanDistractors = parsed.map(s => cleanVietnameseDefinition((s || '').toString())).filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
+              const cleanDistractors = parsed.map(s => chameleonStyleMatching((s || '').toString(), correctDef)).filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
               if (cleanDistractors.length > 0) {
                 quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
                 saveAiDistractorCache();
@@ -6934,7 +6964,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       const regularNeeded = 3 - aiDistractors.length;
-      const regularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
+      const rawRegularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
+      const regularDistractors = rawRegularDistractors.map(d => chameleonStyleMatching(d, correctDef));
       const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
       const choices = [correctDef, ...aiDistractors, ...regularDistractors].slice(0, 4).sort(() => Math.random() - 0.5);
 
