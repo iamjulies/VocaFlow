@@ -1548,7 +1548,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.20</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.21</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2427,10 +2427,10 @@
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
           <div>
             <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 1 Lượt Gợi Ý AI</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá: 20 điểm</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 50 điểm</div>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(1, 20)">
-            Đổi (20đ)
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(1, 50)">
+            Đổi (50đ)
           </button>
         </div>
 
@@ -2438,10 +2438,10 @@
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
           <div>
             <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 5 Lượt Gợi Ý AI</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá: 100 điểm</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 250 điểm</div>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(5, 100)">
-            Đổi (100đ)
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(5, 250)">
+            Đổi (250đ)
           </button>
         </div>
 
@@ -2450,12 +2450,12 @@
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <span style="font-weight: 700; font-size: 14px; color: var(--text);">💡 10 Lượt Gợi Ý AI</span>
-              <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">TIẾT KIỆM 20đ</span>
+              <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">TIẾT KIỆM 50đ</span>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 180 điểm</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 450 điểm</div>
           </div>
-          <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 180)">
-            Đổi (180đ)
+          <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 450)">
+            Đổi (450đ)
           </button>
         </div>
       </div>
@@ -2795,7 +2795,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.20</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.21</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7046,7 +7046,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       // 3. RULE: Must have hints available
       const currentHints = getUserHints();
       if (currentHints <= 0) {
-        if (confirm('🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ' + getUserPoints() + ' điểm.\n\nBạn có muốn mở Cửa hàng để đổi 20 điểm lấy 1 lượt gợi ý mới không?')) {
+        if (confirm('🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ' + getUserPoints() + ' điểm.\n\nBạn có muốn mở Cửa hàng để đổi 50 điểm lấy 1 lượt gợi ý mới không?')) {
           openShopModal();
         }
         return;
