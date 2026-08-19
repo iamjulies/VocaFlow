@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2f</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3053,19 +3053,15 @@
         </div>
       </div>
 
-      <!-- 3-TILE STATS -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
-          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">📚 Bộ từ</div>
-          <div id="pub-view-stat-decks" style="font-size: 18px; font-weight: 800; color: #818cf8; margin-top: 2px;">0</div>
+      <!-- 2-TILE STATS (CLEAN & BALANCED) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">📚 Bộ từ chia sẻ</div>
+          <div id="pub-view-stat-decks" style="font-size: 20px; font-weight: 800; color: #818cf8; margin-top: 2px;">0</div>
         </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
-          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">📝 Từ vựng</div>
-          <div id="pub-view-stat-words" style="font-size: 18px; font-weight: 800; color: #34d399; margin-top: 2px;">0</div>
-        </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
-          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">💰 Điểm / Uy tín</div>
-          <div id="pub-view-stat-points" style="font-size: 18px; font-weight: 800; color: #fbbf24; margin-top: 2px;">+0đ</div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">📝 Tổng số từ vựng</div>
+          <div id="pub-view-stat-words" style="font-size: 20px; font-weight: 800; color: #34d399; margin-top: 2px;">0</div>
         </div>
       </div>
 
@@ -3384,7 +3380,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3523,7 +3519,7 @@
 
   <!-- MODAL: VOCAFLOW COMMUNITY & OFFICIAL LIBRARY -->
   <div class="modal-overlay" id="modal-library">
-    <div class="modal" style="max-width: 720px; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="modal" style="max-width: 780px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px;">📚</span>
@@ -3539,23 +3535,23 @@
       <div style="margin-bottom: 12px;">
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm bộ từ hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px;">
-          <button class="btn btn-outline btn-sm" onclick="fetchCloudLibraryDecks()" title="Làm mới từ Cloud" style="white-space: nowrap;">
+          <button class="btn btn-outline btn-sm" onclick="fetchCloudLibraryDecks()" title="Làm mới từ Cloud" style="white-space: nowrap; font-weight: 600;">
             🔄 Làm mới
           </button>
         </div>
 
-        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;" id="lib-category-tabs">
-          <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')">🏫 Cấp 2 (6-9)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')">📘 Cấp 3 (10-12)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')">📜 Chứng Chỉ</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="life" onclick="setLibraryCategory('life')">💼 Nghề & Đời Sống</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')">☁️ Đóng Góp</button>
+        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;" id="lib-category-tabs">
+          <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🏫 Cấp 2 (6-9)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📘 Cấp 3 (10-12)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📜 Chứng Chỉ</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="life" onclick="setLibraryCategory('life')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">💼 Nghề & Đời Sống</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cloud" onclick="setLibraryCategory('cloud')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">☁️ Đóng Góp</button>
         </div>
       </div>
 
       <!-- LIBRARY DECK LIST -->
-      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; padding-right: 4px; margin-bottom: 14px; max-height: 460px;">
+      <div id="library-deck-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; padding: 4px 6px 14px 2px; margin-bottom: 12px; align-items: stretch; scrollbar-width: thin;">
         <!-- Rendered via JS -->
       </div>
 
@@ -5553,7 +5549,7 @@
       if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
       if (statDecksEl) statDecksEl.textContent = authorDecks.length;
       if (statWordsEl) statWordsEl.textContent = totalWords;
-      if (statPointsEl) statPointsEl.textContent = '+' + (authorDecks.length * 100) + 'đ';
+      if (statPointsEl) statPointsEl.textContent = '';
 
       if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' bộ từ';
       if (decksListEl) {
@@ -13480,42 +13476,42 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         );
 
         html += `
-          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 16px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.18);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color};"></div>
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; min-height: 240px; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.18); box-sizing: border-box;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color}; border-top-left-radius: 14px; border-bottom-left-radius: 14px;"></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0;">
                   <span style="font-size: 22px; flex-shrink: 0;">${icon}</span>
-                  <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
+                  <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.35;">${escapeHtml(deck.title)}</h4>
                   ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
                 </div>
                 <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700; flex-shrink: 0;">${wordCount} từ</span>
               </div>
-              <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              <p style="font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                 <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
               </div>
-              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: auto;">
                 <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1fr 1.2fr' : '1fr 1.25fr'}; gap: 5px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
-              <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
+            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1fr 1.25fr' : '1fr 1.25fr'}; gap: 6px; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+              <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
                 👁️ Xem
               </button>
               ${isAuthor ? `
-                <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
+                <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
                   ✏️ Sửa
                 </button>
-                <button class="btn btn-outline btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
+                <button class="btn btn-outline btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
                   🗑️ Xóa
                 </button>
               ` : ''}
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 36px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 11.5px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
                 📥 ${isImported ? 'Tải lại' : 'Tải về'}
               </button>
             </div>
