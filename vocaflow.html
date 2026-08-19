@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2a</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2b</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3369,7 +3369,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2a</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2b</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3612,9 +3612,25 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label class="form-label">Tên Người Đóng Góp (Tác giả hiển thị):</label>
-        <input type="text" id="pub-deck-author" class="form-input" placeholder="Tên hoặc biệt danh của bạn (VD: Julie, Thầy Hùng, Minh Anh...)">
+      <div class="form-group" style="margin-bottom: 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" style="margin: 0; font-size: 12px; font-weight: 700; color: var(--text);">👤 Người Đóng Góp:</label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span id="pub-deck-author-avatar" style="width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(135deg, #a855f7, #6366f1); font-size: 11px; font-weight: 800; color: white;">👤</span>
+            <strong id="pub-deck-author-name" style="font-size: 13.5px; color: #a5b4fc;">Khách (Offline)</strong>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+            <input type="radio" name="pub-visibility" id="pub-visibility-public" value="public" checked>
+            <span>🌐 Công khai (Tên & Profile)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+            <input type="radio" name="pub-visibility" id="pub-visibility-anon" value="anon">
+            <span>🔒 Ẩn danh (Không hiện Profile)</span>
+          </label>
+        </div>
       </div>
 
       <!-- SOURCE SELECTION TABS -->
@@ -5236,10 +5252,41 @@
     }
 
     function openPublicProfileByAuthor(authorName, deckId) {
-      if (!authorName) return;
+      if (!authorName || authorName === 'Ẩn danh') return;
       const allDecks = getAllLibraryDecks();
-      const authorDecks = allDecks.filter(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
-      const firstDeck = authorDecks.find(d => d.id === deckId) || authorDecks[0];
+      const targetDeck = allDecks.find(d => d.id === deckId) || allDecks.find(d => (d.author || '').toLowerCase() === authorName.toLowerCase());
+
+      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
+      const isCurrentUser = currentUser && (
+        (targetDeck && targetDeck.authorUid && targetDeck.authorUid === currentUser.uid) ||
+        (currentUser.displayName && authorName.toLowerCase() === currentUser.displayName.toLowerCase()) ||
+        (authorName.toLowerCase() === 'i am julies' && (currentUser.email.includes('julies') || (currentUser.displayName || '').toLowerCase().includes('julies')))
+      );
+
+      let resolvedName = authorName;
+      let resolvedAvatar = targetDeck?.authorAvatar || authorName;
+      let resolvedBio = targetDeck?.authorBio || '';
+      let authorDecks = [];
+
+      if (isVocaFlowOfficial) {
+        resolvedName = 'VocaFlow Chuẩn';
+        resolvedAvatar = 'icons/Icon-192.png';
+        resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.';
+        authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
+      } else if (isCurrentUser) {
+        resolvedName = currentUser.displayName || authorName;
+        resolvedAvatar = currentUser.avatar || currentUser.displayName || authorName;
+        resolvedBio = currentUser.bio || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+        authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
+      } else {
+        const matchedStudent = adminStudentsData.find(s => (targetDeck && targetDeck.authorUid && s.uid === targetDeck.authorUid) || s.displayName.toLowerCase() === authorName.toLowerCase());
+        if (matchedStudent) {
+          resolvedName = matchedStudent.displayName;
+          resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName;
+          resolvedBio = matchedStudent.bio || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+        }
+        authorDecks = allDecks.filter(d => (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+      }
 
       const nameEl = document.getElementById('pub-view-name');
       const avEl = document.getElementById('pub-view-avatar');
@@ -5252,9 +5299,9 @@
 
       const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
 
-      if (nameEl) nameEl.textContent = authorName;
-      if (avEl) avEl.innerHTML = renderAvatarHtml(firstDeck?.authorAvatar || authorName, 72, 28);
-      if (bioEl) bioEl.textContent = firstDeck?.authorBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+      if (nameEl) nameEl.textContent = resolvedName;
+      if (avEl) avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
       if (statDecksEl) statDecksEl.textContent = authorDecks.length;
       if (statWordsEl) statWordsEl.textContent = totalWords;
       if (statPointsEl) statPointsEl.textContent = '+' + (authorDecks.length * 100) + 'đ';
@@ -13048,9 +13095,27 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function getAllLibraryDecks() {
       const map = new Map();
-      BUILTIN_LIBRARY_DECKS.forEach(d => map.set(d.id, d));
+      BUILTIN_LIBRARY_DECKS.forEach(d => {
+        const builtInDeck = {
+          ...d,
+          author: 'VocaFlow Chuẩn',
+          authorAvatar: 'icons/Icon-192.png',
+          authorBio: 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.'
+        };
+        map.set(d.id, builtInDeck);
+      });
       cloudLibraryDecks.forEach(d => {
-        if (d && d.id) map.set(d.id, d);
+        if (d && d.id) {
+          // If this cloud deck was uploaded by current user, dynamically reflect their latest profile!
+          if (currentUser && ((d.authorUid && d.authorUid === currentUser.uid) || (currentUser.displayName && (d.author || '').toLowerCase() === currentUser.displayName.toLowerCase()))) {
+            if (!d.isAnonymous) {
+              d.author = currentUser.displayName || d.author;
+              d.authorAvatar = currentUser.avatar || d.authorAvatar;
+              d.authorBio = currentUser.bio || d.authorBio;
+            }
+          }
+          map.set(d.id, d);
+        }
       });
       return Array.from(map.values());
     }
@@ -13133,7 +13198,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
               </div>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-                <span>👤</span> <span>Đóng góp:</span> <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
               </div>
             </div>
 
@@ -13276,10 +13341,15 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (fileInput) fileInput.value = '';
       if (statusEl) statusEl.style.display = 'none';
 
-      // Set author name
-      if (authorInput) {
-        authorInput.value = (currentUser && currentUser.displayName && currentUser.displayName !== 'Khách') ? currentUser.displayName : (authorInput.value || 'Thành viên VocaFlow');
-      }
+      // Set fixed author name and avatar
+      const authorNameEl = document.getElementById('pub-deck-author-name');
+      const authorAvEl = document.getElementById('pub-deck-author-avatar');
+      const currentName = (currentUser && currentUser.displayName && currentUser.displayName !== 'Khách') ? currentUser.displayName : 'Thành viên VocaFlow';
+      if (authorNameEl) authorNameEl.textContent = currentName;
+      if (authorAvEl) authorAvEl.innerHTML = renderAvatarHtml(currentUser?.avatar || currentName, 26, 12);
+
+      const pubRadio = document.getElementById('pub-visibility-public');
+      if (pubRadio) pubRadio.checked = true;
 
       // Populate local decks select
       if (localDeckSelect) {
@@ -13306,6 +13376,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     // Legacy alias
     function openPublisherDeckUploadModal() {
+      openCommunityDeckUploadModal();
+    }
+    function openCommunityUploadModal() {
       openCommunityDeckUploadModal();
     }
 
@@ -13515,7 +13588,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      const author = (authorInput?.value || '').trim() || (currentUser && currentUser.displayName) || 'Cộng đồng VocaFlow';
+      const isAnon = document.getElementById('pub-visibility-anon')?.checked;
+      const currentName = (currentUser && currentUser.displayName) || 'Thành viên VocaFlow';
+      const author = isAnon ? 'Ẩn danh' : currentName;
+      const authorUid = isAnon ? '' : ((currentUser && currentUser.uid) || '');
+      const authorAvatar = isAnon ? '' : ((currentUser && currentUser.avatar) || '');
+      const authorBio = isAnon ? '' : ((currentUser && currentUser.bio) || '');
+
       const deckId = 'pub_deck_' + Date.now();
       const customCatInput = document.getElementById('pub-deck-custom-category');
       let finalCategory = catSelect ? catSelect.value : 'THPT';
@@ -13525,11 +13604,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const payload = {
         id: deckId,
         title: title,
-        description: (descInput?.value || '').trim() || `Bộ từ vựng chia sẻ bởi ${author}`,
+        description: (descInput?.value || '').trim() || (isAnon ? 'Bộ từ vựng chia sẻ bởi thành viên ẩn danh' : `Bộ từ vựng chia sẻ bởi ${author}`),
         author: author,
-        authorUid: (currentUser && currentUser.uid) || '',
-        authorAvatar: (currentUser && currentUser.avatar) || '',
-        authorBio: (currentUser && currentUser.bio) || '',
+        authorUid: authorUid,
+        authorAvatar: authorAvatar,
+        authorBio: authorBio,
+        isAnonymous: !!isAnon,
         category: finalCategory,
         icon: iconSelect ? iconSelect.value : '📘',
         color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
