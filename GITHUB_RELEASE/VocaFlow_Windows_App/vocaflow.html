@@ -1474,6 +1474,42 @@
         min-width: 0;
       }
     }
+    /* KEYBOARD SHORTCUT BADGES (v0.0.9.18) */
+    .key-shortcut-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace, sans-serif;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1.5px 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #c7d2fe;
+      line-height: 1.2;
+      user-select: none;
+    }
+    .quiz-key-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.18);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      font-size: 12px;
+      font-weight: 800;
+      color: #a5b4fc;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .quiz-option:hover .quiz-key-badge {
+      background: rgba(99, 102, 241, 0.35);
+      color: white;
+      border-color: var(--primary);
+    }
   </style>
 </head>
 <body>
@@ -1512,7 +1548,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.17</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.18</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1878,7 +1914,10 @@
         </div>
 
         <div id="quiz-next-container" style="text-align: center; margin-top: 20px; display: none;">
-          <button class="btn btn-primary" style="padding: 12px 32px;" onclick="nextQuizQuestion()">Câu tiếp theo ➔</button>
+          <button class="btn btn-primary" style="padding: 12px 32px; display: inline-flex; align-items: center; gap: 8px;" onclick="nextQuizQuestion()">
+            <span>Câu tiếp theo</span>
+            <kbd class="key-shortcut-badge">Enter ↵</kbd>
+          </button>
         </div>
       </div>
     </section>
@@ -1956,6 +1995,14 @@
           <button class="btn btn-outline btn-icon" id="btn-autofc-shuffle" onclick="shuffleCurrentAutoFlashcard()" title="Trộn ngẫu nhiên danh sách phát">
             <span style="font-size: 14px;">🔀</span>
           </button>
+        </div>
+
+        <!-- Keyboard Shortcuts Hint Guide (v0.0.9.18) -->
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <span><kbd class="key-shortcut-badge">Space</kbd> Tạm dừng / Tiếp tục</span>
+          <span><kbd class="key-shortcut-badge">A / ◀</kbd> Thẻ trước</span>
+          <span><kbd class="key-shortcut-badge">D / ▶</kbd> Thẻ sau</span>
+          <span><kbd class="key-shortcut-badge">Enter</kbd> Lật thẻ (khi dừng)</span>
         </div>
 
         <!-- Speed & Delay Controls -->
@@ -2494,6 +2541,21 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <!-- GUEST PERKS PROMOTION BANNER (v0.0.9.18) -->
+      <div id="guest-perks-banner" style="display: none; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+          ✨ Tạo tài khoản VocaFlow miễn phí để nhận trọn bộ đặc quyền:
+        </div>
+        <ul style="margin: 0 0 10px 0; padding-left: 18px; font-size: 12px; color: var(--text); line-height: 1.6;">
+          <li>☁️ <strong>Lưu trữ & đồng bộ vĩnh viễn trên Cloud</strong> (không sợ mất từ khi đổi máy).</li>
+          <li>📚 <strong>Mở khóa toàn bộ Thư Viện Từ Vựng THPT</strong> chất lượng cao.</li>
+          <li>🎁 <strong>Nhập mã quà tặng</strong> nhận điểm ví và 5 lượt Gợi Ý AI.</li>
+        </ul>
+        <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-profile'); openAuthModal('register');" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 14px; font-size: 13px;">
+          🚀 Đăng Ký / Đăng Nhập Ngay
+        </button>
+      </div>
+
       <div style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
         <div id="profile-avatar" style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden;" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
           👤
@@ -2733,7 +2795,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.17</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.18</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3462,7 +3524,9 @@
       if (h !== null) {
         return parseInt(h, 10) || 0;
       }
+      const guestBanner = document.getElementById('guest-perks-banner');
       if (currentUser && currentUser.email) {
+        if (guestBanner) guestBanner.style.display = 'none';
         localStorage.setItem(STORAGE_KEY_USER_HINTS, '5');
         return 5;
       }
@@ -3562,6 +3626,13 @@
     function openShopModal() {
       updateEconomyUI();
       openModal('modal-shop');
+      setTimeout(() => {
+        const giftInput = document.getElementById('shop-gift-code-input');
+        if (giftInput) {
+          giftInput.focus();
+          giftInput.select();
+        }
+      }, 60);
     }
 
     function buyHintsPackage(hintCount, costPoints) {
@@ -4370,9 +4441,11 @@
       const profileBadgeEl = document.getElementById('profile-badge');
       const profileAvatarEl = document.getElementById('profile-avatar');
       const authActionBtn = document.getElementById('btn-profile-auth-action');
+      const guestBanner = document.getElementById('guest-perks-banner');
 
       const nameMobileEl = document.getElementById('user-display-name-mobile');
       if (currentUser && currentUser.email) {
+        if (guestBanner) guestBanner.style.display = 'none';
         const displayName = currentUser.displayName || currentUser.email.split('@')[0];
         if (nameEl) nameEl.textContent = displayName;
         if (nameMobileEl) nameMobileEl.textContent = `Tài khoản (${displayName})`;
@@ -4395,6 +4468,7 @@
           authActionBtn.style.borderColor = 'rgba(239,68,68,0.4)';
         }
       } else {
+        if (guestBanner) guestBanner.style.display = 'block';
         if (nameEl) nameEl.textContent = 'Khách';
         if (nameMobileEl) nameMobileEl.textContent = 'Tài khoản (Khách)';
         if (profileNameEl) profileNameEl.textContent = 'Khách (Offline)';
@@ -5854,6 +5928,13 @@
       document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
       openModal('modal-word');
+      setTimeout(() => {
+        const termInput = document.getElementById('word-term');
+        if (termInput) {
+          termInput.focus();
+          termInput.select();
+        }
+      }, 60);
     }
 
     function editWord(id) {
@@ -6855,10 +6936,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const optionsContainer = document.getElementById('quiz-options-container');
       optionsContainer.innerHTML = '';
 
-      choices.forEach(choice => {
+      choices.forEach((choice, idx) => {
         const opt = document.createElement('button');
         opt.className = 'quiz-option';
-        opt.textContent = choice;
+        opt.style.display = 'flex';
+        opt.style.alignItems = 'center';
+        opt.style.gap = '10px';
+        opt.style.textAlign = 'left';
+
+        const keyNum = idx + 1;
+        const keyBadge = `<span class="quiz-key-badge">${keyNum}</span>`;
+        opt.innerHTML = `${keyBadge} <span class="quiz-opt-text" style="flex: 1;">${escapeHtml(choice)}</span>`;
         opt.onclick = () => checkQuizAnswer(opt, choice === correctDef);
         optionsContainer.appendChild(opt);
       });
@@ -7039,7 +7127,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           saveDatabase(true);
 
           allButtons.forEach(btn => {
-            if (btn.textContent === (questionWord.definitionVi || questionWord.definition)) {
+            const txt = btn.querySelector('.quiz-opt-text')?.textContent || btn.textContent;
+            if (txt === (questionWord.definitionVi || questionWord.definition)) {
               btn.classList.add('correct');
             }
           });
@@ -11153,6 +11242,81 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         if (btn) btn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
       }
     }
+    // =========================================================================
+    // GLOBAL KEYBOARD SHORTCUTS ENGINE (v0.0.9.18)
+    // =========================================================================
+    window.addEventListener('keydown', (e) => {
+      // Ignore shortcuts if user is typing in form inputs, textareas or contenteditables
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable) {
+        return;
+      }
+      // Ignore if any modal overlay is open (except quiz result)
+      const openModal = document.querySelector('.modal-overlay.active:not(#modal-quiz-result)');
+      if (openModal) {
+        return;
+      }
+
+      // 1. AUTO FLASHCARD SCREEN SHORTCUTS
+      const autoFcScreen = document.getElementById('screen-autofc');
+      if (autoFcScreen && autoFcScreen.classList.contains('active')) {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          toggleAutoFlashcardPlayPause();
+        } else if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          nextAutoFlashcard();
+        } else if (e.code === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          prevAutoFlashcard();
+        } else if (e.key === 'Enter') {
+          if (!isAutoPlaying) {
+            e.preventDefault();
+            handleAutoCardManualFlip();
+          }
+        }
+        return;
+      }
+
+      // 2. QUIZ SCREEN SHORTCUTS
+      const quizScreen = document.getElementById('screen-quiz');
+      if (quizScreen && quizScreen.classList.contains('active')) {
+        if (!quizIsAnswered) {
+          if (['1', '2', '3', '4'].includes(e.key)) {
+            e.preventDefault();
+            const idx = parseInt(e.key, 10) - 1;
+            const options = document.querySelectorAll('#quiz-options-container .quiz-option');
+            if (options && options[idx] && !options[idx].disabled) {
+              options[idx].click();
+            }
+          }
+        } else {
+          // When question is answered, Enter or Space advances to next question
+          if (e.key === 'Enter' || e.code === 'Space') {
+            const nextContainer = document.getElementById('quiz-next-container');
+            if (nextContainer && nextContainer.style.display !== 'none') {
+              e.preventDefault();
+              nextQuizQuestion();
+            }
+          }
+        }
+        return;
+      }
+
+      // 3. MANUAL FLASHCARD SCREEN SHORTCUTS
+      const flashcardScreen = document.getElementById('screen-flashcard');
+      if (flashcardScreen && flashcardScreen.classList.contains('active')) {
+        if (e.code === 'Space' || e.key === 'Enter') {
+          e.preventDefault();
+          flipFlashcard();
+        } else if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          nextFlashcard();
+        } else if (e.code === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          prevFlashcard();
+        }
+      }
+    });
   </script>
 </body>
 </html>
