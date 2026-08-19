@@ -1847,7 +1847,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3881,7 +3881,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7913,7 +7913,11 @@
       const masteryGroup = document.getElementById('form-word-mastery-group');
       if (masteryGroup) masteryGroup.style.display = 'none';
       const slider = document.getElementById('word-mastery-slider');
-      if (slider) slider.value = 0;
+      if (slider) {
+        slider.min = 0;
+        slider.max = 100;
+        slider.value = 0;
+      }
       updateWordModalMasteryPreview(0);
 
       document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
@@ -7962,11 +7966,15 @@
       document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
       document.getElementById('word-note').value = w.note || '';
 
-      // Show mastery slider when editing existing word
+      // Show mastery slider when editing existing word (ONLY ALLOW DECREASING, CANNOT INCREASE BEYOND CURRENT SCORE)
       const masteryGroup = document.getElementById('form-word-mastery-group');
       if (masteryGroup) masteryGroup.style.display = 'block';
       const slider = document.getElementById('word-mastery-slider');
-      if (slider) slider.value = score;
+      if (slider) {
+        slider.min = 0;
+        slider.max = Math.max(0, score);
+        slider.value = score;
+      }
       updateWordModalMasteryPreview(score);
 
       document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
@@ -8722,6 +8730,8 @@
 
           input.oninput = (e) => handleSpellingInput(e, idx);
           input.onkeydown = (e) => handleSpellingKeyDown(e, idx);
+          input.onfocus = () => input.select();
+          input.onclick = () => input.select();
 
           currentWordBlock.appendChild(input);
           if (!firstInputToFocus) firstInputToFocus = input;
@@ -8729,12 +8739,25 @@
       });
 
       if (firstInputToFocus) {
-        setTimeout(() => firstInputToFocus.focus(), 80);
+        setTimeout(() => {
+          firstInputToFocus.focus();
+          firstInputToFocus.select();
+        }, 80);
       }
     }
 
     function getEditableSpellingInputs() {
       return Array.from(document.querySelectorAll('#spelling-boxes-container .spelling-letter-box:not(.prefilled)'));
+    }
+
+    function focusNextSpellingInput(currentInput) {
+      const editables = getEditableSpellingInputs();
+      const curPos = editables.indexOf(currentInput);
+      if (curPos >= 0 && curPos < editables.length - 1) {
+        const next = editables[curPos + 1];
+        next.focus();
+        next.select();
+      }
     }
 
     function handleSpellingInput(e, idx) {
@@ -8745,13 +8768,7 @@
       if (val.length > 0) {
         input.value = val[val.length - 1].toUpperCase();
         input.classList.remove('wrong');
-
-        // Move to next editable input
-        const editables = getEditableSpellingInputs();
-        const curPos = editables.indexOf(input);
-        if (curPos >= 0 && curPos < editables.length - 1) {
-          editables[curPos + 1].focus();
-        }
+        focusNextSpellingInput(input);
       } else {
         input.value = '';
       }
@@ -8762,8 +8779,18 @@
       const editables = getEditableSpellingInputs();
       const curPos = editables.indexOf(input);
 
+      // SPACE KEY: Quick focus to next unfilled or wrong letter box
       if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space') {
         e.preventDefault();
+        if (spellingIsAnswered) {
+          nextSpellingQuestion();
+          return;
+        }
+        const target = editables.find(inp => !inp.value || inp.classList.contains('wrong')) || editables[0];
+        if (target) {
+          target.focus();
+          target.select();
+        }
         return;
       }
 
@@ -8773,6 +8800,7 @@
           const prev = editables[curPos - 1];
           prev.value = '';
           prev.focus();
+          prev.select();
         } else {
           input.value = '';
           input.classList.remove('wrong');
@@ -8781,11 +8809,13 @@
         if (curPos > 0) {
           e.preventDefault();
           editables[curPos - 1].focus();
+          editables[curPos - 1].select();
         }
       } else if (e.key === 'ArrowRight') {
         if (curPos < editables.length - 1) {
           e.preventDefault();
           editables[curPos + 1].focus();
+          editables[curPos + 1].select();
         }
       } else if (e.key === 'Enter') {
         e.preventDefault();
@@ -8795,6 +8825,12 @@
         } else {
           checkSpellingAnswer();
         }
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        // Direct replacement of existing character without needing Backspace
+        input.value = e.key.toUpperCase();
+        input.classList.remove('wrong');
+        e.preventDefault();
+        focusNextSpellingInput(input);
       }
     }
 
@@ -8845,6 +8881,13 @@
       });
 
       const feedbackMsg = document.getElementById('spelling-feedback-msg');
+
+      if (firstWrongInput) {
+        setTimeout(() => {
+          firstWrongInput.focus();
+          firstWrongInput.select();
+        }, 120);
+      }
 
       if (wrongCount === 0) {
         // CORRECT ANSWER (100% CORRECT)!
@@ -14928,14 +14971,61 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
     }
     // =========================================================================
-    // GLOBAL KEYBOARD SHORTCUTS ENGINE (v0.0.9.18)
+    // GLOBAL KEYBOARD SHORTCUTS & ESCAPE ENGINE (v0.0.10.3i UPDATE)
     // =========================================================================
     window.addEventListener('keydown', (e) => {
-      // Ignore shortcuts if user is typing in form inputs, textareas or contenteditables
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable) {
+      // UNIVERSAL ESC KEY HANDLER: Closes modals, exits study modes & screens
+      if (e.key === 'Escape' || e.code === 'Escape') {
+        const activeModals = Array.from(document.querySelectorAll('.modal-overlay.active'));
+        if (activeModals.length > 0) {
+          e.preventDefault();
+          const topModal = activeModals[activeModals.length - 1];
+          closeModal(topModal.id);
+          return;
+        }
+
+        const autoFcScreen = document.getElementById('screen-autofc');
+        if (autoFcScreen && autoFcScreen.classList.contains('active')) {
+          e.preventDefault();
+          exitAutoFlashcard();
+          return;
+        }
+
+        const quizScreen = document.getElementById('screen-quiz');
+        if (quizScreen && quizScreen.classList.contains('active')) {
+          e.preventDefault();
+          exitQuizSession();
+          return;
+        }
+
+        const spellingScreen = document.getElementById('screen-spelling');
+        if (spellingScreen && spellingScreen.classList.contains('active')) {
+          e.preventDefault();
+          exitSpellingSession();
+          return;
+        }
+
+        const deckDetailScreen = document.getElementById('screen-deck-detail');
+        if (deckDetailScreen && deckDetailScreen.classList.contains('active')) {
+          e.preventDefault();
+          showScreen('screen-decks');
+          return;
+        }
+
+        const currentActiveScreen = document.querySelector('.screen.active');
+        if (currentActiveScreen && currentActiveScreen.id !== 'screen-decks') {
+          e.preventDefault();
+          showScreen('screen-decks');
+          return;
+        }
+      }
+
+      // Ignore standard shortcuts if user is actively typing in form inputs (unless in spelling boxes)
+      const isSpellingBox = e.target && e.target.classList && e.target.classList.contains('spelling-letter-box');
+      if (!isSpellingBox && (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable)) {
         return;
       }
-      // Ignore if any modal overlay is open (except quiz result)
+      // Ignore shortcuts if any modal is open
       const openModal = document.querySelector('.modal-overlay.active:not(#modal-quiz-result)');
       if (openModal) {
         return;
@@ -15217,19 +15307,22 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           return;
         }
         const cefr = document.getElementById('ai-topic-cefr')?.value || 'auto';
-        prompt = `You are a world-class English teacher and lexicographer.
-Generate exactly ${count} unique English vocabulary words/phrases for topic: "${topic}".
+        prompt = `You are a world-class English lexicographer and Oxford dictionary engine.
+Generate exactly ${count} unique, non-duplicate English vocabulary words/phrases for topic: "${topic}".
 Target CEFR Level: ${cefr === 'auto' ? 'Diverse mix (A2, B1, B2, C1, C2)' : cefr}.
 
-STRICT RULES:
-1. Every "term" MUST be strictly in LOWERCASE (e.g. "resilient", "sustainable energy", "take into account"), unless it is a proper noun.
-2. Nouns MUST be in SINGULAR form (e.g. "strategy", not "strategies").
-3. Verbs MUST be in BASE INFINITIVE form (e.g. "mitigate", not "mitigating" or "mitigated").
-4. Every single word MUST strictly relate to "${topic}".
+STRICT RULES & STANDARDS:
+1. NO DUPLICATES: Every generated term MUST be distinct.
+2. ALL terms in LOWERCASE (e.g. "resilient", "cutting-edge"), unless recognized proper nouns.
+3. NOUNS in SINGULAR form; VERBS in BASE INFINITIVE form.
+4. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
+5. PART OF SPEECH (part_of_speech): MUST be EXACTLY ONE of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection". Do NOT abbreviate (never use "n.", "v.", "adj.").
+6. DEFINITION (definition_vietnamese): Concise, high-accuracy Vietnamese translation matching the topic.
+7. NOTE (note): Extra grammar nuance, preposition usage or memory mnemonic tip.
 
 Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
-  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
+  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
       } else if (currentAiStudioMode === 'passage') {
         const passage = (document.getElementById('ai-passage-input')?.value || '').trim();
@@ -15238,19 +15331,21 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           document.getElementById('ai-passage-input')?.focus();
           return;
         }
-        prompt = `You are an expert English teacher. Extract the ${count} most valuable, academic, and higher-level English vocabulary words from this passage:
+        prompt = `You are an expert English lexicographer and Oxford dictionary engine. Extract the ${count} most valuable, academic, non-duplicate English vocabulary words from this passage:
 """${passage}"""
 
-STRICT EXTRACTION RULES:
-1. Focus heavily on DIFFICULT, ACADEMIC, and HIGHER CEFR level words (B2, C1, C2). Ignore basic words (A1, A2).
-2. Verbs MUST be converted to their BASE INFINITIVE form (e.g. "scrutinize", not "scrutinizing" or "scrutinized").
-3. Nouns MUST be converted to SINGULAR form (e.g. "phenomenon", not "phenomena").
-4. Terms MUST be strictly LOWERCASE unless proper nouns.
-5. Vietnamese definition MUST accurately match the passage context.
+STRICT EXTRACTION RULES & STANDARDS:
+1. NO DUPLICATES: Every extracted term MUST be distinct.
+2. Focus on DIFFICULT, ACADEMIC, HIGHER CEFR words (B2, C1, C2).
+3. VERBS to BASE INFINITIVE form; NOUNS to SINGULAR form.
+4. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
+5. PART OF SPEECH: MUST be EXACTLY ONE of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction". Do NOT abbreviate.
+6. DEFINITION (definition_vietnamese): Accurate, natural Vietnamese translation in passage context.
+7. NOTE (note): Extra contextual nuance or collocations.
 
 Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
-  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
+  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
       } else if (currentAiStudioMode === 'raw') {
         const rawWords = (document.getElementById('ai-raw-input')?.value || '').trim();
@@ -15259,14 +15354,18 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           document.getElementById('ai-raw-input')?.focus();
           return;
         }
-        prompt = `You are an expert English dictionary engine. For these English words: ${rawWords}
-STRICT RULES:
-1. Ensure all terms are in LOWERCASE and base form (singular nouns, base infinitive verbs).
-2. Provide full IPA, part of speech, Vietnamese meaning, example sentence, CEFR level, collocations, synonyms, antonyms.
+        prompt = `You are an expert English lexicographer and Oxford dictionary engine. Standardize these vocabulary terms: ${rawWords}
+
+STRICT STANDARDIZATION RULES:
+1. NO DUPLICATES: Ensure each term is unique.
+2. ALL terms in LOWERCASE; Nouns SINGULAR; Verbs BASE INFINITIVE.
+3. PHONETIC: Accurate IPA with slashes /.../.
+4. PART OF SPEECH: Exactly one of "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+5. DEFINITION: Precise Vietnamese meaning. Extra nuance in "note".
 
 Format output ONLY as a raw JSON 2D array without markdown formatting:
 [
-  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv"]
+  ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
       }
 
@@ -15368,27 +15467,58 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           throw new Error('Không thể phân giải dữ liệu từ AI. Vui lòng thử lại!');
         }
 
-        aiGeneratedWordsCache = parsedArray.map((row, idx) => {
+        const seenTerms = new Set();
+        const uniqueWords = [];
+
+        parsedArray.forEach((row, idx) => {
           let termStr = (row[0] || '').trim();
-          // Lowercase unless recognized proper noun
           if (!['English', 'Vietnamese', 'French', 'German', 'Spanish', 'Japanese', 'Chinese', 'Google', 'IELTS', 'TOEIC', 'TOEFL'].includes(termStr)) {
             termStr = termStr.toLowerCase();
           }
+          if (!termStr) return;
+          if (seenTerms.has(termStr)) return; // Prevent duplicates in the same generated deck
+          seenTerms.add(termStr);
 
-          return {
+          // Standardize Part of Speech strictly matching manual add word dropdown
+          let rawPos = (row[2] || 'noun').trim().toLowerCase();
+          if (rawPos.includes('noun phrase') || rawPos === 'cụm danh từ') rawPos = 'noun phrase';
+          else if (rawPos.includes('phrasal verb') || rawPos === 'cụm động từ') rawPos = 'phrasal verb';
+          else if (rawPos.includes('idiom') || rawPos === 'thành ngữ') rawPos = 'idiom';
+          else if (rawPos.includes('phrase') || rawPos === 'cụm từ') rawPos = 'phrase';
+          else if (rawPos === 'n' || rawPos === 'n.' || rawPos.includes('noun') || rawPos.includes('danh từ')) rawPos = 'noun';
+          else if (rawPos === 'v' || rawPos === 'v.' || rawPos.includes('verb') || rawPos.includes('động từ')) rawPos = 'verb';
+          else if (rawPos === 'adj' || rawPos === 'adj.' || rawPos.includes('adjective') || rawPos.includes('tính từ')) rawPos = 'adjective';
+          else if (rawPos === 'adv' || rawPos === 'adv.' || rawPos.includes('adverb') || rawPos.includes('trạng từ')) rawPos = 'adverb';
+          else if (rawPos.includes('prep') || rawPos.includes('giới từ')) rawPos = 'preposition';
+          else if (rawPos.includes('conj') || rawPos.includes('liên từ')) rawPos = 'conjunction';
+          else if (rawPos.includes('interj') || rawPos.includes('thán từ')) rawPos = 'interjection';
+          else rawPos = 'other';
+
+          // Standardize Phonetic slashes /.../
+          let phonetic = (row[1] || '').trim();
+          if (phonetic && !phonetic.startsWith('/')) phonetic = '/' + phonetic;
+          if (phonetic && !phonetic.endsWith('/')) phonetic = phonetic + '/';
+
+          let level = (row[5] || 'B1').trim().toUpperCase();
+          if (!['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(level)) level = 'B2';
+
+          uniqueWords.push({
             id: 'ai_w_' + Date.now() + '_' + idx,
             selected: true,
             term: termStr,
-            phonetic: (row[1] || '').trim(),
-            partOfSpeech: (row[2] || 'noun').trim(),
+            phonetic: phonetic,
+            partOfSpeech: rawPos,
             definitionVi: (row[3] || '').trim(),
             example: (row[4] || '').trim(),
-            level: (row[5] || 'B1').trim().toUpperCase(),
+            level: level,
             collocations: (row[6] || '').trim(),
             synonyms: (row[7] || '').trim(),
-            antonyms: (row[8] || '').trim()
-          };
-        }).filter(w => w.term.length > 0);
+            antonyms: (row[8] || '').trim(),
+            note: (row[9] || '').trim()
+          });
+        });
+
+        aiGeneratedWordsCache = uniqueWords;
 
         isAiStudioGenerating = false;
         aiStudioGenProgress = 100;
@@ -15535,11 +15665,12 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
         partOfSpeech: w.partOfSpeech || '',
         exampleSentence: w.example || '',
         example: w.example || '',
+        note: w.note || '',
         cefrLevel: w.level || 'B1',
         level: w.level || 'B1',
-        synonyms: w.synonyms ? w.synonyms.split(',').map(s=>s.trim()) : [],
-        antonyms: w.antonyms ? w.antonyms.split(',').map(s=>s.trim()) : [],
-        collocations: w.collocations ? w.collocations.split(',').map(s=>s.trim()) : [],
+        synonyms: w.synonyms ? w.synonyms.split(',').map(s=>s.trim()).filter(Boolean) : [],
+        antonyms: w.antonyms ? w.antonyms.split(',').map(s=>s.trim()).filter(Boolean) : [],
+        collocations: w.collocations ? w.collocations.split(',').map(s=>s.trim()).filter(Boolean) : [],
         status: 'newWord',
         masteryScore: 0,
         createdAt: new Date().toISOString(),
@@ -15550,7 +15681,7 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
       saveDatabase(true);
 
       closeModal('modal-ai-deck-studio');
-      showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost}đ ví)`);
+      showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost} Xu)`);
       renderDecks();
       openDeckDetail(targetDeckId);
     }
