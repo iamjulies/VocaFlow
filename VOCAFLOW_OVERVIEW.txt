@@ -189,7 +189,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Chặn nhập phím Space trong Luyện Viết (Spelling)**: Ngăn chặn triệt để hành vi vô tình bấm phím cách (Space) khi gõ từ ghép, tự động lọc khoảng trắng giúp người dùng gõ liền mạch mà không lo bị kẹt hoặc phải bấm Backspace xóa tay.
     * **Hỗ trợ phím Enter khi Nạp Mã Quà Tặng (Gift Code)**: Cho phép nhấn phím `Enter` trực tiếp trong ô nhập mã để nạp thưởng ngay mà không cần dùng chuột bấm nút "Áp dụng".
     * **Căn thẳng hàng 4 nút Thao Tác Bộ Từ (Deck Toolbar Grid 2x2)**: Sắp xếp 4 nút `[+ Thêm Từ]`, `[⬆ Nhập Excel]`, `[⬇ Xuất Excel]`, `[🚀 Chia sẻ Thư Viện]` thành lưới 2x2 đối xứng hoàn hảo trên màn hình hẹp/di động, chấm dứt hiện tượng lệch hàng 3 trên 1 dưới.
-    * **Xóa bỏ tài khoản rác / Bot kiểm thử & Bổ sung nút Xóa tài khoản**: Đã dọn dẹp triệt để tài khoản bot rác `user_julies` trên Firebase Cloud, đồng thời trang bị nút **`🗑️ Xóa`** trực tiếp trong Cổng Quản Lý Học Viên (`modal-publisher-portal`) cho quản trị viên.� giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
+    * **Xóa bỏ tài khoản rác / Bot kiểm thử & Bổ sung nút Xóa tài khoản**: Đã dọn dẹp triệt để tài khoản bot rác `user_julies` trên Firebase Cloud, đồng thời trang bị nút **`🗑️ Xóa`** trực tiếp trong Cổng Quản Lý Học Viên (`modal-publisher-portal`) cho quản trị viên.� giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
   - 👥 Thẻ Hồ Sơ Người Dùng Công Khai Đa Năng (Public Profile Modal - `v0.0.10.2b/c/d/f`):
     * Hiển thị thông tin cho "VocaFlow Chuẩn" (hiển thị đủ 3 bộ từ chuẩn, 180 từ vựng và icon nhận diện chính thức).
     * Dynamic Profile Resolution: Tự động cập nhật tên mới (VD: "julies"), Avatar và Bio mới nhất của tác giả lên toàn bộ các bộ từ đã chia sẻ trước đó mà không bị gán cứng tên cũ.
@@ -217,7 +217,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
+• 🤖 v0.0.10.3: AI Deck Generator Studio - Xưởng Tạo & Làm Giàu Bộ Từ Vựng Thông Minh Bằng Google Gemini AI
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
   - 3 Chế độ đầu vào: Theo Chủ đề (Topic Prompt), Trích xuất từ Đoạn văn/Bài báo (Passage), và Chuẩn hóa dãy từ khô (Raw Words).
