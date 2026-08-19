@@ -6664,7 +6664,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     // Persistent LocalStorage + Session AI Distractors Cache to minimize API quota
     let quizAiDistractorCache = {};
     try {
-      const savedAiCache = localStorage.getItem('vocaflow_ai_distractors_cache_v3');
+      const savedAiCache = localStorage.getItem('vocaflow_ai_distractors_cache_v4');
       if (savedAiCache) quizAiDistractorCache = JSON.parse(savedAiCache);
     } catch (e) {
       quizAiDistractorCache = {};
@@ -6672,7 +6672,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     function saveAiDistractorCache() {
       try {
-        localStorage.setItem('vocaflow_ai_distractors_cache_v3', JSON.stringify(quizAiDistractorCache));
+        localStorage.setItem('vocaflow_ai_distractors_cache_v4', JSON.stringify(quizAiDistractorCache));
       } catch (e) {}
     }
 
@@ -6843,17 +6843,18 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         const prompt = 'Bạn là chuyên gia biên soạn đề thi trắc nghiệm tiếng Anh chuẩn quốc tế (SAT/IELTS Chameleon Distractor Generator).\n' +
           'Từ tiếng Anh mục tiêu: "' + questionWord.term + '" (' + pos + ').\n' +
-          'Đáp án đúng chuẩn: "' + correctDef + '".\n\n' +
-          'NHIỆM VỤ: Tạo chính xác ' + count + ' phương án SAI HOÀN TOÀN (distractors) bằng tiếng Việt có phong cách trình bày MẠO DANH HOÀN HẢO ĐÁP ÁN ĐÚNG.\n\n' +
+          'Đáp án đúng chuẩn tiếng Việt: "' + correctDef + '".\n\n' +
+          'NHIỆM VỤ: Tạo chính xác ' + count + ' phương án SAI HOÀN TOÀN (distractors) 100% BẰNG TIẾNG VIỆT có phong cách trình bày MẠO DANH HOÀN HẢO ĐÁP ÁN ĐÚNG.\n\n' +
           'QUY TẮC BẮT BUỘC ĐỂ MẠO DANH & ĐẢM BẢO ĐỀ THI ĐẲNG CẤP:\n' +
-          '1. TUYỆT ĐỐI KHÔNG ĐƯỢC LÀ BẤT KỲ NÉT NGHĨA NÀO CỦA TỪ "' + questionWord.term + '" (Cấm nghĩa đen, nghĩa bóng, nghĩa lóng, nghĩa phụ của từ này).\n' +
-          '2. PHƯƠNG ÁN SAI PHẢI HOÀN TOÀN SAI ĐỐI VỚI TỪ "' + questionWord.term + '" nhưng tạo bẫy thông minh (nghĩa của từ phát âm tương tự, tiền tố/hậu tố dễ nhầm, từ cùng chủ đề).\n' +
-          '3. MẠO DANH 100% PHONG CÁCH TRÌNH BÀY CỦA ĐÁP ÁN ĐÚNG:\n' +
+          '1. NGÔN NGỮ BẮT BUỘC: 100% TIẾNG VIỆT TOÀN DIỆN. TUYỆT ĐỐI KHÔNG ĐƯỢC CHÈN HOẶC BẮT ĐẦU BẰNG TỪ/CỤM TỪ TIẾNG ANH (Ví dụ: CẤM ghi "Formal assessment (...)" hay bất kỳ từ tiếng Anh nào; BẮT BUỘC phải là nghĩa tiếng Việt như "Đánh giá tổng kết (...)" hoặc "Đánh giá định kỳ (...)").\n' +
+          '2. TUYỆT ĐỐI KHÔNG ĐƯỢC LÀ BẤT KỲ NÉT NGHĨA NÀO CỦA TỪ "' + questionWord.term + '" (Cấm nghĩa đen, nghĩa bóng, nghĩa lóng, nghĩa phụ của từ này).\n' +
+          '3. PHƯƠNG ÁN SAI PHẢI HOÀN TOÀN SAI ĐỐI VỚI TỪ "' + questionWord.term + '" nhưng tạo bẫy thông minh (nghĩa của từ phát âm tương tự, tiền tố/hậu tố dễ nhầm, từ cùng chủ đề - đều phải diễn đạt bằng tiếng Việt).\n' +
+          '4. MẠO DANH 100% PHONG CÁCH TRÌNH BÀY CỦA ĐÁP ÁN ĐÚNG:\n' +
           '   - Viết hoa: ' + (isCap ? 'BẮT BUỘC VIẾT HOA chữ cái đầu tiên (như đáp án đúng)' : 'viết thường chữ cái đầu tiên (như đáp án đúng)') + '.\n' +
           '   - Dấu ngoặc đơn: ' + (hasParens ? 'BẮT BUỘC PHẢI CÓ phần giải thích sắc thái trong dấu ngoặc đơn (...) tương tự độ dài đáp án đúng' : 'KHÔNG dùng dấu ngoặc đơn') + '.\n' +
           '   - Độ dài & cấu trúc: Xấp xỉ ' + wordCount + ' từ, cấu trúc câu tương đương đáp án đúng.\n' +
           '   - Dấu chấm cuối: ' + (hasDot ? 'BẮT BUỘC có dấu chấm (.) ở cuối' : 'KHÔNG có dấu chấm ở cuối') + '.\n' +
-          '4. ĐỊNH DẠNG: Trả về DUY NHẤT một JSON Array chuỗi tiếng Việt: ["phương án sai 1"' + (count > 1 ? ', "phương án sai 2"' : '') + (count > 2 ? ', "phương án sai 3"' : '') + ']';
+          '5. ĐỊNH DẠNG: Trả về DUY NHẤT một JSON Array chuỗi tiếng Việt: ["phương án sai tiếng Việt 1"' + (count > 1 ? ', "phương án sai tiếng Việt 2"' : '') + (count > 2 ? ', "phương án sai tiếng Việt 3"' : '') + ']';
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 4500);
