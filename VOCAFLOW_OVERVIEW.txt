@@ -122,19 +122,23 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
   - Điều hướng ngữ cảnh thông minh (Context-Aware Navigation): Thoát ôn tập tự động quay về Trang Chủ và cập nhật tiến độ.
   - Loại bỏ hoàn toàn Flashcard thủ công cũ thừa code để tối ưu hóa hiệu năng 100%.
 
-• ✍️ v0.0.10.1 (a -> e): Chế Độ Luyện Viết Chính Tả (Spelling) & Chuẩn Hóa Điểm Thưởng Trắc Nghiệm (Quiz)
+• ✍️ v0.0.10.1 (a -> f): Chế Độ Luyện Viết Chính Tả (Spelling) & Chuẩn Hóa Điểm Thưởng Trắc Nghiệm (Quiz)
   - Luyện trí nhớ cơ bắp (Muscle Memory) giúp người học viết chính xác 100% không sai một ký tự.
   - 3 Cấp độ Thử thách Luyện Viết:
     * 🟢 Dễ (Easy - x1.0 Điểm): Ẩn 1/3 ký tự ngẫu nhiên (hiển thị 2/3 chữ cái gợi ý sẵn).
     * 🟡 Trung bình (Medium - x1.5 Điểm): Ẩn 2/3 ký tự ngẫu nhiên (hiển thị 1/3 chữ cái gợi ý sẵn).
     * 🔴 Khó (Hard / Mastery - x2.0 Điểm): Ẩn 100% ký tự (gõ toàn bộ từ vựng).
-  - Tùy chọn Manh Mối Hiển Thị ("Known-thing Clues"): Tự do bật/tắt Nghĩa tiếng Việt, Phiên âm IPA, và Phát âm thanh (bắt buộc >= 1).
+  - 🔥 Hệ Số Thử Thách Manh Mối (Clue Multiplier - v0.0.10.1f):
+    * 1 Manh mối duy nhất (Hardcore - Chỉ nghe âm thanh hoặc chỉ nhìn nghĩa): Thưởng x1.5!
+    * 2 Manh mối (Nâng cao): Thưởng x1.2!
+    * 3 Manh mối (Toàn diện): Thưởng x1.0 chuẩn!
+    * Badge động tự động nhảy màu và hiển thị hệ số tổng (x1.0 -> x3.0) cả trên modal thiết lập và thanh điều hướng Top Nav.
   - Giao diện Interactive Letter Boxes & Word-Block Grouping: Nhóm từ thông minh tránh ngắt dòng giữa chừng từng từ, tự động chuyển ô khi gõ, phím Backspace lùi ô.
   - Điều khiển Phím Enter 2 Nhịp chuẩn xác: Enter lần 1 kiểm tra kết quả và hiển thị thông báo chúc mừng / nút "Từ Tiếp Theo", Enter lần 2 mới chuyển câu tiếp theo.
   - ⚖️ Cơ Chế Điểm Cân Bằng Khoa Học (v0.0.10.1d):
-    * Điểm Ví (VocaPoints 🪙): Thưởng trọn vẹn theo công sức gõ (Tổng số ô * Hệ số độ khó).
-    * Điểm Tinh Thông (Mastery Score %): Tỉ lệ co giãn khoa học (min(12, ceil(Tổng số ô * 0.35 * Hệ số))), chặn trần tối đa +12% tránh lạm phát độ thuộc bài ở các từ/cụm từ dài.
-    * Điểm Phạt khi gõ sai: Phạt ví theo ô sai (Số ô sai * Hệ số), phạt tinh thông nhẹ (min(8, ceil(Số ô sai * 0.35 * Hệ số))).
+    * Điểm Ví (VocaPoints 🪙): Thưởng trọn vẹn theo công sức gõ (Tổng số ô * Hệ số tổng).
+    * Điểm Tinh Thông (Mastery Score %): Tỉ lệ co giãn khoa học (min(12, ceil(Tổng số ô * 0.35 * Hệ số tổng))), chặn trần tối đa +12% tránh lạm phát độ thuộc bài ở các từ/cụm từ dài.
+    * Điểm Phạt khi gõ sai: Phạt ví theo ô sai (Số ô sai * Hệ số tổng), phạt tinh thông nhẹ (min(8, ceil(Số ô sai * 0.35 * Hệ số tổng))).
   - 🎯 Chuẩn Hóa Điểm Thưởng Trắc Nghiệm Quiz Theo Cấp Độ Thử Thách (v0.0.10.1e - Phương án A):
     * Không phụ thuộc vào nhãn CEFR (tránh sai lệch dữ liệu hoặc cày điểm).
     * 🟢 Dễ (0 bẫy AI): Đúng (+3% thuộc bài, +3đ ví) • Sai (-2% thuộc bài, -2đ ví).

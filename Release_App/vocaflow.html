@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.1f</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2443,7 +2443,7 @@
           <label style="font-size: 12px; font-weight: 700; color: var(--text);">
             2. Manh Mối Hiển Thị (Chọn ít nhất 1):
           </label>
-          <span style="font-size: 11px; color: #a5b4fc;">Bắt buộc >= 1 mục</span>
+          <span id="spelling-clues-multiplier-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🌱 3 Manh mối (x1.0 Chuẩn)</span>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
@@ -3184,7 +3184,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.1f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6793,6 +6793,54 @@
       return '🟢 Dễ (x1.0)';
     }
 
+        function getSpellingMultipliers() {
+      const activeClueCount = [spellingCluesConfig.def, spellingCluesConfig.ipa, spellingCluesConfig.audio].filter(Boolean).length;
+      let clueMult = 1.0;
+      let clueLabel = 'Toàn diện';
+      if (activeClueCount === 1) {
+        clueMult = 1.5;
+        clueLabel = 'Siêu thử thách';
+      } else if (activeClueCount === 2) {
+        clueMult = 1.2;
+        clueLabel = 'Nâng cao';
+      }
+
+      let diffMult = 1.0;
+      let diffLabel = 'Dễ';
+      if (currentSpellingDifficulty === 'hard') {
+        diffMult = 2.0;
+        diffLabel = 'Khó';
+      } else if (currentSpellingDifficulty === 'medium') {
+        diffMult = 1.5;
+        diffLabel = 'Trung bình';
+      }
+
+      const totalMult = Number((diffMult * clueMult).toFixed(2));
+      return { clueMult, clueLabel, diffMult, diffLabel, totalMult, activeClueCount };
+    }
+
+    function updateSpellingClueMultiplierBadge() {
+      const badge = document.getElementById('spelling-clues-multiplier-badge');
+      if (!badge) return;
+      const { clueMult, activeClueCount } = getSpellingMultipliers();
+      if (activeClueCount === 1) {
+        badge.innerHTML = '🔥 1 Manh mối (x1.5 Thưởng)';
+        badge.style.background = 'rgba(239, 68, 68, 0.15)';
+        badge.style.color = '#f87171';
+        badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+      } else if (activeClueCount === 2) {
+        badge.innerHTML = '⚡ 2 Manh mối (x1.2 Thưởng)';
+        badge.style.background = 'rgba(245, 158, 11, 0.15)';
+        badge.style.color = '#fbbf24';
+        badge.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+      } else {
+        badge.innerHTML = '🌱 3 Manh mối (x1.0 Chuẩn)';
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+        badge.style.color = '#34d399';
+        badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+      }
+    }
+
     function openSpellingSetupModal(useSelectionOnly = false, customWordList = null) {
       spellingSetupUseSelection = useSelectionOnly;
       spellingSetupCustomWordList = customWordList;
@@ -6828,6 +6876,7 @@
         if (chk) chk.checked = !!spellingCluesConfig[k];
         updateSpellingClueUI(k, !!spellingCluesConfig[k]);
       });
+      updateSpellingClueMultiplierBadge();
 
       const shuffleCb = document.getElementById('spelling-setup-shuffle-checkbox');
       if (shuffleCb) shuffleCb.checked = isStudyShuffle;
@@ -6885,6 +6934,7 @@
 
       spellingCluesConfig[clueKey] = chk.checked;
       updateSpellingClueUI(clueKey, chk.checked);
+      updateSpellingClueMultiplierBadge();
       localStorage.setItem('vocaflow_spelling_clues', JSON.stringify(spellingCluesConfig));
     }
 
@@ -6943,7 +6993,15 @@
     function updateSpellingDifficultyUI() {
       const badge = document.getElementById('spelling-difficulty-badge');
       if (badge) {
-        badge.textContent = getSpellingDifficultyLabel(currentSpellingDifficulty);
+        const { diffMult, totalMult, activeClueCount } = getSpellingMultipliers();
+        let icon = '🟢';
+        let diffName = 'Dễ';
+        if (currentSpellingDifficulty === 'hard') { icon = '🔴'; diffName = 'Khó'; }
+        else if (currentSpellingDifficulty === 'medium') { icon = '🟡'; diffName = 'Trung bình'; }
+
+        badge.textContent = `${icon} ${diffName} (x${totalMult})`;
+        badge.title = `Cấp độ: ${diffName} (x${diffMult}) • Manh mối: ${activeClueCount}/3 -> Tổng hệ số: x${totalMult}. Bấm để chuyển đổi nhanh độ khó.`;
+
         if (currentSpellingDifficulty === 'hard') {
           badge.style.background = 'rgba(239, 68, 68, 0.15)';
           badge.style.color = '#f87171';
@@ -7234,10 +7292,9 @@
         return;
       }
 
-      // Determine difficulty multiplier (Easy: 1.0, Medium: 1.5, Hard: 2.0)
-      let mult = 1.0;
-      if (currentSpellingDifficulty === 'hard') mult = 2.0;
-      else if (currentSpellingDifficulty === 'medium') mult = 1.5;
+      // Determine combined multiplier (Difficulty * Clue Challenge)
+      const { totalMult } = getSpellingMultipliers();
+      const mult = totalMult;
 
       // Check user answers letter by letter
       let wrongCount = 0;
