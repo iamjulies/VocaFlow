@@ -1548,7 +1548,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.22</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.9.23</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -1744,9 +1744,37 @@
           </div>
         </div>
 
-        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER -->
-        <div class="filter-bar">
-          <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()">
+        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER, POS & CEFR SELECTORS (v0.0.9.23) -->
+        <div class="filter-bar" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()" style="flex: 1; min-width: 140px;">
+          
+          <!-- Dropdown Lọc Theo Từ Loại -->
+          <select id="filter-word-pos-select" class="form-select" onchange="setWordPosFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo từ loại">
+            <option value="all">🏷️ Tất cả từ loại</option>
+            <option value="noun">noun (danh từ)</option>
+            <option value="verb">verb (động từ)</option>
+            <option value="adjective">adjective (tính từ)</option>
+            <option value="adverb">adverb (trạng từ)</option>
+            <option value="noun phrase">noun phrase (cụm danh từ)</option>
+            <option value="phrasal verb">phrasal verb (cụm động từ)</option>
+            <option value="phrase">phrase (cụm từ chung)</option>
+            <option value="idiom">idiom (thành ngữ)</option>
+            <option value="preposition">preposition (giới từ)</option>
+            <option value="conjunction">conjunction (liên từ)</option>
+            <option value="other">khác (other)</option>
+          </select>
+
+          <!-- Dropdown Lọc Theo Cấp Độ CEFR -->
+          <select id="filter-word-cefr-select" class="form-select" onchange="setWordCefrFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo cấp độ CEFR">
+            <option value="all">🎯 Tất cả cấp độ</option>
+            <option value="A1">A1 (Beginner)</option>
+            <option value="A2">A2 (Elementary)</option>
+            <option value="B1">B1 (Intermediate)</option>
+            <option value="B2">B2 (Upper Intermediate)</option>
+            <option value="C1">C1 (Advanced)</option>
+            <option value="C2">C2 (Mastery / Proficiency)</option>
+          </select>
+
           <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
             🎚️ <span class="hide-on-mobile">Lọc điểm</span>
           </button>
@@ -2061,8 +2089,14 @@
               <option value="verb">verb (động từ)</option>
               <option value="adjective">adjective (tính từ)</option>
               <option value="adverb">adverb (trạng từ)</option>
+              <option value="noun phrase">noun phrase (cụm danh từ)</option>
+              <option value="phrasal verb">phrasal verb (cụm động từ)</option>
               <option value="phrase">phrase (cụm từ)</option>
               <option value="idiom">idiom (thành ngữ)</option>
+              <option value="preposition">preposition (giới từ)</option>
+              <option value="conjunction">conjunction (liên từ)</option>
+              <option value="interjection">interjection (thán từ)</option>
+              <option value="other">other (khác)</option>
             </select>
           </div>
 
@@ -2795,7 +2829,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.22</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.9.23</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3416,6 +3450,8 @@
     }
     let currentDeckId = null;
     let currentWordFilter = 'all';
+    let currentPosFilter = 'all';
+    let currentCefrFilter = 'all';
 
     // Flashcard State
     let flashcardList = [];
@@ -5153,9 +5189,20 @@
     // MULTI-SELECTION, MULTI-TIER MASTERY & SLIDER FILTER ENGINE (v0.0.8.10)
     // =========================================================================
     let selectedWordIds = new Set();
-    currentWordFilter = 'all'; // 'all' | '0' | '1-25' | '26-50' | '51-75' | '76-99' | '100' | 'custom-range'
     let customMinScore = 0;
     let customMaxScore = 100;
+
+    function setWordPosFilter(val) {
+      currentPosFilter = val || 'all';
+      renderWordList();
+      updateSelectionUI();
+    }
+
+    function setWordCefrFilter(val) {
+      currentCefrFilter = val || 'all';
+      renderWordList();
+      updateSelectionUI();
+    }
 
     function getWordScore(w) {
       if (!w) return 0;
@@ -5243,6 +5290,48 @@
           const s = getWordScore(w);
           return s >= customMinScore && s <= customMaxScore;
         });
+      }
+
+      // Filter by Part of Speech (POS) (v0.0.9.23)
+      if (currentPosFilter && currentPosFilter !== 'all') {
+        const targetPos = currentPosFilter.toLowerCase().trim();
+        deckWords = deckWords.filter(w => {
+          const wPos = (w.partOfSpeech || '').toLowerCase().trim();
+          if (targetPos === 'other') {
+            return !['noun', 'verb', 'adjective', 'adverb', 'noun phrase', 'phrasal verb', 'phrase', 'idiom', 'preposition', 'conjunction'].includes(wPos);
+          }
+          if (targetPos === 'noun') {
+            return wPos === 'noun' || wPos === 'n' || wPos.startsWith('n ') || (wPos.startsWith('noun') && wPos !== 'noun phrase');
+          }
+          if (targetPos === 'verb') {
+            return wPos === 'verb' || wPos === 'v' || wPos.startsWith('v ') || (wPos.startsWith('verb') && wPos !== 'phrasal verb');
+          }
+          if (targetPos === 'adjective') {
+            return wPos === 'adjective' || wPos === 'adj' || wPos.startsWith('adj');
+          }
+          if (targetPos === 'adverb') {
+            return wPos === 'adverb' || wPos === 'adv' || wPos.startsWith('adv');
+          }
+          if (targetPos === 'noun phrase') {
+            return wPos === 'noun phrase' || wPos.includes('noun phrase') || wPos.includes('cụm danh từ');
+          }
+          if (targetPos === 'phrasal verb') {
+            return wPos === 'phrasal verb' || wPos.includes('phrasal verb') || wPos.includes('cụm động từ');
+          }
+          if (targetPos === 'phrase') {
+            return wPos.includes('phrase') || wPos.includes('cụm');
+          }
+          if (targetPos === 'idiom') {
+            return wPos === 'idiom' || wPos.includes('idiom') || wPos.includes('thành ngữ');
+          }
+          return wPos === targetPos || wPos.includes(targetPos);
+        });
+      }
+
+      // Filter by CEFR Level (v0.0.9.23)
+      if (currentCefrFilter && currentCefrFilter !== 'all') {
+        const targetCefr = currentCefrFilter.toUpperCase().trim();
+        deckWords = deckWords.filter(w => (w.cefrLevel || '').toUpperCase().trim() === targetCefr);
       }
 
       if (query) {
@@ -5770,6 +5859,12 @@
       }
       document.getElementById('word-search-input').value = '';
       currentWordFilter = 'all';
+      currentPosFilter = 'all';
+      currentCefrFilter = 'all';
+      const posFilterSelect = document.getElementById('filter-word-pos-select');
+      if (posFilterSelect) posFilterSelect.value = 'all';
+      const cefrFilterSelect = document.getElementById('filter-word-cefr-select');
+      if (cefrFilterSelect) cefrFilterSelect.value = 'all';
 
       // Reset slider panel
       const panel = document.getElementById('mastery-slider-panel');
@@ -5945,7 +6040,23 @@
 
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
-      document.getElementById('word-pos').value = w.partOfSpeech || '';
+      const posSelect = document.getElementById('word-pos');
+      if (posSelect) {
+        const rawPos = (w.partOfSpeech || '').trim();
+        const rawPosLower = rawPos.toLowerCase();
+        let match = Array.from(posSelect.options).find(opt => opt.value.toLowerCase() === rawPosLower);
+        if (!match && rawPos) {
+          const customOpt = document.createElement('option');
+          customOpt.value = rawPos;
+          customOpt.textContent = rawPos + ' (tùy chỉnh)';
+          posSelect.appendChild(customOpt);
+          posSelect.value = rawPos;
+        } else if (match) {
+          posSelect.value = match.value;
+        } else {
+          posSelect.value = '';
+        }
+      }
       document.getElementById('word-cefr').value = w.cefrLevel || '';
       document.getElementById('word-phonetic').value = w.phonetic || '';
       document.getElementById('word-def').value = w.definitionVi || w.definition || '';
