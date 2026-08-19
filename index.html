@@ -1486,36 +1486,36 @@
         box-sizing: border-box;
       }
       .deck-filter-controls-row {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 6px !important;
-        width: 100% !important;
-        align-items: center !important;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        width: 100%;
+        align-items: center;
       }
       #filter-word-pos-select {
-        flex: 1 !important;
-        min-width: 0 !important;
-        width: auto !important;
-        height: 34px !important;
-        font-size: 11px !important;
-        padding: 0 4px !important;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        height: 34px;
+        font-size: 11px;
+        padding: 0 4px;
       }
       #filter-word-cefr-select {
-        flex: 1 !important;
-        min-width: 0 !important;
-        width: auto !important;
-        height: 34px !important;
-        font-size: 11px !important;
-        padding: 0 4px !important;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        height: 34px;
+        font-size: 11px;
+        padding: 0 4px;
       }
       #btn-toggle-mastery-slider {
-        flex-shrink: 0 !important;
-        width: 36px !important;
-        height: 34px !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        flex-shrink: 0;
+        width: 36px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
     }
     /* KEYBOARD SHORTCUT BADGES (v0.0.9.18) */
@@ -1711,7 +1711,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3492,7 +3492,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3908,6 +3908,7 @@
     const STORAGE_KEY_SHOW_FILTER_POS = 'vocaflow_show_filter_pos';
     const STORAGE_KEY_SHOW_FILTER_CEFR = 'vocaflow_show_filter_cefr';
     const STORAGE_KEY_SHOW_FILTER_SCORE = 'vocaflow_show_filter_score';
+    const STORAGE_KEY_SETTINGS_TIME = 'vocaflow_settings_updated_at';
 
     let showReviewQueueSetting = localStorage.getItem(STORAGE_KEY_SHOW_REVIEW_QUEUE) !== 'false';
     let showFilterPosSetting = localStorage.getItem(STORAGE_KEY_SHOW_FILTER_POS) !== 'false';
@@ -3917,25 +3918,33 @@
     function toggleShowReviewQueueSetting(val) {
       showReviewQueueSetting = !!val;
       localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
+      if (currentUser && !isSyncing) syncData();
     }
 
     function toggleShowFilterPosSetting(val) {
       showFilterPosSetting = !!val;
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
+      if (currentUser && !isSyncing) syncData();
     }
 
     function toggleShowFilterCefrSetting(val) {
       showFilterCefrSetting = !!val;
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
+      if (currentUser && !isSyncing) syncData();
     }
 
     function toggleShowFilterScoreSetting(val) {
       showFilterScoreSetting = !!val;
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
+      if (currentUser && !isSyncing) syncData();
     }
 
     function applyUiFilterSettings() {
@@ -3944,11 +3953,16 @@
       const scoreBtn = document.getElementById('btn-toggle-mastery-slider');
       const scorePanel = document.getElementById('mastery-slider-panel');
       const reviewQueueBanner = document.getElementById('daily-review-banner-container');
+      const filterControlsRow = document.querySelector('.deck-filter-controls-row');
 
-      if (posSelect) posSelect.style.display = showFilterPosSetting ? 'inline-block' : 'none';
-      if (cefrSelect) cefrSelect.style.display = showFilterCefrSetting ? 'inline-block' : 'none';
-      if (scoreBtn) scoreBtn.style.display = showFilterScoreSetting ? 'inline-flex' : 'none';
+      if (posSelect) posSelect.style.display = showFilterPosSetting ? '' : 'none';
+      if (cefrSelect) cefrSelect.style.display = showFilterCefrSetting ? '' : 'none';
+      if (scoreBtn) scoreBtn.style.display = showFilterScoreSetting ? '' : 'none';
       if (!showFilterScoreSetting && scorePanel) scorePanel.style.display = 'none';
+
+      if (filterControlsRow) {
+        filterControlsRow.style.display = (showFilterPosSetting || showFilterCefrSetting || showFilterScoreSetting) ? '' : 'none';
+      }
 
       if (reviewQueueBanner) {
         if (!showReviewQueueSetting) {
@@ -4128,6 +4142,18 @@
 
       const tsCheckbox = document.getElementById('settings-timestamp-checkbox');
       if (tsCheckbox) tsCheckbox.checked = showTimestampSetting;
+
+      const reviewCb = document.getElementById('settings-review-queue-checkbox');
+      if (reviewCb) reviewCb.checked = showReviewQueueSetting;
+
+      const posCb = document.getElementById('settings-filter-pos-checkbox');
+      if (posCb) posCb.checked = showFilterPosSetting;
+
+      const cefrCb = document.getElementById('settings-filter-cefr-checkbox');
+      if (cefrCb) cefrCb.checked = showFilterCefrSetting;
+
+      const scoreCb = document.getElementById('settings-filter-score-checkbox');
+      if (scoreCb) scoreCb.checked = showFilterScoreSetting;
 
       const geminiInput = document.getElementById('gemini-api-key-input');
       if (geminiInput) geminiInput.value = geminiApiKey || '';
@@ -6240,6 +6266,32 @@
                   updateEconomyUI();
                 }
 
+                if (cloudData.settings && typeof cloudData.settings === 'object') {
+                  const remoteSettingsTime = parseInt(cloudData.settings.updatedAt || '0', 10);
+                  const localSettingsTime = parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || '0', 10);
+
+                  if (remoteSettingsTime > localSettingsTime || localSettingsTime === 0) {
+                    if (typeof cloudData.settings.showReviewQueue === 'boolean') {
+                      showReviewQueueSetting = cloudData.settings.showReviewQueue;
+                      localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
+                    }
+                    if (typeof cloudData.settings.showFilterPos === 'boolean') {
+                      showFilterPosSetting = cloudData.settings.showFilterPos;
+                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
+                    }
+                    if (typeof cloudData.settings.showFilterCefr === 'boolean') {
+                      showFilterCefrSetting = cloudData.settings.showFilterCefr;
+                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
+                    }
+                    if (typeof cloudData.settings.showFilterScore === 'boolean') {
+                      showFilterScoreSetting = cloudData.settings.showFilterScore;
+                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
+                    }
+                    localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, remoteSettingsTime.toString());
+                    applyUiFilterSettings();
+                  }
+                }
+
                 saveDatabase(false);
                 refreshActiveScreenData();
               }
@@ -6278,6 +6330,13 @@
                 points: getUserPoints(),
                 hints: getUserHints(),
                 updatedAt: new Date().toISOString()
+              },
+              settings: {
+                showReviewQueue: showReviewQueueSetting,
+                showFilterPos: showFilterPosSetting,
+                showFilterCefr: showFilterCefrSetting,
+                showFilterScore: showFilterScoreSetting,
+                updatedAt: parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || Date.now().toString(), 10)
               },
               lastSync: new Date().toISOString()
             };

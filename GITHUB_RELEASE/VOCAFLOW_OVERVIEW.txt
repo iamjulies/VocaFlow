@@ -181,7 +181,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * Hết lượt miễn phí: Dùng trực tiếp 100đ ví / lượt hoặc mua thêm trong Cửa Hàng VocaShop (1 lượt: 100đ, 5 lượt: 500đ, 10 lượt: 900đ tiết kiệm 100đ).
     * Bỏ qua lập tức hiển thị đáp án và chuyển sang từ tiếp theo mà không bị trừ điểm phạt.
 
-• 👤 v0.0.10.2 (a -> h): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc & Đại Tu Giao Diện Di Động (Mobile UX Overhaul)
+• 👤 v0.0.10.2 (a -> i): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc & Đồng Bộ Cloud Toàn Diện (Cloud Settings Sync)
   - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
     * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
     * Giao diện Hồ sơ gọn gàng: Luôn hiển thị Khung Ghi chú & Mục tiêu học tập (`profile-bio-box`), form sửa chỉ hiện khi bấm nút ✏️ Sửa Tên & Bio.
@@ -203,11 +203,15 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
   - 📐 Bố Cục Thư Viện Danh Sách Ngang & Nút "🌟 CỦA TÔI" (`v0.0.10.2g`):
     * Chuyển đổi Thư Viện sang dạng **Danh sách 1 dòng (Horizontal Row Card)** cho từng bộ từ: Thông tin bộ từ nằm bên trái, cụm nút bấm thao tác nằm bên phải/dưới liền mạch, co giãn linh hoạt 100% không bị che khuất.
     * Nút **`🌟 CỦA TÔI`** đặt ngay cạnh nút Làm Mới: 1-click lọc nhanh toàn bộ các bộ từ do chính mình đăng tải.
-  - 📱 Đại Tu Giao Diện Di Động & Chống Tràn Màn Hình (Mobile UX Overhaul - `v0.0.10.2h`):
-    * **Gọn gàng thanh bộ lọc từ vựng trên điện thoại**: Gộp 3 công cụ lọc (`🏷️ Từ loại`, `🎯 Cấp độ`, `🎚️ Lọc điểm`) thành 1 dòng ngang duy nhất bên dưới thanh tìm kiếm, tiết kiệm tối đa diện tích màn hình.
+  - 📱 Đại Tu Giao Diện Di Động & Khắc Phục Hiển Thị Bộ Lọc (`v0.0.10.2h/i`):
+    * **Hiển thị đầy đủ cả 3 bộ lọc trên điện thoại**: Gỡ bỏ xung đột `!important` trong CSS giúp 2 dropdown `🏷️ Từ loại`, `🎯 Cấp độ` và nút `🎚️ Lọc điểm` xuất hiện đồng thời đầy đủ trên cùng 1 dòng ngang mượt mà.
     * **Tối ưu Modal Hàng Đợi Ôn Tập**: Bỏ khung giải thích thuật toán cồng kềnh, đưa toàn bộ nút học và danh sách từ vựng lên trên cùng trực quan.
     * **Chống đè chữ nút Gợi ý (❓) & Bỏ qua (⏭️)** trong màn hình Quiz và Luyện Viết (Spelling): Tách bạch tiêu đề câu hỏi và cụm nút bằng cấu trúc Flexbox độc lập, tuyệt đối không bị chồng lấn văn bản.
     * **Co giãn ô chữ Luyện Viết linh hoạt (Responsive Letter Boxes & Word Wrap)**: Ứng dụng CSS `clamp()` và ngắt từ tự động theo dấu cách, dấu gạch nối `-`, gạch chéo `/`, đảm bảo các từ dài từ 10-15 ký tự luôn nằm vừa vặn 100% trong khung nhìn điện thoại mà không bị tràn màn hình.
+  - ☁️ Đồng Bộ Cài Đặt 2 Chiều Theo Thời Gian Thực (Timestamped Cloud Settings Sync - `v0.0.10.2i`):
+    * Tích hợp cơ chế đồng bộ Timestamp (`updatedAt`) cho toàn bộ cài đặt giao diện (Bật/tắt Hàng đợi ôn tập, Bật/tắt 3 bộ lọc từ vựng).
+    * Khi sửa cài đặt trên điện thoại, hệ thống lập tức lưu timestamp mới nhất và đẩy lên Cloud, ngăn chặn hoàn toàn việc bị ghi đè hay reset về mặc định khi tải lại trang hoặc mở trên máy tính.
+    * Ràng buộc 2 chiều (Two-Way Binding) chính xác 100% giữa giao diện hộp thoại Cài Đặt (`modal-settings`) và trạng thái thực tế.
 • 🤖 [v0.0.10.3]: AI Deck Generator Studio - Xưởng Tạo Bộ Từ Thông Minh Bằng AI (Dự kiến):
   - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
   - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
