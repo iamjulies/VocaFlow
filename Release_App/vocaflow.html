@@ -1640,7 +1640,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2b</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.2c</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3110,20 +3110,26 @@
       </div>
 
       <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border);">
-        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
           <div id="profile-avatar" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden; box-shadow: 0 4px 12px rgba(168,85,247,0.3);" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
             👤
           </div>
           <div style="flex: 1; min-width: 0;">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
-              <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
+                <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
+              </div>
             </div>
             <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12.5px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+            
             <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
               <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
               <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatar-file-input').click()" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                 <span>📷</span> Đổi Avatar
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="toggleProfileEditSection()" style="font-size: 11px; padding: 4px 10px; font-weight: 600; display: flex; align-items: center; gap: 4px; color: #a5b4fc; border-color: rgba(99,102,241,0.4);">
+                <span>✏️</span> Sửa Tên & Bio
               </button>
               <button type="button" class="btn btn-outline btn-sm" id="btn-remove-avatar" onclick="removeUserAvatar()" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
                 🗑️ Xóa Ảnh
@@ -3132,8 +3138,14 @@
           </div>
         </div>
 
-        <!-- EDIT DISPLAY NAME & BIO (v0.0.10.2a) -->
-        <div id="profile-custom-fields-container" style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+        <!-- BIO DISPLAY BOX (Always visible on profile card) -->
+        <div id="profile-bio-box" style="margin-top: 12px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="font-size: 11px; font-weight: 700; color: #34d399; margin-bottom: 2px;">🎯 Ghi chú & Mục tiêu học tập:</div>
+          <p id="profile-bio-display" style="margin: 0; font-size: 12.5px; color: var(--text); line-height: 1.45; font-style: italic;">Chưa thiết lập mục tiêu cá nhân.</p>
+        </div>
+
+        <!-- COLLAPSIBLE EDIT FORM (Hidden by default, activated on click) -->
+        <div id="profile-custom-fields-container" style="display: none; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px; flex-direction: column; gap: 10px;">
           <div>
             <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
               <span>✏️</span> Tên Hiển Thị (Nickname):
@@ -3146,9 +3158,12 @@
             </label>
             <textarea id="profile-bio-input" class="form-textarea" rows="2" placeholder="Ví dụ: Mục tiêu IELTS 8.0 trước tháng 12 • Mỗi ngày học 20 từ mới • Don't give up!..." style="font-size: 12px;"></textarea>
           </div>
-          <button type="button" class="btn btn-primary btn-sm" onclick="saveUserProfileCustomFields()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 7px 14px; align-self: flex-end; display: flex; align-items: center; gap: 6px;">
-            <span>💾</span> Lưu Thông Tin Cá Nhân
-          </button>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleProfileEditSection(false)" style="font-size: 11.5px;">Hủy</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveUserProfileCustomFields()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 7px 14px; display: flex; align-items: center; gap: 6px;">
+              <span>💾</span> Lưu Thay Đổi
+            </button>
+          </div>
         </div>
       </div>
 
@@ -3369,7 +3384,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2b</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.2c</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -3601,12 +3616,13 @@
   <!-- MODAL: COMMUNITY DECK CONTRIBUTION (OPEN FOR EVERYONE) -->
   <div class="modal-overlay" id="modal-community-upload">
     <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
+      <input type="hidden" id="pub-editing-deck-id" value="">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">🚀</span>
+          <span style="font-size: 22px;" id="pub-modal-icon">🚀</span>
           <div>
-            <strong style="font-size: 16px;">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
+            <strong style="font-size: 16px;" id="pub-modal-title">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;" id="pub-modal-subtitle">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -5190,6 +5206,19 @@
         }
       }
 
+      // Update Profile Name & Bio Inputs & Bio Display Box
+      const nameInput = document.getElementById('profile-display-name-input');
+      const bioInput = document.getElementById('profile-bio-input');
+      if (nameInput && document.activeElement !== nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
+      if (bioInput && document.activeElement !== bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
+
+      const bioDisplayEl = document.getElementById('profile-bio-display');
+      if (bioDisplayEl) {
+        const hasBio = currentUser && currentUser.bio && currentUser.bio.trim().length > 0;
+        bioDisplayEl.textContent = hasBio ? currentUser.bio : 'Chưa thiết lập mục tiêu cá nhân.';
+        bioDisplayEl.style.fontStyle = hasBio ? 'normal' : 'italic';
+      }
+
       // Update metrics
       const statDecks = document.getElementById('profile-stat-decks');
       const statWords = document.getElementById('profile-stat-words');
@@ -5222,6 +5251,20 @@
       }
     }
 
+    function toggleProfileEditSection(forceOpen) {
+      const container = document.getElementById('profile-custom-fields-container');
+      if (!container) return;
+      const willOpen = (typeof forceOpen === 'boolean') ? forceOpen : (container.style.display === 'none' || !container.style.display);
+      container.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen) {
+        const nameInput = document.getElementById('profile-display-name-input');
+        const bioInput = document.getElementById('profile-bio-input');
+        if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
+        if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
+        if (nameInput) nameInput.focus();
+      }
+    }
+
     async function saveUserProfileCustomFields() {
       const nameInput = document.getElementById('profile-display-name-input');
       const bioInput = document.getElementById('profile-bio-input');
@@ -5242,13 +5285,142 @@
 
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       updateAuthUI();
+      toggleProfileEditSection(false);
 
-      // If logged in, push to Cloud
+      // If logged in, push to Cloud User Profile & Public Library Decks
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+        // 1. Update user profile nodes
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/displayName.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newName)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/displayName.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newName)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/bio.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBio)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/bio.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBio)
+        }).catch(() => {});
+
+        // 2. Cascade update all public library decks published by this user!
+        if (Array.isArray(cloudLibraryDecks)) {
+          cloudLibraryDecks.forEach(d => {
+            const isOwner = (d && d.authorUid && d.authorUid === currentUser.uid) ||
+                            (d && d.author && (d.author.toLowerCase() === 'i am julies' || d.author.toLowerCase() === 'julies' || d.author.toLowerCase() === newName.toLowerCase())) ||
+                            (d && d.authorEmail && currentUser.email && d.authorEmail === currentUser.email);
+            if (isOwner && !d.isAnonymous) {
+              d.author = newName;
+              d.authorBio = newBio;
+              d.authorAvatar = currentUser.avatar || d.authorAvatar || '';
+              d.authorUid = currentUser.uid;
+
+              fetch(rtdbUrl + '/publicLibraryDecks/' + d.id + '/author.json' + authParam, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newName)
+              }).catch(() => {});
+
+              fetch(rtdbUrl + '/publicLibraryDecks/' + d.id + '/authorBio.json' + authParam, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newBio)
+              }).catch(() => {});
+
+              fetch(rtdbUrl + '/publicLibraryDecks/' + d.id + '/authorUid.json' + authParam, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(currentUser.uid)
+              }).catch(() => {});
+            }
+          });
+          renderLibraryDecks();
+        }
+
         pushCurrentDatabaseToCloud();
       }
 
-      showToast('✨ Đã lưu thông tin hồ sơ và mục tiêu học tập thành công!');
+      showToast('✨ Đã lưu và đồng bộ hồ sơ cá nhân lên Cloud thành công!');
+    }
+
+    function openEditPublishedDeckModal(deckId) {
+      if (!requireLogin('Chỉnh Sửa Bộ Từ Đã Đăng')) return;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      pendingPublisherDeck = {
+        title: deck.title,
+        words: deck.words || []
+      };
+
+      const editInput = document.getElementById('pub-editing-deck-id');
+      if (editInput) editInput.value = deckId;
+
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      if (titleInput) titleInput.value = deck.title || '';
+      if (descInput) descInput.value = deck.description || '';
+
+      const catSelect = document.getElementById('pub-deck-category');
+      const customCatInput = document.getElementById('pub-deck-custom-category');
+      const customGroup = document.getElementById('pub-custom-category-group');
+
+      const knownValues = ['THPT', '10', '11', '12', 'THCS', '6', '7', '8', '9', 'TIEUHOC', 'IELTS', 'TOEIC', 'TOEFL', 'CAMBRIDGE', 'SAT_GRE', 'GIAOTIEP', 'DULICH', 'DUHOC', 'IT', 'KINHTE', 'YKHOA', 'KYTHUAT', 'CHUYENNGANH'];
+
+      if (catSelect) {
+        if (knownValues.includes(deck.category)) {
+          catSelect.value = deck.category;
+          if (customGroup) customGroup.style.display = 'none';
+        } else {
+          catSelect.value = 'CUSTOM';
+          if (customGroup) customGroup.style.display = 'block';
+          if (customCatInput) customCatInput.value = deck.category || '';
+        }
+      }
+
+      const iconSelect = document.getElementById('pub-deck-icon');
+      if (iconSelect && deck.icon) iconSelect.value = deck.icon;
+
+      const pubRadio = document.getElementById('pub-visibility-public');
+      const anonRadio = document.getElementById('pub-visibility-anon');
+      if (deck.isAnonymous || deck.author === 'Ẩn danh') {
+        if (anonRadio) anonRadio.checked = true;
+      } else {
+        if (pubRadio) pubRadio.checked = true;
+      }
+
+      const modalIcon = document.getElementById('pub-modal-icon');
+      const modalTitle = document.getElementById('pub-modal-title');
+      const modalSubtitle = document.getElementById('pub-modal-subtitle');
+      if (modalIcon) modalIcon.textContent = '✏️';
+      if (modalTitle) modalTitle.textContent = 'Chỉnh Sửa Bộ Từ Đã Đăng';
+      if (modalSubtitle) modalSubtitle.textContent = 'Cập nhật tên, mô tả, danh mục hoặc dữ liệu từ vựng trên Thư Viện Toàn Cầu';
+
+      const uploadBtn = document.getElementById('btn-pub-do-upload');
+      if (uploadBtn) uploadBtn.textContent = '💾 Cập Nhật Lên Thư Viện';
+
+      const previewStatus = document.getElementById('pub-upload-preview-status');
+      if (previewStatus) {
+        previewStatus.style.display = 'block';
+        previewStatus.textContent = `✅ Đang giữ nguyên ${deck.words ? deck.words.length : 0} từ vựng gốc (hoặc tải file/chọn bộ từ mới nếu muốn thay thế).`;
+      }
+
+      openModal('modal-community-upload');
     }
 
     function openPublicProfileByAuthor(authorName, deckId) {
@@ -13179,14 +13351,23 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const icon = deck.icon || '📘';
         const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng');
 
+        // Check if current logged in user is the owner/author of this public deck
+        const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
+          (deck.authorUid && deck.authorUid === currentUser.uid) ||
+          (deck.author && currentUser.displayName && deck.author.toLowerCase() === currentUser.displayName.toLowerCase()) ||
+          (deck.author && (deck.author.toLowerCase() === 'i am julies' || deck.author.toLowerCase() === 'julies') && currentUser.email.includes('julies')) ||
+          (deck.authorEmail && deck.authorEmail === currentUser.email)
+        );
+
         html += `
           <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 16px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.18);">
             <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color};"></div>
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
-                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0;">
                   <span style="font-size: 22px; flex-shrink: 0;">${icon}</span>
                   <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
+                  ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
                 </div>
                 <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700; flex-shrink: 0;">${wordCount} từ</span>
               </div>
@@ -13202,12 +13383,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1.25fr; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
-              <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
-                👁️ Xem trước
+            <div style="display: grid; grid-template-columns: ${isAuthor ? '1fr 1fr 1.25fr' : '1fr 1.25fr'}; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
+                👁️ Xem
               </button>
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
-                📥 ${isImported ? 'Tải thêm' : 'Tải về học'}
+              ${isAuthor ? `
+                <button class="btn btn-outline btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ bạn đã đăng">
+                  ✏️ Sửa
+                </button>
+              ` : ''}
+              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 11.5px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+                📥 ${isImported ? 'Tải lại' : 'Tải về'}
               </button>
             </div>
           </div>
@@ -13350,6 +13536,19 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const pubRadio = document.getElementById('pub-visibility-public');
       if (pubRadio) pubRadio.checked = true;
+
+      const editInput = document.getElementById('pub-editing-deck-id');
+      if (editInput) editInput.value = '';
+
+      const modalIcon = document.getElementById('pub-modal-icon');
+      const modalTitle = document.getElementById('pub-modal-title');
+      const modalSubtitle = document.getElementById('pub-modal-subtitle');
+      if (modalIcon) modalIcon.textContent = '🚀';
+      if (modalTitle) modalTitle.textContent = 'Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu';
+      if (modalSubtitle) modalSubtitle.textContent = 'Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow';
+
+      const uploadBtn = document.getElementById('btn-pub-do-upload');
+      if (uploadBtn) uploadBtn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
 
       // Populate local decks select
       if (localDeckSelect) {
