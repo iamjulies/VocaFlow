@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5f (Build 66)
+Phiên bản hiện tại : v0.10.5g (Build 67)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🏆 v0.10.5g (Build 67 - Nâng Cấp AI Speaking Chuẩn ELSA & Sửa Lỗi Sổ Cái/Người Mua):
+  - Khắc phục triệt để lỗi "không đọc gì mà AI vẫn chấm 85 điểm":
+    * Tích hợp bộ phân tích năng lượng âm thanh Web Audio API (Client-side Voice Activity Detection - VAD):
+      - Phân tích sóng âm RMS và Peak Amplitude trực tiếp trên trình duyệt.
+      - Nếu phát hiện file thu âm là im lặng, tiếng xào xạc, tiếng thở hoặc không có giọng nói con người (RMS < 0.006 hoặc Peak < 0.035) -> Chấm 0 ĐIỂM ngay lập tức, báo rõ "🔇 Micro chưa thu được giọng nói hoặc âm lượng quá nhỏ" và không cộng Xu/Mastery.
+    * Nâng cấp Hệ Thống Prompt Chấm Ngữ Âm Chuẩn ELSA cho Gemini Flash Multimodal:
+      - Thiết lập độ nghiêm ngặt cao nhất (temperature: 0.1) ngăn chặn 100% tình trạng "hallucination" tự tưởng tượng ra từ.
+      - Đối chiếu âm vị khắt khe với phiên âm Oxford IPA: kiểm tra tỉ mỉ âm đuôi (/s/, /t/, /d/, /k/, /z/), trọng âm và độ dài nguyên âm.
+      - Sai âm nào lập tức trừ điểm và gắn cờ cảnh báo/lỗi, đưa ra lời khuyên sửa khẩu hình bằng tiếng Việt chi tiết như gia sư ELSA.
+  - Sửa lỗi Sổ cái tài khoản khi Bán bộ từ (SELL_DECK):
+    * Tính toán và ghi nhận chính xác số dư `balanceAfter` của tác giả và người giới thiệu Affiliate khi có người mua bộ từ, xóa bỏ hoàn toàn lỗi hiển thị `undefined Xu`.
+    * Thêm liên kết mở Modal Profile người mua (`openPublicProfileModal`) trực tiếp từ dòng lịch sử bán bộ từ trong Sổ cái.
+
 • 🎯 v0.10.5f (Build 66 - Fix Chấm Điểm AI, Loại Bỏ Popup Mic WebView2 & Tinh Gọn UI):
   - Khắc phục lỗi nút Chấm Điểm AI:
     * Khôi phục và kết nối hàm `evaluateSpeakingAudioWithGemini` gọi trực tiếp Gemini Flash Multimodal.
