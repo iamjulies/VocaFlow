@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4p) */
+      /* SPELLING EXTREME MODE (v0.10.4r) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4p</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4r</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3297,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4p MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4r MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4p) -->
+      <!-- GUEST LOCK VIEW (v0.10.4r) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4p) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4r) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4p</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4r</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4p) -->
+      <!-- Price Setting for Deck (v0.10.4r) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4p)
+        // Realtime Inter-Tab Synchronization (v0.10.4r)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4p)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4r)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6585,7 +6585,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4p)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4r)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6847,7 +6847,42 @@
                 <span class="badge" style="font-size: 9.5px; padding: 1px 6px; background: ${isPlus ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${color}; font-weight: 700;">${badgeIcon}</span>
                 <span style="font-size: 11px; color: var(--text-muted);">${dateStr}</span>
               </div>
-              <div style="font-size: 12px; font-weight: 600; color: var(--text);">${escapeHtml(tx.description || 'Giao dịch hệ thống')}</div>
+              ${(() => {
+                let descHtml = escapeHtml(tx.description || 'Giao dịch hệ thống');
+                if (tx.type === 'BUY_DECK') {
+                  let deckTitle = tx.deckTitle;
+                  let authorName = tx.authorName;
+                  let deckId = tx.deckId || '';
+                  let authorUid = tx.authorUid || '';
+
+                  if (!deckTitle || !authorName) {
+                    const match = (tx.description || '').match(/Mua bộ từ "(.*?)" từ tác giả (.*)/);
+                    if (match) {
+                      deckTitle = match[1];
+                      authorName = match[2];
+                    }
+                  }
+
+                  const allDecks = getAllLibraryDecks();
+                  const matchedDeck = allDecks.find(d => (deckId && d.id === deckId) || (authorUid && d.authorUid === authorUid) || (deckTitle && d.title === deckTitle));
+                  if (matchedDeck) {
+                    if (matchedDeck.author && !matchedDeck.isAnonymous) authorName = matchedDeck.author;
+                    deckId = matchedDeck.id;
+                    authorUid = matchedDeck.authorUid || authorUid;
+                  }
+
+                  if (deckTitle && authorName) {
+                    descHtml = `Mua bộ từ "<strong>${escapeHtml(deckTitle)}</strong>" từ tác giả <span style="color: #818cf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}', '${escapeHtml(deckId)}')" title="Xem hồ sơ tác giả">${escapeHtml(authorName)}</span>`;
+                  }
+                } else if (tx.type === 'SELL_DECK') {
+                  let deckTitle = tx.deckTitle;
+                  let buyerName = tx.buyerName;
+                  if (deckTitle) {
+                    descHtml = `Bán bộ từ "<strong>${escapeHtml(deckTitle)}</strong>"${buyerName ? ` cho ${escapeHtml(buyerName)}` : ''} (${tx.description?.includes('20%') ? '20% hoa hồng' : '100%'})`;
+                  }
+                }
+                return `<div style="font-size: 12px; font-weight: 600; color: var(--text);">${descHtml}</div>`;
+              })()}
             </div>
             <div style="text-align: right; flex-shrink: 0;">
               <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} Xu</div>
@@ -7155,6 +7190,13 @@
       }
 
       openModal('modal-community-upload');
+    }
+
+        function openPublicProfileModal(authorName, authorUid, deckId) {
+      if (!authorName || authorName === 'Ẩn danh') return;
+      const allDecks = getAllLibraryDecks();
+      const targetDeck = allDecks.find(d => (deckId && d.id === deckId) || (authorUid && d.authorUid === authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+      openPublicProfileByAuthor(targetDeck?.author || authorName, targetDeck?.id || deckId);
     }
 
     function openPublicProfileByAuthor(authorName, deckId) {
@@ -8687,10 +8729,23 @@
             <span>Mức độ thuộc: ${avgScore}%</span>
             <span>Đã thuộc: ${mastered}/${total}</span>
           </div>
-          <div class="deck-timestamp" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
-            <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
-            ${deck.author ? `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(deck.author)}</span>` : ''}
-          </div>
+          ${(() => {
+            let liveAuthor = deck.author || '';
+            let liveAuthorUid = deck.authorUid || '';
+            if (deck.libSourceId || deck.authorUid) {
+              const libDeck = getAllLibraryDecks().find(d => (deck.libSourceId && d.id === deck.libSourceId) || (deck.authorUid && d.authorUid === deck.authorUid));
+              if (libDeck && libDeck.author && !libDeck.isAnonymous) {
+                liveAuthor = libDeck.author;
+                liveAuthorUid = libDeck.authorUid || liveAuthorUid;
+              }
+            }
+            return `
+              <div class="deck-timestamp" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+                <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+                ${liveAuthor ? `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>` : ''}
+              </div>
+            `;
+          })()}
 
           <div class="deck-actions-grid">
             <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sửa thông tin bộ từ">
@@ -8750,8 +8805,18 @@
       const timeEl = document.getElementById('deck-detail-timestamp');
       if (timeEl) {
         let timeText = '🕒 Tạo: ' + formatDateOnly(deck.createdAt || deck.updatedAt);
-        if (deck.author) {
-          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: <span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}')" title="Xem hồ sơ người đóng góp">${escapeHtml(deck.author)}</span>`;
+        let liveAuthor = deck.author || '';
+        let liveAuthorUid = deck.authorUid || '';
+        if (deck.libSourceId || deck.authorUid) {
+          const libDeck = getAllLibraryDecks().find(d => (deck.libSourceId && d.id === deck.libSourceId) || (deck.authorUid && d.authorUid === deck.authorUid));
+          if (libDeck && libDeck.author && !libDeck.isAnonymous) {
+            liveAuthor = libDeck.author;
+            liveAuthorUid = libDeck.authorUid || liveAuthorUid;
+          }
+        }
+
+        if (liveAuthor) {
+          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: <span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">${escapeHtml(liveAuthor)}</span>`;
         } else {
           timeEl.textContent = timeText;
         }
@@ -12132,7 +12197,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4p)
+      // Progressive incomplete session leniency / penalty (v0.10.4r)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
