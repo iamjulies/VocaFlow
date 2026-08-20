@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4d) */
+      /* SPELLING EXTREME MODE (v0.10.4e) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4d</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4e</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4d MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4e MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3383,7 +3383,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4d) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4e) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4076,7 +4076,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4d</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4e</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4407,7 +4407,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4d) -->
+      <!-- Price Setting for Deck (v0.10.4e) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -4857,6 +4857,18 @@
       if (viSlider) viSlider.value = currentSpeechRateVi;
       if (viLabel) viLabel.textContent = `${currentSpeechRateVi.toFixed(1)}x`;
 
+      const apiKeyInput = document.getElementById('setting-gemini-api-key');
+      if (apiKeyInput) {
+        if (!currentUser || !currentUser.email) {
+          apiKeyInput.value = '';
+          apiKeyInput.disabled = true;
+          apiKeyInput.placeholder = '🔒 Đăng nhập tài khoản để cài đặt Gemini API Key';
+        } else {
+          apiKeyInput.disabled = false;
+          apiKeyInput.placeholder = 'AIzaSy...';
+        }
+      }
+
       const tsCheckbox = document.getElementById('settings-timestamp-checkbox');
       if (tsCheckbox) tsCheckbox.checked = showTimestampSetting;
 
@@ -5269,6 +5281,7 @@
         playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserSkips(getUserSkips() + skipCount);
+        addLedgerEntry('BUY_SKIP', -costPoints, `Đổi +${skipCount} Lượt Bỏ Qua (Skip Pass) trong VocaShop`);
         showToast(`🎉 Đã đổi thành công +${skipCount} lượt Bỏ Qua!`);
         updateEconomyUI();
       }
@@ -5292,6 +5305,7 @@
         playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserHints(getUserHints() + hintCount);
+        addLedgerEntry('BUY_HINT', -costPoints, `Đổi +${hintCount} Lượt Gợi Ý AI trong VocaShop`);
         showToast(`🎉 Đã đổi thành công +${hintCount} lượt gợi ý AI!`);
         updateEconomyUI();
       }
@@ -6439,7 +6453,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4d)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4e)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -7147,18 +7161,69 @@
       }
     }
 
-    function handleAuthActionFromProfile() {
+    async function handleAuthActionFromProfile() {
       closeModal('modal-profile');
       if (currentUser) {
-        if (confirm('Bạn có chắc chắn muốn đăng xuất? (Từ vựng trên máy này vẫn được giữ nguyên)')) {
-          currentUser = null;
-          localStorage.removeItem(STORAGE_KEY_AUTH);
-          updateAuthUI();
-          showToast('Đã đăng xuất tài khoản.');
-        }
+        await doLogout();
       } else {
         openAuthModal('login');
       }
+    }
+
+    async function doLogout() {
+      if (!currentUser) return;
+      if (!confirm('Bạn có chắc chắn muốn đăng xuất? Mọi dữ liệu của bạn sẽ được đồng bộ lên Cloud an toàn và thiết bị sẽ được đặt lại về trạng thái ban đầu.')) return;
+
+      showToast('⏳ Đang đồng bộ dữ liệu lên Cloud trước khi đăng xuất...');
+      try {
+        await pushCurrentDatabaseToCloud();
+      } catch (e) {
+        console.warn('Sync before logout warning:', e);
+      }
+
+      // 1. Clear all user account data from LocalStorage & Memory
+      currentUser = null;
+      localStorage.removeItem(STORAGE_KEY_AUTH);
+      localStorage.removeItem('vocaflow_user_ledger');
+      userLedger = [];
+      localStorage.removeItem('vocaflow_purchased_decks');
+      userPurchasedDeckIds = new Set();
+      localStorage.removeItem('vocaflow_gemini_api_key');
+      geminiApiKey = '';
+      const apiInp = document.getElementById('setting-gemini-api-key');
+      if (apiInp) apiInp.value = '';
+
+      localStorage.removeItem('vocaflow_user_avatar');
+      localStorage.removeItem('vocaflow_avatar_time');
+      localStorage.removeItem('vocaflow_user_points');
+      localStorage.removeItem('vocaflow_user_hints');
+      localStorage.removeItem('vocaflow_user_skips');
+      localStorage.removeItem('vocaflow_economy_time');
+      localStorage.removeItem(STORAGE_KEY_LAST_SYNC);
+      localStorage.removeItem('vocaflow_deleted_words');
+      localStorage.removeItem('vocaflow_deleted_decks');
+      deletedWordIds.clear();
+      deletedDeckIds.clear();
+
+      // 2. Reset decks & words to clean starter sample data
+      seedSampleData();
+      saveDatabase(false);
+
+      // 3. Reset points & inventory to guest defaults
+      localStorage.setItem('vocaflow_user_points', '0');
+      localStorage.setItem('vocaflow_user_hints', '5');
+      localStorage.setItem('vocaflow_user_skips', '3');
+      updateEconomyUI();
+
+      // 4. Force difficulty to 'easy'
+      currentQuizDifficulty = 'easy';
+      currentSpellingDifficulty = 'easy';
+      localStorage.setItem('vocaflow_quiz_difficulty', 'easy');
+      localStorage.setItem('vocaflow_spelling_difficulty', 'easy');
+
+      updateAuthUI();
+      refreshActiveScreenData();
+      showToast('👋 Đã đăng xuất an toàn. Dữ liệu tài khoản đã được bảo lưu trên Cloud.');
     }
 
     async function handleFormLogin(e) {
@@ -9312,6 +9377,11 @@
     }
 
     function setSpellingDifficulty(diff) {
+      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
+        alert('🔒 Cấp độ Thường, Khó và Siêu Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        openAuthModal('login');
+        return;
+      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentSpellingDifficulty = diff;
       localStorage.setItem('vocaflow_spelling_difficulty', diff);
@@ -10963,6 +11033,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function setQuizDifficulty(diff) {
+      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
+        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        openAuthModal('login');
+        return;
+      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentQuizDifficulty = diff;
       localStorage.setItem('vocaflow_quiz_difficulty', diff);
@@ -11844,7 +11919,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4d)
+      // Progressive incomplete session leniency / penalty (v0.10.4e)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
