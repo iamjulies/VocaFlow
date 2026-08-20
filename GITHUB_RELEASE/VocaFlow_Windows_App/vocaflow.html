@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.3o) */
+      /* SPELLING EXTREME MODE (v0.10.3p) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.3o</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.3p</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -3407,17 +3407,18 @@
 
       <div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
         <div>
-          <strong style="color: var(--text);">🎯 Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - v0.0.10.1e):</strong><br>
-          • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3đ ví) • Sai (-2% thuộc, -2đ ví)<br>
-          • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5đ ví) • Sai (-3% thuộc, -3đ ví)<br>
-          • 🔴 <strong>Khó:</strong> Đúng (+8% thuộc, +8đ ví) • Sai (-4% thuộc, -4đ ví)<br>
-          • 🟣 <strong>Cực khó:</strong> Đúng (+10% thuộc, +10đ ví) • Sai (-5% thuộc, -5đ ví)
+          <strong style="color: var(--text);">🎯 Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - balance_v1):</strong><br>
+          • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3 Xu) • Sai (-2% thuộc, -2 Xu)<br>
+          • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5 Xu) • Sai (-3% thuộc, -3 Xu)<br>
+          • 🔴 <strong>Khó:</strong> Đúng (+7% thuộc, +7 Xu) • Sai (-4% thuộc, -4 Xu)<br>
+          • 🟣 <strong>Cực khó:</strong> Đúng (+9% thuộc, +9 Xu) • Sai (-5% thuộc, -5 Xu)
         </div>
         <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
-          <strong style="color: var(--text);">✍️ Quy tắc điểm Luyện Viết (Spelling - v0.0.10.1d & v0.0.10.1f):</strong><br>
-          • 💰 <strong>Điểm ví:</strong> +1đ ví cho mỗi ô chữ cái × (Cấp độ: Dễ x1.0, TB x1.5, Khó x2.0) × (Manh mối: 3 manh mối x1.0, 2 manh mối x1.2, 1 manh mối x1.5)<br>
-          • 📈 <strong>Điểm thuộc:</strong> Tăng cân bằng theo số ký tự đúng (tối đa +12%/từ, tránh lạm phát ở từ dài)<br>
-          • ❌ <strong>Gõ sai / Bỏ qua:</strong> Phạt nhẹ theo số ô sai; Bỏ qua không bị trừ điểm phạt.
+          <strong style="color: var(--text);">✍️ Quy tắc điểm Luyện Viết (Spelling - balance_v1):</strong><br>
+          • 💰 <strong>Điểm ví (Xu):</strong> Nhận theo ký tự × Hệ số cấp độ (Dễ x1.0, TB x1.5, Khó x2.0, Siêu Khó x2.5) × Hệ số manh mối (3 manh mối x1.0, 2 manh mối x1.2, 1 manh mối x1.5). Giới hạn tối đa/từ: Dễ (8 Xu), TB (12 Xu), Khó (16 Xu), Siêu Khó (22 Xu).<br>
+          • 📈 <strong>Điểm tinh thông:</strong> Tăng chuẩn theo cấp độ, giới hạn tối đa/từ: Dễ (+4%), TB (+6%), Khó (+8%), Siêu Khó (+10%).<br>
+          • 🔊 <strong>Giới hạn nghe phát âm:</strong> Dễ (6 lần), TB (5 lần), Khó (4 lần), Siêu Khó (3 lần)/từ.<br>
+          • ❌ <strong>Gõ sai / Bỏ qua:</strong> Ở Siêu Khó phạt 75% điểm câu; các cấp độ khác phạt nhẹ theo số ô sai; Bỏ qua không bị trừ phạt.
         </div>
         <div style="border-top: 1px dashed var(--border); padding-top: 6px; color: #34d399; font-weight: 600;">
           🎁 Tặng sẵn <strong>5 lượt Gợi Ý AI</strong> và <strong>3 lượt Bỏ Qua</strong> miễn phí cho tài khoản mới!
@@ -3958,7 +3959,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.3o</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.3p</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6301,8 +6302,17 @@
       }
     }
 
+    function updatePublishModalAuthorUI() {
+      const authorNameEl = document.getElementById('pub-deck-author-name');
+      const authorAvEl = document.getElementById('pub-deck-author-avatar');
+      const currentName = (currentUser && currentUser.displayName && currentUser.displayName !== 'Khách' && currentUser.displayName !== 'Khách (Offline)') ? currentUser.displayName : 'Thành viên VocaFlow';
+      if (authorNameEl) authorNameEl.textContent = currentName;
+      if (authorAvEl) authorAvEl.innerHTML = renderAvatarHtml(currentUser?.avatar || currentName, 26, 12);
+    }
+
     function openEditPublishedDeckModal(deckId) {
       if (!requireLogin('Chỉnh Sửa Bộ Từ Đã Đăng')) return;
+      updatePublishModalAuthorUI();
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
@@ -8841,13 +8851,15 @@
         audioEl.style.display = spellingCluesConfig.audio ? 'inline-flex' : 'none';
       }
 
-      // 2. Render Letter Boxes based on difficulty
+      // 2. Reset Audio Replay Limits & Render Letter Boxes
+      spellingAudioPlaysLeft = getMaxSpellingAudioPlays(currentSpellingDifficulty);
+      updateSpellingAudioButtonUI();
       renderSpellingBoxes(questionWord.term, currentSpellingDifficulty);
 
-      // Auto-play audio if audio clue is enabled
+      // Auto-play audio if audio clue is enabled (not counted towards manual replays)
       if (spellingCluesConfig.audio) {
         setTimeout(() => {
-          speakSpellingTerm();
+          speakSpellingTerm(false);
         }, 150);
       }
     }
@@ -9106,11 +9118,11 @@
           spellingWrongAttemptsForCurrentWord = 0;
 
           const totalBoxes = expected.length;
-          const walletPts = Math.ceil(totalBoxes * mult * 1.2);
+          const walletPts = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
           spellingScore += walletPts;
           spellingPointsEarned += walletPts;
 
-          const masteryGain = Math.min(18, Math.ceil(totalBoxes * 0.45 * mult));
+          const masteryGain = Math.min(10, Math.max(2, Math.round(totalBoxes * 0.28 * mult)));
           const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
@@ -9122,7 +9134,7 @@
           saveDatabase(true);
 
           setTimeout(() => {
-            speakSpellingTerm();
+            speakSpellingTerm(false);
           }, 500);
 
           document.getElementById('spelling-score').textContent = 'Bài: +' + spellingScore + 'đ';
@@ -9151,8 +9163,8 @@
           spellingWrongAttemptsForCurrentWord++;
 
           const totalBoxes = expected.length;
-          const expectedWalletGain = Math.ceil(totalBoxes * mult * 1.2);
-          const expectedMasteryGain = Math.min(18, Math.ceil(totalBoxes * 0.45 * mult));
+          const expectedWalletGain = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
+          const expectedMasteryGain = Math.min(10, Math.max(2, Math.round(totalBoxes * 0.28 * mult)));
 
           // Deduct 75% of expected points for that question (Hardcore)
           const walletPenalty = Math.max(1, Math.round(expectedWalletGain * 0.75));
@@ -9778,13 +9790,48 @@
       refreshActiveScreenData();
     }
 
-    function speakSpellingTerm() {
+    let spellingAudioPlaysLeft = 6;
+
+    function getMaxSpellingAudioPlays(diff) {
+      const d = diff || currentSpellingDifficulty || 'easy';
+      if (d === 'extreme') return 3;
+      if (d === 'hard') return 4;
+      if (d === 'medium') return 5;
+      return 6; // easy
+    }
+
+    function updateSpellingAudioButtonUI() {
+      const btn = document.getElementById('spelling-clue-audio');
+      const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
+      if (!btn) return;
+      if (spellingAudioPlaysLeft <= 0) {
+        btn.innerHTML = `<svg class="icon" style="width: 14px; height: 14px;"><use href="#i-volume"/></svg> Hết lượt nghe (0/${max})`;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+      } else {
+        btn.innerHTML = `<svg class="icon" style="width: 14px; height: 14px;"><use href="#i-volume"/></svg> Nghe lại phát âm (${spellingAudioPlaysLeft}/${max})`;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      }
+    }
+
+    function speakSpellingTerm(isManual = true) {
       if (!spellingList || spellingList.length === 0) return;
       const questionWord = spellingList[spellingIndex];
-      if (questionWord && questionWord.term) {
-        speakText(questionWord.term);
+      if (!questionWord || !questionWord.term) return;
+
+      const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
+      if (isManual) {
+        if (spellingAudioPlaysLeft <= 0) {
+          showToast(`⚠️ Bạn đã hết lượt nghe phát âm cho từ này (tối đa ${max} lần ở cấp độ ${getSpellingDifficultyLabel(currentSpellingDifficulty)})!`);
+          return;
+        }
+        spellingAudioPlaysLeft--;
+        updateSpellingAudioButtonUI();
       }
-      // Re-focus the first unfilled or active box after user listens to audio
+
+      speakText(questionWord.term);
+
       setTimeout(() => {
         const editables = getEditableSpellingInputs();
         const target = editables.find(inp => !inp.value || inp.classList.contains('wrong')) || editables[0];
@@ -10807,8 +10854,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function getQuizScoringDeltas(difficulty, isCorrect) {
       const diff = difficulty || currentQuizDifficulty || 'easy';
       if (isCorrect) {
-        if (diff === 'extreme') return { masteryGain: 10, walletDelta: 10 };
-        if (diff === 'hard') return { masteryGain: 8, walletDelta: 8 };
+        if (diff === 'extreme') return { masteryGain: 9, walletDelta: 9 };
+        if (diff === 'hard') return { masteryGain: 7, walletDelta: 7 };
         if (diff === 'medium') return { masteryGain: 5, walletDelta: 5 };
         return { masteryGain: 3, walletDelta: 3 }; // easy
       } else {
@@ -10951,8 +10998,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
         if (questionWord) {
-          const { gain } = calculateMasteryPoints(questionWord.cefrLevel, true);
-          const { newScore } = updateWordMasteryScore(questionWord, gain);
+          const { masteryGain } = getQuizScoringDeltas(currentQuizDifficulty, true);
+          const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
             words[idx].masteryScore = newScore;
@@ -10970,8 +11017,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
         if (questionWord) {
-          const { penalty } = calculateMasteryPoints(questionWord.cefrLevel, true);
-          const { newScore } = updateWordMasteryScore(questionWord, -penalty);
+          const { masteryPenalty } = getQuizScoringDeltas(currentQuizDifficulty, false);
+          const { newScore } = updateWordMasteryScore(questionWord, -masteryPenalty);
           const idx = words.findIndex(w => w.id === questionWord.id);
           if (idx >= 0) {
             words[idx].masteryScore = newScore;
@@ -15128,12 +15175,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (fileInput) fileInput.value = '';
       if (statusEl) statusEl.style.display = 'none';
 
-      // Set fixed author name and avatar
-      const authorNameEl = document.getElementById('pub-deck-author-name');
-      const authorAvEl = document.getElementById('pub-deck-author-avatar');
-      const currentName = (currentUser && currentUser.displayName && currentUser.displayName !== 'Khách') ? currentUser.displayName : 'Thành viên VocaFlow';
-      if (authorNameEl) authorNameEl.textContent = currentName;
-      if (authorAvEl) authorAvEl.innerHTML = renderAvatarHtml(currentUser?.avatar || currentName, 26, 12);
+      updatePublishModalAuthorUI();
 
       const pubRadio = document.getElementById('pub-visibility-public');
       if (pubRadio) pubRadio.checked = true;
@@ -15455,6 +15497,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         if (activeModals.length > 0) {
           e.preventDefault();
           const topModal = activeModals[activeModals.length - 1];
+          if (topModal.id === 'modal-quiz-result') {
+            exitQuizToDeck();
+            return;
+          }
+          if (topModal.id === 'modal-spelling-result') {
+            exitSpellingToDeck();
+            return;
+          }
           closeModal(topModal.id);
           return;
         }
