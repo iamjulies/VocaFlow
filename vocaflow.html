@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4f) */
+      /* SPELLING EXTREME MODE (v0.10.4g) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4f</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4g</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4f MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4g MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3309,7 +3309,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4f) -->
+      <!-- GUEST LOCK VIEW (v0.10.4g) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3402,7 +3402,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4f) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4g) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4096,7 +4096,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4f</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4g</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4427,7 +4427,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4f) -->
+      <!-- Price Setting for Deck (v0.10.4g) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5393,7 +5393,10 @@
             usedCodes.push(code);
             localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
             if (hts > 0) setUserHints(getUserHints() + hts);
-            if (pts > 0) setUserPoints(getUserPoints() + pts);
+            if (pts > 0) {
+              setUserPoints(getUserPoints() + pts);
+              addLedgerEntry('GIFTCODE', pts, `Nhập mã quà tặng "${code}" (+${pts} Xu)`);
+            }
             if (sks > 0) setUserSkips(getUserSkips() + sks);
 
             msg.style.display = 'block';
@@ -5417,6 +5420,7 @@
         localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
         setUserHints(getUserHints() + 150);
         setUserPoints(getUserPoints() + 500);
+        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 Xu)`);
         msg.style.display = 'block';
         msg.style.color = '#10b981';
         msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 Lượt Gợi Ý AI & +500đ Ví!';
@@ -6478,7 +6482,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4f)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4g)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6494,6 +6498,7 @@
     }
 
     function addLedgerEntry(type, amount, description) {
+      if (isGuest()) return; // Never record guest transactions into user account ledger
       const currentBalance = getUserPoints();
       const tx = {
         id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -6572,7 +6577,7 @@
     }
 
     async function fetchCloudLedger() {
-      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      if (isGuest()) return;
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
@@ -6581,13 +6586,15 @@
           const data = await res.json();
           if (data && typeof data === 'object' && !data.error) {
             const cloudEntries = Object.values(data).filter(e => e && e.timestamp);
-            const map = new Map();
-            userLedger.forEach(e => { if (e && e.id) map.set(e.id, e); });
-            cloudEntries.forEach(e => { if (e && e.id) map.set(e.id, e); });
-            userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
-            localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+            if (cloudEntries.length > 0) {
+              userLedger = cloudEntries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+              if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
+              localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+            } else if (getUserPoints() > 0 && userLedger.length === 0) {
+              addLedgerEntry('STUDY', getUserPoints(), 'Số dư tích lũy ban đầu');
+            }
             renderLedgerList();
+            renderStudioDashboard();
           }
         }
       } catch (e) {
@@ -7269,6 +7276,14 @@
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
 
+      // Clear guest state immediately before logging in
+      localStorage.removeItem('vocaflow_user_ledger');
+      userLedger = [];
+      localStorage.removeItem(STORAGE_KEY_USER_POINTS);
+      localStorage.removeItem(STORAGE_KEY_USER_HINTS);
+      localStorage.removeItem(STORAGE_KEY_USER_SKIPS);
+      localStorage.removeItem(STORAGE_KEY_ECONOMY_TIME);
+
       if (firebaseConfig.apiKey) {
         try {
           const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`, {
@@ -7669,14 +7684,18 @@
                 if (cloudData.economy && typeof cloudData.economy === 'object') {
                   const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
                   const remoteHints = typeof cloudData.economy.hints === 'number' ? cloudData.economy.hints : parseInt(cloudData.economy.hints, 10);
-                  const remoteTime = new Date(cloudData.economy.updatedAt || 0).getTime();
-                  const localTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+                  const remoteSkips = typeof cloudData.economy.skips === 'number' ? cloudData.economy.skips : parseInt(cloudData.economy.skips, 10);
 
-                  if (remoteTime > localTime || localTime === 0) {
-                    if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
-                    if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
-                    localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, remoteTime.toString());
+                  if (!isNaN(remotePoints)) {
+                    localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
                   }
+                  if (!isNaN(remoteHints)) {
+                    localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
+                  }
+                  if (!isNaN(remoteSkips)) {
+                    localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
+                  }
+                  localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
                   updateEconomyUI();
                 }
 
@@ -11979,7 +11998,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4f)
+      // Progressive incomplete session leniency / penalty (v0.10.4g)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
