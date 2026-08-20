@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4k) */
+      /* SPELLING EXTREME MODE (v0.10.4l) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4k</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4l</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2254,8 +2254,16 @@
           <!-- 4 Multiple Choices -->
         </div>
 
+        <!-- NEXT QUESTION BUTTON (Placed ABOVE word details for instant progression) -->
+        <div id="quiz-next-container" style="text-align: center; margin-top: 18px; margin-bottom: 14px; display: none;">
+          <button class="btn btn-primary" style="padding: 12px 32px; display: inline-flex; align-items: center; gap: 8px;" onclick="nextQuizQuestion()">
+            <span>Câu tiếp theo</span>
+            <kbd class="key-shortcut-badge">Enter ↵</kbd>
+          </button>
+        </div>
+
         <!-- WORD FULL DETAILS & AI EXPLANATION CARD (v0.0.10.1g) -->
-        <div id="quiz-word-details-box" style="display: none; margin-top: 18px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+        <div id="quiz-word-details-box" style="display: none; margin-top: 10px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <strong id="quiz-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
@@ -2280,13 +2288,6 @@
             </div>
             <div id="quiz-ai-explanation-text">Đang phân tích lý do chọn đáp án...</div>
           </div>
-        </div>
-
-        <div id="quiz-next-container" style="text-align: center; margin-top: 20px; display: none;">
-          <button class="btn btn-primary" style="padding: 12px 32px; display: inline-flex; align-items: center; gap: 8px;" onclick="nextQuizQuestion()">
-            <span>Câu tiếp theo</span>
-            <kbd class="key-shortcut-badge">Enter ↵</kbd>
-          </button>
         </div>
       </div>
     </section>
@@ -2362,6 +2363,16 @@
         <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
           <div id="spelling-feedback-msg" style="font-size: 14px; font-weight: 700; min-height: 24px; text-align: center;"></div>
 
+          <!-- ACTION BUTTONS: Placed ABOVE word details for instant progression -->
+          <div id="spelling-action-container" style="display: flex; gap: 10px; width: 100%; max-width: 360px; margin-bottom: 6px;">
+            <button class="btn btn-primary" id="btn-spelling-check" onclick="checkSpellingAnswer()" style="flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
+              Kiểm Tra [Enter ↵]
+            </button>
+            <button class="btn btn-success" id="btn-spelling-next" onclick="nextSpellingQuestion()" style="display: none; flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
+              Từ Tiếp Theo [Enter ↵]
+            </button>
+          </div>
+
           <!-- WORD FULL DETAILS CARD (v0.0.10.1g) -->
           <div id="spelling-word-details-box" style="display: none; width: 100%; max-width: 580px; margin: 0 auto; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -2380,15 +2391,6 @@
             <div id="spelling-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
             
             <div id="spelling-detail-meta" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text);"></div>
-          </div>
-          
-          <div id="spelling-action-container" style="display: flex; gap: 10px; width: 100%; max-width: 360px;">
-            <button class="btn btn-primary" id="btn-spelling-check" onclick="checkSpellingAnswer()" style="flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
-              Kiểm Tra [Enter ↵]
-            </button>
-            <button class="btn btn-success" id="btn-spelling-next" onclick="nextSpellingQuestion()" style="display: none; flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
-              Từ Tiếp Theo [Enter ↵]
-            </button>
           </div>
         </div>
       </div>
@@ -3295,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4k MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4l MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3309,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4k) -->
+      <!-- GUEST LOCK VIEW (v0.10.4l) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3405,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4k) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4l) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4099,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4k</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4l</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4430,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4k) -->
+      <!-- Price Setting for Deck (v0.10.4l) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5139,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4k)
+        // Realtime Inter-Tab Synchronization (v0.10.4l)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5222,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4k)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4l)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6147,18 +6149,39 @@
             return;
           }
 
-          let html = '<div style="display: flex; flex-direction: column; gap: 6px;">';
+          let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
           for (const [codeKey, codeData] of Object.entries(data)) {
             if (!codeData) continue;
+            const pts = parseInt(codeData.points, 10) || 0;
+            const hts = parseInt(codeData.hints, 10) || 0;
+            const sks = parseInt(codeData.skips, 10) || 0;
+            const isExpired = codeData.expiresAt && (new Date(codeData.expiresAt).getTime() < Date.now());
+            const expiryStr = codeData.expiresAt ? formatDateTime(codeData.expiresAt) : 'Vĩnh viễn';
+            const statusBadge = isExpired
+              ? '<span class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 10px;">🔴 Hết hạn</span>'
+              : '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">🟢 Hoạt động</span>';
+
+            let rewards = [];
+            if (pts > 0) rewards.push(`+${pts}đ Ví`);
+            if (hts > 0) rewards.push(`+${hts} Gợi Ý`);
+            if (sks > 0) rewards.push(`+${sks} Skip`);
+            const rewardText = rewards.join(', ') || 'Không có quà';
+
             html += `
-              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-elevated); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-elevated); padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); flex-wrap: wrap; gap: 8px;">
                 <div>
-                  <strong style="color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(codeData.code || codeKey)}</strong>
-                  <span style="font-size: 11px; color: var(--text-muted); margin-left: 8px;">(+${codeData.hints || 0} Gợi Ý, +${codeData.points || 0}đ)</span>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: #38bdf8; font-family: monospace; font-size: 13.5px;">${escapeHtml(codeData.code || codeKey)}</strong>
+                    ${statusBadge}
+                    <span style="font-size: 11.5px; color: var(--text); font-weight: 600;">(${rewardText})</span>
+                  </div>
+                  <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
+                    ⏰ Hạn sử dụng: <strong style="color: var(--text);">${expiryStr}</strong>
+                  </div>
                 </div>
                 <div style="display: flex; gap: 6px;">
-                  <button class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 10px;" onclick="copyGiftCodeToClipboard('${escapeHtml(codeData.code || codeKey)}')">📋 Copy</button>
-                  <button class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 10px; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteAdminGiftCode('${escapeHtml(codeKey)}')">🗑️ Xóa</button>
+                  <button class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px;" onclick="copyGiftCodeToClipboard('${escapeHtml(codeData.code || codeKey)}')">📋 Copy</button>
+                  <button class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteAdminGiftCode('${escapeHtml(codeKey)}')">🗑️ Xóa</button>
                 </div>
               </div>
             `;
@@ -6541,7 +6564,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4k)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4l)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -11890,7 +11913,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               btn.classList.add('correct');
             }
           });
-          showToast('⚠️ Chưa đúng (' + delta + 'đ ví, Còn: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
+          showToast(`⚠️ Chưa đúng (${delta} Xu)! Thuộc bài: ${newScore}%`);
         }
       }
 
@@ -12079,7 +12102,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4k)
+      // Progressive incomplete session leniency / penalty (v0.10.4l)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
