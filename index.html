@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.3p) */
+      /* SPELLING EXTREME MODE (v0.10.3q) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.3p</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.3q</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2335,12 +2335,10 @@
             <!-- Rendered by JS -->
           </div>
 
-          <!-- Loa Clue Icon lớn -->
-          <div id="spelling-clue-audio" style="margin-top: 6px; display: inline-flex;">
-            <button class="btn btn-primary btn-sm" onclick="speakSpellingTerm()" style="border-radius: 20px; padding: 6px 16px; font-size: 12px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-              <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Nghe lại phát âm</span>
-            </button>
-          </div>
+          <!-- Nút Nghe Lại Phát Âm (Interactive Button) -->
+          <button id="spelling-clue-audio" class="btn btn-primary btn-sm" onclick="speakSpellingTerm(true)" style="border-radius: 20px; padding: 6px 16px; font-size: 12px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer; transition: all 0.2s;">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span id="spelling-audio-btn-text">Nghe lại phát âm</span>
+          </button>
 
           <div id="spelling-hint-box" style="display: none; margin-top: 14px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 10px; font-size: 12.5px; color: #fbbf24; text-align: left;"></div>
         </div>
@@ -3123,7 +3121,8 @@
               <div>
                 <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🎯 Cấp độ CEFR:</label>
                 <select id="ai-topic-cefr" class="form-select" style="font-size: 12px; padding: 6px 8px;">
-                  <option value="auto">🌟 Tự Động (Đa Dạng A2-C1)</option>
+                  <option value="auto">🌟 Tự Động (Đa Dạng A1-C1)</option>
+                  <option value="A1">A1 - Cơ Bản / Nhập Môn (Beginner)</option>
                   <option value="A2">A2 - Sơ Cấp (Elementary)</option>
                   <option value="B1">B1 - Trung Cấp (Intermediate)</option>
                   <option value="B2">B2 - Trung Cao (Upper-Int)</option>
@@ -3959,7 +3958,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.3p</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.3q</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9802,16 +9801,18 @@
 
     function updateSpellingAudioButtonUI() {
       const btn = document.getElementById('spelling-clue-audio');
-      const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
       if (!btn) return;
+      const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
       if (spellingAudioPlaysLeft <= 0) {
-        btn.innerHTML = `<svg class="icon" style="width: 14px; height: 14px;"><use href="#i-volume"/></svg> Hết lượt nghe (0/${max})`;
+        btn.innerHTML = `<svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Hết lượt nghe (0/${max})</span>`;
         btn.style.opacity = '0.5';
         btn.style.cursor = 'not-allowed';
+        btn.disabled = true;
       } else {
-        btn.innerHTML = `<svg class="icon" style="width: 14px; height: 14px;"><use href="#i-volume"/></svg> Nghe lại phát âm (${spellingAudioPlaysLeft}/${max})`;
+        btn.innerHTML = `<svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Nghe lại phát âm (${spellingAudioPlaysLeft}/${max})</span>`;
         btn.style.opacity = '1';
         btn.style.cursor = 'pointer';
+        btn.disabled = false;
       }
     }
 
@@ -15849,7 +15850,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const cefr = document.getElementById('ai-topic-cefr')?.value || 'auto';
         prompt = `You are a world-class English lexicographer and Oxford dictionary engine.
 Generate exactly ${count} unique, non-duplicate English vocabulary words/phrases for topic: "${topic}".
-Target CEFR Level: ${cefr === 'auto' ? 'Diverse mix (A2, B1, B2, C1, C2)' : cefr}.
+Target CEFR Level: ${cefr === 'auto' ? 'Diverse mix (A1, A2, B1, B2, C1, C2)' : cefr}.
 
 STRICT RULES & STANDARDS:
 1. NO DUPLICATES: Every generated term MUST be distinct.
