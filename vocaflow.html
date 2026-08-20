@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4m) */
+      /* SPELLING EXTREME MODE (v0.10.4n) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4m</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4n</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3297,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4m MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4n MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4m) -->
+      <!-- GUEST LOCK VIEW (v0.10.4n) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4m) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4n) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4m</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4n</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4m) -->
+      <!-- Price Setting for Deck (v0.10.4n) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4m)
+        // Realtime Inter-Tab Synchronization (v0.10.4n)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4m)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4n)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6566,7 +6566,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4m)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4n)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6819,6 +6819,8 @@
         else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua bộ từ';
         else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi gợi ý';
         else if (tx.type === 'BUY_SKIP') badgeIcon = '⏭️ Đổi bỏ qua';
+        else if (tx.type === 'CREATE_DECK') badgeIcon = '📁 Tạo bộ từ';
+        else if (tx.type === 'CREATE_WORD') badgeIcon = '📝 Tạo từ vựng';
         else if (tx.type === 'AI_GEN') badgeIcon = '🤖 Tạo AI';
         else if (tx.type === 'GIFTCODE') badgeIcon = '🎁 GiftCode';
         else if (tx.type === 'PENALTY_QUIT') badgeIcon = '⚠️ Thoát ngang';
@@ -8934,13 +8936,23 @@
           document.getElementById('deck-detail-desc').textContent = desc;
         }
       } else {
+        const curPts = getUserPoints();
+        const deckCost = 50;
+        if (!isGuest() && curPts < deckCost) {
+          alert(`🪙 Bạn không đủ số dư ví để tạo bộ từ mới (cần ${deckCost} Xu, hiện có ${curPts} Xu)! Hãy học bài hoặc dùng GiftCode để kiếm thêm Xu nhé.`);
+          return;
+        }
         decks.push({ id, title, description: desc, color, createdAt: nowIso, updatedAt: nowIso });
+        if (!isGuest()) {
+          addLedgerEntry('CREATE_DECK', -deckCost, `Tạo bộ từ mới "${title}" (-${deckCost} Xu)`);
+          setUserPoints(Math.max(0, curPts - deckCost));
+        }
       }
 
       saveDatabase(true);
       renderDecks();
       closeModal('modal-deck');
-      showToast('Đã lưu bộ từ vựng!');
+      showToast('Đã lưu bộ từ vựng thành công!');
     }
 
     // WORD MODAL
@@ -9061,6 +9073,12 @@
           updatedAt: nowIso
         };
       } else {
+        const curPts = getUserPoints();
+        const wordCost = 10;
+        if (!isGuest() && curPts < wordCost) {
+          alert(`🪙 Bạn không đủ số dư ví để tạo từ mới (cần ${wordCost} Xu, hiện có ${curPts} Xu)! Hãy học bài hoặc dùng GiftCode để kiếm thêm Xu nhé.`);
+          return;
+        }
         words.push({
           id, deckId: currentDeckId,
           term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
@@ -9071,8 +9089,11 @@
           createdAt: nowIso,
           updatedAt: nowIso
         });
-        setUserPoints(getUserPoints() + 10);
-        showToast('🎉 Đã thêm từ vựng mới (+10đ ví thưởng tự soạn)!');
+        if (!isGuest()) {
+          addLedgerEntry('CREATE_WORD', -wordCost, `Tạo từ vựng thủ công "${term}" (-${wordCost} Xu)`);
+          setUserPoints(Math.max(0, curPts - wordCost));
+        }
+        showToast(`📝 Đã thêm từ vựng mới "${term}" (-${wordCost} Xu)!`);
       }
 
       saveDatabase(true);
@@ -12114,7 +12135,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4m)
+      // Progressive incomplete session leniency / penalty (v0.10.4n)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -17309,9 +17330,6 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
         return;
       }
 
-      // Deduct wallet points
-      setUserPoints(currentPts - actualCost);
-
       const titleInput = document.getElementById('ai-new-deck-title');
       let deckTitle = titleInput ? titleInput.value.trim() : '';
       if (!deckTitle) {
@@ -17323,6 +17341,12 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           deckTitle = 'Bộ Từ Vựng Chuẩn Hóa AI (' + formatDateOnly(new Date()) + ')';
         }
       }
+
+      // Record transaction in ledger FIRST
+      addLedgerEntry('AI_GEN', -actualCost, `Tạo bộ từ "${deckTitle}" (${selectedWords.length} từ bằng AI Studio)`);
+
+      // Deduct wallet points
+      setUserPoints(currentPts - actualCost);
 
       const newDeckId = 'deck_' + Date.now();
       const newDeck = {
