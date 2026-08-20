@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4a) */
+      /* SPELLING EXTREME MODE (v0.10.4b) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4a</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4b</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4a MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4b MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -4062,7 +4062,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4a</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4b</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4391,6 +4391,25 @@
       <div class="form-group">
         <label class="form-label">Mô Tả Bộ Từ:</label>
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
+      </div>
+
+      <!-- Price Setting for Deck (v0.10.4b) -->
+      <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
+        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+          <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
+          <span id="pub-price-label-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px;">🟢 Miễn Phí</span>
+        </label>
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(0)" style="font-size: 11px; padding: 3px 8px; border-color: #10b981; color: #34d399;">0đ (Free)</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(50)" style="font-size: 11px; padding: 3px 8px;">50 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(100)" style="font-size: 11px; padding: 3px 8px;">100 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(200)" style="font-size: 11px; padding: 3px 8px;">200 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(500)" style="font-size: 11px; padding: 3px 8px;">500 Xu</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="number" id="pub-deck-price" class="form-input" min="0" max="10000" value="0" placeholder="0" style="font-size: 13px; font-weight: 700; color: #fbbf24; max-width: 130px; padding: 5px 8px;" oninput="updatePublishPriceUI(this.value)">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Xu (Doanh thu chuyển thẳng về ví bạn khi có người mua)</span>
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
@@ -6406,7 +6425,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4a)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4b)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6486,7 +6505,40 @@
       }
     }
 
-    function openWalletStudioModal() {
+    async function fetchCloudLedger() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/ledger.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            const cloudEntries = Object.values(data).filter(e => e && e.timestamp);
+            const map = new Map();
+            userLedger.forEach(e => map.set(e.id, e));
+            cloudEntries.forEach(e => map.set(e.id, e));
+            userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
+            localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+            renderLedgerList();
+          }
+        }
+      } catch (e) {
+        console.warn('Error fetching cloud ledger:', e);
+      }
+    }
+
+    async function openWalletStudioModal() {
+      if (typeof fetchCloudLibraryDecks === 'function' && (!cloudLibraryDecks || cloudLibraryDecks.length === 0)) {
+        fetchCloudLibraryDecks().then(() => {
+          renderStudioDashboard();
+        }).catch(() => {});
+      }
+      if (typeof fetchCloudLedger === 'function') {
+        fetchCloudLedger().then(() => {
+          renderStudioDashboard();
+        }).catch(() => {});
+      }
       renderStudioDashboard();
       openModal('modal-wallet-studio');
     }
@@ -10240,18 +10292,21 @@
     function exitSpelling() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.0.10.3m)
-      if (!spellingIsCompleted && spellingPointsEarned > 0) {
-        const total = spellingTotalQuestions || spellingList.length || 1;
+      // Progressive incomplete session leniency / penalty (v0.0.10.4b)
+      if (!spellingIsCompleted && spellingPointsEarned !== 0) {
+        const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
         const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
         const mult = getIncompleteSessionMultiplier(done, total);
-        const penalizedPts = Math.round(spellingPointsEarned * mult);
-        const deduction = spellingPointsEarned - penalizedPts;
-        setUserPoints(Math.max(0, getUserPoints() - deduction));
-        saveDatabase(true);
-        const pctText = Math.round((done / total) * 100);
-        showToast('⚠️ Bỏ dở Luyện viết (tiến độ ' + done + '/' + total + ' từ - ' + pctText + '%): Xu thưởng nhận x' + mult + ' (+' + penalizedPts + ' Xu thay vì +' + spellingPointsEarned + ' Xu)!');
-        spellingPointsEarned = penalizedPts;
+        const finalPts = Math.round(spellingPointsEarned * mult);
+        if (finalPts !== 0) {
+          setUserPoints(Math.max(0, getUserPoints() + finalPts));
+          saveDatabase(true);
+          const pctText = Math.round((done / total) * 100);
+          showToast(`⚠️ Bỏ dở Luyện viết (tiến độ ${done}/${total} từ - ${pctText}%): Nhận x${mult} Xu (${finalPts >= 0 ? '+' : ''}${finalPts} Xu)!`);
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          addLedgerEntry(finalPts > 0 ? 'STUDY' : 'PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" giữa chừng (${done}/${total} từ, x${mult})`);
+        }
+        spellingPointsEarned = finalPts;
       }
       if (studySourceContext === 'review-queue' || !currentDeckId) {
         showScreen('screen-decks');
@@ -11480,9 +11535,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const questionWord = quizList[quizIndex];
       const delta = getQuizPointDelta(questionWord?.cefrLevel, isCorrect);
-      const currentPts = getUserPoints();
-      const newTotalPoints = Math.max(0, currentPts + delta);
-      setUserPoints(newTotalPoints);
       quizPointsEarned += delta;
 
       if (isCorrect) {
@@ -11502,7 +11554,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             words[idx].updatedAt = questionWord.updatedAt;
           }
           saveDatabase(true);
-          showToast('🎉 Đúng rồi (+' + delta + 'đ ví, Tổng: ' + newTotalPoints + 'đ)! Thuộc bài: ' + newScore + '%');
+          showToast(`🎉 Đúng rồi (+${delta} Xu)! Thuộc bài: ${newScore}%`);
         }
       } else {
         playVocaSfx('wrong');
@@ -11566,12 +11618,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       quizIsCompleted = true;
 
       const deckSizeMult = getSessionDeckSizeMultiplier(total);
-      if (quizPointsEarned > 0) {
-        const finalPts = Math.round(quizPointsEarned * deckSizeMult);
-        const diff = finalPts - quizPointsEarned;
-        quizPointsEarned = finalPts;
-        setUserPoints(Math.max(0, getUserPoints() + diff));
+      const finalPts = Math.round(quizPointsEarned * deckSizeMult);
+      quizPointsEarned = finalPts;
+      if (quizPointsEarned !== 0) {
+        setUserPoints(Math.max(0, getUserPoints() + quizPointsEarned));
         saveDatabase(true);
+        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
+        addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu)`);
       }
 
       const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
@@ -15924,7 +15977,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const descInput = document.getElementById('pub-deck-desc');
       const catSelect = document.getElementById('pub-deck-category');
       const iconSelect = document.getElementById('pub-deck-icon');
-      const authorInput = document.getElementById('pub-deck-author');
+      const editingDeckId = (document.getElementById('pub-editing-deck-id')?.value || '').trim();
+      const isEditing = !!editingDeckId;
 
       const title = (titleInput?.value || '').trim();
       if (!title) {
@@ -15939,29 +15993,36 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const authorAvatar = isAnon ? '' : ((currentUser && currentUser.avatar) || '');
       const authorBio = isAnon ? '' : ((currentUser && currentUser.bio) || '');
 
-      const deckId = 'pub_deck_' + Date.now();
+      const existingDeck = isEditing ? getAllLibraryDecks().find(d => d.id === editingDeckId) : null;
+      const deckId = isEditing ? editingDeckId : ('pub_deck_' + Date.now());
+
       const customCatInput = document.getElementById('pub-deck-custom-category');
       let finalCategory = catSelect ? catSelect.value : 'THPT';
       if (finalCategory === 'CUSTOM') {
         finalCategory = (customCatInput?.value || '').trim() || 'Chủ đề tự do';
       }
+
+      const priceVal = Number(document.getElementById('pub-deck-price')?.value) || 0;
+
       const payload = {
         id: deckId,
         title: title,
         description: (descInput?.value || '').trim() || (isAnon ? 'Bộ từ vựng chia sẻ bởi thành viên ẩn danh' : `Bộ từ vựng chia sẻ bởi ${author}`),
         author: author,
-        authorUid: authorUid,
-        authorAvatar: authorAvatar,
-        authorBio: authorBio,
+        authorUid: authorUid || (existingDeck?.authorUid || ''),
+        authorAvatar: authorAvatar || (existingDeck?.authorAvatar || ''),
+        authorBio: authorBio || (existingDeck?.authorBio || ''),
         isAnonymous: !!isAnon,
         category: finalCategory,
-        icon: iconSelect ? iconSelect.value : '📘',
+        icon: iconSelect ? iconSelect.value : (existingDeck?.icon || '📘'),
         color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
-        price: Number(document.getElementById('pub-deck-price')?.value) || 0,
-        salesCount: 0,
+        price: Math.max(0, priceVal),
+        salesCount: existingDeck?.salesCount || 0,
+        revenueXu: existingDeck?.revenueXu || 0,
         totalWords: pendingPublisherDeck.words.length,
         words: pendingPublisherDeck.words,
-        publishedAt: new Date().toISOString()
+        publishedAt: existingDeck?.publishedAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -15969,7 +16030,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       try {
         const btn = document.getElementById('btn-pub-do-upload');
-        if (btn) btn.textContent = '⏳ Đang tải lên Thư Viện...';
+        if (btn) btn.textContent = isEditing ? '⏳ Đang cập nhật...' : '⏳ Đang tải lên Thư Viện...';
 
         const res = await fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}.json${authParam}`, {
           method: 'PUT',
@@ -15978,9 +16039,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         });
 
         if (res.ok) {
-          showToast(`🚀 Đã đóng góp thành công bộ từ "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện toàn cầu!`);
+          if (isEditing) {
+            showToast(`✅ Đã cập nhật thành công bộ từ "${title}" (Giá: ${payload.price > 0 ? payload.price + ' Xu' : 'Miễn phí'})!`);
+          } else {
+            showToast(`🚀 Đã đóng góp thành công bộ từ "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện!`);
+          }
           closeModal('modal-community-upload');
           fetchCloudLibraryDecks();
+          renderCreatorStoreDecks();
         } else {
           alert('Không thể lưu lên Cloud. Kiểm tra quyền hoặc kết nối!');
         }

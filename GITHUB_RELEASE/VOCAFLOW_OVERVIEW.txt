@@ -217,7 +217,18 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 💎 v0.10.4a: SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
+• 💎 v0.10.4 (a -> b): Tối Ưu Sổ Cái Biến Động, Giá Bán Bộ Từ & Đồng Bộ Gian Hàng Tự Động SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
+  - 🛠️ Hoàn Thiện Giá Bán, Đồng Bộ Gian Hàng & Gộp Biến Động Điểm Bài Học (`v0.10.4b`):
+    * **Thêm Khung Thiết Lập Giá Bán Vào Form Đăng & Sửa Bộ Từ (Hình 1)**:
+      + Đã tích hợp đầy đủ ô nhập `💎 Giá bán bộ từ` kèm các nút chọn nhanh (0đ, 50, 100, 200, 500 Xu) và badge màu sắc trực quan ngay trong popup Sửa và Đăng bộ từ.
+      + Khi bấm "Đổi giá / Sửa", hệ thống tự nạp chính xác giá bán hiện tại và lưu đè chuẩn xác lên Thư Viện Toàn Cầu.
+    * **Tự Động Nạp Bộ Từ Vào Gian Hàng Của Tôi Ngay Khi F5 Trang**:
+      + Hệ thống tự động fetch dữ liệu Cloud ngầm khi mở Studio & Ví Xu, đảm bảo các bộ từ đã xuất bản hiển thị ngay lập tức mà không cần phải vào Thư Viện trước.
+    * **Đồng Bộ Sổ Cái Biến Động Số Dư Từ Cloud RTDB (Hình 2)**:
+      + Tự động kéo lịch sử giao dịch từ Cloud `/users/{uid}/ledger.json` và merge an toàn vào sổ cái thiết bị.
+    * **Cơ Chế Gộp Điểm Khi Hoàn Thành / Thoát Bài Học (Deferred Points Engine)**:
+      + Khi đang làm bài Quiz hoặc Luyện viết: Không trừ/cộng lẻ tẻ vào ví gốc sau từng câu (chỉ hiện thông báo badge `+X Xu` / `-X Xu` và tính tổng tạm thời).
+      + Chỉ khi **hoàn thành bài** hoặc **thoát bài giữa chừng** thì mới cập nhật 1 lần vào ví và ghi **DUY NHẤT 1 dòng giao dịch chuẩn chỉnh** vào Sổ Cái Biến Động Số Dư!
   - 🛒 **Thị Trường Mua Bán Bộ Từ (Creator Marketplace)**:
     * Người dùng khi tải/sửa bộ từ lên Thư Viện Toàn Cầu có thể thiết lập mức **Giá Bán (Xu)** tùy chọn (0đ = Miễn phí, 50 Xu, 100 Xu, 200 Xu, 500 Xu...).
     * Người học khác có thể bấm "Mua Bộ Từ" trực tiếp trên Thư Viện. Khi mua thành công:
