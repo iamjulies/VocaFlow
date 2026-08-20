@@ -1,280 +1,142 @@
 ================================================================================
-  VOCALFLOW - THE NEXT-GEN SMART VOCABULARY & FLASHCARD LEARNING ECOSYSTEM
-              TỔNG QUAN TOÀN DIỆN & NHẬT KÝ PHÁT TRIỂN (v0.0.1 -> v0.0.10)
+          📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
+           TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
+================================================================================
+Phiên bản hiện tại : v0.10.4s (Build 59)
+Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
+Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
+Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
 ================================================================================
 
-✨ TỔNG QUAN VỀ VOCAFLOW:
-VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế hệ mới, kết hợp phương pháp lặp lại ngắt quãng (Spaced Repetition System), trí tuệ nhân tạo (Gemini AI Co-Pilot), phát âm giọng bản xứ đa ngữ và đồng bộ đám mây đa nền tảng (Windows Portable, Web App, Mobile PWA).
+I. TỔNG QUAN HỆ THỐNG
+--------------------------------------------------------------------------------
+VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
+
+Ứng dụng hỗ trợ đa nền tảng:
+1. Web PWA Online: https://iamjulies.github.io/VocaFlow/ (Chạy mượt trên mọi thiết bị).
+2. Windows Desktop App: Gói nén Portable ZIP kèm Service Worker & Cache Offline.
 
 --------------------------------------------------------------------------------
-📌 LỘ TRÌNH PHÁT TRIỂN & CÁC TÍNH NĂNG ĐỘT PHÁ THEO TỪNG PHIÊN BẢN
+II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🚀 [v0.0.1] - NỀN TẢNG CỐT LÕI & KIẾN TRÚC OFFLINE-FIRST
-• Kiến trúc Single-File SPA siêu nhẹ, tải trang tức thì, không phụ thuộc máy chủ trung gian.
-• Quản lý Bộ từ vựng (Decks): Tạo, sửa, gán màu sắc, biểu tượng emoji, gắn nhãn phân loại.
-• Hệ thống dữ liệu từ vựng chuyên sâu:
-  - Thuật ngữ (Term), Phiên âm chuẩn quốc tế (IPA), Từ loại (Noun, Verb, Adj, Phrasal Verb...).
-  - Định nghĩa tiếng Việt súc tích, câu ví dụ thực tế kèm bản dịch.
-  - Phân loại chuẩn khung tham chiếu Châu Âu (CEFR: A1, A2, B1, B2, C1, C2).
-• Chế độ Flashcard 3D: Lật thẻ tương tác hai mặt mượt mà.
-• Lưu trữ an toàn cục bộ (LocalStorage) với khả năng hoạt động 100% khi không có mạng (Offline-Ready).
+🌟 [v0.10.4] - SIÊU BẢN CẬP NHẬT KINH TẾ, THỊ TRƯỜNG TÁC GIẢ & TRẢI NGHIỆM NGƯỜI DÙNG (a -> s)
+• 💎 v0.10.4s (Build 59):
+  - Sửa màu nút Tab Kho Lưu Trữ: Nút "Kho Lưu Trữ" sáng màu tím/xanh nổi bật chuẩn xác khi chuyển tab.
+  - Điều hướng Modal thông minh khi nhấn ESC: Thoát khỏi cửa sổ xem trước bộ từ sẽ quay trở lại Profile tác giả thay vì thoát hẳn ra màn hình chính.
+  - Đổi tên nhãn thống kê Profile: Đổi "Tổng số bộ từ" ➔ "Tổng số bộ chia sẻ", "Tổng số từ vựng" ➔ "Số từ chia sẻ".
+  - Khớp đúng tác giả từng bộ từ: Loại bỏ hoàn toàn lỗi gán nhầm tên tác giả trên Thẻ bộ từ và Chi tiết bộ từ.
+
+• 👤 v0.10.4r (Build 58):
+  - Định nghĩa và kết nối hàm `openPublicProfileModal`: Khắc phục triệt để lỗi không mở được hồ sơ tác giả khi bấm vào tên tác giả ở Thẻ bộ từ và Chi tiết bộ từ.
+  - Tác giả trong Sổ Cái Dynamic & Clickable: Tên người bán trong dòng giao dịch Mua bộ từ (`BUY_DECK`) tự động cập nhật theo Cloud và có liên kết bấm trực tiếp để mở Hồ sơ cá nhân người bán.
+
+• 🛡️ v0.10.4p (Build 57):
+  - Chuẩn hóa phân quyền sở hữu bộ từ: Loại bỏ mọi ngoại lệ hardcoded bypass email, đảm bảo tính công bằng tuyệt đối giữa mọi tài khoản người học.
+  - Người dùng chỉ được sửa/xóa bộ từ do chính mình tạo ra hoặc xuất bản; bộ từ mua từ tác giả khác được bảo vệ nguyên vẹn.
+
+• 🪙 v0.10.4o (Build 56):
+  - Tạo bộ từ thủ công: Hoàn toàn MIỄN PHÍ (0 Xu).
+  - Tự soạn từ vựng thủ công / bán thủ công: Thưởng ngay +10 Xu / từ vào ví.
+  - Tạo bộ từ tự động qua Gemini AI Studio: Trừ -20 Xu / từ.
+
+• 📜 v0.10.4n (Build 55):
+  - Chuẩn hóa 100% các loại biến động số dư trong Sổ cái:
+    + Cộng tiền: Học tập (`STUDY`), Nhập GiftCode (`GIFTCODE`), Doanh thu bán bộ từ (`SELL_DECK`), Thưởng soạn từ (`CREATE_WORD`).
+    + Trừ tiền: Mua bộ từ (`BUY_DECK`), Đổi gợi ý AI (`BUY_HINT`), Đổi bỏ qua (`BUY_SKIP`), Tạo từ bằng AI (`AI_GEN`), Thoát ngang âm điểm (`PENALTY_QUIT`).
+
+• 🎯 v0.10.4m (Build 54):
+  - Đồng bộ Ghi chú & Mục tiêu học tập (Bio) 2 chiều lên Firebase Realtime Database.
+  - Khắc phục lỗi Sổ cái không ghi nhận điểm sau khi hoàn thành bài học Spelling / Quiz.
+
+• 🧩 v0.10.4l (Build 53):
+  - Sửa lỗi Quiz khi trả lời sai: Luôn hiển thị đầy đủ thông tin giải nghĩa và nút "Tiếp theo".
+  - Đổi vị trí nút "Tiếp tục" trong Quiz và Spelling lên phía trên ô thông tin giải nghĩa.
+  - Bổ sung thông tin số lượt Skip Pass và hạn sử dụng trong Danh Sách Mã Quà Tặng Đang Hoạt Động.
+
+• ⚡ v0.10.4k (Build 52):
+  - Nâng cấp tốc độ đồng bộ Realtime đa thiết bị và đa tab.
+  - Bổ sung nút làm mới dữ liệu tức thì từ Cloud.
+
+• 🔄 v0.10.4j (Build 51):
+  - Kích hoạt cơ chế đồng bộ tức thì biến động số dư ngay sau khi hoàn thành phiên học.
+
+• 🌐 v0.10.4i (Build 50):
+  - Thống nhất các biến quản lý trạng thái (`money`, `hints`, `skips`) đồng bộ giữa Web và ứng dụng Desktop Windows.
+
+• 🔒 v0.10.4h (Build 49):
+  - Loại bỏ triệt để dữ liệu ảo, đồng bộ số lượt Skip Pass đa nền tảng.
+
+• ⚙️ v0.10.4g (Build 48):
+  - Thiết lập baseline kinh tế chuẩn, đồng bộ ví Xu và Cửa Hàng VocaShop.
+
+• 👥 v0.10.4f (Build 47):
+  - Đồng bộ số dư Cloud ngay khi đăng nhập, cách ly dữ liệu sổ cái của chế độ Khách (Guest).
+
+• 🛡️ v0.10.4e (Build 46):
+  - Hoàn thiện chế độ Khách (`isGuest`), ghi log chi tiêu VocaShop và đăng xuất an toàn.
+
+• 📜 v0.10.4d (Build 45):
+  - Khắc phục triệt để hiển thị Sổ cái biến động số dư và tự động nạp số dư ban đầu cho tài khoản mới.
+
+• ⭐ v0.10.4c (Build 44):
+  - Hệ thống Đánh giá 5 Sao & Nhận xét bộ từ thư viện.
+  - Chế độ Xem trước 25% nội dung bộ từ trước khi mua.
+  - Hoa hồng Affiliate 20% cho người giới thiệu.
+  - Bảng xếp hạng Top Pháp Sư Tạo Bộ Từ.
+
+• 🏷️ v0.10.4b (Build 43):
+  - Tự do thiết lập giá bán bộ từ (0 - 500 Xu), nhận 100% doanh thu khi người khác mua.
+  - Tự động gộp các biến động điểm học tập thành một dòng duy nhất trong Sổ cái.
+
+• 💎 v0.10.4a (Build 42):
+  - Ra mắt Siêu Chợ Bộ Từ Vựng (Creator Marketplace) & Sổ Cái Bất Biến (Immutable Ledger).
 
 --------------------------------------------------------------------------------
-🔍 [v0.0.2] - TÌM KIẾM THÔNG MINH & BỘ LỌC TẬP TRUNG
-• Bộ máy tìm kiếm tức thời (Instant Search): Tìm theo từ vựng, phiên âm, định nghĩa tiếng Việt, từ đồng nghĩa/trái nghĩa.
-• Phân nhóm từ vựng theo tiến độ học tập:
-  - 🆕 Mới (0% điểm thuộc)
-  - 📖 Đang học (1% - 99%)
-  - 🎯 Đã thuộc (100% Mastery)
-• Thuật toán tính điểm tinh thông (Mastery Score Engine) theo trọng số độ khó CEFR.
+
+🌟 [v0.10.3] - XƯỞNG AI STUDIO, BỘ NHỚ CLIPBOARD & HỆ THỐNG ÂM THANH SỐNG ĐỘNG (a -> q)
+• 🤖 v0.10.3a -> q:
+  - 🤖 Xưởng Tạo Bộ Từ Bằng AI (Gemini AI Studio): Tự động tạo bộ từ vựng theo chủ đề, cấp độ CEFR (A1 - C2), định nghĩa song ngữ Anh - Việt, ví dụ ngữ cảnh và phát âm IPA.
+  - 🔑 Tích hợp nhập nhanh Google Gemini API Key trực tiếp trên ứng dụng.
+  - 📋 Bộ nhớ tạm VocaFlow Clipboard đa năng: Hỗ trợ Sao chép (Copy), Cắt (Cut), Dán (Paste) từ vựng giữa các bộ từ khác nhau.
+  - 🖼️ Cửa sổ thu nhỏ PiP (Picture-in-Picture Mini-Player) cho chế độ Auto Flashcard.
+  - 🎨 Bảng màu 16 Theme Presets sắc nét cho từng bộ từ vựng.
+  - 🔊 Hệ thống SFX âm thanh sống động (Đúng, Sai, Hoàn thành bài học, Mua sắm, Fireworks) kèm thanh điều chỉnh âm lượng.
+  - ✍️ Chế độ Luyện viết Siêu Khó (Hardcore Spelling): 1 ô nhập duy nhất không manh mối, nhân điểm thưởng cao.
+  - ⚠️ Cơ chế phạt thoát ngang bài học (Quit Penalty): Trừ điểm theo thời gian tham gia phiên học để chống gian lận.
 
 --------------------------------------------------------------------------------
-📥 [v0.0.3] - NHẬP / XUẤT EXCEL LINH HOẠT & SAO LƯU TOÀN DIỆN
-• Nhập dữ liệu hàng loạt từ Excel (.xlsx, .xls) và CSV với tính năng tự động nhận diện cột thông minh (Auto Column Mapping).
-• Xuất dữ liệu bộ từ ra file Excel (.xlsx) chuẩn hóa định dạng để in ấn hoặc chia sẻ cho bạn bè.
-• Hệ thống Sao lưu & Phục hồi cơ sở dữ liệu (JSON Backup & Restore) chỉ với 1 click.
+
+🌟 [v0.0.10.2] - TÙY BIẾN HỒ SƠ, BỐ CỤC THƯ VIỆN & GHIM BỘ TỪ (a -> l)
+• 👤 v0.0.10.2a -> l:
+  - Tùy biến Tên hiển thị, Ảnh đại diện (Avatar) và Ghi chú / Mục tiêu học tập (Bio).
+  - Thẻ Hồ Sơ Người Dùng Công Khai (Public Profile Modal): Xem đóng góp của các tác giả trong cộng đồng.
+  - Tính năng Ghim bộ từ (`isPinned`) và Lưu trữ bộ từ (`isArchived`) giúp sắp xếp bàn học gọn gàng.
+  - Bố cục Thư Viện dạng danh sách ngang hiện đại và nút lọc "🌟 CỦA TÔI".
 
 --------------------------------------------------------------------------------
-🎮 [v0.0.4] - CHẾ ĐỘ QUIZ TRẮC NGHIỆM TƯƠNG TÁC CAO
-• Phòng luyện trắc nghiệm 4 đáp án thông minh (Smart Distractor Engine):
-  - Tự động ghép nối các phương án sai CÙNG TỪ LOẠI (Noun với Noun, Verb với Verb, Adj với Adj) và CÙNG CHỦ ĐỀ trong bộ từ.
-  - Loại bỏ hoàn toàn đáp án dễ đoán vô lý, tạo bẫy ngữ nghĩa thử thách và rèn luyện tư duy phản xạ đỉnh cao.
-• Tính điểm thời gian thực, hiển thị thanh tiến trình trực quan, hiệu ứng âm thanh và huy hiệu chúc mừng.
-• Tăng giảm điểm thuộc từ vựng chính xác dựa trên kết quả trả lời đúng/sai của từng câu.
-• Tích hợp nút phát âm giọng bản xứ chuẩn xác ngay tại từng câu hỏi Quiz để vừa luyện nhìn mặt chữ vừa luyện nghe.
+
+🌟 [v0.0.10.1] - CHẾ ĐỘ LUYỆN VIẾT CHÍNH TẢ & VÍ ĐIỂM THƯỞNG (a -> m)
+• ✍️ v0.0.10.1a -> m:
+  - Ra mắt Chế độ Luyện Viết Chính Tả (Spelling Mode) luyện phản xạ cơ bắp.
+  - Hệ số thử thách manh mối (Clue Multiplier).
+  - Bấm giờ thời gian học thực tế (Smart Active Time Tracking).
+  - Cửa hàng VocaShop: Đổi điểm lấy Gợi ý AI và Skip Pass.
 
 --------------------------------------------------------------------------------
-☁️ [v0.0.5] - ĐỒNG BỘ ĐÁM MÂY ĐA NỀN TẢNG (REALTIME CLOUD SYNC & PWA)
-• Tích hợp Firebase Realtime Cloud Database: Dữ liệu tự động đồng bộ tức thì giữa Máy tính (Windows EXE) và Điện thoại (iOS / Android Web PWA).
-• Hỗ trợ đăng nhập tài khoản an toàn (Google OAuth / Email Auth).
-• Cơ chế đồng bộ 2 chiều thông minh (Two-Way Sync): Tự động gộp dữ liệu cục bộ khi online, không bao giờ lo mất dữ liệu.
-• Chuẩn hóa Progressive Web App (PWA): Hỗ trợ "Cài đặt vào màn hình chính" (Add to Home Screen) trên mọi smartphone với trải nghiệm mượt mà như app gốc.
+
+🌟 [v0.0.10.0] - HÀNG ĐỢI ÔN TẬP CHU KỲ QUÊN (SPACED REPETITION SYSTEM - SRS)
+• 🔔 v0.0.10.0:
+  - Thuật toán phân loại độ thuần thục từ vựng (0 - 100đ): Chưa thuộc, Đang học, Khá thuộc, Đã thuộc.
+  - Banner nhắc nhở ôn tập hàng ngày theo chu kỳ quên Ebbinghaus.
 
 --------------------------------------------------------------------------------
-🧠 [v0.0.6] - TRỢ LÝ TRÍ TUỆ NHÂN TẠO CO-PILOT (GEMINI AI THINKING ENGINE)
-• Trợ lý AI thế hệ mới hỗ trợ người học tạo từ vựng siêu tốc (< 1 giây):
-  - Tự động điền phiên âm IPA Anh-Mỹ chuẩn xác.
-  - Tự động dịch nghĩa tiếng Việt sát ngữ cảnh chuyên ngành nhất.
-  - Đề xuất câu ví dụ thực tế (giao tiếp đời thường & học thuật nâng cao).
-  - Tự động gợi ý Collocations (Cụm từ hay đi kèm), Từ đồng nghĩa (Synonyms) & Từ trái nghĩa (Antonyms).
-• Tối ưu hóa tốc độ AI với cơ chế Cache mô hình Flash kết nối thành công và giới hạn token đầu ra, phản hồi tức thì không độ trễ.
-• Cơ chế "Tư duy theo dữ liệu có sẵn" (AI Context-Aware Thinking): AI đọc thông tin người dùng đã nhập để phát hiện lỗi sai, chỉnh sửa ngữ pháp hoặc mở rộng nâng cấp nội dung phong phú hơn.
-• Quản lý API Key riêng tư: Tự do nhập và lưu trữ Gemini API Key cá nhân an toàn.
 
---------------------------------------------------------------------------------
-🎧 [v0.0.7] - AUTO FLASHCARD RẢNH TAY & TỐI ƯU GIAO DIỆN DI ĐỘNG SIÊU TINH GỌN
-• Chế độ học thụ động Auto Flashcard (Hands-Free Passive Learning):
-  - Tự động phát âm tiếng Anh chuẩn ➡️ dừng ngắt nhịp ➡️ tự lật mặt sau ➡️ phát âm nghĩa tiếng Việt ➡️ tự chuyển từ tiếp theo.
-  - Giúp vừa làm việc, chạy bộ, nghỉ ngơi vừa ngấm từ vựng tự nhiên qua thính giác.
-  - Tùy chỉnh độc lập tốc độ đọc tiếng Anh (0.5x - 1.5x) và tiếng Việt (0.5x - 1.5x).
-• Nâng cấp Bộ máy Âm thanh Tự nhiên (Natural Audio Engine):
-  - 100% sử dụng luồng âm thanh studio tự nhiên, triệt tiêu hoàn toàn giọng robot rè của hệ điều hành.
-• Tái cấu trúc giao diện Mobile & Sticky Header siêu tinh gọn.
-
---------------------------------------------------------------------------------
-🌟 [v0.0.8] - THƯ VIỆN TOÀN CẦU, HỆ THỐNG KINH TẾ & PHÁO HOA ĂN MỪNG QUIZ
-• 📚 Thư Viện Từ Vựng Toàn Cầu (VocaLibrary Cloud):
-  - Tích hợp sẵn bộ từ vựng trọng tâm THPT Quốc Gia: Lớp 10, Lớp 11, Lớp 12.
-  - Hỗ trợ tải về học ngay 1-Click hoặc tự do đóng góp bộ từ mới bằng file Excel / bộ từ cá nhân lên Cloud.
-• 💰 Hệ thống Kinh tế Học tập & Ví Điểm (VocaShop & Points Economy):
-  - Tích lũy điểm khi làm đúng bài Quiz (điểm thưởng theo cấp độ CEFR A1-C2).
-  - Đổi điểm lấy lượt Gợi Ý AI (AI Context Hints) trong bài Quiz.
-  - Cổng Quản Trị / God Mode bí mật (/gamemode creative / /gamemode c).
-  - Hệ thống Mã Quà Tặng (Cloud Gift Codes): Phát hành và áp dụng mã nhận điểm và gợi ý tức thì.
-• 🎚️ Bộ lọc 6 cấp độ tinh thông & Thanh trượt Min-Max Dual Range Slider (0% - 100%):
-  - Chia nhỏ thành: Mới 0%, Vừa học 1-25%, Hơi thuộc 26-50%, Khá thuộc 51-75%, Sắp thuộc 76-99%, Đã thuộc 100%.
-• 🎆 Pop-up Kết Quả Quiz Ăn Mừng với Pháo Hoa Hạt Đa Sắc Màu (Dynamic Particle Fireworks):
-  - Đúng càng nhiều pháo hoa bắn càng to và rực rỡ.
-  - Bảng thống kê 5 ô màu mè: Số câu đúng, Điểm nhận được, Tổng thời gian, Tốc độ SPQ (giây/câu), Số gợi ý đã dùng.
-• 📌 Ghim bộ từ & Sắp xếp đa tiêu chí (A-Z, Z-A, Số lượng từ, Cập nhật gần nhất).
-• 🗑️ Đồng bộ Xóa thông minh (Tombstone Tracking): Xóa từ/bộ từ vĩnh viễn trên tất cả thiết bị, không bị hồi sinh khi sync Cloud.
-
---------------------------------------------------------------------------------
-👑 [v0.0.9] - BẢN CẬP NHẬT QUẢN TRỊ & TINH HOA TRẢI NGHIỆM (POLISH & ADMIN UPDATE)
-• 👥 v0.0.9.0 -> v0.0.9.8: Cổng Quản Lý Học Viên Trực Tuyến (Live Cloud Students Portal)
-  - Xem danh sách toàn bộ học viên đăng ký trên Cloud, tìm kiếm theo Tên/Email/UID.
-  - Xem danh sách bộ từ của học viên, cộng/trừ điểm ví & lượt gợi ý trực tiếp lên Cloud.
-  - Bảng thống kê tổng quan toàn hệ thống (Platform Metrics).
-• 🎮 v0.0.9.9 -> v0.0.9.11: Pop-up Chọn Độ Khó Quiz & Chế Độ "Cực Khó" (x2.5 điểm)
-  - 4 cấp độ: Dễ (0 AI), Trung Bình (1 AI), Khó (2 AI), Cực Khó (3 AI distractors).
-  - Kèm tooltip giải thích chi tiết từng mức độ và cơ chế điểm thưởng/phạt.
-• 🖼️ v0.0.9.13 -> v0.0.9.14: Chuẩn hóa nhận diện thương hiệu với Authentic Logo Icon bo góc đổ bóng trên Header & Desktop EXE.
-• ✍️ v0.0.9.15: Bộ lọc định dạng AI thông minh (loại bỏ dấu chấm thừa, chuyển hoặc/và// thành dấu phẩy chuẩn).
-• 🔒 v0.0.9.17: Phân quyền & Đặc quyền tài khoản (Guest Perks Banner, bảo vệ Thư Viện, Mã Quà Tặng & Gợi Ý AI).
-• ⌨️ v0.0.9.18: Hệ thống Phím tắt Bàn phím toàn diện kèm Badge trực quan:
-  - Auto FC: Space (Play/Pause), A/◀ (Prev), D/▶ (Next), Enter (Flip).
-  - Quiz: 1, 2, 3, 4 (chọn 4 đáp án), Enter/Space (câu tiếp theo).
-  - Tự động Focus vào ô nhập từ vựng và ô nhập mã quà tặng khi mở modal.
-• 🧠 v0.0.9.19: Huấn luyện AI sinh phương án bẫy chuẩn xác (Zero True-Sense Rule: cấm dùng nghĩa thật làm phương án sai).
-• 🦎 v0.0.9.20: Thuật toán Tắc Kè Hoa Mạo Danh (Chameleon Distractor Matching):
-  - Tự động đồng bộ 100% hình thức viết hoa, chú thích trong ngoặc đơn, độ dài và dấu câu giữa đáp án đúng và các phương án sai.
-• 💰 v0.0.9.21: Điều chỉnh biểu giá Cửa hàng (50đ / lượt Gợi Ý AI).
-• 🎧 v0.0.9.22: Tự động cộng +1% độ thuộc cho từ Mới (0%) khi nghe qua Auto Flashcard.
-• 🏷️ v0.0.9.23: Bộ lọc thông minh theo Từ Loại (POS) & Cấp độ CEFR (A1-C2), mở rộng danh mục từ loại (noun phrase, phrasal verb...).
-
---------------------------------------------------------------------------------
-🌟 [v0.0.10] - BẢN CẬP NHẬT TRÍ NHỚ CƠ BẮP & CHU KỲ QUÊN (SRS & SPELLING REVOLUTION)
-• 🔔 v0.0.10.0: Hàng Đợi Ôn Tập Chu Kỳ Quên (Spaced Repetition System - SRS Engine)
-  - Thuật toán tính chu kỳ vàng lặp lại ngắt quãng (Mới & Vừa học: 1 ngày, Hơi thuộc: 3 ngày, Khá thuộc: 7 ngày, Sắp thuộc: 14 ngày, Đã thuộc: 30 ngày).
-  - Banner tím hồng thông minh hiển thị ngay đầu Trang Chủ: báo chính xác số từ cần ôn hôm nay kèm nút 1-Click "⚡ Ôn Tập Ngay".
-  - Bảng Modal Hàng Đợi Ôn Tập (modal-review-queue) hiển thị chi tiết số ngày trễ hạn, độ thuộc, cấp độ CEFR và nghĩa từ.
-  - Điều hướng ngữ cảnh thông minh (Context-Aware Navigation): Thoát ôn tập tự động quay về Trang Chủ và cập nhật tiến độ.
-  - Loại bỏ hoàn toàn Flashcard thủ công cũ thừa code để tối ưu hóa hiệu năng 100%.
-
-• ✍️ v0.0.10.1 (a -> m): Chế Độ Luyện Viết Chính Tả (Spelling) & Chuẩn Hóa Điểm Thưởng Trắc Nghiệm (Quiz)
-  - Luyện trí nhớ cơ bắp (Muscle Memory) giúp người học viết chính xác 100% không sai một ký tự.
-  - 3 Cấp độ Thử thách Luyện Viết:
-    * 🟢 Dễ (Easy - x1.0 Điểm): Ẩn 1/3 ký tự ngẫu nhiên (hiển thị 2/3 chữ cái gợi ý sẵn).
-    * 🟡 Trung bình (Medium - x1.5 Điểm): Ẩn 2/3 ký tự ngẫu nhiên (hiển thị 1/3 chữ cái gợi ý sẵn).
-    * 🔴 Khó (Hard / Mastery - x2.0 Điểm): Ẩn 100% ký tự (gõ toàn bộ từ vựng).
-  - 🔥 Hệ Số Thử Thách Manh Mối (Clue Multiplier - v0.0.10.1f):
-    * 1 Manh mối duy nhất (Hardcore - Chỉ nghe âm thanh hoặc chỉ nhìn nghĩa): Thưởng x1.5!
-    * 2 Manh mối (Nâng cao): Thưởng x1.2!
-    * 3 Manh mối (Toàn diện): Thưởng x1.0 chuẩn!
-    * Badge động tự động nhảy màu và hiển thị hệ số tổng (x1.0 -> x3.0) cả trên modal thiết lập và thanh điều hướng Top Nav.
-  - 🏪 Tối Ưu Cửa Hàng VocaShop & Thêm Đầy Đủ Quy Tắc Điểm Luyện Viết (v0.0.10.1m):
-    * Chuyển ô Nhập mã quà tặng (Gift Code) lên trên đầu (ngay dưới Thẻ số dư ví) giúp người học dễ thấy và đổi quà thuận tiện nhất.
-    * Bổ sung đầy đủ bảng quy tắc thưởng điểm ví và độ thuộc bài cho cả Luyện Viết (Spelling) và Trắc Nghiệm (Quiz).
-  - 🏫 Mở Rộng Hệ Thống Danh Mục & Chủ Đề Tự Do (v0.0.10.1m):
-    * Hỗ trợ đầy đủ các khối lớp: THCS (Lớp 6, 7, 8, 9), THPT (Lớp 10, 11, 12), Tiểu Học (1-5).
-    * Chứng chỉ quốc tế: IELTS, TOEIC, TOEFL, Cambridge, SAT/GRE.
-    * Đời sống & Nghề nghiệp: IT, Kinh tế/Marketing, Y Khoa, Du lịch, Giao tiếp.
-    * 🏷️ Chủ đề tùy biến (Custom Topic): Cho phép tự gõ tên chủ đề tự do (VD: XYZABC, Sinh học phân tử...) khi đóng góp lên Thư Viện Toàn Cầu.
-    * Thư Viện VocaLibrary bổ sung tab lọc thông minh theo Cấp 2, Cấp 3, Chứng Chỉ, Nghề & Đời Sống.
-  - ⏱️ Bấm Giờ Thời Gian Thực Thông Minh (Smart Active Time Tracking - v0.0.10.1l):
-    * Chỉ bấm giờ khi người học đang thực sự suy nghĩ / làm bài (gõ từ trong Spelling hoặc phân vân chọn đáp án trong Quiz).
-    * Tự động TẠM DỪNG bấm giờ ngay khi trả lời xong hoặc bấm Bỏ qua để người học thoải mái đọc thẻ thông tin chi tiết, nghe phát âm và đọc giải thích AI mà KHÔNG sợ bị đội thời gian hay giảm tốc độ (SPQ / SPW).
-    * Bấm giờ tiếp tục mượt mà khi bấm "Từ Tiếp Theo" / "Câu Tiếp Theo".
-  - 🏆 Nâng Cấp Toàn Diện Bảng Tổng Kết Luyện Viết (Spelling Celebration Modal - v0.0.10.1k):
-    * Thiết kế đồng bộ chuẩn mực theo bảng tổng kết Quiz: Card bo góc hiện đại, viền phát sáng, icon cúp/ngôi sao động theo độ chính xác.
-    * 5 Khung Thống Kê Thông Minh (5-Tile Dashboard): 🎯 Kết quả đúng (100%), 💰 Điểm nhận được, ⏱️ Tổng thời gian, ⚡ Tốc độ (SPW - Giây/từ), và Khung chi tiết (Gợi ý, Bỏ qua, Gõ sai).
-    * Badge Cấp độ + Hệ số điểm tổng và hệ thống pháo hoa động ăn mừng tưng bừng.
-  - 🛡️ Khắc Phục Triệt Để Lỗi Crash/Tải Lại Giữa Chừng Khi Đang Học (v0.0.10.1k):
-    * Cơ chế Service Worker Guard (`isUserInActiveStudySession`): Khi có bản cập nhật mới trên GitHub Pages / Server, app sẽ KHÔNG tự động reload ngắt quãng khi người học đang làm dở Quiz / Spelling / Auto Flashcard.
-    * Bản cập nhật sẽ được trì hoãn và áp dụng êm ái khi người học hoàn• 👤 v0.0.10.2 (a -> l): Tùy Biến Tên Người Dùng, Ghi Chú / Mục Tiêu Cá Nhân (Bio), Thẻ Hồ Sơ, Bố Cục Thư Viện Dạng Danh Sách Ngang, Tùy Biến Bật/Tắt Bộ Lọc, Đồng Bộ Cloud Toàn Diện, Ghi Công Tác Giả & Tối Ưu Trải Nghiệm Nhập Liệu
-  - ✏️ Đổi Tên Hiển Thị (DisplayName) & Ghi Chú Mục Tiêu (Bio) đồng bộ Cloud 2 chiều:
-    * Người dùng có thể tùy ý sửa Tên hiển thị (Nickname) và Ghi chú / Châm ngôn / Mục tiêu học tập ngay trong Hồ Sơ (`modal-profile`).
-    * Giao diện Hồ sơ gọn gàng: Luôn hiển thị Khung Ghi chú & Mục tiêu học tập (`profile-bio-box`), form sửa chỉ hiện khi bấm nút ✏️ Sửa Tên & Bio.
-    * Tự động đồng bộ ngay lập tức lên Header, LocalStorage, Cloud Firestore / Firebase Database và toàn bộ các bộ từ trên Thư Viện 2 chiều.
-    * Cơ chế đồng bộ Realtime Proactive (`v0.0.10.2d`): Đảm bảo Tên và Bio luôn được nạp tức thì từ Cloud trên mọi thiết bị và giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
-  - 👥 Thẻ Hồ Sơ Người Dùng Công Khai Đa Năng (Public Profile Modal - `v0.0.10.2b/c/d/f`):
-    * Hiển thị thông tin cho "VocaFlow Chuẩn" (hiển thị đủ 3 bộ từ chuẩn, 180 từ vựng và icon nhận diện chính thức).
-    * Dynamic Profile Resolution: Tự động cập nhật tên mới (VD: "julies"), Avatar và Bio mới nhất của tác giả lên toàn bộ các bộ từ đã chia sẻ trước đó mà không bị gán cứng tên cũ.
-    * Cân bằng chỉ số (`v0.0.10.2f`): Loại bỏ hoàn toàn chỉ số "Điểm / Uy tín" gây mất cân bằng, bố cục lại 2 ô thông số cân đối, tinh tế: 📚 **Số Bộ Từ Chia Sẻ** & 📝 **Tổng Số Từ Vựng**.
-  - 🔒 Đóng Góp Thư Viện Ẩn Danh / Công Khai (Anonymous / Public Sharing):
-    * Loại bỏ ô nhập tên tác giả tự do để bảo đảm tính xác thực danh tính.
-    * Tự động lấy tên và Avatar thực tế từ Profile cá nhân.
-    * Thêm tùy chọn 2 chế độ: 🌐 **Công khai** (Hiển thị tên & mở xem Profile) hoặc 🔒 **Ẩn danh** (Hiển thị "Ẩn danh", không liên kết Profile).
-    * Cơ chế đóng góp phi vụ lợi (`v0.0.10.2f`): Không tặng điểm ảo khi tải lên để ngăn chặn hành vi spam/đăng trùng lặp trục lợi.
-  - 🛠️ Chỉnh Sửa & Xóa Bộ Từ Đã Đăng Thư Viện (Edit & Delete Public Decks - `v0.0.10.2e`):
-    * Nhận diện chủ sở hữu thông minh: Hiện huy hiệu `TỦ TỦ CỦA TÔI` cùng 2 nút chức năng **`✏️ Sửa`** và **`🗑️ Xóa`** riêng cho tác giả đã đăng bộ từ.
-    * Cho phép tác giả cập nhật Tên, Mô tả, Danh mục, Biểu tượng hoặc Tải file/dữ liệu mới thay thế.
-    * Nút **`🗑️ Xóa Khỏi Thư Viện`**: Cho phép gỡ bỏ vĩnh viễn bộ từ khỏi Cloud Thư Viện Toàn Cầu chỉ với 1 cú click xác nhận an toàn.
-  - 📐 Bố Cục Thư Viện Danh Sách Ngang & Nút "🌟 CỦA TÔI" (`v0.0.10.2g`):
-    * Chuyển đổi Thư Viện sang dạng **Danh sách 1 dòng (Horizontal Row Card)** cho từng bộ từ: Thông tin bộ từ nằm bên trái, cụm nút bấm thao tác nằm bên phải/dưới liền mạch, co giãn linh hoạt 100% không bị che khuất.
-    * Nút **`🌟 CỦA TÔI`** đặt ngay cạnh nút Làm Mới: 1-click lọc nhanh toàn bộ các bộ từ do chính mình đăng tải.
-  - 📱 Đại Tu Giao Diện Di Động & Khắc Phục Hiển Thị Bộ Lọc (`v0.0.10.2h/i`):
-    * **Hiển thị đầy đủ cả 3 bộ lọc trên điện thoại**: Gỡ bỏ xung đột `!important` trong CSS giúp 2 dropdown `🏷️ Từ loại`, `🎯 Cấp độ` và nút `🎚️ Lọc điểm` xuất hiện đồng thời đầy đủ trên cùng 1 dòng ngang mượt mà.
-    * **Tối ưu Modal Hàng Đợi Ôn Tập**: Bỏ khung giải thích thuật toán cồng kềnh, đưa toàn bộ nút học và danh sách từ vựng lên trên cùng trực quan.
-    * **Chống đè chữ nút Gợi ý (❓) & Bỏ qua (⏭️)** trong màn hình Quiz và Luyện Viết (Spelling): Tách bạch tiêu đề câu hỏi và cụm nút bằng cấu trúc Flexbox độc lập, tuyệt đối không bị chồng lấn văn bản.
-    * **Co giãn ô chữ Luyện Viết linh hoạt (Responsive Letter Boxes & Word Wrap)**: Ứng dụng CSS `clamp()` và ngắt từ tự động theo dấu cách, dấu gạch nối `-`, gạch chéo `/`, đảm bảo các từ dài từ 10-15 ký tự luôn nằm vừa vặn 100% trong khung nhìn điện thoại mà không bị tràn màn hình.
-  - 🎨 Tinh Gọn Giao Diện Cài Đặt, Thư Viện & Ghi Công Tác Giả (`v0.0.10.2k`):
-    * **Ghi công tác giả (Author Credit)**: Khi tải bất kỳ bộ từ nào từ Thư Viện về máy, hệ thống tự động lưu trữ thông tin tác giả và hiển thị huy hiệu `👤 Đóng góp: [Tên tác giả]` trên thẻ bộ từ ngoài trang chủ và trong tiêu đề chi tiết bộ từ (click vào để mở ngay Profile tác giả).
-    * **Bố cục Chọn Giao Diện 1 Dòng 3 Ô (1-Row Theme Tiles)**: Thu gọn 3 tùy chọn Tối / Sáng / Theo thiết bị thành 3 ô tile nằm ngang trên cùng 1 dòng duy nhất cả trên desktop và mobile, loại bỏ hoàn toàn việc chiếm nhiều dòng dọc.
-    * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
-    * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
-    * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-  - ⚡ Tối Ưu Bàn Phím, Chặn Phím Cách Luyện Viết & Căn Chỉnh Nút Bộ Từ (`v0.0.10.2l`):
-    * **Chặn nhập phím Space trong Luyện Viết (Spelling)**: Ngăn chặn triệt để hành vi vô tình bấm phím cách (Space) khi gõ từ ghép, tự động lọc khoảng trắng giúp người dùng gõ liền mạch mà không lo bị kẹt hoặc phải bấm Backspace xóa tay.
-    * **Hỗ trợ phím Enter khi Nạp Mã Quà Tặng (Gift Code)**: Cho phép nhấn phím `Enter` trực tiếp trong ô nhập mã để nạp thưởng ngay mà không cần dùng chuột bấm nút "Áp dụng".
-    * **Căn thẳng hàng 4 nút Thao Tác Bộ Từ (Deck Toolbar Grid 2x2)**: Sắp xếp 4 nút `[+ Thêm Từ]`, `[⬆ Nhập Excel]`, `[⬇ Xuất Excel]`, `[🚀 Chia sẻ Thư Viện]` thành lưới 2x2 đối xứng hoàn hảo trên màn hình hẹp/di động, chấm dứt hiện tượng lệch hàng 3 trên 1 dưới.
-    * **Xóa bỏ tài khoản rác / Bot kiểm thử & Bổ sung nút Xóa tài khoản**: Đã dọn dẹp triệt để tài khoản bot rác `user_julies` trên Firebase Cloud, đồng thời trang bị nút **`🗑️ Xóa`** trực tiếp trong Cổng Quản Lý Học Viên (`modal-publisher-portal`) cho quản trị viên.� giữ nguyên trạng thái sau khi F5/Ctrl+F5 mà không cần phải đăng xuất đăng nhập lại.
-  - 👥 Thẻ Hồ Sơ Người Dùng Công Khai Đa Năng (Public Profile Modal - `v0.0.10.2b/c/d/f`):
-    * Hiển thị thông tin cho "VocaFlow Chuẩn" (hiển thị đủ 3 bộ từ chuẩn, 180 từ vựng và icon nhận diện chính thức).
-    * Dynamic Profile Resolution: Tự động cập nhật tên mới (VD: "julies"), Avatar và Bio mới nhất của tác giả lên toàn bộ các bộ từ đã chia sẻ trước đó mà không bị gán cứng tên cũ.
-    * Cân bằng chỉ số (`v0.0.10.2f`): Loại bỏ hoàn toàn chỉ số "Điểm / Uy tín" gây mất cân bằng, bố cục lại 2 ô thông số cân đối, tinh tế: 📚 **Số Bộ Từ Chia Sẻ** & 📝 **Tổng Số Từ Vựng**.
-  - 🔒 Đóng Góp Thư Viện Ẩn Danh / Công Khai (Anonymous / Public Sharing):
-    * Loại bỏ ô nhập tên tác giả tự do để bảo đảm tính xác thực danh tính.
-    * Tự động lấy tên và Avatar thực tế từ Profile cá nhân.
-    * Thêm tùy chọn 2 chế độ: 🌐 **Công khai** (Hiển thị tên & mở xem Profile) hoặc 🔒 **Ẩn danh** (Hiển thị "Ẩn danh", không liên kết Profile).
-    * Cơ chế đóng góp phi vụ lợi (`v0.0.10.2f`): Không tặng điểm ảo khi tải lên để ngăn chặn hành vi spam/đăng trùng lặp trục lợi.
-  - 🛠️ Chỉnh Sửa & Xóa Bộ Từ Đã Đăng Thư Viện (Edit & Delete Public Decks - `v0.0.10.2e`):
-    * Nhận diện chủ sở hữu thông minh: Hiện huy hiệu `TỦ TỪ CỦA TÔI` cùng 2 nút chức năng **`✏️ Sửa`** và **`🗑️ Xóa`** riêng cho tác giả đã đăng bộ từ.
-    * Cho phép tác giả cập nhật Tên, Mô tả, Danh mục, Biểu tượng hoặc Tải file/dữ liệu mới thay thế.
-    * Nút **`🗑️ Xóa Khỏi Thư Viện`**: Cho phép gỡ bỏ vĩnh viễn bộ từ khỏi Cloud Thư Viện Toàn Cầu chỉ với 1 cú click xác nhận an toàn.
-  - 📐 Bố Cục Thư Viện Danh Sách Ngang & Nút "🌟 CỦA TÔI" (`v0.0.10.2g`):
-    * Chuyển đổi Thư Viện sang dạng **Danh sách 1 dòng (Horizontal Row Card)** cho từng bộ từ: Thông tin bộ từ nằm bên trái, cụm nút bấm thao tác nằm bên phải/dưới liền mạch, co giãn linh hoạt 100% không bị che khuất.
-    * Nút **`🌟 CỦA TÔI`** đặt ngay cạnh nút Làm Mới: 1-click lọc nhanh toàn bộ các bộ từ do chính mình đăng tải.
-  - 📱 Đại Tu Giao Diện Di Động & Khắc Phục Hiển Thị Bộ Lọc (`v0.0.10.2h/i`):
-    * **Hiển thị đầy đủ cả 3 bộ lọc trên điện thoại**: Gỡ bỏ xung đột `!important` trong CSS giúp 2 dropdown `🏷️ Từ loại`, `🎯 Cấp độ` và nút `🎚️ Lọc điểm` xuất hiện đồng thời đầy đủ trên cùng 1 dòng ngang mượt mà.
-    * **Tối ưu Modal Hàng Đợi Ôn Tập**: Bỏ khung giải thích thuật toán cồng kềnh, đưa toàn bộ nút học và danh sách từ vựng lên trên cùng trực quan.
-    * **Chống đè chữ nút Gợi ý (❓) & Bỏ qua (⏭️)** trong màn hình Quiz và Luyện Viết (Spelling): Tách bạch tiêu đề câu hỏi và cụm nút bằng cấu trúc Flexbox độc lập, tuyệt đối không bị chồng lấn văn bản.
-    * **Co giãn ô chữ Luyện Viết linh hoạt (Responsive Letter Boxes & Word Wrap)**: Ứng dụng CSS `clamp()` và ngắt từ tự động theo dấu cách, dấu gạch nối `-`, gạch chéo `/`, đảm bảo các từ dài từ 10-15 ký tự luôn nằm vừa vặn 100% trong khung nhìn điện thoại mà không bị tràn màn hình.
-  - 🎨 Tinh Gọn Giao Diện Cài Đặt, Thư Viện & Ghi Công Tác Giả (`v0.0.10.2k`):
-    * **Ghi công tác giả (Author Credit)**: Khi tải bất kỳ bộ từ nào từ Thư Viện về máy, hệ thống tự động lưu trữ thông tin tác giả và hiển thị huy hiệu `👤 Đóng góp: [Tên tác giả]` trên thẻ bộ từ ngoài trang chủ và trong tiêu đề chi tiết bộ từ (click vào để mở ngay Profile tác giả).
-    * **Bố cục Chọn Giao Diện 1 Dòng 3 Ô (1-Row Theme Tiles)**: Thu gọn 3 tùy chọn Tối / Sáng / Theo thiết bị thành 3 ô tile nằm ngang trên cùng 1 dòng duy nhất cả trên desktop và mobile, loại bỏ hoàn toàn việc chiếm nhiều dòng dọc.
-    * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
-    * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
-    * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 💎 v0.10.4 (a -> s): Tối Ưu Tab Kho Lưu Trữ, Điều Hướng Modal Xem Bộ Từ & Chuẩn Xác Tác Giả Xem Hồ Sơ Tác Giả & Dynamic Author Links Toàn Diện (Deck Card, Deck Detail, Sổ Cái) Chuẩn Hóa Phân Quyền Sở Hữu Bộ Từ Thư Viện (Công Bằng Tuyệt Đối Giữa Mọi Người Học) Tinh Chỉnh Quy Tắc Kinh Tế (Tạo Bộ Từ Miễn Phí, Thưởng +10 Xu Tự Soạn Từ, Trừ AI Studio) Chuẩn Hóa Toàn Diện 100% Các Luồng Biến Động Số Dư Trong Sổ Cái Đồng Bộ Ghi Chú & Mục Tiêu Học Tập Lên Cloud + Khắc Phục Triệt Để Sổ Cái Học Tập Sửa Lỗi Quiz Khi Sai, Đổi Vị Trí Nút Tiếp Theo & Hiển Thị Đầy Đủ Quà Tặng/HSD Mã Cloud Nâng Cấp Tốc Độ Đồng Bộ Realtime Đa Tab/Thiết Bị & Nút Làm Mới Tức Thì Đồng Bộ Sổ Cái Biến Động Số Dư Trọn Vẹn Đa Thiết Bị Loại Bỏ Triệt Để Dữ Liệu Ảo, Đồng Bộ Skips Đa Nền Tảng & Đồng Nhất UI Tuyệt Đối Hard Reset Kinh Tế Baseline Toàn Hệ Thống, Đồng Bộ 100% Ví & Cửa Hàng Sửa Lỗi Đồng Bộ Số Dư Cloud Khi Đăng Nhập, Cách Ly Sổ Cái Khách & Log Giftcode Hoàn Thiện Khóa Khách (isGuest), Khóa Cửa Sổ Thu Nhỏ & Phạt Nặng Thoát Ngang Âm Điểm Ghi Log Chi Tiêu VocaShop, Phân Quyền Khách (Guest) & Đăng Xuất An Toàn Reset Sạch Khắc Phục Triệt Để Sổ Cái Biến Động Số Dư & Tự Động Nạp Số Dư Ban Đầu Đánh Giá 5 Sao, Xem Trước 25%, Hoa Hồng Affiliate & BXH Pháp Sư Tối Ưu Sổ Cái Biến Động, Giá Bán Bộ Từ & Đồng Bộ Gian Hàng Tự Động SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
-  - 🛠️ Hoàn Thiện Giá Bán, Đồng Bộ Gian Hàng & Gộp Biến Động Điểm Bài Học (`v0.10.4b`):
-    * **Thêm Khung Thiết Lập Giá Bán Vào Form Đăng & Sửa Bộ Từ (Hình 1)**:
-      + Đã tích hợp đầy đủ ô nhập `💎 Giá bán bộ từ` kèm các nút chọn nhanh (0đ, 50, 100, 200, 500 Xu) và badge màu sắc trực quan ngay trong popup Sửa và Đăng bộ từ.
-      + Khi bấm "Đổi giá / Sửa", hệ thống tự nạp chính xác giá bán hiện tại và lưu đè chuẩn xác lên Thư Viện Toàn Cầu.
-    * **Tự Động Nạp Bộ Từ Vào Gian Hàng Của Tôi Ngay Khi F5 Trang**:
-      + Hệ thống tự động fetch dữ liệu Cloud ngầm khi mở Studio & Ví Xu, đảm bảo các bộ từ đã xuất bản hiển thị ngay lập tức mà không cần phải vào Thư Viện trước.
-    * **Đồng Bộ Sổ Cái Biến Động Số Dư Từ Cloud RTDB (Hình 2)**:
-      + Tự động kéo lịch sử giao dịch từ Cloud `/users/{uid}/ledger.json` và merge an toàn vào sổ cái thiết bị.
-    * **Cơ Chế Gộp Điểm Khi Hoàn Thành / Thoát Bài Học (Deferred Points Engine)**:
-      + Khi đang làm bài Quiz hoặc Luyện viết: Không trừ/cộng lẻ tẻ vào ví gốc sau từng câu (chỉ hiện thông báo badge `+X Xu` / `-X Xu` và tính tổng tạm thời).
-      + Chỉ khi **hoàn thành bài** hoặc **thoát bài giữa chừng** thì mới cập nhật 1 lần vào ví và ghi **DUY NHẤT 1 dòng giao dịch chuẩn chỉnh** vào Sổ Cái Biến Động Số Dư!
-  - 🛒 **Thị Trường Mua Bán Bộ Từ (Creator Marketplace)**:
-    * Người dùng khi tải/sửa bộ từ lên Thư Viện Toàn Cầu có thể thiết lập mức **Giá Bán (Xu)** tùy chọn (0đ = Miễn phí, 50 Xu, 100 Xu, 200 Xu, 500 Xu...).
-    * Người học khác có thể bấm "Mua Bộ Từ" trực tiếp trên Thư Viện. Khi mua thành công:
-      + Trừ Xu người mua và ghi vào Sổ Cái biến động.
-      + Chuyển trực tiếp 100% doanh thu Xu vào tài khoản Ví của Seller (Tác giả).
-      + Người mua sở hữu vĩnh viễn bộ từ, tải lại bất cứ lúc nào không mất phí.
-  - 📜 **Sổ Cái Biến Động Số Dư Bất Biến (Immutable Transaction Ledger)**:
-    * Ghi nhận từng dòng lịch sử thu chi theo thời gian thực (Học tập, Bán bộ từ, Mua bộ từ, Đổi gợi ý/bỏ qua, Tạo AI, Giftcode...).
-    * Dữ liệu bất biến (append-only), đồng bộ trên Cloud RTDB và LocalStorage.
-  - 💼 **Trung Tâm Studio & Ví Xu (Creator Studio & Wallet Hub Modal)**:
-    * Nút truy cập nhanh `💼 Studio & Ví` ngay trên Header, menu mobile và Profile.
-    * Gồm 3 Tab trực quan:
-      + 📜 **Sổ Cái Biến Động Số Dư**: Tra cứu dòng tiền, bộ lọc Thu/Chi (+/-).
-      + 📦 **Gian Hàng Của Tôi**: Quản lý các bộ từ đang bán, lượt mua, tổng doanh thu và nút đổi giá nhanh.
-      + 🛍️ **Bộ Từ Đã Mua**: Danh sách các bộ từ Premium đã sở hữu.
-
-• 🤖 v0.10.3 (a -> q): Khắc Phục Nút Nghe Lại Phát Âm & Bổ Sung CEFR A1 Vào AI Studio Cân Bằng Điểm Toàn Diện (balance_v1), Giới Hạn Nghe Lại Âm Thanh & Sửa Thoát Modal Kết Quả Tinh Chỉnh Giao Diện Thẻ Siêu Khó, Phạt 75% Hardcore Khi Sai & Tách Badge Thư Viện Cấp Độ Luyện Viết Siêu Khó (1 Ô Duy Nhất) & Cân Chỉnh Hệ Số Thoát Ngang (0.2, 0.4, 0.6) Cơ Chế Khoan Hồng Thoát Ngang (3 Bậc: x0.25, x0.5, x0.75) Hệ Số Kinh Tế Theo Độ Dài Bài Học & Cơ Chế Phạt Thoát Ngang (x0.25) Bảng Cài Đặt Âm Lượng & Bật/Tắt SFX, Tách Âm Đúng/Sai & Giọng Đọc Spelling Hệ Thống SFX Âm Thanh Sống Động, Focus Spelling Thông Minh & Sửa Lỗi Phím Esc AI Deck Studio Chuẩn Hóa, Phím Esc Toàn Năng, Giới Hạn Thanh Trượt & Tối Ưu Spelling AI Deck Studio, Bảng Màu Bộ Từ, Hạn Gift Code & Chuẩn Hóa Tiền Tệ Xu AI Deck Studio, Cửa Sổ Thu Nhỏ PiP & Đồng Bộ Lượt Skip Toàn Diện Cổng Quản Trị AI Deck Studio & Cửa Sổ Thu Nhỏ Auto Flashcard (Picture-in-Picture Mini-Player) AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
-  - 🎓 Huấn Luyện AI Chuyên Sâu, Chạy Ngầm & Tối Ưu UX Studio (`v0.0.10.3e`):
-    * **Chuẩn hóa chữ thường & Dạng gốc của từ**: Tất cả từ vựng tạo ra đều đồng bộ chữ thường (trừ danh từ riêng), động từ luôn ở dạng nguyên thể không chia (`mitigate`, không lấy `mitigating`/`mitigated`), danh từ luôn ở số ít (`strategy`, không lấy `strategies`).
-    * **Trích xuất từ báo/bài đọc ưu tiên từ khó & học thuật**: Yêu cầu AI tập trung trích xuất các từ vựng nâng cao có cấp độ CEFR cao (B2, C1, C2), bỏ qua các từ cơ bản (A1, A2).
-    * **Nhập số lượng từ tùy biến (5 - 50 từ)**: Chuyển đổi sang ô nhập số linh hoạt có cơ chế tự động giới hạn (nhập <5 tự về 5, >50 tự về 50).
-    * **Hỗ trợ tạo ngầm trong nền (Background Generation)**: Trong lúc AI đang tạo từ, người dùng có thể thoải mái đóng Studio để làm việc khác, hệ thống sẽ tự động gửi thông báo khi hoàn thành và giữ nguyên kết quả để vào xem & lưu.
-    * **Tính năng "Tạo Lại" tức thì**: Cho phép người dùng chỉnh sửa thông tin chủ đề, đoạn văn, số lượng từ và bấm tạo lại mà không bị lưu đè dữ liệu cũ.
-    * **Thông báo lỗi hạn mức (Quota / Token) lịch sự & chi tiết**: Báo rõ nguyên nhân kèm lời xin lỗi và hướng dẫn khắc phục khi Google Gemini chạm hạn mức.
-    * **Tinh gọn giao diện Studio**: Bỏ khung nhập Key cồng kềnh (thay bằng cảnh báo nhẹ nếu chưa có Key) và luôn mặc định tạo vào một bộ từ mới riêng biệt.
-  - ⚡ Đồng Bộ Danh Sách Mô Hình Gemini Flash Lite & Tự Động Khôi Phục (`v0.0.10.3d`):
-    * **Đồng bộ chuẩn xác hệ thống Model Pool**: Loại bỏ hoàn toàn model không hợp lệ (`gemini-1.5-flash-8b`), chuyển toàn bộ AI Studio sang sử dụng các mô hình `Flash Lite` siêu nhẹ và tốc độ cao (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.0-flash-lite`, `gemini-2.0-flash`, `gemini-1.5-flash`) hoàn toàn đồng nhất với công cụ tra từ và tạo phương án trắc nghiệm.
-    * **Cơ chế Tự Động Ghi Nhớ & Đổi Model Dự Phòng (Model Fallback Memory)**: Tự động ghi nhớ mô hình hoạt động tốt nhất vào `localStorage` và tự động chuyển đổi sang mô hình kế tiếp nếu một mô hình bất kỳ phản hồi chậm.
-  - 🔑 Khắc Phục Triệt Để Khởi Tạo Từ Bằng AI & Tích Hợp Nhập Key Nhanh (`v0.0.10.3c`):
-    * **Khung Cài Đặt Key Trực Tiếp Trong AI Studio**: Bổ sung dải banner thông minh ngay trong hộp thoại Studio giúp người dùng dán và lưu Gemini API Key ngay lập tức hoặc bấm link lấy Key miễn phí từ Google (10s) mà không cần vào Cài Đặt.
-    * **Loại bỏ Mock Data tĩnh gây trùng lặp**: Thay vì âm thầm trả về danh sách từ mẫu cũ khi chưa có Key, hệ thống chủ động hướng dẫn người dùng kết nối Key để Gemini AI tạo bộ từ 100% độc nhất, phong phú và bám sát chủ đề yêu cầu.
-    * **Nâng cấp Prompt & Nhiệt độ sáng tạo (Temperature 0.7)**: Giúp Gemini AI sinh các từ vựng chuyên ngành, collocations và câu ví dụ tự nhiên, đa dạng và hấp dẫn hơn gấp nhiều lần.
-  - 📋 Bộ Nhớ Tạm VocaFlow Clipboard Đa Năng (`v0.0.10.3b`):
-    * **Sao chép (Copy) & Cắt (Cut) từng từ vựng**: Thêm 2 biểu tượng `📋` và `✂️` ngay trên từng thẻ từ trong danh sách giúp nhanh chóng sao chép hoặc di chuyển từ sang bộ từ khác mà không cần nhập lại.
-    * **Thao tác hàng loạt (Bulk Copy/Cut/Paste)**: Khi tick chọn nhiều từ vựng, thanh công cụ xuất hiện các nút `📋 Sao chép`, `✂️ Cắt` và `📋 Dán từ (X)`.
-    * **Dán thông minh (Smart Paste Engine)**: Tự động nhân bản từ với ID mới khi Copy, hoặc cập nhật thuộc tính `deckId` khi Cắt (Cut) và dọn sạch bộ nhớ tạm sau khi di chuyển.
-  - 🏆 Điều Chỉnh Cơ Chế Thưởng Tự Học & Mở Rộng Giới Hạn AI (`v0.0.10.3b`):
-    * **Thưởng tự học theo từ**: Tự thêm 1 từ mới thủ công được thưởng ngay **`+10đ ví / 1 từ`** (loại bỏ thưởng tạo bộ từ trống để đảm bảo công bằng).
-    * **Mở rộng số lượng từ AI**: Cho phép tạo tối đa lên tới **`50 từ / 1 lần`** (các mốc 5, 10, 15, 20, 30, 40, 50 từ).
-  - Giá tạo từ bằng AI: 20đ ví / 1 từ (tính chuẩn xác theo số từ thực tế tạo thành công).
-  - Tặng quà trải nghiệm: 10 từ AI miễn phí cho tài khoản mới (tương đương 200đ ví).
-  - 3 Chế độ đầu vào: Theo Chủ đề (Topic Prompt), Trích xuất từ Đoạn văn/Bài báo (Passage), và Chuẩn hóa dãy từ khô (Raw Words).
-  - Tối ưu Token mảng nén + Phao cứu sinh Auto-Repair JSON cứu 100% từ đã tạo khi ngắt kết nối/chạm giới hạn.
-  - Thưởng điểm khi tự soạn thủ công (+50đ ví) để kích thích tinh thần tự học.
-
-================================================================================
-🌐 TRẢI NGHIỆM TRỰC TUYẾN: https://iamjulies.github.io/VocaFlow/
-💻 BẢN WINDOWS PORTABLE: Tải trực tiếp trong thư mục GITHUB_RELEASE
+🌟 [v0.0.1 -> v0.0.9] - NỀN TẢNG CỐT LÕI (CORE FOUNDATION)
+• Quản lý bộ từ vựng thông minh, Flashcard 3D mượt mà, Phát âm chuẩn bản xứ (Web Speech API).
+• Bộ lọc Từ loại (POS) & Cấp độ CEFR (A1 - C2).
+• Đồng bộ dữ liệu đa thiết bị qua Cloud Firebase.
+• Cổng Quản Trị Viên (Admin Panel) xem tiến độ và quản lý mã quà tặng.
 ================================================================================
