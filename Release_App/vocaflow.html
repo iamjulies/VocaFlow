@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4o) */
+      /* SPELLING EXTREME MODE (v0.10.4p) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4o</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4p</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3297,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4o MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4p MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4o) -->
+      <!-- GUEST LOCK VIEW (v0.10.4p) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4o) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4p) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4o</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4p</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4o) -->
+      <!-- Price Setting for Deck (v0.10.4p) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4o)
+        // Realtime Inter-Tab Synchronization (v0.10.4p)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4o)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4p)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6435,7 +6435,23 @@
       }
     }
 
-    async function saveUserProfileCustomFields() {
+    function isDeckAuthor(deck) {
+      if (!deck || !currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || (typeof deck.id === 'string' && deck.id.startsWith('lib_deck_'))) {
+        return false;
+      }
+      if (deck.authorUid && deck.authorUid === currentUser.uid) {
+        return true;
+      }
+      if (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) {
+        return true;
+      }
+      if (!deck.authorUid && deck.author && currentUser.displayName && deck.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) {
+        return true;
+      }
+      return false;
+    }
+
+    function saveUserProfileCustomFields() {
       const nameInput = document.getElementById('profile-display-name-input');
       const bioInput = document.getElementById('profile-bio-input');
       const newName = (nameInput?.value || '').trim() || 'Người dùng VocaFlow';
@@ -6492,9 +6508,7 @@
         // 2. Cascade update all public library decks published by this user!
         if (Array.isArray(cloudLibraryDecks)) {
           cloudLibraryDecks.forEach(d => {
-            const isOwner = (d && d.authorUid && d.authorUid === currentUser.uid) ||
-                            (d && d.author && (d.author.toLowerCase() === 'i am julies' || d.author.toLowerCase() === 'julies' || d.author.toLowerCase() === newName.toLowerCase())) ||
-                            (d && d.authorEmail && currentUser.email && d.authorEmail === currentUser.email);
+            const isOwner = isDeckAuthor(d);
             if (isOwner && !d.isAnonymous) {
               d.author = newName;
               d.authorBio = newBio;
@@ -6540,6 +6554,11 @@
         return;
       }
 
+      if (!isDeckAuthor(deck)) {
+        alert('❌ Bạn không có quyền xóa bộ từ của tác giả khác!');
+        return;
+      }
+
       if (!confirm(`⚠️ Bạn có chắc chắn muốn xóa vĩnh viễn bộ từ "${deck.title}" khỏi Thư Viện Toàn Cầu không?\n\n(Lưu ý: Bộ từ sẽ được gỡ bỏ ngay lập tức khỏi Thư Viện của tất cả người dùng).`)) {
         return;
       }
@@ -6566,7 +6585,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4o)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4p)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6761,10 +6780,7 @@
       const spentEl = document.getElementById('studio-total-spent');
       if (spentEl) spentEl.textContent = '-' + totalSpent + ' Xu';
 
-      const myDecks = getAllLibraryDecks().filter(d => currentUser && (
-        (d.authorUid && d.authorUid === currentUser.uid) ||
-        (d.author && currentUser.displayName && d.author.toLowerCase() === currentUser.displayName.toLowerCase())
-      ));
+      const myDecks = getAllLibraryDecks().filter(d => isDeckAuthor(d));
 
       const sellingEl = document.getElementById('studio-decks-selling-count');
       if (sellingEl) sellingEl.textContent = myDecks.length + ' bộ';
@@ -6945,10 +6961,7 @@
       if (!deck) return;
 
       const price = Number(deck.price) || 0;
-      const isOwner = currentUser && (
-        (deck.authorUid && deck.authorUid === currentUser.uid) ||
-        (deck.author && currentUser.displayName && deck.author.toLowerCase() === currentUser.displayName.toLowerCase())
-      );
+      const isOwner = isDeckAuthor(deck);
 
       if (price === 0 || isOwner || userPurchasedDeckIds.has(deck.id)) {
         installLibraryDeck(deck.id);
@@ -7073,6 +7086,11 @@
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
 
+      if (!isDeckAuthor(deck)) {
+        alert('❌ Bạn không có quyền chỉnh sửa bộ từ của tác giả khác!');
+        return;
+      }
+
       pendingPublisherDeck = {
         title: deck.title,
         words: deck.words || []
@@ -7145,11 +7163,7 @@
       const targetDeck = allDecks.find(d => d.id === deckId) || allDecks.find(d => (d.author || '').toLowerCase() === authorName.toLowerCase());
 
       const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
-      const isCurrentUser = currentUser && (
-        (targetDeck && targetDeck.authorUid && targetDeck.authorUid === currentUser.uid) ||
-        (currentUser.displayName && authorName.toLowerCase() === currentUser.displayName.toLowerCase()) ||
-        (authorName.toLowerCase() === 'i am julies' && (currentUser.email.includes('julies') || (currentUser.displayName || '').toLowerCase().includes('julies')))
-      );
+      const isCurrentUser = targetDeck ? isDeckAuthor(targetDeck) : (currentUser && currentUser.displayName && authorName.toLowerCase() === currentUser.displayName.toLowerCase());
 
       let resolvedName = authorName;
       let resolvedAvatar = targetDeck?.authorAvatar || authorName;
@@ -12118,7 +12132,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4o)
+      // Progressive incomplete session leniency / penalty (v0.10.4p)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -15794,29 +15808,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         // My Decks Filter Toggle
         if (libraryMyDecksOnly) {
-          const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
-            (deck.authorUid && deck.authorUid === currentUser.uid) ||
-            (deck.author && currentUser.displayName && (
-              deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
-              deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
-              currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
-            )) ||
-            (deck.author && (
-              deck.author.toLowerCase().includes('julies') ||
-              deck.author.toLowerCase().includes('duwchao') ||
-              deck.author.toLowerCase().includes('julie') ||
-              deck.author.toLowerCase().includes('i am julies')
-            ) && (
-              currentUser.email.includes('julies') ||
-              currentUser.email.includes('duwchao') ||
-              (currentUser.displayName || '').toLowerCase().includes('julies') ||
-              (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
-              currentUser.email === 'duwchao@gmail.com'
-            )) ||
-            (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
-            (currentUser.email === 'duwchao@gmail.com')
-          );
-          if (!isAuthor) return false;
+          if (!isDeckAuthor(deck)) return false;
         }
 
         // Category Filter
@@ -15864,28 +15856,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng');
 
         // Check if current logged in user is the owner/author of this public deck
-        const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
-          (deck.authorUid && deck.authorUid === currentUser.uid) ||
-          (deck.author && currentUser.displayName && (
-            deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
-            deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
-            currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
-          )) ||
-          (deck.author && (
-            deck.author.toLowerCase().includes('julies') ||
-            deck.author.toLowerCase().includes('duwchao') ||
-            deck.author.toLowerCase().includes('julie') ||
-            deck.author.toLowerCase().includes('i am julies')
-          ) && (
-            currentUser.email.includes('julies') ||
-            currentUser.email.includes('duwchao') ||
-            (currentUser.displayName || '').toLowerCase().includes('julies') ||
-            (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
-            currentUser.email === 'duwchao@gmail.com'
-          )) ||
-          (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
-          (currentUser.email === 'duwchao@gmail.com')
-        );
+        const isAuthor = isDeckAuthor(deck);
 
         html += `
           <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: 0 3px 10px rgba(0,0,0,0.12); transition: all 0.2s ease;">
@@ -16105,28 +16076,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (!deck) return;
       currentPreviewDeck = deck;
 
-      const isAuthor = currentUser && currentUser.email && !deck.id.startsWith('lib_deck_') && (
-        (deck.authorUid && deck.authorUid === currentUser.uid) ||
-        (deck.author && currentUser.displayName && (
-          deck.author.toLowerCase() === currentUser.displayName.toLowerCase() ||
-          deck.author.toLowerCase().includes(currentUser.displayName.toLowerCase()) ||
-          currentUser.displayName.toLowerCase().includes(deck.author.toLowerCase())
-        )) ||
-        (deck.author && (
-          deck.author.toLowerCase().includes('julies') ||
-          deck.author.toLowerCase().includes('duwchao') ||
-          deck.author.toLowerCase().includes('julie') ||
-          deck.author.toLowerCase().includes('i am julies')
-        ) && (
-          currentUser.email.includes('julies') ||
-          currentUser.email.includes('duwchao') ||
-          (currentUser.displayName || '').toLowerCase().includes('julies') ||
-          (currentUser.displayName || '').toLowerCase().includes('duwchao') ||
-          currentUser.email === 'duwchao@gmail.com'
-        )) ||
-        (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
-        (currentUser.email === 'duwchao@gmail.com')
-      );
+      const isAuthor = isDeckAuthor(deck);
 
       const btnEdit = document.getElementById('btn-lib-preview-edit');
       const btnDelete = document.getElementById('btn-lib-preview-delete');
