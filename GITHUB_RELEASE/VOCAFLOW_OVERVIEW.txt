@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5a (Build 61)
+Phiên bản hiện tại : v0.10.5b (Build 62)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🧠 v0.10.5b (Build 62 - Bước 2 Chấm Điểm Multimodal):
+  - Tích hợp Gemini 2.5 / 3.0 Flash Multimodal Audio Evaluation API:
+    * Gửi bản thu âm giọng nói của người học (Base64) trực tiếp lên Gemini Flash để phân tích ngữ âm, cao độ & độ chuẩn xác.
+    * Thang điểm tổng thể 0 - 100 điểm với vòng tròn màu sắc động (Xanh ngọc >= 90, Tím >= 75, Vàng >= 50, Đỏ < 50).
+  - Diagnostic Result Panel (Bảng chẩn đoán chi tiết):
+    * Phân tích 3 yếu tố cốt lõi: 🎯 **Trọng âm (Stress)**, 🔊 **Âm đuôi (Ending sounds)**, 🔤 **Nguyên âm (Vowels)**.
+    * Bóc tách từng âm tiết (Phoneme Breakdown Tags) trực quan theo 3 cấp độ: 🟢 Chuẩn xác, 🟡 Cần chú ý, 🔴 Sai/Thiếu âm.
+    * Hộp nhận xét & lời khuyên khẩu hình chuyên sâu bằng tiếng Việt chuẩn ngữ cảnh.
+
 • 🎙️ v0.10.5a (Build 61 - Bước 1 Khởi Động):
   - Ra mắt giao diện & nền tảng Chế độ Luyện Phát Âm (AI Speaking Lab):
     * Thêm nút "🎙️ Luyện Nói AI" trên thanh công cụ học tập trong chi tiết bộ từ.
