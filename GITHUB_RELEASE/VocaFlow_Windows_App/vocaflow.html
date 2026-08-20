@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4h) */
+      /* SPELLING EXTREME MODE (v0.0.10.4i) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.4i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4h MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.0.10.4i MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3309,7 +3309,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4h) -->
+      <!-- GUEST LOCK VIEW (v0.0.10.4i) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3402,7 +3402,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4h) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.0.10.4i) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4096,7 +4096,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.4i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4427,7 +4427,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4h) -->
+      <!-- Price Setting for Deck (v0.0.10.4i) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5196,10 +5196,10 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4h)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.0.10.4i)
     // =========================================================================
-    function runEconomyMigrationV0104h() {
-      const MIGRATION_KEY = 'vocaflow_migration_v0104h';
+    function runEconomyMigrationV0104i() {
+      const MIGRATION_KEY = 'vocaflow_migration_v00104i';
       if (localStorage.getItem(MIGRATION_KEY) !== 'done') {
         localStorage.setItem(STORAGE_KEY_USER_POINTS, '0');
         localStorage.setItem(STORAGE_KEY_USER_HINTS, '5');
@@ -5234,6 +5234,12 @@
 
       const headerPoints = document.getElementById('header-points-display');
       if (headerPoints) headerPoints.textContent = formatPointsCompact(points);
+
+      const studioBal = document.getElementById('studio-wallet-balance');
+      if (studioBal) studioBal.textContent = points + ' Xu';
+
+      const profPoints = document.getElementById('profile-user-points');
+      if (profPoints) profPoints.textContent = points + ' Xu';
 
       const shopPoints = document.getElementById('shop-user-points');
       if (shopPoints) shopPoints.textContent = points;
@@ -6199,7 +6205,7 @@
 
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
-      runEconomyMigrationV0104h();
+      runEconomyMigrationV0104i();
       initTheme();
       loadDatabase();
       loadAuthState();
@@ -6509,7 +6515,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4h)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.0.10.4i)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6691,19 +6697,7 @@
       const balEl = document.getElementById('studio-wallet-balance');
       if (balEl) balEl.textContent = curBalance + ' Xu';
 
-      // If user already has Xu from before v0.10.4a, auto-seed initial record so ledger is never blank
-      if (userLedger.length === 0 && curBalance > 0) {
-        const initTx = {
-          id: 'tx_init_' + Date.now(),
-          timestamp: new Date().toISOString(),
-          type: 'STUDY',
-          amount: curBalance,
-          balanceAfter: curBalance,
-          description: 'Số dư tích lũy ban đầu'
-        };
-        userLedger.push(initTx);
-        localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
-      }
+// Clean ledger without dummy auto-seeding
 
       let totalEarned = 0;
       let totalSpent = 0;
@@ -7727,6 +7721,16 @@
                   updateEconomyUI();
                 }
 
+                // Sync ledger from cloud
+                if (cloudData.ledger && typeof cloudData.ledger === 'object') {
+                  const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp);
+                  userLedger = cloudEntries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                  if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
+                  localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+                  if (typeof renderLedgerList === 'function') renderLedgerList();
+                  if (typeof renderStudioDashboard === 'function') renderStudioDashboard();
+                }
+
                 if (cloudData.settings && typeof cloudData.settings === 'object') {
                   const remoteSettingsTime = parseInt(cloudData.settings.updatedAt || '0', 10);
                   const localSettingsTime = parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || '0', 10);
@@ -7790,6 +7794,7 @@
               economy: {
                 points: getUserPoints(),
                 hints: getUserHints(),
+                skips: getUserSkips(),
                 updatedAt: new Date().toISOString()
               },
               settings: {
@@ -12026,7 +12031,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4h)
+      // Progressive incomplete session leniency / penalty (v0.0.10.4i)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
