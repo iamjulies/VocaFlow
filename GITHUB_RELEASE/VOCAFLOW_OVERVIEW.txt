@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5e (Build 65)
+Phiên bản hiện tại : v0.10.5f (Build 66)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎯 v0.10.5f (Build 66 - Fix Chấm Điểm AI, Loại Bỏ Popup Mic WebView2 & Tinh Gọn UI):
+  - Khắc phục lỗi nút Chấm Điểm AI:
+    * Khôi phục và kết nối hàm `evaluateSpeakingAudioWithGemini` gọi trực tiếp Gemini Flash Multimodal.
+    * Nhấn nút `🧠 Chấm Điểm AI` (hoặc nhấn phím `Enter`) sẽ kích hoạt phân tích ngữ âm, trả về điểm số và bảng chẩn đoán chính xác.
+    * Sau khi có kết quả chấm điểm, nhấn `Enter` lần 2 sẽ chuyển sang từ tiếp theo (`nextSpeakingWord()`).
+  - Loại bỏ hoàn toàn lỗi Popup Micro làm phiền trên App Windows .exe (WebView2):
+    * Loại bỏ tiến trình SpeechRecognition chạy ngầm (vốn là nguyên nhân kích hoạt popup hỏi quyền Micro lặp đi lặp lại của Chromium trên file://).
+    * Giữ chuẩn kết nối MediaRecorder với `speakingPersistentStream` xuyên suốt phiên học giúp người dùng CHỈ CẦN CHO PHÉP ĐÚNG 1 LẦN DUY NHẤT khi mở app.
+  - Tinh gọn giao diện Speaking (Clean & Minimalist UI):
+    * Xóa nút "Phát âm mẫu" thừa ở góc trên bên phải (đã có biểu tượng loa Oxford chuẩn cạnh phiên âm IPA).
+    * Xóa các nhãn phím tắt rườm rà dưới dòng thời lượng thu âm và trên 2 nút "Từ Trước" / "Từ Tiếp Theo".
+    * Xóa bỏ thanh footer phím tắt dưới cùng để màn hình học tập thoáng đãng, tập trung tối đa.
+
 • 🎙️ v0.10.5e (Build 65 - Tự Động Đọc Mẫu, Realtime Speech Match & Fix Micro/Phím Tắt):
   - Tự động phát âm mẫu 1 lần khi chuyển sang từ mới (Auto Model Pronunciation):
     * Khi người học mở chế độ Speaking hoặc chuyển từ (Next/Prev/Shuffle), app tự động phát âm chuẩn bản xứ 1 lần trước để người học lắng nghe và bắt chước.
