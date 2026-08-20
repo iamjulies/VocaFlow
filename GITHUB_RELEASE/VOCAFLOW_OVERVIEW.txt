@@ -217,6 +217,23 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
+• 💎 v0.10.4a: SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
+  - 🛒 **Thị Trường Mua Bán Bộ Từ (Creator Marketplace)**:
+    * Người dùng khi tải/sửa bộ từ lên Thư Viện Toàn Cầu có thể thiết lập mức **Giá Bán (Xu)** tùy chọn (0đ = Miễn phí, 50 Xu, 100 Xu, 200 Xu, 500 Xu...).
+    * Người học khác có thể bấm "Mua Bộ Từ" trực tiếp trên Thư Viện. Khi mua thành công:
+      + Trừ Xu người mua và ghi vào Sổ Cái biến động.
+      + Chuyển trực tiếp 100% doanh thu Xu vào tài khoản Ví của Seller (Tác giả).
+      + Người mua sở hữu vĩnh viễn bộ từ, tải lại bất cứ lúc nào không mất phí.
+  - 📜 **Sổ Cái Biến Động Số Dư Bất Biến (Immutable Transaction Ledger)**:
+    * Ghi nhận từng dòng lịch sử thu chi theo thời gian thực (Học tập, Bán bộ từ, Mua bộ từ, Đổi gợi ý/bỏ qua, Tạo AI, Giftcode...).
+    * Dữ liệu bất biến (append-only), đồng bộ trên Cloud RTDB và LocalStorage.
+  - 💼 **Trung Tâm Studio & Ví Xu (Creator Studio & Wallet Hub Modal)**:
+    * Nút truy cập nhanh `💼 Studio & Ví` ngay trên Header, menu mobile và Profile.
+    * Gồm 3 Tab trực quan:
+      + 📜 **Sổ Cái Biến Động Số Dư**: Tra cứu dòng tiền, bộ lọc Thu/Chi (+/-).
+      + 📦 **Gian Hàng Của Tôi**: Quản lý các bộ từ đang bán, lượt mua, tổng doanh thu và nút đổi giá nhanh.
+      + 🛍️ **Bộ Từ Đã Mua**: Danh sách các bộ từ Premium đã sở hữu.
+
 • 🤖 v0.10.3 (a -> q): Khắc Phục Nút Nghe Lại Phát Âm & Bổ Sung CEFR A1 Vào AI Studio Cân Bằng Điểm Toàn Diện (balance_v1), Giới Hạn Nghe Lại Âm Thanh & Sửa Thoát Modal Kết Quả Tinh Chỉnh Giao Diện Thẻ Siêu Khó, Phạt 75% Hardcore Khi Sai & Tách Badge Thư Viện Cấp Độ Luyện Viết Siêu Khó (1 Ô Duy Nhất) & Cân Chỉnh Hệ Số Thoát Ngang (0.2, 0.4, 0.6) Cơ Chế Khoan Hồng Thoát Ngang (3 Bậc: x0.25, x0.5, x0.75) Hệ Số Kinh Tế Theo Độ Dài Bài Học & Cơ Chế Phạt Thoát Ngang (x0.25) Bảng Cài Đặt Âm Lượng & Bật/Tắt SFX, Tách Âm Đúng/Sai & Giọng Đọc Spelling Hệ Thống SFX Âm Thanh Sống Động, Focus Spelling Thông Minh & Sửa Lỗi Phím Esc AI Deck Studio Chuẩn Hóa, Phím Esc Toàn Năng, Giới Hạn Thanh Trượt & Tối Ưu Spelling AI Deck Studio, Bảng Màu Bộ Từ, Hạn Gift Code & Chuẩn Hóa Tiền Tệ Xu AI Deck Studio, Cửa Sổ Thu Nhỏ PiP & Đồng Bộ Lượt Skip Toàn Diện Cổng Quản Trị AI Deck Studio & Cửa Sổ Thu Nhỏ Auto Flashcard (Picture-in-Picture Mini-Player) AI Deck Generator Studio (Xưởng Tạo Bộ Từ Bằng Gemini AI), Kết Nối Key Trực Tiếp & Bộ Nhớ Tạm Clipboard (Copy, Cut, Paste)
   - 🎓 Huấn Luyện AI Chuyên Sâu, Chạy Ngầm & Tối Ưu UX Studio (`v0.0.10.3e`):
     * **Chuẩn hóa chữ thường & Dạng gốc của từ**: Tất cả từ vựng tạo ra đều đồng bộ chữ thường (trừ danh từ riêng), động từ luôn ở dạng nguyên thể không chia (`mitigate`, không lấy `mitigating`/`mitigated`), danh từ luôn ở số ít (`strategy`, không lấy `strategies`).

@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.3q) */
+      /* SPELLING EXTREME MODE (v0.10.4a) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,9 +1889,12 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.3q</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4a</span>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
+        💼 <span class="hide-on-mobile">Studio & Ví</span>
+      </button>
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
         🏪 <span id="header-points-display">0đ</span>
       </button>
@@ -1921,6 +1924,13 @@
 
         <!-- Dropdown Menu -->
         <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
+          <div class="dropdown-item" onclick="openWalletStudioModal(); closeHeaderMoreMenu();" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3);">
+            <span style="font-size: 16px;">💼</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: #c084fc;">Studio & Ví Xu</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Lịch sử giao dịch & Quản lý bộ từ bán</small>
+            </div>
+          </div>
           <div class="dropdown-item" onclick="openLibraryModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
             <span style="font-size: 16px;">📚</span>
             <div>
@@ -3285,6 +3295,100 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4a MONETIZATION UPDATE) -->
+  <div class="modal-overlay" id="modal-wallet-studio">
+    <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">💼</span>
+          <div>
+            <strong style="font-size: 16.5px; color: var(--text);">Trung Tâm Studio & Ví Xu</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Sổ cái giao dịch bất biến & Quản lý gian hàng bộ từ</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- Financial Summary Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">🪙 Số Dư Ví</div>
+          <div id="studio-wallet-balance" style="font-size: 20px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">📈 Tổng Thu Nhập</div>
+          <div id="studio-total-earned" style="font-size: 18px; font-weight: 800; color: #34d399; margin-top: 2px;">+0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">🛍️ Tổng Đã Chi</div>
+          <div id="studio-total-spent" style="font-size: 18px; font-weight: 800; color: #f87171; margin-top: 2px;">-0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">📦 Bộ Từ Bán</div>
+          <div id="studio-decks-selling-count" style="font-size: 18px; font-weight: 800; color: #a855f7; margin-top: 2px;">0 bộ</div>
+        </div>
+      </div>
+
+      <!-- Studio Navigation Tabs -->
+      <div style="display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-wrap: wrap;">
+        <button class="btn btn-outline btn-sm studio-tab-btn active" id="tab-btn-ledger" onclick="switchStudioTab('ledger')" style="font-size: 12px; font-weight: 700; border-color: #c084fc; color: #c084fc; background: rgba(168,85,247,0.12);">
+          📜 Sổ Cái Biến Động Số Dư
+        </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-store" onclick="switchStudioTab('store')" style="font-size: 12px; font-weight: 700;">
+          📦 Gian Hàng Của Tôi
+        </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-purchased" onclick="switchStudioTab('purchased')" style="font-size: 12px; font-weight: 700;">
+          🛍️ Bộ Từ Đã Mua
+        </button>
+      </div>
+
+      <!-- TAB 1: IMMUTABLE LEDGER -->
+      <div id="studio-tab-sec-ledger" style="display: block; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Sổ cái bất biến, tự động ghi nhận mọi luồng tiền ra vào ví</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('all')" style="font-size: 10.5px; padding: 2px 7px;">Tất cả</button>
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('income')" style="font-size: 10.5px; padding: 2px 7px; color: #34d399;">Cộng (+)</button>
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('expense')" style="font-size: 10.5px; padding: 2px 7px; color: #f87171;">Trừ (-)</button>
+          </div>
+        </div>
+        <div id="studio-ledger-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 2: CREATOR STORE -->
+      <div id="studio-tab-sec-store" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Danh sách các bộ từ bạn đã xuất bản và thiết lập giá bán</span>
+          <button class="btn btn-primary btn-sm" onclick="closeModal('modal-wallet-studio'); openCommunityDeckUploadModal();" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
+            ➕ Đăng Bộ Từ Mới
+          </button>
+        </div>
+        <div id="studio-store-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 3: PURCHASED DECKS -->
+      <div id="studio-tab-sec-purchased" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="margin-bottom: 8px; font-size: 11.5px; color: var(--text-muted);">
+          Các bộ từ có phí bạn đã mua thành công, có thể tải về máy bất cứ lúc nào
+        </div>
+        <div id="studio-purchased-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-wallet-studio')">Đóng</button>
+        <button class="btn btn-outline btn-sm" onclick="openShopModal(); closeModal('modal-wallet-studio');" style="color: #fbbf24; border-color: rgba(245,158,11,0.4);">
+          🏪 Mở Cửa Hàng VocaShop
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modal-shop">
     <div class="modal" style="max-width: 480px;">
       <div class="modal-title">
@@ -3958,7 +4062,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.3q</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4a</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6301,6 +6405,390 @@
       }
     }
 
+        // =========================================================================
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4a)
+    // =========================================================================
+    let userLedger = [];
+    let userPurchasedDeckIds = new Set();
+    let currentLedgerFilter = 'all';
+
+    try {
+      const savedLedger = localStorage.getItem('vocaflow_user_ledger');
+      if (savedLedger) userLedger = JSON.parse(savedLedger);
+      const savedPurchased = localStorage.getItem('vocaflow_purchased_decks');
+      if (savedPurchased) userPurchasedDeckIds = new Set(JSON.parse(savedPurchased));
+    } catch (e) {
+      console.warn('Error loading ledger/purchased decks:', e);
+    }
+
+    function addLedgerEntry(type, amount, description) {
+      const currentBalance = getUserPoints();
+      const tx = {
+        id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        timestamp: new Date().toISOString(),
+        type: type, // 'STUDY' | 'SELL_DECK' | 'BUY_DECK' | 'BUY_HINT' | 'BUY_SKIP' | 'AI_GEN' | 'GIFTCODE' | 'DAILY_BONUS' | 'PENALTY_QUIT'
+        amount: Number(amount) || 0,
+        balanceAfter: currentBalance,
+        description: description || ''
+      };
+
+      userLedger.unshift(tx);
+      if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
+      localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+
+      // Sync to Cloud Ledger if logged in
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/ledger/${tx.id}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tx)
+        }).catch(() => {});
+      }
+
+      if (document.getElementById('modal-wallet-studio')?.classList.contains('active')) {
+        renderLedgerList();
+      }
+    }
+
+    function setPublishPricePreset(price) {
+      const input = document.getElementById('pub-deck-price');
+      if (input) {
+        input.value = price;
+        updatePublishPriceUI(price);
+      }
+      const presets = document.querySelectorAll('.pub-price-preset');
+      presets.forEach(btn => {
+        if (btn.textContent.includes(price + ' Xu') || (price === 0 && btn.textContent.includes('0đ'))) {
+          btn.style.borderColor = '#10b981';
+          btn.style.color = '#34d399';
+        } else {
+          btn.style.borderColor = 'var(--border)';
+          btn.style.color = 'var(--text)';
+        }
+      });
+    }
+
+    function updatePublishPriceUI(val) {
+      const p = parseInt(val) || 0;
+      const badge = document.getElementById('pub-price-label-badge');
+      if (badge) {
+        if (p <= 0) {
+          badge.textContent = '🟢 Miễn Phí';
+          badge.style.background = 'rgba(16, 185, 129, 0.2)';
+          badge.style.color = '#34d399';
+        } else {
+          badge.textContent = `💎 ${p} Xu`;
+          badge.style.background = 'rgba(245, 158, 11, 0.2)';
+          badge.style.color = '#fbbf24';
+        }
+      }
+    }
+
+    function openWalletStudioModal() {
+      renderStudioDashboard();
+      openModal('modal-wallet-studio');
+    }
+
+    function switchStudioTab(tab) {
+      const tabs = ['ledger', 'store', 'purchased'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`studio-tab-sec-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tab) {
+          if (sec) sec.style.display = 'block';
+          if (btn) {
+            btn.style.borderColor = '#c084fc';
+            btn.style.color = '#c084fc';
+            btn.style.background = 'rgba(168,85,247,0.12)';
+          }
+        } else {
+          if (sec) sec.style.display = 'none';
+          if (btn) {
+            btn.style.borderColor = 'var(--border)';
+            btn.style.color = 'var(--text)';
+            btn.style.background = 'transparent';
+          }
+        }
+      });
+
+      if (tab === 'ledger') renderLedgerList();
+      else if (tab === 'store') renderCreatorStoreDecks();
+      else if (tab === 'purchased') renderPurchasedDecksList();
+    }
+
+    function renderStudioDashboard() {
+      const curBalance = getUserPoints();
+      const balEl = document.getElementById('studio-wallet-balance');
+      if (balEl) balEl.textContent = curBalance + ' Xu';
+
+      let totalEarned = 0;
+      let totalSpent = 0;
+      userLedger.forEach(tx => {
+        if (tx.amount > 0) totalEarned += tx.amount;
+        else totalSpent += Math.abs(tx.amount);
+      });
+
+      const earnedEl = document.getElementById('studio-total-earned');
+      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' Xu';
+      const spentEl = document.getElementById('studio-total-spent');
+      if (spentEl) spentEl.textContent = '-' + totalSpent + ' Xu';
+
+      const myDecks = getAllLibraryDecks().filter(d => currentUser && (
+        (d.authorUid && d.authorUid === currentUser.uid) ||
+        (d.author && currentUser.displayName && d.author.toLowerCase() === currentUser.displayName.toLowerCase())
+      ));
+
+      const sellingEl = document.getElementById('studio-decks-selling-count');
+      if (sellingEl) sellingEl.textContent = myDecks.length + ' bộ';
+
+      switchStudioTab('ledger');
+    }
+
+    function filterLedger(type) {
+      currentLedgerFilter = type;
+      renderLedgerList();
+    }
+
+    function renderLedgerList() {
+      const container = document.getElementById('studio-ledger-list');
+      if (!container) return;
+
+      let filtered = userLedger;
+      if (currentLedgerFilter === 'income') {
+        filtered = userLedger.filter(tx => tx.amount > 0);
+      } else if (currentLedgerFilter === 'expense') {
+        filtered = userLedger.filter(tx => tx.amount < 0);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">📜</div>
+            Chưa có giao dịch nào được ghi nhận. Hãy bắt đầu học hoặc xuất bản bộ từ!
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(tx => {
+        const isPlus = tx.amount > 0;
+        const color = isPlus ? '#34d399' : '#f87171';
+        const sign = isPlus ? '+' : '';
+        const dateStr = new Date(tx.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+
+        let badgeIcon = '🪙';
+        if (tx.type === 'STUDY') badgeIcon = '✍️ Học tập';
+        else if (tx.type === 'SELL_DECK') badgeIcon = '💎 Bán bộ từ';
+        else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua bộ từ';
+        else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi gợi ý';
+        else if (tx.type === 'BUY_SKIP') badgeIcon = '⏭️ Đổi bỏ qua';
+        else if (tx.type === 'AI_GEN') badgeIcon = '🤖 Tạo AI';
+        else if (tx.type === 'GIFTCODE') badgeIcon = '🎁 GiftCode';
+        else if (tx.type === 'PENALTY_QUIT') badgeIcon = '⚠️ Thoát ngang';
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span class="badge" style="font-size: 9.5px; padding: 1px 6px; background: ${isPlus ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${color}; font-weight: 700;">${badgeIcon}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">${dateStr}</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--text);">${escapeHtml(tx.description || 'Giao dịch hệ thống')}</div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} Xu</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Dư: ${tx.balanceAfter} Xu</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderCreatorStoreDecks() {
+      const container = document.getElementById('studio-store-list');
+      if (!container) return;
+
+      const myDecks = getAllLibraryDecks().filter(d => currentUser && (
+        (d.authorUid && d.authorUid === currentUser.uid) ||
+        (d.author && currentUser.displayName && d.author.toLowerCase() === currentUser.displayName.toLowerCase())
+      ));
+
+      if (myDecks.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">📦</div>
+            Bạn chưa đăng bộ từ nào lên Thư Viện. Hãy xuất bản bộ từ để bắt đầu kiếm Xu!
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      myDecks.forEach(deck => {
+        const price = deck.price || 0;
+        const sales = deck.salesCount || 0;
+        const totalRev = sales * price;
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="font-size: 16px;">${deck.icon || '📘'}</span>
+                <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
+                <span class="badge" style="font-size: 10px; background: rgba(99,102,241,0.15); color: #a5b4fc;">${(deck.words || []).length} từ</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-muted); display: flex; gap: 10px; align-items: center;">
+                <span>Giá: <strong style="color: #fbbf24;">${price > 0 ? price + ' Xu' : 'Miễn phí'}</strong></span>
+                <span>• Đã bán/tải: <strong style="color: #38bdf8;">${sales} lượt</strong></span>
+                <span>• Doanh thu: <strong style="color: #34d399;">+${totalRev} Xu</strong></span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" onclick="closeModal('modal-wallet-studio'); openEditPublishedDeckModal('${deck.id}');" style="font-size: 11px; padding: 3px 8px; color: #fbbf24; border-color: rgba(245,158,11,0.4);">
+                ✏️ Đổi Giá / Sửa
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="previewLibraryDeck('${deck.id}');" style="font-size: 11px; padding: 3px 8px;">
+                👁️ Xem
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderPurchasedDecksList() {
+      const container = document.getElementById('studio-purchased-list');
+      if (!container) return;
+
+      const allDecks = getAllLibraryDecks();
+      const purchased = allDecks.filter(d => userPurchasedDeckIds.has(d.id));
+
+      if (purchased.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">🛍️</div>
+            Bạn chưa mua bộ từ có phí nào. Ghé Thư Viện để khám phá các bộ từ chất lượng cao!
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      purchased.forEach(deck => {
+        const isImported = decks.some(d => d.title === deck.title || d.libSourceId === deck.id);
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="font-size: 16px;">${deck.icon || '📘'}</span>
+                <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
+                <span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.15); color: #34d399;">Đã sở hữu</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">Tác giả: ${escapeHtml(deck.author || 'Cộng đồng')} • ${(deck.words || []).length} từ</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="installLibraryDeck('${deck.id}');" style="font-size: 11px; padding: 4px 10px; font-weight: 700; color: #818cf8; border-color: rgba(99,102,241,0.4);">
+              📥 ${isImported ? 'Cài Lại' : 'Tải Về'}
+            </button>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    async function buyCommunityDeck(deckId) {
+      if (!requireLogin('Mua Bộ Từ Vựng')) return;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const price = Number(deck.price) || 0;
+      const isOwner = currentUser && (
+        (deck.authorUid && deck.authorUid === currentUser.uid) ||
+        (deck.author && currentUser.displayName && deck.author.toLowerCase() === currentUser.displayName.toLowerCase())
+      );
+
+      if (price === 0 || isOwner || userPurchasedDeckIds.has(deck.id)) {
+        installLibraryDeck(deck.id);
+        return;
+      }
+
+      const curPoints = getUserPoints();
+      if (curPoints < price) {
+        showToast(`🪙 Bạn không đủ Xu để mua bộ từ "${deck.title}" (Cần ${price} Xu, bạn có ${curPoints} Xu)!`);
+        openShopModal();
+        return;
+      }
+
+      const confirmed = confirm(`💎 XÁC NHẬN MUA BỘ TỪ\n\nBạn có muốn dùng ${price} Xu để mua vĩnh viễn bộ từ "${deck.title}" của tác giả "${deck.author || 'Cộng đồng'}" không?`);
+      if (!confirmed) return;
+
+      // 1. Deduct buyer Xu & persist
+      setUserPoints(curPoints - price);
+      userPurchasedDeckIds.add(deck.id);
+      localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
+      saveDatabase(true);
+
+      // 2. Add buyer transaction ledger
+      addLedgerEntry('BUY_DECK', -price, `Mua bộ từ "${deck.title}" từ tác giả ${deck.author || 'Cộng đồng'}`);
+
+      // 3. Play purchase sound
+      playVocaSfx('purchase');
+
+      // 4. Transfer revenue to Seller on Cloud
+      if (deck.authorUid && !deck.authorUid.startsWith('guest_')) {
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const sellerTx = {
+            id: 'tx_sell_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            timestamp: new Date().toISOString(),
+            type: 'SELL_DECK',
+            amount: +price,
+            buyerName: currentUser.displayName || 'Một người học',
+            deckTitle: deck.title,
+            description: `Bán bộ từ "${deck.title}" cho người học ${currentUser.displayName || 'VocaFlow'}`
+          };
+          fetch(`${rtdbUrl}/users/${deck.authorUid}/ledger/${sellerTx.id}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sellerTx)
+          }).catch(() => {});
+
+          fetch(`${rtdbUrl}/users/${deck.authorUid}/wallet/points.json`).then(r => r.json()).then(sellerPts => {
+            const newSellerPts = (typeof sellerPts === 'number' ? sellerPts : 0) + price;
+            fetch(`${rtdbUrl}/users/${deck.authorUid}/wallet/points.json`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(newSellerPts)
+            }).catch(() => {});
+          }).catch(() => {});
+
+          const curSales = (deck.salesCount || 0) + 1;
+          deck.salesCount = curSales;
+          fetch(`${rtdbUrl}/publicLibraryDecks/${deck.id}/salesCount.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(curSales)
+          }).catch(() => {});
+        } catch (e) {}
+      }
+
+      // 5. Install to local library
+      installLibraryDeck(deck.id);
+      showToast(`🎉 Đã mua thành công bộ từ "${deck.title}" (-${price} Xu)!`);
+      renderLibraryDecks();
+      if (document.getElementById('modal-library-preview')?.classList.contains('active')) {
+        previewLibraryDeck(deck.id);
+      }
+    }
+
     function updatePublishModalAuthorUI() {
       const authorNameEl = document.getElementById('pub-deck-author-name');
       const authorAvEl = document.getElementById('pub-deck-author-avatar');
@@ -6328,6 +6816,12 @@
       const descInput = document.getElementById('pub-deck-desc');
       if (titleInput) titleInput.value = deck.title || '';
       if (descInput) descInput.value = deck.description || '';
+
+      const priceInput = document.getElementById('pub-deck-price');
+      if (priceInput) {
+        priceInput.value = deck.price || 0;
+        updatePublishPriceUI(deck.price || 0);
+      }
 
       const catSelect = document.getElementById('pub-deck-category');
       const customCatInput = document.getElementById('pub-deck-custom-category');
@@ -14982,6 +15476,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
                 <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700;">${wordCount} từ</span>
                 <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
+                ${(deck.price || 0) > 0 ? `<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4);">💎 ${deck.price} Xu</span>` : ''}
                 ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
               </div>
               <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -15004,9 +15499,15 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
                   🗑️ Xóa
                 </button>
               ` : ''}
-              <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
-                📥 ${isImported ? 'Tải lại' : 'Tải về'}
-              </button>
+              ${(!isImported && !isAuthor && (deck.price || 0) > 0 && !userPurchasedDeckIds.has(deck.id)) ? `
+                <button class="btn btn-primary btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.3);" onclick="buyCommunityDeck('${deck.id}')">
+                  🛒 Mua (${deck.price} Xu)
+                </button>
+              ` : `
+                <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+                  📥 ${isImported ? 'Tải lại' : 'Tải về'}
+                </button>
+              `}
             </div>
           </div>
         `;
@@ -15456,6 +15957,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         category: finalCategory,
         icon: iconSelect ? iconSelect.value : '📘',
         color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
+        price: Number(document.getElementById('pub-deck-price')?.value) || 0,
+        salesCount: 0,
         totalWords: pendingPublisherDeck.words.length,
         words: pendingPublisherDeck.words,
         publishedAt: new Date().toISOString()
