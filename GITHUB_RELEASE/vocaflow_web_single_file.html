@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4e) */
+      /* SPELLING EXTREME MODE (v0.10.4f) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4f</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4e MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4f MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3309,6 +3309,25 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <!-- GUEST LOCK VIEW (v0.10.4f) -->
+      <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Ví Xu, Sổ Cái Biến Động Số Dư, Gian Hàng Xuất Bản Bộ Từ & Bảng Xếp Hạng Pháp Sư</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-wallet-studio'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-wallet-studio');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="studio-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1;">
       <!-- Financial Summary Cards -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
@@ -3383,7 +3402,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4e) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4f) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -3400,6 +3419,7 @@
           🏪 Mở Cửa Hàng VocaShop
         </button>
       </div>
+      </div> <!-- end studio-main-authenticated-view -->
     </div>
   </div>
 
@@ -4076,7 +4096,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4407,7 +4427,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4e) -->
+      <!-- Price Setting for Deck (v0.10.4f) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5099,6 +5119,11 @@
     const STORAGE_KEY_LAST_SYNC = 'vocaflow_last_sync_time';
 
     let currentUser = null;
+
+    function isGuest() {
+      return !currentUser || !currentUser.email || (currentUser.uid && currentUser.uid.startsWith('guest_'));
+    }
+    window.isGuest = isGuest;
     let firebaseConfig = {
       apiKey: "AIzaSyAM2KmHJzVLvd-oMbLj0AZKXeSiX-Hgv8I",
       authDomain: "vocaflow-e866c.firebaseapp.com",
@@ -6453,7 +6478,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4e)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4f)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6571,6 +6596,19 @@
     }
 
     async function openWalletStudioModal() {
+      const guestView = document.getElementById('studio-guest-lock-view');
+      const authView = document.getElementById('studio-main-authenticated-view');
+
+      if (isGuest()) {
+        if (guestView) guestView.style.display = 'block';
+        if (authView) authView.style.display = 'none';
+        openModal('modal-wallet-studio');
+        return;
+      }
+
+      if (guestView) guestView.style.display = 'none';
+      if (authView) authView.style.display = 'flex';
+
       if (typeof fetchCloudLibraryDecks === 'function' && (!cloudLibraryDecks || cloudLibraryDecks.length === 0)) {
         fetchCloudLibraryDecks().then(() => {
           renderStudioDashboard();
@@ -9283,6 +9321,12 @@
     }
 
     function selectSpellingSetupDifficulty(diff) {
+      if (diff !== 'easy' && isGuest()) {
+        alert('🔒 Cấp độ Thường, Khó và Siêu Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        closeModal('modal-spelling-setup');
+        openAuthModal('login');
+        return;
+      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSpellingSetupDifficulty = diff;
       const cards = {
@@ -9390,6 +9434,11 @@
     }
 
     function cycleSpellingDifficulty() {
+      if (isGuest()) {
+        alert('🔒 Cấp độ Thường, Khó và Siêu Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        openAuthModal('login');
+        return;
+      }
       const order = ['easy', 'medium', 'hard', 'extreme'];
       const nextIdx = (order.indexOf(currentSpellingDifficulty) + 1) % order.length;
       setSpellingDifficulty(order[nextIdx]);
@@ -10980,6 +11029,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function selectQuizSetupDifficulty(diff) {
+      if (diff !== 'easy' && isGuest()) {
+        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        closeModal('modal-quiz-setup');
+        openAuthModal('login');
+        return;
+      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
       const cards = {
@@ -11046,6 +11101,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function cycleQuizDifficulty() {
+      if (isGuest()) {
+        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        openAuthModal('login');
+        return;
+      }
       const order = ['easy', 'medium', 'hard', 'extreme'];
       const nextIdx = (order.indexOf(currentQuizDifficulty) + 1) % order.length;
       setQuizDifficulty(order[nextIdx]);
@@ -11919,19 +11979,30 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4e)
+      // Progressive incomplete session leniency / penalty (v0.10.4f)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
         const mult = getIncompleteSessionMultiplier(done, total);
-        const finalPts = Math.round(quizPointsEarned * mult);
+        let finalPts = 0;
+        if (quizPointsEarned > 0) {
+          finalPts = Math.round(quizPointsEarned * mult);
+        } else if (quizPointsEarned < 0) {
+          // Negative points penalty: divide by mult so rage quitters cannot escape penalties!
+          finalPts = Math.min(quizPointsEarned, Math.round(quizPointsEarned / Math.max(0.2, mult)));
+        }
         if (finalPts !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
           saveDatabase(true);
           const pctText = Math.round((done / total) * 100);
-          showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} Xu (${finalPts >= 0 ? '+' : ''}${finalPts} Xu)!`);
-          addLedgerEntry(finalPts > 0 ? 'STUDY' : 'PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
+          if (finalPts < 0) {
+            showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} Xu!`);
+            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${mult})`);
+          } else {
+            showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} Xu (+${finalPts} Xu)!`);
+            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
+          }
         }
         quizPointsEarned = finalPts;
       }
@@ -12374,6 +12445,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let lastScreenBeforeAutoFc = 'screen-decks';
 
     function minimizeAutoFlashcardToPip() {
+      if (isGuest()) {
+        alert('🔒 Chế độ cửa sổ thu nhỏ (Mini Floating Flashcard) chỉ dành cho tài khoản đã đăng ký/đăng nhập!');
+        openAuthModal('login');
+        return;
+      }
       isAutoFcMiniMode = true;
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'flex';
