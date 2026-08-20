@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4j) */
+      /* SPELLING EXTREME MODE (v0.10.4k) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4j</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4k</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4j MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4k MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3309,7 +3309,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4j) -->
+      <!-- GUEST LOCK VIEW (v0.10.4k) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3368,7 +3368,10 @@
       <div id="studio-tab-sec-ledger" style="display: block; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
           <span style="font-size: 11.5px; color: var(--text-muted);">Sổ cái bất biến, tự động ghi nhận mọi luồng tiền ra vào ví</span>
-          <div style="display: flex; gap: 4px;">
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <button class="btn btn-outline btn-sm" onclick="manualSyncStudioLedger()" title="Làm mới và đồng bộ Sổ cái từ Cloud tức thì" style="font-size: 10.5px; padding: 2px 8px; border-color: rgba(56,189,248,0.4); color: #38bdf8;">
+              🔄 Làm mới
+            </button>
             <button class="btn btn-outline btn-sm" onclick="filterLedger('all')" style="font-size: 10.5px; padding: 2px 7px;">Tất cả</button>
             <button class="btn btn-outline btn-sm" onclick="filterLedger('income')" style="font-size: 10.5px; padding: 2px 7px; color: #34d399;">Cộng (+)</button>
             <button class="btn btn-outline btn-sm" onclick="filterLedger('expense')" style="font-size: 10.5px; padding: 2px 7px; color: #f87171;">Trừ (-)</button>
@@ -3402,7 +3405,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4j) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4k) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4096,7 +4099,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4j</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4k</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4427,7 +4430,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4j) -->
+      <!-- Price Setting for Deck (v0.10.4k) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5136,6 +5139,26 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
+        // Realtime Inter-Tab Synchronization (v0.10.4k)
+    const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
+    if (vocaSyncChannel) {
+      vocaSyncChannel.onmessage = (event) => {
+        if (event.data && (event.data.type === 'ECONOMY_UPDATED' || event.data.type === 'LEDGER_UPDATED')) {
+          updateEconomyUI();
+          if (typeof renderLedgerList === 'function') renderLedgerList();
+          if (typeof renderStudioDashboard === 'function') renderStudioDashboard();
+        }
+      };
+    }
+
+    function broadcastEconomyUpdate() {
+      if (vocaSyncChannel) {
+        try {
+          vocaSyncChannel.postMessage({ type: 'ECONOMY_UPDATED', timestamp: Date.now() });
+        } catch (e) {}
+      }
+    }
+
     const STORAGE_KEY_USER_POINTS = 'vocaflow_user_points';
     const STORAGE_KEY_USER_HINTS = 'vocaflow_user_hints';
     const STORAGE_KEY_USER_SKIPS = 'vocaflow_user_skips';
@@ -5170,6 +5193,7 @@
       localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateEconomyUI();
       syncEconomyToCloud();
+      broadcastEconomyUpdate();
     }
 
     function setUserHints(val) {
@@ -5178,6 +5202,7 @@
       localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateEconomyUI();
       syncEconomyToCloud();
+      broadcastEconomyUpdate();
     }
 
     function setUserSkips(val) {
@@ -5186,6 +5211,7 @@
       localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateEconomyUI();
       syncEconomyToCloud();
+      broadcastEconomyUpdate();
     }
 
     function formatPointsCompact(pts) {
@@ -5196,7 +5222,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4j)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4k)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6515,7 +6541,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4j)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4k)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6546,7 +6572,7 @@
       if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
       localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
 
-      // Sync to Cloud Ledger if logged in
+      // Sync to Cloud Ledger immediately if logged in
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
@@ -6556,6 +6582,7 @@
           body: JSON.stringify(tx)
         }).catch(() => {});
       }
+      broadcastEconomyUpdate();
 
       // Realtime UI updates for studio ledger
       const curBalEl = document.getElementById('studio-wallet-balance');
@@ -6648,18 +6675,18 @@
       if (guestView) guestView.style.display = 'none';
       if (authView) authView.style.display = 'flex';
 
-      if (typeof fetchCloudLibraryDecks === 'function' && (!cloudLibraryDecks || cloudLibraryDecks.length === 0)) {
-        fetchCloudLibraryDecks().then(() => {
-          renderStudioDashboard();
-        }).catch(() => {});
-      }
-      if (typeof fetchCloudLedger === 'function') {
-        fetchCloudLedger().then(() => {
-          renderStudioDashboard();
-        }).catch(() => {});
-      }
+      // Immediate pre-render
       renderStudioDashboard();
       openModal('modal-wallet-studio');
+
+      // Instant live sync in background
+      Promise.allSettled([
+        typeof fetchCloudLedger === 'function' ? fetchCloudLedger() : Promise.resolve(),
+        typeof loadEconomyFromCloud === 'function' ? loadEconomyFromCloud() : Promise.resolve(),
+        (typeof fetchCloudLibraryDecks === 'function' && (!cloudLibraryDecks || cloudLibraryDecks.length === 0)) ? fetchCloudLibraryDecks() : Promise.resolve()
+      ]).then(() => {
+        renderStudioDashboard();
+      });
     }
 
     function switchStudioTab(tab) {
@@ -6718,6 +6745,14 @@
       if (sellingEl) sellingEl.textContent = myDecks.length + ' bộ';
 
       switchStudioTab('ledger');
+    }
+
+        async function manualSyncStudioLedger() {
+      showToast('🔄 Đang đồng bộ Sổ cái thời gian thực từ Cloud...');
+      if (typeof fetchCloudLedger === 'function') await fetchCloudLedger();
+      if (typeof loadEconomyFromCloud === 'function') await loadEconomyFromCloud();
+      renderStudioDashboard();
+      showToast('✨ Sổ cái đã được đồng bộ mới nhất!');
     }
 
     function filterLedger(type) {
@@ -10553,12 +10588,17 @@
         const mult = getIncompleteSessionMultiplier(done, total);
         const finalPts = Math.round(spellingPointsEarned * mult);
         if (finalPts !== 0) {
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          const pctText = Math.round((done / total) * 100);
+          if (finalPts < 0) {
+            showToast(`⚠️ Bỏ dở Luyện viết khi đang âm điểm (tiến độ ${done}/${total} từ, phạt chia /${mult}): Trừ ${finalPts} Xu!`);
+            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${mult})`);
+          } else {
+            showToast(`⚠️ Bỏ dở Luyện viết (tiến độ ${done}/${total} từ - ${pctText}%): Nhận x${mult} Xu (+${finalPts} Xu)!`);
+            addLedgerEntry('STUDY', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" giữa chừng (${done}/${total} từ, x${mult})`);
+          }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
           saveDatabase(true);
-          const pctText = Math.round((done / total) * 100);
-          showToast(`⚠️ Bỏ dở Luyện viết (tiến độ ${done}/${total} từ - ${pctText}%): Nhận x${mult} Xu (${finalPts >= 0 ? '+' : ''}${finalPts} Xu)!`);
-          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
-          addLedgerEntry(finalPts > 0 ? 'STUDY' : 'PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" giữa chừng (${done}/${total} từ, x${mult})`);
         }
         spellingPointsEarned = finalPts;
       }
@@ -12039,7 +12079,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4j)
+      // Progressive incomplete session leniency / penalty (v0.10.4k)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -12053,8 +12093,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
         if (finalPts !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
-          setUserPoints(Math.max(0, getUserPoints() + finalPts));
-          saveDatabase(true);
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
             showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} Xu!`);
@@ -12063,6 +12101,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} Xu (+${finalPts} Xu)!`);
             addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
           }
+          setUserPoints(Math.max(0, getUserPoints() + finalPts));
+          saveDatabase(true);
         }
         quizPointsEarned = finalPts;
       }
