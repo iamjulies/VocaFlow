@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4l) */
+      /* SPELLING EXTREME MODE (v0.10.4m) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4l</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4m</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3297,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4l MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4m MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4l) -->
+      <!-- GUEST LOCK VIEW (v0.10.4m) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4l) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4m) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4l</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4m</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4l) -->
+      <!-- Price Setting for Deck (v0.10.4m) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4l)
+        // Realtime Inter-Tab Synchronization (v0.10.4m)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4l)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4m)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6453,9 +6453,11 @@
         currentUser.bio = newBio;
       }
 
+      localStorage.setItem('vocaflow_user_bio', newBio);
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       updateAuthUI();
       toggleProfileEditSection(false);
+      saveDatabase(true);
 
       // If logged in, push to Cloud User Profile & Public Library Decks
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
@@ -6564,7 +6566,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4l)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4m)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6966,10 +6968,10 @@
       setUserPoints(curPoints - price);
       userPurchasedDeckIds.add(deck.id);
       localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
-      saveDatabase(true);
 
-      // 2. Add buyer transaction ledger
+      // 2. Add buyer transaction ledger FIRST
       addLedgerEntry('BUY_DECK', -price, `Mua bộ từ "${deck.title}" từ tác giả ${deck.author || 'Cộng đồng'}`);
+      saveDatabase(true);
 
       // 3. Play purchase sound
       playVocaSfx('purchase');
@@ -7610,6 +7612,13 @@
                 const remoteProf = cloudData.profile || {};
                 const remoteName = remoteProf.displayName || cloudData.displayName;
                 const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
+                if (remoteBio !== undefined && remoteBio !== null) {
+                  localStorage.setItem('vocaflow_user_bio', remoteBio);
+                  const bioDisplay = document.getElementById('profile-bio-display');
+                  if (bioDisplay) bioDisplay.textContent = (typeof remoteBio === 'string' && remoteBio.trim()) ? remoteBio : 'Chưa thiết lập mục tiêu cá nhân.';
+                  const bioInput = document.getElementById('profile-bio-input');
+                  if (bioInput) bioInput.value = (typeof remoteBio === 'string') ? remoteBio : '';
+                }
                 if (currentUser) {
                   let profChanged = false;
                   if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
@@ -7833,17 +7842,20 @@
             const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
             const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
 
+            const currentBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
             const payload = {
               profile: {
                 displayName: currentUser.displayName || currentUser.email.split('@')[0],
                 email: currentUser.email,
                 avatar: avToSave,
                 avatarTime: avTimeToSave,
+                bio: currentBio,
                 geminiApiKey: geminiApiKey || '',
                 lastSync: new Date().toISOString()
               },
               avatar: avToSave,
               avatarTime: avTimeToSave,
+              bio: currentBio,
               geminiApiKey: geminiApiKey || '',
               deckSort: currentDeckSort,
               decks: decks,
@@ -10461,10 +10473,10 @@
       const finalPts = Math.round(spellingPointsEarned * deckSizeMult);
       spellingPointsEarned = finalPts;
       if (spellingPointsEarned !== 0) {
-        setUserPoints(Math.max(0, getUserPoints() + spellingPointsEarned));
-        saveDatabase(true);
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
         addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ)`);
+        setUserPoints(Math.max(0, getUserPoints() + spellingPointsEarned));
+        saveDatabase(true);
       }
 
       const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
@@ -11954,10 +11966,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const finalPts = Math.round(quizPointsEarned * deckSizeMult);
       quizPointsEarned = finalPts;
       if (quizPointsEarned !== 0) {
-        setUserPoints(Math.max(0, getUserPoints() + quizPointsEarned));
-        saveDatabase(true);
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
         addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu)`);
+        setUserPoints(Math.max(0, getUserPoints() + quizPointsEarned));
+        saveDatabase(true);
       }
 
       const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
@@ -12102,7 +12114,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4l)
+      // Progressive incomplete session leniency / penalty (v0.10.4m)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
