@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5g (Build 67)
+Phiên bản hiện tại : v0.10.5h (Build 68)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 📋 v0.10.5h (Build 68 - Giữ Mức Độ Thuộc Khi Copy/Paste, Fix Profile Tác Giả & Bổ Sung Bảng Quy Tắc Speaking):
+  - Bảo lưu Mức độ thuộc bài (% Mastery) khi Sao chép / Dán từ vựng (Copy / Paste Word):
+    * Khi sao chép từ vựng từ bộ từ này sang bộ từ khác, mức độ thuộc bài (`masteryScore`) và trạng thái học tập (`status: learning / mastered`) được giữ nguyên vẹn 100% thay vì bị reset về 0%.
+  - Khắc phục lỗi xem Hồ sơ tác giả (Public Profile Modal) từ Thẻ bộ từ:
+    * Thêm cơ chế tải ngầm kho Cloud Library Decks ngay khi mở app (`DOMContentLoaded`).
+    * Hàm `openPublicProfileModal` và `openPublicProfileByAuthor` tự động nạp dữ liệu tác giả thật từ Firebase RTDB `/users/${authorUid}/profile.json` ngay cả khi người dùng chưa từng bấm vào mục Thư Viện Cộng Đồng, hiển thị chính xác tên, avatar, tiểu sử và toàn bộ danh sách bộ từ chia sẻ của tác giả thật.
+  - Bổ sung Bảng Quy Tắc Tính Điểm Luyện Phát Âm (AI Speaking Lab - balance_v1):
+    * Thêm chi tiết cơ chế điểm thưởng vào bảng Quy tắc đổi điểm:
+      - 👑 Điểm 100 (Hoàn Hảo): +10 Xu • +5% Mức độ thuộc từ (Bắn pháo hoa 🎉)
+      - 🪙 Điểm 80 - 99 (Chuẩn xác): +5 Xu • +2% Mức độ thuộc từ
+      - 💡 Dưới 80 điểm: Không cộng Xu • Nhận chẩn đoán âm vị & lời khuyên khẩu hình để luyện lại.
+
 • 🏆 v0.10.5g (Build 67 - Nâng Cấp AI Speaking Chuẩn ELSA & Sửa Lỗi Sổ Cái/Người Mua):
   - Khắc phục triệt để lỗi "không đọc gì mà AI vẫn chấm 85 điểm":
     * Tích hợp bộ phân tích năng lượng âm thanh Web Audio API (Client-side Voice Activity Detection - VAD):
