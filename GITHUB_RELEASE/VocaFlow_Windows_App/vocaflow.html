@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4b) */
+      /* SPELLING EXTREME MODE (v0.10.4c) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4b</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4c</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3295,7 +3295,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4b MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4c MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3340,6 +3340,9 @@
         <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-purchased" onclick="switchStudioTab('purchased')" style="font-size: 12px; font-weight: 700;">
           🛍️ Bộ Từ Đã Mua
         </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-leaderboard" onclick="switchStudioTab('leaderboard')" style="font-size: 12px; font-weight: 700; color: #f59e0b;">
+          🏆 BXH Pháp Sư
+        </button>
       </div>
 
       <!-- TAB 1: IMMUTABLE LEDGER -->
@@ -3376,6 +3379,17 @@
           Các bộ từ có phí bạn đã mua thành công, có thể tải về máy bất cứ lúc nào
         </div>
         <div id="studio-purchased-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4c) -->
+      <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+          <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
+          <span style="color: #fbbf24; font-weight: 700;">🔥 Doanh Thu Thực</span>
+        </div>
+        <div id="studio-leaderboard-list" style="display: flex; flex-direction: column; gap: 8px;">
           <!-- Rendered via JS -->
         </div>
       </div>
@@ -4062,7 +4076,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4b</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4c</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4393,7 +4407,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4b) -->
+      <!-- Price Setting for Deck (v0.10.4c) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -6425,7 +6439,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4b)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4c)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -6467,7 +6481,7 @@
       }
 
       if (document.getElementById('modal-wallet-studio')?.classList.contains('active')) {
-        renderLedgerList();
+        renderStudioDashboard();
       }
     }
 
@@ -6544,7 +6558,7 @@
     }
 
     function switchStudioTab(tab) {
-      const tabs = ['ledger', 'store', 'purchased'];
+      const tabs = ['ledger', 'store', 'purchased', 'leaderboard'];
       tabs.forEach(t => {
         const sec = document.getElementById(`studio-tab-sec-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -6568,6 +6582,7 @@
       if (tab === 'ledger') renderLedgerList();
       else if (tab === 'store') renderCreatorStoreDecks();
       else if (tab === 'purchased') renderPurchasedDecksList();
+      else if (tab === 'leaderboard') renderTopCreatorsLeaderboard();
     }
 
     function renderStudioDashboard() {
@@ -6798,14 +6813,22 @@
       if (deck.authorUid && !deck.authorUid.startsWith('guest_')) {
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const urlParams = new URLSearchParams(window.location.search);
+          const affRef = urlParams.get('ref');
+
+          const hasAffiliate = affRef && affRef !== deck.authorUid && affRef !== currentUser.uid && !affRef.startsWith('guest_');
+          const authorCut = hasAffiliate ? Math.round(price * 0.8) : price;
+          const affiliateCut = hasAffiliate ? Math.round(price * 0.2) : 0;
+
+          // Transfer to Author (80% or 100%)
           const sellerTx = {
             id: 'tx_sell_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
             timestamp: new Date().toISOString(),
             type: 'SELL_DECK',
-            amount: +price,
+            amount: +authorCut,
             buyerName: currentUser.displayName || 'Một người học',
             deckTitle: deck.title,
-            description: `Bán bộ từ "${deck.title}" cho người học ${currentUser.displayName || 'VocaFlow'}`
+            description: `Bán bộ từ "${deck.title}" (${hasAffiliate ? '80% sau hoa hồng' : '100%'})`
           };
           fetch(`${rtdbUrl}/users/${deck.authorUid}/ledger/${sellerTx.id}.json`, {
             method: 'PUT',
@@ -6814,13 +6837,39 @@
           }).catch(() => {});
 
           fetch(`${rtdbUrl}/users/${deck.authorUid}/wallet/points.json`).then(r => r.json()).then(sellerPts => {
-            const newSellerPts = (typeof sellerPts === 'number' ? sellerPts : 0) + price;
+            const newSellerPts = (typeof sellerPts === 'number' ? sellerPts : 0) + authorCut;
             fetch(`${rtdbUrl}/users/${deck.authorUid}/wallet/points.json`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(newSellerPts)
             }).catch(() => {});
           }).catch(() => {});
+
+          // Transfer to Affiliate if exists (20%)
+          if (hasAffiliate && affiliateCut > 0) {
+            const affTx = {
+              id: 'tx_aff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              timestamp: new Date().toISOString(),
+              type: 'SELL_DECK',
+              amount: +affiliateCut,
+              deckTitle: deck.title,
+              description: `Hoa hồng giới thiệu bộ từ "${deck.title}" (20%)`
+            };
+            fetch(`${rtdbUrl}/users/${affRef}/ledger/${affTx.id}.json`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(affTx)
+            }).catch(() => {});
+
+            fetch(`${rtdbUrl}/users/${affRef}/wallet/points.json`).then(r => r.json()).then(affPts => {
+              const newAffPts = (typeof affPts === 'number' ? affPts : 0) + affiliateCut;
+              fetch(`${rtdbUrl}/users/${affRef}/wallet/points.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newAffPts)
+              }).catch(() => {});
+            }).catch(() => {});
+          }
 
           const curSales = (deck.salesCount || 0) + 1;
           deck.salesCount = curSales;
@@ -9675,8 +9724,7 @@
             words[idx].updatedAt = new Date().toISOString();
           }
 
-          setUserPoints(getUserPoints() + walletPts);
-          saveDatabase(true);
+          // Points accumulated in session (deferred to finish/exit)
 
           setTimeout(() => {
             speakSpellingTerm(false);
@@ -9717,7 +9765,6 @@
 
           spellingScore -= walletPenalty;
           spellingPointsEarned = Math.max(0, spellingPointsEarned - walletPenalty);
-          setUserPoints(Math.max(0, getUserPoints() - walletPenalty));
 
           const { newScore } = updateWordMasteryScore(questionWord, -masteryPenalty);
           const idx = words.findIndex(w => w.id === questionWord.id);
@@ -9819,8 +9866,7 @@
           words[idx].updatedAt = new Date().toISOString();
         }
 
-        setUserPoints(getUserPoints() + walletPts);
-        saveDatabase(true);
+        // Points accumulated in session (deferred to finish/exit)
 
         // Visual & Natural Google Audio Success: Wait 500ms so correct SFX plays first
         setTimeout(() => {
@@ -10147,12 +10193,13 @@
 
       spellingIsCompleted = true;
       const deckSizeMult = getSessionDeckSizeMultiplier(totalWords);
-      if (spellingPointsEarned > 0) {
-        const finalPts = Math.round(spellingPointsEarned * deckSizeMult);
-        const diff = finalPts - spellingPointsEarned;
-        spellingPointsEarned = finalPts;
-        setUserPoints(Math.max(0, getUserPoints() + diff));
+      const finalPts = Math.round(spellingPointsEarned * deckSizeMult);
+      spellingPointsEarned = finalPts;
+      if (spellingPointsEarned !== 0) {
+        setUserPoints(Math.max(0, getUserPoints() + spellingPointsEarned));
         saveDatabase(true);
+        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ)`);
       }
 
       const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
@@ -15569,6 +15616,168 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       container.innerHTML = html;
     }
 
+        function renderTopCreatorsLeaderboard() {
+      const container = document.getElementById('studio-leaderboard-list');
+      if (!container) return;
+
+      const allDecks = getAllLibraryDecks();
+      const creatorsMap = new Map();
+
+      allDecks.forEach(d => {
+        if (!d || !d.author || d.id.startsWith('lib_deck_') || d.isAnonymous || d.author === 'Ẩn danh') return;
+        const authorName = d.author;
+        const price = d.price || 0;
+        const sales = d.salesCount || 0;
+        const revenue = (d.revenueXu || (sales * price)) || 0;
+
+        if (!creatorsMap.has(authorName)) {
+          creatorsMap.set(authorName, {
+            name: authorName,
+            avatar: d.authorAvatar || authorName,
+            authorBio: d.authorBio || '',
+            decksCount: 0,
+            totalWords: 0,
+            totalSales: 0,
+            totalRevenue: 0
+          });
+        }
+
+        const c = creatorsMap.get(authorName);
+        c.decksCount++;
+        c.totalWords += (d.words || []).length;
+        c.totalSales += sales;
+        c.totalRevenue += revenue;
+      });
+
+      const sortedCreators = Array.from(creatorsMap.values()).sort((a, b) => b.totalRevenue - a.totalRevenue || b.totalSales - a.totalSales || b.decksCount - a.decksCount);
+
+      if (sortedCreators.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">🏆</div>
+            Chưa có dữ liệu tác giả. Hãy xuất bản bộ từ đầu tiên để dẫn đầu bảng xếp hạng!
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      sortedCreators.forEach((c, idx) => {
+        let rankBadge = `<span style="font-weight: 800; font-size: 14px; width: 24px; text-align: center; color: var(--text-muted);">#${idx + 1}</span>`;
+        let rankBorder = 'var(--border)';
+        let rankBg = 'var(--surface-elevated)';
+        let creatorTitle = 'Học Giả Soạn Bài';
+
+        if (idx === 0) {
+          rankBadge = '<span style="font-size: 20px;">🥇</span>';
+          rankBorder = 'rgba(245, 158, 11, 0.5)';
+          rankBg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(99, 102, 241, 0.08))';
+          creatorTitle = '🌟 Đại Pháp Sư Từ Vựng';
+        } else if (idx === 1) {
+          rankBadge = '<span style="font-size: 20px;">🥈</span>';
+          rankBorder = 'rgba(156, 163, 175, 0.5)';
+          creatorTitle = '🥈 Bậc Thầy Biên Soạn';
+        } else if (idx === 2) {
+          rankBadge = '<span style="font-size: 20px;">🥉</span>';
+          rankBorder = 'rgba(217, 119, 6, 0.5)';
+          creatorTitle = '🥉 Chuyên Gia Đóng Góp';
+        }
+
+        html += `
+          <div style="background: ${rankBg}; border: 1px solid ${rankBorder}; border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${rankBadge}
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 14px; overflow: hidden; flex-shrink: 0;">
+                ${renderAvatarHtml(c.avatar, 36, 14)}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
+                  <span class="badge" style="font-size: 9.5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${creatorTitle}</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                  ${c.decksCount} bộ từ • ${c.totalWords} từ vựng • ${c.totalSales} lượt mua
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 15px; font-weight: 800; color: #fbbf24;">+${c.totalRevenue} Xu</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Doanh thu tích lũy</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function copyAffiliateLink(deckId) {
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const myUid = (currentUser && currentUser.uid) ? currentUser.uid : 'user_' + Date.now();
+      const currentUrl = window.location.href.split('?')[0];
+      const affUrl = `${currentUrl}?deckId=${encodeURIComponent(deckId)}&ref=${encodeURIComponent(myUid)}`;
+
+      navigator.clipboard.writeText(affUrl).then(() => {
+        showToast(`📋 Đã sao chép link giới thiệu bộ từ "${deck.title}"! Bạn bè mua qua link bạn nhận ngay 20% Xu hoa hồng!`);
+      }).catch(() => {
+        prompt('Sao chép link chia sẻ nhận hoa hồng 20% Xu:', affUrl);
+      });
+    }
+
+    async function submitDeckRating(deckId, stars, comment) {
+      if (!requireLogin('Đánh Giá Bộ Từ')) return;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const uid = currentUser.uid;
+      const ratingObj = {
+        uid: uid,
+        stars: Math.max(1, Math.min(5, Number(stars) || 5)),
+        comment: (comment || '').trim(),
+        authorName: currentUser.displayName || 'Học Viên VocaFlow',
+        authorAvatar: currentUser.avatar || '',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!deck.ratings) deck.ratings = {};
+      deck.ratings[uid] = ratingObj;
+
+      const ratingValues = Object.values(deck.ratings).map(r => r.stars);
+      const totalStars = ratingValues.reduce((a, b) => a + b, 0);
+      deck.ratingCount = ratingValues.length;
+      deck.avgRating = parseFloat((totalStars / ratingValues.length).toFixed(1));
+
+      // Save to Firebase RTDB
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/ratings/${uid}.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ratingObj)
+      }).catch(() => {});
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/avgRating.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deck.avgRating)
+      }).catch(() => {});
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/ratingCount.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deck.ratingCount)
+      }).catch(() => {});
+
+      showToast(`⭐ Cảm ơn bạn đã đánh giá ${stars} sao cho bộ từ "${deck.title}"!`);
+      previewLibraryDeck(deckId);
+      renderLibraryDecks();
+    }
+
     function previewLibraryDeck(deckId) {
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
@@ -15616,9 +15825,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       const wordsList = document.getElementById('lib-preview-words-container');
+      const isImported = decks.some(d => d.title === deck.title || d.libSourceId === deck.id);
+      const isPurchased = userPurchasedDeckIds.has(deck.id);
+      const price = Number(deck.price) || 0;
+      const isLockedPremium = price > 0 && !isAuthor && !isPurchased && !isImported;
+
+      const totalWords = (deck.words || []).length;
+      const allowedPreviewCount = isLockedPremium ? Math.max(3, Math.ceil(totalWords * 0.25)) : totalWords;
+
       if (wordsList) {
         let html = '';
-        (deck.words || []).forEach((w, idx) => {
+        (deck.words || []).slice(0, allowedPreviewCount).forEach((w, idx) => {
           html += `
             <div style="background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
@@ -15637,6 +15854,45 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             </div>
           `;
         });
+
+        if (isLockedPremium && totalWords > allowedPreviewCount) {
+          html += `
+            <div style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(236,72,153,0.1)); border: 1px dashed rgba(245,158,11,0.4); border-radius: 12px; padding: 16px 12px; text-align: center; margin-top: 8px;">
+              <div style="font-size: 26px; margin-bottom: 4px;">🔒</div>
+              <strong style="color: #fbbf24; font-size: 13.5px;">Đã khóa ${totalWords - allowedPreviewCount} từ vựng còn lại (Xem trước 25%)</strong>
+              <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 10px 0;">Mua trọn bộ để mở khóa 100% từ vựng, phiên âm & câu ví dụ!</p>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; padding: 6px 16px; font-size: 12px;" onclick="buyCommunityDeck('${deck.id}')">
+                🛒 Mua Trọn Bộ (${price} Xu)
+              </button>
+            </div>
+          `;
+        }
+
+        // Ratings & Reviews Box in Preview Modal
+        const avgRating = deck.avgRating || 5.0;
+        const rCount = deck.ratingCount || (deck.ratings ? Object.keys(deck.ratings).length : 0);
+        html += `
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 15px; color: #fbbf24; font-weight: 800;">⭐ ${avgRating}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">(${rCount} đánh giá)</span>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="copyAffiliateLink('${deck.id}')" style="font-size: 11px; padding: 3px 8px; color: #c084fc; border-color: rgba(168,85,247,0.4);">
+                🔗 Chia Sẻ (Nhận 20% Hoa Hồng)
+              </button>
+            </div>
+            ${(isImported || isPurchased || isAuthor) ? `
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 11px; font-weight: 700; color: var(--text);">Chấm sao:</span>
+                <div style="display: flex; gap: 2px;">
+                  ${[1,2,3,4,5].map(s => `<button type="button" class="btn btn-outline btn-sm" onclick="submitDeckRating('${deck.id}', ${s})" style="padding: 1px 5px; font-size: 11px; border-color: rgba(245,158,11,0.3); color: #fbbf24;">${s}⭐</button>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
         wordsList.innerHTML = html;
       }
 

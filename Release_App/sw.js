@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vocaflow-pwa-v0.10.4b';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.4c';
 const ASSETS = [
   './',
   './index.html',
