@@ -1804,6 +1804,48 @@
       }
     }
 
+      /* SPELLING EXTREME MODE (v0.0.10.3n) */
+    .spelling-extreme-container {
+      width: 100%;
+      max-width: 560px;
+      margin: 14px auto;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+    .spelling-extreme-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 18px;
+      font-size: clamp(18px, 4.5vw, 26px);
+      font-weight: 800;
+      text-align: center;
+      border-radius: 16px;
+      border: 2px solid rgba(168, 85, 247, 0.45);
+      background: rgba(168, 85, 247, 0.08);
+      color: var(--text);
+      outline: none;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+    }
+    .spelling-extreme-input:focus {
+      border-color: #c084fc;
+      background: rgba(168, 85, 247, 0.16);
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.4);
+    }
+    .spelling-extreme-input.wrong {
+      border-color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.15) !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.35) !important;
+      color: #f87171 !important;
+    }
+    .spelling-extreme-input.correct {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.12) !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35) !important;
+      color: #34d399 !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1847,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3m</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.0.10.3n</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
@@ -2716,6 +2758,18 @@
               </div>
             </div>
             <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn 100% chữ cái (toàn bộ ô trống). Luyện trí nhớ cơ bắp gõ chính xác 100%!</p>
+          </div>
+
+          <!-- SIÊU KHÓ (EXTREME / NIGHTMARE) -->
+          <div class="spelling-diff-card" id="spelling-diff-card-extreme" onclick="selectSpellingSetupDifficulty('extreme')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟣</span>
+                <strong style="font-size: 13.5px; color: #c084fc;">Cấp độ SIÊU KHÓ (Extreme)</strong>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10px;">x2.5 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Không hiện số ô hay độ dài từ! Tự gõ toàn bộ từ vựng (bao gồm dấu space, -, /) vào 1 ô duy nhất.</p>
           </div>
         </div>
       </div>
@@ -3904,7 +3958,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3m</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.0.10.3n</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4409,9 +4463,9 @@
       const total = totalCount || 1;
       const done = Math.max(0, doneCount || 0);
       const ratio = done / total;
-      if (ratio <= (1 / 3)) return 0.25;
-      if (ratio <= (2 / 3)) return 0.5;
-      return 0.75;
+      if (ratio <= (1 / 3)) return 0.2;
+      if (ratio <= (2 / 3)) return 0.4;
+      return 0.6;
     }
 
     const STORAGE_KEY_DECKS = 'vocaflow_decks';
@@ -8430,6 +8484,7 @@
     let currentSpellingRevealedIndices = new Set();
 
     function getSpellingDifficultyLabel(diff) {
+      if (diff === 'extreme') return '🟣 Siêu Khó (x2.5)';
       if (diff === 'hard') return '🔴 Khó (x2.0)';
       if (diff === 'medium') return '🟡 Trung bình (x1.5)';
       return '🟢 Dễ (x1.0)';
@@ -8449,7 +8504,10 @@
 
       let diffMult = 1.0;
       let diffLabel = 'Dễ';
-      if (currentSpellingDifficulty === 'hard') {
+      if (currentSpellingDifficulty === 'extreme') {
+        diffMult = 2.5;
+        diffLabel = 'Siêu Khó';
+      } else if (currentSpellingDifficulty === 'hard') {
         diffMult = 2.0;
         diffLabel = 'Khó';
       } else if (currentSpellingDifficulty === 'medium') {
@@ -8527,12 +8585,13 @@
     }
 
     function selectSpellingSetupDifficulty(diff) {
-      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSpellingSetupDifficulty = diff;
       const cards = {
         easy: document.getElementById('spelling-diff-card-easy'),
         medium: document.getElementById('spelling-diff-card-medium'),
-        hard: document.getElementById('spelling-diff-card-hard')
+        hard: document.getElementById('spelling-diff-card-hard'),
+        extreme: document.getElementById('spelling-diff-card-extreme')
       };
 
       Object.keys(cards).forEach(k => {
@@ -8616,7 +8675,7 @@
     }
 
     function setSpellingDifficulty(diff) {
-      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentSpellingDifficulty = diff;
       localStorage.setItem('vocaflow_spelling_difficulty', diff);
       updateSpellingDifficultyUI();
@@ -8624,7 +8683,7 @@
     }
 
     function cycleSpellingDifficulty() {
-      const order = ['easy', 'medium', 'hard'];
+      const order = ['easy', 'medium', 'hard', 'extreme'];
       const nextIdx = (order.indexOf(currentSpellingDifficulty) + 1) % order.length;
       setSpellingDifficulty(order[nextIdx]);
       if (spellingList && spellingList.length > 0 && spellingIndex < spellingList.length) {
@@ -8638,13 +8697,18 @@
         const { diffMult, totalMult, activeClueCount } = getSpellingMultipliers();
         let icon = '🟢';
         let diffName = 'Dễ';
-        if (currentSpellingDifficulty === 'hard') { icon = '🔴'; diffName = 'Khó'; }
+        if (currentSpellingDifficulty === 'extreme') { icon = '🟣'; diffName = 'Siêu Khó'; }
+        else if (currentSpellingDifficulty === 'hard') { icon = '🔴'; diffName = 'Khó'; }
         else if (currentSpellingDifficulty === 'medium') { icon = '🟡'; diffName = 'Trung bình'; }
 
         badge.textContent = `${icon} ${diffName} (x${totalMult})`;
         badge.title = `Cấp độ: ${diffName} (x${diffMult}) • Manh mối: ${activeClueCount}/3 -> Tổng hệ số: x${totalMult}. Bấm để chuyển đổi nhanh độ khó.`;
 
-        if (currentSpellingDifficulty === 'hard') {
+        if (currentSpellingDifficulty === 'extreme') {
+          badge.style.background = 'rgba(168, 85, 247, 0.15)';
+          badge.style.color = '#c084fc';
+          badge.style.borderColor = 'rgba(168, 85, 247, 0.35)';
+        } else if (currentSpellingDifficulty === 'hard') {
           badge.style.background = 'rgba(239, 68, 68, 0.15)';
           badge.style.color = '#f87171';
           badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
@@ -8789,6 +8853,44 @@
       container.innerHTML = '';
       container.className = ''; // remove any shake animation
 
+      if (difficulty === 'extreme') {
+        const extremeDiv = document.createElement('div');
+        extremeDiv.className = 'spelling-extreme-container';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'spelling-extreme-input';
+        input.className = 'spelling-extreme-input';
+        input.placeholder = 'Nhập toàn bộ từ vựng tại đây...';
+        input.autocomplete = 'off';
+        input.autocorrect = 'off';
+        input.autocapitalize = 'off';
+        input.spellcheck = false;
+        input.dataset.expected = term;
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (spellingIsAnswered) {
+              nextSpellingQuestion();
+            } else {
+              checkSpellingAnswer();
+            }
+          }
+        };
+        input.oninput = () => {
+          input.classList.remove('wrong');
+        };
+        extremeDiv.appendChild(input);
+        container.appendChild(extremeDiv);
+
+        setTimeout(() => {
+          input.focus();
+          input.select();
+        }, 80);
+        return;
+      }
+
       const chars = Array.from(term);
       const letterIndices = [];
 
@@ -8876,6 +8978,10 @@
     }
 
     function getEditableSpellingInputs() {
+      if (currentSpellingDifficulty === 'extreme') {
+        const ext = document.getElementById('spelling-extreme-input');
+        return ext ? [ext] : [];
+      }
       return Array.from(document.querySelectorAll('#spelling-boxes-container .spelling-letter-box:not(.prefilled)'));
     }
 
@@ -8969,6 +9075,109 @@
       if (!questionWord) return;
 
       const boxesContainer = document.getElementById('spelling-boxes-container');
+      const feedbackMsg = document.getElementById('spelling-feedback-msg');
+
+      if (currentSpellingDifficulty === 'extreme') {
+        const extremeInput = document.getElementById('spelling-extreme-input');
+        if (!extremeInput) return;
+        const userVal = (extremeInput.value || '').trim();
+        const expected = (extremeInput.dataset.expected || '').trim();
+
+        if (!userVal) {
+          extremeInput.classList.add('wrong');
+          extremeInput.focus();
+          showToast('⚠️ Vui lòng nhập từ vựng trước khi kiểm tra!');
+          return;
+        }
+
+        const isCorrect = userVal.toLowerCase() === expected.toLowerCase();
+        const { totalMult } = getSpellingMultipliers();
+        const mult = totalMult;
+
+        if (isCorrect) {
+          playVocaSfx('correct');
+          spellingIsAnswered = true;
+          spellingCorrectCount++;
+          spellingWrongAttemptsForCurrentWord = 0;
+
+          const totalBoxes = expected.length;
+          const walletPts = Math.ceil(totalBoxes * mult * 1.2);
+          spellingScore += walletPts;
+          spellingPointsEarned += walletPts;
+
+          const masteryGain = Math.min(18, Math.ceil(totalBoxes * 0.45 * mult));
+          const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
+          const idx = words.findIndex(w => w.id === questionWord.id);
+          if (idx >= 0) {
+            words[idx].masteryScore = newScore;
+            words[idx].updatedAt = new Date().toISOString();
+          }
+
+          setUserPoints(getUserPoints() + walletPts);
+          saveDatabase(true);
+
+          setTimeout(() => {
+            speakSpellingTerm();
+          }, 500);
+
+          document.getElementById('spelling-score').textContent = 'Bài: +' + spellingScore + 'đ';
+          updateSpellingWalletPointsDisplay();
+
+          if (feedbackMsg) {
+            feedbackMsg.textContent = '🏆 SIÊU ĐỈNH! Viết đúng tuyệt đối (+' + masteryGain + 'đ tinh thông, +' + walletPts + 'đ ví)';
+            feedbackMsg.style.color = '#c084fc';
+          }
+
+          extremeInput.disabled = true;
+          extremeInput.classList.remove('wrong');
+          extremeInput.classList.add('correct');
+          renderWordDetailsCard('spelling', questionWord);
+
+          const checkBtn = document.getElementById('btn-spelling-check');
+          const nextBtn = document.getElementById('btn-spelling-next');
+          if (checkBtn) checkBtn.style.display = 'none';
+          if (nextBtn) {
+            nextBtn.style.display = 'block';
+            nextBtn.focus();
+          }
+        } else {
+          playVocaSfx('wrong');
+          spellingWrongCount++;
+          spellingWrongAttemptsForCurrentWord++;
+
+          const walletPenalty = Math.ceil(4 * mult);
+          const masteryPenalty = Math.min(10, Math.max(2, Math.ceil(3 * mult)));
+
+          const { newScore } = updateWordMasteryScore(questionWord, -masteryPenalty);
+          const idx = words.findIndex(w => w.id === questionWord.id);
+          if (idx >= 0) {
+            words[idx].masteryScore = newScore;
+            words[idx].updatedAt = new Date().toISOString();
+          }
+
+          const curPts = getUserPoints();
+          if (curPts > 0) setUserPoints(Math.max(0, curPts - walletPenalty));
+          saveDatabase(true);
+          updateSpellingWalletPointsDisplay();
+
+          if (boxesContainer) {
+            boxesContainer.classList.remove('shake-mild', 'shake-intense');
+            void boxesContainer.offsetWidth;
+            boxesContainer.classList.add('shake-mild');
+          }
+
+          if (feedbackMsg) {
+            feedbackMsg.textContent = '❌ Chưa chính xác! Hãy kiểm tra lại từng chữ cái, khoảng trắng & dấu.';
+            feedbackMsg.style.color = '#f87171';
+          }
+
+          extremeInput.classList.add('wrong');
+          extremeInput.focus();
+          extremeInput.select();
+        }
+        return;
+      }
+
       const editables = getEditableSpellingInputs();
 
       // Check if all editable boxes have been filled
@@ -9008,8 +9217,6 @@
           if (!firstWrongInput) firstWrongInput = input;
         }
       });
-
-      const feedbackMsg = document.getElementById('spelling-feedback-msg');
 
       if (firstWrongInput) {
         setTimeout(() => {
@@ -9150,14 +9357,23 @@
       spellingSkipCount++;
       updateSpellingWalletPointsDisplay();
 
-      // Reveal full word in letter boxes with muted color
-      const editables = getEditableSpellingInputs();
-      editables.forEach(inp => {
-        inp.value = (inp.dataset.expected || '').toUpperCase();
-        inp.disabled = true;
-        inp.classList.remove('wrong');
-        inp.classList.add('hint-revealed');
-      });
+      // Reveal full word in letter boxes or single input with muted color
+      if (currentSpellingDifficulty === 'extreme') {
+        const ext = document.getElementById('spelling-extreme-input');
+        if (ext) {
+          ext.value = questionWord.term;
+          ext.disabled = true;
+          ext.classList.add('hint-revealed');
+        }
+      } else {
+        const editables = getEditableSpellingInputs();
+        editables.forEach(inp => {
+          inp.value = (inp.dataset.expected || '').toUpperCase();
+          inp.disabled = true;
+          inp.classList.remove('wrong');
+          inp.classList.add('hint-revealed');
+        });
+      }
 
       const feedbackMsg = document.getElementById('spelling-feedback-msg');
       if (feedbackMsg) {
@@ -9254,6 +9470,43 @@
       if (spellingIsAnswered) return;
       const questionWord = spellingList[spellingIndex];
       if (!questionWord) return;
+
+      if (currentSpellingDifficulty === 'extreme') {
+        const ext = document.getElementById('spelling-extreme-input');
+        if (!ext) return;
+        const curVal = ext.value || '';
+        const expected = questionWord.term || '';
+        if (curVal.toLowerCase() === expected.toLowerCase()) {
+          showToast('💡 Bạn đã nhập đúng toàn bộ từ!');
+          return;
+        }
+
+        const hintCost = 50;
+        const curHints = getUserHints();
+        const curPts = getUserPoints();
+        if (curHints <= 0 && curPts < hintCost) {
+          showToast('🪙 Bạn không đủ điểm ví (cần 50đ để đổi 1 Gợi ý)');
+          openShopModal();
+          return;
+        }
+        if (curHints > 0) setUserHints(curHints - 1);
+        else setUserPoints(curPts - hintCost);
+
+        spellingHintsUsed++;
+        updateSpellingWalletPointsDisplay();
+
+        let nextCharIndex = 0;
+        while (nextCharIndex < expected.length && nextCharIndex < curVal.length && curVal[nextCharIndex].toLowerCase() === expected[nextCharIndex].toLowerCase()) {
+          nextCharIndex++;
+        }
+        ext.value = expected.slice(0, nextCharIndex + 1);
+        ext.focus();
+        showToast('💡 Đã mở thêm ký tự: "' + expected[nextCharIndex] + '" (' + (nextCharIndex + 1) + '/' + expected.length + ' ký tự)');
+        if (ext.value.toLowerCase() === expected.toLowerCase()) {
+          checkSpellingAnswer();
+        }
+        return;
+      }
 
       const editables = getEditableSpellingInputs().filter(inp => !inp.classList.contains('hint-revealed') && inp.value.toLowerCase() !== (inp.dataset.expected || '').toLowerCase());
       if (editables.length === 0) {
