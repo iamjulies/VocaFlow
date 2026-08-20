@@ -217,7 +217,7 @@ VocaFlow là hệ sinh thái học từ vựng tiếng Anh thông minh thế h�
     * **Đẩy mục Gemini AI lên trên**: Đặt `✨ Google Gemini AI (Miễn Phí)` ngay dưới mục Chọn Giao Diện và trên Tốc Độ Phát Âm giúp người dùng tiện thao tác cấu hình API Key.
     * **Thu gọn dải banner Đóng Góp Thư Viện**: Chuyển banner đóng góp ở đáy Thư Viện thành dải thanh slim 1 dòng siêu gọn gàng, tiết kiệm không gian cuộn danh sách từ.
     * **Làm sạch cụm nút Học tập (Selection Study Bar)**: Bỏ số đếm dynamic `(61)` trên 2 nút `🎧 Auto Flashcard` và `❓ Trắc Nghiệm Quiz`, giữ nút bấm luôn ngắn gọn, tinh tế và đồng bộ với nút `✍️ Luyện Viết`.
-• 💎 v0.10.4 (a -> c): Đánh Giá 5 Sao, Xem Trước 25%, Hoa Hồng Affiliate & BXH Pháp Sư Tối Ưu Sổ Cái Biến Động, Giá Bán Bộ Từ & Đồng Bộ Gian Hàng Tự Động SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
+• 💎 v0.10.4 (a -> d): Khắc Phục Triệt Để Sổ Cái Biến Động Số Dư & Tự Động Nạp Số Dư Ban Đầu Đánh Giá 5 Sao, Xem Trước 25%, Hoa Hồng Affiliate & BXH Pháp Sư Tối Ưu Sổ Cái Biến Động, Giá Bán Bộ Từ & Đồng Bộ Gian Hàng Tự Động SIÊU BẢN CẬP NHẬT KINH TẾ (MONETIZATION & CREATOR MARKETPLACE):
   - 🛠️ Hoàn Thiện Giá Bán, Đồng Bộ Gian Hàng & Gộp Biến Động Điểm Bài Học (`v0.10.4b`):
     * **Thêm Khung Thiết Lập Giá Bán Vào Form Đăng & Sửa Bộ Từ (Hình 1)**:
       + Đã tích hợp đầy đủ ô nhập `💎 Giá bán bộ từ` kèm các nút chọn nhanh (0đ, 50, 100, 200, 500 Xu) và badge màu sắc trực quan ngay trong popup Sửa và Đăng bộ từ.
