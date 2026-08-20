@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.4s (Build 59)
+Phiên bản hiện tại : v0.10.4t (Build 60)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.4] - SIÊU BẢN CẬP NHẬT KINH TẾ, THỊ TRƯỜNG TÁC GIẢ & TRẢI NGHIỆM NGƯỜI DÙNG (a -> s)
+• 🧠 v0.10.4t (Build 60):
+  - Đại tu & nâng cấp toàn diện Prompt cho Gemini AI Studio & Trợ Lý Tự Động Điền Từ Vựng (AI Auto Fill).
+  - BẮT BUỘC AI luôn cung cấp trọn vẹn 100% các trường dữ liệu từ điển nâng cao:
+    * Từ đồng nghĩa (Synonyms): 2 - 4 từ đồng nghĩa tiếng Anh chuẩn xác.
+    * Từ trái nghĩa (Antonyms): 2 - 3 từ trái nghĩa hoặc khái niệm đối lập.
+    * Cụm từ đi kèm (Collocations): 2 - 4 cụm từ tự nhiên, tần suất cao trong giao tiếp & học thuật.
+    * Ghi chú & Mẹo nhớ (Note / Mnemonic): Mẹo ghi nhớ dễ thuộc, quy tắc giới từ đi kèm, hoặc sắc thái ngữ cảnh.
+    * Phiên âm IPA chuẩn Oxford/Cambridge và Câu ví dụ minh họa ngữ cảnh.
+
 • 💎 v0.10.4s (Build 59):
   - Sửa màu nút Tab Kho Lưu Trữ: Nút "Kho Lưu Trữ" sáng màu tím/xanh nổi bật chuẩn xác khi chuyển tab.
   - Điều hướng Modal thông minh khi nhấn ESC: Thoát khỏi cửa sổ xem trước bộ từ sẽ quay trở lại Profile tác giả thay vì thoát hẳn ra màn hình chính.

@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4s) */
+      /* SPELLING EXTREME MODE (v0.10.4t) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1889,7 +1889,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4s</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4t</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3297,7 +3297,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4s MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4t MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3311,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4s) -->
+      <!-- GUEST LOCK VIEW (v0.10.4t) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3407,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4s) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4t) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4101,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4s</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4t</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4432,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4s) -->
+      <!-- Price Setting for Deck (v0.10.4t) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5141,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4s)
+        // Realtime Inter-Tab Synchronization (v0.10.4t)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5224,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4s)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4t)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6585,7 +6585,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4s)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4t)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -11021,33 +11021,32 @@
       if (userContext.pos) contextNote += `\n- Từ loại người dùng chọn: "${userContext.pos}"`;
       if (userContext.cefrLevel) contextNote += `\n- Cấp độ CEFR người dùng chọn: "${userContext.cefrLevel}"`;
 
-      const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển tiếng Anh cho người học Việt Nam.
-Người dùng đang học từ vựng tiếng Anh: "${term}".
-${contextNote ? `\nNgười dùng ĐÃ NHẬP SẴN một số thông tin sau:${contextNote}\n
-HƯỚNG DẪN TƯ DUY & XỬ LÝ DỮ LIỆU:
-1. TỰ ĐỘNG XÁC ĐỊNH TỪ LOẠI CHUẨN XÁC: Nếu người dùng chưa chọn từ loại hoặc chọn sai, hãy tự động nhận diện từ loại chuẩn xác nhất (noun, verb, adjective, adverb, phrase, hoặc idiom), TUYỆT ĐỐI KHÔNG ép buộc nghĩa theo từ loại sai!
-2. ĐỊNH NGHĨA SIÊU GỌN GÀNG: "definition" chỉ ghi nghĩa cốt lõi, cô đọng (dưới 8 từ).
-   - QUY TẮC ĐỊNH NGHĨA: DÙNG DẤU PHẨY (,) để ngăn cách các nét nghĩa. TUYỆT ĐỐI KHÔNG dùng từ "hoặc", "và", dấu gạch chéo "/".
-   - TUYỆT ĐỐI KHÔNG ĐỂ DẤU CHẤM CÂU (.) Ở CUỐI ĐỊNH NGHĨA (Ví dụ đúng: "cơ bụng sáu múi, lốc sáu lon bia" - KHÔNG viết: "cơ bụng sáu múi hoặc lốc sáu lon bia.").
-3. THÔNG TIN MỞ RỘNG ĐƯA VÀO GHI CHÚ: Mọi giải thích ngữ cảnh, sắc thái, mẹo ghi nhớ hay thông tin phụ hãy đưa vào trường "note".
-4. TỰ ĐIỀN ĐỦ: Điền đầy đủ phiên âm IPA chuẩn Anh-Mỹ, phân loại CEFR, ví dụ tự nhiên kèm dịch tiếng Việt, collocations, từ đồng nghĩa/trái nghĩa.` : `Hãy phân tích từ vựng "${term}":
-- Tự động nhận diện từ loại chính xác nhất (noun/verb/adjective/adverb/phrase/idiom).
-- Định nghĩa tiếng Việt "definition" thật ngắn gọn, cô đọng (dưới 8 từ). Dùng dấu phẩy (,) ngăn cách các nét nghĩa, TUYỆT ĐỐI KHÔNG dùng từ "hoặc", "và", "/" và TUYỆT ĐỐI KHÔNG có dấu chấm (.) ở cuối.
-- Thông tin mở rộng, ngữ cảnh hay mẹo nhớ đưa vào trường "note".
-- Phiên âm IPA chuẩn Anh-Mỹ, CEFR, ví dụ tự nhiên kèm dịch nghĩa, từ đồng nghĩa/trái nghĩa, collocations.`}
+      const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho người học Việt Nam.
+Hãy phân tích và hoàn thiện trọn vẹn 100% dữ liệu từ điển cho từ vựng tiếng Anh: "${term}".
+${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\n` : ''}
+YÊU CẦU BIÊN SOẠN CHUẨN XÁC VÀ BẮT BUỘC ĐẦY ĐỦ MỌI TRƯỜNG (KHÔNG ĐƯỢC ĐỂ TRỐNG):
+1. TỪ LOẠI ("pos"): Tự động nhận diện chính xác nhất: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+2. PHIÊN ÂM ("ipa"): Phiên âm chuẩn quốc tế IPA Anh-Mỹ kèm dấu gạch chéo /.../ (ví dụ: "/rɪˈzɪliənt/").
+3. CEFR ("cefrLevel"): Phân loại chuẩn xác: "A1", "A2", "B1", "B2", "C1", hoặc "C2".
+4. ĐỊNH NGHĨA ("definition"): Nghĩa tiếng Việt cốt lõi, cô đọng, tự nhiên (dưới 8 từ). Dùng dấu phẩy (,) nếu có nhiều nét nghĩa, KHÔNG có dấu chấm (.) ở cuối.
+5. GHI CHÚ & MẸO NHỚ ("note"): BẮT BUỘC. Mẹo ghi nhớ dễ thuộc, quy tắc giới từ đi kèm, hoặc sắc thái ngữ cảnh trong tiếng Việt (ví dụ: "Thường đi kèm giới từ 'to'; mẹo nhớ: sức bật phục hồi nhanh").
+6. VÍ DỤ ("example"): 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
+7. TỪ ĐỒNG NGHĨA ("synonyms"): BẮT BUỘC. Mảng chứa 2-4 từ đồng nghĩa tiếng Anh chính xác (ví dụ: ["tough", "adaptable", "robust"]).
+8. TỪ TRÁI NGHĨA ("antonyms"): BẮT BUỘC. Mảng chứa 2-3 từ trái nghĩa tiếng Anh (ví dụ: ["fragile", "weak", "vulnerable"]).
+9. COLLOCATIONS ("collocations"): BẮT BUỘC. Mảng chứa 2-4 cụm từ đi kèm tự nhiên thường gặp (ví dụ: ["resilient economy", "highly resilient", "remain resilient"]).
 
-Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON) theo cấu trúc:
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
 {
   "term": "${term}",
-  "pos": "noun/verb/adjective/adverb/phrase/idiom",
-  "ipa": "/phiên âm IPA chuẩn Anh-Mỹ/",
+  "pos": "noun/verb/adjective/adverb/noun phrase/phrasal verb/phrase/idiom",
+  "ipa": "/phiên âm IPA/",
   "cefrLevel": "A1/A2/B1/B2/C1/C2",
-  "definition": "Nghĩa tiếng Việt cốt lõi ngắn gọn dưới 8 từ",
-  "note": "Mẹo nhớ, sắc thái ngữ cảnh hoặc thông tin mở rộng",
-  "example": "1 câu ví dụ tiếng Anh tự nhiên kèm nghĩa tiếng Việt",
-  "synonyms": ["từ đồng nghĩa 1", "từ đồng nghĩa 2"],
-  "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2"],
-  "collocations": ["cụm từ đi kèm 1", "cụm từ đi kèm 2"]
+  "definition": "Nghĩa tiếng Việt ngắn gọn",
+  "note": "Mẹo nhớ và lưu ý ngữ pháp",
+  "example": "Natural English example sentence (Bản dịch tiếng Việt)",
+  "synonyms": ["synonym 1", "synonym 2", "synonym 3"],
+  "antonyms": ["antonym 1", "antonym 2"],
+  "collocations": ["collocation 1", "collocation 2"]
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
@@ -12235,7 +12234,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4s)
+      // Progressive incomplete session leniency / penalty (v0.10.4t)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -17051,19 +17050,23 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
         const cefr = document.getElementById('ai-topic-cefr')?.value || 'auto';
         prompt = `You are a world-class English lexicographer and Oxford dictionary engine.
-Generate exactly ${count} unique, non-duplicate English vocabulary words/phrases for topic: "${topic}".
+Generate exactly ${count} unique, high-yield, non-duplicate English vocabulary words/phrases for topic: "${topic}".
 Target CEFR Level: ${cefr === 'auto' ? 'Diverse mix (A1, A2, B1, B2, C1, C2)' : cefr}.
 
-STRICT RULES & STANDARDS:
-1. NO DUPLICATES: Every generated term MUST be distinct.
-2. ALL terms in LOWERCASE (e.g. "resilient", "cutting-edge"), unless recognized proper nouns.
-3. NOUNS in SINGULAR form; VERBS in BASE INFINITIVE form.
-4. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
-5. PART OF SPEECH (part_of_speech): MUST be EXACTLY ONE of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection". Do NOT abbreviate (never use "n.", "v.", "adj.").
-6. DEFINITION (definition_vietnamese): Concise, high-accuracy Vietnamese translation matching the topic.
-7. NOTE (note): Extra grammar nuance, preposition usage or memory mnemonic tip.
+MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIRED - NEVER LEAVE ANY EMPTY):
+1. TERM (term): Unique, high-frequency, lowercase (unless proper noun). Singular nouns, base infinitive verbs.
+2. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
+3. PART OF SPEECH (part_of_speech): Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection".
+4. DEFINITION (definition_vietnamese): Concise, high-accuracy Vietnamese translation matching topic.
+5. EXAMPLE SENTENCE (example_sentence): A natural, high-quality contextual sentence demonstrating usage.
+6. CEFR LEVEL (cefr_level): Exactly one of "A1", "A2", "B1", "B2", "C1", "C2".
+7. COLLOCATIONS (collocations_csv): MANDATORY. Provide 2-4 natural, high-frequency collocations/phrases separated by commas (e.g. "resilient economy, highly resilient, remain resilient"). NEVER leave empty!
+8. SYNONYMS (synonyms_csv): MANDATORY. Provide 2-3 accurate English synonyms separated by commas (e.g. "tough, adaptable, robust"). NEVER leave empty!
+9. ANTONYMS (antonyms_csv): MANDATORY. Provide 2-3 accurate English antonyms/opposites separated by commas (e.g. "fragile, weak, vulnerable"). If no direct antonym, provide contrasting terms. NEVER leave empty!
+10. NOTE & MNEMONIC (note): MANDATORY. Provide a practical memory tip, common preposition pairing, or contextual nuance in Vietnamese (e.g. "Thường đi kèm giới từ 'to'; mẹo nhớ: sức bật đàn hồi"). NEVER leave empty!
 
-Format output ONLY as a raw JSON 2D array without markdown formatting:
+OUTPUT FORMAT:
+Return ONLY a valid raw JSON 2D array of strings with NO markdown fences:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
@@ -17074,19 +17077,23 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           document.getElementById('ai-passage-input')?.focus();
           return;
         }
-        prompt = `You are an expert English lexicographer and Oxford dictionary engine. Extract the ${count} most valuable, academic, non-duplicate English vocabulary words from this passage:
+        prompt = `You are a world-class English lexicographer and Oxford dictionary engine. Extract exactly ${count} most valuable, academic, non-duplicate English vocabulary words from this passage:
 """${passage}"""
 
-STRICT EXTRACTION RULES & STANDARDS:
-1. NO DUPLICATES: Every extracted term MUST be distinct.
-2. Focus on DIFFICULT, ACADEMIC, HIGHER CEFR words (B2, C1, C2).
-3. VERBS to BASE INFINITIVE form; NOUNS to SINGULAR form.
-4. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
-5. PART OF SPEECH: MUST be EXACTLY ONE of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction". Do NOT abbreviate.
-6. DEFINITION (definition_vietnamese): Accurate, natural Vietnamese translation in passage context.
-7. NOTE (note): Extra contextual nuance or collocations.
+MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIRED - NEVER LEAVE ANY EMPTY):
+1. TERM: Unique, academic terms. Lowercase, singular nouns, base infinitive verbs.
+2. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
+3. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+4. DEFINITION: Accurate, natural Vietnamese translation in passage context.
+5. EXAMPLE SENTENCE: Natural contextual sentence from passage or illustrating usage.
+6. CEFR LEVEL: "A1", "A2", "B1", "B2", "C1", or "C2".
+7. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
+8. SYNONYMS (synonyms_csv): MANDATORY. 2-3 accurate English synonyms separated by commas. NEVER leave empty!
+9. ANTONYMS (antonyms_csv): MANDATORY. 2-3 accurate English antonyms/opposites separated by commas. NEVER leave empty!
+10. NOTE & MNEMONIC (note): MANDATORY. Practical memory tip, preposition rule, or context note in Vietnamese. NEVER leave empty!
 
-Format output ONLY as a raw JSON 2D array without markdown formatting:
+OUTPUT FORMAT:
+Return ONLY a valid raw JSON 2D array with NO markdown fences:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
@@ -17097,16 +17104,23 @@ Format output ONLY as a raw JSON 2D array without markdown formatting:
           document.getElementById('ai-raw-input')?.focus();
           return;
         }
-        prompt = `You are an expert English lexicographer and Oxford dictionary engine. Standardize these vocabulary terms: ${rawWords}
+        prompt = `You are a world-class English lexicographer and Oxford dictionary engine. Standardize and enrich these vocabulary terms into complete dictionary entries: ${rawWords}
 
-STRICT STANDARDIZATION RULES:
+MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIRED - NEVER LEAVE ANY EMPTY):
 1. NO DUPLICATES: Ensure each term is unique.
-2. ALL terms in LOWERCASE; Nouns SINGULAR; Verbs BASE INFINITIVE.
-3. PHONETIC: Accurate IPA with slashes /.../.
-4. PART OF SPEECH: Exactly one of "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-5. DEFINITION: Precise Vietnamese meaning. Extra nuance in "note".
+2. CASING & FORMS: Lowercase; Nouns in SINGULAR; Verbs in BASE INFINITIVE.
+3. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/.../").
+4. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+5. DEFINITION: Precise Vietnamese meaning.
+6. EXAMPLE SENTENCE: A natural, clear contextual example sentence.
+7. CEFR LEVEL: Accurate CEFR grade ("A1", "A2", "B1", "B2", "C1", "C2").
+8. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
+9. SYNONYMS (synonyms_csv): MANDATORY. 2-3 accurate English synonyms separated by commas. NEVER leave empty!
+10. ANTONYMS (antonyms_csv): MANDATORY. 2-3 accurate English antonyms/opposites separated by commas. NEVER leave empty!
+11. NOTE & MNEMONIC (note): MANDATORY. Practical memory tip, preposition usage, or grammar nuance in Vietnamese. NEVER leave empty!
 
-Format output ONLY as a raw JSON 2D array without markdown formatting:
+OUTPUT FORMAT:
+Return ONLY a valid raw JSON 2D array with NO markdown fences:
 [
   ["term", "phonetic_ipa", "part_of_speech", "definition_vietnamese", "example_sentence", "cefr_level", "collocations_csv", "synonyms_csv", "antonyms_csv", "note"]
 ]`;
