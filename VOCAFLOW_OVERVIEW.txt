@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.4t (Build 60)
+Phiên bản hiện tại : v0.10.5a (Build 61)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -21,6 +21,18 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎙️ v0.10.5a (Build 61 - Bước 1 Khởi Động):
+  - Ra mắt giao diện & nền tảng Chế độ Luyện Phát Âm (AI Speaking Lab):
+    * Thêm nút "🎙️ Luyện Nói AI" trên thanh công cụ học tập trong chi tiết bộ từ.
+    * Màn hình học tập `screen-speaking` chuyên nghiệp: Hiển thị từ vựng trọng tâm, phiên âm IPA, cấp độ CEFR, từ loại POS, định nghĩa và ví dụ ngữ cảnh.
+  - Xây dựng bộ thu âm HTML5 MediaRecorder Engine:
+    * Tự động tương thích định dạng audio của mọi trình duyệt (`audio/webm`, `audio/mp4`, `audio/wav`).
+    * Nút Micro lớn với hiệu ứng animation nhịp thở và sóng âm trực quan khi đang thu âm.
+    * Giới hạn thời lượng thông minh tối đa 6 giây (tự dừng an toàn).
+    * Tính năng "🎧 Nghe lại giọng bạn": Cho phép người học phát lại đoạn ghi âm vừa nói để tự đối chiếu với giọng mẫu bản xứ.
+    * Sẵn sàng đầu ra Base64 audio payload cho Bước 2 kết nối Gemini 2.5/3.0 Flash Multimodal Evaluation.
 
 🌟 [v0.10.4] - SIÊU BẢN CẬP NHẬT KINH TẾ, THỊ TRƯỜNG TÁC GIẢ & TRẢI NGHIỆM NGƯỜI DÙNG (a -> s)
 • 🧠 v0.10.4t (Build 60):

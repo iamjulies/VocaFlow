@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.4t) */
+      /* SPELLING EXTREME MODE (v0.10.5a) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1859,7 +1859,8 @@
       <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></symbol>
       <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
       <symbol id="i-arrow-back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
-      <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></symbol>
       <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></symbol>
       <symbol id="i-download" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
       <symbol id="i-upload" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></symbol>
@@ -1889,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.4t</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5a</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2102,6 +2103,9 @@
           
           <div class="selection-study-actions">
 
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="startSpeakingMode(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
+              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span><span id="speaking-count-label"></span>
+            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
@@ -2397,6 +2401,109 @@
     </section>
 
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
+        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5a - Bước 1) -->
+    <section id="screen-speaking" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="speaking-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Từ 1 / 10</div>
+          <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.35); font-weight: 700; font-size: 11px; padding: 2px 8px;">🎙️ AI Speaking Lab</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentSpeaking()" title="Xáo trộn ngẫu nhiên danh sách từ">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-spk-listen-native" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm mẫu</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="speaking-container" style="max-width: 640px; margin: 16px auto; padding: 0 16px;">
+        <!-- Card Hiển Thị Từ Vựng Trọng Tâm -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          
+          <div style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px;">
+            <span id="spk-word-pos" class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10px; font-weight: 700;">noun</span>
+            <span id="spk-word-cefr" class="badge badge-level-b2" style="font-size: 10px; font-weight: 700;">B2</span>
+          </div>
+
+          <!-- Từ Tiếng Anh Trọng Tâm -->
+          <div id="spk-word-term" style="font-size: 32px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.2;">
+            resilient
+          </div>
+
+          <!-- Phiên Âm IPA & Nút Nghe Mẫu -->
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px;">
+            <span id="spk-word-ipa" style="font-size: 15px; font-family: monospace; color: #f472b6; font-weight: 600;">/rɪˈzɪliənt/</span>
+            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn Oxford" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center;">
+              <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+            </button>
+          </div>
+
+          <!-- Định Nghĩa Tiếng Việt -->
+          <div id="spk-word-def" style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+            kiên cường, đàn hồi
+          </div>
+
+          <!-- Ví Dụ Ngữ Cảnh -->
+          <div id="spk-word-example" style="font-size: 12.5px; color: var(--text-muted); font-style: italic; max-width: 500px; margin: 0 auto; line-height: 1.4;">
+            “The local economy is remarkably resilient.”
+          </div>
+        </div>
+
+        <!-- KHU VỰC MICROPHONE THU ÂM TRỰC QUAN -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 20px; padding: 24px 16px; text-align: center; margin-bottom: 20px; position: relative;">
+          
+          <!-- Animated Mic Button -->
+          <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
+            <button id="btn-speaking-mic" onclick="toggleSpeakingRecord()" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #db2777); border: 3px solid rgba(255,255,255,0.25); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 20px rgba(236,72,153,0.35); transition: all 0.25s; outline: none;">
+              <svg class="icon" style="width: 36px; height: 36px; fill: white;"><use href="#i-mic"/></svg>
+            </button>
+          </div>
+
+          <!-- Recording Status & Timer -->
+          <div id="speaking-record-status" style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px;">
+            Nhấn vào Mic để bắt đầu nói
+          </div>
+          <div id="speaking-record-timer" style="font-size: 12px; color: var(--text-muted);">
+            Giữ giọng rõ ràng • Tối đa 6 giây
+          </div>
+
+          <!-- Audio Wave Visualizer Placeholder -->
+          <div id="speaking-wave-box" style="display: none; justify-content: center; align-items: center; gap: 4px; height: 28px; margin-top: 10px;">
+            <span class="spk-wave-bar" style="width: 4px; height: 12px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out;"></span>
+            <span class="spk-wave-bar" style="width: 4px; height: 22px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out 0.15s;"></span>
+            <span class="spk-wave-bar" style="width: 4px; height: 16px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out 0.3s;"></span>
+            <span class="spk-wave-bar" style="width: 4px; height: 26px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out 0.45s;"></span>
+            <span class="spk-wave-bar" style="width: 4px; height: 14px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out 0.6s;"></span>
+          </div>
+
+          <!-- Nghe lại đoạn thu âm vừa thực hiện -->
+          <div id="speaking-user-playback-container" style="display: none; margin-top: 14px; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-outline btn-sm" id="btn-spk-playback-user" onclick="playSpeakingUserAudio()" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); font-weight: 700; padding: 6px 14px;">
+              🎧 Nghe lại giọng của bạn
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="toggleSpeakingRecord()" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; padding: 6px 14px;">
+              🔄 Thu lại
+            </button>
+          </div>
+        </div>
+
+        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="min-width: 110px;">
+            ⏮️ Từ Trước
+          </button>
+          <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 16px;">
+            Từ Tiếp Theo ⏭️
+          </button>
+        </div>
+      </div>
+    </section>
+
     <section id="screen-autofc" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Thoát">
@@ -3297,7 +3404,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.4t MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5a MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3311,7 +3418,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.4t) -->
+      <!-- GUEST LOCK VIEW (v0.10.5a) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3407,7 +3514,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.4t) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5a) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4101,7 +4208,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.4t</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5a</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4432,7 +4539,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.4t) -->
+      <!-- Price Setting for Deck (v0.10.5a) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5141,7 +5248,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.4t)
+        // Realtime Inter-Tab Synchronization (v0.10.5a)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5224,7 +5331,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.4t)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5a)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6585,7 +6692,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.4t)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5a)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -12234,7 +12341,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.4t)
+      // Progressive incomplete session leniency / penalty (v0.10.5a)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -12735,6 +12842,283 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       autoFlashcardStepId++;
       stopAllAudio();
       showToast('⏹️ Đã tắt Auto Flashcard.');
+    }
+
+        // =========================================================================
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5a - BƯỚC 1 KHỞI ĐỘNG)
+    // =========================================================================
+    let speakingWordsList = [];
+    let currentSpeakingIndex = 0;
+    let speakingMediaRecorder = null;
+    let speakingAudioChunks = [];
+    let speakingAudioBlob = null;
+    let speakingAudioBlobUrl = null;
+    let speakingCurrentAudioBase64 = null;
+    let isSpeakingRecording = false;
+    let speakingRecordTimerInterval = null;
+    let speakingRecordSeconds = 0;
+
+    function getSupportedAudioMimeType() {
+      const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/wav', 'audio/ogg'];
+      for (const t of types) {
+        if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
+          return t;
+        }
+      }
+      return '';
+    }
+
+    function startSpeakingMode(fromSelection = false) {
+      if (!currentDeckId) return;
+      const deck = decks.find(d => d.id === currentDeckId);
+      if (!deck) return;
+
+      let targetWords = [];
+      if (fromSelection && selectedWordIds.size > 0) {
+        targetWords = words.filter(w => selectedWordIds.has(w.id));
+      } else {
+        targetWords = words.filter(w => w.deckId === currentDeckId);
+      }
+
+      if (targetWords.length === 0) {
+        alert('Bộ từ này chưa có từ vựng nào để luyện phát âm!');
+        return;
+      }
+
+      speakingWordsList = [...targetWords];
+      currentSpeakingIndex = 0;
+      resetSpeakingAudioState();
+
+      showScreen('screen-speaking');
+      renderSpeakingCurrentWord();
+    }
+
+    function exitSpeakingMode() {
+      stopSpeakingRecord();
+      resetSpeakingAudioState();
+      showScreen('screen-deck-detail');
+    }
+
+    function shuffleCurrentSpeaking() {
+      if (speakingWordsList.length <= 1) return;
+      for (let i = speakingWordsList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [speakingWordsList[i], speakingWordsList[j]] = [speakingWordsList[j], speakingWordsList[i]];
+      }
+      currentSpeakingIndex = 0;
+      resetSpeakingAudioState();
+      renderSpeakingCurrentWord();
+      showToast('🔀 Đã xáo trộn danh sách từ phát âm!');
+    }
+
+    function renderSpeakingCurrentWord() {
+      if (speakingWordsList.length === 0) return;
+      const word = speakingWordsList[currentSpeakingIndex];
+      if (!word) return;
+
+      resetSpeakingAudioState();
+
+      const counterEl = document.getElementById('speaking-counter');
+      if (counterEl) counterEl.textContent = `Từ ${currentSpeakingIndex + 1} / ${speakingWordsList.length}`;
+
+      const termEl = document.getElementById('spk-word-term');
+      const ipaEl = document.getElementById('spk-word-ipa');
+      const posEl = document.getElementById('spk-word-pos');
+      const cefrEl = document.getElementById('spk-word-cefr');
+      const defEl = document.getElementById('spk-word-def');
+      const exEl = document.getElementById('spk-word-example');
+
+      if (termEl) termEl.textContent = word.term || '';
+      if (ipaEl) ipaEl.textContent = word.phonetic || '/.../';
+      if (posEl) posEl.textContent = word.partOfSpeech || 'noun';
+      if (cefrEl) {
+        cefrEl.textContent = word.cefrLevel || word.level || 'B1';
+        cefrEl.className = `badge badge-level-${(word.cefrLevel || word.level || 'b1').toLowerCase()}`;
+      }
+      if (defEl) defEl.textContent = word.definitionVi || word.definition || '';
+      if (exEl) exEl.textContent = word.exampleSentence || word.example ? `“${word.exampleSentence || word.example}”` : '';
+
+      const btnPrev = document.getElementById('btn-spk-prev');
+      if (btnPrev) btnPrev.disabled = (currentSpeakingIndex === 0);
+    }
+
+    function speakCurrentSpeakingWord() {
+      const word = speakingWordsList[currentSpeakingIndex];
+      if (word && word.term) {
+        speakTerm(word.term);
+      }
+    }
+
+    function nextSpeakingWord() {
+      if (isSpeakingRecording) stopSpeakingRecord();
+      if (currentSpeakingIndex < speakingWordsList.length - 1) {
+        currentSpeakingIndex++;
+        renderSpeakingCurrentWord();
+      } else {
+        showToast('🎉 Bạn đã hoàn thành lượt luyện phát âm cho danh sách này!');
+      }
+    }
+
+    function prevSpeakingWord() {
+      if (isSpeakingRecording) stopSpeakingRecord();
+      if (currentSpeakingIndex > 0) {
+        currentSpeakingIndex--;
+        renderSpeakingCurrentWord();
+      }
+    }
+
+    function resetSpeakingAudioState() {
+      if (speakingRecordTimerInterval) {
+        clearInterval(speakingRecordTimerInterval);
+        speakingRecordTimerInterval = null;
+      }
+      isSpeakingRecording = false;
+      speakingRecordSeconds = 0;
+      speakingAudioChunks = [];
+      speakingAudioBlob = null;
+      speakingAudioBlobUrl = null;
+      speakingCurrentAudioBase64 = null;
+
+      const micBtn = document.getElementById('btn-speaking-mic');
+      const statusEl = document.getElementById('speaking-record-status');
+      const timerEl = document.getElementById('speaking-record-timer');
+      const waveEl = document.getElementById('speaking-wave-box');
+      const playbackCont = document.getElementById('speaking-user-playback-container');
+
+      if (micBtn) {
+        micBtn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+        micBtn.style.boxShadow = '0 6px 20px rgba(236,72,153,0.35)';
+        micBtn.style.transform = 'scale(1)';
+      }
+      if (statusEl) {
+        statusEl.textContent = 'Nhấn vào Mic để bắt đầu nói';
+        statusEl.style.color = 'var(--text)';
+      }
+      if (timerEl) timerEl.textContent = 'Giữ giọng rõ ràng • Tối đa 6 giây';
+      if (waveEl) waveEl.style.display = 'none';
+      if (playbackCont) playbackCont.style.display = 'none';
+    }
+
+    async function toggleSpeakingRecord() {
+      if (isSpeakingRecording) {
+        stopSpeakingRecord();
+      } else {
+        await startSpeakingRecord();
+      }
+    }
+
+    async function startSpeakingRecord() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            channelCount: 1
+          }
+        });
+
+        const mimeType = getSupportedAudioMimeType();
+        speakingMediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+        speakingAudioChunks = [];
+
+        speakingMediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) {
+            speakingAudioChunks.push(e.data);
+          }
+        };
+
+        speakingMediaRecorder.onstop = async () => {
+          const finalMime = speakingMediaRecorder.mimeType || 'audio/webm';
+          speakingAudioBlob = new Blob(speakingAudioChunks, { type: finalMime });
+          speakingAudioBlobUrl = URL.createObjectURL(speakingAudioBlob);
+
+          // Convert Blob to Base64
+          const reader = new FileReader();
+          reader.readAsDataURL(speakingAudioBlob);
+          reader.onloadend = () => {
+            const base64data = reader.result;
+            speakingCurrentAudioBase64 = base64data ? base64data.split(',')[1] : null;
+          };
+
+          // Release tracks
+          stream.getTracks().forEach(track => track.stop());
+
+          // UI update on recording completion
+          const statusEl = document.getElementById('speaking-record-status');
+          const timerEl = document.getElementById('speaking-record-timer');
+          const playbackCont = document.getElementById('speaking-user-playback-container');
+          const waveEl = document.getElementById('speaking-wave-box');
+
+          if (statusEl) {
+            statusEl.textContent = '✅ Đã thu âm xong!';
+            statusEl.style.color = '#34d399';
+          }
+          if (timerEl) timerEl.textContent = `Thời lượng: ${speakingRecordSeconds}s • Sẵn sàng chấm điểm`;
+          if (waveEl) waveEl.style.display = 'none';
+          if (playbackCont) playbackCont.style.display = 'flex';
+        };
+
+        speakingMediaRecorder.start();
+        isSpeakingRecording = true;
+        speakingRecordSeconds = 0;
+
+        const micBtn = document.getElementById('btn-speaking-mic');
+        const statusEl = document.getElementById('speaking-record-status');
+        const timerEl = document.getElementById('speaking-record-timer');
+        const waveEl = document.getElementById('speaking-wave-box');
+        const playbackCont = document.getElementById('speaking-user-playback-container');
+
+        if (micBtn) {
+          micBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+          micBtn.style.boxShadow = '0 0 25px rgba(239,68,68,0.7)';
+          micBtn.style.transform = 'scale(1.08)';
+        }
+        if (statusEl) {
+          statusEl.textContent = '🔴 Đang lắng nghe... (Bấm để dừng)';
+          statusEl.style.color = '#f87171';
+        }
+        if (waveEl) waveEl.style.display = 'flex';
+        if (playbackCont) playbackCont.style.display = 'none';
+
+        speakingRecordTimerInterval = setInterval(() => {
+          speakingRecordSeconds++;
+          if (timerEl) timerEl.textContent = `⏱️ Đang thu âm: ${speakingRecordSeconds}s / 6s`;
+          if (speakingRecordSeconds >= 6) {
+            stopSpeakingRecord();
+          }
+        }, 1000);
+
+      } catch (err) {
+        console.error('Mic Error:', err);
+        alert('⚠️ Không thể truy cập Microphone!\n\nVui lòng cấp quyền sử dụng Micro cho trình duyệt để trải nghiệm tính năng luyện phát âm nhé.');
+        resetSpeakingAudioState();
+      }
+    }
+
+    function stopSpeakingRecord() {
+      if (speakingRecordTimerInterval) {
+        clearInterval(speakingRecordTimerInterval);
+        speakingRecordTimerInterval = null;
+      }
+      if (speakingMediaRecorder && speakingMediaRecorder.state !== 'inactive') {
+        speakingMediaRecorder.stop();
+      }
+      isSpeakingRecording = false;
+
+      const micBtn = document.getElementById('btn-speaking-mic');
+      if (micBtn) {
+        micBtn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+        micBtn.style.boxShadow = '0 6px 20px rgba(236,72,153,0.35)';
+        micBtn.style.transform = 'scale(1)';
+      }
+    }
+
+    function playSpeakingUserAudio() {
+      if (speakingAudioBlobUrl) {
+        const audio = new Audio(speakingAudioBlobUrl);
+        audio.play().catch(e => console.warn('Audio playback error:', e));
+      }
     }
 
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
