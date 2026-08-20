@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.5b) */
+      /* SPELLING EXTREME MODE (v0.10.5c) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5b</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5c</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2401,7 +2401,7 @@
     </section>
 
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5b - Bước 1) -->
+        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5c - Bước 1) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -2418,6 +2418,7 @@
           <button class="btn btn-outline btn-sm" id="btn-spk-listen-native" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ">
             <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm mẫu</span>
           </button>
+          <div id="speaking-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
         </div>
       </div>
 
@@ -2536,8 +2537,15 @@
             </div>
 
             <!-- Vietnamese Specific Feedback Box -->
-            <div id="spk-feedback-box" style="background: rgba(99,102,241,0.08); border: 1px dashed rgba(99,102,241,0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a5b4fc; line-height: 1.4; text-align: left;">
+            <div id="spk-feedback-box" style="background: rgba(99,102,241,0.08); border: 1px dashed rgba(99,102,241,0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a5b4fc; line-height: 1.4; text-align: left; margin-bottom: 10px;">
               💡 <strong>Nhận xét:</strong> <span id="spk-feedback-text">Phát âm rất rõ ràng, ngữ điệu tự nhiên!</span>
+            </div>
+
+            <!-- Reward Badge for Speaking Accuracy (v0.10.5c) -->
+            <div id="spk-reward-badge-container" style="display: none; justify-content: center; align-items: center; gap: 6px;">
+              <span id="spk-reward-badge" class="badge" style="font-size: 11.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">
+                🪙 +5 Xu • 📈 +2% Thuộc từ
+              </span>
             </div>
           </div>
         </div>
@@ -2993,6 +3001,35 @@
   </div>
 
   <!-- MODAL: SPELLING CELEBRATION RESULT POPUP (v0.0.10.1k) -->
+    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.5c) -->
+  <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 480px; text-align: center; padding: 24px 20px;">
+      <div style="font-size: 48px; margin-bottom: 8px;">🎙️</div>
+      <h2 style="font-size: 20px; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">Hoàn Thành Luyện Nói AI!</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Bạn đã hoàn thành phiên luyện phát âm chuẩn xác với Gemini AI.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">📚 Số từ đã luyện</div>
+          <div id="spk-res-total-words" style="font-size: 20px; font-weight: 800; color: #818cf8; margin-top: 2px;">10 từ</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">🪙 Thưởng tích lũy</div>
+          <div id="spk-res-total-coins" style="font-size: 20px; font-weight: 800; color: #34d399; margin-top: 2px;">+50 Xu</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-outline" onclick="closeModal('modal-speaking-result'); startSpeakingMode(false);" style="flex: 1; justify-content: center;">
+          🔁 Luyện Lại
+        </button>
+        <button class="btn btn-primary" onclick="closeModal('modal-speaking-result'); showScreen('screen-deck-detail');" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700;">
+          🚪 Về Bộ Từ
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -3454,7 +3491,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5b MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5c MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3468,7 +3505,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.5b) -->
+      <!-- GUEST LOCK VIEW (v0.10.5c) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3564,7 +3601,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5b) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5c) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4258,7 +4295,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5b</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5c</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4589,7 +4626,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.5b) -->
+      <!-- Price Setting for Deck (v0.10.5c) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5298,7 +5335,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.5b)
+        // Realtime Inter-Tab Synchronization (v0.10.5c)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5381,7 +5418,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5b)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5c)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6742,7 +6779,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5b)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5c)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -12391,7 +12428,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.5b)
+      // Progressive incomplete session leniency / penalty (v0.10.5c)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -12895,7 +12932,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
         // =========================================================================
-    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5b - BƯỚC 1 KHỞI ĐỘNG)
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5c - BƯỚC 1 KHỞI ĐỘNG)
     // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
@@ -12907,6 +12944,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let isSpeakingRecording = false;
     let speakingRecordTimerInterval = null;
     let speakingRecordSeconds = 0;
+    let speakingSessionPointsEarned = 0;
+    let speakingGradedWordIds = new Set();
 
     function getSupportedAudioMimeType() {
       const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/wav', 'audio/ogg'];
@@ -12937,7 +12976,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       speakingWordsList = [...targetWords];
       currentSpeakingIndex = 0;
+      speakingSessionPointsEarned = 0;
+      speakingGradedWordIds.clear();
       resetSpeakingAudioState();
+
+      const scoreBadge = document.getElementById('speaking-score-badge');
+      if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
 
       showScreen('screen-speaking');
       renderSpeakingCurrentWord();
@@ -12946,6 +12990,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitSpeakingMode() {
       stopSpeakingRecord();
       resetSpeakingAudioState();
+      if (speakingSessionPointsEarned > 0) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
+        const curPts = getUserPoints();
+        setUserPoints(curPts + speakingSessionPointsEarned);
+        addLedgerEntry('STUDY', speakingSessionPointsEarned, `Luyện phát âm AI "${deckTitle}" (${speakingGradedWordIds.size}/${speakingWordsList.length} từ)`);
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        showToast(`🎉 Đã cộng +${speakingSessionPointsEarned} Xu vào ví từ phiên luyện phát âm!`);
+      }
       showScreen('screen-deck-detail');
     }
 
@@ -13005,7 +13059,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         currentSpeakingIndex++;
         renderSpeakingCurrentWord();
       } else {
-        showToast('🎉 Bạn đã hoàn thành lượt luyện phát âm cho danh sách này!');
+        // Finished all words
+        if (speakingSessionPointsEarned > 0) {
+          const curDeck = decks.find(d => d.id === currentDeckId);
+          const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
+          const curPts = getUserPoints();
+          setUserPoints(curPts + speakingSessionPointsEarned);
+          addLedgerEntry('STUDY', speakingSessionPointsEarned, `Luyện phát âm AI "${deckTitle}" (${speakingWordsList.length} từ hoàn thành)`);
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+
+        const totalWordsEl = document.getElementById('spk-res-total-words');
+        const totalCoinsEl = document.getElementById('spk-res-total-coins');
+        if (totalWordsEl) totalWordsEl.textContent = `${speakingWordsList.length} từ`;
+        if (totalCoinsEl) totalCoinsEl.textContent = `+${speakingSessionPointsEarned} Xu`;
+
+        playVocaSfx('fireworks');
+        openModal('modal-speaking-result');
       }
     }
 
@@ -13051,9 +13122,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const resultPanel = document.getElementById('speaking-result-panel');
       const aiLoading = document.getElementById('speaking-ai-loading');
       const aiContent = document.getElementById('speaking-ai-content');
+      const rewardCont = document.getElementById('spk-reward-badge-container');
       if (resultPanel) resultPanel.style.display = 'none';
       if (aiLoading) aiLoading.style.display = 'none';
       if (aiContent) aiContent.style.display = 'none';
+      if (rewardCont) rewardCont.style.display = 'none';
     }
 
     async function toggleSpeakingRecord() {
@@ -13376,6 +13449,63 @@ Return ONLY a valid JSON object matching this schema without markdown formatting
       if (feedbackEl) {
         feedbackEl.textContent = data.vietnameseSpecificMistake || 'Phát âm rõ ràng, chuẩn ngữ điệu!';
       }
+
+      // Points & Mastery Economy Integration (v0.10.5c)
+      const currentWord = speakingWordsList[currentSpeakingIndex];
+      const rewardCont = document.getElementById('spk-reward-badge-container');
+      const rewardBadge = document.getElementById('spk-reward-badge');
+
+      if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
+        speakingGradedWordIds.add(currentWord.id);
+
+        let earnedXu = 0;
+        let masteryInc = 0;
+
+        if (score >= 100) {
+          earnedXu = 10;
+          masteryInc = 5;
+          if (rewardBadge) {
+            rewardBadge.innerHTML = '👑 +10 Xu • 🌟 +5% Thuộc từ (Hoàn Hảo!)';
+            rewardBadge.style.background = 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(245,158,11,0.25))';
+            rewardBadge.style.color = '#fbbf24';
+            rewardBadge.style.borderColor = 'rgba(234,179,8,0.5)';
+          }
+          playVocaSfx('fireworks');
+        } else if (score >= 80) {
+          earnedXu = 5;
+          masteryInc = 2;
+          if (rewardBadge) {
+            rewardBadge.innerHTML = '🪙 +5 Xu • 📈 +2% Thuộc từ';
+            rewardBadge.style.background = 'linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2))';
+            rewardBadge.style.color = '#34d399';
+            rewardBadge.style.borderColor = 'rgba(52,211,153,0.4)';
+          }
+          playVocaSfx('correct');
+        } else {
+          if (rewardBadge) {
+            rewardBadge.innerHTML = '💡 Thử lại để đạt điểm cao hơn nhé!';
+            rewardBadge.style.background = 'rgba(148,163,184,0.15)';
+            rewardBadge.style.color = '#94a3b8';
+            rewardBadge.style.borderColor = 'rgba(148,163,184,0.3)';
+          }
+        }
+
+        if (earnedXu > 0) {
+          speakingSessionPointsEarned += earnedXu;
+          const scoreBadge = document.getElementById('speaking-score-badge');
+          if (scoreBadge) scoreBadge.textContent = `Bài: +${speakingSessionPointsEarned}đ`;
+        }
+
+        if (masteryInc > 0) {
+          const mainIdx = words.findIndex(w => w.id === currentWord.id);
+          if (mainIdx >= 0) {
+            words[mainIdx].masteryScore = Math.min(100, (words[mainIdx].masteryScore || 0) + masteryInc);
+            words[mainIdx].updatedAt = new Date().toISOString();
+          }
+        }
+      }
+
+      if (rewardCont) rewardCont.style.display = 'flex';
 
       // Render 3 Pillar Badges
       const pStress = document.getElementById('spk-pillar-stress');
@@ -17410,6 +17540,13 @@ Return ONLY a valid JSON object matching this schema without markdown formatting
         if (quizScreen && quizScreen.classList.contains('active')) {
           e.preventDefault();
           exitQuiz();
+          return;
+        }
+
+        const speakingScreen = document.getElementById('screen-speaking');
+        if (speakingScreen && speakingScreen.classList.contains('active')) {
+          e.preventDefault();
+          exitSpeakingMode();
           return;
         }
 

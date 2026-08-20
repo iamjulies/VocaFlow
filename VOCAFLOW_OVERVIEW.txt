@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5b (Build 62)
+Phiên bản hiện tại : v0.10.5c (Build 63)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🏆 v0.10.5c (Build 63 - Bước 3 Hoàn Thiện Kinh Tế & Phím Tắt):
+  - Tích hợp Hệ thống Kinh tế Xu & Điểm Thuộc Từ (Mastery Points):
+    * Điểm phát âm >= 80: Thưởng ngay +5 Xu và tăng +2% mức độ thuộc từ (Mastery score). Phát âm thanh SFX chuẩn xác.
+    * Điểm phát âm 100 (Hoàn hảo): Thưởng lớn +10 Xu và tăng +5% Mastery score. Bắn pháo hoa rực rỡ và SFX fireworks.
+    * Tự động tổng hợp và ghi nhận 1 giao dịch STUDY hợp nhất vào Sổ cái và đồng bộ Cloud an toàn.
+  - Modal Tổng kết Luyện Phát Âm (Speaking Celebration Modal):
+    * Hiển thị bảng vinh danh tổng số từ đã luyện, tổng Xu nhận được kèm nút "Luyện Lại" hoặc "Về Bộ Từ".
+  - Bộ Phím Tắt Nhanh (Smart Keyboard Shortcuts):
+    * Phím `Space` hoặc `R`: Bắt đầu thu âm / Dừng & Gửi AI chấm điểm tức thì.
+    * Phím `Enter` hoặc `Mũi tên phải (->)`: Chuyển sang từ tiếp theo.
+    * Phím `Mũi tên trái (<-)`: Quay lại từ trước đó.
+    * Phím `L` hoặc `P`: Nghe phát âm chuẩn bản xứ.
+    * Phím `Escape`: Thoát an toàn về danh sách từ vựng.
+
 • 🧠 v0.10.5b (Build 62 - Bước 2 Chấm Điểm Multimodal):
   - Tích hợp Gemini 2.5 / 3.0 Flash Multimodal Audio Evaluation API:
     * Gửi bản thu âm giọng nói của người học (Base64) trực tiếp lên Gemini Flash để phân tích ngữ âm, cao độ & độ chuẩn xác.
