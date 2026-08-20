@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5c (Build 63)
+Phiên bản hiện tại : v0.10.5d (Build 64)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛠️ v0.10.5d (Build 64 - Fix Lỗi & Tinh Chỉnh Trải Nghiệm Speaking):
+  - Khắc phục triệt để lỗi âm thanh phát âm mẫu:
+    * Sửa lỗi gọi hàm phát âm `speakText(word.term)` giúp cả 2 nút loa phát âm mẫu và phím tắt `L` hoạt động chuẩn 100%.
+  - Cải tiến quy trình thu âm & chấm điểm 2 bước (Two-step Flow):
+    * Khi thu âm xong, hệ thống KHÔNG tự động gửi chấm ngay mà cho người học nghe lại giọng mình (`[P]`) hoặc thu lại (`[R]`).
+    * Nhấn phím `Enter` (hoặc click nút `🧠 Chấm Điểm AI`) để gửi AI phân tích.
+    * Sau khi có kết quả chấm điểm, nhấn `Enter` lần nữa để chuyển sang từ tiếp theo (`nextSpeakingWord()`).
+  - Tối ưu luồng cấp quyền Micro cho App Windows Portable (.exe WebView2):
+    * Áp dụng `speakingPersistentStream` lưu giữ stream micro trong suốt phiên học, giúp người dùng CHỈ CẦN BẤM "CHO PHÉP" ĐÚNG 1 LẦN DUY NHẤT khi mở app, không bao giờ bị hỏi lại nhiều lần giữa các từ.
+  - Cân bằng giao diện & Gợi ý phím tắt trực quan:
+    * Cân bằng kích thước 2 nút "⏮️ [←] Từ Trước" và "Từ Tiếp Theo [→] ⏭️" đều nhau (`flex: 1`).
+    * Đưa badge phần thưởng điểm Xu (`#spk-reward-badge-container`) lên trên hộp nhận xét tiếng Việt.
+    * Bổ sung nhãn phím tắt trực tiếp trên các nút và thanh hướng dẫn chân trang: `[Space] Thu âm • [P] Nghe lại • [Enter] Chấm điểm/Tiếp theo • [L] Phát âm mẫu • [← / →] Đổi từ • [Esc] Thoát`.
+
 • 🏆 v0.10.5c (Build 63 - Bước 3 Hoàn Thiện Kinh Tế & Phím Tắt):
   - Tích hợp Hệ thống Kinh tế Xu & Điểm Thuộc Từ (Mastery Points):
     * Điểm phát âm >= 80: Thưởng ngay +5 Xu và tăng +2% mức độ thuộc từ (Mastery score). Phát âm thanh SFX chuẩn xác.

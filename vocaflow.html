@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.5c) */
+      /* SPELLING EXTREME MODE (v0.10.5d) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5c</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5d</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2401,7 +2401,7 @@
     </section>
 
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5c - Bước 1) -->
+        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5d - Bước 1) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -2415,8 +2415,8 @@
           <button class="btn btn-outline btn-sm" onclick="shuffleCurrentSpeaking()" title="Xáo trộn ngẫu nhiên danh sách từ">
             🔀 <span class="hide-on-mobile">Trộn</span>
           </button>
-          <button class="btn btn-outline btn-sm" id="btn-spk-listen-native" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ">
-            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm mẫu</span>
+          <button class="btn btn-outline btn-sm" id="btn-spk-listen-native" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ (Phím L)">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm mẫu [L]</span>
           </button>
           <div id="speaking-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
         </div>
@@ -2439,7 +2439,7 @@
           <!-- Phiên Âm IPA & Nút Nghe Mẫu -->
           <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px;">
             <span id="spk-word-ipa" style="font-size: 15px; font-family: monospace; color: #f472b6; font-weight: 600;">/rɪˈzɪliənt/</span>
-            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn Oxford" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center;">
+            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ [L]" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center;">
               <svg class="icon icon-sm"><use href="#i-volume"/></svg>
             </button>
           </div>
@@ -2482,13 +2482,20 @@
             <span class="spk-wave-bar" style="width: 4px; height: 14px; background: #f472b6; border-radius: 2px; animation: spkWave 0.6s infinite ease-in-out 0.6s;"></span>
           </div>
 
-          <!-- Nghe lại đoạn thu âm vừa thực hiện -->
-          <div id="speaking-user-playback-container" style="display: none; margin-top: 14px; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-outline btn-sm" id="btn-spk-playback-user" onclick="playSpeakingUserAudio()" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); font-weight: 700; padding: 6px 14px;">
-              🎧 Nghe lại giọng của bạn
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="toggleSpeakingRecord()" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; padding: 6px 14px;">
-              🔄 Thu lại
+          <!-- Nghe lại & Nút Chấm Điểm AI (v0.10.5d) -->
+          <div id="speaking-user-playback-container" style="display: none; margin-top: 14px; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%;">
+              <button class="btn btn-outline btn-sm" id="btn-spk-playback-user" onclick="playSpeakingUserAudio()" title="Nghe lại giọng của bạn (Phím P)" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); font-weight: 700; padding: 7px 14px; border-radius: 20px;">
+                🎧 Nghe lại [P]
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-spk-retry" onclick="toggleSpeakingRecord()" title="Thu lại từ đầu (Phím R)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; padding: 7px 14px; border-radius: 20px;">
+                🔄 Thu lại [R]
+              </button>
+            </div>
+            
+            <!-- Nút Chấm Điểm AI Nổi Bật -->
+            <button class="btn btn-primary" id="btn-spk-submit-eval" onclick="submitSpeakingEvaluation()" style="width: 100%; max-width: 320px; padding: 11px 16px; font-size: 13.5px; font-weight: 800; border-radius: 24px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; box-shadow: 0 4px 16px rgba(56,189,248,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>🧠 Chấm Điểm AI [Enter ↵]</span>
             </button>
           </div>
         </div>
@@ -2536,28 +2543,31 @@
               </div>
             </div>
 
-            <!-- Vietnamese Specific Feedback Box -->
-            <div id="spk-feedback-box" style="background: rgba(99,102,241,0.08); border: 1px dashed rgba(99,102,241,0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a5b4fc; line-height: 1.4; text-align: left; margin-bottom: 10px;">
-              💡 <strong>Nhận xét:</strong> <span id="spk-feedback-text">Phát âm rất rõ ràng, ngữ điệu tự nhiên!</span>
-            </div>
-
-            <!-- Reward Badge for Speaking Accuracy (v0.10.5c) -->
-            <div id="spk-reward-badge-container" style="display: none; justify-content: center; align-items: center; gap: 6px;">
-              <span id="spk-reward-badge" class="badge" style="font-size: 11.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">
+            <!-- Reward Badge for Speaking Accuracy (v0.10.5d - Đặt lên trên nhận xét) -->
+            <div id="spk-reward-badge-container" style="display: none; justify-content: center; align-items: center; gap: 6px; margin-bottom: 12px;">
+              <span id="spk-reward-badge" class="badge" style="font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">
                 🪙 +5 Xu • 📈 +2% Thuộc từ
               </span>
+            </div>
+
+            <!-- Vietnamese Specific Feedback Box -->
+            <div id="spk-feedback-box" style="background: rgba(99,102,241,0.08); border: 1px dashed rgba(99,102,241,0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a5b4fc; line-height: 1.4; text-align: left;">
+              💡 <strong>Nhận xét:</strong> <span id="spk-feedback-text">Phát âm rất rõ ràng, ngữ điệu tự nhiên!</span>
             </div>
           </div>
         </div>
 
-        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD -->
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-          <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="min-width: 110px;">
-            ⏮️ Từ Trước
+        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD (v0.10.5d - 2 nút bằng nhau) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
+            ⏮️ [←] Từ Trước
           </button>
-          <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 16px;">
-            Từ Tiếp Theo ⏭️
+          <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 14px; font-size: 13px;">
+            Từ Tiếp Theo [→] ⏭️
           </button>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; opacity: 0.85;">
+          ⌨️ <strong>Phím tắt:</strong> [Space] Thu âm • [P] Nghe lại • [Enter] Chấm điểm / Tiếp theo • [L] Phát âm mẫu • [← / →] Đổi từ • [Esc] Thoát
         </div>
       </div>
     </section>
@@ -3001,7 +3011,7 @@
   </div>
 
   <!-- MODAL: SPELLING CELEBRATION RESULT POPUP (v0.0.10.1k) -->
-    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.5c) -->
+    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.5d) -->
   <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 480px; text-align: center; padding: 24px 20px;">
       <div style="font-size: 48px; margin-bottom: 8px;">🎙️</div>
@@ -3491,7 +3501,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5c MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5d MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3505,7 +3515,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.5c) -->
+      <!-- GUEST LOCK VIEW (v0.10.5d) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3601,7 +3611,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5c) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5d) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4295,7 +4305,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5c</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5d</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4626,7 +4636,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.5c) -->
+      <!-- Price Setting for Deck (v0.10.5d) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5335,7 +5345,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.5c)
+        // Realtime Inter-Tab Synchronization (v0.10.5d)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5418,7 +5428,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5c)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5d)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -6779,7 +6789,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5c)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5d)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -12428,7 +12438,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.5c)
+      // Progressive incomplete session leniency / penalty (v0.10.5d)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -12932,7 +12942,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
         // =========================================================================
-    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5c - BƯỚC 1 KHỞI ĐỘNG)
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5d - BƯỚC 1 KHỞI ĐỘNG)
     // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
@@ -13049,7 +13059,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function speakCurrentSpeakingWord() {
       const word = speakingWordsList[currentSpeakingIndex];
       if (word && word.term) {
-        speakTerm(word.term);
+        speakText(word.term);
       }
     }
 
@@ -13139,7 +13149,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function startSpeakingRecord() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        if (!speakingPersistentStream || !speakingPersistentStream.active || speakingPersistentStream.getAudioTracks().every(t => t.readyState === 'ended')) {
+          speakingPersistentStream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
@@ -13148,8 +13159,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           }
         });
 
+        }
         const mimeType = getSupportedAudioMimeType();
-        speakingMediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+        speakingMediaRecorder = mimeType ? new MediaRecorder(speakingPersistentStream, { mimeType }) : new MediaRecorder(speakingPersistentStream);
         speakingAudioChunks = [];
 
         speakingMediaRecorder.ondataavailable = (e) => {
@@ -13159,8 +13171,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         };
 
         speakingMediaRecorder.onstop = async () => {
-          const finalMime = speakingMediaRecorder.mimeType || 'audio/webm';
-          speakingAudioBlob = new Blob(speakingAudioChunks, { type: finalMime });
+          speakingFinalAudioMime = speakingMediaRecorder.mimeType || 'audio/webm';
+          speakingAudioBlob = new Blob(speakingAudioChunks, { type: speakingFinalAudioMime });
           speakingAudioBlobUrl = URL.createObjectURL(speakingAudioBlob);
 
           // Convert Blob to Base64
@@ -13171,27 +13183,24 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             speakingCurrentAudioBase64 = base64data ? base64data.split(',')[1] : null;
           };
 
-          // Release tracks
-          stream.getTracks().forEach(track => track.stop());
+          // Update state to recorded_ready: Wait for user review before evaluation (v0.10.5d)
+          speakingFlowState = 'recorded_ready';
 
-          // UI update on recording completion
           const statusEl = document.getElementById('speaking-record-status');
           const timerEl = document.getElementById('speaking-record-timer');
           const playbackCont = document.getElementById('speaking-user-playback-container');
           const waveEl = document.getElementById('speaking-wave-box');
 
           if (statusEl) {
-            statusEl.textContent = '✅ Đã thu âm xong!';
+            statusEl.textContent = '✅ Đã thu âm xong! Nghe lại hoặc nhấn Chấm Điểm';
             statusEl.style.color = '#34d399';
           }
-          if (timerEl) timerEl.textContent = `Thời lượng: ${speakingRecordSeconds}s • Đang gửi AI chấm điểm...`;
+          if (timerEl) timerEl.textContent = `Thời lượng: ${speakingRecordSeconds}s • [P] Nghe lại • [Enter] Chấm điểm`;
           if (waveEl) waveEl.style.display = 'none';
-          if (playbackCont) playbackCont.style.display = 'flex';
-
-          // Trigger Gemini Multimodal Evaluation (Bước 2)
-          setTimeout(() => {
-            evaluateSpeakingAudioWithGemini(finalMime);
-          }, 200);
+          if (playbackCont) {
+            playbackCont.style.display = 'flex';
+            playbackCont.style.flexDirection = 'column';
+          }
         };
 
         speakingMediaRecorder.start();
@@ -13409,6 +13418,7 @@ Return ONLY a valid JSON object matching this schema without markdown formatting
     }
 
     function renderDiagnosticResult(data) {
+      speakingFlowState = 'evaluated';
       const score = Math.max(0, Math.min(100, Number(data.score) || 0));
       const scoreNumEl = document.getElementById('spk-score-num');
       const scoreCircleEl = document.getElementById('spk-score-circle');
@@ -13450,7 +13460,7 @@ Return ONLY a valid JSON object matching this schema without markdown formatting
         feedbackEl.textContent = data.vietnameseSpecificMistake || 'Phát âm rõ ràng, chuẩn ngữ điệu!';
       }
 
-      // Points & Mastery Economy Integration (v0.10.5c)
+      // Points & Mastery Economy Integration (v0.10.5d)
       const currentWord = speakingWordsList[currentSpeakingIndex];
       const rewardCont = document.getElementById('spk-reward-badge-container');
       const rewardBadge = document.getElementById('spk-reward-badge');
@@ -13546,6 +13556,15 @@ Return ONLY a valid JSON object matching this schema without markdown formatting
         }
         phonemesEl.innerHTML = phtml;
       }
+    }
+
+    function submitSpeakingEvaluation() {
+      if (!speakingCurrentAudioBase64) {
+        showToast('⚠️ Vui lòng nhấn Mic thu âm trước khi gửi chấm điểm nhé!');
+        return;
+      }
+      speakingFlowState = 'evaluating';
+      evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
     }
 
     function playSpeakingUserAudio() {
