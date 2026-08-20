@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5d (Build 64)
+Phiên bản hiện tại : v0.10.5e (Build 65)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎙️ v0.10.5e (Build 65 - Tự Động Đọc Mẫu, Realtime Speech Match & Fix Micro/Phím Tắt):
+  - Tự động phát âm mẫu 1 lần khi chuyển sang từ mới (Auto Model Pronunciation):
+    * Khi người học mở chế độ Speaking hoặc chuyển từ (Next/Prev/Shuffle), app tự động phát âm chuẩn bản xứ 1 lần trước để người học lắng nghe và bắt chước.
+  - Tích hợp Nhận diện giọng nói thời gian thực (Realtime Speech Matching via Web Speech API):
+    * Khi người học nhấn Mic nói, hệ thống vừa thu âm vừa nhận diện trực tiếp lời nói `lang = 'en-US'`.
+    * Nếu đọc chuẩn từ vựng mục tiêu, hệ thống TỰ ĐỘNG ngắt thu âm và gửi AI chấm điểm ngay lập tức (không cần bấm dừng thủ công).
+    * Nếu chưa đọc chuẩn, người học có thể đọc lại hoặc tự bấm dừng khi muốn.
+  - Khắc phục triệt để lỗi Micro & Cấp quyền đa nền tảng (Web PWA & App Windows .exe):
+    * Bỏ các ràng buộc mic khắt khe (`channelCount`, `autoGainControl`) gây lỗi `OverconstrainedError` trên một số trình duyệt.
+    * Cơ chế `getSpeakingAudioStream()` fallback đa tầng đảm bảo tương thích 100% mọi loại Microphone.
+    * Giữ trạng thái chờ IDLE khi vào màn hình (chỉ bật thu âm khi người dùng chủ động nhấn Mic hoặc phím `Space`).
+  - Kích hoạt toàn diện Bộ Phím Tắt Bàn Phím trong Màn Hình Speaking:
+    * Khắc phục triệt để lỗi phím tắt không nhận: `Space`, `R` (Thu âm), `P` (Nghe lại), `L` (Phát âm mẫu), `Enter` (Chấm điểm / Tiếp theo), `ArrowLeft`/`ArrowRight` (Đổi từ), `Escape` (Thoát).
+
 • 🛠️ v0.10.5d (Build 64 - Fix Lỗi & Tinh Chỉnh Trải Nghiệm Speaking):
   - Khắc phục triệt để lỗi âm thanh phát âm mẫu:
     * Sửa lỗi gọi hàm phát âm `speakText(word.term)` giúp cả 2 nút loa phát âm mẫu và phím tắt `L` hoạt động chuẩn 100%.
