@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6a (Build 72)
+Phiên bản hiện tại : v0.10.6b (Build 73)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎯 v0.10.6b (Build 73 - CONFUSION CANDIDATE MATCHING ENGINE: Loại Bỏ Hoàn Toàn LLM Generosity Bias):
+  - Ra mắt bộ máy Phân Loại Âm Thanh Đa Lựa Chọn (Multi-Choice Acoustic Classifier):
+    * Minimal Pair Generator (`getConfusionSet(word)`): Tự động sinh danh sách 4-7 ứng viên bẫy âm vị / cặp từ tối thiểu (minimal pairs) cho mọi từ vựng tiếng Anh (VD: "line" ➔ `["line", "like", "light", "lie", "life", "lime", "mine"]`; "ship" ➔ `["ship", "sheep", "sip", "chip", "shit"]`).
+    * Confusion Candidate Trap Injection: Ép AI nghe audio và phân loại xem người dùng đọc giống từ nào nhất trong danh sách bẫy.
+    * Hard Penalty Clamping (Dual-Layer Guardrail):
+      • Nếu `selectedCandidate !== targetWord` (hoặc `isExactMatch === false`): Điểm bị khóa cứng trong khoảng 20-42 điểm (tối đa 45 điểm), không thể nào đạt 80-100 điểm.
+      • Chỉ khi `selectedCandidate === targetWord`: Mới bước vào phân tích ngữ điệu và trọng âm (80-100 điểm).
+    * UI Diagnostic Banner: Hiển thị thanh so sánh trực quan `Từ đích: line ➔ AI nhận diện: like` với cảnh báo màu sắc rõ ràng.
+
 • 🎙️ v0.10.6a (Build 72 - OVERHAUL AI SPEAKING: Phoneme Decomposition Strict Evaluator):
   - Viết lại hoàn toàn prompt chấm điểm phát âm AI với hệ thống phân tích âm vị nghiêm ngặt:
     * Phoneme-by-Phoneme Verification: Phân tách từ thành Onset (Âm đầu) + Nucleus (Nguyên âm chính) + Coda (Âm đuôi).
