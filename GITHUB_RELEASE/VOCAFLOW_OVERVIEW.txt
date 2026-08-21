@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6b (Build 73)
+Phiên bản hiện tại : v0.10.6c (Build 74)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎨 v0.10.6c (Build 74 - PHONEME DIAGNOSTIC UI & SCORE CALIBRATION: Visual Badges, Diagnostic Tip Box & Economy Protection):
+  - Nâng cấp toàn diện giao diện chẩn đoán âm vị & cơ chế bảo vệ kinh tế:
+    * Visual Phoneme Badges: Hiển thị 3 thẻ âm vị trực quan, có thể bấm vào để nghe phát âm mẫu:
+      • `[ Onset ]` (Xanh - Đúng âm đầu / Đỏ - Báo lỗi)
+      • `[ Nucleus ]` (Xanh - Đúng nguyên âm / Đỏ - Báo lỗi)
+      • `[ Coda ]` (Xanh - Đúng âm đuôi / Đỏ - Báo lỗi)
+    * Immediate Diagnostic Tip Box: Khi có lỗi âm đuôi (coda) hoặc nguyên âm, hiển thị hộp cảnh báo tức thì:
+      • ⚠️ "Lỗi âm đuôi (Ending Sound): Bạn đang đọc thành từ '{detectedWord}'."
+      • Nút "🔊 Nghe lại âm chuẩn" phát âm chuẩn xác từ đích để người học sửa khẩu hình ngay.
+    * Economy & Mastery Protection (Bảo vệ điểm ví & mức độ thuộc bài):
+      • Điểm < 80: Tuyệt đối KHÔNG cộng Xu và KHÔNG tăng % thuộc bài.
+      • Hiển thị nút "🔄 Thử lại để lấy +5 Xu (Phím Space)" nổi bật.
+      • Phím tắt Spacebar khi đang ở màn hình kết quả chẩn đoán tự động kích hoạt thu âm lại từ đầu.
+
 • 🎯 v0.10.6b (Build 73 - CONFUSION CANDIDATE MATCHING ENGINE: Loại Bỏ Hoàn Toàn LLM Generosity Bias):
   - Ra mắt bộ máy Phân Loại Âm Thanh Đa Lựa Chọn (Multi-Choice Acoustic Classifier):
     * Minimal Pair Generator (`getConfusionSet(word)`): Tự động sinh danh sách 4-7 ứng viên bẫy âm vị / cặp từ tối thiểu (minimal pairs) cho mọi từ vựng tiếng Anh (VD: "line" ➔ `["line", "like", "light", "lie", "life", "lime", "mine"]`; "ship" ➔ `["ship", "sheep", "sip", "chip", "shit"]`).
