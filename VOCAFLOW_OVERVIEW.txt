@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5i (Build 69)
+Phiên bản hiện tại : v0.10.5j (Build 70)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,25 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• ⚖️ v0.10.5j (Build 70 - Kết Hợp Hệ Số Hoàn Thành & Hệ Số Độ Dài Bài Học, Nâng Cấp Phạt Bỏ Dở Giữa Chừng):
+  - Chuẩn hóa cơ chế tính điểm thưởng / phạt đa tầng (Multi-tier Multiplier Engine):
+    * Hệ số hoàn thành khi bỏ dở (Completion Multiplier):
+      • ≤ 1/3 bài học: x0.2
+      • ≤ 2/3 bài học: x0.4
+      • > 2/3 bài học: x0.6
+      • Hoàn thành 100%: x1.0
+    * Hệ số độ dài bài học (Deck Length Multiplier):
+      • ≤ 10 từ: x0.8
+      • ≤ 20 từ: x0.9
+      • ≤ 30 từ: x1.0
+      • ≤ 40 từ: x1.1
+      • ≤ 50 từ: x1.2
+      • > 50 từ: x1.3
+    * Công thức kết hợp tổng điểm:
+      • Điểm thưởng (Dương): Điểm gốc × Hệ số hoàn thành × Hệ số độ dài (VD: bỏ dở ≤ 1/3 bài của bộ ≤ 10 từ nhận x0.2 × 0.8 = x0.16 Xu).
+      • Phạt bỏ dở khi âm điểm (Âm): Điểm âm ÷ (Hệ số hoàn thành × Hệ số độ dài) để răn đe người chơi thoát ngang khi làm sai nhiều (VD: -10 Xu ÷ 0.16 = -62 Xu).
+    * Áp dụng đồng bộ và chuẩn xác trên tất cả các chế độ: Quiz, Luyện viết (Spelling), Luyện phát âm (AI Speaking).
+
 • 🛠️ v0.10.5i (Build 69 - Sửa Profile Người Mua Trong Sổ Cái, Sửa Nhập Số Lượng Từ AI & Sync Avatar BXH):
   - Khắc phục lỗi Bấm vào người mua (Như) bị mở nhầm Profile của chính mình (Hình 1):
     * Sửa logic nhận diện `isCurrentUser`: Chỉ coi là hồ sơ của chính mình khi `authorUid` hoặc `authorName` trùng khớp với tài khoản hiện tại, không còn bị nhầm do khớp `deckId` của bộ từ người dùng đã bán.
