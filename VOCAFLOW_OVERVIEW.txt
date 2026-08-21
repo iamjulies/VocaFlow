@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5j (Build 70)
+Phiên bản hiện tại : v0.10.5k (Build 71)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🌟 v0.10.5k (Build 71 - NÂNG CẤP TOÀN DIỆN BALANCE_V2: Tích Lũy Điểm Thưởng Theo Khối Lượng Thực Học & Thưởng Cột Mốc Phiên Dài):
+  - Ra mắt hệ thống kinh tế điểm thưởng mới: `balance_v2`
+    * Giải quyết triệt để vấn đề "học 70 từ trong hàng đợi 220 từ bị giảm còn x0.2":
+      1. Đặc quyền Hàng Đợi Ôn Tập SRS (`review-queue`): Ghi nhận trọn vẹn 100% công sức ôn tập (`completionMult = 1.0`), không bị xem là bỏ dở.
+      2. Mốc an toàn khối lượng thực học: Học ≥30 từ luôn đạt x1.0; Học ≥15 từ (x0.85); Học ≥8 từ (x0.7); Học ≥4 từ (x0.5); Chỉ phạt khi spam dưới 4 từ rồi thoát ngang (x0.25).
+      3. Hệ số độ dài theo số từ thực học (`deckLengthMult`): ≤5 từ (x0.8), ≤10 từ (x0.9), ≤25 từ (x1.0), ≤45 từ (x1.1), ≤70 từ (x1.2), >70 từ (x1.3). Học càng nhiều từ trong phiên, hệ số nhân thưởng càng cao!
+      4. Thưởng Cột Mốc Phiên Học Dài (Milestone Streak Bonus): Đạt 25 từ (+15 Xu), 50 từ (+40 Xu), 70 từ (+75 Xu), 100 từ (+150 Xu).
+    * Kết quả thực tế:
+      - Học 70 từ trong phiên ôn tập: Nhận trọn vẹn x1.0 (Hoàn thành) × x1.2 (Khối lượng 70 từ) + 75 Xu (Cột mốc 70 từ) ➔ ~1239 Xu (thay vì 194 Xu như trước)!
+    * Áp dụng đồng bộ cho Quiz, Luyện viết (Spelling), Luyện phát âm (AI Speaking).
+
 • ⚖️ v0.10.5j (Build 70 - Kết Hợp Hệ Số Hoàn Thành & Hệ Số Độ Dài Bài Học, Nâng Cấp Phạt Bỏ Dở Giữa Chừng):
   - Chuẩn hóa cơ chế tính điểm thưởng / phạt đa tầng (Multi-tier Multiplier Engine):
     * Hệ số hoàn thành khi bỏ dở (Completion Multiplier):
