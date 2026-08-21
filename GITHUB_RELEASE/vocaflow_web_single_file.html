@@ -1804,7 +1804,7 @@
       }
     }
 
-      /* SPELLING EXTREME MODE (v0.10.5h) */
+      /* SPELLING EXTREME MODE (v0.10.5i) */
     .spelling-extreme-container {
       width: 100%;
       max-width: 560px;
@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.5i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2401,7 +2401,7 @@
     </section>
 
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5h - Gọn gàng, sạch đẹp) -->
+        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.5i - Gọn gàng, sạch đẹp) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -2554,7 +2554,7 @@
           </div>
         </div>
 
-        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD (v0.10.5h - Gọn gàng, sạch đẹp) -->
+        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD (v0.10.5i - Gọn gàng, sạch đẹp) -->
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
           <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
             ⏮️ Từ Trước
@@ -3005,7 +3005,7 @@
   </div>
 
   <!-- MODAL: SPELLING CELEBRATION RESULT POPUP (v0.0.10.1k) -->
-    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.5h) -->
+    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.5i) -->
   <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 480px; text-align: center; padding: 24px 20px;">
       <div style="font-size: 48px; margin-bottom: 8px;">🎙️</div>
@@ -3342,7 +3342,7 @@
               </div>
               <div>
                 <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ (5 - 50):</label>
-                <input type="number" id="ai-topic-count-input" class="form-input" min="5" max="50" value="10" oninput="handleAiWordCountInput(this)" onchange="handleAiWordCountInput(this)" style="font-size: 12px; padding: 6px 8px;">
+                <input type="number" id="ai-topic-count-input" class="form-input" min="5" max="50" value="10" oninput="updateAiStudioCost()" onblur="handleAiWordCountBlur(this)" onchange="handleAiWordCountBlur(this)" style="font-size: 12px; padding: 6px 8px;">
               </div>
             </div>
           </div>
@@ -3355,7 +3355,7 @@
             </div>
             <div class="form-group">
               <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🔢 Số lượng từ trích xuất (5 - 50):</label>
-              <input type="number" id="ai-passage-count-input" class="form-input" min="5" max="50" value="10" oninput="handleAiWordCountInput(this)" onchange="handleAiWordCountInput(this)" style="font-size: 12px; padding: 6px 8px;">
+              <input type="number" id="ai-passage-count-input" class="form-input" min="5" max="50" value="10" oninput="updateAiStudioCost()" onblur="handleAiWordCountBlur(this)" onchange="handleAiWordCountBlur(this)" style="font-size: 12px; padding: 6px 8px;">
             </div>
           </div>
 
@@ -3495,7 +3495,7 @@
   </div>
 
   <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5h MONETIZATION UPDATE) -->
+    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.5i MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -3509,7 +3509,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW (v0.10.5h) -->
+      <!-- GUEST LOCK VIEW (v0.10.5i) -->
       <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -3605,7 +3605,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5h) -->
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.5i) -->
       <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
         <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
           <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
@@ -4305,7 +4305,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.5i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4636,7 +4636,7 @@
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
-      <!-- Price Setting for Deck (v0.10.5h) -->
+      <!-- Price Setting for Deck (v0.10.5i) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
           <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
@@ -5345,7 +5345,7 @@
     let isSyncing = false;
 
     // Economy, Hint & Skip Shop State (v0.0.8 -> v0.0.10.1c)
-        // Realtime Inter-Tab Synchronization (v0.10.5h)
+        // Realtime Inter-Tab Synchronization (v0.10.5i)
     const vocaSyncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('vocaflow_sync_channel') : null;
     if (vocaSyncChannel) {
       vocaSyncChannel.onmessage = (event) => {
@@ -5428,7 +5428,7 @@
     }
 
         // =========================================================================
-    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5h)
+    // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.5i)
     // =========================================================================
     function runEconomyMigrationV0104i() {
       const MIGRATION_KEY = 'vocaflow_migration_v00104i';
@@ -5811,6 +5811,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(avatarTime)
         }).catch(() => {});
+
+        // Cascade update avatar in publicLibraryDecks (v0.10.5i)
+        if (Array.isArray(cloudLibraryDecks)) {
+          cloudLibraryDecks.forEach(d => {
+            if (isDeckAuthor(d) && !d.isAnonymous) {
+              d.authorAvatar = avatarDataUrl || '';
+              fetch(rtdbUrl + '/publicLibraryDecks/' + d.id + '/authorAvatar.json' + authParam, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(avatarDataUrl || '')
+              }).catch(() => {});
+            }
+          });
+        }
 
         pushCurrentDatabaseToCloud();
       }
@@ -6480,7 +6494,7 @@
         handleManualSync();
         loadEconomyFromCloud();
       }
-      // Pre-fetch cloud library in background so author profiles are always ready (v0.10.5h)
+      // Pre-fetch cloud library in background so author profiles are always ready (v0.10.5i)
       fetchCloudLibraryDecks().catch(() => {});
     });
 
@@ -6791,7 +6805,7 @@
     }
 
         // =========================================================================
-    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5h)
+    // CREATOR MONETIZATION, IMMUTABLE LEDGER & MARKETPLACE (v0.10.5i)
     // =========================================================================
     let userLedger = [];
     let userPurchasedDeckIds = new Set();
@@ -7437,8 +7451,23 @@
         } catch (e) {}
       }
       const allDecks = getAllLibraryDecks();
-      const targetDeck = allDecks.find(d => (deckId && d.id === deckId) || (authorUid && d.authorUid === authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
-      await openPublicProfileByAuthor(targetDeck?.author || authorName, targetDeck?.id || deckId, authorUid || targetDeck?.authorUid);
+
+      // Find deck matching the requested author specifically
+      let targetDeck = null;
+      if (authorUid) {
+        targetDeck = allDecks.find(d => d.authorUid === authorUid);
+      }
+      if (!targetDeck && authorName) {
+        targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+      }
+      if (!targetDeck && deckId) {
+        const candidate = allDecks.find(d => d.id === deckId);
+        if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
+          targetDeck = candidate;
+        }
+      }
+
+      await openPublicProfileByAuthor(authorName, targetDeck?.id || deckId, authorUid || targetDeck?.authorUid || '');
     }
 
     async function openPublicProfileByAuthor(authorName, deckId, authorUid = '') {
@@ -7449,10 +7478,26 @@
         } catch (e) {}
       }
       const allDecks = getAllLibraryDecks();
-      const targetDeck = allDecks.find(d => (deckId && d.id === deckId) || (authorUid && d.authorUid === authorUid) || (d.author || '').toLowerCase() === authorName.toLowerCase());
+
+      let targetDeck = null;
+      if (authorUid) {
+        targetDeck = allDecks.find(d => d.authorUid === authorUid);
+      }
+      if (!targetDeck && authorName) {
+        targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+      }
+      if (!targetDeck && deckId) {
+        const candidate = allDecks.find(d => d.id === deckId);
+        if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
+          targetDeck = candidate;
+        }
+      }
 
       const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
-      const isCurrentUser = targetDeck ? isDeckAuthor(targetDeck) : (currentUser && currentUser.displayName && authorName.toLowerCase() === currentUser.displayName.toLowerCase());
+
+      // STRICT USER MATCH: Only true if author identity matches current logged in user (v0.10.5i)
+      const isCurrentUser = (authorUid && currentUser && authorUid === currentUser.uid) ||
+                            (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase());
 
       let resolvedName = authorName;
       let resolvedAvatar = targetDeck?.authorAvatar || authorName;
@@ -7467,8 +7512,8 @@
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
       } else if (isCurrentUser) {
         resolvedName = currentUser.displayName || authorName;
-        resolvedAvatar = currentUser.avatar || currentUser.displayName || authorName;
-        resolvedBio = currentUser.bio || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+        resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
+        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
       } else {
         // Fetch fresh profile from Cloud RTDB for authentic user metadata
@@ -12498,7 +12543,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty (v0.10.5h)
+      // Progressive incomplete session leniency / penalty (v0.10.5i)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
         const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
@@ -13003,7 +13048,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         // =========================================================================
     // =========================================================================
-    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5h - ELSA GRADE AI PHONETICS)
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.5i - ELSA GRADE AI PHONETICS)
     // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
@@ -13057,7 +13102,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
     }
 
-    // Client-side Voice Activity Detection (VAD) & Audio Energy Analyzer (v0.10.5h)
+    // Client-side Voice Activity Detection (VAD) & Audio Energy Analyzer (v0.10.5i)
     async function analyzeAudioSpeechEnergy(blob) {
       if (!blob || blob.size < 1500) {
         return { hasVoice: false, reason: 'too_small' };
@@ -13419,7 +13464,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const currentWord = speakingWordsList[currentSpeakingIndex];
       if (!currentWord) return;
 
-      // 1. CLIENT-SIDE VOICE ACTIVITY DETECTION (VAD) & ENERGY CHECK (v0.10.5h)
+      // 1. CLIENT-SIDE VOICE ACTIVITY DETECTION (VAD) & ENERGY CHECK (v0.10.5i)
       const vadResult = await analyzeAudioSpeechEnergy(speakingAudioBlob);
       if (!vadResult.hasVoice) {
         if (aiLoading) aiLoading.style.display = 'none';
@@ -13485,7 +13530,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
-      // ELSA-GRADE RIGOROUS PHONETICS PROMPT (v0.10.5h)
+      // ELSA-GRADE RIGOROUS PHONETICS PROMPT (v0.10.5i)
       const prompt = `You are an ELSA-grade AI Speech Assessment Engine and Oxford Phonetician for Vietnamese English learners.
 The user was prompted to pronounce the English word: "${currentWord.term}" (Standard Oxford IPA: "${currentWord.phonetic || ''}", Definition: "${currentWord.definitionVi || ''}").
 Listen to the user's audio recording with surgical acoustic precision.
@@ -17049,16 +17094,35 @@ CRITICAL ASSESSMENT RULES:
         const sales = d.salesCount || 0;
         const revenue = (d.revenueXu || (sales * price)) || 0;
 
+        const authorUid = d.authorUid || '';
+        let curAvatar = d.authorAvatar || authorName;
+
+        // Dynamic avatar sync for current user (v0.10.5i)
+        if (currentUser && ((authorUid && authorUid === currentUser.uid) || (currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()))) {
+          curAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || curAvatar;
+        } else {
+          const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+          if (student && student.avatar) {
+            curAvatar = student.avatar;
+          }
+        }
+
         if (!creatorsMap.has(authorName)) {
           creatorsMap.set(authorName, {
             name: authorName,
-            avatar: d.authorAvatar || authorName,
+            avatar: curAvatar,
             authorBio: d.authorBio || '',
+            authorUid: authorUid,
             decksCount: 0,
             totalWords: 0,
             totalSales: 0,
             totalRevenue: 0
           });
+        } else {
+          // Update avatar if latest found
+          if (curAvatar && curAvatar !== authorName) {
+            creatorsMap.get(authorName).avatar = curAvatar;
+          }
         }
 
         const c = creatorsMap.get(authorName);
@@ -17779,7 +17843,7 @@ CRITICAL ASSESSMENT RULES:
         }
       }
 
-      // 0. SPEAKING SCREEN SHORTCUTS (v0.10.5h - Phím tắt toàn diện)
+      // 0. SPEAKING SCREEN SHORTCUTS (v0.10.5i - Phím tắt toàn diện)
       const spkScreen = document.getElementById('screen-speaking');
       if (spkScreen && spkScreen.classList.contains('active')) {
         if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
@@ -17934,14 +17998,16 @@ CRITICAL ASSESSMENT RULES:
     let aiStudioGenStatus = '';
     let aiStudioGenProgress = 0;
 
-    function handleAiWordCountInput(input) {
+    function handleAiWordCountBlur(input) {
       if (!input) return;
       let val = parseInt(input.value, 10);
-      if (!isNaN(val)) {
-        if (val < 5) val = 5;
-        if (val > 50) val = 50;
-        input.value = val;
-      }
+      if (isNaN(val) || val < 5) val = 5;
+      if (val > 50) val = 50;
+      input.value = val;
+      updateAiStudioCost();
+    }
+
+    function handleAiWordCountInput(input) {
       updateAiStudioCost();
     }
 
@@ -18010,15 +18076,13 @@ CRITICAL ASSESSMENT RULES:
       if (currentAiStudioMode === 'topic') {
         const inp = document.getElementById('ai-topic-count-input');
         let val = inp ? parseInt(inp.value, 10) : 10;
-        if (isNaN(val) || val < 5) val = 5;
-        if (val > 50) val = 50;
-        return val;
+        if (isNaN(val)) return 5;
+        return Math.max(1, Math.min(50, val));
       } else if (currentAiStudioMode === 'passage') {
         const inp = document.getElementById('ai-passage-count-input');
         let val = inp ? parseInt(inp.value, 10) : 10;
-        if (isNaN(val) || val < 5) val = 5;
-        if (val > 50) val = 50;
-        return val;
+        if (isNaN(val)) return 5;
+        return Math.max(1, Math.min(50, val));
       } else if (currentAiStudioMode === 'raw') {
         const rawText = (document.getElementById('ai-raw-input')?.value || '').trim();
         if (!rawText) return 5;
@@ -18242,7 +18306,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         let rawResponseText = '';
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
+        const standardModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-flash-latest'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         let fetchSuccess = false;
@@ -18632,7 +18696,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         updateClipboardUI();
         showToast(`✂️ Đã di chuyển thành công ${count} từ vựng sang bộ từ này!`);
       } else {
-        // Copy action: Clone words with new IDs while PRESERVING masteryScore & learning state (v0.10.5h)
+        // Copy action: Clone words with new IDs while PRESERVING masteryScore & learning state (v0.10.5i)
         const newWordObjects = vocaClipboard.words.map((w, idx) => ({
           ...w,
           id: 'w_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 4),

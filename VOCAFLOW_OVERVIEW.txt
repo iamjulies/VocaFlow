@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5h (Build 68)
+Phiên bản hiện tại : v0.10.5i (Build 69)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛠️ v0.10.5i (Build 69 - Sửa Profile Người Mua Trong Sổ Cái, Sửa Nhập Số Lượng Từ AI & Sync Avatar BXH):
+  - Khắc phục lỗi Bấm vào người mua (Như) bị mở nhầm Profile của chính mình (Hình 1):
+    * Sửa logic nhận diện `isCurrentUser`: Chỉ coi là hồ sơ của chính mình khi `authorUid` hoặc `authorName` trùng khớp với tài khoản hiện tại, không còn bị nhầm do khớp `deckId` của bộ từ người dùng đã bán.
+  - Sửa lỗi ô nhập Số lượng từ trong AI Deck Generator Studio (Hình 2):
+    * Chuyển đổi logic kiểm tra giới hạn `[5, 50]` từ sự kiện gõ phím liên tục (`oninput`) sang sự kiện rời ô nhập (`onblur`/`onchange`). Người dùng có thể thoải mái gõ các số hai chữ số như 14, 25, 50 mà không bị tự nhảy về 5 hoặc 50.
+  - Nâng cấp độ ổn định khi tạo bộ từ AI trên điện thoại (Mobile Reliability):
+    * Ưu tiên danh sách mô hình Gemini chính thức có độ trễ cực thấp (`gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash`), loại bỏ các tên mô hình không hợp lệ gây tốn thời gian timeout mạng 4G/Wifi trên điện thoại di động.
+  - Đồng bộ Avatar thời gian thực trên Bảng Xếp Hạng Pháp Sư & Gian Hàng (Hình 3):
+    * Tự động lấy avatar mới nhất từ tài khoản hiện hành (`currentUser.avatar`) và đồng bộ lên tất cả các bộ từ đã xuất bản trên Cloud RTDB (`publicLibraryDecks/{deckId}/authorAvatar.json`), loại bỏ tình trạng avatar bị kẹt ở ảnh cũ.
+
 • 📋 v0.10.5h (Build 68 - Giữ Mức Độ Thuộc Khi Copy/Paste, Fix Profile Tác Giả & Bổ Sung Bảng Quy Tắc Speaking):
   - Bảo lưu Mức độ thuộc bài (% Mastery) khi Sao chép / Dán từ vựng (Copy / Paste Word):
     * Khi sao chép từ vựng từ bộ từ này sang bộ từ khác, mức độ thuộc bài (`masteryScore`) và trạng thái học tập (`status: learning / mastered`) được giữ nguyên vẹn 100% thay vì bị reset về 0%.
