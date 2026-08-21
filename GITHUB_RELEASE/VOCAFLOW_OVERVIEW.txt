@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.5k (Build 71)
+Phiên bản hiện tại : v0.10.6a (Build 72)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎙️ v0.10.6a (Build 72 - OVERHAUL AI SPEAKING: Phoneme Decomposition Strict Evaluator):
+  - Viết lại hoàn toàn prompt chấm điểm phát âm AI với hệ thống phân tích âm vị nghiêm ngặt:
+    * Phoneme-by-Phoneme Verification: Phân tách từ thành Onset (Âm đầu) + Nucleus (Nguyên âm chính) + Coda (Âm đuôi).
+    * Hard Penalty Enforcement (Zero-Tolerance Rules):
+      • Coda Error (Sai/Nuốt âm đuôi): Điểm tối đa CHỈ 40/100 (VD: nói "lie" thay "line").
+      • Nucleus Error (Sai nguyên âm): Điểm tối đa 50/100.
+      • Onset Error (Sai âm đầu): Điểm tối đa 55/100.
+      • Multiple Errors (2+ thành phần sai): Điểm tối đa 25/100.
+      • Chỉ đạt 85-100 khi CẢ 3 thành phần (Onset + Nucleus + Coda) đều chính xác 100%.
+    * Strict Output JSON Schema mới: targetWord, expectedIPA, detectedSpokenIPA, phonemeBreakdown (onset/nucleus/coda), codaStatus, nucleusStatus, onsetStatus, syllableBreakdown.
+    * UI hiển thị phân tích Onset/Nucleus/Coda trực quan với badge xanh/đỏ, IPA phát hiện được, và trạng thái Coda.
+
 • 🌟 v0.10.5k (Build 71 - NÂNG CẤP TOÀN DIỆN BALANCE_V2: Tích Lũy Điểm Thưởng Theo Khối Lượng Thực Học & Thưởng Cột Mốc Phiên Dài):
   - Ra mắt hệ thống kinh tế điểm thưởng mới: `balance_v2`
     * Giải quyết triệt để vấn đề "học 70 từ trong hàng đợi 220 từ bị giảm còn x0.2":
