@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6h (Build 79)
+Phiên bản hiện tại : v0.10.6i (Build 80)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🚀 v0.10.6i (Build 80 - SPEAKING LAUNCH UNBLOCK & WORD RESOLUTION ENGINE FIX):
+  - Khắc phục triệt để lỗi không vào được Chế độ Luyện Nói khi bấm "Bắt Đầu Luyện Nói":
+    * Loại bỏ rào cản kiểm tra đăng nhập chặn người dùng khi chọn Cấp độ Trung Bình hoặc Khó trong modal thiết lập Luyện Nói (`selectSpeakingSetupDifficulty`), giúp mọi người dùng Web và Windows Desktop Offline vào học ngay lập tức.
+    * Nâng cấp cơ chế phân giải danh sách từ vựng (`startSpeakingMode` & `openSpeakingSetupModal`): Đồng bộ chuẩn hóa với các chế độ Spelling và Quiz, tự động lấy danh sách từ theo bộ lọc đang mở (`getFilteredDeckWords()`), từ được tick chọn hoặc toàn bộ từ trong deck một cách trơn tru, không bao giờ bị chặn hay kẹt màn hình.
+  - Đồng bộ cập nhật gói phát hành ZIP portable v0.10.6i và gắn nhãn cập nhật bản sửa lỗi.
+
 • 💎 v0.10.6h (Build 79 - ACTION BUTTONS PLACEMENT, UNLIMITED POST-PASS AUDIO & RECORDING ANTI-CHEAT):
   - Chuẩn hóa vị trí Cụm 3 Phím Hành Động (Từ Trước, Bỏ qua, Từ Tiếp Theo):
     * Di chuyển cụm nút điều hướng nằm ngay bên dưới Khung Microphone & Nút "Chấm Điểm AI", và nằm phía trên Khung Kết Quả Đánh Giá AI. Cụm nút luôn cố định, trực quan, dễ thao tác ngay sau khi thu âm/chấm điểm mà không bị lọt vào giữa các khối chẩn đoán âm vị.

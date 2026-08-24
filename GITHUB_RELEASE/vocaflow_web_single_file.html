@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6h</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6i</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4448,7 +4448,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6h</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6i</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13387,12 +13387,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function selectSpeakingSetupDifficulty(diff) {
-      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
-        alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập tài khoản!');
-        openAuthModal('login');
-        return;
-      }
-      selectedSpeakingSetupDifficulty = diff;
+      selectedSpeakingSetupDifficulty = diff || 'easy';
       ['easy','medium','hard'].forEach(d => {
         const card = document.getElementById('speaking-diff-card-' + d);
         if (card) card.style.borderColor = d === diff ? ({easy:'#10b981',medium:'#f59e0b',hard:'#ef4444'})[d] : 'var(--border)';
@@ -13517,7 +13512,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function openSpeakingSetupModal(useSelection, customWordList) {
       speakingSetupUseSelection = useSelection || false;
       speakingSetupCustomWordList = customWordList || null;
-      selectedSpeakingSetupDifficulty = currentSpeakingDifficulty;
+      selectedSpeakingSetupDifficulty = currentSpeakingDifficulty || 'easy';
       ['def','ipa','audio'].forEach(k => {
         const chk = document.getElementById('speaking-chk-' + k);
         if (chk) chk.checked = !!speakingCluesConfig[k];
@@ -13526,16 +13521,25 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       selectSpeakingSetupDifficulty(selectedSpeakingSetupDifficulty);
       const shuffleCb = document.getElementById('speaking-setup-shuffle-checkbox');
       if (shuffleCb) shuffleCb.checked = isStudyShuffle;
-      let wordCount = customWordList ? customWordList.length : (useSelection && selectedWordIds.size > 0 ? selectedWordIds.size : words.filter(w => w.deckId === currentDeckId).length);
+      let deckWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && useSelection && selectedWordIds.size > 0) {
+        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (!customWordList && (!deckWords || deckWords.length === 0)) {
+        deckWords = words.filter(w => w.deckId === currentDeckId);
+      }
+      let wordCount = deckWords ? deckWords.length : 0;
       const sub = document.getElementById('speaking-setup-subtitle');
       if (sub) sub.textContent = wordCount + ' từ vựng sẽ được luyện nói';
       openModal('modal-speaking-setup');
     }
 
     function confirmStartSpeakingFromModal() {
-      currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
+      currentSpeakingDifficulty = selectedSpeakingSetupDifficulty || 'easy';
       localStorage.setItem('vocaflow_speaking_difficulty', currentSpeakingDifficulty);
-      ['def','ipa','audio'].forEach(k => { speakingCluesConfig[k] = !!document.getElementById('speaking-chk-' + k)?.checked; });
+      ['def','ipa','audio'].forEach(k => {
+        const chk = document.getElementById('speaking-chk-' + k);
+        if (chk) speakingCluesConfig[k] = !!chk.checked;
+      });
       localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
       const shuffleCb = document.getElementById('speaking-setup-shuffle-checkbox');
       if (shuffleCb) { isStudyShuffle = shuffleCb.checked; localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false'); }
@@ -13544,17 +13548,20 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function startSpeakingMode(fromSelection, customWordList) {
-      if (!currentDeckId && !customWordList) return;
-      const deck = decks.find(d => d.id === currentDeckId);
-      if (!deck && !customWordList) return;
-
       studySourceContext = customWordList ? 'review-queue' : 'deck';
-      let targetWords = [];
-      if (customWordList) targetWords = customWordList;
-      else if (fromSelection && selectedWordIds.size > 0) targetWords = words.filter(w => selectedWordIds.has(w.id));
-      else targetWords = words.filter(w => w.deckId === currentDeckId);
+      let targetWords = customWordList || getFilteredDeckWords();
+      if (!customWordList && fromSelection && selectedWordIds.size > 0) {
+        targetWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (!customWordList && selectedWordIds.size > 0) {
+        targetWords = words.filter(w => selectedWordIds.has(w.id));
+      } else if (!customWordList && (!targetWords || targetWords.length === 0)) {
+        targetWords = words.filter(w => w.deckId === currentDeckId);
+      }
 
-      if (targetWords.length === 0) { alert('Bộ từ này chưa có từ vựng nào để luyện phát âm!'); return; }
+      if (!targetWords || targetWords.length === 0) {
+        alert('Không có từ vựng nào để luyện phát âm!');
+        return;
+      }
 
       speakingWordsList = isStudyShuffle ? [...targetWords].sort(() => Math.random() - 0.5) : [...targetWords];
       currentSpeakingIndex = 0;
