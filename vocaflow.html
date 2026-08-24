@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6f</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2435,9 +2435,9 @@
           </div>
 
           <!-- Phiên Âm IPA & Nút Nghe Mẫu Bản Xứ -->
-          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px;">
+          <div id="spk-phonetic-audio-container" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px;">
             <span id="spk-word-ipa" style="font-size: 15px; font-family: monospace; color: #f472b6; font-weight: 600;">/rɪˈzɪliənt/</span>
-            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center; gap: 4px;">
+            <button class="btn-speaker" id="btn-spk-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center; gap: 4px;">
               <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               <span id="spk-listen-quota-badge" style="font-size: 11px; color: var(--text-muted); font-weight: 600;">(5/5)</span>
             </button>
@@ -4433,7 +4433,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13416,30 +13416,64 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function toggleSpeakingClue(clueKey) {
-      const chk = document.getElementById('speaking-chk-' + clueKey);
-      if (!chk) return;
-      const cfg = getSpeakingDifficultyConfig(selectedSpeakingSetupDifficulty);
-      const activeCount = ['def','ipa','audio'].filter(k => document.getElementById('speaking-chk-' + k)?.checked).length;
+      const diff = selectedSpeakingSetupDifficulty;
 
-      if (selectedSpeakingSetupDifficulty === 'easy') {
-        chk.checked = true;
+      if (diff === 'easy') {
+        const chk = document.getElementById('speaking-chk-' + clueKey);
+        if (chk) chk.checked = true;
         showToast('⚠️ Cấp độ Dễ luôn giữ 3/3 manh mối!');
         return;
       }
-      if (!chk.checked && activeCount < 1) {
-        chk.checked = true;
-        showToast('⚠️ Phải giữ ít nhất 1 manh mối!');
+
+      if (diff === 'hard') {
+        // Radio mode: clicking any clue selects ONLY that clue (1/3)
+        speakingCluesConfig = {
+          def: clueKey === 'def',
+          ipa: clueKey === 'ipa',
+          audio: clueKey === 'audio'
+        };
+        ['def','ipa','audio'].forEach(k => {
+          const chk = document.getElementById('speaking-chk-' + k);
+          if (chk) chk.checked = !!speakingCluesConfig[k];
+          updateSpeakingClueUI(k, !!speakingCluesConfig[k]);
+        });
+        updateSpeakingClueMultiplierBadge();
+        localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
         return;
       }
-      if (chk.checked && activeCount > cfg.maxClues) {
-        chk.checked = false;
-        showToast('⚠️ Cấp độ này cho phép tối đa ' + cfg.maxClues + ' manh mối!');
+
+      if (diff === 'medium') {
+        const curKeys = ['def','ipa','audio'];
+        const activeKeys = curKeys.filter(k => !!document.getElementById('speaking-chk-' + k)?.checked);
+        const isCurrentlyChecked = activeKeys.includes(clueKey);
+
+        if (!isCurrentlyChecked) {
+          // Turning ON clueKey -> if already 2 active, drop the second one to keep exactly 2
+          if (activeKeys.length >= 2) {
+            const keyToDrop = activeKeys[1];
+            speakingCluesConfig[keyToDrop] = false;
+          }
+          speakingCluesConfig[clueKey] = true;
+        } else {
+          // Turning OFF clueKey -> if only 1 left, prevent turning off
+          if (activeKeys.length <= 1) {
+            const chk = document.getElementById('speaking-chk-' + clueKey);
+            if (chk) chk.checked = true;
+            showToast('⚠️ Cấp độ Trung Bình cần chọn 2 manh mối!');
+            return;
+          }
+          speakingCluesConfig[clueKey] = false;
+        }
+
+        curKeys.forEach(k => {
+          const c = document.getElementById('speaking-chk-' + k);
+          if (c) c.checked = !!speakingCluesConfig[k];
+          updateSpeakingClueUI(k, !!speakingCluesConfig[k]);
+        });
+        updateSpeakingClueMultiplierBadge();
+        localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
         return;
       }
-      speakingCluesConfig[clueKey] = chk.checked;
-      updateSpeakingClueUI(clueKey, chk.checked);
-      updateSpeakingClueMultiplierBadge();
-      localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
     }
 
     function updateSpeakingClueUI(clueKey, isChecked) {
@@ -13603,22 +13637,72 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const cefrEl = document.getElementById('spk-word-cefr');
       const defEl = document.getElementById('spk-word-def');
       const exEl = document.getElementById('spk-word-example');
+      const phoneticAudioCont = document.getElementById('spk-phonetic-audio-container');
+      const speakerBtn = document.getElementById('btn-spk-speaker') || document.querySelector('.btn-speaker');
+      const listenBadge = document.getElementById('spk-listen-quota-badge');
 
-      if (termEl) termEl.textContent = word.term || '';
+      const showIpa = !!speakingCluesConfig.ipa;
+      const showDef = !!speakingCluesConfig.def;
+      const showAudio = !!speakingCluesConfig.audio;
+
+      // 1. English Term & IPA: Shown ONLY when IPA clue is enabled (từ tiếng Anh đi kèm phiên âm)
+      if (termEl) {
+        if (showIpa) {
+          termEl.textContent = word.term || '';
+          termEl.style.display = 'block';
+        } else {
+          termEl.textContent = '';
+          termEl.style.display = 'none';
+        }
+      }
+
       if (ipaEl) {
-        ipaEl.textContent = speakingCluesConfig.ipa ? (word.phonetic || '/.../') : '[ẩn]';
-        ipaEl.style.opacity = speakingCluesConfig.ipa ? '1' : '0.3';
+        if (showIpa) {
+          ipaEl.textContent = word.phonetic || '/.../';
+          ipaEl.style.display = 'inline';
+        } else {
+          ipaEl.textContent = '';
+          ipaEl.style.display = 'none';
+        }
       }
+
+      // 2. Speaker Button & Listen Quota: Shown ONLY when Audio clue is enabled
+      if (speakerBtn) {
+        speakerBtn.style.display = showAudio ? 'inline-flex' : 'none';
+      }
+
+      // 3. Phonetic & Audio Container: Shown ONLY if at least one of (IPA, Audio) is enabled
+      if (phoneticAudioCont) {
+        phoneticAudioCont.style.display = (showIpa || showAudio) ? 'inline-flex' : 'none';
+      }
+
+      // 4. Definition: Shown ONLY when Def clue is enabled
       if (defEl) {
-        defEl.textContent = speakingCluesConfig.def ? (word.definitionVi || word.definition || '') : '[ẩn nghĩa]';
-        defEl.style.opacity = speakingCluesConfig.def ? '1' : '0.3';
+        if (showDef) {
+          defEl.textContent = word.definitionVi || word.definition || '';
+          defEl.style.display = 'block';
+        } else {
+          defEl.textContent = '';
+          defEl.style.display = 'none';
+        }
       }
+
+      // 5. Example: Shown only if Def or IPA is active, and word has an example
+      if (exEl) {
+        if ((showDef || showIpa) && (word.exampleSentence || word.example)) {
+          exEl.textContent = `"${word.exampleSentence || word.example}"`;
+          exEl.style.display = 'block';
+        } else {
+          exEl.textContent = '';
+          exEl.style.display = 'none';
+        }
+      }
+
       if (posEl) posEl.textContent = word.partOfSpeech || 'noun';
       if (cefrEl) {
         cefrEl.textContent = word.cefrLevel || word.level || 'B1';
         cefrEl.className = `badge badge-level-${(word.cefrLevel || word.level || 'b1').toLowerCase()}`;
       }
-      if (exEl) exEl.textContent = (word.exampleSentence || word.example) ? `"${word.exampleSentence || word.example}"` : '';
 
       const btnPrev = document.getElementById('btn-spk-prev');
       if (btnPrev) btnPrev.disabled = (currentSpeakingIndex === 0);
@@ -13626,18 +13710,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const skipBtn = document.getElementById('btn-spk-skip');
       if (skipBtn) skipBtn.textContent = `⏭️ Bỏ qua (${speakingWordSkipsLeft})`;
 
-      const listenBadge = document.getElementById('spk-listen-quota-badge');
-      const speakerBtn = document.querySelector('.btn-speaker');
-      if (speakerBtn) {
-        speakerBtn.style.display = speakingCluesConfig.audio ? 'inline-flex' : 'none';
-      }
       if (listenBadge) {
         const remaining = Math.max(0, speakingMaxListens - speakingListensUsed);
         listenBadge.textContent = `(${remaining}/${speakingMaxListens})`;
         listenBadge.style.opacity = remaining <= 0 ? '0.4' : '1';
       }
 
-      if (speakingCluesConfig.audio && !speakingAutoPlayDone) {
+      if (showAudio && !speakingAutoPlayDone) {
         if (speakingAutoPlayTimeout) clearTimeout(speakingAutoPlayTimeout);
         speakingAutoPlayTimeout = setTimeout(() => {
           const curScreen = document.getElementById('screen-speaking');

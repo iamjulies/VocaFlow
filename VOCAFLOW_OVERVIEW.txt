@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6e (Build 76)
+Phiên bản hiện tại : v0.10.6f (Build 77)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎯 v0.10.6f (Build 77 - HARD MODE RADIO CLUE TOGGLE & CLEAN GATED CLUE VISIBILITY):
+  - Khắc phục cơ chế chọn manh mối ở Cấp độ KHÓ (Hard Mode):
+    * Cấp độ KHÓ (1/3 manh mối) hoạt động theo cơ chế Radio Switch: Khi người dùng bấm vào bất kỳ manh mối nào (`Nghĩa TV`, `Phiên âm IPA`, hoặc `Âm thanh`), hệ thống lập tức chuyển sang chọn duy nhất manh mối đó (1-click toggle) mà không bị khóa cứng.
+    * Cấp độ TRUNG BÌNH (2/3 manh mối) tự động xoay vòng thay thế manh mối mượt mà khi người dùng bấm chọn manh mối thứ 3.
+  - Ẩn triệt để và dọn sạch các thành phần manh mối chưa chọn trên Thẻ Luyện Nói:
+    * Manh mối Tiếng Anh đi kèm Phiên âm IPA (`ipa`): Khi không chọn manh mối IPA, từ Tiếng Anh (`#spk-word-term`) và chuỗi phiên âm (`#spk-word-ipa`) đều được ẩn hoàn toàn để bảo toàn độ khó thử thách.
+    * Manh mối Âm thanh (`audio`): Khi không chọn manh mối Âm thanh, nút loa (`#btn-spk-speaker`) và badge quota bị xóa bỏ hoàn toàn khỏi giao diện.
+    * Khi cả IPA và Âm thanh đều tắt (ví dụ: Chế độ Khó chỉ chọn Nghĩa TV): Khối capsule chứa phiên âm và loa được ẩn hoàn toàn, chỉ hiển thị Nghĩa Tiếng Việt để người học phản xạ nhớ từ và phát âm.
+    * Manh mối Định nghĩa (`def`): Ẩn hoàn toàn khi không được chọn.
+
 • ⚡ v0.10.6e (Build 76 - DIFFICULTY CLUES AUTO-ADJUSTMENT & LISTEN QUOTA CALIBRATION):
   - Sửa lỗi chuyển đổi cấp độ trong Modal Thiết Lập Luyện Nói (`modal-speaking-setup`):
     * Tự động điều chỉnh số lượng manh mối khi chuyển cấp độ:
