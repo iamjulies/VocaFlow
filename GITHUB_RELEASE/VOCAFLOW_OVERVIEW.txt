@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6o (Build 86)
+Phiên bản hiện tại : v0.10.6p (Build 87)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6p (Build 87 - HOTFIX: CLUES STATE REPAIR & STRICT NEXT BUTTON LOCKING):
+  - Khắc phục triệt để lỗi Chọn Manh Mối (Clues Selection State Repair):
+    * Sửa lỗi nghịch đảo boolean trong hàm `selectSpeakingSetupDifficulty`, `toggleSpeakingClue` và `updateSpeakingClueMultiplierBadge`.
+    * Cấp độ Dễ (Easy): Cố định và highlight sáng toàn bộ 3/3 manh mối (Nghĩa TV, Phiên âm IPA, Âm thanh).
+    * Cấp độ Trung Bình (Medium): Luôn duy trì chính xác 2/3 manh mối hoạt động, tự động chuyển đổi thông minh khi người dùng click.
+    * Cấp độ Khó (Hard): Chuyển đổi dạng Radio độc quyền chính xác 1/3 manh mối (chọn 1 trong 3).
+  - Khắc phục triệt để lỗi Nút "Từ Tiếp Theo" bị sáng khi chưa đạt điểm sàn:
+    * Sửa lỗi `isHistory` bị nghịch đảo khiến từ mới luôn bị coi là từ cũ trong lịch sử.
+    * Khóa cứng nút "Từ Tiếp Theo" (disabled = true, opacity = 0.35, pointer-events = none) đối với mọi từ mới cho đến khi đạt điểm sàn bài học hoặc đã dùng hết số lượt thu âm.
+  - Xác thực thực nghiệm: Đã kiểm thử 100% tự động qua Edge headless runtime suite, vượt qua toàn bộ 6/6 test case.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6p_Windows_Portable.zip`.
+
 • 💎 v0.10.6o (Build 86 - SPEAKING UX OVERHAUL, STATE LOCKING & MICROPHONE LIFECYCLE REPAIR):
   - Khóa nút "Từ Tiếp Theo" (Next Button Locking Engine):
     * Nút "Từ Tiếp Theo" bị vô hiệu hóa (disabled = true, opacity 0.4) cho đến khi người học đạt điểm sàn bài học HOẶC đã dùng hết số lượt thu âm quy định.
