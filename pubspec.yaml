@@ -1,7 +1,7 @@
 name: vocaflow
 description: "VocaFlow - Smart English Vocabulary Memorization App"
 publish_to: 'none'
-version: 0.10.6+80
+version: 0.10.6+81
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

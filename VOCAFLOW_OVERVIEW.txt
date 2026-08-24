@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6i (Build 80)
+Phiên bản hiện tại : v0.10.6j (Build 81)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• ⚡ v0.10.6j (Build 81 - FRESH NATIVE BINARY REBUILD & SPEAKING ENGINE CERTIFIED):
+  - Biên dịch lại hoàn toàn bộ nhị phân Windows Native (`VocaFlow.exe` - .NET 8 + WebView2):
+    * Giải quyết nguyên nhân file `VocaFlow.exe` giữ ngày sửa cũ (19/08/2026) do trước đó tiến trình `VocaFlow.exe` chạy ngầm trong hệ thống khóa quyền ghi đè. Đã kill process ngầm, rebuild & publish nhị phân mới tinh với timestamp ngày hôm nay.
+  - Kiểm tra và chứng thực toàn diện Engine Luyện Nói (Speaking Mode):
+    * Đảm bảo tính toàn vẹn của DOM và JavaScript luồng mở bài tập Speaking: `openSpeakingSetupModal` -> `confirmStartSpeakingFromModal` -> `startSpeakingMode` -> `renderSpeakingCurrentWord` khởi chạy mượt mà 100%.
+    * Bổ sung cơ chế fallback tự động cho `speakingCluesConfig` phòng ngừa trường hợp dữ liệu cấu hình manh mối trong LocalStorage bị rỗng.
+  - Đóng gói file ZIP phát hành mới `VocaFlow_v0.10.6j_Windows_Portable.zip` và gắn thẻ `_ERROR` vào `VocaFlow_v0.10.6i_ERROR_Windows_Portable.zip`.
+
 • 🚀 v0.10.6i (Build 80 - SPEAKING START RUNTIME ERROR FIX & ERROR-TAGGED ARCHIVE):
   - Khắc phục triệt để lỗi runtime khi bấm "Bắt Đầu Luyện Nói":
     * Nguyên nhân gốc rễ: Trong bản v0.10.6h khi tái cấu trúc cụm nút hành động và dọn dẹp các thanh điều hướng cũ (`#spk-idle-nav-bar`), hàm `renderSpeakingCurrentWord` vẫn còn sót lệnh truy cập thuộc tính `disabled` trên phần tử đã loại bỏ (`btnIdlePrev.disabled`), dẫn đến lỗi JavaScript fatal `TypeError: Cannot set properties of null (setting 'disabled')` làm tiến trình mở bài tập bị ngắt hoàn toàn ngay khi nhấn Bắt đầu.
