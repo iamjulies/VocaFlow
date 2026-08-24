@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6c (Build 74)
+Phiên bản hiện tại : v0.10.6d (Build 75)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,31 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎙️ v0.10.6d (Build 75 - AI SPEAKING MULTI-TAKE ECONOMY & DIFFICULTY ENGINE: Cấp Độ Thử Thách, Điểm Sàn & Bảo Toàn Giao Dịch):
+  - Ra mắt Modal Thiết Lập Luyện Nói AI (`modal-speaking-setup`):
+    * 3 Cấp độ Thử thách:
+      • 🟢 DỄ (Easy - x1.0): Điểm sàn 70 • Cố định 3/3 manh mối • Tối đa 5 lần nghe mẫu + 5 lần thu âm.
+      • 🟡 TRUNG BÌNH (Medium - x1.5): Điểm sàn 80 • Chọn 2/3 manh mối • Tối đa 4 lần nghe mẫu + 4 lần thu âm (Hệ số: Nghĩa+IPA x2.25, Nghĩa+Âm mẫu x1.875, IPA+Âm mẫu x1.5).
+      • 🔴 KHÓ (Hard - x2.0): Điểm sàn 90 • Chọn 1/3 manh mối • Tối đa 3 lần nghe mẫu + 3 lần thu âm (Hệ số: Chỉ Nghĩa x3.0, Chỉ IPA x2.5, Chỉ Âm mẫu x2.0).
+    * Bộ lọc giới hạn manh mối trực quan kèm Huy hiệu Hệ số Động (Live Multiplier Badge).
+    * Tùy chọn Xáo trộn (Shuffle) danh sách từ vựng trước khi bắt đầu.
+  - Công Thức Kinh Tế Đa Lượt (Multi-Take Settlement & Scoring Engine):
+    * `baseXu = syllableCount * 3` (Tối thiểu 3 Xu, đếm âm tiết bằng Gemini AI và lưu bộ nhớ đệm).
+    * `admissionScore = average(takes)`, `admissionRatio = admissionScore / floorScore`.
+    * Đạt điểm sàn (≥ floorScore ở ít nhất 1 lần thu): Thưởng `baseXu * diffMult * clueMult * admissionRatio`, tăng `+5 * admissionRatio %` độ thuộc bài, hiển thị banner xanh.
+    * Hết lượt mà không đạt điểm sàn: Phạt `-baseXu * diffMult * clueMult * (1 - admissionScore / 100)` Xu, trừ `-5%` độ thuộc bài, hiển thị banner đỏ.
+    * Nút Bỏ qua từ (`[⏭️ Bỏ qua (-1 Skip)]`) tiêu thụ 1 lượt Skip Pass, không thưởng, không phạt.
+  - Cơ Chế Bảo Toàn Giao Dịch & Khôi Phục Lỗi Mạng (Burn-on-Success & Network Recovery):
+    * Giữ bản thu `pendingAudioBlob` trong suốt quá trình gọi Gemini API (temperature: 0.0).
+    * Kiểm tra VAD & Chống gian lận: Từ chối bản thu < 0.4s hoặc im lặng cục bộ mà không tiêu hao lượt thu của người học.
+    * Khi gặp lỗi mạng / HTTP 429/500 / timeout: Không trừ lượt thu, không phạt Xu, giữ nguyên `pendingAudioBlob` và hiển thị Banner Vàng kèm 2 nút hành động `[🔄 Thử chấm lại (Retry)]` và `[🎙️ Thu âm lại]`.
+    * Chỉ ghi nhận lượt thu (`takes.push`) và hủy `pendingAudioBlob` khi API phản hồi 200 OK thành công.
+  - Giao Diện & Tương Tác:
+    * Huy hiệu Quota nghe mẫu trực quan: `🔊 (3/4)` và tự động vô hiệu hóa khi hết lượt.
+    * Dãy huy hiệu Lịch sử các lần thu âm (`Lần 1: 65đ`, `Lần 2: 88đ ✓`).
+    * Đồng bộ Sổ cái bất biến `STUDY_SPEAKING` và tích hợp công thức `balance_v2` (Hệ số độ dài, hoàn thành và thưởng cột mốc).
+
+• 🎨 v0.10.6c (Build 74 - PHONEME DIAGNOSTIC UI & SCORE CALIBRATION: Visual Badges, Diagnostic Tip Box & Economy Protection):ION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
 • 🎨 v0.10.6c (Build 74 - PHONEME DIAGNOSTIC UI & SCORE CALIBRATION: Visual Badges, Diagnostic Tip Box & Economy Protection):
   - Nâng cấp toàn diện giao diện chẩn đoán âm vị & cơ chế bảo vệ kinh tế:
     * Visual Phoneme Badges: Hiển thị 3 thẻ âm vị trực quan, có thể bấm vào để nghe phát âm mẫu:

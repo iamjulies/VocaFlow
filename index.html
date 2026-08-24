@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6c</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6d</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2103,7 +2103,7 @@
           
           <div class="selection-study-actions">
 
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="startSpeakingMode(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span><span id="speaking-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
@@ -2401,7 +2401,7 @@
     </section>
 
     <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.6c - Gọn gàng, sạch đẹp) -->
+        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.6d - Multi-Take Economy) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -2409,7 +2409,8 @@
         </button>
         <div style="display: flex; align-items: center; gap: 8px;">
           <div id="speaking-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Từ 1 / 10</div>
-          <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.35); font-weight: 700; font-size: 11px; padding: 2px 8px;">🎙️ AI Speaking Lab</span>
+          <span id="speaking-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px;">🟢 Dễ (x1.0)</span>
+          <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.35); font-weight: 700; font-size: 11px; padding: 2px 8px;">🎙️ Speaking Lab</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
           <button class="btn btn-outline btn-sm" onclick="shuffleCurrentSpeaking()" title="Xáo trộn ngẫu nhiên danh sách từ">
@@ -2436,8 +2437,9 @@
           <!-- Phiên Âm IPA & Nút Nghe Mẫu Bản Xứ -->
           <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px;">
             <span id="spk-word-ipa" style="font-size: 15px; font-family: monospace; color: #f472b6; font-weight: 600;">/rɪˈzɪliənt/</span>
-            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center;">
+            <button class="btn-speaker" onclick="speakCurrentSpeakingWord()" title="Nghe phát âm chuẩn bản xứ" style="background: none; border: none; cursor: pointer; color: #a5b4fc; display: flex; align-items: center; gap: 4px;">
               <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              <span id="spk-listen-quota-badge" style="font-size: 11px; color: var(--text-muted); font-weight: 600;">(5/5)</span>
             </button>
           </div>
 
@@ -2467,7 +2469,7 @@
             Nhấn vào Mic để bắt đầu nói
           </div>
           <div id="speaking-record-timer" style="font-size: 12px; color: var(--text-muted);">
-            Giữ giọng rõ ràng • Tối đa 8 giây
+            Giữ giọng rõ ràng • Tối đa 8 giây • Lượt: 0/5
           </div>
 
           <!-- Audio Wave Visualizer -->
@@ -2509,6 +2511,18 @@
 
           <!-- AI Evaluation Content -->
           <div id="speaking-ai-content" style="display: none;">
+            <!-- Network Error / Retry Banner (v0.10.6d) -->
+            <div id="spk-network-error-banner" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Floor Score Reached Banner (v0.10.6d) -->
+            <div id="spk-floor-banner" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Exhausted Takes Penalty Banner (v0.10.6d) -->
+            <div id="spk-fail-banner" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Multi-Take History Badges (v0.10.6d) -->
+            <div id="spk-take-history" style="display: none; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px;"></div>
+
             <!-- Header: Score Badge & Verdict -->
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
               <div style="display: flex; align-items: center; gap: 12px;">
@@ -2554,10 +2568,13 @@
           </div>
         </div>
 
-        <!-- BOTTOM ACTION BUTTONS: PREV & NEXT WORD (v0.10.6c - Gọn gàng, sạch đẹp) -->
+        <!-- BOTTOM ACTION BUTTONS: PREV, SKIP & NEXT WORD (v0.10.6d) -->
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
           <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
             ⏮️ Từ Trước
+          </button>
+          <button class="btn btn-outline" id="btn-spk-skip" onclick="skipSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px; border-color: rgba(245,158,11,0.4); color: #fbbf24;" title="Bỏ qua từ này (còn 3 lượt)">
+            ⏭️ Bỏ qua (3)
           </button>
           <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 14px; font-size: 13px;">
             Từ Tiếp Theo ⏭️
@@ -3004,13 +3021,113 @@
     </div>
   </div>
 
-  <!-- MODAL: SPELLING CELEBRATION RESULT POPUP (v0.0.10.1k) -->
-    <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.6c) -->
+  <!-- MODAL: SPEAKING SETUP (v0.10.6d) -->
+  <div class="modal-overlay" id="modal-speaking-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🎙️</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Chế Độ Luyện Nói (Speaking)</strong>
+            <div id="speaking-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách và manh mối gợi ý</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-speaking-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">1. Chọn Cấp Độ Thử Thách:</label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="speaking-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="speaking-diff-card" id="speaking-diff-card-easy" onclick="selectSpeakingSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px;">x1.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Điểm sàn 70. 3/3 manh mối. 5 lần nghe mẫu + 5 lần thu âm.</p>
+          </div>
+          <!-- TRUNG BÌNH -->
+          <div class="speaking-diff-card" id="speaking-diff-card-medium" onclick="selectSpeakingSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px;">x1.5 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Điểm sàn 80. 2/3 manh mối. 4 lần nghe mẫu + 4 lần thu âm.</p>
+          </div>
+          <!-- KHÓ -->
+          <div class="speaking-diff-card" id="speaking-diff-card-hard" onclick="selectSpeakingSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
+                <span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px;">x2.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Điểm sàn 90. 1/3 manh mối. 3 lần nghe mẫu + 3 lần thu âm.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CHỌN MANH MỐI HIỂN THỊ -->
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text);">2. Manh Mối Hiển Thị:</label>
+          <span id="speaking-clues-multiplier-badge" class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid rgba(16,185,129,0.3);">🌱 3/3 manh mối (x1.0)</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <label class="btn btn-outline" id="speaking-clue-toggle-def" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="speaking-chk-def" checked onchange="toggleSpeakingClue('def')" style="display: none;">
+            <span style="font-size: 18px;">🇻🇳</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Nghĩa TV</span>
+          </label>
+          <label class="btn btn-outline" id="speaking-clue-toggle-ipa" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="speaking-chk-ipa" checked onchange="toggleSpeakingClue('ipa')" style="display: none;">
+            <span style="font-size: 18px;">🗣️</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Phiên âm IPA</span>
+          </label>
+          <label class="btn btn-outline" id="speaking-clue-toggle-audio" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="speaking-chk-audio" checked onchange="toggleSpeakingClue('audio')" style="display: none;">
+            <span style="font-size: 18px;">🔊</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Âm thanh</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. SHUFFLE TOGGLE -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="speaking-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ</span>
+        </label>
+        <input type="checkbox" id="speaking-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-speaking-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartSpeakingFromModal()" style="flex: 2; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(236,72,153,0.3);">
+          🚀 Bắt Đầu Luyện Nói
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.6d) -->
   <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 480px; text-align: center; padding: 24px 20px;">
       <div style="font-size: 48px; margin-bottom: 8px;">🎙️</div>
       <h2 style="font-size: 20px; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">Hoàn Thành Luyện Nói AI!</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Bạn đã hoàn thành phiên luyện phát âm chuẩn xác với Gemini AI.</p>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Bạn đã hoàn thành phiên luyện phát âm chuẩn xác với Gemini AI.</p>
+
+      <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
+        <span id="spk-res-difficulty" class="badge" style="font-size: 12px; font-weight: 700; padding: 4px 12px; background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.35);">🟢 Dễ</span>
+      </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px;">
@@ -3024,10 +3141,10 @@
       </div>
 
       <div style="display: flex; gap: 10px; justify-content: center;">
-        <button class="btn btn-outline" onclick="closeModal('modal-speaking-result'); startSpeakingMode(false);" style="flex: 1; justify-content: center;">
+        <button class="btn btn-outline" onclick="closeModal('modal-speaking-result'); openSpeakingSetupModal(speakingSetupUseSelection, speakingSetupCustomWordList);" style="flex: 1; justify-content: center;">
           🔁 Luyện Lại
         </button>
-        <button class="btn btn-primary" onclick="closeModal('modal-speaking-result'); showScreen('screen-deck-detail');" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700;">
+        <button class="btn btn-primary" onclick="closeModal('modal-speaking-result'); exitSpeakingMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700;">
           🚪 Về Bộ Từ
         </button>
       </div>
@@ -3795,15 +3912,18 @@
 
 
       <!-- Quick Action Buttons for Due Words -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-primary" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span>
+        </button>
         <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
           <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
         </button>
         <button class="btn btn-primary" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết (Spelling)</span>
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span>
         </button>
         <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span>
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span>
         </button>
       </div>
 
@@ -4313,7 +4433,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6c</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6d</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9801,7 +9921,9 @@
         return;
       }
 
-      if (mode === 'autofc') {
+      if (mode === 'speaking') {
+        openSpeakingSetupModal(false, targetList);
+      } else if (mode === 'autofc') {
         startAutoFlashcardMode(false, targetList);
       } else if (mode === 'spelling') {
         openSpellingSetupModal(false, targetList);
@@ -13118,9 +13240,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       showToast('⏹️ Đã tắt Auto Flashcard.');
     }
 
-        // =========================================================================
     // =========================================================================
-    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6c - ELSA GRADE AI PHONETICS)
+    // =========================================================================
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6d - FULL MULTI-TAKE ECONOMY)
     // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
@@ -13131,7 +13253,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let speakingCurrentAudioBase64 = null;
     let speakingFinalAudioMime = 'audio/webm';
     let isSpeakingRecording = false;
-    let speakingFlowState = 'idle'; // 'idle' | 'recording' | 'recorded_ready' | 'evaluating' | 'evaluated'
+    let speakingFlowState = 'idle';
     let speakingRecordTimerInterval = null;
     let speakingRecordSeconds = 0;
     let speakingSessionPointsEarned = 0;
@@ -13139,12 +13261,33 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let speakingPersistentStream = null;
     let speakingAutoPlayTimeout = null;
 
+    // v0.10.6d: Multi-Take Economy & Difficulty Engine
+    let currentSpeakingDifficulty = localStorage.getItem('vocaflow_speaking_difficulty') || 'easy';
+    let selectedSpeakingSetupDifficulty = 'easy';
+    let speakingCluesConfig = JSON.parse(localStorage.getItem('vocaflow_speaking_clues') || '{"def":true,"ipa":true,"audio":true}');
+    let speakingSetupUseSelection = false;
+    let speakingSetupCustomWordList = null;
+    let speakingTakes = [];
+    let speakingCurrentTakeIndex = 0;
+    let speakingMaxTakes = 5;
+    let speakingMaxListens = 5;
+    let speakingListensUsed = 0;
+    let speakingAutoPlayDone = false;
+    let speakingFloorScore = 70;
+    let speakingFloorReached = false;
+    let speakingSyllableCache = {};
+    let pendingAudioBlob = null;
+    let pendingAudioBase64 = null;
+    let speakingWordSkipsLeft = 3;
+    let speakingTotalWords = 0;
+    let speakingCompletedWords = 0;
+    let speakingStartTime = 0;
+    let speakingIsCompleted = false;
+
     function getSupportedAudioMimeType() {
       const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/wav', 'audio/ogg'];
       for (const t of types) {
-        if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
-          return t;
-        }
+        if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
       }
       return '';
     }
@@ -13152,136 +13295,240 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     async function getSpeakingAudioStream() {
       if (speakingPersistentStream && speakingPersistentStream.active) {
         const tracks = speakingPersistentStream.getAudioTracks();
-        if (tracks.length > 0 && tracks.some(t => t.readyState === 'live')) {
-          return speakingPersistentStream;
-        }
+        if (tracks.length > 0 && tracks.some(t => t.readyState === 'live')) return speakingPersistentStream;
       }
-
       try {
         speakingPersistentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         return speakingPersistentStream;
       } catch (e1) {
-        console.warn('getUserMedia audio: true fallback attempt:', e1);
         try {
-          speakingPersistentStream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true }
-          });
+          speakingPersistentStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true } });
           return speakingPersistentStream;
-        } catch (e2) {
-          console.error('All getUserMedia attempts failed:', e2);
-          throw e2;
-        }
+        } catch (e2) { throw e2; }
       }
     }
 
-    // Client-side Voice Activity Detection (VAD) & Audio Energy Analyzer (v0.10.6c)
     async function analyzeAudioSpeechEnergy(blob) {
-      if (!blob || blob.size < 1500) {
-        return { hasVoice: false, reason: 'too_small' };
-      }
+      if (!blob || blob.size < 1500) return { hasVoice: false, reason: 'too_small' };
       try {
         const arrayBuffer = await blob.arrayBuffer();
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) {
-          return { hasVoice: blob.size > 2500, reason: 'no_audiocontext' };
-        }
+        if (!AudioCtx) return { hasVoice: blob.size > 2500, reason: 'no_audiocontext' };
         const audioCtx = new AudioCtx();
         const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
         const channelData = audioBuffer.getChannelData(0);
-
-        let sumSquares = 0;
-        let peak = 0;
-        let speechSamplesCount = 0;
-
+        let sumSquares = 0, peak = 0, speechSamplesCount = 0;
         for (let i = 0; i < channelData.length; i++) {
           const val = Math.abs(channelData[i]);
           sumSquares += val * val;
           if (val > peak) peak = val;
           if (val > 0.03) speechSamplesCount++;
         }
-
         const rms = Math.sqrt(sumSquares / channelData.length);
         const duration = audioBuffer.duration;
-        const speechDuration = (speechSamplesCount / audioBuffer.sampleRate);
+        const speechDuration = speechSamplesCount / audioBuffer.sampleRate;
         await audioCtx.close();
-
-        // If audio is silent or peak energy is negligible
-        if (peak < 0.035 || rms < 0.006 || speechDuration < 0.15) {
-          return { hasVoice: false, reason: 'silent', rms, peak, speechDuration, duration };
-        }
+        if (peak < 0.035 || rms < 0.006 || speechDuration < 0.15) return { hasVoice: false, reason: 'silent', rms, peak, speechDuration, duration };
         return { hasVoice: true, rms, peak, speechDuration, duration };
       } catch (e) {
-        console.warn('Audio energy analysis fallback:', e);
         return { hasVoice: blob.size > 2500, reason: 'fallback' };
       }
     }
 
-    function startSpeakingMode(fromSelection = false) {
-      if (!currentDeckId) return;
-      const deck = decks.find(d => d.id === currentDeckId);
-      if (!deck) return;
+    // v0.10.6d: Difficulty Config Engine
+    function getSpeakingDifficultyConfig(diff) {
+      if (diff === 'hard') return { floorScore: 90, diffMult: 2.0, maxTakes: 3, maxListens: 3, minClues: 1, maxClues: 1 };
+      if (diff === 'medium') return { floorScore: 80, diffMult: 1.5, maxTakes: 4, maxListens: 4, minClues: 2, maxClues: 2 };
+      return { floorScore: 70, diffMult: 1.0, maxTakes: 5, maxListens: 5, minClues: 3, maxClues: 3 };
+    }
 
-      let targetWords = [];
-      if (fromSelection && selectedWordIds.size > 0) {
-        targetWords = words.filter(w => selectedWordIds.has(w.id));
-      } else {
-        targetWords = words.filter(w => w.deckId === currentDeckId);
+    function getSpeakingClueMult() {
+      const def = !!speakingCluesConfig.def, ipa = !!speakingCluesConfig.ipa, audio = !!speakingCluesConfig.audio;
+      const diff = currentSpeakingDifficulty;
+      if (diff === 'easy') return 1.0;
+      if (diff === 'medium') {
+        if (def && ipa && !audio) return 1.5;   // Nghĩa + IPA (x2.25)
+        if (def && audio && !ipa) return 1.25;  // Nghĩa + Âm mẫu (x1.875)
+        if (ipa && audio && !def) return 1.0;   // IPA + Âm mẫu (x1.5)
+        if (def && ipa) return 1.5;
+        if (def && audio) return 1.25;
+        return 1.0;
       }
+      if (diff === 'hard') {
+        if (def && !ipa && !audio) return 1.5;  // Chỉ Nghĩa (x3.0)
+        if (!def && ipa && !audio) return 1.25; // Chỉ IPA (x2.5)
+        if (!def && !ipa && audio) return 1.0;  // Chỉ Âm mẫu (x2.0)
+        return 1.0;
+      }
+      return 1.0;
+    }
 
-      if (targetWords.length === 0) {
-        alert('Bộ từ này chưa có từ vựng nào để luyện phát âm!');
+    function getSpeakingTotalMult() {
+      const cfg = getSpeakingDifficultyConfig(currentSpeakingDifficulty);
+      return Math.round(cfg.diffMult * getSpeakingClueMult() * 1000) / 1000;
+    }
+
+    function selectSpeakingSetupDifficulty(diff) {
+      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
+        alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập tài khoản!');
+        openAuthModal('login');
         return;
       }
+      selectedSpeakingSetupDifficulty = diff;
+      ['easy','medium','hard'].forEach(d => {
+        const card = document.getElementById('speaking-diff-card-' + d);
+        if (card) card.style.borderColor = d === diff ? ({easy:'#10b981',medium:'#f59e0b',hard:'#ef4444'})[d] : 'var(--border)';
+      });
+      if (diff === 'easy') {
+        speakingCluesConfig = { def: true, ipa: true, audio: true };
+        ['def','ipa','audio'].forEach(k => {
+          const chk = document.getElementById('speaking-chk-' + k);
+          if (chk) chk.checked = true;
+          updateSpeakingClueUI(k, true);
+        });
+      }
+      updateSpeakingClueMultiplierBadge();
+    }
 
-      speakingWordsList = [...targetWords];
+    function toggleSpeakingClue(clueKey) {
+      const chk = document.getElementById('speaking-chk-' + clueKey);
+      if (!chk) return;
+      const cfg = getSpeakingDifficultyConfig(selectedSpeakingSetupDifficulty);
+      const activeCount = ['def','ipa','audio'].filter(k => document.getElementById('speaking-chk-' + k)?.checked).length;
+      if (selectedSpeakingSetupDifficulty === 'easy') { chk.checked = true; showToast('⚠️ Cấp độ Dễ luôn giữ 3/3 manh mối!'); return; }
+      if (!chk.checked && activeCount < 1) { chk.checked = true; showToast('⚠️ Phải giữ ít nhất 1 manh mối!'); return; }
+      if (chk.checked && activeCount > cfg.maxClues) { chk.checked = false; showToast('⚠️ Cấp độ này cho phép tối đa ' + cfg.maxClues + ' manh mối!'); return; }
+      speakingCluesConfig[clueKey] = chk.checked;
+      updateSpeakingClueUI(clueKey, chk.checked);
+      updateSpeakingClueMultiplierBadge();
+      localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
+    }
+
+    function updateSpeakingClueUI(clueKey, isChecked) {
+      const toggleBtn = document.getElementById('speaking-clue-toggle-' + clueKey);
+      if (!toggleBtn) return;
+      if (isChecked) { toggleBtn.style.borderColor = '#6366f1'; toggleBtn.style.background = 'rgba(99,102,241,0.2)'; toggleBtn.style.color = '#fff'; }
+      else { toggleBtn.style.borderColor = 'var(--border)'; toggleBtn.style.background = 'var(--surface-elevated)'; toggleBtn.style.color = 'var(--text-muted)'; }
+    }
+
+    function updateSpeakingClueMultiplierBadge() {
+      const badge = document.getElementById('speaking-clues-multiplier-badge');
+      if (!badge) return;
+      const activeCount = ['def','ipa','audio'].filter(k => document.getElementById('speaking-chk-' + k)?.checked).length;
+      badge.textContent = '\uD83C\uDFAF ' + activeCount + '/3 manh mối (x' + getSpeakingTotalMult() + ')';
+    }
+
+    function openSpeakingSetupModal(useSelection, customWordList) {
+      speakingSetupUseSelection = useSelection || false;
+      speakingSetupCustomWordList = customWordList || null;
+      selectedSpeakingSetupDifficulty = currentSpeakingDifficulty;
+      ['def','ipa','audio'].forEach(k => {
+        const chk = document.getElementById('speaking-chk-' + k);
+        if (chk) chk.checked = !!speakingCluesConfig[k];
+        updateSpeakingClueUI(k, !!speakingCluesConfig[k]);
+      });
+      selectSpeakingSetupDifficulty(selectedSpeakingSetupDifficulty);
+      const shuffleCb = document.getElementById('speaking-setup-shuffle-checkbox');
+      if (shuffleCb) shuffleCb.checked = isStudyShuffle;
+      let wordCount = customWordList ? customWordList.length : (useSelection && selectedWordIds.size > 0 ? selectedWordIds.size : words.filter(w => w.deckId === currentDeckId).length);
+      const sub = document.getElementById('speaking-setup-subtitle');
+      if (sub) sub.textContent = wordCount + ' từ vựng sẽ được luyện nói';
+      openModal('modal-speaking-setup');
+    }
+
+    function confirmStartSpeakingFromModal() {
+      currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
+      localStorage.setItem('vocaflow_speaking_difficulty', currentSpeakingDifficulty);
+      ['def','ipa','audio'].forEach(k => { speakingCluesConfig[k] = !!document.getElementById('speaking-chk-' + k)?.checked; });
+      localStorage.setItem('vocaflow_speaking_clues', JSON.stringify(speakingCluesConfig));
+      const shuffleCb = document.getElementById('speaking-setup-shuffle-checkbox');
+      if (shuffleCb) { isStudyShuffle = shuffleCb.checked; localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false'); }
+      closeModal('modal-speaking-setup');
+      startSpeakingMode(speakingSetupUseSelection, speakingSetupCustomWordList);
+    }
+
+    function startSpeakingMode(fromSelection, customWordList) {
+      if (!currentDeckId && !customWordList) return;
+      const deck = decks.find(d => d.id === currentDeckId);
+      if (!deck && !customWordList) return;
+
+      studySourceContext = customWordList ? 'review-queue' : 'deck';
+      let targetWords = [];
+      if (customWordList) targetWords = customWordList;
+      else if (fromSelection && selectedWordIds.size > 0) targetWords = words.filter(w => selectedWordIds.has(w.id));
+      else targetWords = words.filter(w => w.deckId === currentDeckId);
+
+      if (targetWords.length === 0) { alert('Bộ từ này chưa có từ vựng nào để luyện phát âm!'); return; }
+
+      speakingWordsList = isStudyShuffle ? [...targetWords].sort(() => Math.random() - 0.5) : [...targetWords];
       currentSpeakingIndex = 0;
       speakingSessionPointsEarned = 0;
       speakingGradedWordIds.clear();
-      resetSpeakingAudioState();
+      speakingSyllableCache = {};
+      speakingWordSkipsLeft = 3;
+      speakingTotalWords = speakingWordsList.length;
+      speakingCompletedWords = 0;
+      speakingStartTime = Date.now();
+      speakingIsCompleted = false;
 
+      const cfg = getSpeakingDifficultyConfig(currentSpeakingDifficulty);
+      speakingFloorScore = cfg.floorScore;
+      speakingMaxTakes = cfg.maxTakes;
+      speakingMaxListens = cfg.maxListens;
+
+      resetSpeakingWordState();
       const scoreBadge = document.getElementById('speaking-score-badge');
       if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
-
+      updateSpeakingDifficultyBadge();
       showScreen('screen-speaking');
       renderSpeakingCurrentWord();
     }
 
+    function updateSpeakingDifficultyBadge() {
+      const badge = document.getElementById('speaking-difficulty-badge');
+      if (!badge) return;
+      const totalMult = getSpeakingTotalMult();
+      const labels = { easy: '\uD83D\uDFE2 Dễ', medium: '\uD83D\uDFE1 TB', hard: '\uD83D\uDD34 Khó' };
+      badge.textContent = (labels[currentSpeakingDifficulty] || '\uD83D\uDFE2 Dễ') + ' (x' + totalMult + ')';
+    }
+
     function exitSpeakingMode() {
-      if (speakingAutoPlayTimeout) {
-        clearTimeout(speakingAutoPlayTimeout);
-        speakingAutoPlayTimeout = null;
-      }
+      if (speakingAutoPlayTimeout) { clearTimeout(speakingAutoPlayTimeout); speakingAutoPlayTimeout = null; }
       stopSpeakingRecord();
-      resetSpeakingAudioState();
+      resetSpeakingWordState();
 
       if (speakingPersistentStream) {
-        try {
-          speakingPersistentStream.getTracks().forEach(track => track.stop());
-        } catch (e) {}
+        try { speakingPersistentStream.getTracks().forEach(track => track.stop()); } catch (e) {}
         speakingPersistentStream = null;
       }
 
-      if (speakingSessionPointsEarned > 0) {
-        const total = speakingWordsList ? speakingWordsList.length : 1;
-        const done = speakingGradedWordIds.size;
+      if (speakingSessionPointsEarned !== 0) {
+        const total = speakingTotalWords || speakingWordsList.length || 1;
+        const done = speakingCompletedWords;
         const isComp = done >= total && total > 0;
         const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
         const finalPts = res.finalPts;
 
-        if (finalPts > 0) {
+        if (finalPts !== 0) {
           const curDeck = decks.find(d => d.id === currentDeckId);
           const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
-          const curPts = getUserPoints();
-          setUserPoints(curPts + finalPts);
+          setUserPoints(Math.max(0, getUserPoints() + finalPts));
           const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-          addLedgerEntry('STUDY', finalPts, `Luyện phát âm AI "${deckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
+          addLedgerEntry('STUDY_SPEAKING', finalPts, `Luyện nói AI "${deckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
-          showToast(`🎉 Đã cộng +${finalPts} Xu (Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}) vào ví!`);
+          showToast(`🎉 Speaking: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
         }
         speakingSessionPointsEarned = 0;
       }
-      showScreen('screen-deck-detail');
+
+      if (studySourceContext === 'review-queue' || !currentDeckId) {
+        showScreen('screen-decks');
+        refreshActiveScreenData();
+      } else {
+        showScreen('screen-deck-detail');
+        refreshActiveScreenData();
+      }
     }
 
     function shuffleCurrentSpeaking() {
@@ -13291,7 +13538,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         [speakingWordsList[i], speakingWordsList[j]] = [speakingWordsList[j], speakingWordsList[i]];
       }
       currentSpeakingIndex = 0;
-      resetSpeakingAudioState();
+      resetSpeakingWordState();
       renderSpeakingCurrentWord();
       showToast('🔀 Đã xáo trộn danh sách từ phát âm!');
     }
@@ -13301,7 +13548,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const word = speakingWordsList[currentSpeakingIndex];
       if (!word) return;
 
-      resetSpeakingAudioState();
+      resetSpeakingWordState();
 
       const counterEl = document.getElementById('speaking-counter');
       if (counterEl) counterEl.textContent = `Từ ${currentSpeakingIndex + 1} / ${speakingWordsList.length}`;
@@ -13314,74 +13561,98 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const exEl = document.getElementById('spk-word-example');
 
       if (termEl) termEl.textContent = word.term || '';
-      if (ipaEl) ipaEl.textContent = word.phonetic || '/.../';
+      if (ipaEl) {
+        ipaEl.textContent = speakingCluesConfig.ipa ? (word.phonetic || '/.../') : '[ẩn]';
+        ipaEl.style.opacity = speakingCluesConfig.ipa ? '1' : '0.3';
+      }
+      if (defEl) {
+        defEl.textContent = speakingCluesConfig.def ? (word.definitionVi || word.definition || '') : '[ẩn nghĩa]';
+        defEl.style.opacity = speakingCluesConfig.def ? '1' : '0.3';
+      }
       if (posEl) posEl.textContent = word.partOfSpeech || 'noun';
       if (cefrEl) {
         cefrEl.textContent = word.cefrLevel || word.level || 'B1';
         cefrEl.className = `badge badge-level-${(word.cefrLevel || word.level || 'b1').toLowerCase()}`;
       }
-      if (defEl) defEl.textContent = word.definitionVi || word.definition || '';
-      if (exEl) exEl.textContent = word.exampleSentence || word.example ? `“${word.exampleSentence || word.example}”` : '';
+      if (exEl) exEl.textContent = (word.exampleSentence || word.example) ? `"${word.exampleSentence || word.example}"` : '';
 
       const btnPrev = document.getElementById('btn-spk-prev');
       if (btnPrev) btnPrev.disabled = (currentSpeakingIndex === 0);
 
-      // Tự động đọc mẫu 1 lần khi sang từ mới
-      if (speakingAutoPlayTimeout) clearTimeout(speakingAutoPlayTimeout);
-      speakingAutoPlayTimeout = setTimeout(() => {
-        const curScreen = document.getElementById('screen-speaking');
-        if (curScreen && curScreen.classList.contains('active')) {
-          speakCurrentSpeakingWord();
-        }
-      }, 350);
+      const skipBtn = document.getElementById('btn-spk-skip');
+      if (skipBtn) skipBtn.textContent = `⏭️ Bỏ qua (${speakingWordSkipsLeft})`;
+
+      const listenBadge = document.getElementById('spk-listen-quota-badge');
+      if (listenBadge) listenBadge.textContent = `🔊 (${speakingMaxListens - speakingListensUsed}/${speakingMaxListens})`;
+
+      if (speakingCluesConfig.audio && !speakingAutoPlayDone) {
+        if (speakingAutoPlayTimeout) clearTimeout(speakingAutoPlayTimeout);
+        speakingAutoPlayTimeout = setTimeout(() => {
+          const curScreen = document.getElementById('screen-speaking');
+          if (curScreen && curScreen.classList.contains('active')) {
+            speakCurrentSpeakingWord(true);
+            speakingAutoPlayDone = true;
+          }
+        }, 350);
+      }
     }
 
-    function speakCurrentSpeakingWord() {
-      const word = speakingWordsList[currentSpeakingIndex];
-      if (word && word.term) {
-        speakText(word.term);
+    function speakCurrentSpeakingWord(isAutoPlay = false) {
+      if (!speakingCluesConfig.audio && !isAutoPlay) { showToast('⚠️ Manh mối Âm thanh đã bị tắt!'); return; }
+      if (!isAutoPlay) {
+        if (speakingListensUsed >= speakingMaxListens) { showToast('⚠️ Đã hết lượt nghe mẫu cho từ này!'); return; }
+        speakingListensUsed++;
+        const listenBadge = document.getElementById('spk-listen-quota-badge');
+        if (listenBadge) {
+          const remaining = speakingMaxListens - speakingListensUsed;
+          listenBadge.textContent = `🔊 (${remaining}/${speakingMaxListens})`;
+          if (remaining <= 0) listenBadge.style.opacity = '0.4';
+        }
       }
+      const word = speakingWordsList[currentSpeakingIndex];
+      if (word && word.term) speakText(word.term);
     }
 
     function nextSpeakingWord() {
       if (isSpeakingRecording) stopSpeakingRecord();
+      speakingCompletedWords++;
       if (currentSpeakingIndex < speakingWordsList.length - 1) {
         currentSpeakingIndex++;
         renderSpeakingCurrentWord();
       } else {
-        if (speakingSessionPointsEarned > 0) {
-          const curDeck = decks.find(d => d.id === currentDeckId);
-          const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
-          const curPts = getUserPoints();
-          setUserPoints(curPts + speakingSessionPointsEarned);
-          addLedgerEntry('STUDY', speakingSessionPointsEarned, `Luyện phát âm AI "${deckTitle}" (${speakingWordsList.length} từ hoàn thành)`);
-          saveDatabase(true);
-          pushCurrentDatabaseToCloud();
-        }
-
-        const totalWordsEl = document.getElementById('spk-res-total-words');
-        const totalCoinsEl = document.getElementById('spk-res-total-coins');
-        if (totalWordsEl) totalWordsEl.textContent = `${speakingWordsList.length} từ`;
-        if (totalCoinsEl) totalCoinsEl.textContent = `+${speakingSessionPointsEarned} Xu`;
-
-        playVocaSfx('fireworks');
-        openModal('modal-speaking-result');
+        finishSpeakingSession();
       }
     }
 
     function prevSpeakingWord() {
       if (isSpeakingRecording) stopSpeakingRecord();
-      if (currentSpeakingIndex > 0) {
-        currentSpeakingIndex--;
-        renderSpeakingCurrentWord();
-      }
+      if (currentSpeakingIndex > 0) { currentSpeakingIndex--; renderSpeakingCurrentWord(); }
     }
 
-    function resetSpeakingAudioState() {
-      if (speakingRecordTimerInterval) {
-        clearInterval(speakingRecordTimerInterval);
-        speakingRecordTimerInterval = null;
+    function skipSpeakingWord() {
+      if (speakingWordSkipsLeft <= 0) { showToast('⚠️ Đã hết lượt bỏ qua cho phiên này!'); return; }
+      speakingWordSkipsLeft--;
+      showToast(`⏭️ Đã bỏ qua từ này (còn ${speakingWordSkipsLeft} lượt skip)`);
+      nextSpeakingWord();
+    }
+
+    function finishSpeakingSession() {
+      speakingIsCompleted = true;
+      const totalWordsEl = document.getElementById('spk-res-total-words');
+      const totalCoinsEl = document.getElementById('spk-res-total-coins');
+      const totalDiffEl = document.getElementById('spk-res-difficulty');
+      if (totalWordsEl) totalWordsEl.textContent = `${speakingWordsList.length} từ`;
+      if (totalCoinsEl) totalCoinsEl.textContent = `+${speakingSessionPointsEarned} Xu`;
+      if (totalDiffEl) {
+        const labels = { easy: '🟢 Dễ', medium: '🟡 Trung Bình', hard: '🔴 Khó' };
+        totalDiffEl.textContent = labels[currentSpeakingDifficulty] || '🟢 Dễ';
       }
+      playVocaSfx('fireworks');
+      openModal('modal-speaking-result');
+    }
+
+    function resetSpeakingWordState() {
+      if (speakingRecordTimerInterval) { clearInterval(speakingRecordTimerInterval); speakingRecordTimerInterval = null; }
       isSpeakingRecording = false;
       speakingFlowState = 'idle';
       speakingRecordSeconds = 0;
@@ -13389,6 +13660,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       speakingAudioBlob = null;
       speakingAudioBlobUrl = null;
       speakingCurrentAudioBase64 = null;
+      pendingAudioBlob = null;
+      pendingAudioBase64 = null;
+      speakingTakes = [];
+      speakingCurrentTakeIndex = 0;
+      speakingListensUsed = 0;
+      speakingAutoPlayDone = false;
+      speakingFloorReached = false;
 
       const micBtn = document.getElementById('btn-speaking-mic');
       const statusEl = document.getElementById('speaking-record-status');
@@ -13400,12 +13678,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         micBtn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
         micBtn.style.boxShadow = '0 6px 20px rgba(236,72,153,0.35)';
         micBtn.style.transform = 'scale(1)';
+        micBtn.disabled = false;
+        micBtn.style.opacity = '1';
       }
-      if (statusEl) {
-        statusEl.textContent = 'Nhấn vào Mic để bắt đầu nói';
-        statusEl.style.color = 'var(--text)';
-      }
-      if (timerEl) timerEl.textContent = 'Giữ giọng rõ ràng • Tối đa 8 giây';
+      if (statusEl) { statusEl.textContent = 'Nhấn vào Mic để bắt đầu nói'; statusEl.style.color = 'var(--text)'; }
+      if (timerEl) timerEl.textContent = `Giữ giọng rõ ràng • Tối đa 8 giây • Lượt: 0/${speakingMaxTakes}`;
       if (waveEl) waveEl.style.display = 'none';
       if (playbackCont) playbackCont.style.display = 'none';
 
@@ -13413,16 +13690,29 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const aiLoading = document.getElementById('speaking-ai-loading');
       const aiContent = document.getElementById('speaking-ai-content');
       const rewardCont = document.getElementById('spk-reward-badge-container');
+      const takeHistEl = document.getElementById('spk-take-history');
+      const floorBanner = document.getElementById('spk-floor-banner');
+      const failBanner = document.getElementById('spk-fail-banner');
+      const retryBanner = document.getElementById('spk-network-error-banner');
+
       if (resultPanel) resultPanel.style.display = 'none';
       if (aiLoading) aiLoading.style.display = 'none';
       if (aiContent) aiContent.style.display = 'none';
       if (rewardCont) rewardCont.style.display = 'none';
+      if (takeHistEl) takeHistEl.innerHTML = '';
+      if (floorBanner) floorBanner.style.display = 'none';
+      if (failBanner) failBanner.style.display = 'none';
+      if (retryBanner) retryBanner.style.display = 'none';
     }
 
     async function toggleSpeakingRecord() {
       if (isSpeakingRecording) {
         stopSpeakingRecord();
       } else {
+        if (speakingCurrentTakeIndex >= speakingMaxTakes) {
+          showToast('⚠️ Đã hết ' + speakingMaxTakes + ' lượt thu âm cho từ này!');
+          return;
+        }
         await startSpeakingRecord();
       }
     }
@@ -13464,7 +13754,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
             statusEl.textContent = '✅ Đã thu âm xong! Nghe lại hoặc nhấn Chấm Điểm';
             statusEl.style.color = '#34d399';
           }
-          if (timerEl) timerEl.textContent = `Thời lượng thu âm: ${speakingRecordSeconds} giây`;
+          if (timerEl) timerEl.textContent = 'Thời lượng: ' + speakingRecordSeconds + 's • Lượt: ' + (speakingCurrentTakeIndex + 1) + '/' + speakingMaxTakes;
           if (waveEl) waveEl.style.display = 'none';
           if (playbackCont) {
             playbackCont.style.display = 'flex';
@@ -13506,7 +13796,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       } catch (err) {
         console.error('Mic Error:', err);
         showToast('⚠️ Không thể truy cập Microphone! Vui lòng kiểm tra quyền Micro của trình duyệt.');
-        resetSpeakingAudioState();
+        resetSpeakingWordState();
       }
     }
 
@@ -13534,6 +13824,36 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
 
+      // Anti-cheat: reject recordings < 0.4s without consuming attempt
+      const vadResult = await analyzeAudioSpeechEnergy(speakingAudioBlob);
+      if (vadResult.duration && vadResult.duration < 0.4) {
+        showToast('⚠️ Bản thu âm quá ngắn (< 0.4s). Vui lòng nói rõ ràng hơn!');
+        return;
+      }
+
+      if (!vadResult.hasVoice) {
+        const resultPanel = document.getElementById('speaking-result-panel');
+        const aiLoading = document.getElementById('speaking-ai-loading');
+        const aiContent = document.getElementById('speaking-ai-content');
+        if (resultPanel) resultPanel.style.display = 'block';
+        if (aiLoading) aiLoading.style.display = 'none';
+        if (aiContent) aiContent.style.display = 'block';
+
+        renderDiagnosticResult({
+          score: 0,
+          verdict: 'Không có giọng nói',
+          detectedSpeech: '(Không phát hiện âm thanh)',
+          accuracyDetails: { stress: 'Chưa phát âm', endingSound: 'Không có âm', vowels: 'Không có âm' },
+          vietnameseSpecificMistake: '🔇 Micro chưa thu được giọng nói hoặc âm lượng quá nhỏ. Bạn hãy kiểm tra lại Micro, nói to và rõ ràng hơn nhé!',
+          phonemeBreakdown: { onset: null, nucleus: null, coda: null }
+        }, false);
+        return;
+      }
+
+      // Burn-on-success: hold audio during API call
+      pendingAudioBlob = speakingAudioBlob;
+      pendingAudioBase64 = speakingCurrentAudioBase64;
+
       speakingFlowState = 'evaluating';
       const resultPanel = document.getElementById('speaking-result-panel');
       const aiLoading = document.getElementById('speaking-ai-loading');
@@ -13543,44 +13863,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (aiLoading) aiLoading.style.display = 'block';
       if (aiContent) aiContent.style.display = 'none';
 
-      const currentWord = speakingWordsList[currentSpeakingIndex];
-      if (!currentWord) return;
-
-      // 1. CLIENT-SIDE VOICE ACTIVITY DETECTION (VAD) & ENERGY CHECK (v0.10.6c)
-      const vadResult = await analyzeAudioSpeechEnergy(speakingAudioBlob);
-      if (!vadResult.hasVoice) {
-        if (aiLoading) aiLoading.style.display = 'none';
-        if (aiContent) aiContent.style.display = 'block';
-
-        const rawParts = (currentWord.phonetic || currentWord.term).replace(/[/ˈˌ]/g, '').split(/[. -]+/).filter(Boolean);
-        const errorPhonemes = (rawParts.length > 0 ? rawParts : [currentWord.term]).map(p => ({
-          part: p,
-          ipa: p,
-          status: 'error',
-          tip: 'Chưa phát hiện giọng nói'
-        }));
-
-        renderDiagnosticResult({
-          score: 0,
-          verdict: 'Không có giọng nói',
-          detectedSpeech: '(Không phát hiện âm thanh)',
-          accuracyDetails: {
-            stress: 'Chưa phát âm',
-            endingSound: 'Không có âm',
-            vowels: 'Không có âm'
-          },
-          vietnameseSpecificMistake: '🔇 Micro chưa thu được giọng nói hoặc âm lượng quá nhỏ. Bạn hãy kiểm tra lại Micro, nói to và rõ ràng hơn nhé!',
-          phonemeBreakdown: errorPhonemes
-        });
-        return;
-      }
-
-      // 2. CALL GEMINI FLASH MULTIMODAL AUDIO EVALUATION
       evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
     }
 
     // =========================================================================
-    // PHONETIC CONFUSION CANDIDATE GENERATOR (balance_v2 / v0.10.6c)
+    // PHONETIC CONFUSION CANDIDATE GENERATOR (balance_v2 / v0.10.6d)
     // Minimal Pair & Vietnamese L1 Transfer Trap Generator
     // =========================================================================
     function getConfusionSet(word) {
@@ -13588,7 +13875,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const clean = word.toLowerCase().trim();
       if (!clean) return [];
 
-      // Curated High-Frequency Confusion Minimal Pairs for common words
       const curatedDict = {
         'line': ['line', 'like', 'light', 'lie', 'life', 'lime', 'mine'],
         'ship': ['ship', 'sheep', 'sip', 'chip', 'shit'],
@@ -13653,14 +13939,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         'clothe': ['clothe', 'cloth', 'close']
       };
 
-      if (curatedDict[clean]) {
-        return curatedDict[clean];
-      }
+      if (curatedDict[clean]) return curatedDict[clean];
 
-      // Algorithmic phonetic variants generation based on Vietnamese phonetic traps
       const candidates = [clean];
-
-      // 1. Drop ending sound (coda truncation)
       if (clean.length > 2) {
         if (clean.endsWith('e') && clean.length > 3) {
           const base = clean.slice(0, -2);
@@ -13670,7 +13951,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
-      // 2. Ending consonant swap rules
       const endingReplacements = {
         'ne': ['ke', 'te', 'me', 'fe', 'de', 'se'],
         'ke': ['ne', 'te', 'me', 'fe', 'de', 'se'],
@@ -13701,14 +13981,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       for (const [suffix, swaps] of Object.entries(endingReplacements)) {
         if (clean.endsWith(suffix)) {
           const stem = clean.slice(0, -suffix.length);
-          for (const swap of swaps) {
-            candidates.push(stem + swap);
-          }
+          for (const swap of swaps) candidates.push(stem + swap);
           break;
         }
       }
 
-      // 3. Onset consonant swap rules
       const onsetReplacements = {
         'th': ['t', 'f', 's', 'd'],
         'sh': ['s', 'ch'],
@@ -13729,46 +14006,33 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       for (const [prefix, swaps] of Object.entries(onsetReplacements)) {
         if (clean.startsWith(prefix)) {
           const tail = clean.slice(prefix.length);
-          for (const swap of swaps) {
-            candidates.push(swap + tail);
-          }
+          for (const swap of swaps) candidates.push(swap + tail);
           break;
         }
       }
 
-      // 4. Vowel swap rules (short vs long / front vs back)
-      if (clean.includes('ee')) {
-        candidates.push(clean.replace('ee', 'i'));
-      } else if (clean.includes('ea')) {
-        candidates.push(clean.replace('ea', 'i'), clean.replace('ea', 'e'));
-      } else if (clean.includes('oo')) {
-        candidates.push(clean.replace('oo', 'u'), clean.replace('oo', 'o'));
-      } else if (clean.includes('i') && !clean.includes('ie')) {
-        candidates.push(clean.replace('i', 'ee'), clean.replace('i', 'e'));
-      } else if (clean.includes('a') && !clean.includes('ai') && !clean.includes('ay')) {
-        candidates.push(clean.replace('a', 'e'), clean.replace('a', 'u'));
-      }
+      if (clean.includes('ee')) candidates.push(clean.replace('ee', 'i'));
+      else if (clean.includes('ea')) { candidates.push(clean.replace('ea', 'i'), clean.replace('ea', 'e')); }
+      else if (clean.includes('oo')) { candidates.push(clean.replace('oo', 'u'), clean.replace('oo', 'o')); }
+      else if (clean.includes('i') && !clean.includes('ie')) { candidates.push(clean.replace('i', 'ee'), clean.replace('i', 'e')); }
+      else if (clean.includes('a') && !clean.includes('ai') && !clean.includes('ay')) { candidates.push(clean.replace('a', 'e'), clean.replace('a', 'u')); }
 
-      // Deduplicate, ensure target word is first, keep 4 to 7 candidates
       const unique = Array.from(new Set(candidates.filter(c => c && c.length > 0)));
-      const finalSet = [clean, ...unique.filter(c => c !== clean)].slice(0, 7);
-      return finalSet;
+      return [clean, ...unique.filter(c => c !== clean)].slice(0, 7);
     }
 
-
-        async function evaluateSpeakingAudioWithGemini(mimeType = 'audio/webm') {
+    async function evaluateSpeakingAudioWithGemini(mimeType = 'audio/webm') {
       const resultPanel = document.getElementById('speaking-result-panel');
       const aiLoading = document.getElementById('speaking-ai-loading');
       const aiContent = document.getElementById('speaking-ai-content');
-
       const currentWord = speakingWordsList[currentSpeakingIndex];
-      if (!currentWord || !speakingCurrentAudioBase64) {
+
+      if (!currentWord || !pendingAudioBase64) {
         if (aiLoading) aiLoading.style.display = 'none';
         return;
       }
 
       let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
-
       if (!key) {
         if (aiLoading) aiLoading.style.display = 'none';
         if (aiContent) aiContent.style.display = 'block';
@@ -13776,24 +14040,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           score: 0,
           verdict: 'Cần API Key',
           detectedSpeech: '(Chưa cấu hình API)',
-          accuracyDetails: {
-            stress: 'Cần Key',
-            endingSound: 'Cần Key',
-            vowels: 'Cần Key'
-          },
+          accuracyDetails: { stress: 'Cần Key', endingSound: 'Cần Key', vowels: 'Cần Key' },
           vietnameseSpecificMistake: '🔑 Bạn chưa cài đặt Gemini API Key. Hãy vào mục Cài Đặt nhập Key Gemini miễn phí để AI phân tích âm vị chuẩn xác như ELSA nhé!',
-          phonemeBreakdown: [
-            { part: currentWord.term, ipa: currentWord.phonetic || '', status: 'warning', tip: 'Nhập API Key để chấm' }
-          ]
-        });
+          phonemeBreakdown: { onset: null, nucleus: null, coda: null }
+        }, false);
         return;
       }
 
-      // Generate Phonetic Confusion Candidate Set (balance_v2 / v0.10.6c)
       const confusionSet = getConfusionSet(currentWord.term);
       const confusionListStr = JSON.stringify(confusionSet);
+      const needSyllable = !speakingSyllableCache[currentWord.id];
 
-      // MULTI-CHOICE ACOUSTIC CLASSIFIER & PHONEME DECOMPOSITION PROMPT (v0.10.6c)
       const prompt = `You are an ELSA-grade AI Speech Assessment Engine, Acoustic Classifier, and Oxford Phonetics Specialist for Vietnamese English learners.
 
 TARGET WORD: "${currentWord.term}"
@@ -13818,14 +14075,13 @@ STEP 2: MULTI-CHOICE ACOUSTIC CLASSIFICATION
   → Set "isExactMatch": true ONLY if selectedCandidate === "${currentWord.term}" AND all phonemes match.
 
 STEP 3: HARD PENALTY ENFORCEMENT (ZERO-TOLERANCE RULES)
-• If selectedCandidate !== "${currentWord.term}" (e.g., user said a confusion candidate like "like", "lie", "light" instead of "line"):
+• If selectedCandidate !== "${currentWord.term}":
   - MUST set "isExactMatch": false
   - HARD SCORE CAP: Force final "score" to be strictly between 20 and 42 (NEVER exceed 45/100).
   - Verdict: "Cần cải thiện" or "Chưa chuẩn".
-  - Explain clearly in "vietnameseSpecificMistake" that the audio sounded like the confusion candidate '\${selectedCandidate}' rather than '${currentWord.term}'.
 • If selectedCandidate === "${currentWord.term}" (All 3 Onset + Nucleus + Coda match):
   - Set "isExactMatch": true
-  - Score range: 85-100 (based on naturalness, rhythm, vowel duration, and stress precision).
+  - Score range: 85-100.
 
 STEP 4: PHONEME DECOMPOSITION (Onset + Nucleus + Coda)
 Break the TARGET WORD into 3 IPA components:
@@ -13833,21 +14089,21 @@ Break the TARGET WORD into 3 IPA components:
 • Nucleus (Nguyên âm chính): Core vowel sound.
 • Coda (Âm đuôi): Final consonant(s). Use "(none)" if open.
 
-For each component, report expected IPA vs detected IPA and boolean isCorrect.
-
+${needSyllable ? 'STEP 5: SYLLABLE COUNT\nCount the number of syllables in the target word and return as "syllableCount".\n' : ''}
 ═══════════════════════════════════════════════════════
 RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 ═══════════════════════════════════════════════════════
 {
-  "selectedCandidate": "<the exact candidate from confusion list closest to user speech>",
+  "selectedCandidate": "<word from confusion list>",
   "isExactMatch": true | false,
   "confusionSet": ${confusionListStr},
   "score": <0-100>,
   "verdict": "Xuất sắc" | "Khá tốt" | "Cần cải thiện" | "Chưa chuẩn" | "Không có giọng nói",
   "targetWord": "${currentWord.term}",
   "expectedIPA": "${currentWord.phonetic || ''}",
-  "detectedSpokenIPA": "<IPA transcription of what user actually said>",
-  "detectedSpeech": "<word or text heard>",
+  "detectedSpokenIPA": "<IPA of what user said>",
+  "detectedSpeech": "<word/text heard>",
+  "syllableCount": <number>,
   "phonemeBreakdown": {
     "onset": {"expected": "/l/", "detected": "/l/", "isCorrect": true},
     "nucleus": {"expected": "/aɪ/", "detected": "/aɪ/", "isCorrect": true},
@@ -13861,14 +14117,12 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     "endingSound": "<ending sound analysis in Vietnamese>",
     "vowels": "<vowel analysis in Vietnamese>"
   },
-  "vietnameseSpecificMistake": "<detailed Vietnamese-language coaching feedback with mouth/tongue position tips>",
+  "vietnameseSpecificMistake": "<detailed Vietnamese coaching feedback>",
   "syllableBreakdown": [
     {"part": "li", "ipa": "/laɪ/", "status": "correct", "tip": "Nguyên âm tốt"},
-    {"part": "ne", "ipa": "/n/", "status": "error", "tip": "Bị phát âm nhầm thành /k/"}
+    {"part": "ne", "ipa": "/n/", "status": "error", "tip": "Lỗi âm đuôi"}
   ]
 }`;
-
-
 
       try {
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
@@ -13881,19 +14135,23 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         for (const m of modelsToTry) {
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             const res = await fetch(url, {
               method: 'POST',
+              signal: controller.signal,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 contents: [{
                   parts: [
-                    { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: speakingCurrentAudioBase64 } },
+                    { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: pendingAudioBase64 } },
                     { text: prompt }
                   ]
                 }],
                 generationConfig: {
                   responseMimeType: "application/json",
-                  temperature: 0.1,
+                  temperature: 0.0,
                   maxOutputTokens: 1024
                 },
                 safetySettings: [
@@ -13904,6 +14162,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 ]
               })
             });
+            clearTimeout(timeoutId);
 
             if (res.ok) {
               const resJson = await res.json();
@@ -13914,6 +14173,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 evalSuccess = true;
                 break;
               }
+            } else if (res.status === 429 || res.status >= 500) {
+              continue;
             }
           } catch (modelErr) {
             console.warn(`Model ${m} speaking eval failed:`, modelErr);
@@ -13924,37 +14185,65 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (aiContent) aiContent.style.display = 'block';
 
         if (evalSuccess && evalData) {
-          renderDiagnosticResult(evalData);
+          pendingAudioBlob = null;
+          pendingAudioBase64 = null;
+
+          if (evalData.syllableCount && currentWord && !speakingSyllableCache[currentWord.id]) {
+            speakingSyllableCache[currentWord.id] = Math.max(1, Math.round(Number(evalData.syllableCount) || 1));
+          }
+
+          renderDiagnosticResult(evalData, true);
         } else {
-          renderDiagnosticResult({
-            score: 0,
-            verdict: 'Chưa chấm được',
-            detectedSpeech: '(Không thể kết nối AI)',
-            accuracyDetails: {
-              stress: 'Chưa rõ',
-              endingSound: 'Chưa rõ',
-              vowels: 'Chưa rõ'
-            },
-            vietnameseSpecificMistake: '⚠️ Không thể kết nối với Gemini AI. Vui lòng kiểm tra lại kết nối mạng hoặc API Key.',
-            phonemeBreakdown: [
-              { part: currentWord.term, ipa: currentWord.phonetic || '', status: 'warning', tip: 'Thử lại' }
-            ]
-          });
+          showNetworkErrorBanner();
         }
 
       } catch (err) {
         console.error('Speaking eval error:', err);
         if (aiLoading) aiLoading.style.display = 'none';
         if (aiContent) aiContent.style.display = 'block';
-        renderDiagnosticResult({
-          score: 0,
-          verdict: 'Lỗi chấm điểm',
-          detectedSpeech: '(Lỗi kết nối)',
-          accuracyDetails: { stress: 'Lỗi', endingSound: 'Lỗi', vowels: 'Lỗi' },
-          vietnameseSpecificMistake: '⚠️ Đã xảy ra lỗi khi gửi bản thu âm. Hãy thử lại.',
-          phonemeBreakdown: [{ part: currentWord.term, ipa: currentWord.phonetic || '', status: 'error', tip: 'Lỗi kết nối' }]
-        });
+        showNetworkErrorBanner();
       }
+    }
+
+    function showNetworkErrorBanner() {
+      const banner = document.getElementById('spk-network-error-banner');
+      if (banner) {
+        banner.style.display = 'block';
+        banner.innerHTML = `
+          <div style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); border-radius: 12px; padding: 12px; text-align: center;">
+            <div style="font-size: 13px; font-weight: 700; color: #fbbf24; margin-bottom: 8px;">⚠️ Không thể kết nối AI hoặc phản hồi bị lỗi. Bạn không bị mất lượt thu!</div>
+            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <button class="btn btn-sm" onclick="retryPendingEvaluation()" style="background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: #38bdf8; font-weight: 700; border-radius: 20px; padding: 6px 14px; cursor: pointer;">🔄 Thử chấm lại (Retry)</button>
+              <button class="btn btn-sm" onclick="discardPendingAndRerecord()" style="background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700; border-radius: 20px; padding: 6px 14px; cursor: pointer;">🎙️ Thu âm lại</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function retryPendingEvaluation() {
+      const banner = document.getElementById('spk-network-error-banner');
+      if (banner) banner.style.display = 'none';
+      if (pendingAudioBase64) {
+        const aiLoading = document.getElementById('speaking-ai-loading');
+        const aiContent = document.getElementById('speaking-ai-content');
+        if (aiLoading) aiLoading.style.display = 'block';
+        if (aiContent) aiContent.style.display = 'none';
+        evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
+      } else {
+        showToast('⚠️ Không còn bản thu âm chờ. Hãy thu âm lại!');
+      }
+    }
+
+    function discardPendingAndRerecord() {
+      pendingAudioBlob = null;
+      pendingAudioBase64 = null;
+      const banner = document.getElementById('spk-network-error-banner');
+      if (banner) banner.style.display = 'none';
+      const resultPanel = document.getElementById('speaking-result-panel');
+      if (resultPanel) resultPanel.style.display = 'none';
+      speakingFlowState = 'idle';
+      showToast('🎙️ Hãy thu âm lại!');
     }
 
     function speakPhonemePart(ipa) {
@@ -13964,11 +14253,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function retrySpeakingFromBadge() {
-      resetSpeakingAudioState();
+      const resultPanel = document.getElementById('speaking-result-panel');
+      if (resultPanel) resultPanel.style.display = 'none';
+      speakingFlowState = 'idle';
       toggleSpeakingRecord();
     }
 
-    function renderDiagnosticResult(data) {
+    function renderDiagnosticResult(data, countAsTake = true) {
       speakingFlowState = 'evaluated';
       const currentWord = speakingWordsList[currentSpeakingIndex];
       const targetTerm = (currentWord?.term || '').toLowerCase().trim();
@@ -13976,11 +14267,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const isMismatch = (data.isExactMatch === false) || (detectedCand && detectedCand !== targetTerm);
 
       let score = Math.max(0, Math.min(100, Number(data.score) || 0));
-      // Client-side hard penalty clamp if confusion trap triggered
       if (isMismatch && score > 45) {
         score = Math.min(42, Math.max(20, score - 40));
       }
       score = Math.max(0, Math.min(100, Math.round(score)));
+
+      if (countAsTake) {
+        speakingTakes.push(score);
+        speakingCurrentTakeIndex = speakingTakes.length;
+        if (score >= speakingFloorScore) speakingFloorReached = true;
+      }
 
       const scoreNumEl = document.getElementById('spk-score-num');
       const scoreCircleEl = document.getElementById('spk-score-circle');
@@ -14022,7 +14318,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         feedbackEl.textContent = data.vietnameseSpecificMistake || 'Phát âm rõ ràng, chuẩn ngữ điệu!';
       }
 
-      // Render 3 Pillar Badges
+      // 3 Pillar Badges
       const pStress = document.getElementById('spk-pillar-stress');
       const pEnding = document.getElementById('spk-pillar-ending');
       const pVowels = document.getElementById('spk-pillar-vowels');
@@ -14033,11 +14329,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       const pb = data.phonemeBreakdown;
 
-      // Render Phoneme Decomposition & Immediate Diagnostic Box (balance_v2 / v0.10.6c)
+      // Phoneme Decomposition & Diagnostics
       if (phonemesEl) {
         let phtml = '';
 
-        // 1. Immediate Diagnostic Warning Box if Coda / Nucleus / Onset error
         if (pb && typeof pb === 'object') {
           if (pb.coda && pb.coda.isCorrect === false) {
             const detectedWordName = data.selectedCandidate || data.detectedSpeech || 'từ khác';
@@ -14076,7 +14371,6 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           }
         }
 
-        // 2. Visual Phoneme Badges: 3 Clickable / Colored Badges [ Onset ] [ Nucleus ] [ Coda ]
         if (pb && typeof pb === 'object' && !Array.isArray(pb) && (pb.onset || pb.nucleus || pb.coda)) {
           const renderPhonemeBadge = (label, emoji, comp) => {
             if (!comp) return '';
@@ -14106,7 +14400,6 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           phtml += '</div>';
         }
 
-        // 3. Detected IPA + Coda Status Bar
         const detectedIPA = data.detectedSpokenIPA;
         const codaSt = data.codaStatus;
         if (detectedIPA || codaSt) {
@@ -14122,7 +14415,6 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           phtml += `</div>`;
         }
 
-        // 4. Syllable breakdown (array)
         const syllParts = Array.isArray(data.syllableBreakdown) ? data.syllableBreakdown : (Array.isArray(data.phonemeBreakdown) ? data.phonemeBreakdown : []);
         if (syllParts.length > 0) {
           phtml += '<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; justify-content: center;">';
@@ -14155,70 +14447,114 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         phonemesEl.innerHTML = phtml;
       }
 
-      // Points & Mastery Economy Integration (Zero-tolerance: Only award when score >= 80)
+      // Render Take History Badges
+      const takeHistEl = document.getElementById('spk-take-history');
+      if (takeHistEl && speakingTakes.length > 0) {
+        let thHtml = '';
+        speakingTakes.forEach((s, i) => {
+          const passed = s >= speakingFloorScore;
+          const bg = passed ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.15)';
+          const col = passed ? '#34d399' : '#f87171';
+          const label = passed ? `Lần ${i + 1}: ${s}đ ✓` : `Lần ${i + 1}: ${s}đ`;
+          thHtml += `<span style="background: ${bg}; color: ${col}; border-radius: 12px; padding: 3px 10px; font-size: 11px; font-weight: 700;">${label}</span> `;
+        });
+        takeHistEl.innerHTML = thHtml;
+        takeHistEl.style.display = 'flex';
+      }
+
+      // Multi-Take Economy & Floor Score Check (v0.10.6d)
       const rewardCont = document.getElementById('spk-reward-badge-container');
+      const floorBanner = document.getElementById('spk-floor-banner');
+      const failBanner = document.getElementById('spk-fail-banner');
 
-      if (rewardCont) {
-        let earnedXu = 0;
-        let masteryInc = 0;
+      if (rewardCont && countAsTake) {
+        if (speakingFloorReached) {
+          if (floorBanner) {
+            floorBanner.style.display = 'block';
+            floorBanner.innerHTML = `<div style="background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.4); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12px; color: #34d399; font-weight: 700;">✅ Đã đạt điểm sàn (${speakingFloorScore})! Có thể Tiếp tục hoặc Thu lại (tính trung bình cộng).</div>`;
+          }
 
-        if (score >= 100) {
           if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
             speakingGradedWordIds.add(currentWord.id);
-            earnedXu = 10;
-            masteryInc = 5;
+            const syllCount = speakingSyllableCache[currentWord.id] || Math.max(1, Math.ceil((currentWord.term || '').length / 3));
+            const baseXu = Math.max(3, syllCount * 3);
+            const admissionScore = speakingTakes.reduce((a, b) => a + b, 0) / speakingTakes.length;
+            const admissionRatio = Math.min(2, admissionScore / speakingFloorScore);
+            const cfg = getSpeakingDifficultyConfig(currentSpeakingDifficulty);
+            const clueMult = getSpeakingClueMult();
+            const wordReward = Math.round(baseXu * cfg.diffMult * clueMult * admissionRatio);
+            const masteryDelta = Math.round(5 * admissionRatio);
+
+            speakingSessionPointsEarned += wordReward;
+            const scoreBadge = document.getElementById('speaking-score-badge');
+            if (scoreBadge) scoreBadge.textContent = `Bài: +${speakingSessionPointsEarned}đ`;
+
+            const mainIdx = words.findIndex(w => w.id === currentWord.id);
+            if (mainIdx >= 0) {
+              words[mainIdx].masteryScore = Math.min(100, (words[mainIdx].masteryScore || 0) + masteryDelta);
+              words[mainIdx].updatedAt = new Date().toISOString();
+            }
+
+            rewardCont.innerHTML = `<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">🪙 +${wordReward} Xu • 📈 +${masteryDelta}% Thuộc từ (Sàn: ${speakingFloorScore})</span>`;
+            rewardCont.style.display = 'flex';
+            playVocaSfx('correct');
           }
-          rewardCont.innerHTML = `
-            <span id="spk-reward-badge" class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(234,179,8,0.25), rgba(245,158,11,0.25)); color: #fbbf24; border: 1px solid rgba(234,179,8,0.5);">
-              👑 +10 Xu • 🌟 +5% Thuộc từ (Hoàn Hảo!)
-            </span>
-          `;
-          playVocaSfx('fireworks');
-        } else if (score >= 80) {
-          if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
-            speakingGradedWordIds.add(currentWord.id);
-            earnedXu = 5;
-            masteryInc = 2;
+
+        } else if (speakingCurrentTakeIndex >= speakingMaxTakes) {
+          // All takes exhausted & floor NOT reached -> Penalty
+          if (failBanner) {
+            const syllCount = speakingSyllableCache[currentWord.id] || Math.max(1, Math.ceil((currentWord.term || '').length / 3));
+            const baseXu = Math.max(3, syllCount * 3);
+            const admissionScore = speakingTakes.reduce((a, b) => a + b, 0) / speakingTakes.length;
+            const cfg = getSpeakingDifficultyConfig(currentSpeakingDifficulty);
+            const clueMult = getSpeakingClueMult();
+            const penalty = -Math.round(baseXu * cfg.diffMult * clueMult * (1 - (admissionScore / 100)));
+
+            speakingSessionPointsEarned += penalty;
+            const scoreBadge = document.getElementById('speaking-score-badge');
+            if (scoreBadge) scoreBadge.textContent = `Bài: ${speakingSessionPointsEarned}đ`;
+
+            if (currentWord) {
+              speakingGradedWordIds.add(currentWord.id);
+              const mainIdx = words.findIndex(w => w.id === currentWord.id);
+              if (mainIdx >= 0) {
+                words[mainIdx].masteryScore = Math.max(0, (words[mainIdx].masteryScore || 0) - 5);
+                words[mainIdx].updatedAt = new Date().toISOString();
+              }
+            }
+
+            failBanner.style.display = 'block';
+            failBanner.innerHTML = `<div style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12px; color: #f87171; font-weight: 700;">❌ Hết ${speakingMaxTakes} lượt thu! Trung bình: ${Math.round(admissionScore)}đ < Sàn ${speakingFloorScore}đ → ${penalty} Xu, -5% Thuộc từ</div>`;
+
+            rewardCont.innerHTML = `<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.4);">💸 ${penalty} Xu • 📉 -5% Thuộc từ</span>`;
+            rewardCont.style.display = 'flex';
           }
-          rewardCont.innerHTML = `
-            <span id="spk-reward-badge" class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">
-              🪙 +5 Xu • 📈 +2% Thuộc từ
-            </span>
-          `;
-          playVocaSfx('correct');
+
         } else {
-          // Score < 80: STRICTLY DO NOT GRANT XU OR MASTERY!
+          // Still have takes left, score < floor
+          const remaining = speakingMaxTakes - speakingCurrentTakeIndex;
           rewardCont.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%;">
               <button class="btn btn-primary" onclick="retrySpeakingFromBadge()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 800; font-size: 13px; padding: 9px 20px; border-radius: 24px; box-shadow: 0 4px 14px rgba(245,158,11,0.35); display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-                🔄 Thử lại để lấy +5 Xu (Phím Space)
+                🔄 Thử lại (còn ${remaining} lượt) — Phím Space
               </button>
               <span style="font-size: 11px; color: var(--text-muted);">
-                💡 Cần đạt từ <strong>80/100 điểm</strong> trở lên để nhận Xu và tăng mức thuộc bài!
+                💡 Cần đạt từ <strong>${speakingFloorScore}/100 điểm</strong> để nhận Xu và tăng mức thuộc bài!
               </span>
             </div>
           `;
+          rewardCont.style.display = 'flex';
         }
+      }
 
-        if (earnedXu > 0) {
-          speakingSessionPointsEarned += earnedXu;
-          const scoreBadge = document.getElementById('speaking-score-badge');
-          if (scoreBadge) scoreBadge.textContent = `Bài: +${speakingSessionPointsEarned}đ`;
+      if (speakingCurrentTakeIndex >= speakingMaxTakes) {
+        const micBtn = document.getElementById('btn-speaking-mic');
+        if (micBtn) {
+          micBtn.disabled = true;
+          micBtn.style.opacity = '0.4';
         }
-
-        if (masteryInc > 0 && currentWord) {
-          const mainIdx = words.findIndex(w => w.id === currentWord.id);
-          if (mainIdx >= 0) {
-            words[mainIdx].masteryScore = Math.min(100, (words[mainIdx].masteryScore || 0) + masteryInc);
-            words[mainIdx].updatedAt = new Date().toISOString();
-          }
-        }
-
-        rewardCont.style.display = 'flex';
       }
     }
-
-
 
     function playSpeakingUserAudio() {
       if (speakingAudioBlobUrl) {
