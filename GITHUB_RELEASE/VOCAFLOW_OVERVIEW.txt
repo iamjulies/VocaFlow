@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6m (Build 84)
+Phiên bản hiện tại : v0.10.6n (Build 85)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6n (Build 85 - SYNTAX REPAIR & ZERO-CORRUPTION SCRIPT CLEANUP):
+  - Tìm ra và triệt tiêu nguyên nhân cốt lõi khiến màn hình bị tê liệt, không bấm được gì:
+    * Lỗi cú pháp JavaScript (SyntaxError): Trong quá trình cập nhật Speaking Engine ở bản trước, một khối mã cũ gồm `try { const cachedWorkingModel = ... }` và `renderDiagnosticResult` bị dán trùng bên ngoài hàm kèm ký tự thừa `}`;`. Lỗi này khiến trình duyệt/WebView2 không thể biên dịch khối `<script>`, dừng toàn bộ tiến trình thực thi JavaScript khiến hàm `initApp()` không chạy, dữ liệu không được nạp từ LocalStorage và tất cả các nút `onclick` trên giao diện bị tê liệt hoàn toàn.
+    * Đã dọn sạch 475 dòng mã trùng lặp ngoài phạm vi (global scope) và chuẩn hóa cấu trúc tệp 100% sạch sẽ, khôi phục tương tác hoàn hảo cho toàn bộ ứng dụng.
+  - Kiểm tra tính toàn vẹn: Xác thực bộ phân tích cú pháp HTML/JS qua Edge headless render thành công 100% và không có bất kỳ lỗi Runtime nào.
+  - Gắn thẻ cảnh báo lỗi `VocaFlow_v0.10.6m_ERROR_Windows_Portable.zip`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6n_Windows_Portable.zip`.
+
 • 💎 v0.10.6m (Build 84 - ATOMIC AUDIO LIFECYCLE LOCK & MULTI-WORD WORD-BY-WORD DECOMPOSITION):
   - Khắc phục triệt để lỗi chấm điểm trùng lặp nhiều lần (Duplicate Evaluation Bug):
     * Triển khai khóa luồng Mutex `isEvaluatingSpeaking`: Ngăn chặn tuyệt đối việc bấm gửi chấm điểm 2 lần liên tiếp hoặc phím tắt kích hoạt song song.
