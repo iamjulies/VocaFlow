@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6l (Build 83)
+Phiên bản hiện tại : v0.10.6m (Build 84)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 💎 v0.10.6m (Build 84 - ATOMIC AUDIO LIFECYCLE LOCK & MULTI-WORD WORD-BY-WORD DECOMPOSITION):
+  - Khắc phục triệt để lỗi chấm điểm trùng lặp nhiều lần (Duplicate Evaluation Bug):
+    * Triển khai khóa luồng Mutex `isEvaluatingSpeaking`: Ngăn chặn tuyệt đối việc bấm gửi chấm điểm 2 lần liên tiếp hoặc phím tắt kích hoạt song song.
+    * Giải phóng bộ nhớ Audio tức thì (Burn-on-Success): Khi AI chấm điểm thành công (200 OK), lập tức xóa sạch `speakingAudioBlob`, `speakingCurrentAudioBase64`, `pendingAudioBlob`, `pendingAudioBase64` và ẩn vùng điều khiển thu âm cũ. Một lượt thử (Take) mới CHỈ được phép tạo ra khi người dùng chủ động nhấn "Thu âm lại" hoặc bắt đầu lượt ghi âm mới.
+  - Đại tu toàn diện Prompt & Schema Gemini (Anti-Hallucination & Multi-Word Word-by-Word Engine):
+    * Cố định `temperature: 0.0` trong `generationConfig` để loại bỏ ảo giác.
+    * Tái cấu trúc chuẩn đánh giá cụm từ ghép / nhiều từ vựng (như "Inquiry-based learning"): Đánh giá bóc tách theo từng từ riêng biệt (`wordsBreakdown`) thay vì nhồi nhét vào 3 hộp Onset/Nucleus/Coda gây chuỗi nối ký tự âm đuôi lộn xộn.
+    * Chống lỗi ảo giác phụ âm bật hơi cuối từ: Cấm AI nhận định sai các âm đuôi /ŋ/ (đuôi -ing trong "learning") thành /ŋk/ ("learnink").
+  - Nâng cấp giao diện hiển thị: Thay thế 3 hộp tĩnh bằng Thẻ Viền Âm Vị Động (Word Diagnostic Chips) phân màu Xanh (Chuẩn) / Đỏ (Cần cải thiện) kèm 3 huy hiệu âm học (Trọng âm, Âm đuôi, Nguyên âm) tinh gọn.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6m_Windows_Portable.zip`.
+
 • 🎯 v0.10.6l (Build 83 - REFERENCEERROR RESOLUTION & ZERO-EXCEPTION RUNTIME CERTIFICATION):
   - Tìm ra và triệt tiêu nguyên nhân cốt lõi gây đứng Speaking Mode:
     * Lỗi ReferenceError: Trong hàm `resetSpeakingWordState()` (hàm được gọi đầu tiên khi render mỗi từ), hai biến banner chẩn đoán `failBanner` và `retryBanner` được sử dụng trong câu lệnh `if (failBanner) / if (retryBanner)` nhưng thiếu phần khai báo `const failBanner = ...` và `const retryBanner = ...`. Điều này khiến JavaScript ném ngoại lệ nghiêm trọng `Uncaught ReferenceError: failBanner is not defined` ngay khi khởi tạo bài học, làm chết hoàn toàn tiến trình render bài tập.
