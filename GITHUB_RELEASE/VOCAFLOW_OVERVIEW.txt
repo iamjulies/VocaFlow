@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6f (Build 77)
+Phiên bản hiện tại : v0.10.6g (Build 78)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🌟 v0.10.6g (Build 78 - MEDIUM MODE DETERMINISTIC CLUE TOGGLE, WORD DETAILS BOX & ACTION BUTTONS REORGANIZATION):
+  - Khắc phục triệt để chọn manh mối Cấp độ TRUNG BÌNH (Medium Mode Toggle):
+    * Tái cấu trúc logic hoán đổi tổ hợp (Combination Swapper) cho Medium (2/3 manh mối). Bất kỳ thao tác click nào vào các nút manh mối đều chuyển đổi mượt mà và tức thì giữa 3 tổ hợp: Nghĩa+IPA (x2.25), Nghĩa+Âm mẫu (x1.875), IPA+Âm mẫu (x1.5).
+  - Loại bỏ hoàn toàn dòng ví dụ tiếng Anh khỏi Thẻ Luyện Nói trong lúc luyện tập:
+    * Dòng ví dụ câu ngữ cảnh không còn xuất hiện trong lúc thu âm/luyện phát âm để tránh làm lộ từ tiếng Anh và gợi ý trước đáp án.
+  - Tích hợp Hộp Thông Tin Từ Vựng Chi Tiết (Word Full Details Box) sau khi đạt điểm sàn:
+    * Sau khi đạt điểm sàn (hoặc hoàn tất số lượt thu), hiển thị hộp thông tin mở rộng đầy đủ chuẩn VocaFlow (như bên Spelling): Thuật ngữ, Từ loại, Cấp độ CEFR, Phiên âm IPA, Nút nghe phát âm, Định nghĩa tiếng Việt, Ví dụ câu ngữ cảnh đầy đủ, Từ đồng nghĩa, Trái nghĩa, Cụm từ đi kèm (Collocations), và Ghi chú (Note).
+  - Tái cơ cấu vị trí Cụm 3 Phím Hành Động (Từ Trước, Bỏ qua, Từ Tiếp Theo):
+    * Di chuyển cụm nút hành động lên ngay phía trên hộp Nhận xét (ngay dưới Huy hiệu thưởng Xu và khu vực chấm điểm AI), giúp người học bấm chuyển từ hoặc bỏ qua thuận tiện, tự nhiên mà không cần cuộn trang.
+
 • 🎯 v0.10.6f (Build 77 - HARD MODE RADIO CLUE TOGGLE & CLEAN GATED CLUE VISIBILITY):
   - Khắc phục cơ chế chọn manh mối ở Cấp độ KHÓ (Hard Mode):
     * Cấp độ KHÓ (1/3 manh mối) hoạt động theo cơ chế Radio Switch: Khi người dùng bấm vào bất kỳ manh mối nào (`Nghĩa TV`, `Phiên âm IPA`, hoặc `Âm thanh`), hệ thống lập tức chuyển sang chọn duy nhất manh mối đó (1-click toggle) mà không bị khóa cứng.

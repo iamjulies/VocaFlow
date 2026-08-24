@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6f</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6g</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2444,13 +2444,8 @@
           </div>
 
           <!-- Định Nghĩa Tiếng Việt -->
-          <div id="spk-word-def" style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+          <div id="spk-word-def" style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px;">
             kiên cường, đàn hồi
-          </div>
-
-          <!-- Ví Dụ Ngữ Cảnh -->
-          <div id="spk-word-example" style="font-size: 12.5px; color: var(--text-muted); font-style: italic; max-width: 500px; margin: 0 auto; line-height: 1.4;">
-            “The local economy is remarkably resilient.”
           </div>
         </div>
 
@@ -2554,29 +2549,62 @@
               </div>
             </div>
 
-            <!-- Reward Badge for Speaking Accuracy (Đặt lên trên nhận xét) -->
+            <!-- Reward Badge for Speaking Accuracy -->
             <div id="spk-reward-badge-container" style="display: none; justify-content: center; align-items: center; gap: 6px; margin-bottom: 12px;">
               <span id="spk-reward-badge" class="badge" style="font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">
                 🪙 +5 Xu • 📈 +2% Thuộc từ
               </span>
             </div>
 
+            <!-- ACTION BUTTONS: PREV, SKIP & NEXT WORD (Placed right above feedback) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 12px 0 14px 0;">
+              <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
+                ⏮️ Từ Trước
+              </button>
+              <button class="btn btn-outline" id="btn-spk-skip" onclick="skipSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px; border-color: rgba(245,158,11,0.4); color: #fbbf24;" title="Bỏ qua từ này (còn 3 lượt)">
+                ⏭️ Bỏ qua (3)
+              </button>
+              <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 14px; font-size: 13px;">
+                Từ Tiếp Theo ⏭️
+              </button>
+            </div>
+
             <!-- Vietnamese Specific Feedback Box -->
             <div id="spk-feedback-box" style="background: rgba(99,102,241,0.08); border: 1px dashed rgba(99,102,241,0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a5b4fc; line-height: 1.4; text-align: left;">
               💡 <strong>Nhận xét:</strong> <span id="spk-feedback-text">Phát âm rất rõ ràng, ngữ điệu tự nhiên!</span>
             </div>
+
+            <!-- WORD FULL DETAILS CARD (v0.10.6g - Only shown after floor score / take evaluation) -->
+            <div id="spk-word-details-box" style="display: none; width: 100%; margin-top: 14px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <strong id="spk-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
+                  <span id="spk-detail-pos" class="badge badge-pos">POS</span>
+                  <span id="spk-detail-cefr" class="badge badge-cefr">CEFR</span>
+                  <span id="spk-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
+                </div>
+                <button class="btn btn-outline btn-icon" onclick="speakCurrentSpeakingWord(true)" style="width: 32px; height: 32px; border-radius: 50%;" title="Nghe phát âm">
+                  <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+                </button>
+              </div>
+
+              <div id="spk-detail-def" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Định nghĩa tiếng Việt</div>
+              <div id="spk-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
+              
+              <div id="spk-detail-meta" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text);"></div>
+            </div>
           </div>
         </div>
 
-        <!-- BOTTOM ACTION BUTTONS: PREV, SKIP & NEXT WORD (v0.10.6d) -->
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-          <button class="btn btn-outline" id="btn-spk-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
+        <!-- IDLE ACTION BUTTONS: PREV, SKIP & NEXT WORD (Visible when not evaluated) -->
+        <div id="spk-idle-nav-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <button class="btn btn-outline" id="btn-spk-idle-prev" onclick="prevSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px;">
             ⏮️ Từ Trước
           </button>
-          <button class="btn btn-outline" id="btn-spk-skip" onclick="skipSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px; border-color: rgba(245,158,11,0.4); color: #fbbf24;" title="Bỏ qua từ này (còn 3 lượt)">
+          <button class="btn btn-outline" id="btn-spk-idle-skip" onclick="skipSpeakingWord()" style="flex: 1; justify-content: center; padding: 10px 14px; font-weight: 700; font-size: 13px; border-color: rgba(245,158,11,0.4); color: #fbbf24;" title="Bỏ qua từ này (còn 3 lượt)">
             ⏭️ Bỏ qua (3)
           </button>
-          <button class="btn btn-primary" id="btn-spk-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 14px; font-size: 13px;">
+          <button class="btn btn-primary" id="btn-spk-idle-next" onclick="nextSpeakingWord()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 10px 14px; font-size: 13px;">
             Từ Tiếp Theo ⏭️
           </button>
         </div>
@@ -4433,7 +4461,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6f</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6g</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13443,29 +13471,32 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       if (diff === 'medium') {
-        const curKeys = ['def','ipa','audio'];
-        const activeKeys = curKeys.filter(k => !!document.getElementById('speaking-chk-' + k)?.checked);
-        const isCurrentlyChecked = activeKeys.includes(clueKey);
+        // Combinations: A: def+ipa, B: def+audio, C: ipa+audio
+        const isDef = !!speakingCluesConfig.def;
+        const isIpa = !!speakingCluesConfig.ipa;
+        const isAudio = !!speakingCluesConfig.audio;
 
-        if (!isCurrentlyChecked) {
-          // Turning ON clueKey -> if already 2 active, drop the second one to keep exactly 2
-          if (activeKeys.length >= 2) {
-            const keyToDrop = activeKeys[1];
-            speakingCluesConfig[keyToDrop] = false;
+        if (clueKey === 'audio') {
+          if (!isAudio) {
+            speakingCluesConfig = { def: isDef || !isIpa, ipa: false, audio: true };
+          } else {
+            speakingCluesConfig = { def: true, ipa: true, audio: false };
           }
-          speakingCluesConfig[clueKey] = true;
-        } else {
-          // Turning OFF clueKey -> if only 1 left, prevent turning off
-          if (activeKeys.length <= 1) {
-            const chk = document.getElementById('speaking-chk-' + clueKey);
-            if (chk) chk.checked = true;
-            showToast('⚠️ Cấp độ Trung Bình cần chọn 2 manh mối!');
-            return;
+        } else if (clueKey === 'ipa') {
+          if (!isIpa) {
+            speakingCluesConfig = { def: isDef || !isAudio, ipa: true, audio: false };
+          } else {
+            speakingCluesConfig = { def: true, ipa: false, audio: true };
           }
-          speakingCluesConfig[clueKey] = false;
+        } else if (clueKey === 'def') {
+          if (!isDef) {
+            speakingCluesConfig = { def: true, ipa: true, audio: false };
+          } else {
+            speakingCluesConfig = { def: false, ipa: true, audio: true };
+          }
         }
 
-        curKeys.forEach(k => {
+        ['def','ipa','audio'].forEach(k => {
           const c = document.getElementById('speaking-chk-' + k);
           if (c) c.checked = !!speakingCluesConfig[k];
           updateSpeakingClueUI(k, !!speakingCluesConfig[k]);
@@ -13706,9 +13737,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const btnPrev = document.getElementById('btn-spk-prev');
       if (btnPrev) btnPrev.disabled = (currentSpeakingIndex === 0);
+      const btnIdlePrev = document.getElementById('btn-spk-idle-prev');
+      if (btnIdlePrev) btnIdlePrev.disabled = (currentSpeakingIndex === 0);
 
       const skipBtn = document.getElementById('btn-spk-skip');
       if (skipBtn) skipBtn.textContent = `⏭️ Bỏ qua (${speakingWordSkipsLeft})`;
+      const skipBtnIdle = document.getElementById('btn-spk-idle-skip');
+      if (skipBtnIdle) skipBtnIdle.textContent = `⏭️ Bỏ qua (${speakingWordSkipsLeft})`;
 
       if (listenBadge) {
         const remaining = Math.max(0, speakingMaxListens - speakingListensUsed);
@@ -13831,6 +13866,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const failBanner = document.getElementById('spk-fail-banner');
       const retryBanner = document.getElementById('spk-network-error-banner');
 
+      const detailsBox = document.getElementById('spk-word-details-box');
+      const idleNavBar = document.getElementById('spk-idle-nav-bar');
+
       if (resultPanel) resultPanel.style.display = 'none';
       if (aiLoading) aiLoading.style.display = 'none';
       if (aiContent) aiContent.style.display = 'none';
@@ -13839,6 +13877,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (floorBanner) floorBanner.style.display = 'none';
       if (failBanner) failBanner.style.display = 'none';
       if (retryBanner) retryBanner.style.display = 'none';
+      if (detailsBox) detailsBox.style.display = 'none';
+      if (idleNavBar) idleNavBar.style.display = 'flex';
     }
 
     async function toggleSpeakingRecord() {
@@ -14681,6 +14721,42 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           `;
           rewardCont.style.display = 'flex';
         }
+      }
+
+      // Hide idle navigation bar since buttons are now inside result panel
+      const idleNavBar = document.getElementById('spk-idle-nav-bar');
+      if (idleNavBar) idleNavBar.style.display = 'none';
+
+      // Render Full Word Details Card if floor reached or all takes exhausted (v0.10.6g)
+      const detailsBox = document.getElementById('spk-word-details-box');
+      if (detailsBox && currentWord && (speakingFloorReached || speakingCurrentTakeIndex >= speakingMaxTakes)) {
+        const detailTerm = document.getElementById('spk-detail-term');
+        const detailPos = document.getElementById('spk-detail-pos');
+        const detailCefr = document.getElementById('spk-detail-cefr');
+        const detailPhonetic = document.getElementById('spk-detail-phonetic');
+        const detailDef = document.getElementById('spk-detail-def');
+        const detailEx = document.getElementById('spk-detail-example');
+        const detailMeta = document.getElementById('spk-detail-meta');
+
+        if (detailTerm) detailTerm.textContent = currentWord.term || '';
+        if (detailPos) detailPos.textContent = currentWord.partOfSpeech || 'noun';
+        if (detailCefr) {
+          detailCefr.textContent = currentWord.cefrLevel || currentWord.level || 'B1';
+          detailCefr.className = `badge badge-level-${(currentWord.cefrLevel || currentWord.level || 'b1').toLowerCase()}`;
+        }
+        if (detailPhonetic) detailPhonetic.textContent = currentWord.phonetic || '';
+        if (detailDef) detailDef.textContent = currentWord.definitionVi || currentWord.definition || '';
+        if (detailEx) detailEx.textContent = (currentWord.exampleSentence || currentWord.example) ? `“${currentWord.exampleSentence || currentWord.example}”` : '';
+
+        let metaHtml = '';
+        if (currentWord.synonyms && currentWord.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(currentWord.synonyms.join(', '))}</div>`;
+        if (currentWord.antonyms && currentWord.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(currentWord.antonyms.join(', '))}</div>`;
+        if (currentWord.collocations && currentWord.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(currentWord.collocations.join(', '))}</div>`;
+        if (currentWord.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(currentWord.note)}</div>`;
+        if (detailMeta) {
+          detailMeta.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
+        }
+        detailsBox.style.display = 'block';
       }
 
       if (speakingCurrentTakeIndex >= speakingMaxTakes) {
