@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6n (Build 85)
+Phiên bản hiện tại : v0.10.6o (Build 86)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,25 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 💎 v0.10.6o (Build 86 - SPEAKING UX OVERHAUL, STATE LOCKING & MICROPHONE LIFECYCLE REPAIR):
+  - Khóa nút "Từ Tiếp Theo" (Next Button Locking Engine):
+    * Nút "Từ Tiếp Theo" bị vô hiệu hóa (disabled = true, opacity 0.4) cho đến khi người học đạt điểm sàn bài học HOẶC đã dùng hết số lượt thu âm quy định.
+    * Người học không thể tự ý chuyển từ khi chưa đạt chuẩn, trừ khi sử dụng trợ giúp "Bỏ qua (Skip)" (tối đa 3 lượt/phiên).
+  - Khôi phục kết quả đã chấm khi bấm "Từ Trước" (Read-Only History State):
+    * Giữ nút "Từ Trước" và lưu trữ lịch sử chấm điểm trong phiên học (`speakingWordHistoryMap`).
+    * Khi quay lại từ cũ: Hiển thị lại toàn bộ kết quả chấm, nhận xét, chi tiết từ và khóa nút Thu âm (Read-Only Mode) để ngăn chặn hành vi lợi dụng hack xu.
+  - Đồng bộ hóa chặt chẽ giữa Điểm số và Nhận xét (Scoring & Feedback Harmony):
+    * Điểm 95-100: Phát âm hoàn hảo, nhận xét khen ngợi trọn vẹn.
+    * Điểm 80-94: BẮT BUỘC chỉ rõ điểm trừ/điểm cần cải thiện dù là nhỏ nhất (độ nối âm, ngữ điệu, âm đuôi nhẹ...) trong nhận xét, tuyệt đối không khen hoàn hảo nếu bị trừ điểm.
+    * Điểm < 80: Chỉ rõ âm sai, vần sai hoặc mất âm để người học khắc phục.
+  - Đại tu Màn hình Kết thúc Luyện Nói (`modal-speaking-result`):
+    * Thiết kế giao diện đẳng cấp tương đương Quiz/Spelling với 4 ô thông số (Đạt sàn %, Điểm nhận được, Thời gian, Điểm phát âm TB).
+    * Bổ sung hiệu ứng pháo hoa Canvas sống động (`launchSpeakingFireworks`) và cơ chế tắt âm pháo hoa ngay lập tức khi đóng modal/thoát.
+  - Sửa lỗi Micro làm phóng đại/biến dạng âm lượng hệ điều hành:
+    * Cấu hình Audio Constraints chuẩn: `autoGainControl: false, echoCancellation: true, noiseSuppression: true`.
+    * Giải phóng ngay lập tức các Track của Microphone (`track.stop()`) ngay khi dừng ghi âm, khôi phục âm lượng hệ thống tự nhiên tức thì.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6o_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6n (Build 85 - SYNTAX REPAIR & ZERO-CORRUPTION SCRIPT CLEANUP):
   - Tìm ra và triệt tiêu nguyên nhân cốt lõi khiến màn hình bị tê liệt, không bấm được gì:
     * Lỗi cú pháp JavaScript (SyntaxError): Trong quá trình cập nhật Speaking Engine ở bản trước, một khối mã cũ gồm `try { const cachedWorkingModel = ... }` và `renderDiagnosticResult` bị dán trùng bên ngoài hàm kèm ký tự thừa `}`;`. Lỗi này khiến trình duyệt/WebView2 không thể biên dịch khối `<script>`, dừng toàn bộ tiến trình thực thi JavaScript khiến hàm `initApp()` không chạy, dữ liệu không được nạp từ LocalStorage và tất cả các nút `onclick` trên giao diện bị tê liệt hoàn toàn.
