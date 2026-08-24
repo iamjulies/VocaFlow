@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6g (Build 78)
+Phiên bản hiện tại : v0.10.6h (Build 79)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 💎 v0.10.6h (Build 79 - ACTION BUTTONS PLACEMENT, UNLIMITED POST-PASS AUDIO & RECORDING ANTI-CHEAT):
+  - Chuẩn hóa vị trí Cụm 3 Phím Hành Động (Từ Trước, Bỏ qua, Từ Tiếp Theo):
+    * Di chuyển cụm nút điều hướng nằm ngay bên dưới Khung Microphone & Nút "Chấm Điểm AI", và nằm phía trên Khung Kết Quả Đánh Giá AI. Cụm nút luôn cố định, trực quan, dễ thao tác ngay sau khi thu âm/chấm điểm mà không bị lọt vào giữa các khối chẩn đoán âm vị.
+  - Mở khóa Loa phát âm không giới hạn (Unlimited Audio) sau khi vượt điểm sàn:
+    * Khi người dùng đã đạt điểm sàn (hoặc xem Hộp thông tin chi tiết từ vựng), nút loa trên hộp thông tin và nút loa trên thẻ từ đều cho phép nghe phát âm chuẩn bản xứ tự do không bị trừ quota hay báo hết lượt.
+  - Thiết lập cơ chế Chống Gian Lận (Anti-Cheat) nghiêm ngặt trong lúc thu âm:
+    * Khi microphone đang hoạt động (`isSpeakingRecording === true`): Cấm tuyệt đối việc mở âm thanh mẫu hoặc nghe âm vị. Toàn bộ tiến trình TTS lập tức bị hủy (`cancel`), các nút loa bị vô hiệu hóa tạm thời để đảm bảo tính công bằng và chính xác khi đánh giá phản xạ phát âm.
+
 • 🌟 v0.10.6g (Build 78 - MEDIUM MODE DETERMINISTIC CLUE TOGGLE, WORD DETAILS BOX & ACTION BUTTONS REORGANIZATION):
   - Khắc phục triệt để chọn manh mối Cấp độ TRUNG BÌNH (Medium Mode Toggle):
     * Tái cấu trúc logic hoán đổi tổ hợp (Combination Swapper) cho Medium (2/3 manh mối). Bất kỳ thao tác click nào vào các nút manh mối đều chuyển đổi mượt mà và tức thì giữa 3 tổ hợp: Nghĩa+IPA (x2.25), Nghĩa+Âm mẫu (x1.875), IPA+Âm mẫu (x1.5).
