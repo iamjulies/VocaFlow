@@ -23,11 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
-• 🚀 v0.10.6i (Build 80 - SPEAKING LAUNCH UNBLOCK & WORD RESOLUTION ENGINE FIX):
-  - Khắc phục triệt để lỗi không vào được Chế độ Luyện Nói khi bấm "Bắt Đầu Luyện Nói":
-    * Loại bỏ rào cản kiểm tra đăng nhập chặn người dùng khi chọn Cấp độ Trung Bình hoặc Khó trong modal thiết lập Luyện Nói (`selectSpeakingSetupDifficulty`), giúp mọi người dùng Web và Windows Desktop Offline vào học ngay lập tức.
-    * Nâng cấp cơ chế phân giải danh sách từ vựng (`startSpeakingMode` & `openSpeakingSetupModal`): Đồng bộ chuẩn hóa với các chế độ Spelling và Quiz, tự động lấy danh sách từ theo bộ lọc đang mở (`getFilteredDeckWords()`), từ được tick chọn hoặc toàn bộ từ trong deck một cách trơn tru, không bao giờ bị chặn hay kẹt màn hình.
-  - Đồng bộ cập nhật gói phát hành ZIP portable v0.10.6i và gắn nhãn cập nhật bản sửa lỗi.
+• 🚀 v0.10.6i (Build 80 - SPEAKING START RUNTIME ERROR FIX & ERROR-TAGGED ARCHIVE):
+  - Khắc phục triệt để lỗi runtime khi bấm "Bắt Đầu Luyện Nói":
+    * Nguyên nhân gốc rễ: Trong bản v0.10.6h khi tái cấu trúc cụm nút hành động và dọn dẹp các thanh điều hướng cũ (`#spk-idle-nav-bar`), hàm `renderSpeakingCurrentWord` vẫn còn sót lệnh truy cập thuộc tính `disabled` trên phần tử đã loại bỏ (`btnIdlePrev.disabled`), dẫn đến lỗi JavaScript fatal `TypeError: Cannot set properties of null (setting 'disabled')` làm tiến trình mở bài tập bị ngắt hoàn toàn ngay khi nhấn Bắt đầu.
+    * Đã loại bỏ toàn bộ các tham chiếu cũ mồ côi, bổ sung guard check `if (btnPrev)` và `if (skipBtn)` cho 100% phần tử điều hướng để bài tập luôn render tức thì, ổn định và chính xác.
+    * Chuẩn hóa kiểm tra tài khoản `isGuest()` đồng bộ với các chế độ Spelling/Quiz (người dùng đã đăng nhập tự do chọn cấp độ Trung Bình / Khó mà không gặp bất kỳ cảnh báo sai lệch nào).
+  - Đổi tên và gắn thẻ lỗi phiên bản gặp sự cố: `VocaFlow_v0.10.6h_ERROR_Windows_Portable.zip` trong thư mục GITHUB_RELEASE để người dùng phân biệt rõ ràng.
 
 • 💎 v0.10.6h (Build 79 - ACTION BUTTONS PLACEMENT, UNLIMITED POST-PASS AUDIO & RECORDING ANTI-CHEAT):
   - Chuẩn hóa vị trí Cụm 3 Phím Hành Động (Từ Trước, Bỏ qua, Từ Tiếp Theo):

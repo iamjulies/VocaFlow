@@ -13387,6 +13387,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function selectSpeakingSetupDifficulty(diff) {
+      if (diff !== 'easy' && isGuest()) {
+        alert('🔒 Cấp độ Trung Bình và Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+        openAuthModal('login');
+        return;
+      }
       selectedSpeakingSetupDifficulty = diff || 'easy';
       ['easy','medium','hard'].forEach(d => {
         const card = document.getElementById('speaking-diff-card-' + d);
@@ -13512,6 +13517,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function openSpeakingSetupModal(useSelection, customWordList) {
       speakingSetupUseSelection = useSelection || false;
       speakingSetupCustomWordList = customWordList || null;
+      if (isGuest() && currentSpeakingDifficulty !== 'easy') {
+        currentSpeakingDifficulty = 'easy';
+      }
       selectedSpeakingSetupDifficulty = currentSpeakingDifficulty || 'easy';
       ['def','ipa','audio'].forEach(k => {
         const chk = document.getElementById('speaking-chk-' + k);
