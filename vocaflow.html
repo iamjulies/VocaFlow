@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6k</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6l</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -2447,6 +2447,9 @@
           <div id="spk-word-def" style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px;">
             kiên cường, đàn hồi
           </div>
+
+          <!-- Câu Ví Dụ (Gợi Ý) -->
+          <div id="spk-word-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-top: 4px; display: none;"></div>
         </div>
 
         <!-- KHU VỰC MICROPHONE THU ÂM TRỰC QUAN -->
@@ -4448,7 +4451,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6k</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6l</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13919,6 +13922,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const rewardCont = document.getElementById('spk-reward-badge-container');
       const takeHistEl = document.getElementById('spk-take-history');
       const floorBanner = document.getElementById('spk-floor-banner');
+      const failBanner = document.getElementById('spk-fail-banner');
+      const retryBanner = document.getElementById('spk-network-error-banner');
       const detailsBox = document.getElementById('spk-word-details-box');
       const speakerBtn = document.getElementById('btn-spk-speaker');
       if (speakerBtn) {

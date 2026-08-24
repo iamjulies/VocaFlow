@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6k (Build 82)
+Phiên bản hiện tại : v0.10.6l (Build 83)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🎯 v0.10.6l (Build 83 - REFERENCEERROR RESOLUTION & ZERO-EXCEPTION RUNTIME CERTIFICATION):
+  - Tìm ra và triệt tiêu nguyên nhân cốt lõi gây đứng Speaking Mode:
+    * Lỗi ReferenceError: Trong hàm `resetSpeakingWordState()` (hàm được gọi đầu tiên khi render mỗi từ), hai biến banner chẩn đoán `failBanner` và `retryBanner` được sử dụng trong câu lệnh `if (failBanner) / if (retryBanner)` nhưng thiếu phần khai báo `const failBanner = ...` và `const retryBanner = ...`. Điều này khiến JavaScript ném ngoại lệ nghiêm trọng `Uncaught ReferenceError: failBanner is not defined` ngay khi khởi tạo bài học, làm chết hoàn toàn tiến trình render bài tập.
+    * Đã bổ sung đầy đủ khai báo DOM cho `failBanner` (`#spk-fail-banner`) và `retryBanner` (`#spk-network-error-banner`).
+    * Bổ sung phần tử DOM còn thiếu `#spk-word-example` trong thẻ từ vựng của màn hình Speaking.
+  - Quét toàn diện AST/Lexer: Đảm bảo 64/64 DOM IDs của Speaking Engine tồn tại chính xác trong HTML và 0 lỗi biến chưa khai báo.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6l_Windows_Portable.zip`.
+
 • 🌟 v0.10.6k (Build 82 - ROBUST SPEAKING SETUP RE-ARCHITECTURE & ERROR-TAGGED LEGACY BUILDS):
   - Tái cấu trúc chuẩn hóa toàn bộ luồng khởi động Luyện Nói (Speaking Startup Flow):
     * Đồng bộ 100% cơ chế xử lý của `openSpeakingSetupModal`, `selectSpeakingSetupDifficulty`, `confirmStartSpeakingFromModal` và `startSpeakingMode` theo chuẩn kiến trúc ổn định đã được kiểm chứng của `modal-spelling-setup` và `modal-quiz-setup`.
