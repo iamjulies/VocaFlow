@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6d (Build 75)
+Phiên bản hiện tại : v0.10.6e (Build 76)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,24 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• ⚡ v0.10.6e (Build 76 - DIFFICULTY CLUES AUTO-ADJUSTMENT & LISTEN QUOTA CALIBRATION):
+  - Sửa lỗi chuyển đổi cấp độ trong Modal Thiết Lập Luyện Nói (`modal-speaking-setup`):
+    * Tự động điều chỉnh số lượng manh mối khi chuyển cấp độ:
+      • Chuyển sang 🟡 TRUNG BÌNH: Tự động giữ đúng 2/3 manh mối mặc định (`[Nghĩa TV]` + `[Phiên âm IPA]`, tắt Âm thanh).
+      • Chuyển sang 🔴 KHÓ: Tự động giữ đúng 1/3 manh mối mặc định (`[Nghĩa TV]`, tắt IPA & Âm thanh).
+      • Chuyển sang 🟢 DỄ: Tự động khôi phục trọn vẹn 3/3 manh mối (`[Nghĩa TV]` + `[Phiên âm IPA]` + `[Âm thanh]`).
+  - Khắc phục triệt để tính toán Hệ Số Tổ Hợp & Multiplier Badge:
+    * Truyền chính xác cấp độ đang được chọn trong modal (`selectedSpeakingSetupDifficulty`) vào hàm tính hệ số tổ hợp `getSpeakingTotalMult()`.
+    * Cấp độ DỄ (Easy) với 3/3 manh mối luôn hiển thị chuẩn xác `🎯 3/3 manh mối (x1.0)`.
+    * Cấp độ Trung Bình & Khó hiển thị chính xác các tổ hợp (x1.5, x1.875, x2.25, x2.0, x2.5, x3.0).
+  - Chuẩn hóa Quota Nghe Mẫu Bản Xứ & Tự Động Phát (Autoplay Listen Quota):
+    * Lần tự động phát (Autoplay) đầu tiên khi mở từ được tính là 1 lượt nghe trong tổng quota.
+    * Quota hiển thị ngay số lượt còn lại để bấm thủ công:
+      • Dễ: Tổng 5 lượt (1 auto + 4 bấm tay) ➔ Ban đầu hiển thị `(4/5)`.
+      • Trung bình: Tổng 4 lượt (1 auto + 3 bấm tay) ➔ Ban đầu hiển thị `(3/4)`.
+      • Khó: Tổng 3 lượt (1 auto + 2 bấm tay) ➔ Ban đầu hiển thị `(2/3)`.
+    * Tự động ẩn nút loa khi người dùng tắt manh mối Âm thanh trong cấp độ Trung bình / Khó.
+
 • 🎙️ v0.10.6d (Build 75 - AI SPEAKING MULTI-TAKE ECONOMY & DIFFICULTY ENGINE: Cấp Độ Thử Thách, Điểm Sàn & Bảo Toàn Giao Dịch):
   - Ra mắt Modal Thiết Lập Luyện Nói AI (`modal-speaking-setup`):
     * 3 Cấp độ Thử thách:
