@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6j (Build 81)
+Phiên bản hiện tại : v0.10.6k (Build 82)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🌟 v0.10.6k (Build 82 - ROBUST SPEAKING SETUP RE-ARCHITECTURE & ERROR-TAGGED LEGACY BUILDS):
+  - Tái cấu trúc chuẩn hóa toàn bộ luồng khởi động Luyện Nói (Speaking Startup Flow):
+    * Đồng bộ 100% cơ chế xử lý của `openSpeakingSetupModal`, `selectSpeakingSetupDifficulty`, `confirmStartSpeakingFromModal` và `startSpeakingMode` theo chuẩn kiến trúc ổn định đã được kiểm chứng của `modal-spelling-setup` và `modal-quiz-setup`.
+    * Khắc phục triệt để lỗi bất đồng bộ khi kiểm tra tài khoản lúc mở modal (`openSpeakingSetupModal`), tự động chọn cấp độ an toàn và chỉ mở popup đăng nhập khi người dùng Guest chủ động click đổi độ khó bên trong modal.
+    * Đảm bảo danh sách từ vựng luyện tập (`deckWords`) luôn được nạp đầy đủ và chính xác từ Deck hiện tại hoặc Hàng đợi ôn tập.
+  - Tự động kiểm tra và biên dịch lại bộ nhị phân Windows Native `VocaFlow.exe` (.NET 8 + WebView2).
+  - Đóng gói file ZIP phát hành mới `VocaFlow_v0.10.6k_Windows_Portable.zip` và phân loại rõ ràng các bản lỗi cũ với thẻ `_ERROR`.
+
 • ⚡ v0.10.6j (Build 81 - FRESH NATIVE BINARY REBUILD & SPEAKING ENGINE CERTIFIED):
   - Biên dịch lại hoàn toàn bộ nhị phân Windows Native (`VocaFlow.exe` - .NET 8 + WebView2):
     * Giải quyết nguyên nhân file `VocaFlow.exe` giữ ngày sửa cũ (19/08/2026) do trước đó tiến trình `VocaFlow.exe` chạy ngầm trong hệ thống khóa quyền ghi đè. Đã kill process ngầm, rebuild & publish nhị phân mới tinh với timestamp ngày hôm nay.
