@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7d-1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7e</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4560,7 +4560,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7d-1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7e</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4744,6 +4744,7 @@
 
         <div style="display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; max-width: 100%;" id="lib-category-tabs">
           <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="following" onclick="setLibraryCategory('following')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px; border-color: rgba(56,189,248,0.4); color: #38bdf8; background: rgba(56,189,248,0.08);">👥 Đang Theo Dõi (<span id="lib-count-following">0</span>)</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🏫 Cấp 2</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thpt" onclick="setLibraryCategory('thpt')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📘 Cấp 3</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📜 Chứng Chỉ</button>
@@ -18858,10 +18859,14 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function renderLibraryDecks() {
       const container = document.getElementById('library-deck-list');
       const countAllEl = document.getElementById('lib-count-all');
+      const countFollowingEl = document.getElementById('lib-count-following');
       if (!container) return;
 
       const allDecks = getAllLibraryDecks();
       if (countAllEl) countAllEl.textContent = allDecks.length;
+      if (countFollowingEl) {
+        countFollowingEl.textContent = allDecks.filter(d => d.authorUid && myFollowingMap[d.authorUid]).length;
+      }
 
       const query = (document.getElementById('library-search-input')?.value || '').toLowerCase().trim();
 
@@ -18875,8 +18880,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           if (!isDeckAuthor(deck)) return false;
         }
 
-        // Category Filter
-        if (currentLibraryCategory === 'thcs') {
+        // Category Filter (v0.10.7e: Following Filter)
+        if (currentLibraryCategory === 'following') {
+          const authorUid = deck.authorUid;
+          if (!authorUid || !myFollowingMap[authorUid]) return false;
+        } else if (currentLibraryCategory === 'thcs') {
           if (!['THCS', '6', '7', '8', '9'].includes(cat) && ![6, 7, 8, 9].includes(grade) && !['lớp 6', 'lớp 7', 'lớp 8', 'lớp 9', 'thcs'].some(t => title.includes(t))) return false;
         } else if (currentLibraryCategory === 'thpt') {
           if (!['THPT', '10', '11', '12'].includes(cat) && ![10, 11, 12].includes(grade) && !['lớp 10', 'lớp 11', 'lớp 12', 'thpt'].some(t => title.includes(t))) return false;
@@ -18901,13 +18909,23 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
-            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-            <div style="font-size: 14px; font-weight: 600;">Không tìm thấy bộ từ nào phù hợp</div>
-            <div style="font-size: 12px; margin-top: 4px;">Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút làm mới.</div>
-          </div>
-        `;
+        if (currentLibraryCategory === 'following') {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+              <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
+              <div style="font-size: 14.5px; font-weight: 700; color: var(--text);">Bạn chưa theo dõi tác giả nào hoặc tác giả chưa đăng bộ từ mới</div>
+              <div style="font-size: 12px; margin-top: 6px; color: var(--text-muted); line-height: 1.5;">Hãy theo dõi các pháp sư tạo bộ từ trong Thư Viện để cập nhật nội dung mới nhất!</div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+              <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+              <div style="font-size: 14px; font-weight: 600;">Không tìm thấy bộ từ nào phù hợp</div>
+              <div style="font-size: 12px; margin-top: 4px;">Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút làm mới.</div>
+            </div>
+          `;
+        }
         return;
       }
 
@@ -18938,8 +18956,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
               <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
-              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
+                ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
+                  <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận bộ từ mới'}">
+                    ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
+                  </button>
+                ` : '' }
               </div>
             </div>
 
