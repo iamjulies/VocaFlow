@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6r</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6s</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4487,7 +4487,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6r</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6s</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -14459,40 +14459,42 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const needSyllable = !speakingSyllableCache[currentWord.id];
 
-      const prompt = `You are an ELSA-grade AI Speech Assessment Engine, Acoustic Classifier, and Oxford Phonetics Specialist for Vietnamese English learners.
+      const prompt = `You are a certified Oxford Phonetician and ELSA-grade AI Speech Assessment Engine for English learners.
 
 TARGET WORD/PHRASE: "${currentWord.term}"
 REFERENCE IPA: "${currentWord.phonetic || ''}"
-DEFINITION: "${currentWord.definitionVi || ''}"
+MEANING: "${currentWord.definitionVi || ''}"
 
 ═══════════════════════════════════════════════════════
-ACOUSTIC EVALUATION RULES:
+OBJECTIVE & FAIR PHONETIC CRITERIA:
 ═══════════════════════════════════════════════════════
-1. SILENCE / NOISE DETECTION:
-- If audio is silent, background static, breathing, coughing, or NOT English speech:
-  → score: 0, verdict: "Không có giọng nói", detectedTranscript: "(silence)".
+1. ACCURATE SCORING CRITERIA:
+- 90 - 100 ("Xuất sắc" / "Rất tốt"): Clear, accurate, and fully intelligible pronunciation. Stress is placed on the correct syllable. All required phonemes (vowels, initial consonants, consonant clusters, and final stops/nasals/fricatives) are present and clear.
+  * IMPORTANT: If the speech is clear, natural, and correct, AWARD 90-100! Do NOT artificially deduct points down to 80s for minor accent variations.
+  * Feedback must be purely positive, encouraging, and highlight correct pronunciation.
 
-2. MULTI-WORD & WORD-BY-WORD DECOMPOSITION:
-- For compound words or phrases (e.g. "Inquiry-based learning", "laid-back", "take off"):
-  → Evaluate each word individually in "wordsBreakdown".
-  → NEVER concatenate codas/onsets across different words into a single merged list!
-  → Evaluate natural speech linking (liaison) between words.
-- For single words:
-  → Provide the word in "wordsBreakdown" with its IPA and syllable/phoneme feedback.
+- 75 - 89 ("Khá tốt" / "Đạt"): Understandable and generally correct, but with a REAL, identifiable phonetic inaccuracy (e.g. slight confusion between /iː/ and /ɪ/, /e/ and /æ/, /θ/ vs /s/, or reduced vowel omitted).
+  * Feedback MUST pinpoint the EXACT phoneme and provide concrete tongue/mouth placement tips.
 
-3. CRITICAL SCORING & FEEDBACK HARMONY (STRICT):
-- SCORE 95-100 ("Xuất sắc"): Pronunciation is virtually flawless and near-native. "feedbackVi" MUST be purely complimentary with zero complaints.
-- SCORE 80-94 ("Khá tốt" / "Đạt"): Pronunciation is good and understandable, BUT you MUST explicitly state the minor flaws in "feedbackVi" (e.g. slight hesitation in word linking, weak final stop consonant, or vowel duration slightly off). NEVER give 100% unconditional praise if the score is below 95!
-- SCORE 50-79 ("Cần cải thiện"): Noticeable phoneme errors (dropped ending sound, wrong vowel, or wrong stress). "feedbackVi" MUST clearly identify which specific sound was wrong and how to fix it.
-- SCORE 0-49 ("Chưa chuẩn"): Mispronounced, wrong word, or unintelligible.
-- Anti-Hallucination: DO NOT hallucinate phantom plosive sounds like /k/ at the end of "-ing" (e.g. do NOT falsely claim "learning" was pronounced as "learnink").
+- 50 - 74 ("Cần cải thiện"): Significant phonetic error (e.g. dropped essential final consonant /s, z, t, d, k, l, f, v/, wrong syllable stress, or substituted vowel).
+
+- 0 - 49 ("Chưa chuẩn" / "Không phát hiện"): Wrong word, unintelligible noise, or silence.
+
+2. STRICT LINGUISTIC SANITY RULES (ANTI-HALLUCINATION & ANTI-NITPICKING):
+- RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). In English, nasal endings (like /n/ in "foundation" /faʊnˈdeɪʃn/, "person", "sun") and stop endings are naturally brief closures. Elongating /n/ is unnatural and phonetically incorrect!
+- RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist (e.g., claiming "-ing" has a /k/ sound, or expecting extra sounds not in the IPA).
+- RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British phonetic variations (e.g., rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
+- RULE D (CONSTRUCTIVE FEEDBACK ONLY): If the word is pronounced correctly, say so warmly without inventing artificial flaws.
+
+3. MULTI-WORD & COMPOUND PHRASES:
+- For multi-word phrases (e.g. "aqueous solution", "point out"): evaluate each word individually in "wordsBreakdown".
 
 ${needSyllable ? '4. SYLLABLE COUNT: Count total syllables in the target phrase and return as "syllableCount".\n' : ''}
 ═══════════════════════════════════════════════════════
 RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 ═══════════════════════════════════════════════════════
 {
-  "score": 92,
+  "score": 95,
   "verdict": "Xuất sắc",
   "detectedTranscript": "${currentWord.term}",
   "wordsBreakdown": [
@@ -14508,7 +14510,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     "endingSounds": "Âm đuôi phát âm đầy đủ",
     "vowels": "Nguyên âm chuẩn xác"
   },
-  "feedbackVi": "Nhận xét tiếng Việt cụ thể, hướng dẫn chi tiết người học sửa lỗi phát âm nếu điểm dưới 95"
+  "feedbackVi": "Nhận xét tiếng Việt tự nhiên, khen ngợi nếu đạt 90+, chỉ rõ lỗi thật và cách đặt khẩu hình lưỡi/môi nếu dưới 90"
 }`;
 
       try {

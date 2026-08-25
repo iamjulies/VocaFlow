@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6r (Build 89)
+Phiên bản hiện tại : v0.10.6s (Build 90)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6s (Build 90 - OXFORD-CALIBRATED PHONETIC ASSESSMENT & ANTI-NITPICKING PROMPT):
+  - Chuẩn Hóa Tiêu Chí Chấm Điểm Phát Âm Oxford & ELSA (Anti-Nitpicking Prompt Engineering):
+    * Loại bỏ triệt để tình trạng AI bắt bẻ phi lý (hallucination) như ép "ngân dài âm đuôi /n/" hoặc "kéo dài phụ âm".
+    * Thiết lập quy tắc ngữ âm học chuẩn quốc tế (Strict Linguistic Sanity Rules): Phụ âm mũi (/m, n, ŋ/) và phụ âm tắc (/p, t, k, b, d, g/) ở cuối từ là các âm đóng tự nhiên, không bao giờ được ngân dài.
+    * Thang điểm công bằng (Fair Scoring Matrix): Khi người học phát âm rõ ràng, đúng trọng âm và đầy đủ âm vị, AI lập tức cho 90 - 100 điểm (Xuất sắc) kèm lời khen chân thành, không bị ép dìm điểm xuống 80s để tạo lỗi giả.
+    * Nhận xét tiếng Việt tập trung vào các lỗi ngữ âm thực tế của người Việt (nuốt âm đuôi, sai trọng âm, nhầm nguyên âm đôi), kèm hướng dẫn chuẩn khẩu hình môi/lưỡi.
+  - Xác thực thực nghiệm: Đã kiểm thử prompt và cập nhật toàn diện.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6s_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6r (Build 89 - POST-EVALUATION AUDIO PLAYBACK & STRICT SINGLE-EVAL LOCK):
   - Bảo lưu Bản Thu Âm Để Nghe Lại Sau Khi Chấm Điểm (Post-Evaluation Voice Playback):
     * Giữ nguyên `speakingAudioBlobUrl` và nút `🎧 Nghe lại giọng bạn (Lần X)` sau khi hoàn tất chấm điểm AI.
