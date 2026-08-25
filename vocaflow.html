@@ -1890,9 +1890,14 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7e</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f</span>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
+        <span>🔔</span>
+        <span class="hide-on-mobile">Thông Báo</span>
+        <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
+      </button>
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
         💼 <span class="hide-on-mobile">Studio & Ví</span>
       </button>
@@ -1925,6 +1930,16 @@
 
         <!-- Dropdown Menu -->
         <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
+          <div class="dropdown-item" onclick="openNotificationsModal(); closeHeaderMoreMenu();" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);">
+            <span style="font-size: 16px;">🔔</span>
+            <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #38bdf8;">Thông Báo</div>
+                <small style="color: var(--text-muted); font-size: 10.5px;">Bộ từ mới & tương tác</small>
+              </div>
+              <span id="mobile-notif-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 800;">0</span>
+            </div>
+          </div>
           <div class="dropdown-item" onclick="openWalletStudioModal(); closeHeaderMoreMenu();" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3);">
             <span style="font-size: 16px;">💼</span>
             <div>
@@ -4129,6 +4144,50 @@
     </div>
   </div>
 
+  <!-- MODAL: NOTIFICATIONS CENTER (v0.10.7f) -->
+  <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
+    <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🔔</span>
+          <div>
+            <strong style="font-size: 17px; color: var(--text);">Trung Tâm Thông Báo</strong>
+            <div id="notif-header-subtitle" style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Cập nhật bộ từ mới từ tác giả bạn theo dõi & biến động tài khoản</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- FILTER TABS & BULK ACTIONS -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+        <div style="display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;" id="notif-filter-tabs">
+          <button class="btn btn-sm btn-primary notif-tab-btn active" data-filter="all" onclick="setNotificationFilter('all')" style="font-size: 11.5px; padding: 4px 10px;">Tất cả</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_DECK" onclick="setNotificationFilter('NEW_DECK')" style="font-size: 11.5px; padding: 4px 10px;">📘 Bộ từ mới</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_FOLLOWER" onclick="setNotificationFilter('NEW_FOLLOWER')" style="font-size: 11.5px; padding: 4px 10px;">👥 Tương tác</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="FINANCIAL" onclick="setNotificationFilter('FINANCIAL')" style="font-size: 11.5px; padding: 4px 10px;">💎 Ví Xu</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="markAllNotificationsRead()" title="Đánh dấu tất cả là đã đọc" style="font-size: 11px; padding: 4px 8px; color: #34d399; border-color: rgba(16,185,129,0.3);">
+            ✓ Đã đọc hết
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="clearAllNotifications()" title="Xóa toàn bộ thông báo" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(248,113,113,0.3);">
+            🗑️ Xóa hết
+          </button>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS LIST CONTAINER -->
+      <div id="notifications-list-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; scrollbar-width: thin;">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-notifications')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: SUBSCRIBERS / FOLLOWING LIST (v0.10.7d) -->
   <div class="modal-overlay" id="modal-subscribers-list" style="z-index: 10006;">
     <div class="modal" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column;">
@@ -4560,7 +4619,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7e</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6811,10 +6870,12 @@
         };
       }
       // Auto-trigger sync on load if logged in
+      updateNotificationsUI();
       if (currentUser && currentUser.uid) {
         handleManualSync();
         loadEconomyFromCloud();
         syncFollowStateWithCloud();
+        syncNotificationsWithCloud();
       }
       // Pre-fetch cloud library in background so author profiles are always ready (v0.10.6c)
       fetchCloudLibraryDecks().catch(() => {});
@@ -6919,6 +6980,315 @@
         }
       } catch (e) {
         console.warn('Legacy data migration v0.10.7b note:', e);
+      }
+    }
+
+    // =========================================================================
+    // NOTIFICATION CENTER & ACTIVITY FEED ENGINE (v0.10.7f)
+    // =========================================================================
+    let userNotifications = [];
+    let currentNotificationFilter = 'all';
+
+    try {
+      const savedNotifs = localStorage.getItem('vocaflow_notifications');
+      if (savedNotifs) userNotifications = JSON.parse(savedNotifs) || [];
+    } catch (e) {}
+
+    function addNotification(type, title, message, actionType = null, actionData = null, customId = null) {
+      const notifId = customId || ('notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
+      
+      // Avoid duplicate notifications (e.g. for the same deckId)
+      if (actionType === 'PREVIEW_DECK' && actionData && actionData.deckId) {
+        const existing = userNotifications.find(n => n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === actionData.deckId);
+        if (existing) return existing;
+      }
+
+      const notif = {
+        id: notifId,
+        type: type, // 'NEW_DECK' | 'NEW_FOLLOWER' | 'FINANCIAL' | 'SYSTEM'
+        title: title,
+        message: message,
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        actionType: actionType,
+        actionData: actionData
+      };
+
+      userNotifications.unshift(notif);
+      if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100);
+      localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+      updateNotificationsUI();
+
+      // Cloud backup
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notif.id}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(notif)
+        }).catch(() => {});
+      }
+
+      return notif;
+    }
+
+    async function syncNotificationsWithCloud() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            const cloudList = Object.values(data).filter(n => n && n.id);
+            const map = new Map();
+            userNotifications.forEach(n => map.set(n.id, n));
+            cloudList.forEach(n => {
+              if (!map.has(n.id)) {
+                map.set(n.id, n);
+              } else {
+                if (n.isRead) map.get(n.id).isRead = true;
+              }
+            });
+            userNotifications = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
+            localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+            updateNotificationsUI();
+          }
+        }
+      } catch (e) {
+        console.warn('Notifications cloud sync notice:', e);
+      }
+    }
+
+    function checkFollowedCreatorsNewDecks() {
+      if (!Array.isArray(cloudLibraryDecks) || cloudLibraryDecks.length === 0) return;
+      const followingUids = Object.keys(myFollowingMap || {});
+      if (followingUids.length === 0) return;
+
+      cloudLibraryDecks.forEach(deck => {
+        if (!deck || !deck.authorUid || deck.authorUid === currentUser?.uid) return;
+        if (myFollowingMap[deck.authorUid]) {
+          const authorDisplay = deck.author || (deck.authorUsername ? ('@' + deck.authorUsername) : 'Tác giả');
+          const authorHandle = deck.authorUsername ? ('@' + deck.authorUsername) : '';
+          const notifTitle = `📘 Bộ từ mới từ ${authorHandle || authorDisplay}`;
+          const notifMessage = `Tác giả ${authorDisplay} vừa xuất bản bộ từ mới: "${deck.title}". Nhấn để xem ngay!`;
+          
+          addNotification('NEW_DECK', notifTitle, notifMessage, 'PREVIEW_DECK', {
+            deckId: deck.id,
+            deckTitle: deck.title,
+            author: deck.author,
+            authorUid: deck.authorUid
+          });
+        }
+      });
+    }
+
+    function openNotificationsModal() {
+      updateNotificationsUI();
+      renderNotificationsList();
+      openModal('modal-notifications');
+    }
+
+    function setNotificationFilter(filter) {
+      currentNotificationFilter = filter;
+      document.querySelectorAll('#notif-filter-tabs .notif-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-filter') === filter) {
+          btn.className = 'btn btn-sm btn-primary notif-tab-btn active';
+        } else {
+          btn.className = 'btn btn-sm btn-outline notif-tab-btn';
+        }
+      });
+      renderNotificationsList();
+    }
+
+    function updateNotificationsUI() {
+      const unreadCount = userNotifications.filter(n => !n.isRead).length;
+      
+      const badgeHeader = document.getElementById('header-notif-badge');
+      if (badgeHeader) {
+        if (unreadCount > 0) {
+          badgeHeader.style.display = 'flex';
+          badgeHeader.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        } else {
+          badgeHeader.style.display = 'none';
+        }
+      }
+
+      const badgeMobile = document.getElementById('mobile-notif-badge');
+      if (badgeMobile) {
+        if (unreadCount > 0) {
+          badgeMobile.style.display = 'inline-block';
+          badgeMobile.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        } else {
+          badgeMobile.style.display = 'none';
+        }
+      }
+    }
+
+    function renderNotificationsList() {
+      const container = document.getElementById('notifications-list-container');
+      if (!container) return;
+
+      let list = [...userNotifications];
+      if (currentNotificationFilter !== 'all') {
+        list = list.filter(n => n.type === currentNotificationFilter);
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔔</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text);">Không có thông báo nào</div>
+            <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">Các cập nhật từ tác giả bạn theo dõi và biến động tài khoản sẽ hiển thị tại đây.</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      list.forEach(n => {
+        const isUnread = !n.isRead;
+        let typeIcon = '🔔';
+        let typeColor = '#38bdf8';
+        let typeBg = 'rgba(56,189,248,0.12)';
+        let typeBorder = 'rgba(56,189,248,0.3)';
+
+        if (n.type === 'NEW_DECK') {
+          typeIcon = '📘';
+          typeColor = '#818cf8';
+          typeBg = 'rgba(99,102,241,0.12)';
+          typeBorder = 'rgba(99,102,241,0.3)';
+        } else if (n.type === 'NEW_FOLLOWER') {
+          typeIcon = '👥';
+          typeColor = '#34d399';
+          typeBg = 'rgba(16,185,129,0.12)';
+          typeBorder = 'rgba(16,185,129,0.3)';
+        } else if (n.type === 'FINANCIAL') {
+          typeIcon = '💎';
+          typeColor = '#fbbf24';
+          typeBg = 'rgba(245,158,11,0.12)';
+          typeBorder = 'rgba(245,158,11,0.3)';
+        }
+
+        const timeStr = formatRelativeTime(n.timestamp);
+
+        html += `
+          <div class="notification-item" onclick="handleNotificationClick('${n.id}')" style="background: ${isUnread ? 'rgba(99,102,241,0.08)' : 'var(--surface-elevated)'}; border: 1px solid ${isUnread ? 'rgba(99,102,241,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; transition: all 0.2s; position: relative;">
+            ${isUnread ? '<div style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></div>' : ''}
+            <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 10px; background: ${typeBg}; border: 1px solid ${typeBorder}; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+              ${typeIcon}
+            </div>
+            <div style="flex: 1; min-width: 0; padding-right: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <div style="font-weight: 700; font-size: 13px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'};">${escapeHtml(n.title)}</div>
+              </div>
+              <div style="font-size: 12px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'}; line-height: 1.4; margin-bottom: 4px;">
+                ${escapeHtml(n.message)}
+              </div>
+              <div style="font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                <span>🕒</span> <span>${timeStr}</span>
+                ${n.actionType ? '<span style="color: #38bdf8; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>' : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function formatRelativeTime(isoString) {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+      if (isNaN(diff)) return '';
+      if (diff < 60) return 'Vừa xong';
+      if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+      if (diff < 259200) return `${Math.floor(diff / 86400)} ngày trước`;
+      return date.toLocaleDateString('vi-VN');
+    }
+
+    function handleNotificationClick(notifId) {
+      const notif = userNotifications.find(n => n.id === notifId);
+      if (!notif) return;
+
+      if (!notif.isRead) {
+        notif.isRead = true;
+        localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+        updateNotificationsUI();
+        renderNotificationsList();
+
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notif.id}/isRead.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(true)
+          }).catch(() => {});
+        }
+      }
+
+      closeModal('modal-notifications');
+
+      if (notif.actionType === 'PREVIEW_DECK' && notif.actionData && notif.actionData.deckId) {
+        previewLibraryDeck(notif.actionData.deckId);
+      } else if (notif.actionType === 'VIEW_PROFILE' && notif.actionData && notif.actionData.targetUid) {
+        openPublicProfileModal(notif.actionData.targetName || 'Thành viên', notif.actionData.targetUid);
+      } else if (notif.actionType === 'OPEN_WALLET') {
+        openWalletStudioModal();
+      }
+    }
+
+    function markAllNotificationsRead() {
+      let changed = false;
+      userNotifications.forEach(n => {
+        if (!n.isRead) {
+          n.isRead = true;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+        updateNotificationsUI();
+        renderNotificationsList();
+        showToast('✓ Đã đánh dấu tất cả thông báo là đã đọc.');
+
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          const patch = {};
+          userNotifications.forEach(n => {
+            patch[`users/${currentUser.uid}/notifications/${n.id}/isRead`] = true;
+          });
+          fetch(`${rtdbUrl}/.json${authParam}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch)
+          }).catch(() => {});
+        }
+      }
+    }
+
+    function clearAllNotifications() {
+      if (userNotifications.length === 0) return;
+      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách thông báo?')) return;
+      userNotifications = [];
+      localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+      updateNotificationsUI();
+      renderNotificationsList();
+      showToast('🗑️ Đã xóa toàn bộ thông báo.');
+
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`, {
+          method: 'DELETE'
+        }).catch(() => {});
       }
     }
 
@@ -8316,6 +8686,7 @@
 
       // 5. Install to local library
       installLibraryDeck(deck.id);
+      addNotification('FINANCIAL', '🛒 Mua bộ từ thành công', `Bạn đã mua bộ từ "${deck.title}" (-${price} Xu). Hãy bắt đầu học ngay!`, 'PREVIEW_DECK', { deckId: deck.id });
       showToast(`🎉 Đã mua thành công bộ từ "${deck.title}" (-${price} Xu)!`);
       renderLibraryDecks();
       if (document.getElementById('modal-library-preview')?.classList.contains('active')) {
@@ -18793,6 +19164,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           const data = await res.json();
           if (data && typeof data === 'object') {
             cloudLibraryDecks = Object.values(data).filter(d => d && d.title && Array.isArray(d.words));
+            checkFollowedCreatorsNewDecks();
             
             // v0.10.7b: Auto-patch legacy cloud decks for current logged in user
             if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
