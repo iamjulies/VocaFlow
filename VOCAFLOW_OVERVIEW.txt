@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6t (Build 91)
+Phiên bản hiện tại : v0.10.6u (Build 92)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6u (Build 92 - SPEAKING SKIP PASS WALLET SYNC & DEDUCTION):
+  - Đồng Bộ Thẻ Bỏ Qua (Skip Pass) Với Kho Túi Đồ & Ví Người Dùng Thực Tế:
+    * Thay thế hoàn toàn số lượt skip cục bộ cố định (3 lượt) bằng số lượng Thẻ Bỏ Qua người dùng đang sở hữu thực tế trong kho (`getUserSkips()`).
+    * Nút Bỏ qua hiển thị chính xác số lượt còn lại: `⏭️ Bỏ qua (13)` (hoặc `100đ` nếu hết lượt miễn phí).
+    * Khi người dùng bấm Bỏ qua trong phòng Luyện nói:
+      + Nếu còn lượt Skip miễn phí: trừ 1 lượt trực tiếp vào kho đồ (`setUserSkips(curSkips - 1)`).
+      + Nếu hết lượt Skip miễn phí: sử dụng 100 Xu trong ví để mua lượt bỏ qua ngay tại chỗ (`setUserPoints(curPts - 100)`).
+      + Tự động lưu LocalStorage và đồng bộ tức thì lên Cloud Realtime Database.
+  - Cập nhật số lượt Skip đã dùng ở màn hình tổng kết: hiển thị số lượt thực tế đã dùng trong phiên (`X lượt`).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6u_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6t (Build 91 - SPEAKING UI REFINED & ACCURATE PASS RATE METRICS):
   - Tối Giản Hóa Luồng Học & Bố Cục Giao Diện Luyện Nói:
     * Bỏ nút "Từ Trước" và dọn sạch trạng thái xem lại từ trước để code nhẹ, luồng học thẳng tiến về phía trước.

@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6t</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6u</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -3182,7 +3182,7 @@
             <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
               <span>⏭️</span> Bỏ qua (Skip)
             </div>
-            <div id="spk-res-skips-used" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0/3 lượt</div>
+            <div id="spk-res-skips-used" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0 lượt</div>
           </div>
 
           <!-- 5. Tổng thời gian (Span 2 cols) -->
@@ -4494,7 +4494,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6t</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6u</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13864,7 +13864,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
 
       const skipBtn = document.getElementById('btn-spk-skip');
-      if (skipBtn) skipBtn.textContent = '⏭️ Bỏ qua (' + speakingWordSkipsLeft + ')';
+      if (skipBtn) {
+        const curSkips = getUserSkips();
+        skipBtn.textContent = '⏭️ Bỏ qua (' + (curSkips > 0 ? curSkips : '100đ') + ')';
+      }
 
       // Fresh word state
       resetSpeakingWordState(true);
@@ -13950,14 +13953,38 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function skipSpeakingWord() {
-      if (speakingWordSkipsLeft <= 0) {
-        showToast('⚠️ Đã hết 3 lượt bỏ qua cho phiên này!');
+      if (isSpeakingRecording) stopSpeakingRecord();
+
+      const curSkips = getUserSkips();
+      const curPts = getUserPoints();
+      const skipCost = 100;
+
+      if (curSkips <= 0 && curPts < skipCost) {
+        showToast('🪙 Bạn không đủ điểm ví (cần 100 Xu để đổi 1 lượt Bỏ Qua)');
+        openShopModal();
         return;
       }
-      if (isSpeakingRecording) stopSpeakingRecord();
-      speakingWordSkipsLeft--;
+
+      if (curSkips > 0) {
+        setUserSkips(curSkips - 1);
+        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua (còn ' + getUserSkips() + ' lượt).');
+      } else {
+        setUserPoints(curPts - skipCost);
+        showToast('⏭️ Đã dùng 100 Xu ví để Bỏ Qua từ này.');
+      }
+
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
+      updateEconomyUI();
+
+      speakingWordsSkippedCount++;
       speakingCompletedWords++;
-      showToast('⏭️ Đã bỏ qua từ này (còn ' + speakingWordSkipsLeft + ' lượt skip)');
+
+      const skipBtn = document.getElementById('btn-spk-skip');
+      if (skipBtn) {
+        const remainingSkips = getUserSkips();
+        skipBtn.textContent = '⏭️ Bỏ qua (' + (remainingSkips > 0 ? remainingSkips : '100đ') + ')';
+      }
 
       if (currentSpeakingIndex < speakingWordsList.length - 1) {
         currentSpeakingIndex++;
@@ -13974,7 +14001,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const totalTakes = speakingTotalTakesCount;
       const floorTakes = speakingFloorTakesCount;
       const floorRatePct = totalTakes > 0 ? Math.round((floorTakes / totalTakes) * 100) : 0;
-      const skipsUsed = 3 - speakingWordSkipsLeft;
+      const skipsUsed = speakingWordsSkippedCount;
 
       const floorRatioEl = document.getElementById('spk-res-floor-ratio') || document.getElementById('spk-res-score-ratio');
       const pointsEl = document.getElementById('spk-res-points');
@@ -13986,7 +14013,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       if (floorRatioEl) floorRatioEl.textContent = floorTakes + '/' + totalTakes + ' (' + floorRatePct + '%)';
       if (pointsEl) pointsEl.textContent = (speakingSessionPointsEarned >= 0 ? '+' : '') + speakingSessionPointsEarned + ' Xu';
-      if (skipsUsedEl) skipsUsedEl.textContent = skipsUsed + '/3 lượt';
+      if (skipsUsedEl) skipsUsedEl.textContent = skipsUsed + ' lượt';
 
       const durationSec = Math.max(1, Math.round((Date.now() - speakingStartTime) / 1000));
       const mins = Math.floor(durationSec / 60).toString().padStart(2, '0');
