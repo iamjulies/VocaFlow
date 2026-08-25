@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-1 (Build 108)
+Phiên bản hiện tại : v0.10.7g-2 (Build 109)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-2 (Build 109 - AI MENTOR GEMINI API KEY RESOLUTION & MULTI-MODEL FALLBACK):
+  - Khắc Phục Triệt Để Lỗi Kết Nối Gemini AI Mentor:
+    * Đồng bộ phương thức lấy API Key `getEffectiveGeminiApiKey()` từ bộ nhớ cục bộ `STORAGE_KEY_GEMINI_KEY` (giống như chế độ Speaking và AI Studio).
+    * Áp dụng vòng lặp Fallback đa mô hình (`gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-2.0-flash-lite`, `gemini-1.5-flash-8b`, `gemini-1.5-pro`) tự động thử mô hình hoạt động ổn định nhất, khắc phục lỗi gọi sai model.
+    * Bổ sung thông báo hướng dẫn chi tiết nếu người dùng chưa nhập API Key trong mục Cài đặt.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-2_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-1 (Build 108 - AI MENTOR IN-DECK CONTEXT & FAB POSITION FIX):
   - Tối Ưu Vị Trí Nút AI & Khắc Phục Lỗi Ngữ Cảnh Trong Bộ Từ:
     * Chuyển vị trí nút FAB AI Mentor sang góc dưới bên trái (`bottom: 22px; left: 18px;`) để tránh che khuất các thông báo đồng bộ Cloud và Toast góc phải.

@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -21948,6 +21948,10 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
     }
 
+    function getEffectiveGeminiApiKey() {
+      return (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+    }
+
     async function evaluateAiMiniVoiceAudio(vId, targetWord, audioBlob) {
       const btn = document.getElementById(vId + '_btn');
       const statusEl = document.getElementById(vId + '_status');
@@ -21963,73 +21967,94 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           return;
         }
 
-        try {
-          const userKey = (settings.geminiApiKey || '').trim();
-          const effectiveKey = userKey || GEMINI_PROXIES[Math.floor(Math.random() * GEMINI_PROXIES.length)];
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveKey}`;
-
-          const payload = {
-            contents: [{
-              parts: [
-                {
-                  text: `Bạn là giám khảo phát âm AI. Hãy đánh giá phát âm của người học cho từ vựng: "${targetWord}". Trả về JSON: {"score": 85, "feedbackVi": "Nhận xét ngắn về khẩu hình và âm đuôi", "detected": "Từ nghe được"}. Chỉ trả JSON, không bọc markdown.`
-                },
-                {
-                  inlineData: {
-                    mimeType: audioBlob.type || 'audio/webm',
-                    data: base64Audio
-                  }
-                }
-              ]
-            }]
-          };
-
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-            let parsed = {};
-            try {
-              parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
-            } catch (e) {
-              parsed = { score: 80, feedbackVi: 'Phát âm tương đối tốt!', detected: targetWord };
-            }
-
-            const score = parsed.score || 75;
-            const isGood = score >= 75;
-
-            if (resultEl) {
-              resultEl.style.display = 'block';
-              resultEl.style.background = isGood ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
-              resultEl.style.border = `1px solid ${isGood ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}`;
-              resultEl.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <strong style="color: ${isGood ? '#34d399' : '#fbbf24'}; font-size: 13px;">${isGood ? '🌟 Phát âm Đạt' : '⚠️ Cần cải thiện'}: ${score}/100đ</strong>
-                  <span style="font-size: 11px; color: var(--text-muted);">Nghe được: "${parsed.detected || targetWord}"</span>
-                </div>
-                <div style="color: var(--text); font-size: 12px;">${parsed.feedbackVi || 'Hãy tiếp tục luyện tập nhé!'}</div>
-              `;
-            }
+        const key = getEffectiveGeminiApiKey();
+        if (!key) {
+          if (resultEl) {
+            resultEl.style.display = 'block';
+            resultEl.style.background = 'rgba(239,68,68,0.15)';
+            resultEl.innerHTML = '🔑 Vui lòng nhập API Key trong mục ⚙️ Cài đặt để chấm điểm phát âm.';
           }
-        } catch (e) {
+          if (btn) { btn.disabled = false; btn.textContent = '🎙️ Thu âm lại'; }
+          return;
+        }
+
+        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
+        const standardModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+
+        const payload = {
+          contents: [{
+            parts: [
+              {
+                text: `Bạn là giám khảo phát âm AI. Hãy đánh giá phát âm của người học cho từ vựng: "${targetWord}". Trả về JSON: {"score": 85, "feedbackVi": "Nhận xét ngắn về khẩu hình và âm đuôi", "detected": "Từ nghe được"}. Chỉ trả JSON, không bọc markdown.`
+              },
+              {
+                inlineData: {
+                  mimeType: audioBlob.type || 'audio/webm',
+                  data: base64Audio
+                }
+              }
+            ]
+          }]
+        };
+
+        let parsed = null;
+
+        for (const m of modelsToTry) {
+          try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+              try {
+                parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+                localStorage.setItem('vocaflow_gemini_working_model', m);
+                break;
+              } catch (e) {
+                parsed = { score: 80, feedbackVi: 'Phát âm tương đối tốt!', detected: targetWord };
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn(`Mini Voice model ${m} error:`, e);
+          }
+        }
+
+        if (parsed) {
+          const score = parsed.score || 75;
+          const isGood = score >= 75;
+          if (resultEl) {
+            resultEl.style.display = 'block';
+            resultEl.style.background = isGood ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+            resultEl.style.border = `1px solid ${isGood ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}`;
+            resultEl.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: ${isGood ? '#34d399' : '#fbbf24'}; font-size: 13px;">${isGood ? '🌟 Phát âm Đạt' : '⚠️ Cần cải thiện'}: ${score}/100đ</strong>
+                <span style="font-size: 11px; color: var(--text-muted);">Nghe được: "${parsed.detected || targetWord}"</span>
+              </div>
+              <div style="color: var(--text); font-size: 12px;">${parsed.feedbackVi || 'Hãy tiếp tục luyện tập nhé!'}</div>
+            `;
+          }
+        } else {
           if (resultEl) {
             resultEl.style.display = 'block';
             resultEl.style.background = 'rgba(239,68,68,0.15)';
             resultEl.textContent = '⚠️ Không thể kết nối dịch vụ chấm điểm phát âm.';
           }
-        } finally {
-          if (btn) {
-            btn.disabled = false;
-            btn.textContent = '🎙️ Thu âm lại';
-            btn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
-          }
-          if (statusEl) statusEl.textContent = 'Đã hoàn tất đánh giá';
         }
+
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '🎙️ Thu âm lại';
+          btn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+        }
+        if (statusEl) statusEl.textContent = 'Đã hoàn tất đánh giá';
       };
     }
 
@@ -22069,6 +22094,22 @@ Hãy vào VocaShop hoặc làm Quiz để nhận thêm Xu nhé!`);
       aiChatIsLoading = true;
       renderAiChatMessages();
 
+      // Check API Key
+      const key = getEffectiveGeminiApiKey();
+      if (!key) {
+        const errorMsg = {
+          id: 'msg_' + Date.now(),
+          role: 'model',
+          isError: true,
+          text: '🔑 **Chưa cấu hình Google Gemini API Key**\n\nĐể trò chuyện với Gia sư AI, bạn vui lòng mở **⚙️ Cài đặt** (trên thanh Header) và dán API Key Gemini của bạn nhé!',
+          timestamp: new Date().toISOString()
+        };
+        aiChatHistory.push(errorMsg);
+        aiChatIsLoading = false;
+        renderAiChatMessages();
+        return;
+      }
+
       // Build Contextual Prompt for Gemini
       const ctx = getCurrentStudyContext();
       let contextInfo = 'Ngữ cảnh học: Tự do.';
@@ -22085,96 +22126,109 @@ Phong cách phản hồi:
 2. Dùng Markdown in đậm **từ vựng/cấu trúc**.
 3. Nếu người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố người dùng 1 câu mini, hãy đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi?","options":["A...","B...","C...","D..."],"answer":0,"explain":"Giải thích ngắn"}]
 4. Nếu người dùng yêu cầu luyện phát âm từ nào đó, hãy đính kèm thẻ: [VOICE_CHECK: {"word":"từ_cần_đọc","ipa":"/phiên âm/"}]
-5. Nếu không làm được hoặc yêu cầu không liên quan đến học tiếng Anh, hãy lịch sự từ chối và xin lỗi người dùng.`;
+5. Luôn thân thiện, tạo cảm hứng và giải thích dễ hiểu nhất.`;
 
       // Multi-turn payload (last 8 turns)
       const contentsPayload = [];
       const recentTurns = aiChatHistory.slice(-8);
       recentTurns.forEach(turn => {
-        contentsPayload.push({
-          role: turn.role === 'user' ? 'user' : 'model',
-          parts: [{ text: turn.text }]
-        });
+        if (!turn.isError && turn.text) {
+          contentsPayload.push({
+            role: turn.role === 'user' ? 'user' : 'model',
+            parts: [{ text: turn.text }]
+          });
+        }
       });
 
-      try {
-        const userKey = (settings.geminiApiKey || '').trim();
-        const effectiveKey = userKey || GEMINI_PROXIES[Math.floor(Math.random() * GEMINI_PROXIES.length)];
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveKey}`;
+      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
+      const standardModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+      const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
-        const payload = {
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents: contentsPayload
+      let fetchSuccess = false;
+      let replyText = '';
+      let lastErrorMsg = '';
+
+      const payload = {
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: contentsPayload
+      };
+
+      for (const m of modelsToTry) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            if (replyText) {
+              localStorage.setItem('vocaflow_gemini_working_model', m);
+              fetchSuccess = true;
+              break;
+            }
+          } else {
+            const errJson = await res.json().catch(() => ({}));
+            lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
+            console.warn(`Model ${m} error:`, lastErrorMsg);
+          }
+        } catch (e) {
+          lastErrorMsg = e.message;
+          console.warn(`Model ${m} network failed:`, e);
+        }
+      }
+
+      if (fetchSuccess && replyText) {
+        // Burn-on-Success settlement
+        if (quota.isFree) {
+          aiChatDailyCount++;
+          localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+        } else {
+          setUserPoints(getUserPoints() - quota.costXu);
+          addLedgerEntry('AI_CHAT', -quota.costXu, 'Hỏi đáp Gia sư tiếng Anh AI Mentor');
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+
+        const modelMsg = {
+          id: 'msg_' + Date.now(),
+          role: 'model',
+          text: replyText,
+          timestamp: new Date().toISOString()
         };
 
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        aiChatHistory.push(modelMsg);
+        if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
+        localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+        updateAiChatQuotaUI();
 
-        if (res.ok) {
-          const data = await res.json();
-          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Gia sư AI đã ghi nhận câu hỏi của bạn.';
-
-          // Burn-on-Success settlement
-          if (quota.isFree) {
-            aiChatDailyCount++;
-            localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
-          } else {
-            setUserPoints(getUserPoints() - quota.costXu);
-            addLedgerEntry('AI_CHAT', -quota.costXu, 'Hỏi đáp Gia sư tiếng Anh AI Mentor');
-            saveDatabase(true);
-            pushCurrentDatabaseToCloud();
-          }
-
-          const modelMsg = {
-            id: 'msg_' + Date.now(),
-            role: 'model',
-            text: replyText,
-            timestamp: new Date().toISOString()
-          };
-
-          aiChatHistory.push(modelMsg);
-          if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
-          localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
-          updateAiChatQuotaUI();
-
-          // Cloud Sync History (last 30 messages)
-          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-            const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-            fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatHistory.json${authParam}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(aiChatHistory)
-            }).catch(() => {});
-          }
-
-        } else {
-          // No-fail guarantee: do NOT deduct Xu / do NOT deduct quota
-          const errorMsg = {
-            id: 'msg_' + Date.now(),
-            role: 'model',
-            isError: true,
-            text: '⚠️ Rất tiếc, máy chủ AI đang quá tải hoặc gặp sự cố kết nối. Bạn hãy thử lại sau giây lát nhé! (Hệ thống KHÔNG trừ Xu / lượt chat của bạn).',
-            timestamp: new Date().toISOString()
-          };
-          aiChatHistory.push(errorMsg);
+        // Cloud Sync History (last 30 messages)
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatHistory.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(aiChatHistory)
+          }).catch(() => {});
         }
-      } catch (err) {
+      } else {
+        // No-fail guarantee: do NOT deduct Xu / do NOT deduct quota
         const errorMsg = {
           id: 'msg_' + Date.now(),
           role: 'model',
           isError: true,
-          text: '⚠️ Lỗi kết nối mạng hoặc API. Vui lòng kiểm tra lại đường truyền! (Không trừ Xu/lượt chat).',
+          text: `⚠️ Không thể kết nối tới Google Gemini AI (${lastErrorMsg || 'Mạng gián đoạn'}). Vui lòng kiểm tra lại API Key trong mục Cài đặt! (Hệ thống KHÔNG trừ Xu / lượt chat của bạn).`,
           timestamp: new Date().toISOString()
         };
         aiChatHistory.push(errorMsg);
-      } finally {
-        aiChatIsLoading = false;
-        renderAiChatMessages();
       }
+
+      aiChatIsLoading = false;
+      renderAiChatMessages();
     }
 
   </script>
