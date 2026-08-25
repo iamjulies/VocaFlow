@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4619,7 +4619,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7312,23 +7312,45 @@
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        // Fetch Following Map
+        // Fetch Following Map (Bidirectional Union Merge)
         const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
         if (followingRes.ok) {
           const data = await followingRes.json();
-          myFollowingMap = (data && typeof data === 'object') ? data : {};
-          localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
-          currentUser.followingCount = Object.keys(myFollowingMap).length;
+          if (data && typeof data === 'object') {
+            myFollowingMap = { ...myFollowingMap, ...data };
+            localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+          }
         }
 
-        // Fetch Followers Map
+        // Fetch Followers Map (Bidirectional Union Merge)
         const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
         if (followersRes.ok) {
           const fData = await followersRes.json();
-          myFollowersMap = (fData && typeof fData === 'object') ? fData : {};
-          localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
-          currentUser.followerCount = Object.keys(myFollowersMap).length;
+          if (fData && typeof fData === 'object') {
+            myFollowersMap = { ...myFollowersMap, ...fData };
+            localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+          }
         }
+
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
+
+        // Push bidirectional sync to cloud to guarantee data retention
+        const followPatch = {};
+        if (Object.keys(myFollowingMap).length > 0) {
+          followPatch[`users/${currentUser.uid}/following`] = myFollowingMap;
+        }
+        if (Object.keys(myFollowersMap).length > 0) {
+          followPatch[`users/${currentUser.uid}/followers`] = myFollowersMap;
+        }
+        followPatch[`users/${currentUser.uid}/profile/followingCount`] = currentUser.followingCount;
+        followPatch[`users/${currentUser.uid}/profile/followerCount`] = currentUser.followerCount;
+
+        fetch(`${rtdbUrl}/.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(followPatch)
+        }).catch(() => {});
 
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         updateAuthUI();
@@ -9262,8 +9284,17 @@
             avatar: avToSave,
             avatarTime: avTimeToSave,
             geminiApiKey: geminiApiKey || '',
+            followerCount: Object.keys(myFollowersMap || {}).length,
+            followingCount: Object.keys(myFollowingMap || {}).length,
             lastSync: new Date().toISOString()
           },
+          following: myFollowingMap,
+          followers: myFollowersMap,
+          notifications: (() => {
+            const nMap = {};
+            userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });
+            return nMap;
+          })(),
           displayName: currentUser.displayName || '',
           bio: currentUser.bio || '',
           avatar: avToSave,
@@ -9286,8 +9317,9 @@
           lastSync: new Date().toISOString()
         };
 
+        // Safe PATCH method protects sibling nodes (following, followers, notifications)
         await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
@@ -9557,6 +9589,39 @@
                   }
                 }
 
+                // Sync Following & Followers from Cloud (Bidirectional Union Merge)
+                if (cloudData.following && typeof cloudData.following === 'object') {
+                  myFollowingMap = { ...myFollowingMap, ...cloudData.following };
+                  localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+                }
+                if (cloudData.followers && typeof cloudData.followers === 'object') {
+                  myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
+                  localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+                }
+                if (currentUser) {
+                  currentUser.followingCount = Object.keys(myFollowingMap).length;
+                  currentUser.followerCount = Object.keys(myFollowersMap).length;
+                  localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+                  updateAuthUI();
+                }
+
+                // Sync Notifications from Cloud
+                if (cloudData.notifications && typeof cloudData.notifications === 'object') {
+                  const cloudNotifs = Object.values(cloudData.notifications).filter(n => n && n.id);
+                  const nMap = new Map();
+                  userNotifications.forEach(n => nMap.set(n.id, n));
+                  cloudNotifs.forEach(n => {
+                    if (!nMap.has(n.id)) {
+                      nMap.set(n.id, n);
+                    } else if (n.isRead) {
+                      nMap.get(n.id).isRead = true;
+                    }
+                  });
+                  userNotifications = Array.from(nMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
+                  localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+                  updateNotificationsUI();
+                }
+
                 saveDatabase(false);
                 refreshActiveScreenData();
               }
@@ -9578,13 +9643,24 @@
             const payload = {
               profile: {
                 displayName: currentUser.displayName || currentUser.email.split('@')[0],
+                username: currentUser.username || '',
+                lastUsernameChangeTimestamp: currentUser.lastUsernameChangeTimestamp || 0,
                 email: currentUser.email,
                 avatar: avToSave,
                 avatarTime: avTimeToSave,
                 bio: currentBio,
                 geminiApiKey: geminiApiKey || '',
+                followerCount: Object.keys(myFollowersMap || {}).length,
+                followingCount: Object.keys(myFollowingMap || {}).length,
                 lastSync: new Date().toISOString()
               },
+              following: myFollowingMap,
+              followers: myFollowersMap,
+              notifications: (() => {
+                const nMap = {};
+                userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });
+                return nMap;
+              })(),
               avatar: avToSave,
               avatarTime: avTimeToSave,
               bio: currentBio,
@@ -9617,8 +9693,9 @@
               lastSync: new Date().toISOString()
             };
 
+            // Safe PATCH method protects sibling nodes (following, followers, notifications)
             await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
-              method: 'PUT',
+              method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
             });
