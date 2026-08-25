@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6x (Build 95)
+Phiên bản hiện tại : v0.10.7a (Build 96)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -21,6 +21,18 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7a (Build 96 - DECOUPLE PERMANENT UID & UNIQUE HANDLE ENGINE):
+  - Tái Cấu Trúc Hệ Thống Định Danh Người Dùng (UID & Handle Decoupling):
+    * Tách biệt hoàn toàn UID nội bộ vĩnh viễn (`currentUser.uid`) và Handle hiển thị duy nhất (`@username`).
+    * Chuẩn hóa định dạng Handle: Chỉ chấp nhận chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (`_`), độ dài từ 3 đến 20 ký tự.
+    * Tích hợp Blacklist các tên hệ thống nhạy cảm (`admin`, `system`, `vocaflow`, `null`, `undefined`, `true`, `false`, `root`, `api`, `bot`, v.v.).
+    * Quy tắc Cooldown 7 ngày (`lastUsernameChangeTimestamp`): Người dùng chỉ được đổi Handle 1 lần mỗi 7 ngày, có đồng hồ đếm ngược trực quan.
+    * Sổ đăng ký định danh toàn cầu (`/usernames/{handle}: uid`): Đổi tên nguyên tử Multi-Path Atomic PATCH trên Firebase Realtime Database.
+    * Tự động cấp phát và ánh xạ Handle cho người dùng cũ khi đăng nhập hoặc mở ứng dụng (`ensureUserHandleAssigned`).
+    * Nâng cấp giao diện Hồ sơ (`modal-profile`) và Hồ sơ công khai (`modal-public-profile`) với huy hiệu `@username`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7a_Windows_Portable.zip`.
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
 • 🛡️ v0.10.6x (Build 95 - COMPLETE WIN32 RESOURCE REBUILD & SHELL CACHE REFRESH):

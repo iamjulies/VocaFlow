@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6x</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7a</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4070,7 +4070,11 @@
         <div id="pub-view-avatar" style="width: 72px; height: 72px; min-width: 72px; min-height: 72px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; margin: 0 auto 10px; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 6px 18px rgba(168, 85, 247, 0.4); overflow: hidden;">
           👤
         </div>
-        <h3 id="pub-view-name" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: var(--text);">Người dùng VocaFlow</h3>
+        <h3 id="pub-view-name" style="margin: 0 0 2px 0; font-size: 18px; font-weight: 800; color: var(--text);">Người dùng VocaFlow</h3>
+        <!-- v0.10.7a: Public Profile Handle -->
+        <div style="font-size: 13px; font-weight: 800; color: #38bdf8; font-family: monospace; margin-bottom: 6px;">
+          <span id="pub-view-handle">@member</span>
+        </div>
         <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
           <span id="pub-view-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">🌟 Tác Giả Đóng Góp</span>
           <span id="pub-view-sub-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Thành Viên VocaFlow</span>
@@ -4147,7 +4151,12 @@
                 <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
               </div>
             </div>
-            <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12.5px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+            <!-- v0.10.7a: Unique Handle Row -->
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap;">
+              <span id="profile-handle" style="font-size: 13.5px; font-weight: 800; color: #38bdf8; font-family: monospace;">@guest</span>
+              <span id="profile-handle-badge" class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">UID</span>
+            </div>
+            <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
             
             <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
               <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
@@ -4177,6 +4186,20 @@
               <span>✏️</span> Tên Hiển Thị (Nickname):
             </label>
             <input type="text" id="profile-display-name-input" class="form-input" placeholder="Nhập tên hoặc biệt danh của bạn..." style="font-size: 13px; padding: 7px 10px;">
+          </div>
+          <!-- v0.10.7a: Unique Handle Input with 7-Day Cooldown -->
+          <div>
+            <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+              <span>🆔 Tên Định Danh Duy Nhất (Handle / Username):</span>
+              <span id="profile-handle-cooldown-hint" style="font-size: 10.5px; color: var(--text-muted); font-weight: normal;">Đổi được 1 lần / 7 ngày</span>
+            </label>
+            <div style="display: flex; align-items: center; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 0 10px;">
+              <span style="color: #38bdf8; font-weight: 800; font-family: monospace; font-size: 14px; margin-right: 4px;">@</span>
+              <input type="text" id="profile-username-input" class="form-input" placeholder="ví dụ: julies, alex_99..." style="border: none; background: transparent; padding: 7px 0; font-size: 13px; font-family: monospace; color: #38bdf8; font-weight: 700; width: 100%;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20)">
+            </div>
+            <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
+              * Chỉ gồm chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (_), từ 3 - 20 ký tự.
+            </div>
           </div>
           <div>
             <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #34d399; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
@@ -4494,7 +4517,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6x</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7a</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6760,6 +6783,9 @@
       } catch (e) {
         console.error('Error loading auth state:', e);
       }
+      if (currentUser && currentUser.uid) {
+        ensureUserHandleAssigned(currentUser);
+      }
       updateAuthUI();
       updateEconomyUI();
 
@@ -6774,6 +6800,16 @@
               let changed = false;
               if (prof.displayName && prof.displayName !== currentUser.displayName) {
                 currentUser.displayName = prof.displayName;
+                changed = true;
+              }
+              const remoteUsername = prof.username || uData.username;
+              const remoteLastChange = prof.lastUsernameChangeTimestamp || uData.lastUsernameChangeTimestamp;
+              if (remoteUsername && remoteUsername.trim().length >= 3 && remoteUsername !== currentUser.username) {
+                currentUser.username = remoteUsername.trim().toLowerCase();
+                changed = true;
+              }
+              if (remoteLastChange && remoteLastChange !== currentUser.lastUsernameChangeTimestamp) {
+                currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
                 changed = true;
               }
               const remoteBio = (prof.bio !== undefined) ? prof.bio : uData.bio;
@@ -6797,6 +6833,185 @@
       }
     }
 
+    // =========================================================================
+    // USER IDENTIFICATION & UNIQUE HANDLE REGISTRY ENGINE (v0.10.7a)
+    // =========================================================================
+    const RESERVED_USERNAMES = new Set([
+      'admin', 'administrator', 'system', 'vocaflow', 'official', 'support', 'help',
+      'null', 'undefined', 'true', 'false', 'guest', 'anonymous', 'root', 'api',
+      'bot', 'mod', 'moderator', 'dev', 'developer', 'staff', 'owner', 'super',
+      'public', 'test', 'error', 'config', 'service', 'database'
+    ]);
+
+    const USERNAME_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+    function validateUsernameFormat(handle) {
+      if (!handle || typeof handle !== 'string') {
+        return { valid: false, error: 'Tên người dùng không được để trống!' };
+      }
+      const clean = handle.toLowerCase().trim();
+      if (clean.length < 3) {
+        return { valid: false, error: 'Tên người dùng phải có ít nhất 3 ký tự!' };
+      }
+      if (clean.length > 20) {
+        return { valid: false, error: 'Tên người dùng tối đa 20 ký tự!' };
+      }
+      if (!/^[a-z0-9_]+$/.test(clean)) {
+        return { valid: false, error: 'Tên người dùng chỉ được chứa chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (_), không khoảng trắng!' };
+      }
+      if (RESERVED_USERNAMES.has(clean)) {
+        return { valid: false, error: `Tên người dùng @${clean} nằm trong danh sách cấm của hệ thống!` };
+      }
+      return { valid: true, clean };
+    }
+
+    function getUsernameCooldownStatus(lastChangeTimestamp) {
+      if (!lastChangeTimestamp) return { canChange: true, daysRemaining: 0, hoursRemaining: 0 };
+      const last = Number(lastChangeTimestamp);
+      if (isNaN(last) || last <= 0) return { canChange: true, daysRemaining: 0, hoursRemaining: 0 };
+      const elapsed = Date.now() - last;
+      if (elapsed >= USERNAME_COOLDOWN_MS) {
+        return { canChange: true, daysRemaining: 0, hoursRemaining: 0 };
+      }
+      const remainingMs = USERNAME_COOLDOWN_MS - elapsed;
+      const daysRemaining = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+      const hoursRemaining = Math.ceil(remainingMs / (60 * 60 * 1000));
+      return { canChange: false, daysRemaining, hoursRemaining, remainingMs };
+    }
+
+    async function ensureUserHandleAssigned(user) {
+      if (!user) return;
+      if (!user.uid || user.uid.startsWith('guest_')) {
+        if (!user.username) {
+          user.username = 'guest_' + (user.uid ? user.uid.replace('guest_', '').slice(-6) : Math.floor(1000 + Math.random() * 9000));
+        }
+        return;
+      }
+
+      if (user.username && user.username.trim().length >= 3) {
+        return;
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (user && user.idToken) ? '?auth=' + user.idToken : '';
+
+      let baseCandidate = '';
+      if (user.email) {
+        baseCandidate = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 14);
+      } else if (user.displayName) {
+        baseCandidate = user.displayName.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 14);
+      }
+      if (baseCandidate.length < 3) {
+        baseCandidate = 'user_' + user.uid.slice(0, 6).toLowerCase();
+      }
+
+      let finalHandle = baseCandidate;
+      try {
+        const res = await fetch(`${rtdbUrl}/usernames/${finalHandle}.json${authParam}`);
+        if (res.ok) {
+          const claimedUid = await res.json();
+          if (claimedUid && claimedUid !== user.uid) {
+            finalHandle = (baseCandidate.slice(0, 13) + '_' + Math.floor(100 + Math.random() * 900)).toLowerCase();
+          }
+        }
+
+        const patch = {
+          [`usernames/${finalHandle}`]: user.uid,
+          [`users/${user.uid}/profile/username`]: finalHandle,
+          [`users/${user.uid}/username`]: finalHandle
+        };
+
+        await fetch(`${rtdbUrl}/.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        });
+
+        user.username = finalHandle;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
+        updateAuthUI();
+      } catch (e) {
+        console.warn('Auto handle registration fallback:', e);
+        user.username = finalHandle;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
+        updateAuthUI();
+      }
+    }
+
+    async function changeUserHandle(rawHandle) {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) {
+        showToast('🔒 Vui lòng đăng ký / đăng nhập tài khoản để đặt Handle duy nhất!');
+        openAuthModal('login');
+        return { success: false, reason: 'unauthorized' };
+      }
+
+      const val = validateUsernameFormat(rawHandle);
+      if (!val.valid) {
+        showToast('⚠️ ' + val.error);
+        return { success: false, reason: 'invalid_format', error: val.error };
+      }
+
+      const newHandle = val.clean;
+      const oldHandle = (currentUser.username || '').toLowerCase().trim();
+
+      if (newHandle === oldHandle) {
+        return { success: true, unchanged: true };
+      }
+
+      const cooldown = getUsernameCooldownStatus(currentUser.lastUsernameChangeTimestamp);
+      if (!cooldown.canChange) {
+        showToast(`⏳ Bạn chỉ có thể đổi Handle sau ${cooldown.daysRemaining} ngày nữa!`);
+        return { success: false, reason: 'cooldown_active', daysRemaining: cooldown.daysRemaining };
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      try {
+        const checkRes = await fetch(`${rtdbUrl}/usernames/${newHandle}.json${authParam}`);
+        if (checkRes.ok) {
+          const claimedUid = await checkRes.json();
+          if (claimedUid && claimedUid !== currentUser.uid) {
+            showToast(`❌ Tên người dùng @${newHandle} đã có người sử dụng! Vui lòng chọn tên khác.`);
+            return { success: false, reason: 'already_taken' };
+          }
+        }
+
+        const now = Date.now();
+        const patch = {};
+        if (oldHandle && oldHandle !== newHandle) {
+          patch[`usernames/${oldHandle}`] = null;
+        }
+        patch[`usernames/${newHandle}`] = currentUser.uid;
+        patch[`users/${currentUser.uid}/profile/username`] = newHandle;
+        patch[`users/${currentUser.uid}/profile/lastUsernameChangeTimestamp`] = now;
+        patch[`users/${currentUser.uid}/username`] = newHandle;
+        patch[`users/${currentUser.uid}/lastUsernameChangeTimestamp`] = now;
+
+        const patchRes = await fetch(`${rtdbUrl}/.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        });
+
+        if (patchRes.ok) {
+          currentUser.username = newHandle;
+          currentUser.lastUsernameChangeTimestamp = now;
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+          updateAuthUI();
+          showToast(`🎉 Đã đổi tên người dùng thành công: @${newHandle}`);
+          return { success: true };
+        } else {
+          showToast('⚠️ Không thể cập nhật Handle lên máy chủ. Vui lòng thử lại!');
+          return { success: false, reason: 'cloud_error' };
+        }
+      } catch (err) {
+        console.error('Handle change error:', err);
+        showToast('⚠️ Lỗi: ' + err.message);
+        return { success: false, reason: 'exception', error: err.message };
+      }
+    }
+
     function updateAuthUI() {
       const nameEl = document.getElementById('user-display-name');
       const profileNameEl = document.getElementById('profile-name');
@@ -6805,11 +7020,16 @@
       const profileAvatarEl = document.getElementById('profile-avatar');
       const authActionBtn = document.getElementById('btn-profile-auth-action');
       const guestBanner = document.getElementById('guest-perks-banner');
+      const profileHandleEl = document.getElementById('profile-handle');
+      const profileHandleBadge = document.getElementById('profile-handle-badge');
+      const profileHandleCooldownHint = document.getElementById('profile-handle-cooldown-hint');
+      const usernameInput = document.getElementById('profile-username-input');
 
       const nameMobileEl = document.getElementById('user-display-name-mobile');
       if (currentUser && currentUser.email) {
         if (guestBanner) guestBanner.style.display = 'none';
         const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+        const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
         if (nameEl) nameEl.textContent = displayName;
         if (nameMobileEl) nameMobileEl.textContent = `Tài khoản (${displayName})`;
         if (profileNameEl) profileNameEl.textContent = displayName;
@@ -6818,6 +7038,36 @@
           profileBadgeEl.textContent = 'Đã liên kết Cloud';
           profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
           profileBadgeEl.style.color = '#34d399';
+        }
+
+        // Handle & Cooldown Status
+        const cooldown = getUsernameCooldownStatus(currentUser.lastUsernameChangeTimestamp);
+        if (profileHandleEl) profileHandleEl.textContent = `@${userHandle}`;
+        if (profileHandleBadge) {
+          if (cooldown.canChange) {
+            profileHandleBadge.textContent = '✨ Có thể đổi';
+            profileHandleBadge.style.background = 'rgba(16,185,129,0.15)';
+            profileHandleBadge.style.color = '#34d399';
+            profileHandleBadge.style.borderColor = 'rgba(16,185,129,0.3)';
+          } else {
+            profileHandleBadge.textContent = `⏳ Sau ${cooldown.daysRemaining} ngày`;
+            profileHandleBadge.style.background = 'rgba(245,158,11,0.15)';
+            profileHandleBadge.style.color = '#fbbf24';
+            profileHandleBadge.style.borderColor = 'rgba(245,158,11,0.3)';
+          }
+        }
+        if (profileHandleCooldownHint) {
+          if (cooldown.canChange) {
+            profileHandleCooldownHint.textContent = '✨ Có thể đổi tên ngay';
+            profileHandleCooldownHint.style.color = '#34d399';
+          } else {
+            const nextDate = new Date(Number(currentUser.lastUsernameChangeTimestamp) + USERNAME_COOLDOWN_MS).toLocaleDateString('vi-VN');
+            profileHandleCooldownHint.textContent = `⏳ Đổi lại sau ${cooldown.daysRemaining} ngày (${nextDate})`;
+            profileHandleCooldownHint.style.color = '#fbbf24';
+          }
+        }
+        if (usernameInput && document.activeElement !== usernameInput) {
+          usernameInput.value = userHandle;
         }
         const userAvatar = getUserAvatar(currentUser);
         if (profileAvatarEl) profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
@@ -6840,6 +7090,21 @@
           profileBadgeEl.textContent = 'Chưa liên kết';
           profileBadgeEl.style.background = 'rgba(245,158,11,0.2)';
           profileBadgeEl.style.color = '#fbbf24';
+        }
+        const guestHandle = (currentUser && currentUser.username) ? currentUser.username : 'guest';
+        if (profileHandleEl) profileHandleEl.textContent = `@${guestHandle}`;
+        if (profileHandleBadge) {
+          profileHandleBadge.textContent = 'Khách';
+          profileHandleBadge.style.background = 'rgba(148,163,184,0.15)';
+          profileHandleBadge.style.color = '#94a3b8';
+          profileHandleBadge.style.borderColor = 'rgba(148,163,184,0.3)';
+        }
+        if (profileHandleCooldownHint) {
+          profileHandleCooldownHint.textContent = '🔒 Đăng nhập để đặt Handle duy nhất';
+          profileHandleCooldownHint.style.color = 'var(--text-muted)';
+        }
+        if (usernameInput && document.activeElement !== usernameInput) {
+          usernameInput.value = guestHandle;
         }
         if (profileAvatarEl) profileAvatarEl.textContent = 'V';
         if (authActionBtn) {
@@ -6902,8 +7167,10 @@
       if (willOpen) {
         const nameInput = document.getElementById('profile-display-name-input');
         const bioInput = document.getElementById('profile-bio-input');
+        const usernameInput = document.getElementById('profile-username-input');
         if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
         if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
+        if (usernameInput) usernameInput.value = (currentUser && currentUser.username) || '';
         if (nameInput) nameInput.focus();
       }
     }
@@ -6924,11 +7191,13 @@
       return false;
     }
 
-    function saveUserProfileCustomFields() {
+    async function saveUserProfileCustomFields() {
       const nameInput = document.getElementById('profile-display-name-input');
       const bioInput = document.getElementById('profile-bio-input');
+      const usernameInput = document.getElementById('profile-username-input');
       const newName = (nameInput?.value || '').trim() || 'Người dùng VocaFlow';
       const newBio = (bioInput?.value || '').trim();
+      const rawUsername = (usernameInput?.value || '').trim().toLowerCase();
 
       if (!currentUser) {
         currentUser = {
@@ -6940,6 +7209,15 @@
       } else {
         currentUser.displayName = newName;
         currentUser.bio = newBio;
+      }
+
+      // v0.10.7a: Handle username modification
+      if (rawUsername && rawUsername !== (currentUser.username || '').toLowerCase() && !currentUser.uid.startsWith('guest_')) {
+        const handleResult = await changeUserHandle(rawUsername);
+        if (!handleResult.success && !handleResult.unchanged) {
+          // If handle change failed due to format, cooldown, or collision, stop and keep edit open
+          return;
+        }
       }
 
       localStorage.setItem('vocaflow_user_bio', newBio);
@@ -7753,6 +8031,7 @@
                             (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase());
 
       let resolvedName = authorName;
+      let resolvedHandle = '';
       let resolvedAvatar = targetDeck?.authorAvatar || authorName;
       let resolvedBio = targetDeck?.authorBio || '';
       let targetUid = authorUid || targetDeck?.authorUid || '';
@@ -7760,11 +8039,13 @@
 
       if (isVocaFlowOfficial) {
         resolvedName = 'VocaFlow Chuẩn';
+        resolvedHandle = 'official';
         resolvedAvatar = 'icons/Icon-192.png';
         resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.';
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
       } else if (isCurrentUser) {
         resolvedName = currentUser.displayName || authorName;
+        resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
         resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
@@ -7776,9 +8057,10 @@
             const res = await fetch(`${rtdbUrl}/users/${targetUid}/profile.json`);
             if (res.ok) {
               const uProf = await res.json();
-              if (uProf && uProf.displayName) {
-                resolvedName = uProf.displayName;
-                resolvedAvatar = uProf.avatar || uProf.displayName;
+              if (uProf) {
+                if (uProf.displayName) resolvedName = uProf.displayName;
+                if (uProf.username) resolvedHandle = uProf.username;
+                resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
                 resolvedBio = uProf.bio || resolvedBio;
               }
             }
@@ -7793,6 +8075,12 @@
         }
         authorDecks = allDecks.filter(d => (targetUid && d.authorUid === targetUid) || (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
       }
+
+      if (!resolvedHandle) {
+        resolvedHandle = targetDeck?.authorUsername || (targetDeck?.authorEmail ? targetDeck.authorEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : authorName.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 15));
+      }
+      const handleEl = document.getElementById('pub-view-handle');
+      if (handleEl) handleEl.textContent = `@${resolvedHandle}`;
 
       const nameEl = document.getElementById('pub-view-name');
       const avEl = document.getElementById('pub-view-avatar');
@@ -8046,6 +8334,9 @@
       }
 
       closeModal('modal-auth');
+      if (currentUser && currentUser.uid) {
+        ensureUserHandleAssigned(currentUser);
+      }
       updateAuthUI();
       showToast('Đăng nhập thành công!');
       handleManualSync();
@@ -8154,6 +8445,8 @@
         const payload = {
           profile: {
             displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
+            username: currentUser.username || '',
+            lastUsernameChangeTimestamp: currentUser.lastUsernameChangeTimestamp || 0,
             bio: currentUser.bio || '',
             email: currentUser.email || '',
             avatar: avToSave,
@@ -8227,9 +8520,11 @@
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
-                // Sync Profile DisplayName & Bio from Cloud
+                // Sync Profile DisplayName, Username & Bio from Cloud (v0.10.7a)
                 const remoteProf = cloudData.profile || {};
                 const remoteName = remoteProf.displayName || cloudData.displayName;
+                const remoteUsername = remoteProf.username || cloudData.username;
+                const remoteLastChange = remoteProf.lastUsernameChangeTimestamp || cloudData.lastUsernameChangeTimestamp;
                 const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
                 if (remoteBio !== undefined && remoteBio !== null) {
                   localStorage.setItem('vocaflow_user_bio', remoteBio);
@@ -8242,6 +8537,14 @@
                   let profChanged = false;
                   if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
                     currentUser.displayName = remoteName.trim();
+                    profChanged = true;
+                  }
+                  if (remoteUsername && remoteUsername.trim().length >= 3 && remoteUsername !== currentUser.username) {
+                    currentUser.username = remoteUsername.trim().toLowerCase();
+                    profChanged = true;
+                  }
+                  if (remoteLastChange && remoteLastChange !== currentUser.lastUsernameChangeTimestamp) {
+                    currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
                     profChanged = true;
                   }
                   if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
