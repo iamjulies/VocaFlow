@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7b</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7c</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4195,8 +4195,9 @@
             </label>
             <div style="display: flex; align-items: center; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 0 10px;">
               <span style="color: #38bdf8; font-weight: 800; font-family: monospace; font-size: 14px; margin-right: 4px;">@</span>
-              <input type="text" id="profile-username-input" class="form-input" placeholder="ví dụ: julies, alex_99..." style="border: none; background: transparent; padding: 7px 0; font-size: 13px; font-family: monospace; color: #38bdf8; font-weight: 700; width: 100%;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20)">
+              <input type="text" id="profile-username-input" class="form-input" placeholder="ví dụ: julies, alex_99..." style="border: none; background: transparent; padding: 7px 0; font-size: 13px; font-family: monospace; color: #38bdf8; font-weight: 700; width: 100%;" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20); onProfileUsernameInput(this.value);">
             </div>
+            <div id="profile-handle-live-feedback" style="font-size: 11px; margin-top: 4px; display: none; font-weight: 600;"></div>
             <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
               * Chỉ gồm chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (_), từ 3 - 20 ký tự.
             </div>
@@ -4517,7 +4518,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7b</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7c</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6982,6 +6983,71 @@
       }
     }
 
+    let usernameLiveValidationTimeout = null;
+
+    function onProfileUsernameInput(val) {
+      const fb = document.getElementById('profile-handle-live-feedback');
+      if (!fb) return;
+
+      if (!val || val.trim().length === 0) {
+        fb.style.display = 'none';
+        return;
+      }
+
+      const clean = val.toLowerCase().trim();
+      const currentHandle = (currentUser?.username || '').toLowerCase().trim();
+
+      if (clean === currentHandle) {
+        fb.style.display = 'block';
+        fb.style.color = 'var(--text-muted)';
+        fb.textContent = 'ℹ️ Đây là tên người dùng hiện tại của bạn.';
+        return;
+      }
+
+      // Check format
+      const valRes = validateUsernameFormat(clean);
+      if (!valRes.valid) {
+        fb.style.display = 'block';
+        fb.style.color = '#f87171';
+        fb.textContent = '⚠️ ' + valRes.error;
+        return;
+      }
+
+      // Check cooldown
+      const cooldown = getUsernameCooldownStatus(currentUser?.lastUsernameChangeTimestamp);
+      if (!cooldown.canChange) {
+        fb.style.display = 'block';
+        fb.style.color = '#fbbf24';
+        fb.textContent = `⏳ Bạn chỉ có thể đổi tên sau ${cooldown.daysRemaining} ngày nữa.`;
+        return;
+      }
+
+      fb.style.display = 'block';
+      fb.style.color = '#38bdf8';
+      fb.textContent = '🔍 Đang kiểm tra tên người dùng...';
+
+      if (usernameLiveValidationTimeout) clearTimeout(usernameLiveValidationTimeout);
+      usernameLiveValidationTimeout = setTimeout(async () => {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        try {
+          const checkRes = await fetch(`${rtdbUrl}/usernames/${clean}.json${authParam}`);
+          if (checkRes.ok) {
+            const claimedUid = await checkRes.json();
+            if (claimedUid && claimedUid !== currentUser?.uid) {
+              fb.style.color = '#f87171';
+              fb.textContent = '❌ Tên người dùng này đã có người sử dụng';
+              return;
+            }
+          }
+          fb.style.color = '#34d399';
+          fb.textContent = `✅ Tên người dùng @${clean} khả dụng!`;
+        } catch (e) {
+          fb.style.display = 'none';
+        }
+      }, 350);
+    }
+
     async function changeUserHandle(rawHandle) {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) {
         showToast('🔒 Vui lòng đăng ký / đăng nhập tài khoản để đặt Handle duy nhất!');
@@ -6989,6 +7055,7 @@
         return { success: false, reason: 'unauthorized' };
       }
 
+      // 1. Check format (3-20 chars, no special characters)
       const val = validateUsernameFormat(rawHandle);
       if (!val.valid) {
         showToast('⚠️ ' + val.error);
@@ -7002,9 +7069,10 @@
         return { success: true, unchanged: true };
       }
 
+      // 2. Check 7-day cooldown
       const cooldown = getUsernameCooldownStatus(currentUser.lastUsernameChangeTimestamp);
       if (!cooldown.canChange) {
-        showToast(`⏳ Bạn chỉ có thể đổi Handle sau ${cooldown.daysRemaining} ngày nữa!`);
+        showToast(`⏳ Bạn chỉ có thể đổi tên sau ${cooldown.daysRemaining} ngày nữa`);
         return { success: false, reason: 'cooldown_active', daysRemaining: cooldown.daysRemaining };
       }
 
@@ -7012,15 +7080,17 @@
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
+        // 3. Check Firebase /usernames/{new_handle}
         const checkRes = await fetch(`${rtdbUrl}/usernames/${newHandle}.json${authParam}`);
         if (checkRes.ok) {
           const claimedUid = await checkRes.json();
           if (claimedUid && claimedUid !== currentUser.uid) {
-            showToast(`❌ Tên người dùng @${newHandle} đã có người sử dụng! Vui lòng chọn tên khác.`);
+            showToast('❌ Tên người dùng này đã có người sử dụng');
             return { success: false, reason: 'already_taken' };
           }
         }
 
+        // 4. Transactionally delete old handle, create new handle, update profile & record timestamp
         const now = Date.now();
         const patch = {};
         if (oldHandle && oldHandle !== newHandle) {
@@ -7042,6 +7112,21 @@
           currentUser.username = newHandle;
           currentUser.lastUsernameChangeTimestamp = now;
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+
+          // Cascade update published decks
+          if (Array.isArray(cloudLibraryDecks)) {
+            cloudLibraryDecks.forEach(d => {
+              if (d.authorUid === currentUser.uid && !d.isAnonymous) {
+                d.authorUsername = newHandle;
+                fetch(`${rtdbUrl}/publicLibraryDecks/${d.id}/authorUsername.json${authParam}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(newHandle)
+                }).catch(() => {});
+              }
+            });
+          }
+
           updateAuthUI();
           showToast(`🎉 Đã đổi tên người dùng thành công: @${newHandle}`);
           return { success: true };
@@ -7215,6 +7300,8 @@
         if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
         if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
         if (usernameInput) usernameInput.value = (currentUser && currentUser.username) || '';
+        const fb = document.getElementById('profile-handle-live-feedback');
+        if (fb) fb.style.display = 'none';
         if (nameInput) nameInput.focus();
       }
     }

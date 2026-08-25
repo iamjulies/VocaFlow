@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7b (Build 97)
+Phiên bản hiện tại : v0.10.7c (Build 98)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7c (Build 98 - HANDLE CHANGE & VALIDATION PIPELINE):
+  - Quy Trình Kiểm Tra & Đổi Tên Người Dùng Toàn Diện (Validation Pipeline):
+    * Kiểm tra định dạng nghiêm ngặt: 3-20 ký tự thường (a-z), chữ số (0-9) và dấu gạch dưới (`_`), không chứa ký tự đặc biệt hay khoảng trắng.
+    * Kiểm tra Cooldown 7 ngày: Chặn chỉnh sửa và hiển thị cảnh báo Toast chuẩn: "Bạn chỉ có thể đổi tên sau {days_remaining} ngày nữa".
+    * Kiểm tra trùng lặp trên Firebase `/usernames/{new_handle}`: Từ chối nếu đã có người sử dụng kèm thông báo: "Tên người dùng này đã có người sử dụng".
+    * Đổi tên nguyên tử (Transactional Multi-Path Update): Xóa `/usernames/{old_handle}`, tạo `/usernames/{new_handle}`, cập nhật Profile và lưu `lastUsernameChangeTimestamp = Date.now()`.
+    * Tích hợp bộ phản hồi trạng thái trực tiếp (Real-time Live Feedback Indicator) ngay dưới ô nhập Handle trong `modal-profile`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7c_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7b (Build 97 - ZERO-DOWNTIME LEGACY MIGRATION & BACKWARD COMPATIBILITY):
   - Cơ Chế Tự Động Di Trú Dữ Liệu Cũ Không Gián Đoạn (Zero-Downtime Migration):
     * Khởi chạy `runLegacyDataMigrationV0107b` ngay khi tải ứng dụng và sau khi đăng nhập.
