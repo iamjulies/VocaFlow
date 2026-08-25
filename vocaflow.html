@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -5017,7 +5017,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7650,6 +7650,22 @@
       });
     }
 
+    function isAuthorVipUser(authorUid, authorName) {
+      if (authorUid && currentUser && authorUid === currentUser.uid) return isUserVip();
+      if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return isUserVip();
+      const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+      if (student && student.isVip) return true;
+      return false;
+    }
+
+    function getAuthorVipTier(authorUid, authorName) {
+      if (authorUid && currentUser && authorUid === currentUser.uid) return getUserVipTier();
+      if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return getUserVipTier();
+      const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+      if (student && student.isVip && student.vipTier) return student.vipTier;
+      return 'none';
+    }
+
     let userNotifications = [];
     let deletedNotificationIds = new Set();
     let currentNotificationFilter = 'all';
@@ -9901,10 +9917,12 @@
       if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
       if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
 
-      const isAuthorVip = isCurrentUser ? isUserVip() : (targetUid && typeof uProf !== 'undefined' && uProf && uProf.isVip === true);
+      const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
+      const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
+
       if (nameEl) {
         if (isAuthorVip) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Tác giả VIP">👑</span></span>`;
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
         } else {
           nameEl.textContent = resolvedName;
         }
@@ -9912,10 +9930,30 @@
       if (avEl) {
         avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
         if (isAuthorVip) {
-          avEl.classList.add('vip-avatar-glow');
+          avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
+          avEl.style.borderColor = '#fbbf24';
         } else {
-          avEl.classList.remove('vip-avatar-glow');
-          avEl.style.boxShadow = 'none';
+          avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
+          avEl.style.borderColor = 'rgba(255,255,255,0.3)';
+        }
+      }
+      const pubBadgeEl = document.getElementById('pub-view-badge');
+      if (pubBadgeEl) {
+        if (isAuthorVip) {
+          const tierLabels = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
+          pubBadgeEl.innerHTML = `👑 VIP ${tierLabels[authorVipTier] || authorVipTier.toUpperCase()}`;
+          pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          pubBadgeEl.style.color = '#ffffff';
+          pubBadgeEl.style.fontWeight = '800';
+          pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+          pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+        } else {
+          pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+          pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+          pubBadgeEl.style.color = '#a5b4fc';
+          pubBadgeEl.style.fontWeight = '700';
+          pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+          pubBadgeEl.style.boxShadow = 'none';
         }
       }
       if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
@@ -11631,7 +11669,7 @@
             return `
               <div class="deck-timestamp" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
                 <span>🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
-                ${liveAuthor ? `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>` : ''}
+                ${liveAuthor ? (isAuthorVipUser(liveAuthorUid, liveAuthor) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="font-size: 11.5px;">${escapeHtml(liveAuthor)}</strong></span>` : `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>`) : ''}
               </div>
             `;
           })()}
@@ -11711,7 +11749,11 @@
         }
 
         if (liveAuthor) {
-          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: <span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">${escapeHtml(liveAuthor)}</span>`;
+          const isVipAuth = isAuthorVipUser(liveAuthorUid, liveAuthor);
+          const authorHtml = isVipAuth
+            ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; font-weight: 700; display: inline-flex; vertical-align: middle;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; font-size: 12.5px;">${escapeHtml(liveAuthor)}</strong></span>`
+            : `<span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">${escapeHtml(liveAuthor)}</span>`;
+          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: ${authorHtml}`;
         } else {
           timeEl.textContent = timeText;
         }
@@ -20516,7 +20558,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (((isAuthor && isUserVip()) || deck.isAuthorVip || deck.authorIsVip) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (isAuthorVipUser(deck.authorUid, authorName) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
                 ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
                   <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận bộ từ mới'}">
                     ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
@@ -20640,16 +20682,32 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           creatorTitle = '🥉 Chuyên Gia Đóng Góp';
         }
 
+        const isCreatorVip = isAuthorVipUser(c.authorUid, c.name);
+        const creatorVipTier = getAuthorVipTier(c.authorUid, c.name);
+
+        if (isCreatorVip) {
+          rankBg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(168, 85, 247, 0.12))';
+          rankBorder = 'rgba(251, 191, 36, 0.6)';
+        }
+
         html += `
-          <div style="background: ${rankBg}; border: 1px solid ${rankBorder}; border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <div style="background: ${rankBg}; border: 1px solid ${rankBorder}; border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-shadow: ${isCreatorVip ? '0 4px 16px rgba(0,0,0,0.25), 0 0 15px rgba(245,158,11,0.25)' : '0 2px 8px rgba(0,0,0,0.1)'}; transition: all 0.2s;">
             <div style="display: flex; align-items: center; gap: 10px;">
               ${rankBadge}
-              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 14px; overflow: hidden; flex-shrink: 0;">
-                ${renderAvatarHtml(c.avatar, 36, 14)}
+              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 14px; overflow: hidden; flex-shrink: 0; ${isCreatorVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 14px rgba(251,191,36,0.65); border: 1.5px solid #fbbf24;' : ''}">
+                ${renderAvatarHtml(c.avatar, 38, 15)}
               </div>
               <div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  ${isCreatorVip ? `
+                    <span class="vip-name-wrapper" style="gap: 4px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">
+                      <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
+                      <strong class="vip-glowing-name" style="font-size: 14px; text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(c.name)}</strong>
+                    </span>
+                    <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>
+                  ` : `
+                    <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
+                  `}
                   <span class="badge" style="font-size: 9.5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${creatorTitle}</span>
                 </div>
                 <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">

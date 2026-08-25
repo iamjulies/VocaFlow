@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-3.5 (Build 142)
+Phiên bản hiện tại : v0.10.8-beta-3.6 (Build 143)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-3.6 (Build 143 - UNIVERSAL ROYAL VIP VISUAL PRESENTATION & LEADERBOARD REWORK):
+  - Chuẩn Hóa Hiển Thị VIP Hoàng Gia Toàn Diện Mọi Giao Diện (Universal VIP Presentation):
+    * Hồ Sơ Công Khai Người Dùng (`modal-public-profile`): Fix scoping bug, hiển thị tên phát sáng neon hoàng gia `vip-glowing-name`, vương miện 👑, viền Avatar phát sáng vàng kim và huy hiệu `👑 VIP [GÓI]`.
+    * Thư Viện Từ Vựng (`VocaLibrary`): Tên tác giả đóng góp VIP tự động hiển thị vương miện 👑 và phát sáng vàng kim hoàng gia.
+    * Thẻ Bộ Từ Học Tập (`screen-decks`) & Chi Tiết Bộ Từ (`screen-words`): Tên người đóng góp VIP chuyển đổi sang huy hiệu hoàng gia `👑 [Tên VIP]`.
+    * Bảng Xếp Hạng Studio (`Top Creators Leaderboard`): Thiết kế lại sang trọng cho tác giả VIP với viền Avatar phát sáng vàng kim 3D, tên phát sáng hoàng gia, vương miện và thẻ VIP cao cấp.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-3.6_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-3.5 (Build 142 - COMPREHENSIVE CLOUD VIP SYNC & PUBLISHER VIP MANAGER):
   - Khắc Phục Lỗi Đồng Bộ VIP Trên Thiết Bị Khác (Multi-Device VIP Sync Bug Fix):
     * Bổ sung cơ chế kéo VIP State tự động trên Firebase Cloud ngay khi ứng dụng khởi chạy (`loadAuthState()`).
