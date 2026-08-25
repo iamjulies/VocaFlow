@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6s (Build 90)
+Phiên bản hiện tại : v0.10.6t (Build 91)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6t (Build 91 - SPEAKING UI REFINED & ACCURATE PASS RATE METRICS):
+  - Tối Giản Hóa Luồng Học & Bố Cục Giao Diện Luyện Nói:
+    * Bỏ nút "Từ Trước" và dọn sạch trạng thái xem lại từ trước để code nhẹ, luồng học thẳng tiến về phía trước.
+    * Chuyển nút "Bỏ qua (Skip Pass)" lên góc trên bên phải của Thẻ Từ Vựng (đồng bộ thiết kế như chế độ Quiz & Spelling).
+    * Khu vực hành động dưới Mic chỉ còn duy nhất 1 nút lớn "Từ Tiếp Theo ⏭️" nổi bật, căn giữa chuẩn chỉnh.
+  - Chuẩn Hóa Màn Hình Tổng Kết Luyện Nói (Accurate Floor Pass Rate & Skips Metric):
+    * Sửa lỗi tính tỷ lệ đạt sàn 0% do đếm nhầm lượt từ đã hoàn thành.
+    * Thay đổi thành chỉ số chi tiết: Tỉ lệ đạt điểm sàn = `[Số lượt thu đạt điểm sàn] / [Tổng số lượt thu âm] (x%)`.
+    * Bổ sung ô thống kê số lượt Bỏ qua (Skip Pass) đã sử dụng (`X/3 lượt`).
+    * Điểm phát âm TB, thời gian luyện nói và thưởng Balance v2 hiển thị chuẩn xác, trực quan.
+  - Xác thực thực nghiệm: Đã kiểm thử logic và giao diện toàn diện.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6t_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6s (Build 90 - OXFORD-CALIBRATED PHONETIC ASSESSMENT & ANTI-NITPICKING PROMPT):
   - Chuẩn Hóa Tiêu Chí Chấm Điểm Phát Âm Oxford & ELSA (Anti-Nitpicking Prompt Engineering):
     * Loại bỏ triệt để tình trạng AI bắt bẻ phi lý (hallucination) như ép "ngân dài âm đuôi /n/" hoặc "kéo dài phụ âm".
