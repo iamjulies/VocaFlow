@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7d (Build 99)
+Phiên bản hiện tại : v0.10.7d-1 (Build 100)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7d-1 (Build 100 - REAL-TIME TARGET FOLLOWER COUNT INCREMENT FIX):
+  - Khắc Phục Lỗi Đồng Bộ Số Lượng Người Theo Dõi Của Đối Phương:
+    * Đồng bộ thời gian thực `followerCount` của tác giả đích khi nhấn Theo dõi / Hủy theo dõi.
+    * Đọc trực tiếp danh sách `followers` và `following` từ Firebase RTDB khi mở Modal Hồ sơ công khai (`openPublicProfileByAuthor`).
+    * Tự động tăng / giảm và phản chiếu tức thì số lượng Người theo dõi trên giao diện `modal-public-profile` mà không cần tải lại trang.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7d-1_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7d (Build 99 - CREATOR FOLLOW ENGINE & SOCIAL GRAPH):
   - Bộ Máy Theo Dõi Tác Giả & Cấu Trúc Mạng Xã Hội (Creator Follow Engine):
     * Cấu trúc cơ sở dữ liệu Firebase Realtime Database phân quyền: `/users/{uid}/following/{targetUid}: true` và `/users/{uid}/followers/{fanUid}: true`.

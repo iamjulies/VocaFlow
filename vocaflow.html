@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7d</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7d-1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4560,7 +4560,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7d</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7d-1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6985,6 +6985,14 @@
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         updateAuthUI();
         updatePubViewFollowBtn(targetUid);
+
+        // Update target follower count on UI immediately
+        if (currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === targetUid) {
+          currentPublicProfileAuthor.targetFollowerCount = Math.max(0, (currentPublicProfileAuthor.targetFollowerCount || 1) - 1);
+          const pubFollowerEl = document.getElementById('pub-view-follower-count');
+          if (pubFollowerEl) pubFollowerEl.textContent = currentPublicProfileAuthor.targetFollowerCount;
+        }
+
         showToast(`Đã hủy theo dõi tác giả ${targetName || ''}.`);
 
         // Cloud updates
@@ -6995,6 +7003,13 @@
           body: JSON.stringify(currentUser.followingCount)
         }).catch(() => {});
         fetch(`${rtdbUrl}/users/${targetUid}/followers/${currentUser.uid}.json${authParam}`, { method: 'DELETE' }).catch(() => {});
+        if (currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === targetUid) {
+          fetch(`${rtdbUrl}/users/${targetUid}/profile/followerCount.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(currentPublicProfileAuthor.targetFollowerCount)
+          }).catch(() => {});
+        }
       } else {
         // Follow
         myFollowingMap[targetUid] = true;
@@ -7003,6 +7018,14 @@
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         updateAuthUI();
         updatePubViewFollowBtn(targetUid);
+
+        // Update target follower count on UI immediately
+        if (currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === targetUid) {
+          currentPublicProfileAuthor.targetFollowerCount = (currentPublicProfileAuthor.targetFollowerCount || 0) + 1;
+          const pubFollowerEl = document.getElementById('pub-view-follower-count');
+          if (pubFollowerEl) pubFollowerEl.textContent = currentPublicProfileAuthor.targetFollowerCount;
+        }
+
         showToast(`✨ Đã theo dõi tác giả ${targetName || ''}!`);
 
         // Cloud updates
@@ -7021,6 +7044,13 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(true)
         }).catch(() => {});
+        if (currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === targetUid) {
+          fetch(`${rtdbUrl}/users/${targetUid}/profile/followerCount.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(currentPublicProfileAuthor.targetFollowerCount)
+          }).catch(() => {});
+        }
       }
     }
 
@@ -8439,6 +8469,8 @@
       let resolvedAvatar = targetDeck?.authorAvatar || authorName;
       let resolvedBio = targetDeck?.authorBio || '';
       let targetUid = authorUid || targetDeck?.authorUid || '';
+      let targetFollowerCount = 0;
+      let targetFollowingCount = 0;
       let authorDecks = [];
 
       if (isVocaFlowOfficial) {
@@ -8454,18 +8486,39 @@
         resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
       } else {
-        // Fetch fresh profile from Cloud RTDB for authentic user metadata
+        // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
         if (targetUid && targetUid !== 'undefined') {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           try {
-            const res = await fetch(`${rtdbUrl}/users/${targetUid}/profile.json`);
-            if (res.ok) {
-              const uProf = await res.json();
+            const [pRes, fRes, fingRes] = await Promise.allSettled([
+              fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}/following.json`)
+            ]);
+
+            if (pRes.status === 'fulfilled' && pRes.value.ok) {
+              const uProf = await pRes.value.json();
               if (uProf) {
                 if (uProf.displayName) resolvedName = uProf.displayName;
                 if (uProf.username) resolvedHandle = uProf.username;
                 resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
                 resolvedBio = uProf.bio || resolvedBio;
+                if (typeof uProf.followerCount === 'number') targetFollowerCount = uProf.followerCount;
+                if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
+              }
+            }
+
+            if (fRes.status === 'fulfilled' && fRes.value.ok) {
+              const fData = await fRes.value.json();
+              if (fData && typeof fData === 'object') {
+                targetFollowerCount = Object.keys(fData).length;
+              }
+            }
+
+            if (fingRes.status === 'fulfilled' && fingRes.value.ok) {
+              const fingData = await fingRes.value.json();
+              if (fingData && typeof fingData === 'object') {
+                targetFollowingCount = Object.keys(fingData).length;
               }
             }
           } catch (e) {}
@@ -8497,18 +8550,25 @@
 
       const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
 
+      if (isCurrentUser) {
+        targetFollowerCount = currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0;
+        targetFollowingCount = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
+      }
+
       // v0.10.7d: Set current profile author state & update follow button
       currentPublicProfileAuthor = {
         targetUid: targetUid,
         resolvedName: resolvedName,
-        resolvedHandle: resolvedHandle
+        resolvedHandle: resolvedHandle,
+        targetFollowerCount: targetFollowerCount,
+        targetFollowingCount: targetFollowingCount
       };
       updatePubViewFollowBtn(targetUid);
 
       const pubFollowerEl = document.getElementById('pub-view-follower-count');
       const pubFollowingEl = document.getElementById('pub-view-following-count');
-      if (pubFollowerEl) pubFollowerEl.textContent = targetDeck?.followerCount || (targetUid && targetUid === currentUser?.uid ? (currentUser?.followerCount || Object.keys(myFollowersMap).length) : 0);
-      if (pubFollowingEl) pubFollowingEl.textContent = targetDeck?.followingCount || (targetUid && targetUid === currentUser?.uid ? (currentUser?.followingCount || Object.keys(myFollowingMap).length) : 0);
+      if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
+      if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
 
       if (nameEl) nameEl.textContent = resolvedName;
       if (avEl) avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
@@ -8541,49 +8601,10 @@
       openModal('modal-public-profile');
     }
 
-    function openPublicProfileByStudent(uid) {
+    async function openPublicProfileByStudent(uid) {
       const s = adminStudentsData.find(st => st.uid === uid);
       if (!s) return;
-
-      const nameEl = document.getElementById('pub-view-name');
-      const avEl = document.getElementById('pub-view-avatar');
-      const bioEl = document.getElementById('pub-view-bio-text');
-      const statDecksEl = document.getElementById('pub-view-stat-decks');
-      const statWordsEl = document.getElementById('pub-view-stat-words');
-      const statPointsEl = document.getElementById('pub-view-stat-points');
-      const decksListEl = document.getElementById('pub-view-decks-list');
-      const decksCountEl = document.getElementById('pub-view-decks-count');
-
-      if (nameEl) nameEl.textContent = s.displayName;
-      if (avEl) avEl.innerHTML = renderAvatarHtml(s.avatar || s.displayName, 72, 28);
-      const studentBio = s.bio || (currentUser && currentUser.uid === s.uid ? (currentUser.bio || localStorage.getItem('vocaflow_user_bio')) : '') || 'Chưa cập nhật mục tiêu học tập.';
-      if (bioEl) bioEl.textContent = studentBio;
-      if (statDecksEl) statDecksEl.textContent = s.deckCount;
-      if (statWordsEl) statWordsEl.textContent = s.wordCount;
-      if (statPointsEl) statPointsEl.textContent = s.points + 'đ';
-
-      if (decksCountEl) decksCountEl.textContent = (s.rawDecks?.length || 0) + ' bộ từ';
-      if (decksListEl) {
-        if (!s.rawDecks || s.rawDecks.length === 0) {
-          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
-        } else {
-          let h = '';
-          s.rawDecks.forEach(d => {
-            const dWords = (s.rawWords || []).filter(w => w.deckId === d.id);
-            h += `
-              <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                <div style="min-width: 0; flex: 1;">
-                  <div style="font-weight: 700; font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📘 ${escapeHtml(d.title || 'Bộ từ')}</div>
-                  <div style="font-size: 10.5px; color: var(--text-muted);">${dWords.length} từ vựng</div>
-                </div>
-              </div>
-            `;
-          });
-          decksListEl.innerHTML = h;
-        }
-      }
-
-      openModal('modal-public-profile');
+      await openPublicProfileByAuthor(s.displayName, '', s.uid);
     }
 
     function openProfileModal() {
