@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-7 (Build 115)
+Phiên bản hiện tại : v0.10.7g-8 (Build 116)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-8 (Build 116 - GLOBAL TDZ VARIABLE HOISTING & MAX QUOTA MERGE ENGINE):
+  - Khắc Phục Triệt Để Lỗi Biến TDZ & Tối Ưu Thuật Toán Đồng Bộ Quota AI:
+    * Khắc phục lỗi Temporal Dead Zone (TDZ) do khai báo biến bằng `let` ở cuối file: Đưa toàn bộ các biến trạng thái `aiChatDailyDate`, `aiChatDailyCount` lên khai báo `var` ở đầu `<script>`, loại bỏ hoàn toàn các lỗi `ReferenceError: Cannot access before initialization`.
+    * Tinh chỉnh thuật toán giải quyết xung đột Quota: Sử dụng nguyên tắc `Math.max(localCount, cloudCount)` để ngăn máy B đẩy dữ liệu số lượt cũ (0 lượt) đè lên dữ liệu mới của máy A (5 lượt).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-8_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-7 (Build 115 - GLOBAL DATE HELPER & MODAL OPEN AUTO-FETCH QUOTA HOTFIX):
   - Khắc Phục Lỗi Phạm Vi Hàm getTodayDateString & Tự Động Kéo Quota Khi Mở Khung Chat:
     * Chuyển hàm `getTodayDateString()` lên phạm vi toàn cục (Global Scope) đầu script, khắc phục hoàn toàn lỗi `ReferenceError: getTodayDateString is not defined` làm gián đoạn tiến trình đồng bộ Cloud.
