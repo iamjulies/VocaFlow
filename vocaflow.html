@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -21785,10 +21785,12 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           let optionsHtml = '';
           (qData.options || []).forEach((opt, oIdx) => {
             const letter = ['A','B','C','D'][oIdx] || (oIdx + 1);
+            // Clean option: strip leading "A. ", "A) ", "1. ", "a. "
+            const cleanOpt = (opt || '').toString().replace(/^[A-Da-d0-9][\.\)\-\:\s]+\s*/, '').trim();
             const explainEsc = escapeHtml(qData.explain || '').replace(/'/g, "\\'");
             optionsHtml += `
-              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${explainEsc}')" style="text-align: left; justify-content: flex-start; padding: 7px 10px; font-size: 12px; border-radius: 8px; width: 100%;">
-                <strong style="margin-right: 6px; color: #818cf8;">${letter}.</strong> ${escapeHtml(opt)}
+              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${explainEsc}')" style="text-align: left; justify-content: flex-start; padding: 8px 12px; font-size: 12px; border-radius: 8px; width: 100%; line-height: 1.4;">
+                <strong style="margin-right: 6px; color: #818cf8;">${letter}.</strong> ${escapeHtml(cleanOpt)}
               </button>
             `;
           });
@@ -21798,13 +21800,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
               <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
                 <span>🎯 CÂU HỎI TRẮC NGHIỆM TƯƠNG TÁC:</span>
               </div>
-              <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: var(--text);">
+              <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: var(--text); line-height: 1.4;">
                 ${escapeHtml(qData.q || qData.question || 'Chọn đáp án đúng:')}
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px;">
                 ${optionsHtml}
               </div>
-              <div id="${qId}_explain" style="display: none; margin-top: 10px; padding: 8px 10px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
+              <div id="${qId}_explain" style="display: none; margin-top: 10px; padding: 10px 12px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; font-size: 12px; line-height: 1.5;"></div>
             </div>
           `;
           const phKey = `###AI_PLACEHOLDER_${placeholders.length}###`;
@@ -21815,37 +21817,38 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         }
       });
 
-      // 2. Parse and extract [VOICE_CHECK: ...]
+      // 2. Parse and extract [VOICE_CHECK: ...] (support word or sentence/text)
       const voiceRegex = /\[VOICE_CHECK:\s*(\{.*?\})\]/gs;
       text = text.replace(voiceRegex, (match, jsonStr) => {
         try {
           const vData = JSON.parse(jsonStr);
-          const vWord = vData.word || '';
-          const vIpa = vData.ipa || '';
+          const vTarget = (vData.text || vData.word || '').trim();
+          const vIpa = (vData.ipa || '').trim();
+          const isSentence = vTarget.includes(' ');
           const vId = 'ai_voice_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
-          const wordEsc = escapeHtml(vWord).replace(/'/g, "\\'");
+          const textEsc = escapeHtml(vTarget).replace(/'/g, "\\'");
 
           const cardHtml = `
             <div class="ai-voice-check-card" id="${vId}" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 12px; margin: 10px 0;">
               <div style="font-size: 11px; font-weight: 700; color: #f472b6; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
-                <span>🎙️ PHÒNG LUYỆN NÓI TẠI CHỖ (MINI VOICE CHECK):</span>
+                <span>🎙️ PHÒNG LUYỆN NÓI TẠI CHỖ (${isSentence ? 'LUYỆN ĐỌC CÂU' : 'LUYỆN PHÁT ÂM TỪ'}):</span>
               </div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-                <div>
-                  <strong style="font-size: 15px; color: var(--text);">${escapeHtml(vWord)}</strong>
-                  ${vIpa ? `<span style="font-family: monospace; color: #a5b4fc; font-size: 12px; margin-left: 6px;">${escapeHtml(vIpa)}</span>` : ''}
+                <div style="flex: 1; min-width: 180px;">
+                  <strong style="font-size: 14.5px; color: var(--text); line-height: 1.4;">${escapeHtml(vTarget)}</strong>
+                  ${vIpa ? `<div style="font-family: monospace; color: #a5b4fc; font-size: 12px; margin-top: 2px;">${escapeHtml(vIpa)}</div>` : ''}
                 </div>
-                <button type="button" class="btn btn-outline btn-sm" onclick="speakText('${wordEsc}')" style="font-size: 11px; padding: 3px 8px; border-radius: 8px; color: #38bdf8;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="speakText('${textEsc}')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 8px; color: #38bdf8; flex-shrink: 0;">
                   🔊 Nghe mẫu
                 </button>
               </div>
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <button type="button" id="${vId}_btn" class="btn btn-primary btn-sm" onclick="toggleAiMiniVoiceRecord('${vId}', '${wordEsc}')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
+                <button type="button" id="${vId}_btn" class="btn btn-primary btn-sm" onclick="toggleAiMiniVoiceRecord('${vId}', '${textEsc}')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 6px 14px; border-radius: 8px;">
                   🎙️ Nhấn để thu âm
                 </button>
-                <span id="${vId}_status" style="font-size: 11.5px; color: var(--text-muted);">Bấm Mic và nói từ này</span>
+                <span id="${vId}_status" style="font-size: 11.5px; color: var(--text-muted);">Bấm Mic và đọc ${isSentence ? 'câu' : 'từ'} này rõ ràng</span>
               </div>
-              <div id="${vId}_result" style="display: none; margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
+              <div id="${vId}_result" style="display: none; margin-top: 12px; padding: 12px; border-radius: 10px; font-size: 12px; line-height: 1.5;"></div>
             </div>
           `;
           const phKey = `###AI_PLACEHOLDER_${placeholders.length}###`;
@@ -21894,11 +21897,16 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       if (explainEl) {
         explainEl.style.display = 'block';
         const isRight = selectedIdx === correctIdx;
+        // Format markdown bold in explainText
+        const formattedExplain = (explainText || 'Đáp án đúng là lựa chọn được tô xanh.')
+          .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #6ee7b7;">$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
         explainEl.innerHTML = `
-          <div style="font-weight: 700; color: ${isRight ? '#34d399' : '#f87171'}; margin-bottom: 2px;">
+          <div style="font-weight: 700; color: ${isRight ? '#34d399' : '#f87171'}; margin-bottom: 4px; font-size: 12.5px;">
             ${isRight ? '🎉 Chính xác!' : '❌ Chưa chính xác!'}
           </div>
-          <div>${explainText || 'Đáp án đúng là lựa chọn được tô xanh.'}</div>
+          <div style="color: var(--text);">${formattedExplain}</div>
         `;
       }
     }
@@ -21967,7 +21975,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       return (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
     }
 
-    async function evaluateAiMiniVoiceAudio(vId, targetWord, audioBlob) {
+    async function evaluateAiMiniVoiceAudio(vId, targetText, audioBlob) {
       const btn = document.getElementById(vId + '_btn');
       const statusEl = document.getElementById(vId + '_status');
       const resultEl = document.getElementById(vId + '_result');
@@ -21997,12 +22005,39 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         const standardModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
+        const isSentence = targetText.trim().includes(' ');
+        const promptInstruction = isSentence
+          ? `Bạn là chuyên gia thẩm âm và luyện ngữ điệu tiếng Anh bản xứ hàng đầu. Người học vừa thu âm đọc CÂU: "${targetText}".
+Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-5 câu nhận xét bằng tiếng Việt) về:
+1. Độ rõ và chuẩn của các từ khóa quan trọng trong câu, âm đầu và âm đuôi (ending sounds).
+2. Trọng âm câu (sentence stress), hiện tượng nối âm (linking sounds) và ngữ điệu (intonation lên/xuống giọng).
+3. Hướng dẫn cụ thể cách mở khẩu hình, đặt vị trí lưỡi và ngắt nhịp để nói câu này tự nhiên và "Tây" như người bản xứ.
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
+{
+  "score": 85,
+  "detected": "Câu hoặc các từ nghe được từ audio",
+  "feedbackVi": "Đoạn phân tích chi tiết 3-5 câu bằng tiếng Việt về phát âm, ngữ điệu, nối âm và mẹo khẩu hình",
+  "strengths": "Điểm người học đã làm tốt (ví dụ: ngữ điệu tự nhiên, từ X đọc rất chuẩn)",
+  "improvements": "Điểm cần khắc phục cụ thể (ví dụ: cần bật rõ âm đuôi /s/ ở từ Y, nối âm giữa A và B)"
+}`
+          : `Bạn là chuyên gia thẩm âm và sửa phát âm tiếng Anh chuẩn quốc tế. Người học vừa thu âm phát âm TỪ: "${targetText}".
+Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-4 câu nhận xét bằng tiếng Việt) về:
+1. Độ chính xác của âm đầu (onset), nguyên âm chính (nucleus vowel) và đặc biệt là âm đuôi/âm cuối (coda/ending sound).
+2. Trọng âm từ và độ rung thanh quản/bật hơi.
+3. Hướng dẫn cụ thể vị trí đặt đầu lưỡi, khẩu hình môi để phát âm chuẩn xác nhất.
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
+{
+  "score": 85,
+  "detected": "Từ nghe được từ audio",
+  "feedbackVi": "Đoạn phân tích chi tiết 3-4 câu bằng tiếng Việt phân tích chi tiết âm đầu, âm giữa, âm đuôi và hướng dẫn khẩu hình",
+  "strengths": "Điểm phát âm tốt",
+  "improvements": "Lỗi âm cụ thể cần sửa và cách sửa"
+}`;
+
         const payload = {
           contents: [{
             parts: [
-              {
-                text: `Bạn là giám khảo phát âm AI. Hãy đánh giá phát âm của người học cho từ vựng: "${targetWord}". Trả về JSON: {"score": 85, "feedbackVi": "Nhận xét ngắn về khẩu hình và âm đuôi", "detected": "Từ nghe được"}. Chỉ trả JSON, không bọc markdown.`
-              },
+              { text: promptInstruction },
               {
                 inlineData: {
                   mimeType: audioBlob.type || 'audio/webm',
@@ -22032,7 +22067,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
                 localStorage.setItem('vocaflow_gemini_working_model', m);
                 break;
               } catch (e) {
-                parsed = { score: 80, feedbackVi: 'Phát âm tương đối tốt!', detected: targetWord };
+                parsed = { score: 80, feedbackVi: rawText, detected: targetText };
                 break;
               }
             }
@@ -22042,18 +22077,33 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         }
 
         if (parsed) {
-          const score = parsed.score || 75;
+          const score = typeof parsed.score === 'number' ? parsed.score : 75;
           const isGood = score >= 75;
+          const detected = parsed.detected || targetText;
+          const feedback = parsed.feedbackVi || 'Phát âm của bạn khá tốt!';
+          const strengths = parsed.strengths || '';
+          const improvements = parsed.improvements || '';
+
           if (resultEl) {
             resultEl.style.display = 'block';
-            resultEl.style.background = isGood ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
-            resultEl.style.border = `1px solid ${isGood ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}`;
+            resultEl.style.background = isGood ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)';
+            resultEl.style.border = `1px solid ${isGood ? 'rgba(16,185,129,0.35)' : 'rgba(245,158,11,0.35)'}`;
+            
+            let extraPills = '';
+            if (strengths) {
+              extraPills += `<div style="margin-top: 6px; padding: 6px 8px; background: rgba(16,185,129,0.15); border-radius: 6px; font-size: 11.5px; color: #a7f3d0;"><strong>🌟 Điểm tốt:</strong> ${escapeHtml(strengths)}</div>`;
+            }
+            if (improvements) {
+              extraPills += `<div style="margin-top: 6px; padding: 6px 8px; background: rgba(245,158,11,0.15); border-radius: 6px; font-size: 11.5px; color: #fde68a;"><strong>💡 Mẹo cải thiện:</strong> ${escapeHtml(improvements)}</div>`;
+            }
+
             resultEl.innerHTML = `
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <strong style="color: ${isGood ? '#34d399' : '#fbbf24'}; font-size: 13px;">${isGood ? '🌟 Phát âm Đạt' : '⚠️ Cần cải thiện'}: ${score}/100đ</strong>
-                <span style="font-size: 11px; color: var(--text-muted);">Nghe được: "${parsed.detected || targetWord}"</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+                <strong style="color: ${isGood ? '#34d399' : '#fbbf24'}; font-size: 13.5px;">${isGood ? '🌟 Phát âm Đạt' : '⚠️ Cần cải thiện'}: ${score}/100đ</strong>
+                <span style="font-size: 11.5px; color: var(--text-muted);">AI nghe được: "<em>${escapeHtml(detected)}</em>"</span>
               </div>
-              <div style="color: var(--text); font-size: 12px;">${parsed.feedbackVi || 'Hãy tiếp tục luyện tập nhé!'}</div>
+              <div style="color: var(--text); font-size: 12px; line-height: 1.5;">${escapeHtml(feedback)}</div>
+              ${extraPills}
             `;
           }
         } else {
@@ -22136,12 +22186,14 @@ Hãy vào VocaShop hoặc làm Quiz để nhận thêm Xu nhé!`);
 
       const systemInstruction = `Bạn là Gemini English Mentor - Gia sư tiếng Anh học thuật kiêm bạn đồng hành luyện tập phản xạ của ứng dụng VocaFlow.
 ${contextInfo}
-Phong cách phản hồi:
-1. Giải thích ngắn gọn, súc tích, trực diện bằng tiếng Việt (kèm ví dụ tiếng Anh chuẩn tự nhiên).
-2. Dùng Markdown in đậm **từ vựng/cấu trúc**.
-3. Nếu người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố người dùng 1 câu mini, hãy đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi?","options":["A...","B...","C...","D..."],"answer":0,"explain":"Giải thích ngắn"}]
-4. Nếu người dùng yêu cầu luyện phát âm từ nào đó, hãy đính kèm thẻ: [VOICE_CHECK: {"word":"từ_cần_đọc","ipa":"/phiên âm/"}]
-5. Luôn thân thiện, tạo cảm hứng và giải thích dễ hiểu nhất.`;
+Quy tắc phản hồi quan trọng:
+1. Giải thích ngắn gọn, trực diện bằng tiếng Việt, dùng Markdown in đậm **từ vựng/cấu trúc**.
+2. Khi người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố 1 câu: đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi trắc nghiệm?","options":["Lựa chọn 1","Lựa chọn 2","Lựa chọn 3","Lựa chọn 4"],"answer":0,"explain":"Giải thích chi tiết vì sao đáp án này đúng và các đáp án khác sai"}]
+   LƯU Ý CỰC KỲ QUAN TRỌNG: TUYỆT ĐỐI KHÔNG lặp lại câu hỏi hay viết các lựa chọn A/B/C/D ở đoạn văn bản bên ngoài. Trong mảng options chỉ ghi nội dung phương án (không đính kèm tiền tố "A.", "B.", "1.", "2.").
+3. Khi người dùng yêu cầu luyện phát âm TỪ VỰNG: đính kèm thẻ: [VOICE_CHECK: {"text":"từ_cần_đọc","ipa":"/phiên âm IPA/"}]
+4. Khi người dùng yêu cầu luyện phát âm CÂU TIẾNG ANH (hoặc câu có chỉnh sửa): BẮT BUỘC đính kèm thẻ cho TOÀN BỘ CÂU ĐÓ: [VOICE_CHECK: {"text":"câu_tiếng_Anh_hoàn_chỉnh_cần_luyện_đọc","ipa":""}]
+   TUYỆT ĐỐI KHÔNG tự ý cắt vụn câu của người dùng thành 1 từ duy nhất khi người dùng yêu cầu luyện đọc cả câu.
+5. Luôn thân thiện, tạo cảm hứng học tập và giải thích cặn kẽ dễ hiểu.`;
 
       // Multi-turn payload (last 8 turns)
       const contentsPayload = [];

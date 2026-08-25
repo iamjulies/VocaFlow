@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-3 (Build 110)
+Phiên bản hiện tại : v0.10.7g-4 (Build 111)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-4 (Build 111 - DEEP VOICE EVALUATION & SENTENCE PRACTICE UPGRADE):
+  - Nâng Cấp Toàn Diện Phòng Luyện Nói Mini & Bộ Câu Hỏi Trắc Nghiệm:
+    * Hỗ trợ luyện phát âm cả Câu Tiếng Anh (Sentence/Phrase) lẫn Từ đơn lẻ (Word) mà không bị AI tự ý rút gọn.
+    * Động cơ chấm điểm phát âm sư phạm chuyên sâu: Phân tích 3-5 câu chi tiết về âm đầu, âm đuôi, ngữ điệu câu, hiện tượng nối âm và hướng dẫn khẩu hình miệng, kèm 2 thẻ chuyên biệt "🌟 Điểm tốt" và "💡 Mẹo cải thiện".
+    * Khắc phục triệt để lỗi lặp câu hỏi bên ngoài khung trắc nghiệm, khử trùng lặp ký hiệu phương án (`A. A)`) và render in đậm Markdown cho phần giải thích đáp án.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-4_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-3 (Build 110 - IN-CHAT MINI-WIDGET HTML ESCAPING HOTFIX):
   - Khắc Phục Lỗi Hiển Thị Raw HTML Của Mini Voice Check & Mini Quiz:
     * Điều chỉnh thứ tự phân giải Markdown: Trích xuất các thẻ tương tác `[VOICE_CHECK: ...]` và `[MINI_QUIZ: ...]` thành placeholder trước khi qua bộ lọc `escapeHtml`, sau đó khôi phục lại các Card giao diện hoàn chỉnh.
