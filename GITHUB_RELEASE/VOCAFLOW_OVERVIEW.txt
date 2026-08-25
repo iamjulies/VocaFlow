@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.1 (Build 125)
+Phiên bản hiện tại : v0.10.8-beta-2.2 (Build 126)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.2 (Build 126 - NATURAL CROWN EMOJI & VIBRANT LIGHT THEME POLISH):
+  - Khắc Phục Lỗi Mất Màu Emoji Vương Miện 👑 & Làm Sáng Giao Diện Hồ Sơ Light Mode:
+    * Khắc phục triệt để hiện tượng Emoji Vương Miện 👑 bị biến đổi màu theo dải gradient chữ: Tách icon 👑 thành phần tử độc lập bên ngoài thuộc tính `background-clip: text`, khôi phục 100% màu sắc tự nhiên, chi tiết sắc nét của ngọc ruby và vàng nguyên bản kết hợp hiệu ứng nhún nhảy bồng bềnh 2.5s.
+    * Giữ trọn vẹn sắc độ Vàng Hoàng Kim tươi sáng lấp lánh (`#f59e0b` ➔ `#fbbf24` ➔ `#fef08a`) cho cả Chế độ Sáng (Light Mode) và Chế độ Tối (Dark Mode).
+    * Làm sáng và tinh chỉnh 2 khối chức năng ("Ghi chú & Mục tiêu học tập" và "Trạng thái Cloud Firestore") trong Hồ Sơ Cá Nhân: Sử dụng biến hệ thống `var(--surface-elevated)` và `var(--border)` thay vì màu xám đục hardcode, mang lại giao diện trắng sáng sạch đẹp và sang trọng.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.2_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.1 (Build 125 - VIP GLOWING NICKNAME & LIGHT THEME CONTRAST HOTFIX):
   - Nâng Cấp Hiệu Ứng Phát Sáng & Tương Phản Giao Diện Sáng Cho Tên VIP:
     * Thêm hiệu ứng phát sáng chuyển động đa chiều (Animated Shimmer Glow Keyframes): Tên người dùng VIP tự động lấp lánh ánh kim hoàng kim kèm bóng đổ quang học phát sáng (Drop Shadow Neon Glow) 3 lớp.
