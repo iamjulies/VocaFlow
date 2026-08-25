@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-3.7 (Build 144)
+Phiên bản hiện tại : v0.10.8-beta-3.8 (Build 145)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-3.8 (Build 145 - VIETQR 25-CHAR EMVCO COMPLIANCE SYNTAX):
+  - Chuẩn Hóa Cú Pháp Chuyển Khoản Tương Thích Tuyệt Đối Giới Hạn 25 Ký Tự VietQR:
+    * Tiêu chuẩn VietQR (EMVCo Tag 62) & Napas 247 giới hạn thông tin bổ sung tối đa 25 ký tự.
+    * Tối ưu hóa cấu trúc cú pháp: `VOCA [16_KÝ_TỰ_UID] [MÃ_GÓI]`, ví dụ: `VOCA MJFITS6BTHWAJB6M LT`.
+    * Độ dài tối đa chỉ 22 - 24 ký tự (≤ 25 ký tự), đảm bảo 100% không bị cắt ngắn hoặc từ chối trên bất kỳ ứng dụng Mobile Banking nào (VCB, MB, TCB, VPB, BIDV, Agribank, TPBank...).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-3.8_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-3.7 (Build 144 - REALTIME VIP REGISTRY, GUEST GLOW FIX & UNCUT UID SYNTAX):
   - Khởi Tạo Sổ Đăng Ký VIP Toàn Cầu Realtime (`globalVipRegistry`):
     * Tự động kéo dữ liệu VIP từ Cloud Firebase ngay khi khởi động ứng dụng mà không cần phải mở Cổng Quản Trị.
