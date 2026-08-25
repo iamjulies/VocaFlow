@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6u (Build 92)
+Phiên bản hiện tại : v0.10.6v (Build 93)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6v (Build 93 - BRAND-NEW HIGH-DEFINITION APP ICON & FULL ASSETS OVERHAUL):
+  - Cập Nhật Toàn Diện Bộ Nhận Diện Thương Hiệu Mới (Brand Icon Overhaul):
+    * Chuyển đổi toàn bộ biểu tượng hệ thống sang logo mới `save/VocaFLow_icon.png`.
+    * Tái tạo và xuất bản đầy đủ các kích thước độ phân giải cao với công nghệ nội suy Bicubic High-Quality:
+      + PWA Web Icons: `Icon-192.png`, `Icon-512.png`, `Icon-maskable-192.png`, `Icon-maskable-512.png`, `web/favicon.png`.
+      + Windows Desktop App Icon: `app_icon.ico` đa tầng (16x16, 32x32, 48x48, 64x64, 128x128, 256x256).
+      + iOS AppIcon Set: Full 15 kích thước chuẩn Apple.
+    * Tinh chỉnh hiển thị trên thanh Header: `border-radius: 9px; object-fit: contain; box-shadow` sắc nét, không bị méo góc hay tràn viền.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6v_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6u (Build 92 - SPEAKING SKIP PASS WALLET SYNC & DEDUCTION):
   - Đồng Bộ Thẻ Bỏ Qua (Skip Pass) Với Kho Túi Đồ & Ví Người Dùng Thực Tế:
     * Thay thế hoàn toàn số lượt skip cục bộ cố định (3 lượt) bằng số lượng Thẻ Bỏ Qua người dùng đang sở hữu thực tế trong kho (`getUserSkips()`).
