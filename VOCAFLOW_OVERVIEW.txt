@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.10 (Build 134)
+Phiên bản hiện tại : v0.10.8-beta-2.11 (Build 135)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.11 (Build 135 - SEPARATED DUAL-LAYER VIP ARCHITECTURE):
+  - Tách Lớp Kết Cấu Hai Tầng Độc Lập Cho Hiệu Ứng VIP (Dual-Layer Component Architecture):
+    * Lớp bao ngoài (`.vip-name-wrapper`): Đảm nhiệm toàn bộ hiệu ứng phát sáng nhấp nháy hào quang bên ngoài (`vip-phat-sang 2.5s ease-in-out infinite`) cho cả tên người dùng và vương miện 👑.
+    * Lớp bên trong (`.vip-glowing-name`): Hoàn toàn giải phóng khỏi filter texture caching, chạy mượt mà 100% animation đổi màu tuyến tính (`vip-anh-kim 3s linear infinite`) với dải màu `#ffd700` ➔ `#ff9a9e` ➔ `#fecfef` ➔ `#ff9a9e` ➔ `#ffd700`.
+    * Khắc phục triệt để lỗi xung đột bộ nhớ đệm GPU Compositor giữa `filter` và `-webkit-background-clip: text` trên Chromium.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.11_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.10 (Build 134 - DUAL-ENGINE: HORIZONTAL LINEAR WAVE & NEON PULSE GLOW):
   - Đồng Thời Kích Hoạt 2 Lớp Hiệu Ứng: Chạy Màu Tuyến Tính Ngang + Phát Sáng Nhấp Nháy Hào Quang:
     * Animation 1 (`vip-anh-kim 3s linear infinite`): Dải màu Hoàng Kim Vàng Kim (`#ffd700`) ➔ Hồng Đào (`#ff9a9e`) ➔ Trắng Hồng Lấp Lánh (`#fecfef`) ➔ Vàng Kim (`#ffd700`) trôi chuyển dịch liên tục 60fps từ phải sang trái (`background-position: 0% center` ➔ `200% center`).

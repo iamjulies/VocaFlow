@@ -67,7 +67,7 @@
     }
 
     /* =========================================================================
-       VIP GLOW & SHIMMER EFFECTS (v0.10.8-beta-2.10)
+       VIP GLOW & SHIMMER EFFECTS (v0.10.8-beta-2.11 DUAL-LAYER ENGINE)
        ========================================================================= */
     @keyframes vip-anh-kim {
       0% {
@@ -80,10 +80,10 @@
 
     @keyframes vip-phat-sang {
       0%, 100% {
-        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.65)) drop-shadow(0 0 10px rgba(255, 154, 158, 0.45));
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 10px rgba(255, 154, 158, 0.5));
       }
       50% {
-        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 1)) drop-shadow(0 0 18px rgba(255, 154, 158, 0.85)) drop-shadow(0 0 28px rgba(254, 207, 239, 0.6));
+        filter: drop-shadow(0 0 9px rgba(255, 215, 0, 1)) drop-shadow(0 0 18px rgba(255, 154, 158, 0.9)) drop-shadow(0 0 28px rgba(254, 207, 239, 0.7));
       }
     }
 
@@ -107,16 +107,23 @@
       }
     }
 
+    .vip-name-wrapper {
+      display: inline-flex !important;
+      align-items: center !important;
+      vertical-align: middle !important;
+      animation: vip-phat-sang 2.5s ease-in-out infinite !important;
+    }
+
     .vip-glowing-name,
     [data-theme="light"] .vip-glowing-name {
       display: inline-block !important;
-      background: linear-gradient(to right, #ffd700 0%, #ff9a9e 25%, #fecfef 50%, #ffd700 100%) !important;
+      background: linear-gradient(to right, #ffd700 0%, #ff9a9e 25%, #fecfef 50%, #ff9a9e 75%, #ffd700 100%) !important;
       background-size: 200% auto !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       background-clip: text !important;
       text-fill-color: transparent !important;
-      animation: vip-anh-kim 3s linear infinite, vip-phat-sang 2.5s ease-in-out infinite !important;
+      animation: vip-anh-kim 3s linear infinite !important;
       font-weight: 800 !important;
       letter-spacing: 0.3px !important;
       vertical-align: middle !important;
@@ -1979,7 +1986,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-2.10</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-2.11</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4784,7 +4791,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-2.10</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-2.11</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6853,7 +6860,7 @@
                 <div>
                   <div style="font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                     ${s.isVip ? `
-                      <span style="display: inline-flex; align-items: center; gap: 4px;" title="Hội viên VIP">
+                      <span class="vip-name-wrapper" style="gap: 4px;" title="Hội viên VIP">
                         <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
                         <span class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(s.displayName)}</span>
                       </span>
@@ -8060,7 +8067,7 @@
               </div>
               <div style="min-width: 0; flex: 1;">
                 <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px;">
-                  ${u.isVip ? `<span class="vip-glowing-name"><span class="vip-crown-icon" style="font-size: 12px;">👑</span> ${escapeHtml(u.name)}</span>` : `<span>${escapeHtml(u.name)}</span>`}
+                  ${u.isVip ? `<span class="vip-name-wrapper"><span class="vip-crown-icon" style="font-size: 12px; margin-right: 4px;">👑</span><span class="vip-glowing-name">${escapeHtml(u.name)}</span></span>` : `<span>${escapeHtml(u.name)}</span>`}
                 </div>
                 <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle)}</div>
               </div>
@@ -8382,7 +8389,7 @@
 
         if (nameEl) {
           if (userVipActive) {
-            nameEl.innerHTML = `<span style="display: inline-flex; align-items: center;"><span class="vip-glowing-name">${escapeHtml(displayName)}</span><span class="vip-crown-icon" title="Hội viên VIP (${userVipTierName.toUpperCase()})" style="font-size: 13px;">👑</span></span>`;
+            nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name">${escapeHtml(displayName)}</span><span class="vip-crown-icon" title="Hội viên VIP (${userVipTierName.toUpperCase()})" style="font-size: 13px;">👑</span></span>`;
           } else {
             nameEl.textContent = displayName;
           }
@@ -8398,7 +8405,7 @@
 
         if (profileNameEl) {
           if (userVipActive) {
-            profileNameEl.innerHTML = `<span style="display: inline-flex; align-items: center;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(displayName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Hội viên VIP (${userVipTierName.toUpperCase()})">👑</span></span>`;
+            profileNameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(displayName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Hội viên VIP (${userVipTierName.toUpperCase()})">👑</span></span>`;
           } else {
             profileNameEl.textContent = displayName;
           }
@@ -9584,7 +9591,7 @@
       const isAuthorVip = isCurrentUser ? isUserVip() : (targetUid && typeof uProf !== 'undefined' && uProf && uProf.isVip === true);
       if (nameEl) {
         if (isAuthorVip) {
-          nameEl.innerHTML = `<span style="display: inline-flex; align-items: center;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Tác giả VIP">👑</span></span>`;
+          nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Tác giả VIP">👑</span></span>`;
         } else {
           nameEl.textContent = resolvedName;
         }
@@ -20177,7 +20184,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (((isAuthor && isUserVip()) || deck.isAuthorVip || deck.authorIsVip) ? `<span style="display: inline-flex; align-items: center; gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (((isAuthor && isUserVip()) || deck.isAuthorVip || deck.authorIsVip) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
                 ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
                   <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận bộ từ mới'}">
                     ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
