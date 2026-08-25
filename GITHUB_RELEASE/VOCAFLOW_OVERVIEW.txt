@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7f (Build 102)
+Phiên bản hiện tại : v0.10.7f-1 (Build 103)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7f-1 (Build 103 - MODAL NAVIGATION & BACK STACK FIX):
+  - Khắc Phục Luồng Điều Hướng Modal Xem Trước Bộ Từ:
+    * Khi chạm vào thông báo bộ từ mới để mở xem trước (`previewLibraryDeck`), hệ thống lưu lại modal nguồn (`modal-notifications`).
+    * Khi đóng modal xem trước (`modal-library-preview`), hệ thống tự động quay lại đúng Trung tâm thông báo (`modal-notifications`) thay vì thoát ra màn hình chính.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7f-1_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7f (Build 102 - NOTIFICATION CENTER & ACTIVITY FEED):
   - Trung Tâm Thông Báo Đa Năng (VocaNotifications):
     * Bổ sung nút Chuông 🔔 trên Header và Menu Mobile với Badge hiển thị số lượng thông báo chưa đọc thời gian thực.
