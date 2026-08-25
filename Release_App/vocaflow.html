@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-1.1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-1.1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7941,7 +7941,12 @@
           avatar = foundDeck.authorAvatar || name;
         }
 
-        // ALWAYS fetch real-time profile from Cloud database to get the exact current username and avatar
+        let isVip = false;
+        if (currentUser && uid === currentUser.uid) {
+          isVip = isUserVip();
+        }
+
+        // ALWAYS fetch real-time profile from Cloud database to get the exact current username, avatar and VIP status
         try {
           const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
           if (res.ok) {
@@ -7950,11 +7955,12 @@
               if (p.displayName) name = p.displayName;
               if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
               if (p.avatar) avatar = p.avatar;
+              if (p.isVip) isVip = true;
             }
           }
         } catch (e) {}
 
-        return { uid, name, handle, avatar };
+        return { uid, name, handle, avatar, isVip };
       }));
 
       let html = '';
@@ -7963,11 +7969,14 @@
         html += `
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; cursor: pointer;" onclick="closeModal('modal-subscribers-list'); openPublicProfileModal('${escapeHtml(u.name)}', '${u.uid}')">
-              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; overflow: hidden;">
+              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; overflow: hidden; ${u.isVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 10px rgba(251,191,36,0.6);' : ''}">
                 ${renderAvatarHtml(u.avatar, 38, 16)}
               </div>
               <div style="min-width: 0; flex: 1;">
-                <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(u.name)}</div>
+                <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px;">
+                  ${u.isVip ? '<span>👑</span>' : ''}
+                  <span ${u.isVip ? 'style="color: #fbbf24;"' : ''}>${escapeHtml(u.name)}</span>
+                </div>
                 <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle)}</div>
               </div>
             </div>
@@ -8283,14 +8292,53 @@
         if (guestBanner) guestBanner.style.display = 'none';
         const displayName = currentUser.displayName || currentUser.email.split('@')[0];
         const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
-        if (nameEl) nameEl.textContent = displayName;
-        if (nameMobileEl) nameMobileEl.textContent = `Tài khoản (${displayName})`;
-        if (profileNameEl) profileNameEl.textContent = displayName;
+        const userVipActive = isUserVip();
+        const userVipTierName = getUserVipTier();
+
+        if (nameEl) {
+          if (userVipActive) {
+            nameEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px;"><span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(displayName)}</span><span title="Hội viên VIP" style="font-size: 13px; filter: drop-shadow(0 0 5px rgba(251,191,36,0.9));">👑</span></span>`;
+          } else {
+            nameEl.textContent = displayName;
+          }
+        }
+
+        if (nameMobileEl) {
+          if (userVipActive) {
+            nameMobileEl.innerHTML = `Tài khoản: <strong style="color: #fbbf24; display: inline-flex; align-items: center; gap: 4px;">👑 ${escapeHtml(displayName)} (VIP)</strong>`;
+          } else {
+            nameMobileEl.textContent = `Tài khoản (${displayName})`;
+          }
+        }
+
+        if (profileNameEl) {
+          if (userVipActive) {
+            profileNameEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;"><span style="background: linear-gradient(135deg, #fbbf24, #f59e0b, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(displayName)}</span><span title="Hội viên VIP (${userVipTierName.toUpperCase()})" style="font-size: 18px; filter: drop-shadow(0 0 8px rgba(251,191,36,0.9)); cursor: default;">👑</span></span>`;
+          } else {
+            profileNameEl.textContent = displayName;
+          }
+        }
+
         if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
+
         if (profileBadgeEl) {
-          profileBadgeEl.textContent = 'Đã liên kết Cloud';
-          profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
-          profileBadgeEl.style.color = '#34d399';
+          if (userVipActive) {
+            const tierNames = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
+            const tierLabel = tierNames[userVipTierName] || 'VIP';
+            profileBadgeEl.innerHTML = `👑 VIP ${tierLabel}`;
+            profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            profileBadgeEl.style.color = '#ffffff';
+            profileBadgeEl.style.fontWeight = '800';
+            profileBadgeEl.style.border = '1px solid rgba(251, 191, 36, 0.6)';
+            profileBadgeEl.style.boxShadow = '0 2px 10px rgba(245, 158, 11, 0.4)';
+          } else {
+            profileBadgeEl.textContent = 'Đã liên kết Cloud';
+            profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
+            profileBadgeEl.style.color = '#34d399';
+            profileBadgeEl.style.fontWeight = 'normal';
+            profileBadgeEl.style.border = 'none';
+            profileBadgeEl.style.boxShadow = 'none';
+          }
         }
 
         // Handle & Cooldown Status
@@ -8340,7 +8388,15 @@
           }
         }
         const userAvatar = getUserAvatar(currentUser);
-        if (profileAvatarEl) profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
+        if (profileAvatarEl) {
+          profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
+          if (userVipActive) {
+            profileAvatarEl.style.borderRadius = '50%';
+            profileAvatarEl.style.boxShadow = '0 0 0 2.5px #fbbf24, 0 0 16px rgba(251, 191, 36, 0.65)';
+          } else {
+            profileAvatarEl.style.boxShadow = 'none';
+          }
+        }
         const headerAvatarIcon = document.getElementById('user-avatar-icon');
         if (headerAvatarIcon) headerAvatarIcon.innerHTML = renderAvatarHtml(userAvatar, 22, 14);
         const mobileAvatarIcon = document.getElementById('user-avatar-icon-mobile');
@@ -9440,8 +9496,23 @@
       if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
       if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
 
-      if (nameEl) nameEl.textContent = resolvedName;
-      if (avEl) avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+      const isAuthorVip = isCurrentUser ? isUserVip() : (targetUid && typeof uProf !== 'undefined' && uProf && uProf.isVip === true);
+      if (nameEl) {
+        if (isAuthorVip) {
+          nameEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;"><span style="background: linear-gradient(135deg, #fbbf24, #f59e0b, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(resolvedName)}</span><span title="Tác giả VIP" style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(251,191,36,0.9));">👑</span></span>`;
+        } else {
+          nameEl.textContent = resolvedName;
+        }
+      }
+      if (avEl) {
+        avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+        if (isAuthorVip) {
+          avEl.style.borderRadius = '50%';
+          avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 18px rgba(251, 191, 36, 0.65)';
+        } else {
+          avEl.style.boxShadow = 'none';
+        }
+      }
       if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
       if (statDecksEl) statDecksEl.textContent = authorDecks.length;
       if (statWordsEl) statWordsEl.textContent = totalWords;
@@ -20021,7 +20092,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (((isAuthor && isUserVip()) || deck.isAuthorVip || deck.authorIsVip) ? `<strong style="color: #fbbf24; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(245,158,11,0.5); display: inline-flex; align-items: center; gap: 3px;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span>👑</span> ${escapeHtml(authorName)}</strong>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
                 ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
                   <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận bộ từ mới'}">
                     ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}

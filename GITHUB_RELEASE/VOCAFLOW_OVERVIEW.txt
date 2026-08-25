@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-1.1 (Build 123)
+Phiên bản hiện tại : v0.10.8-beta-2 (Build 124)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2 (Build 124 - VISUAL VIP CROWN UI BADGES - PHẦN 2/10):
+  - Nhận Diện Hội Viên VIP Trực Quan Lấp Lánh (Phần 2):
+    * Thêm biểu tượng Vương Miện Vàng 👑 với hiệu ứng bóng phát sáng (Drop Shadow Glow) và chữ Gradient Vàng/Cam sang trọng cạnh tên người dùng trên Thanh Tiêu Đề (Header), Menu Di Động (Mobile Drawer) và Hồ Sơ Cá Nhân (Profile Modal).
+    * Thêm Huy hiệu Trạng thái `👑 VIP TRỌN ĐỜI` / `👑 VIP 1 NĂM` / `👑 VIP 1 THÁNG` với Gradient Vàng sang trọng trong Hồ sơ cá nhân.
+    * Vòng hào quang Vàng (Golden Halo Border Ring) bao quanh ảnh đại diện Avatar cho người dùng VIP.
+    * Hiển thị vương miện 👑 cho tác giả VIP trong Thư Viện Từ Vựng Toàn Cầu (VocaLibrary), Hồ Sơ Công Khai (Public Profile) và Danh Sách Người Theo Dõi / Đang Theo Dõi (Subscribers Hub).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-1.1 (Build 123 - GOD MODE VIP BUTTON CLEANUP HOTFIX):
   - Tinh Chỉnh Giao Diện Bảng Điều Khiển God Mode VIP Testing:
     * Loại bỏ nút "Tắt VIP (Về Thường)" trùng lặp ở góc phải, giữ lại nút Toggle chuyển đổi động duy nhất ở đầu hàng (tự động đổi màu Gradient Cam ➔ Đỏ khi bật/tắt) cùng các nút chọn hạng gói Trọn đời / 1 Năm / 1 Tháng.
