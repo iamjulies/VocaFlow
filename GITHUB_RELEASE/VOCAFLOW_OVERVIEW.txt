@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6v (Build 93)
+Phiên bản hiện tại : v0.10.6w (Build 94)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6w (Build 94 - SLEEK TRANSPARENT BRAND ICON & NATIVE WINDOWS ASSETS):
+  - Chuyển Đổi Sang Biểu Tượng Trong Suốt Cao Cấp (`VocaFlow_icon_transparent.png`):
+    * Sử dụng logo không nền, căn chỉnh khung hình chuẩn vuông 1:1 và biên độ an toàn chống tràn viền.
+    * Tái tạo toàn bộ hệ thống biểu tượng với nền trong suốt (Alpha Channel 32bpp):
+      + PWA Web Icons: `Icon-192.png`, `Icon-512.png`, `Icon-maskable-192.png`, `Icon-maskable-512.png`, `web/favicon.png`, `favicon.ico`.
+      + Native Windows App Icon (`app_icon.ico`): Tương thích 100% Windows File Explorer thumbnail (32-bit DIB 16/32/48/64/128 + PNG 256).
+      + Nhúng trực tiếp vào tài nguyên Win32 của `Release_App\VocaFlow.exe`.
+      + iOS AppIcon Set: Toàn bộ 15 kích thước chuẩn.
+    * Header Web App: Căn chỉnh `object-fit: contain; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45))` tạo hiệu ứng phát sáng logo nổi bật trên nền tối.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6w_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6v (Build 93 - BRAND-NEW HIGH-DEFINITION APP ICON & FULL ASSETS OVERHAUL):
   - Cập Nhật Toàn Diện Bộ Nhận Diện Thương Hiệu Mới (Brand Icon Overhaul):
     * Chuyển đổi toàn bộ biểu tượng hệ thống sang logo mới `save/VocaFLow_icon.png`.
