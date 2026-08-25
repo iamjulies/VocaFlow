@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7a</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7b</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4517,7 +4517,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7a</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7b</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6749,6 +6749,7 @@
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
       runEconomyMigrationV0104i();
+      runLegacyDataMigrationV0107b();
       initTheme();
       loadDatabase();
       loadAuthState();
@@ -6830,6 +6831,49 @@
             }
           })
           .catch(() => {});
+      }
+    }
+
+    // =========================================================================
+    // ZERO-DOWNTIME LEGACY DATA MIGRATION & BACKWARD COMPATIBILITY (v0.10.7b)
+    // =========================================================================
+    function runLegacyDataMigrationV0107b() {
+      try {
+        // 1. Ensure currentUser has permanent UID and unique handle
+        if (currentUser) {
+          if (!currentUser.uid) {
+            currentUser.uid = currentUser.email ? ('u_' + Date.now()) : ('guest_' + Date.now());
+            localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+          }
+          ensureUserHandleAssigned(currentUser);
+        }
+
+        // 2. Auto-patch local decks missing authorUid
+        if (Array.isArray(decks) && currentUser && currentUser.uid) {
+          let decksModified = false;
+          decks.forEach(deck => {
+            if (!deck.authorUid || deck.authorUid === '') {
+              if (!deck.libSourceId) {
+                deck.authorUid = currentUser.uid;
+                deck.author = deck.author || currentUser.displayName || 'Tác giả';
+                deck.authorUsername = currentUser.username || deck.authorUsername || '';
+                decksModified = true;
+              } else if (deck.author && currentUser.displayName && deck.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) {
+                deck.authorUid = currentUser.uid;
+                deck.authorUsername = currentUser.username || deck.authorUsername || '';
+                decksModified = true;
+              }
+            } else if (deck.authorUid === currentUser.uid && currentUser.username && deck.authorUsername !== currentUser.username) {
+              deck.authorUsername = currentUser.username;
+              decksModified = true;
+            }
+          });
+          if (decksModified) {
+            saveDatabase(false);
+          }
+        }
+      } catch (e) {
+        console.warn('Legacy data migration v0.10.7b note:', e);
       }
     }
 
@@ -7179,12 +7223,15 @@
       if (!deck || !currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || (typeof deck.id === 'string' && deck.id.startsWith('lib_deck_'))) {
         return false;
       }
+      // 1. Primary match: Permanent authorUid
       if (deck.authorUid && deck.authorUid === currentUser.uid) {
         return true;
       }
+      // 2. Secondary match: Email match (legacy deck compatibility)
       if (deck.authorEmail && currentUser.email && deck.authorEmail.toLowerCase() === currentUser.email.toLowerCase()) {
         return true;
       }
+      // 3. Tertiary fallback: Display name match for legacy user-authored decks
       if (!deck.authorUid && deck.author && currentUser.displayName && deck.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) {
         return true;
       }
@@ -18354,6 +18401,34 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           const data = await res.json();
           if (data && typeof data === 'object') {
             cloudLibraryDecks = Object.values(data).filter(d => d && d.title && Array.isArray(d.words));
+            
+            // v0.10.7b: Auto-patch legacy cloud decks for current logged in user
+            if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+              const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+              cloudLibraryDecks.forEach(d => {
+                if (!d.authorUid && !d.isAnonymous) {
+                  const isEmailMatch = d.authorEmail && currentUser.email && d.authorEmail.toLowerCase() === currentUser.email.toLowerCase();
+                  const isNameMatch = d.author && currentUser.displayName && d.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase();
+                  if (isEmailMatch || isNameMatch) {
+                    d.authorUid = currentUser.uid;
+                    d.authorUsername = currentUser.username || d.authorUsername || '';
+                    fetch(`${rtdbUrl}/publicLibraryDecks/${d.id}/authorUid.json${authParam}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(currentUser.uid)
+                    }).catch(() => {});
+                    if (currentUser.username) {
+                      fetch(`${rtdbUrl}/publicLibraryDecks/${d.id}/authorUsername.json${authParam}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentUser.username)
+                      }).catch(() => {});
+                    }
+                  }
+                }
+              });
+            }
+
             renderLibraryDecks();
           }
         }
@@ -18473,7 +18548,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>` }
               </div>
             </div>
 

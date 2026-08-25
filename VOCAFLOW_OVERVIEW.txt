@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7a (Build 96)
+Phiên bản hiện tại : v0.10.7b (Build 97)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7b (Build 97 - ZERO-DOWNTIME LEGACY MIGRATION & BACKWARD COMPATIBILITY):
+  - Cơ Chế Tự Động Di Trú Dữ Liệu Cũ Không Gián Đoạn (Zero-Downtime Migration):
+    * Khởi chạy `runLegacyDataMigrationV0107b` ngay khi tải ứng dụng và sau khi đăng nhập.
+    * Tự động bảo toàn UID và Handle độc nhất cho hồ sơ người dùng cục bộ.
+    * Auto-Patch các bộ từ cục bộ cũ (`decks`): Tự động gán `deck.authorUid = currentUser.uid` và `deck.authorUsername = currentUser.username`.
+    * Auto-Patch các bộ từ công khai cũ (`cloudLibraryDecks`): Tự động cập nhật `authorUid` và `authorUsername` lên Firebase Realtime Database đối với các bộ từ thuộc quyền sở hữu của người dùng đang đăng nhập.
+  - Tương Thích Ngược Tuyệt Đối Trên Thư Viện Toàn Cầu (Library Fallback Cascade):
+    * Hàm `isDeckAuthor` kiểm tra phân tầng: `authorUid` -> `authorEmail` -> `authorName` (không làm gián đoạn quyền quản lý bộ từ cũ).
+    * Thẻ bộ từ và Modal xem trước thư viện xử lý mượt mà cả các bộ từ thiếu `authorUid` (fallback sang `authorName` an toàn, không bị lỗi null pointer).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7b_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7a (Build 96 - DECOUPLE PERMANENT UID & UNIQUE HANDLE ENGINE):
   - Tái Cấu Trúc Hệ Thống Định Danh Người Dùng (UID & Handle Decoupling):
     * Tách biệt hoàn toàn UID nội bộ vĩnh viễn (`currentUser.uid`) và Handle hiển thị duy nhất (`@username`).
