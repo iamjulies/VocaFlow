@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-6 (Build 114)
+Phiên bản hiện tại : v0.10.7g-7 (Build 115)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-7 (Build 115 - GLOBAL DATE HELPER & MODAL OPEN AUTO-FETCH QUOTA HOTFIX):
+  - Khắc Phục Lỗi Phạm Vi Hàm getTodayDateString & Tự Động Kéo Quota Khi Mở Khung Chat:
+    * Chuyển hàm `getTodayDateString()` lên phạm vi toàn cục (Global Scope) đầu script, khắc phục hoàn toàn lỗi `ReferenceError: getTodayDateString is not defined` làm gián đoạn tiến trình đồng bộ Cloud.
+    * Thêm cơ chế tự động kéo Quota mới nhất (`refreshAiChatQuotaFromCloud`) ngay khi người dùng bấm vào nút bong bóng Trợ lý AI, đảm bảo máy B lập tức cập nhật đúng 0/5 lượt miễn phí mà không cần bấm thủ công nút Đồng bộ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-7_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-6 (Build 114 - AI MENTOR DAILY FREE QUOTA CLOUD REALTIME SYNC):
   - Đồng Bộ Đa Thiết Bị Số Lượt Miễn Phí Gia Sư AI:
     * Mở rộng Schema đồng bộ Firebase Cloud RTDB thêm node `/users/{uid}/aiChatQuota` lưu trữ ngày học `dailyDate` và số lượt đã dùng `dailyCount`.

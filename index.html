@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-6</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-7</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-6</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5143,6 +5143,48 @@
 
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
+    // Global Date Helper for Cloud & Quota Sync (v0.10.7g-7)
+    function getTodayDateString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    // Realtime Cloud Quota Sync Helper (v0.10.7g-7)
+    async function refreshAiChatQuotaFromCloud() {
+      if (typeof currentUser === 'undefined' || !currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatQuota.json${authParam}`);
+        if (res.ok) {
+          const cloudQuota = await res.json();
+          if (cloudQuota && typeof cloudQuota === 'object') {
+            const cloudDate = cloudQuota.dailyDate;
+            const cloudCount = Number(cloudQuota.dailyCount) || 0;
+            const today = getTodayDateString();
+
+            if (cloudDate === today) {
+              if (typeof aiChatDailyDate !== 'undefined' && aiChatDailyDate === today) {
+                aiChatDailyCount = Math.max(aiChatDailyCount, cloudCount);
+              } else {
+                aiChatDailyDate = today;
+                aiChatDailyCount = cloudCount;
+              }
+            } else if (cloudDate && cloudDate > (typeof aiChatDailyDate !== 'undefined' ? aiChatDailyDate : '')) {
+              aiChatDailyDate = cloudDate;
+              aiChatDailyCount = (cloudDate === today) ? cloudCount : 0;
+            }
+
+            localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
+            localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+            if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+          }
+        }
+      } catch (e) {
+        console.warn('AI Quota background refresh note:', e);
+      }
+    }
+
     // =========================================================================
     // VOCAFLOW SOUND EFFECTS (SFX) & AUDIO ENGINE (v0.0.10.3j)
     // =========================================================================
@@ -21678,6 +21720,12 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         updateAiChatQuotaUI();
         renderAiChatMessages();
         openModal('modal-ai-mentor');
+
+        // Realtime sync latest quota from Cloud RTDB
+        if (typeof refreshAiChatQuotaFromCloud === 'function') {
+          refreshAiChatQuotaFromCloud();
+        }
+
         setTimeout(() => {
           const input = document.getElementById('ai-chat-input');
           if (input) input.focus();
