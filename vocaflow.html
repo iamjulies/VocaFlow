@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-9</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-10</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-9</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-10</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7808,25 +7808,27 @@
         let handle = 'user_' + uid.slice(0, 6);
         let avatar = name;
 
-        // Try local matching from library decks
+        // Try local matching from library decks first for instant name/avatar fallback
         const foundDeck = allDecks.find(d => d.authorUid === uid);
         if (foundDeck) {
           name = foundDeck.author || name;
-          handle = foundDeck.authorUsername || (foundDeck.author ? foundDeck.author.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 15) : handle);
+          if (foundDeck.authorUsername) handle = foundDeck.authorUsername;
           avatar = foundDeck.authorAvatar || name;
-        } else {
-          try {
-            const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
-            if (res.ok) {
-              const p = await res.json();
-              if (p) {
-                if (p.displayName) name = p.displayName;
-                if (p.username) handle = p.username;
-                if (p.avatar) avatar = p.avatar;
-              }
-            }
-          } catch (e) {}
         }
+
+        // ALWAYS fetch real-time profile from Cloud database to get the exact current username and avatar
+        try {
+          const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
+          if (res.ok) {
+            const p = await res.json();
+            if (p && typeof p === 'object') {
+              if (p.displayName) name = p.displayName;
+              if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
+              if (p.avatar) avatar = p.avatar;
+            }
+          }
+        } catch (e) {}
+
         return { uid, name, handle, avatar };
       }));
 
@@ -7911,13 +7913,32 @@
         return;
       }
 
-      if (user.username && user.username.trim().length >= 3) {
+      // If user already has a valid non-guest username in local state, do not overwrite
+      if (user.username && user.username.trim().length >= 3 && !user.username.startsWith('guest_')) {
         return;
       }
 
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       const authParam = (user && user.idToken) ? '?auth=' + user.idToken : '';
 
+      // 1. FIRST check if user already has an existing username in Cloud profile
+      try {
+        const pRes = await fetch(`${rtdbUrl}/users/${user.uid}/profile.json${authParam}`);
+        if (pRes.ok) {
+          const prof = await pRes.json();
+          if (prof && prof.username && prof.username.trim().length >= 3) {
+            user.username = prof.username.trim().toLowerCase();
+            if (prof.lastUsernameChangeTimestamp) {
+              user.lastUsernameChangeTimestamp = Number(prof.lastUsernameChangeTimestamp);
+            }
+            localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
+            updateAuthUI();
+            return; // Found existing username on Cloud! DO NOT overwrite!
+          }
+        }
+      } catch (e) {}
+
+      // 2. Only if user has NO username on Cloud, generate an initial candidate
       let baseCandidate = '';
       if (user.email) {
         baseCandidate = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 14);
