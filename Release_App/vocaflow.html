@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4167,8 +4167,8 @@
     </div>
   </div>
 
-  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g) -->
-  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; right: 18px; z-index: 999; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g-1) -->
+  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; left: 18px; z-index: 999; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
     🤖
     <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
   </button>
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -21486,6 +21486,16 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
     function getCurrentStudyContext() {
       const curScreen = document.querySelector('.screen.active')?.id || '';
+      
+      // 1. If on home/decks list (screen-decks), it is ALWAYS Free / Global context
+      if (curScreen === 'screen-decks' || !curScreen) {
+        return {
+          screen: 'screen-decks',
+          deck: null,
+          word: null
+        };
+      }
+
       let activeDeck = null;
       let activeWord = null;
 
@@ -21493,12 +21503,11 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         activeDeck = decks.find(d => d.id === currentDeckId);
       }
 
-      if (curScreen === 'screen-deck-detail' || curScreen === 'screen-flashcard') {
-        if (activeDeck) {
-          const deckWords = words.filter(w => w.deckId === activeDeck.id);
-          if (deckWords.length > 0) {
-            activeWord = deckWords[currentCardIndex % deckWords.length] || deckWords[0];
-          }
+      // 2. If in single flashcard mode, resolve active word
+      if (curScreen === 'screen-flashcard' && activeDeck) {
+        const deckWords = words.filter(w => w.deckId === activeDeck.id);
+        if (deckWords.length > 0 && typeof currentCardIndex === 'number') {
+          activeWord = deckWords[currentCardIndex % deckWords.length] || null;
         }
       }
 
@@ -21510,69 +21519,111 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     }
 
     function updateAiMentorContextUI() {
-      const ctx = getCurrentStudyContext();
-      const textEl = document.getElementById('ai-mentor-context-text');
-      const badgeEl = document.getElementById('ai-mentor-context-badge');
-      const chipsContainer = document.getElementById('ai-mentor-chips-container');
+      try {
+        const ctx = getCurrentStudyContext();
+        const textEl = document.getElementById('ai-mentor-context-text');
+        const badgeEl = document.getElementById('ai-mentor-context-badge');
+        const chipsContainer = document.getElementById('ai-mentor-chips-container');
 
-      if (!textEl || !chipsContainer) return;
+        if (!textEl || !chipsContainer) return;
 
-      let chipsHtml = '';
+        let chipsHtml = '';
 
-      if (ctx.word) {
-        textEl.textContent = `Từ: "${ctx.word.term}" (${ctx.deck ? ctx.deck.title : 'Bộ từ'})`;
-        if (badgeEl) {
-          badgeEl.textContent = 'Thẻ từ vựng';
-          badgeEl.style.background = 'rgba(99,102,241,0.2)';
-          badgeEl.style.color = '#a5b4fc';
+        if (ctx.word) {
+          textEl.textContent = `Từ: "${ctx.word.term}" (${ctx.deck ? ctx.deck.title : 'Bộ từ'})`;
+          if (badgeEl) {
+            badgeEl.textContent = 'Thẻ từ vựng';
+            badgeEl.style.background = 'rgba(99,102,241,0.2)';
+            badgeEl.style.color = '#a5b4fc';
+          }
+          chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_deep')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Giải thích sâu</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_compare')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">⚔️ Phân biệt từ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_examples')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">📝 3 câu ví dụ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_voice')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_quiz')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_mnemonic')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧠 Mẹo nhớ từ</button>
+          `;
+        } else if (ctx.deck) {
+          textEl.textContent = `Bộ từ: "${ctx.deck.title}"`;
+          if (badgeEl) {
+            badgeEl.textContent = 'Bộ từ';
+            badgeEl.style.background = 'rgba(16,185,129,0.15)';
+            badgeEl.style.color = '#34d399';
+          }
+          chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_summary')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt bộ từ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_quiz')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz bộ này</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_roleplay')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay hội thoại</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('grammar')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
+          `;
+        } else {
+          textEl.textContent = 'Chế độ học tự do';
+          if (badgeEl) {
+            badgeEl.textContent = 'Tự do';
+            badgeEl.style.background = 'rgba(56,189,248,0.15)';
+            badgeEl.style.color = '#38bdf8';
+          }
+          chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('grammar')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('translate')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Dịch bản xứ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('read')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('quiz_free')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Đố vui trắc nghiệm</button>
+          `;
         }
-        const termEsc = escapeHtml(ctx.word.term);
-        chipsHtml = `
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('💡 Giải thích sâu và ngữ cảnh thực tế của từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Giải thích sâu</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('⚔️ Phân biệt từ \'${termEsc}\' với các từ đồng nghĩa dễ nhầm lẫn')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">⚔️ Phân biệt từ</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('📝 Đặt 3 câu ví dụ cho từ \'${termEsc}\' theo 3 ngữ cảnh: Giao tiếp, IELTS/Academic và Công việc')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">📝 3 câu ví dụ</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎙️ Giúp tao đọc chuẩn từ \'${termEsc}\' và phân tích khẩu hình')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo 1 câu hỏi trắc nghiệm mini để kiểm tra cách dùng từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧠 Cho tao mẹo nhớ hoặc câu chuyện liên tưởng để nhớ lâu từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧠 Mẹo nhớ từ</button>
-        `;
-      } else if (ctx.deck) {
-        const deckTitleEsc = escapeHtml(ctx.deck.title);
-        textEl.textContent = `Bộ từ: "${ctx.deck.title}"`;
-        if (badgeEl) {
-          badgeEl.textContent = 'Bộ từ';
-          badgeEl.style.background = 'rgba(16,185,129,0.15)';
-          badgeEl.style.color = '#34d399';
-        }
-        chipsHtml = `
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('💡 Tóm tắt các chủ điểm từ vựng quan trọng nhất trong bộ từ \'${deckTitleEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt bộ từ</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo 1 câu hỏi trắc nghiệm mini từ chủ đề bộ từ \'${deckTitleEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎭 Bắt đầu đoạn hội thoại Roleplay ngắn áp dụng từ vựng trong bộ này')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧐 Soi lỗi và giải thích ngữ pháp cho câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
-        `;
-      } else {
-        textEl.textContent = 'Chế độ học tự do';
-        if (badgeEl) {
-          badgeEl.textContent = 'Tự do';
-          badgeEl.style.background = 'rgba(56,189,248,0.15)';
-          badgeEl.style.color = '#38bdf8';
-        }
-        chipsHtml = `
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧐 Soi lỗi và giải thích ngữ pháp cho câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Dịch tự nhiên sang văn phong bản xứ câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Dịch bản xứ</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎙️ Giúp tao luyện đọc câu tiếng Anh này: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo cho tao 1 câu đố trắc nghiệm từ vựng IELTS B2 ngẫu nhiên')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Đố vui trắc nghiệm</button>
-        `;
+
+        chipsContainer.innerHTML = chipsHtml;
+      } catch (err) {
+        console.warn('Error updating AI Mentor context UI:', err);
       }
-
-      chipsContainer.innerHTML = chipsHtml;
     }
 
-    function sendAiQuickChip(text) {
+    function triggerAiQuickChip(chipKey) {
+      const ctx = getCurrentStudyContext();
+      let promptText = '';
+
+      if (chipKey === 'grammar') {
+        promptText = '🧐 Soi lỗi và giải thích ngữ pháp cho câu: ';
+      } else if (chipKey === 'translate') {
+        promptText = '🎯 Dịch tự nhiên sang văn phong bản xứ câu: ';
+      } else if (chipKey === 'read') {
+        promptText = '🎙️ Giúp tao luyện đọc câu tiếng Anh này: ';
+      } else if (chipKey === 'quiz_free') {
+        promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm từ vựng IELTS B2 ngẫu nhiên';
+      } else if (chipKey === 'deck_summary') {
+        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
+        promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong bộ từ "${title}"`;
+      } else if (chipKey === 'deck_quiz') {
+        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
+        promptText = `🎯 Tạo 1 câu hỏi trắc nghiệm mini từ các từ vựng trong bộ từ "${title}"`;
+      } else if (chipKey === 'deck_roleplay') {
+        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
+        promptText = `🎭 Hãy bắt đầu một đoạn hội thoại Roleplay ngắn đóng vai tình huống thực tế áp dụng từ vựng trong bộ "${title}"`;
+      } else if (chipKey === 'word_deep') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `💡 Phân tích chuyên sâu sắc thái nghĩa và ngữ cảnh thực tế của từ "${term}"`;
+      } else if (chipKey === 'word_compare') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `⚔️ So sánh và phân biệt từ "${term}" với các từ đồng nghĩa dễ gây nhầm lẫn`;
+      } else if (chipKey === 'word_examples') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `📝 Đặt 3 câu ví dụ cho từ "${term}" theo 3 ngữ cảnh: Giao tiếp thường ngày, Học thuật IELTS/TOEIC và Môi trường công việc`;
+      } else if (chipKey === 'word_voice') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `🎙️ Giúp tao đọc chuẩn từ "${term}", phân tích khẩu hình, trọng âm và âm đuôi`;
+      } else if (chipKey === 'word_quiz') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `🎯 Tạo 1 câu hỏi trắc nghiệm mini để kiểm tra cách dùng chính xác của từ "${term}"`;
+      } else if (chipKey === 'word_mnemonic') {
+        const term = ctx.word ? ctx.word.term : 'từ này';
+        promptText = `🧠 Cho tao mẹo nhớ hoặc câu chuyện liên tưởng sáng tạo để nhớ lâu từ "${term}"`;
+      }
+
       const input = document.getElementById('ai-chat-input');
-      if (!input) return;
-      input.value = text;
+      if (!input || !promptText) return;
+      input.value = promptText;
       updateAiChatInputLength();
-      if (text.endsWith(': ') || text.endsWith('này: ')) {
+      if (promptText.endsWith(': ')) {
         input.focus();
       } else {
         handleSendAiChatMessage();
@@ -21588,21 +21639,26 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     }
 
     function openAiMentorModal() {
-      // Anti-Cheat: If on exam screen, prevent opening
-      const activeExam = document.querySelector('.screen.active');
-      if (activeExam && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeExam.id)) {
-        showToast('🔒 Trợ lý AI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
-        return;
+      try {
+        // Anti-Cheat: If on exam screen, prevent opening
+        const activeExam = document.querySelector('.screen.active');
+        if (activeExam && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeExam.id)) {
+          showToast('🔒 Trợ lý AI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
+          return;
+        }
+        updateAiMentorContextUI();
+        updateAiChatQuotaUI();
+        renderAiChatMessages();
+        openModal('modal-ai-mentor');
+        setTimeout(() => {
+          const input = document.getElementById('ai-chat-input');
+          if (input) input.focus();
+          scrollAiChatToBottom();
+        }, 100);
+      } catch (err) {
+        console.error('Error opening AI Mentor modal:', err);
+        openModal('modal-ai-mentor');
       }
-      updateAiMentorContextUI();
-      updateAiChatQuotaUI();
-      renderAiChatMessages();
-      openModal('modal-ai-mentor');
-      setTimeout(() => {
-        const input = document.getElementById('ai-chat-input');
-        if (input) input.focus();
-        scrollAiChatToBottom();
-      }, 100);
     }
 
     function clearAiChatHistory() {

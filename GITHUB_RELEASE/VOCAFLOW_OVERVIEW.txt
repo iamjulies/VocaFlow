@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g (Build 107)
+Phiên bản hiện tại : v0.10.7g-1 (Build 108)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-1 (Build 108 - AI MENTOR IN-DECK CONTEXT & FAB POSITION FIX):
+  - Tối Ưu Vị Trí Nút AI & Khắc Phục Lỗi Ngữ Cảnh Trong Bộ Từ:
+    * Chuyển vị trí nút FAB AI Mentor sang góc dưới bên trái (`bottom: 22px; left: 18px;`) để tránh che khuất các thông báo đồng bộ Cloud và Toast góc phải.
+    * Sửa lỗi không mở được AI Mentor khi ở trong bộ từ có từ vựng (chuyển sang kiến trúc Quick Chips an toàn tuyệt đối).
+    * Phân định chuẩn xác ngữ cảnh: Ở màn hình chính / trang chủ luôn là Chế độ học tự do; khi vào xem bộ từ vựng luôn nhận diện chính xác Bộ từ tương ứng.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-1_Windows_Portable.zip`.
+
 • 🚀 v0.10.7g (Build 107 - AI STUDY CHAT & GEMINI ENGLISH MENTOR):
   - Ra Mắt Gia Sư Tiếng Anh Học Thuật & Phản Xạ Thực Chiến AI Gemini:
     * Floating Action Button (FAB) 🤖 & Giao diện Chat Modal: Nhận diện ngữ cảnh động (In-Deck / In-Word vs Global) với bộ Action Chips gợi ý 1-chạm (💡 Giải thích sâu, ⚔️ Phân biệt từ, 📝 3 câu ví dụ, 🎭 Roleplay...).
