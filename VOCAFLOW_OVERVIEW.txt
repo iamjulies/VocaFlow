@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-1 (Build 122)
+Phiên bản hiện tại : v0.10.8-beta-1.1 (Build 123)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-1.1 (Build 123 - GOD MODE VIP BUTTON CLEANUP HOTFIX):
+  - Tinh Chỉnh Giao Diện Bảng Điều Khiển God Mode VIP Testing:
+    * Loại bỏ nút "Tắt VIP (Về Thường)" trùng lặp ở góc phải, giữ lại nút Toggle chuyển đổi động duy nhất ở đầu hàng (tự động đổi màu Gradient Cam ➔ Đỏ khi bật/tắt) cùng các nút chọn hạng gói Trọn đời / 1 Năm / 1 Tháng.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-1.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-1 (Build 122 - GOD MODE VIP SWITCH & VIP DATA ARCHITECTURE - PHẦN 1/10):
   - Khởi Tạo Động Cơ Hội Viên VIP & Bảng Điều Khiển God Mode Testing (Phần 1):
     * Khởi tạo kiến trúc dữ liệu Hội viên VIP/Premium trong LocalStorage & Firebase Cloud: Quản lý các trường trạng thái `isVip`, `vipTier` ('monthly' | 'yearly' | 'lifetime'), `vipExpiresAt` và `adminVipOverride`.
