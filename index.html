@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.6</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.7</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -5017,7 +5017,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.6</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7530,6 +7530,7 @@
       }
       updateAuthUI();
       updateEconomyUI();
+      initGlobalVipRegistry();
 
       // Proactively fetch latest profile from Cloud in background
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && firebaseConfig.databaseURL) {
@@ -7650,9 +7651,47 @@
       });
     }
 
+    // Global Realtime VIP Registry (v0.10.8-beta-3.7)
+    let globalVipRegistry = {};
+    let globalVipRegistryNameMap = {};
+
+    function initGlobalVipRegistry() {
+      if (!firebaseConfig.databaseURL) return;
+      fetch(`${firebaseConfig.databaseURL}/users.json`)
+        .then(res => res.ok ? res.json() : null)
+        .then(allUsers => {
+          if (allUsers && typeof allUsers === 'object') {
+            Object.entries(allUsers).forEach(([uid, uData]) => {
+              if (uData && typeof uData === 'object') {
+                const prof = uData.profile || {};
+                const isVip = prof.isVip === true || uData.isVip === true;
+                const vipTier = prof.vipTier || uData.vipTier || 'none';
+                const name = prof.displayName || uData.displayName || '';
+                const username = prof.username || uData.username || '';
+                const avatar = prof.avatar || uData.avatar || '';
+
+                if (isVip) {
+                  const entry = { uid, isVip: true, vipTier, displayName: name, username, avatar };
+                  globalVipRegistry[uid] = entry;
+                  if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
+                }
+              }
+            });
+            // Re-render components with fresh VIP data
+            renderLibraryDecks();
+            if (typeof renderDecks === 'function') renderDecks();
+          }
+        })
+        .catch(() => {});
+    }
+
     function isAuthorVipUser(authorUid, authorName) {
       if (authorUid && currentUser && authorUid === currentUser.uid) return isUserVip();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return isUserVip();
+      
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].isVip === true;
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].isVip === true;
+
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
       if (student && student.isVip) return true;
       return false;
@@ -7661,6 +7700,10 @@
     function getAuthorVipTier(authorUid, authorName) {
       if (authorUid && currentUser && authorUid === currentUser.uid) return getUserVipTier();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return getUserVipTier();
+      
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipTier || 'lifetime';
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipTier || 'lifetime';
+
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
       if (student && student.isVip && student.vipTier) return student.vipTier;
       return 'none';
@@ -8350,10 +8393,8 @@
           avatar = foundDeck.authorAvatar || name;
         }
 
-        let isVip = false;
-        if (currentUser && uid === currentUser.uid) {
-          isVip = isUserVip();
-        }
+        let isVip = isAuthorVipUser(uid, name);
+        let vipTier = getAuthorVipTier(uid, name);
 
         // ALWAYS fetch real-time profile from Cloud database to get the exact current username, avatar and VIP status
         try {
@@ -8364,12 +8405,17 @@
               if (p.displayName) name = p.displayName;
               if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
               if (p.avatar) avatar = p.avatar;
-              if (p.isVip) isVip = true;
+              if (p.isVip === true) {
+                isVip = true;
+                vipTier = p.vipTier || vipTier || 'lifetime';
+              }
             }
           }
         } catch (e) {}
 
-        return { uid, name, handle, avatar, isVip };
+        if (isAuthorVipUser(uid, name)) isVip = true;
+
+        return { uid, name, handle, avatar, isVip, vipTier };
       }));
 
       let html = '';
@@ -8853,7 +8899,12 @@
         if (usernameInput && document.activeElement !== usernameInput) {
           usernameInput.value = guestHandle;
         }
-        if (profileAvatarEl) profileAvatarEl.textContent = 'V';
+        if (profileAvatarEl) {
+          profileAvatarEl.innerHTML = renderAvatarHtml(getUserAvatar(), 58, 26);
+          profileAvatarEl.classList.remove('vip-avatar-glow');
+          profileAvatarEl.style.boxShadow = '0 4px 12px rgba(168,85,247,0.3)';
+          profileAvatarEl.style.borderColor = 'rgba(255,255,255,0.25)';
+        }
         if (authActionBtn) {
           authActionBtn.textContent = 'Đăng nhập / Đăng ký tài khoản';
           authActionBtn.style.color = '#4f46e5';
@@ -9526,7 +9577,18 @@
                 <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
                 <span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.15); color: #34d399;">Đã sở hữu</span>
               </div>
-              <div style="font-size: 11px; color: var(--text-muted);">Tác giả: ${escapeHtml(deck.author || 'Cộng đồng')} • ${(deck.words || []).length} từ</div>
+              <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                <span>Tác giả:</span>
+                ${isAuthorVipUser(deck.authorUid, deck.author) ? `
+                  <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">
+                    <span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span>
+                    <strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(deck.author)}</strong>
+                  </span>
+                ` : `
+                  <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(deck.author || 'Cộng đồng')}</strong>
+                `}
+                <span>• ${(deck.words || []).length} từ</span>
+              </div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="installLibraryDeck('${deck.id}');" style="font-size: 11px; padding: 4px 10px; font-weight: 700; color: #818cf8; border-color: rgba(99,102,241,0.4);">
               📥 ${isImported ? 'Cài Lại' : 'Tải Về'}
@@ -23288,9 +23350,6 @@ Quy tắc phản hồi quan trọng:
     let cleanUid = 'GUEST';
     if (currentUser && currentUser.uid) {
       cleanUid = currentUser.uid.replace(/^guest_/, 'G_').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      if (cleanUid.length > 12) {
-        cleanUid = cleanUid.slice(0, 12);
-      }
     }
     return `VOCA VIP ${cleanUid} ${tier.toUpperCase()}`;
   }

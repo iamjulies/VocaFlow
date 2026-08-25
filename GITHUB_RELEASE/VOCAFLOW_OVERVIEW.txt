@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-3.6 (Build 143)
+Phiên bản hiện tại : v0.10.8-beta-3.7 (Build 144)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-3.7 (Build 144 - REALTIME VIP REGISTRY, GUEST GLOW FIX & UNCUT UID SYNTAX):
+  - Khởi Tạo Sổ Đăng Ký VIP Toàn Cầu Realtime (`globalVipRegistry`):
+    * Tự động kéo dữ liệu VIP từ Cloud Firebase ngay khi khởi động ứng dụng mà không cần phải mở Cổng Quản Trị.
+    * Đảm bảo bất kỳ học viên hay tác giả nào có VIP đều lập tức phát sáng hoàng gia ở Thư Viện, Danh Sách Bộ Từ, Người Theo Dõi và Gian Hàng.
+  - Sửa Lỗi Viền Avatar Guest & Nâng Cấp Giao Diện:
+    * Khách (Guest) không còn bị lỗi lưu vết viền vàng kim VIP khi đăng xuất.
+    * Tác giả bộ từ trong tab "Bộ Từ Đã Mua" (`renderPurchasedDecksList`) giờ đây đã có thể bấm vào xem hồ sơ công khai và hiển thị VIP hoàng gia.
+    * Danh Sách Người Theo Dõi / Đang Theo Dõi (`openSubsModal`) hiển thị viền vàng kim 3D và vương miện 👑 cho người dùng VIP.
+  - Nâng Cấp Cú Pháp Chuyển Khoản UID Toàn Vẹn (Full Uncut UID Syntax):
+    * Sử dụng toàn bộ 100% độ dài UID người dùng trong nội dung chuyển khoản (`VOCA VIP [FULL_UID] [GÓI]`), triệt tiêu 100% nguy cơ trùng lặp mã thanh toán.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-3.7_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-3.6 (Build 143 - UNIVERSAL ROYAL VIP VISUAL PRESENTATION & LEADERBOARD REWORK):
   - Chuẩn Hóa Hiển Thị VIP Hoàng Gia Toàn Diện Mọi Giao Diện (Universal VIP Presentation):
     * Hồ Sơ Công Khai Người Dùng (`modal-public-profile`): Fix scoping bug, hiển thị tên phát sáng neon hoàng gia `vip-glowing-name`, vương miện 👑, viền Avatar phát sáng vàng kim và huy hiệu `👑 VIP [GÓI]`.
