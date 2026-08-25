@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -21774,8 +21774,9 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     function formatAiChatMarkdown(rawText, msgIndex) {
       if (!rawText) return '';
       let text = rawText;
+      const placeholders = [];
 
-      // 1. Parse and render [MINI_QUIZ: {...}]
+      // 1. Parse and extract [MINI_QUIZ: {...}]
       const quizRegex = /\[MINI_QUIZ:\s*(\{.*?\})\]/gs;
       text = text.replace(quizRegex, (match, jsonStr) => {
         try {
@@ -21783,14 +21784,16 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           const qId = 'ai_quiz_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
           let optionsHtml = '';
           (qData.options || []).forEach((opt, oIdx) => {
+            const letter = ['A','B','C','D'][oIdx] || (oIdx + 1);
+            const explainEsc = escapeHtml(qData.explain || '').replace(/'/g, "\\'");
             optionsHtml += `
-              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${escapeHtml(qData.explain || '')}')" style="text-align: left; justify-content: flex-start; padding: 7px 10px; font-size: 12px; border-radius: 8px;">
-                <strong style="margin-right: 6px; color: #818cf8;">${['A','B','C','D'][oIdx] || (oIdx+1)}.</strong> ${escapeHtml(opt)}
+              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${explainEsc}')" style="text-align: left; justify-content: flex-start; padding: 7px 10px; font-size: 12px; border-radius: 8px; width: 100%;">
+                <strong style="margin-right: 6px; color: #818cf8;">${letter}.</strong> ${escapeHtml(opt)}
               </button>
             `;
           });
 
-          return `
+          const cardHtml = `
             <div class="ai-mini-quiz-card" id="${qId}" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; margin: 10px 0;">
               <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
                 <span>🎯 CÂU HỎI TRẮC NGHIỆM TƯƠNG TÁC:</span>
@@ -21804,12 +21807,15 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
               <div id="${qId}_explain" style="display: none; margin-top: 10px; padding: 8px 10px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
             </div>
           `;
+          const phKey = `###AI_PLACEHOLDER_${placeholders.length}###`;
+          placeholders.push({ key: phKey, html: cardHtml });
+          return phKey;
         } catch (e) {
           return '';
         }
       });
 
-      // 2. Parse and render [VOICE_CHECK: {...}]
+      // 2. Parse and extract [VOICE_CHECK: ...]
       const voiceRegex = /\[VOICE_CHECK:\s*(\{.*?\})\]/gs;
       text = text.replace(voiceRegex, (match, jsonStr) => {
         try {
@@ -21817,23 +21823,24 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           const vWord = vData.word || '';
           const vIpa = vData.ipa || '';
           const vId = 'ai_voice_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
+          const wordEsc = escapeHtml(vWord).replace(/'/g, "\\'");
 
-          return `
+          const cardHtml = `
             <div class="ai-voice-check-card" id="${vId}" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 12px; margin: 10px 0;">
-              <div style="font-size: 11px; font-weight: 700; color: #f472b6; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <div style="font-size: 11px; font-weight: 700; color: #f472b6; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
                 <span>🎙️ PHÒNG LUYỆN NÓI TẠI CHỖ (MINI VOICE CHECK):</span>
               </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                 <div>
                   <strong style="font-size: 15px; color: var(--text);">${escapeHtml(vWord)}</strong>
                   ${vIpa ? `<span style="font-family: monospace; color: #a5b4fc; font-size: 12px; margin-left: 6px;">${escapeHtml(vIpa)}</span>` : ''}
                 </div>
-                <button type="button" class="btn btn-outline btn-sm" onclick="speakText('${escapeHtml(vWord)}')" style="font-size: 11px; padding: 3px 8px; border-radius: 8px; color: #38bdf8;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="speakText('${wordEsc}')" style="font-size: 11px; padding: 3px 8px; border-radius: 8px; color: #38bdf8;">
                   🔊 Nghe mẫu
                 </button>
               </div>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <button type="button" id="${vId}_btn" class="btn btn-primary btn-sm" onclick="toggleAiMiniVoiceRecord('${vId}', '${escapeHtml(vWord)}')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button type="button" id="${vId}_btn" class="btn btn-primary btn-sm" onclick="toggleAiMiniVoiceRecord('${vId}', '${wordEsc}')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
                   🎙️ Nhấn để thu âm
                 </button>
                 <span id="${vId}_status" style="font-size: 11.5px; color: var(--text-muted);">Bấm Mic và nói từ này</span>
@@ -21841,17 +21848,25 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
               <div id="${vId}_result" style="display: none; margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
             </div>
           `;
+          const phKey = `###AI_PLACEHOLDER_${placeholders.length}###`;
+          placeholders.push({ key: phKey, html: cardHtml });
+          return phKey;
         } catch (e) {
           return '';
         }
       });
 
-      // 3. Format standard markdown elements
+      // 3. Escape HTML and format Markdown
       let formatted = escapeHtml(text)
         .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #a5b4fc;">$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
         .replace(/^\s*-\s+(.*)$/gm, '<li style="margin-left: 16px;">$1</li>')
         .replace(/\n/g, '<br>');
+
+      // 4. Restore interactive HTML cards
+      placeholders.forEach(ph => {
+        formatted = formatted.replace(ph.key, ph.html);
+      });
 
       return formatted;
     }
