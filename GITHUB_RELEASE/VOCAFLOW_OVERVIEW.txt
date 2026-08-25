@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7f-3 (Build 105)
+Phiên bản hiện tại : v0.10.7f-4 (Build 106)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7f-4 (Build 106 - CROSS-DEVICE NOTIFICATION SYNC & DEDUPLICATION ENGINE):
+  - Khắc Phục Triệt Để Lỗi Đồng Bộ Thông Báo & Trùng Lặp Tin Bộ Từ Mới:
+    * Đồng bộ trạng thái Đã đọc / Chưa đọc đa thiết bị (Cross-device Read Status): Khi đọc hoặc đánh dấu đã đọc ở máy A, máy B tự động cập nhật ngay tức thì.
+    * Đồng bộ Xóa thông báo (Tombstones & Clear Timestamp): Khi xóa một tin hoặc xóa hết thông báo ở máy A, máy B tự động xóa theo và không bị hiện lại.
+    * Cơ chế Định danh Bất Biến & Thời Gian Phát Hành Thực Tế (Deterministic ID & PublishedAt Timestamp): Gán ID cố định `notif_deck_{deck.id}` và lấy chính xác ngày giờ tác giả đăng bài, đảm bảo mỗi bộ từ mới CHỈ gửi thông báo ĐÚNG 1 LẦN duy nhất và hiển thị thời gian chính xác ("3 ngày trước", thay vì bị lặp lại "Vừa xong").
+    * Thêm nút xóa từng thông báo (🗑️) ngay trên danh sách.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7f-4_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7f-3 (Build 105 - MOBILE HEADER RESPONSIVENESS & USERNAME LOCK):
   - Tối Ưu Giao Diện Header Mobile & Khóa Ô Username Đang Chờ Cooldown:
     * Khắc phục tràn viền nút 3 chấm (`⋮`) trên điện thoại: Tối ưu padding, kích thước nút và chuyển nút Studio sang menu mở rộng giúp Header di động thoáng đẹp và không bao giờ bị cắt.

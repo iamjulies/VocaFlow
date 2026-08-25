@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4635,7 +4635,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7000,42 +7000,53 @@
     }
 
     // =========================================================================
-    // NOTIFICATION CENTER & ACTIVITY FEED ENGINE (v0.10.7f)
+    // NOTIFICATION CENTER & ACTIVITY FEED ENGINE (v0.10.7f-4)
     // =========================================================================
     let userNotifications = [];
+    let deletedNotificationIds = new Set();
     let currentNotificationFilter = 'all';
 
     try {
       const savedNotifs = localStorage.getItem('vocaflow_notifications');
       if (savedNotifs) userNotifications = JSON.parse(savedNotifs) || [];
+      const savedDelNotifs = localStorage.getItem('vocaflow_deleted_notif_ids');
+      if (savedDelNotifs) deletedNotificationIds = new Set(JSON.parse(savedDelNotifs) || []);
     } catch (e) {}
 
-    function addNotification(type, title, message, actionType = null, actionData = null, customId = null) {
+    function saveDeletedNotificationIds() {
+      try {
+        localStorage.setItem('vocaflow_deleted_notif_ids', JSON.stringify(Array.from(deletedNotificationIds).slice(-500)));
+      } catch (e) {}
+    }
+
+    function addNotification(type, title, message, actionType = null, actionData = null, customId = null, customTimestamp = null) {
       const notifId = customId || ('notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
       
-      // Avoid duplicate notifications (e.g. for the same deckId)
-      if (actionType === 'PREVIEW_DECK' && actionData && actionData.deckId) {
-        const existing = userNotifications.find(n => n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === actionData.deckId);
-        if (existing) return existing;
-      }
+      // 1. Never add if deleted by user
+      if (deletedNotificationIds.has(notifId)) return null;
+
+      // 2. Check if notification with this ID or action already exists
+      const existing = userNotifications.find(n => n.id === notifId || (actionType === 'PREVIEW_DECK' && actionData && actionData.deckId && n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === actionData.deckId));
+      if (existing) return existing;
 
       const notif = {
         id: notifId,
         type: type, // 'NEW_DECK' | 'NEW_FOLLOWER' | 'FINANCIAL' | 'SYSTEM'
         title: title,
         message: message,
-        timestamp: new Date().toISOString(),
+        timestamp: customTimestamp || new Date().toISOString(),
         isRead: false,
         actionType: actionType,
         actionData: actionData
       };
 
       userNotifications.unshift(notif);
+      userNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100);
       localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
       updateNotificationsUI();
 
-      // Cloud backup
+      // Cloud backup (using safe PUT for this single notification item)
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
@@ -7055,23 +7066,89 @@
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && typeof data === 'object') {
-            const cloudList = Object.values(data).filter(n => n && n.id);
-            const map = new Map();
-            userNotifications.forEach(n => map.set(n.id, n));
-            cloudList.forEach(n => {
-              if (!map.has(n.id)) {
-                map.set(n.id, n);
-              } else {
-                if (n.isRead) map.get(n.id).isRead = true;
+        const [notifsRes, userDocRes, delRes] = await Promise.all([
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/notificationsClearedTimestamp.json${authParam}`),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/deletedNotificationIds.json${authParam}`)
+        ]);
+
+        if (delRes && delRes.ok) {
+          const remoteDelIds = await delRes.json();
+          if (remoteDelIds && typeof remoteDelIds === 'object') {
+            Object.keys(remoteDelIds).forEach(id => deletedNotificationIds.add(id));
+            saveDeletedNotificationIds();
+          }
+        }
+
+        let cloudClearedTime = 0;
+        if (userDocRes && userDocRes.ok) {
+          const tVal = await userDocRes.json();
+          if (typeof tVal === 'number') {
+            cloudClearedTime = tVal;
+            const localClearedTime = parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10);
+            if (cloudClearedTime > localClearedTime) {
+              localStorage.setItem('vocaflow_notifications_cleared_time', cloudClearedTime.toString());
+            }
+          }
+        }
+
+        const effectiveClearedTime = Math.max(cloudClearedTime, parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10));
+
+        if (notifsRes && notifsRes.ok) {
+          const data = await notifsRes.json();
+          const cloudMap = (data && typeof data === 'object') ? data : {};
+          const cloudList = Object.values(cloudMap).filter(n => n && n.id);
+
+          const mergedMap = new Map();
+
+          // 1. Keep local valid notifications
+          userNotifications.forEach(n => {
+            if (n && n.id && !deletedNotificationIds.has(n.id)) {
+              if (effectiveClearedTime === 0 || new Date(n.timestamp).getTime() > effectiveClearedTime) {
+                mergedMap.set(n.id, { ...n });
               }
-            });
-            userNotifications = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
-            localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-            updateNotificationsUI();
+            }
+          });
+
+          // 2. Merge cloud notifications
+          cloudList.forEach(cloudN => {
+            if (cloudN && cloudN.id && !deletedNotificationIds.has(cloudN.id)) {
+              if (effectiveClearedTime === 0 || new Date(cloudN.timestamp).getTime() > effectiveClearedTime) {
+                if (!mergedMap.has(cloudN.id)) {
+                  mergedMap.set(cloudN.id, { ...cloudN });
+                } else {
+                  const localN = mergedMap.get(cloudN.id);
+                  // Strict read status sync: If read anywhere, it becomes read!
+                  localN.isRead = (localN.isRead === true) || (cloudN.isRead === true);
+                  if (cloudN.timestamp) localN.timestamp = cloudN.timestamp;
+                }
+              }
+            }
+          });
+
+          userNotifications = Array.from(mergedMap.values())
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 100);
+
+          localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+          updateNotificationsUI();
+          renderNotificationsList();
+
+          // Sync back read state to cloud if local was read but cloud was unread
+          const patchObj = {};
+          let hasPatch = false;
+          userNotifications.forEach(n => {
+            if (cloudMap[n.id] && cloudMap[n.id].isRead !== n.isRead) {
+              patchObj[`users/${currentUser.uid}/notifications/${n.id}/isRead`] = n.isRead;
+              hasPatch = true;
+            }
+          });
+          if (hasPatch) {
+            fetch(`${rtdbUrl}/.json${authParam}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(patchObj)
+            }).catch(() => {});
           }
         }
       } catch (e) {
@@ -7084,9 +7161,28 @@
       const followingUids = Object.keys(myFollowingMap || {});
       if (followingUids.length === 0) return;
 
+      const clearedTime = parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10);
+
       cloudLibraryDecks.forEach(deck => {
         if (!deck || !deck.authorUid || deck.authorUid === currentUser?.uid) return;
         if (myFollowingMap[deck.authorUid]) {
+          // Deterministic notification ID per published deck
+          const notifId = 'notif_deck_' + deck.id;
+
+          // 1. Skip if user previously deleted this notification
+          if (deletedNotificationIds.has(notifId)) return;
+
+          // 2. Skip if already exists in notifications list
+          const existing = userNotifications.find(n => n.id === notifId || (n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === deck.id));
+          if (existing) return;
+
+          // 3. Resolve exact creation/publication timestamp of the deck
+          const deckTimestamp = deck.publishedAt || deck.createdAt || deck.updatedAt || new Date().toISOString();
+          const deckTimeMs = new Date(deckTimestamp).getTime();
+
+          // 4. Skip if this deck was published before user cleared their notifications
+          if (clearedTime > 0 && deckTimeMs <= clearedTime) return;
+
           const authorDisplay = deck.author || (deck.authorUsername ? ('@' + deck.authorUsername) : 'Tác giả');
           const authorHandle = deck.authorUsername ? ('@' + deck.authorUsername) : '';
           const notifTitle = `📘 Bộ từ mới từ ${authorHandle || authorDisplay}`;
@@ -7097,7 +7193,7 @@
             deckTitle: deck.title,
             author: deck.author,
             authorUid: deck.authorUid
-          });
+          }, notifId, deckTimestamp);
         }
       });
     }
@@ -7193,11 +7289,11 @@
 
         html += `
           <div class="notification-item" onclick="handleNotificationClick('${n.id}')" style="background: ${isUnread ? 'rgba(99,102,241,0.08)' : 'var(--surface-elevated)'}; border: 1px solid ${isUnread ? 'rgba(99,102,241,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; transition: all 0.2s; position: relative;">
-            ${isUnread ? '<div style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></div>' : ''}
+            ${isUnread ? '<div style="position: absolute; top: 12px; right: 36px; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></div>' : ''}
             <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 10px; background: ${typeBg}; border: 1px solid ${typeBorder}; display: flex; align-items: center; justify-content: center; font-size: 18px;">
               ${typeIcon}
             </div>
-            <div style="flex: 1; min-width: 0; padding-right: 14px;">
+            <div style="flex: 1; min-width: 0; padding-right: 28px;">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 2px;">
                 <div style="font-weight: 700; font-size: 13px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'};">${escapeHtml(n.title)}</div>
               </div>
@@ -7209,6 +7305,9 @@
                 ${n.actionType ? '<span style="color: #38bdf8; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>' : ''}
               </div>
             </div>
+            <button type="button" class="btn btn-outline btn-icon" onclick="deleteSingleNotification('${n.id}', event)" title="Xóa thông báo này" style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; border: none; background: transparent; color: var(--text-muted); font-size: 13px; opacity: 0.6;" onmouseenter="this.style.opacity='1'; this.style.color='#f87171'" onmouseleave="this.style.opacity='0.6'; this.style.color='var(--text-muted)'">
+              🗑️
+            </button>
           </div>
         `;
       });
@@ -7290,9 +7389,40 @@
       }
     }
 
+    function deleteSingleNotification(notifId, event = null) {
+      if (event) event.stopPropagation();
+      deletedNotificationIds.add(notifId);
+      saveDeletedNotificationIds();
+
+      userNotifications = userNotifications.filter(n => n.id !== notifId);
+      localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+      updateNotificationsUI();
+      renderNotificationsList();
+
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        const patchObj = {
+          [`users/${currentUser.uid}/notifications/${notifId}`]: null,
+          [`users/${currentUser.uid}/deletedNotificationIds/${notifId}`]: true
+        };
+        fetch(`${rtdbUrl}/.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patchObj)
+        }).catch(() => {});
+      }
+    }
+
     function clearAllNotifications() {
       if (userNotifications.length === 0) return;
       if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách thông báo?')) return;
+      
+      const nowMs = Date.now();
+      localStorage.setItem('vocaflow_notifications_cleared_time', nowMs.toString());
+      userNotifications.forEach(n => deletedNotificationIds.add(n.id));
+      saveDeletedNotificationIds();
+
       userNotifications = [];
       localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
       updateNotificationsUI();
@@ -7302,8 +7432,14 @@
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-        fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`, {
-          method: 'DELETE'
+        const patchObj = {
+          [`users/${currentUser.uid}/notifications`]: null,
+          [`users/${currentUser.uid}/notificationsClearedTimestamp`]: nowMs
+        };
+        fetch(`${rtdbUrl}/.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patchObj)
         }).catch(() => {});
       }
     }
@@ -9656,22 +9792,46 @@
                   updateAuthUI();
                 }
 
-                // Sync Notifications from Cloud
-                if (cloudData.notifications && typeof cloudData.notifications === 'object') {
-                  const cloudNotifs = Object.values(cloudData.notifications).filter(n => n && n.id);
-                  const nMap = new Map();
-                  userNotifications.forEach(n => nMap.set(n.id, n));
-                  cloudNotifs.forEach(n => {
-                    if (!nMap.has(n.id)) {
-                      nMap.set(n.id, n);
-                    } else if (n.isRead) {
-                      nMap.get(n.id).isRead = true;
-                    }
-                  });
-                  userNotifications = Array.from(nMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
-                  localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-                  updateNotificationsUI();
+                // Sync Notifications from Cloud (with Tombstones & Read State Sync)
+                const cloudNotifs = (cloudData.notifications && typeof cloudData.notifications === 'object') ? Object.values(cloudData.notifications).filter(n => n && n.id) : [];
+                if (cloudData.deletedNotificationIds && typeof cloudData.deletedNotificationIds === 'object') {
+                  Object.keys(cloudData.deletedNotificationIds).forEach(id => deletedNotificationIds.add(id));
+                  saveDeletedNotificationIds();
                 }
+                const cloudClearedTime = Number(cloudData.notificationsClearedTimestamp) || 0;
+                const localClearedTime = parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10);
+                const effectiveClearedTime = Math.max(cloudClearedTime, localClearedTime);
+                if (cloudClearedTime > localClearedTime) {
+                  localStorage.setItem('vocaflow_notifications_cleared_time', cloudClearedTime.toString());
+                }
+
+                const nMergedMap = new Map();
+                userNotifications.forEach(n => {
+                  if (n && n.id && !deletedNotificationIds.has(n.id)) {
+                    if (effectiveClearedTime === 0 || new Date(n.timestamp).getTime() > effectiveClearedTime) {
+                      nMergedMap.set(n.id, { ...n });
+                    }
+                  }
+                });
+
+                cloudNotifs.forEach(cloudN => {
+                  if (cloudN && cloudN.id && !deletedNotificationIds.has(cloudN.id)) {
+                    if (effectiveClearedTime === 0 || new Date(cloudN.timestamp).getTime() > effectiveClearedTime) {
+                      if (!nMergedMap.has(cloudN.id)) {
+                        nMergedMap.set(cloudN.id, { ...cloudN });
+                      } else {
+                        const localN = nMergedMap.get(cloudN.id);
+                        localN.isRead = (localN.isRead === true) || (cloudN.isRead === true);
+                        if (cloudN.timestamp) localN.timestamp = cloudN.timestamp;
+                      }
+                    }
+                  }
+                });
+
+                userNotifications = Array.from(nMergedMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
+                localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+                updateNotificationsUI();
+                renderNotificationsList();
 
                 saveDatabase(false);
                 refreshActiveScreenData();
