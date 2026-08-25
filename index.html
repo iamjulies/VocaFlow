@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4573,7 +4573,7 @@
             </div>
             <div>
               <strong style="color: var(--text);">💸 Nếu chuyển khoản mà quên ghi cú pháp thì có bị mất tiền không?</strong>
-              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0916541813)</strong> để được hỗ trợ đối soát và kích hoạt VIP trong 1 phút.</p>
+              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0876048326)</strong> để được hỗ trợ đối soát và kích hoạt VIP trong 1 phút.</p>
             </div>
             <div>
               <strong style="color: var(--text);">⚠️ Chưa chuyển tiền mà bấm "Tôi Đã Chuyển Khoản" thì sao?</strong>
@@ -5003,7 +5003,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -23120,13 +23120,14 @@ Quy tắc phản hồi quan trọng:
   }
 
   function getCleanTransferSyntax(tier) {
-    const rawIdentifier = (currentUser && currentUser.username)
-      ? currentUser.username
-      : ((currentUser && currentUser.email)
-          ? currentUser.email.split('@')[0]
-          : 'GUEST');
-    const cleanId = rawIdentifier.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    return `VOCA VIP ${cleanId || 'USER'} ${tier.toUpperCase()}`;
+    let cleanUid = 'GUEST';
+    if (currentUser && currentUser.uid) {
+      cleanUid = currentUser.uid.replace(/^guest_/, 'G_').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (cleanUid.length > 12) {
+        cleanUid = cleanUid.slice(0, 12);
+      }
+    }
+    return `VOCA VIP ${cleanUid} ${tier.toUpperCase()}`;
   }
 
   function selectVipPlan(tier, name, priceStr, amount) {
@@ -23258,7 +23259,7 @@ Quy tắc phản hồi quan trọng:
             addNotification(
               'FINANCIAL',
               `⚠️ Đối Soát Chưa Thành Công (${pending.planName})`,
-              `Hệ thống chưa tìm thấy giao dịch ${pending.priceStr} với cú pháp "${pending.syntax}". Nếu bạn đã chuyển tiền thực tế, vui lòng liên hệ Admin NONG DUC HAO (SĐT/Zalo: 0916541813) kèm ảnh biên lai để được kích hoạt ngay nhé!`
+              `Hệ thống chưa tìm thấy giao dịch ${pending.priceStr} với cú pháp "${pending.syntax}". Nếu bạn đã chuyển tiền thực tế, vui lòng liên hệ Admin NONG DUC HAO (SĐT/Zalo: 0876048326) kèm ảnh biên lai để được kích hoạt ngay nhé!`
             );
           }
         }
