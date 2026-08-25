@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2 (Build 124)
+Phiên bản hiện tại : v0.10.8-beta-2.1 (Build 125)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.1 (Build 125 - VIP GLOWING NICKNAME & LIGHT THEME CONTRAST HOTFIX):
+  - Nâng Cấp Hiệu Ứng Phát Sáng & Tương Phản Giao Diện Sáng Cho Tên VIP:
+    * Thêm hiệu ứng phát sáng chuyển động đa chiều (Animated Shimmer Glow Keyframes): Tên người dùng VIP tự động lấp lánh ánh kim hoàng kim kèm bóng đổ quang học phát sáng (Drop Shadow Neon Glow) 3 lớp.
+    * Tối ưu hóa độ tương phản trên Giao Diện Sáng (Light Mode): Điều chỉnh dải màu Gradient Vàng Đồng - Cam Đậm (`#b45309` ➔ `#d97706` ➔ `#f59e0b`) giúp nickname VIP hiển thị sắc nét, nổi bật rõ ràng trên nền sáng mà không bị chìm hay mờ.
+    * Thêm chuyển động bồng bềnh và phát sáng nhịp nhàng (Float & Pulse Animation) cho biểu tượng Vương Miện Vàng 👑 và Vòng Hào Quang Avatar.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2 (Build 124 - VISUAL VIP CROWN UI BADGES - PHẦN 2/10):
   - Nhận Diện Hội Viên VIP Trực Quan Lấp Lánh (Phần 2):
     * Thêm biểu tượng Vương Miện Vàng 👑 với hiệu ứng bóng phát sáng (Drop Shadow Glow) và chữ Gradient Vàng/Cam sang trọng cạnh tên người dùng trên Thanh Tiêu Đề (Header), Menu Di Động (Mobile Drawer) và Hồ Sơ Cá Nhân (Profile Modal).
