@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7f-2 (Build 104)
+Phiên bản hiện tại : v0.10.7f-3 (Build 105)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7f-3 (Build 105 - MOBILE HEADER RESPONSIVENESS & USERNAME LOCK):
+  - Tối Ưu Giao Diện Header Mobile & Khóa Ô Username Đang Chờ Cooldown:
+    * Khắc phục tràn viền nút 3 chấm (`⋮`) trên điện thoại: Tối ưu padding, kích thước nút và chuyển nút Studio sang menu mở rộng giúp Header di động thoáng đẹp và không bao giờ bị cắt.
+    * Khóa tương tác ô Username (@Handle) khi đang trong thời gian chờ 7 ngày (`disabled = true`, `pointer-events: none`, hiển thị ổ khóa 🔒 và ngày được đổi tiếp theo).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7f-3_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7f-2 (Build 104 - BIDIRECTIONAL SOCIAL GRAPH & REALTIME CLOUD SYNC FIX):
   - Bảo Toàn & Khắc Phục Mất Dữ Liệu Theo Dõi (Following/Followers Persistence):
     * Chuyển đổi toàn bộ phương thức gửi dữ liệu nền sang `PATCH` trên Firebase Cloud, triệt tiêu lỗi `PUT` vô tình ghi đè và làm rỗng danh sách Người theo dõi / Đang theo dõi.

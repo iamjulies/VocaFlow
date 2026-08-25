@@ -1241,8 +1241,16 @@
         width: 14px;
         height: 14px;
       }
+      header {
+        padding: 8px 10px;
+      }
+      .brand {
+        font-size: 14px;
+        gap: 4px;
+        min-width: 0;
+      }
       .header-actions {
-        gap: 6px;
+        gap: 4px;
         flex-shrink: 0;
         display: flex;
         align-items: center;
@@ -1252,6 +1260,14 @@
       }
       .mobile-more-btn {
         display: inline-flex !important;
+        padding: 4px 8px !important;
+        height: 32px !important;
+        box-sizing: border-box;
+      }
+      #btn-header-notifications, #btn-shop {
+        padding: 4px 8px !important;
+        height: 32px !important;
+        font-size: 12px !important;
       }
       .hide-on-mobile {
         display: none !important;
@@ -1890,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -1898,8 +1914,8 @@
         <span class="hide-on-mobile">Thông Báo</span>
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
-        💼 <span class="hide-on-mobile">Studio & Ví</span>
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
+        💼 <span>Studio & Ví</span>
       </button>
       <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
         🏪 <span id="header-points-display">0đ</span>
@@ -4619,7 +4635,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7867,7 +7883,7 @@
             profileHandleBadge.style.color = '#34d399';
             profileHandleBadge.style.borderColor = 'rgba(16,185,129,0.3)';
           } else {
-            profileHandleBadge.textContent = `⏳ Sau ${cooldown.daysRemaining} ngày`;
+            profileHandleBadge.textContent = `🔒 Sau ${cooldown.daysRemaining} ngày`;
             profileHandleBadge.style.background = 'rgba(245,158,11,0.15)';
             profileHandleBadge.style.color = '#fbbf24';
             profileHandleBadge.style.borderColor = 'rgba(245,158,11,0.3)';
@@ -7879,12 +7895,29 @@
             profileHandleCooldownHint.style.color = '#34d399';
           } else {
             const nextDate = new Date(Number(currentUser.lastUsernameChangeTimestamp) + USERNAME_COOLDOWN_MS).toLocaleDateString('vi-VN');
-            profileHandleCooldownHint.textContent = `⏳ Đổi lại sau ${cooldown.daysRemaining} ngày (${nextDate})`;
+            profileHandleCooldownHint.textContent = `🔒 Đã khóa (đổi lại sau ${cooldown.daysRemaining} ngày - ${nextDate})`;
             profileHandleCooldownHint.style.color = '#fbbf24';
           }
         }
-        if (usernameInput && document.activeElement !== usernameInput) {
-          usernameInput.value = userHandle;
+        if (usernameInput) {
+          if (document.activeElement !== usernameInput) {
+            usernameInput.value = userHandle;
+          }
+          if (!cooldown.canChange) {
+            usernameInput.disabled = true;
+            usernameInput.readOnly = true;
+            usernameInput.style.cursor = 'not-allowed';
+            usernameInput.style.opacity = '0.55';
+            usernameInput.style.pointerEvents = 'none';
+            usernameInput.title = `🔒 Bạn chỉ có thể đổi tên sau ${cooldown.daysRemaining} ngày nữa`;
+          } else {
+            usernameInput.disabled = false;
+            usernameInput.readOnly = false;
+            usernameInput.style.cursor = 'text';
+            usernameInput.style.opacity = '1';
+            usernameInput.style.pointerEvents = 'auto';
+            usernameInput.title = 'Nhập tên định danh mới (3-20 ký tự)';
+          }
         }
         const userAvatar = getUserAvatar(currentUser);
         if (profileAvatarEl) profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
@@ -7992,7 +8025,25 @@
         const usernameInput = document.getElementById('profile-username-input');
         if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
         if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
-        if (usernameInput) usernameInput.value = (currentUser && currentUser.username) || '';
+        const cooldown = getUsernameCooldownStatus(currentUser ? currentUser.lastUsernameChangeTimestamp : 0);
+        if (usernameInput) {
+          usernameInput.value = (currentUser && currentUser.username) || '';
+          if (!cooldown.canChange) {
+            usernameInput.disabled = true;
+            usernameInput.readOnly = true;
+            usernameInput.style.cursor = 'not-allowed';
+            usernameInput.style.opacity = '0.55';
+            usernameInput.style.pointerEvents = 'none';
+            usernameInput.title = `🔒 Bạn chỉ có thể đổi tên sau ${cooldown.daysRemaining} ngày nữa`;
+          } else {
+            usernameInput.disabled = false;
+            usernameInput.readOnly = false;
+            usernameInput.style.cursor = 'text';
+            usernameInput.style.opacity = '1';
+            usernameInput.style.pointerEvents = 'auto';
+            usernameInput.title = 'Nhập tên định danh mới (3-20 ký tự)';
+          }
+        }
         const fb = document.getElementById('profile-handle-live-feedback');
         if (fb) fb.style.display = 'none';
         if (nameInput) nameInput.focus();
