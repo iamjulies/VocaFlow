@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-4</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-5</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-4</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-5</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -21771,6 +21771,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       });
     }
 
+    let aiQuizCache = {};
+
     function formatAiChatMarkdown(rawText, msgIndex) {
       if (!rawText) return '';
       let text = rawText;
@@ -21781,16 +21783,23 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       text = text.replace(quizRegex, (match, jsonStr) => {
         try {
           const qData = JSON.parse(jsonStr);
-          const qId = 'ai_quiz_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
+          const qId = 'ai_quiz_' + msgIndex + '_' + Math.random().toString(36).substr(2, 6);
+          
+          aiQuizCache[qId] = {
+            q: qData.q || qData.question || '',
+            options: qData.options || [],
+            answer: qData.answer !== undefined ? qData.answer : 0,
+            explain: qData.explain || ''
+          };
+
           let optionsHtml = '';
           (qData.options || []).forEach((opt, oIdx) => {
             const letter = ['A','B','C','D'][oIdx] || (oIdx + 1);
             // Clean option: strip leading "A. ", "A) ", "1. ", "a. "
             const cleanOpt = (opt || '').toString().replace(/^[A-Da-d0-9][\.\)\-\:\s]+\s*/, '').trim();
-            const explainEsc = escapeHtml(qData.explain || '').replace(/'/g, "\\'");
             optionsHtml += `
-              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${explainEsc}')" style="text-align: left; justify-content: flex-start; padding: 8px 12px; font-size: 12px; border-radius: 8px; width: 100%; line-height: 1.4;">
-                <strong style="margin-right: 6px; color: #818cf8;">${letter}.</strong> ${escapeHtml(cleanOpt)}
+              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx})" style="text-align: left; justify-content: flex-start; padding: 9px 12px; font-size: 12.5px; border-radius: 8px; width: 100%; line-height: 1.4; cursor: pointer; transition: all 0.15s ease;">
+                <strong style="margin-right: 8px; color: #818cf8; font-size: 13px;">${letter}.</strong> <span>${escapeHtml(cleanOpt)}</span>
               </button>
             `;
           });
@@ -21800,7 +21809,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
               <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
                 <span>🎯 CÂU HỎI TRẮC NGHIỆM TƯƠNG TÁC:</span>
               </div>
-              <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: var(--text); line-height: 1.4;">
+              <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 10px; color: var(--text); line-height: 1.4;">
                 ${escapeHtml(qData.q || qData.question || 'Chọn đáp án đúng:')}
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -21874,20 +21883,37 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       return formatted;
     }
 
-    function handleAiMiniQuizAnswer(qId, selectedIdx, correctIdx, explainText) {
+    function handleAiMiniQuizAnswer(qId, selectedIdx) {
       const container = document.getElementById(qId);
       if (!container) return;
+      const data = aiQuizCache[qId] || {};
+
+      let correctIdx = 0;
+      if (typeof data.answer === 'number') {
+        correctIdx = data.answer;
+      } else if (typeof data.answer === 'string') {
+        const rawAns = data.answer.trim().toUpperCase();
+        if (rawAns.startsWith('A') || rawAns === '0') correctIdx = 0;
+        else if (rawAns.startsWith('B') || rawAns === '1') correctIdx = 1;
+        else if (rawAns.startsWith('C') || rawAns === '2') correctIdx = 2;
+        else if (rawAns.startsWith('D') || rawAns === '3') correctIdx = 3;
+        else {
+          const fIdx = (data.options || []).findIndex(opt => opt.toLowerCase().includes(data.answer.toLowerCase().trim()));
+          correctIdx = fIdx !== -1 ? fIdx : 0;
+        }
+      }
 
       const buttons = container.querySelectorAll('.ai-quiz-opt');
       buttons.forEach((btn, idx) => {
         btn.disabled = true;
         btn.style.pointerEvents = 'none';
         if (idx === correctIdx) {
-          btn.style.background = 'rgba(16,185,129,0.2)';
+          btn.style.background = 'rgba(16,185,129,0.25)';
           btn.style.borderColor = '#10b981';
           btn.style.color = '#34d399';
+          btn.style.fontWeight = '700';
         } else if (idx === selectedIdx && selectedIdx !== correctIdx) {
-          btn.style.background = 'rgba(239,68,68,0.2)';
+          btn.style.background = 'rgba(239,68,68,0.25)';
           btn.style.borderColor = '#ef4444';
           btn.style.color = '#f87171';
         }
@@ -21897,16 +21923,15 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       if (explainEl) {
         explainEl.style.display = 'block';
         const isRight = selectedIdx === correctIdx;
-        // Format markdown bold in explainText
-        const formattedExplain = (explainText || 'Đáp án đúng là lựa chọn được tô xanh.')
+        const formattedExplain = (data.explain || 'Đáp án đúng là lựa chọn được tô xanh.')
           .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #6ee7b7;">$1</strong>')
           .replace(/\*(.*?)\*/g, '<em>$1</em>');
 
         explainEl.innerHTML = `
-          <div style="font-weight: 700; color: ${isRight ? '#34d399' : '#f87171'}; margin-bottom: 4px; font-size: 12.5px;">
+          <div style="font-weight: 700; color: ${isRight ? '#34d399' : '#f87171'}; margin-bottom: 4px; font-size: 13px;">
             ${isRight ? '🎉 Chính xác!' : '❌ Chưa chính xác!'}
           </div>
-          <div style="color: var(--text);">${formattedExplain}</div>
+          <div style="color: var(--text); line-height: 1.5;">${formattedExplain}</div>
         `;
       }
     }

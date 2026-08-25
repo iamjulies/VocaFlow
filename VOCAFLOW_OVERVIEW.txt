@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-4 (Build 111)
+Phiên bản hiện tại : v0.10.7g-5 (Build 112)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-5 (Build 112 - MINI QUIZ INTERACTION CACHE & CLICK RESOLUTION HOTFIX):
+  - Khắc Phục Triệt Để Lỗi Không Nhấn Được Các Nút Đáp Án Trắc Nghiệm:
+    * Chuyển toàn bộ dữ liệu câu hỏi và đáp án vào bộ nhớ đệm `aiQuizCache`, loại bỏ hoàn toàn việc truyền tham số chuỗi/JSON phức tạp trong thuộc tính `onclick`.
+    * Chuẩn hóa bộ giải mã đáp án: Tự động tương thích với mọi định dạng đáp án trả về từ AI (chữ cái "A", "B", "C", "D", số nguyên 0-3 hoặc nội dung text của từ).
+    * Tăng cường hiệu ứng hover và phản hồi xúc giác khi bấm chọn đáp án.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-5_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-4 (Build 111 - DEEP VOICE EVALUATION & SENTENCE PRACTICE UPGRADE):
   - Nâng Cấp Toàn Diện Phòng Luyện Nói Mini & Bộ Câu Hỏi Trắc Nghiệm:
     * Hỗ trợ luyện phát âm cả Câu Tiếng Anh (Sentence/Phrase) lẫn Từ đơn lẻ (Word) mà không bị AI tự ý rút gọn.
