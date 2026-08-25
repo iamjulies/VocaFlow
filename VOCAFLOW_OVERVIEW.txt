@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-5 (Build 112)
+Phiên bản hiện tại : v0.10.7g-6 (Build 114)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-6 (Build 114 - AI MENTOR DAILY FREE QUOTA CLOUD REALTIME SYNC):
+  - Đồng Bộ Đa Thiết Bị Số Lượt Miễn Phí Gia Sư AI:
+    * Mở rộng Schema đồng bộ Firebase Cloud RTDB thêm node `/users/{uid}/aiChatQuota` lưu trữ ngày học `dailyDate` và số lượt đã dùng `dailyCount`.
+    * Cơ chế Đồng bộ 2 chiều tức thời (Realtime Quota Sync): Khi dùng 1 lượt free ở máy A, máy A đẩy ngay lên Cloud; khi mở hoặc đồng bộ ở máy B, máy B cập nhật ngay chính xác số lượt free còn lại trong ngày (tránh chênh lệch số lượt free giữa các thiết bị).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-6_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-5 (Build 112 - MINI QUIZ INTERACTION CACHE & CLICK RESOLUTION HOTFIX):
   - Khắc Phục Triệt Để Lỗi Không Nhấn Được Các Nút Đáp Án Trắc Nghiệm:
     * Chuyển toàn bộ dữ liệu câu hỏi và đáp án vào bộ nhớ đệm `aiQuizCache`, loại bỏ hoàn toàn việc truyền tham số chuỗi/JSON phức tạp trong thuộc tính `onclick`.
