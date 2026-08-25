@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-8 (Build 116)
+Phiên bản hiện tại : v0.10.7g-9 (Build 117)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-9 (Build 117 - COMPLETE LOGOUT MEMORY WIPEOUT & SELF-FOLLOW PURGE):
+  - Khắc Phục Triệt Để Lỗi Rò Rỉ Dữ Liệu Sau Khi Đăng Xuất (Nguyên Tắc "Chết Là Hết"):
+    * Dọn dẹp sạch 100% dữ liệu cá nhân khi đăng xuất: Xóa toàn bộ `myFollowingMap`, `myFollowersMap`, lịch sử Chat AI `aiChatHistory`, hạn ngạch `aiChatQuota`, thông báo `userNotifications`, bio cá nhân và bộ nhớ đệm creator.
+    * Đưa giao diện Khách (Guest Offline) về trạng thái nguyên thủy chuẩn xác: Số người theo dõi và đang theo dõi của tài khoản Khách luôn hiển thị đúng 0.
+    * Ngăn chặn triệt để hiện tượng tự theo dõi chính mình (Self-Follow): Lọc bỏ hoàn toàn UID của tài khoản hiện tại khỏi danh sách Following và Followers khi kéo từ Cloud cũng như khi hiển thị trong Modal.
+    * Dọn sạch bộ nhớ đệm tạm thời trước khi đăng nhập tài khoản mới, ngăn ngừa hoàn toàn tình trạng tài khoản mới bị gộp lịch sử chat hoặc danh sách follow từ tài khoản cũ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-9_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-8 (Build 116 - GLOBAL TDZ VARIABLE HOISTING & MAX QUOTA MERGE ENGINE):
   - Khắc Phục Triệt Để Lỗi Biến TDZ & Tối Ưu Thuật Toán Đồng Bộ Quota AI:
     * Khắc phục lỗi Temporal Dead Zone (TDZ) do khai báo biến bằng `let` ở cuối file: Đưa toàn bộ các biến trạng thái `aiChatDailyDate`, `aiChatDailyCount` lên khai báo `var` ở đầu `<script>`, loại bỏ hoàn toàn các lỗi `ReferenceError: Cannot access before initialization`.

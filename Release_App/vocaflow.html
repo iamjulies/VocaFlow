@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-8</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-9</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-8</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-9</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7594,23 +7594,31 @@
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        // Fetch Following Map (Bidirectional Union Merge)
+        // Fetch Following Map (Cloud Source of Truth + Self-Follow Filter)
         const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
         if (followingRes.ok) {
           const data = await followingRes.json();
           if (data && typeof data === 'object') {
-            myFollowingMap = { ...myFollowingMap, ...data };
+            myFollowingMap = { ...data };
+            if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
             localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+          } else {
+            myFollowingMap = {};
+            localStorage.removeItem('vocaflow_following_map');
           }
         }
 
-        // Fetch Followers Map (Bidirectional Union Merge)
+        // Fetch Followers Map (Cloud Source of Truth + Self-Follow Filter)
         const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
         if (followersRes.ok) {
           const fData = await followersRes.json();
           if (fData && typeof fData === 'object') {
-            myFollowersMap = { ...myFollowersMap, ...fData };
+            myFollowersMap = { ...fData };
+            if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
             localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+          } else {
+            myFollowersMap = {};
+            localStorage.removeItem('vocaflow_followers_map');
           }
         }
 
@@ -7776,7 +7784,7 @@
       if (iconEl) iconEl.textContent = isFollowing ? '✨' : '👥';
 
       const map = isFollowing ? myFollowingMap : myFollowersMap;
-      const uids = Object.keys(map || {});
+      const uids = Object.keys(map || {}).filter(uid => uid && uid !== currentUser?.uid && uid !== 'undefined' && uid !== 'null');
 
       if (uids.length === 0) {
         bodyEl.innerHTML = `
@@ -8244,10 +8252,15 @@
       }
 
       // Update metrics
+      const isRegisteredUser = !!(currentUser && currentUser.email && currentUser.uid && !currentUser.uid.startsWith('guest_'));
       const followerCountEl = document.getElementById('profile-follower-count');
       const followingCountEl = document.getElementById('profile-following-count');
-      if (followerCountEl) followerCountEl.textContent = currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0;
-      if (followingCountEl) followingCountEl.textContent = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
+      if (followerCountEl) {
+        followerCountEl.textContent = isRegisteredUser ? (currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0) : 0;
+      }
+      if (followingCountEl) {
+        followingCountEl.textContent = isRegisteredUser ? (currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0) : 0;
+      }
 
       const statDecks = document.getElementById('profile-stat-decks');
       const statWords = document.getElementById('profile-stat-words');
@@ -9362,7 +9375,7 @@
         console.warn('Sync before logout warning:', e);
       }
 
-      // 1. Clear all user account data from LocalStorage & Memory
+      // 1. Clear all user account data from LocalStorage & Memory ("CHẾT LÀ HẾT")
       currentUser = null;
       localStorage.removeItem(STORAGE_KEY_AUTH);
       localStorage.removeItem('vocaflow_user_ledger');
@@ -9376,6 +9389,7 @@
 
       localStorage.removeItem('vocaflow_user_avatar');
       localStorage.removeItem('vocaflow_avatar_time');
+      localStorage.removeItem('vocaflow_user_bio');
       localStorage.removeItem('vocaflow_user_points');
       localStorage.removeItem('vocaflow_user_hints');
       localStorage.removeItem('vocaflow_user_skips');
@@ -9385,6 +9399,33 @@
       localStorage.removeItem('vocaflow_deleted_decks');
       deletedWordIds.clear();
       deletedDeckIds.clear();
+
+      // Following & Followers complete wipeout
+      myFollowingMap = {};
+      myFollowersMap = {};
+      localStorage.removeItem('vocaflow_following_map');
+      localStorage.removeItem('vocaflow_followers_map');
+      localStorage.removeItem('vocaflow_creator_profile_cache');
+
+      // Notifications complete wipeout
+      userNotifications = [];
+      deletedNotificationIds.clear();
+      localStorage.removeItem('vocaflow_user_notifications');
+      localStorage.removeItem('vocaflow_deleted_notifications');
+      localStorage.removeItem('vocaflow_notifications_cleared_time');
+      if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+
+      // AI Mentor Chat & Quota complete wipeout
+      aiChatHistory = [];
+      aiQuizCache = {};
+      aiChatDailyCount = 0;
+      aiChatDailyDate = '';
+      localStorage.removeItem('vocaflow_ai_chat_history');
+      localStorage.removeItem('vocaflow_ai_chat_daily_count');
+      localStorage.removeItem('vocaflow_ai_chat_daily_date');
+      localStorage.removeItem('vocaflow_gemini_working_model');
+      if (typeof renderAiChatMessages === 'function') renderAiChatMessages();
+      if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
       // 2. Reset decks & words to clean starter sample data
       seedSampleData();
@@ -9404,7 +9445,7 @@
 
       updateAuthUI();
       refreshActiveScreenData();
-      showToast('👋 Đã đăng xuất an toàn. Dữ liệu tài khoản đã được bảo lưu trên Cloud.');
+      showToast('👋 Đã đăng xuất an toàn. Thiết bị đã được đưa về trạng thái nguyên thủy.');
     }
 
     async function handleFormLogin(e) {
@@ -9412,7 +9453,22 @@
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
 
-      // Clear guest state immediately before logging in
+      // Clear guest/residual state immediately before logging in
+      myFollowingMap = {};
+      myFollowersMap = {};
+      localStorage.removeItem('vocaflow_following_map');
+      localStorage.removeItem('vocaflow_followers_map');
+      userNotifications = [];
+      deletedNotificationIds.clear();
+      localStorage.removeItem('vocaflow_user_notifications');
+      localStorage.removeItem('vocaflow_deleted_notifications');
+      aiChatHistory = [];
+      aiQuizCache = {};
+      aiChatDailyCount = 0;
+      aiChatDailyDate = '';
+      localStorage.removeItem('vocaflow_ai_chat_history');
+      localStorage.removeItem('vocaflow_ai_chat_daily_count');
+      localStorage.removeItem('vocaflow_ai_chat_daily_date');
       localStorage.removeItem('vocaflow_user_ledger');
       userLedger = [];
       localStorage.removeItem(STORAGE_KEY_USER_POINTS);
@@ -9911,14 +9967,22 @@
                   }
                 }
 
-                // Sync Following & Followers from Cloud (Bidirectional Union Merge)
+                // Sync Following & Followers from Cloud (Cloud Source of Truth + Self-Follow Filter)
                 if (cloudData.following && typeof cloudData.following === 'object') {
-                  myFollowingMap = { ...myFollowingMap, ...cloudData.following };
+                  myFollowingMap = { ...cloudData.following };
+                  if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
                   localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+                } else {
+                  myFollowingMap = {};
+                  localStorage.removeItem('vocaflow_following_map');
                 }
                 if (cloudData.followers && typeof cloudData.followers === 'object') {
-                  myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
+                  myFollowersMap = { ...cloudData.followers };
+                  if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
                   localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+                } else {
+                  myFollowersMap = {};
+                  localStorage.removeItem('vocaflow_followers_map');
                 }
                 if (currentUser) {
                   currentUser.followingCount = Object.keys(myFollowingMap).length;
