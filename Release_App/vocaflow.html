@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7f-4</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -1963,7 +1963,14 @@
               <small style="color: var(--text-muted); font-size: 10.5px;">Lịch sử giao dịch & Quản lý bộ từ bán</small>
             </div>
           </div>
-          <div class="dropdown-item" onclick="openLibraryModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
+          <div class="dropdown-item" onclick="openAiMentorModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
+            <span style="font-size: 16px;">🤖</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: #818cf8;">Gia Sư AI (Gemini Mentor)</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Hỏi đáp, luyện phát âm & tạo mini-quiz</small>
+            </div>
+          </div>
+          <div class="dropdown-item" onclick="openLibraryModal(); closeHeaderMoreMenu();">
             <span style="font-size: 16px;">📚</span>
             <div>
               <div style="font-weight: 700; font-size: 13px; color: #a5b4fc;">Thư Viện Từ Vựng</div>
@@ -4160,6 +4167,75 @@
     </div>
   </div>
 
+  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g) -->
+  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; right: 18px; z-index: 999; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+    🤖
+    <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
+  </button>
+
+  <!-- MODAL: AI STUDY CHAT (GEMINI ENGLISH MENTOR - v0.10.7g) -->
+  <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
+    <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+      
+      <!-- HEADER -->
+      <div style="padding: 12px 16px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+            🤖
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <strong style="font-size: 15px; color: var(--text);">Gemini English Mentor</strong>
+              <span id="ai-mentor-quota-badge" class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">5 lượt free</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Gia sư tiếng Anh học thuật & phản xạ thực chiến</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-icon" onclick="clearAiChatHistory()" title="Xóa lịch sử đoạn chat" style="font-size: 13px; padding: 6px 8px; color: var(--text-muted);">
+            🗑️
+          </button>
+          <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-mentor')">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- CONTEXT BANNER -->
+      <div id="ai-mentor-context-banner" style="padding: 7px 14px; background: rgba(99, 102, 241, 0.08); border-bottom: 1px dashed rgba(99, 102, 241, 0.25); font-size: 11.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <span>🎯 Ngữ cảnh:</span>
+          <span id="ai-mentor-context-text" style="font-weight: 700; color: var(--text);">Chế độ học tự do</span>
+        </div>
+        <span id="ai-mentor-context-badge" class="badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Tự do</span>
+      </div>
+
+      <!-- QUICK ACTION CHIPS (SCROLLABLE ROW) -->
+      <div id="ai-mentor-chips-container" style="display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none;">
+        <!-- Dynamic Quick Chips -->
+      </div>
+
+      <!-- MESSAGES CONTAINER -->
+      <div id="ai-chat-messages" style="flex: 1; overflow-y: auto; padding: 14px 14px; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15);">
+        <!-- Messages -->
+      </div>
+
+      <!-- INPUT BAR -->
+      <div style="padding: 10px 14px; background: var(--surface-elevated); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+        <form onsubmit="handleSendAiChatMessage(event)" style="display: flex; gap: 8px; align-items: center; position: relative;">
+          <input type="text" id="ai-chat-input" class="form-input" placeholder="Hỏi gia sư tiếng Anh (tối đa 300 ký tự)..." maxlength="300" style="flex: 1; font-size: 13px; padding: 10px 12px; border-radius: 10px;" autocomplete="off" oninput="updateAiChatInputLength()">
+          <button type="submit" id="btn-ai-chat-send" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-weight: 700; padding: 10px 16px; border-radius: 10px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+            <span>🚀</span> <span id="btn-ai-chat-send-label">Gửi</span>
+          </button>
+        </form>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--text-muted); padding: 0 2px;">
+          <span id="ai-chat-fee-notice">Miễn phí 5 lượt mỗi ngày • Hết lượt: 10 Xu/lượt</span>
+          <span id="ai-chat-char-counter">0/300</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: NOTIFICATIONS CENTER (v0.10.7f) -->
   <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
     <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
@@ -4635,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7f-4</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6887,6 +6963,7 @@
       }
       // Auto-trigger sync on load if logged in
       updateNotificationsUI();
+      updateAiChatQuotaUI();
       if (currentUser && currentUser.uid) {
         handleManualSync();
         loadEconomyFromCloud();
@@ -9792,6 +9869,12 @@
                   updateAuthUI();
                 }
 
+                // Sync AI Chat History from Cloud (v0.10.7g)
+                if (Array.isArray(cloudData.aiChatHistory) && cloudData.aiChatHistory.length > 0) {
+                  aiChatHistory = cloudData.aiChatHistory.slice(-30);
+                  localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+                }
+
                 // Sync Notifications from Cloud (with Tombstones & Read State Sync)
                 const cloudNotifs = (cloudData.notifications && typeof cloudData.notifications === 'object') ? Object.values(cloudData.notifications).filter(n => n && n.id) : [];
                 if (cloudData.deletedNotificationIds && typeof cloudData.deletedNotificationIds === 'object') {
@@ -10068,6 +10151,13 @@
       const btnAdd = document.getElementById('btn-header-add');
       if (btnAdd) {
         btnAdd.style.display = 'none';
+      }
+
+      // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
+      const fab = document.getElementById('btn-ai-mentor-fab');
+      if (fab) {
+        const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
+        fab.style.display = isExamScreen ? 'none' : 'flex';
       }
     }
 
@@ -21308,6 +21398,726 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       if (labelPaste && hasClipboard) {
         const actLabel = vocaClipboard.action === 'cut' ? '✂️ Di chuyển' : '📋 Dán';
         labelPaste.textContent = `${actLabel} (${vocaClipboard.words.length})`;
+      }
+    }
+
+      // =========================================================================
+    // AI STUDY CHAT & GEMINI ENGLISH MENTOR ENGINE (v0.10.7g)
+    // =========================================================================
+    let aiChatHistory = [];
+    let aiChatIsLoading = false;
+    let aiChatDailyDate = '';
+    let aiChatDailyCount = 0;
+    let aiMiniVoiceRecording = false;
+    let aiMiniVoiceRecorder = null;
+    let aiMiniVoiceChunks = [];
+    let aiMiniVoiceWordTarget = '';
+
+    try {
+      const savedHistory = localStorage.getItem('vocaflow_ai_chat_history');
+      if (savedHistory) aiChatHistory = JSON.parse(savedHistory) || [];
+      aiChatDailyDate = localStorage.getItem('vocaflow_ai_chat_daily_date') || '';
+      aiChatDailyCount = parseInt(localStorage.getItem('vocaflow_ai_chat_daily_count') || '0', 10);
+    } catch (e) {}
+
+    function getTodayDateString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function checkResetAiChatDailyQuota() {
+      const today = getTodayDateString();
+      if (aiChatDailyDate !== today) {
+        aiChatDailyDate = today;
+        aiChatDailyCount = 0;
+        localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
+        localStorage.setItem('vocaflow_ai_chat_daily_count', '0');
+      }
+    }
+
+    function getAiChatQuotaStatus() {
+      checkResetAiChatDailyQuota();
+      const freeLimit = 5;
+      const remainingFree = Math.max(0, freeLimit - aiChatDailyCount);
+      return {
+        freeLimit,
+        usedToday: aiChatDailyCount,
+        remainingFree,
+        isFree: remainingFree > 0,
+        costXu: 10
+      };
+    }
+
+    function updateAiChatQuotaUI() {
+      const status = getAiChatQuotaStatus();
+      const badge = document.getElementById('ai-mentor-quota-badge');
+      const fabBadge = document.getElementById('ai-mentor-fab-badge');
+      const feeNotice = document.getElementById('ai-chat-fee-notice');
+      const sendBtnLabel = document.getElementById('btn-ai-chat-send-label');
+
+      if (status.isFree) {
+        if (badge) {
+          badge.textContent = `${status.remainingFree} lượt free`;
+          badge.style.background = 'rgba(16,185,129,0.15)';
+          badge.style.color = '#34d399';
+          badge.style.borderColor = 'rgba(16,185,129,0.3)';
+        }
+        if (fabBadge) {
+          fabBadge.textContent = status.remainingFree;
+          fabBadge.style.background = '#10b981';
+        }
+        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt: 10 Xu/lượt`;
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
+      } else {
+        if (badge) {
+          badge.textContent = `10 Xu / tin`;
+          badge.style.background = 'rgba(245,158,11,0.15)';
+          badge.style.color = '#fbbf24';
+          badge.style.borderColor = 'rgba(245,158,11,0.3)';
+        }
+        if (fabBadge) {
+          fabBadge.textContent = '🪙';
+          fabBadge.style.background = '#f59e0b';
+        }
+        if (feeNotice) feeNotice.textContent = `Đã dùng hết 5 lượt miễn phí hôm nay • Phí: 10 Xu / lượt gửi`;
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi (10 Xu)';
+      }
+    }
+
+    function getCurrentStudyContext() {
+      const curScreen = document.querySelector('.screen.active')?.id || '';
+      let activeDeck = null;
+      let activeWord = null;
+
+      if (currentDeckId) {
+        activeDeck = decks.find(d => d.id === currentDeckId);
+      }
+
+      if (curScreen === 'screen-deck-detail' || curScreen === 'screen-flashcard') {
+        if (activeDeck) {
+          const deckWords = words.filter(w => w.deckId === activeDeck.id);
+          if (deckWords.length > 0) {
+            activeWord = deckWords[currentCardIndex % deckWords.length] || deckWords[0];
+          }
+        }
+      }
+
+      return {
+        screen: curScreen,
+        deck: activeDeck,
+        word: activeWord
+      };
+    }
+
+    function updateAiMentorContextUI() {
+      const ctx = getCurrentStudyContext();
+      const textEl = document.getElementById('ai-mentor-context-text');
+      const badgeEl = document.getElementById('ai-mentor-context-badge');
+      const chipsContainer = document.getElementById('ai-mentor-chips-container');
+
+      if (!textEl || !chipsContainer) return;
+
+      let chipsHtml = '';
+
+      if (ctx.word) {
+        textEl.textContent = `Từ: "${ctx.word.term}" (${ctx.deck ? ctx.deck.title : 'Bộ từ'})`;
+        if (badgeEl) {
+          badgeEl.textContent = 'Thẻ từ vựng';
+          badgeEl.style.background = 'rgba(99,102,241,0.2)';
+          badgeEl.style.color = '#a5b4fc';
+        }
+        const termEsc = escapeHtml(ctx.word.term);
+        chipsHtml = `
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('💡 Giải thích sâu và ngữ cảnh thực tế của từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Giải thích sâu</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('⚔️ Phân biệt từ \'${termEsc}\' với các từ đồng nghĩa dễ nhầm lẫn')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">⚔️ Phân biệt từ</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('📝 Đặt 3 câu ví dụ cho từ \'${termEsc}\' theo 3 ngữ cảnh: Giao tiếp, IELTS/Academic và Công việc')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">📝 3 câu ví dụ</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎙️ Giúp tao đọc chuẩn từ \'${termEsc}\' và phân tích khẩu hình')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo 1 câu hỏi trắc nghiệm mini để kiểm tra cách dùng từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧠 Cho tao mẹo nhớ hoặc câu chuyện liên tưởng để nhớ lâu từ \'${termEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧠 Mẹo nhớ từ</button>
+        `;
+      } else if (ctx.deck) {
+        const deckTitleEsc = escapeHtml(ctx.deck.title);
+        textEl.textContent = `Bộ từ: "${ctx.deck.title}"`;
+        if (badgeEl) {
+          badgeEl.textContent = 'Bộ từ';
+          badgeEl.style.background = 'rgba(16,185,129,0.15)';
+          badgeEl.style.color = '#34d399';
+        }
+        chipsHtml = `
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('💡 Tóm tắt các chủ điểm từ vựng quan trọng nhất trong bộ từ \'${deckTitleEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt bộ từ</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo 1 câu hỏi trắc nghiệm mini từ chủ đề bộ từ \'${deckTitleEsc}\'')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎭 Bắt đầu đoạn hội thoại Roleplay ngắn áp dụng từ vựng trong bộ này')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧐 Soi lỗi và giải thích ngữ pháp cho câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
+        `;
+      } else {
+        textEl.textContent = 'Chế độ học tự do';
+        if (badgeEl) {
+          badgeEl.textContent = 'Tự do';
+          badgeEl.style.background = 'rgba(56,189,248,0.15)';
+          badgeEl.style.color = '#38bdf8';
+        }
+        chipsHtml = `
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🧐 Soi lỗi và giải thích ngữ pháp cho câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Dịch tự nhiên sang văn phong bản xứ câu: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Dịch bản xứ</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎙️ Giúp tao luyện đọc câu tiếng Anh này: ')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="sendAiQuickChip('🎯 Tạo cho tao 1 câu đố trắc nghiệm từ vựng IELTS B2 ngẫu nhiên')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Đố vui trắc nghiệm</button>
+        `;
+      }
+
+      chipsContainer.innerHTML = chipsHtml;
+    }
+
+    function sendAiQuickChip(text) {
+      const input = document.getElementById('ai-chat-input');
+      if (!input) return;
+      input.value = text;
+      updateAiChatInputLength();
+      if (text.endsWith(': ') || text.endsWith('này: ')) {
+        input.focus();
+      } else {
+        handleSendAiChatMessage();
+      }
+    }
+
+    function updateAiChatInputLength() {
+      const input = document.getElementById('ai-chat-input');
+      const counter = document.getElementById('ai-chat-char-counter');
+      if (input && counter) {
+        counter.textContent = `${input.value.length}/300`;
+      }
+    }
+
+    function openAiMentorModal() {
+      // Anti-Cheat: If on exam screen, prevent opening
+      const activeExam = document.querySelector('.screen.active');
+      if (activeExam && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeExam.id)) {
+        showToast('🔒 Trợ lý AI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
+        return;
+      }
+      updateAiMentorContextUI();
+      updateAiChatQuotaUI();
+      renderAiChatMessages();
+      openModal('modal-ai-mentor');
+      setTimeout(() => {
+        const input = document.getElementById('ai-chat-input');
+        if (input) input.focus();
+        scrollAiChatToBottom();
+      }, 100);
+    }
+
+    function clearAiChatHistory() {
+      if (aiChatHistory.length === 0) return;
+      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện với Gia sư AI?')) return;
+      aiChatHistory = [];
+      localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+      renderAiChatMessages();
+      showToast('🗑️ Đã xóa sạch lịch sử trò chuyện.');
+
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatHistory.json${authParam}`, {
+          method: 'DELETE'
+        }).catch(() => {});
+      }
+    }
+
+    function scrollAiChatToBottom() {
+      const container = document.getElementById('ai-chat-messages');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    function renderAiChatMessages() {
+      const container = document.getElementById('ai-chat-messages');
+      if (!container) return;
+
+      if (aiChatHistory.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+            <div style="font-size: 40px; margin-bottom: 10px;">🤖</div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Chào bạn! Mình là Gemini English Mentor</div>
+            <div style="font-size: 12.5px; line-height: 1.5; max-width: 420px; margin: 0 auto; color: var(--text-muted);">
+              Mình có thể giúp bạn giải thích từ vựng chuyên sâu, sửa lỗi ngữ pháp, đóng vai hội thoại, luyện phát âm trực tiếp hoặc tạo mini-quiz ôn tập. Hãy chọn gợi ý nhanh bên trên hoặc nhập câu hỏi bên dưới nhé!
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      aiChatHistory.forEach((msg, idx) => {
+        const isUser = msg.role === 'user';
+        const isError = msg.isError;
+        const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '';
+
+        if (isUser) {
+          html += `
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end; gap: 8px;">
+              <div style="max-width: 82%; background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border-radius: 14px 14px 2px 14px; padding: 10px 14px; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);">
+                <div style="font-size: 13px; line-height: 1.45; word-break: break-word;">${escapeHtml(msg.text)}</div>
+                <div style="font-size: 9.5px; opacity: 0.75; text-align: right; margin-top: 4px;">${timeStr}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          const parsedContent = formatAiChatMarkdown(msg.text, idx);
+          html += `
+            <div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 10px;">
+              <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 2px;">
+                🤖
+              </div>
+              <div style="max-width: 86%; background: ${isError ? 'rgba(239,68,68,0.1)' : 'var(--surface-elevated)'}; border: 1px solid ${isError ? 'rgba(239,68,68,0.3)' : 'var(--border)'}; border-radius: 14px 14px 14px 2px; padding: 12px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 13px; line-height: 1.5; color: var(--text); word-break: break-word;">
+                  ${parsedContent}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.06); font-size: 10px; color: var(--text-muted);">
+                  <span>Gemini English Mentor</span>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" onclick="copyAiChatText(${idx})" title="Sao chép câu trả lời" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 0;">📋 Sao chép</button>
+                    <span>• ${timeStr}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      if (aiChatIsLoading) {
+        html += `
+          <div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 10px;" id="ai-chat-loading-bubble">
+            <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+              🤖
+            </div>
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px 14px 14px 2px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #a5b4fc;">
+                <span class="spinner" style="width: 14px; height: 14px; border: 2px solid #a5b4fc; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite;"></span>
+                <span>Gia sư AI đang phân tích và soạn câu trả lời...</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      scrollAiChatToBottom();
+    }
+
+    function copyAiChatText(msgIndex) {
+      const msg = aiChatHistory[msgIndex];
+      if (!msg || !msg.text) return;
+      navigator.clipboard.writeText(msg.text).then(() => {
+        showToast('📋 Đã sao chép câu trả lời vào bộ nhớ tạm!');
+      }).catch(() => {
+        showToast('⚠️ Không thể sao chép.');
+      });
+    }
+
+    function formatAiChatMarkdown(rawText, msgIndex) {
+      if (!rawText) return '';
+      let text = rawText;
+
+      // 1. Parse and render [MINI_QUIZ: {...}]
+      const quizRegex = /\[MINI_QUIZ:\s*(\{.*?\})\]/gs;
+      text = text.replace(quizRegex, (match, jsonStr) => {
+        try {
+          const qData = JSON.parse(jsonStr);
+          const qId = 'ai_quiz_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
+          let optionsHtml = '';
+          (qData.options || []).forEach((opt, oIdx) => {
+            optionsHtml += `
+              <button type="button" class="btn btn-outline btn-sm ai-quiz-opt" id="${qId}_opt_${oIdx}" onclick="handleAiMiniQuizAnswer('${qId}', ${oIdx}, ${qData.answer}, '${escapeHtml(qData.explain || '')}')" style="text-align: left; justify-content: flex-start; padding: 7px 10px; font-size: 12px; border-radius: 8px;">
+                <strong style="margin-right: 6px; color: #818cf8;">${['A','B','C','D'][oIdx] || (oIdx+1)}.</strong> ${escapeHtml(opt)}
+              </button>
+            `;
+          });
+
+          return `
+            <div class="ai-mini-quiz-card" id="${qId}" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; margin: 10px 0;">
+              <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                <span>🎯 CÂU HỎI TRẮC NGHIỆM TƯƠNG TÁC:</span>
+              </div>
+              <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: var(--text);">
+                ${escapeHtml(qData.q || qData.question || 'Chọn đáp án đúng:')}
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                ${optionsHtml}
+              </div>
+              <div id="${qId}_explain" style="display: none; margin-top: 10px; padding: 8px 10px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
+            </div>
+          `;
+        } catch (e) {
+          return '';
+        }
+      });
+
+      // 2. Parse and render [VOICE_CHECK: {...}]
+      const voiceRegex = /\[VOICE_CHECK:\s*(\{.*?\})\]/gs;
+      text = text.replace(voiceRegex, (match, jsonStr) => {
+        try {
+          const vData = JSON.parse(jsonStr);
+          const vWord = vData.word || '';
+          const vIpa = vData.ipa || '';
+          const vId = 'ai_voice_' + msgIndex + '_' + Math.random().toString(36).substr(2, 4);
+
+          return `
+            <div class="ai-voice-check-card" id="${vId}" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 12px; margin: 10px 0;">
+              <div style="font-size: 11px; font-weight: 700; color: #f472b6; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>🎙️ PHÒNG LUYỆN NÓI TẠI CHỖ (MINI VOICE CHECK):</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="font-size: 15px; color: var(--text);">${escapeHtml(vWord)}</strong>
+                  ${vIpa ? `<span style="font-family: monospace; color: #a5b4fc; font-size: 12px; margin-left: 6px;">${escapeHtml(vIpa)}</span>` : ''}
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="speakText('${escapeHtml(vWord)}')" style="font-size: 11px; padding: 3px 8px; border-radius: 8px; color: #38bdf8;">
+                  🔊 Nghe mẫu
+                </button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <button type="button" id="${vId}_btn" class="btn btn-primary btn-sm" onclick="toggleAiMiniVoiceRecord('${vId}', '${escapeHtml(vWord)}')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
+                  🎙️ Nhấn để thu âm
+                </button>
+                <span id="${vId}_status" style="font-size: 11.5px; color: var(--text-muted);">Bấm Mic và nói từ này</span>
+              </div>
+              <div id="${vId}_result" style="display: none; margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
+            </div>
+          `;
+        } catch (e) {
+          return '';
+        }
+      });
+
+      // 3. Format standard markdown elements
+      let formatted = escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #a5b4fc;">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^\s*-\s+(.*)$/gm, '<li style="margin-left: 16px;">$1</li>')
+        .replace(/\n/g, '<br>');
+
+      return formatted;
+    }
+
+    function handleAiMiniQuizAnswer(qId, selectedIdx, correctIdx, explainText) {
+      const container = document.getElementById(qId);
+      if (!container) return;
+
+      const buttons = container.querySelectorAll('.ai-quiz-opt');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        btn.style.pointerEvents = 'none';
+        if (idx === correctIdx) {
+          btn.style.background = 'rgba(16,185,129,0.2)';
+          btn.style.borderColor = '#10b981';
+          btn.style.color = '#34d399';
+        } else if (idx === selectedIdx && selectedIdx !== correctIdx) {
+          btn.style.background = 'rgba(239,68,68,0.2)';
+          btn.style.borderColor = '#ef4444';
+          btn.style.color = '#f87171';
+        }
+      });
+
+      const explainEl = document.getElementById(qId + '_explain');
+      if (explainEl) {
+        explainEl.style.display = 'block';
+        const isRight = selectedIdx === correctIdx;
+        explainEl.innerHTML = `
+          <div style="font-weight: 700; color: ${isRight ? '#34d399' : '#f87171'}; margin-bottom: 2px;">
+            ${isRight ? '🎉 Chính xác!' : '❌ Chưa chính xác!'}
+          </div>
+          <div>${explainText || 'Đáp án đúng là lựa chọn được tô xanh.'}</div>
+        `;
+      }
+    }
+
+    async function toggleAiMiniVoiceRecord(vId, targetWord) {
+      if (aiMiniVoiceRecording) {
+        stopAiMiniVoiceRecord(vId, targetWord);
+      } else {
+        startAiMiniVoiceRecord(vId, targetWord);
+      }
+    }
+
+    async function startAiMiniVoiceRecord(vId, targetWord) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        aiMiniVoiceRecorder = new MediaRecorder(stream);
+        aiMiniVoiceChunks = [];
+
+        aiMiniVoiceRecorder.ondataavailable = e => {
+          if (e.data && e.data.size > 0) aiMiniVoiceChunks.push(e.data);
+        };
+
+        aiMiniVoiceRecorder.onstop = async () => {
+          const blob = new Blob(aiMiniVoiceChunks, { type: 'audio/webm' });
+          stream.getTracks().forEach(t => t.stop());
+          evaluateAiMiniVoiceAudio(vId, targetWord, blob);
+        };
+
+        aiMiniVoiceRecorder.start();
+        aiMiniVoiceRecording = true;
+
+        const btn = document.getElementById(vId + '_btn');
+        const statusEl = document.getElementById(vId + '_status');
+        if (btn) {
+          btn.textContent = '⏹️ Dừng thu âm';
+          btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        }
+        if (statusEl) {
+          statusEl.textContent = '🔴 Đang lắng nghe bạn nói...';
+          statusEl.style.color = '#f87171';
+        }
+
+      } catch (err) {
+        showToast('⚠️ Không thể truy cập Microphone!');
+      }
+    }
+
+    function stopAiMiniVoiceRecord(vId, targetWord) {
+      if (aiMiniVoiceRecorder && aiMiniVoiceRecorder.state !== 'inactive') {
+        aiMiniVoiceRecorder.stop();
+      }
+      aiMiniVoiceRecording = false;
+      const btn = document.getElementById(vId + '_btn');
+      const statusEl = document.getElementById(vId + '_status');
+      if (btn) {
+        btn.textContent = '⏳ Đang chấm điểm...';
+        btn.disabled = true;
+      }
+      if (statusEl) {
+        statusEl.textContent = 'AI đang phân tích khẩu hình...';
+        statusEl.style.color = '#fbbf24';
+      }
+    }
+
+    async function evaluateAiMiniVoiceAudio(vId, targetWord, audioBlob) {
+      const btn = document.getElementById(vId + '_btn');
+      const statusEl = document.getElementById(vId + '_status');
+      const resultEl = document.getElementById(vId + '_result');
+
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result ? reader.result.split(',')[1] : '';
+        if (!base64Audio) {
+          if (btn) { btn.disabled = false; btn.textContent = '🎙️ Thu âm lại'; btn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)'; }
+          if (statusEl) statusEl.textContent = 'Lỗi thu âm. Vui lòng thử lại!';
+          return;
+        }
+
+        try {
+          const userKey = (settings.geminiApiKey || '').trim();
+          const effectiveKey = userKey || GEMINI_PROXIES[Math.floor(Math.random() * GEMINI_PROXIES.length)];
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveKey}`;
+
+          const payload = {
+            contents: [{
+              parts: [
+                {
+                  text: `Bạn là giám khảo phát âm AI. Hãy đánh giá phát âm của người học cho từ vựng: "${targetWord}". Trả về JSON: {"score": 85, "feedbackVi": "Nhận xét ngắn về khẩu hình và âm đuôi", "detected": "Từ nghe được"}. Chỉ trả JSON, không bọc markdown.`
+                },
+                {
+                  inlineData: {
+                    mimeType: audioBlob.type || 'audio/webm',
+                    data: base64Audio
+                  }
+                }
+              ]
+            }]
+          };
+
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+            let parsed = {};
+            try {
+              parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+            } catch (e) {
+              parsed = { score: 80, feedbackVi: 'Phát âm tương đối tốt!', detected: targetWord };
+            }
+
+            const score = parsed.score || 75;
+            const isGood = score >= 75;
+
+            if (resultEl) {
+              resultEl.style.display = 'block';
+              resultEl.style.background = isGood ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)';
+              resultEl.style.border = `1px solid ${isGood ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}`;
+              resultEl.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <strong style="color: ${isGood ? '#34d399' : '#fbbf24'}; font-size: 13px;">${isGood ? '🌟 Phát âm Đạt' : '⚠️ Cần cải thiện'}: ${score}/100đ</strong>
+                  <span style="font-size: 11px; color: var(--text-muted);">Nghe được: "${parsed.detected || targetWord}"</span>
+                </div>
+                <div style="color: var(--text); font-size: 12px;">${parsed.feedbackVi || 'Hãy tiếp tục luyện tập nhé!'}</div>
+              `;
+            }
+          }
+        } catch (e) {
+          if (resultEl) {
+            resultEl.style.display = 'block';
+            resultEl.style.background = 'rgba(239,68,68,0.15)';
+            resultEl.textContent = '⚠️ Không thể kết nối dịch vụ chấm điểm phát âm.';
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = '🎙️ Thu âm lại';
+            btn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+          }
+          if (statusEl) statusEl.textContent = 'Đã hoàn tất đánh giá';
+        }
+      };
+    }
+
+    async function handleSendAiChatMessage(e = null) {
+      if (e) e.preventDefault();
+      if (aiChatIsLoading) return;
+
+      const input = document.getElementById('ai-chat-input');
+      if (!input) return;
+      const rawText = (input.value || '').trim();
+      if (!rawText) return;
+
+      const quota = getAiChatQuotaStatus();
+      if (!quota.isFree) {
+        const curPoints = getUserPoints();
+        if (curPoints < quota.costXu) {
+          alert(`🪙 Bạn đã hết 5 lượt miễn phí hôm nay và không đủ Xu (cần ${quota.costXu} Xu, bạn đang có ${curPoints} Xu)!
+Hãy vào VocaShop hoặc làm Quiz để nhận thêm Xu nhé!`);
+          openShopModal();
+          return;
+        }
+      }
+
+      const userMsg = {
+        id: 'msg_' + Date.now(),
+        role: 'user',
+        text: rawText,
+        timestamp: new Date().toISOString()
+      };
+
+      aiChatHistory.push(userMsg);
+      if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
+      localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+
+      input.value = '';
+      updateAiChatInputLength();
+      aiChatIsLoading = true;
+      renderAiChatMessages();
+
+      // Build Contextual Prompt for Gemini
+      const ctx = getCurrentStudyContext();
+      let contextInfo = 'Ngữ cảnh học: Tự do.';
+      if (ctx.word) {
+        contextInfo = `Ngữ cảnh học: Người dùng đang mở từ vựng "${ctx.word.term}" (${ctx.word.partOfSpeech || 'noun'}, IPA: ${ctx.word.phonetic || ''}, Nghĩa: ${ctx.word.definitionVi || ctx.word.definition || ''}) thuộc bộ từ "${ctx.deck ? ctx.deck.title : 'Bộ từ'}".`;
+      } else if (ctx.deck) {
+        contextInfo = `Ngữ cảnh học: Người dùng đang xem bộ từ "${ctx.deck.title}" (${ctx.deck.description || ''}).`;
+      }
+
+      const systemInstruction = `Bạn là Gemini English Mentor - Gia sư tiếng Anh học thuật kiêm bạn đồng hành luyện tập phản xạ của ứng dụng VocaFlow.
+${contextInfo}
+Phong cách phản hồi:
+1. Giải thích ngắn gọn, súc tích, trực diện bằng tiếng Việt (kèm ví dụ tiếng Anh chuẩn tự nhiên).
+2. Dùng Markdown in đậm **từ vựng/cấu trúc**.
+3. Nếu người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố người dùng 1 câu mini, hãy đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi?","options":["A...","B...","C...","D..."],"answer":0,"explain":"Giải thích ngắn"}]
+4. Nếu người dùng yêu cầu luyện phát âm từ nào đó, hãy đính kèm thẻ: [VOICE_CHECK: {"word":"từ_cần_đọc","ipa":"/phiên âm/"}]
+5. Nếu không làm được hoặc yêu cầu không liên quan đến học tiếng Anh, hãy lịch sự từ chối và xin lỗi người dùng.`;
+
+      // Multi-turn payload (last 8 turns)
+      const contentsPayload = [];
+      const recentTurns = aiChatHistory.slice(-8);
+      recentTurns.forEach(turn => {
+        contentsPayload.push({
+          role: turn.role === 'user' ? 'user' : 'model',
+          parts: [{ text: turn.text }]
+        });
+      });
+
+      try {
+        const userKey = (settings.geminiApiKey || '').trim();
+        const effectiveKey = userKey || GEMINI_PROXIES[Math.floor(Math.random() * GEMINI_PROXIES.length)];
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveKey}`;
+
+        const payload = {
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          contents: contentsPayload
+        };
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Gia sư AI đã ghi nhận câu hỏi của bạn.';
+
+          // Burn-on-Success settlement
+          if (quota.isFree) {
+            aiChatDailyCount++;
+            localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+          } else {
+            setUserPoints(getUserPoints() - quota.costXu);
+            addLedgerEntry('AI_CHAT', -quota.costXu, 'Hỏi đáp Gia sư tiếng Anh AI Mentor');
+            saveDatabase(true);
+            pushCurrentDatabaseToCloud();
+          }
+
+          const modelMsg = {
+            id: 'msg_' + Date.now(),
+            role: 'model',
+            text: replyText,
+            timestamp: new Date().toISOString()
+          };
+
+          aiChatHistory.push(modelMsg);
+          if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
+          localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+          updateAiChatQuotaUI();
+
+          // Cloud Sync History (last 30 messages)
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+            fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatHistory.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(aiChatHistory)
+            }).catch(() => {});
+          }
+
+        } else {
+          // No-fail guarantee: do NOT deduct Xu / do NOT deduct quota
+          const errorMsg = {
+            id: 'msg_' + Date.now(),
+            role: 'model',
+            isError: true,
+            text: '⚠️ Rất tiếc, máy chủ AI đang quá tải hoặc gặp sự cố kết nối. Bạn hãy thử lại sau giây lát nhé! (Hệ thống KHÔNG trừ Xu / lượt chat của bạn).',
+            timestamp: new Date().toISOString()
+          };
+          aiChatHistory.push(errorMsg);
+        }
+      } catch (err) {
+        const errorMsg = {
+          id: 'msg_' + Date.now(),
+          role: 'model',
+          isError: true,
+          text: '⚠️ Lỗi kết nối mạng hoặc API. Vui lòng kiểm tra lại đường truyền! (Không trừ Xu/lượt chat).',
+          timestamp: new Date().toISOString()
+        };
+        aiChatHistory.push(errorMsg);
+      } finally {
+        aiChatIsLoading = false;
+        renderAiChatMessages();
       }
     }
 

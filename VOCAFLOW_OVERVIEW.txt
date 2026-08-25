@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7f-4 (Build 106)
+Phiên bản hiện tại : v0.10.7g (Build 107)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🚀 v0.10.7g (Build 107 - AI STUDY CHAT & GEMINI ENGLISH MENTOR):
+  - Ra Mắt Gia Sư Tiếng Anh Học Thuật & Phản Xạ Thực Chiến AI Gemini:
+    * Floating Action Button (FAB) 🤖 & Giao diện Chat Modal: Nhận diện ngữ cảnh động (In-Deck / In-Word vs Global) với bộ Action Chips gợi ý 1-chạm (💡 Giải thích sâu, ⚔️ Phân biệt từ, 📝 3 câu ví dụ, 🎭 Roleplay...).
+    * Interactive Mini-Widgets trong chat:
+      + 🎙️ Mini Voice Check: Thu âm phát âm trực tiếp trong khung chat ➔ Gemini chấm điểm & phân tích khẩu hình, âm đuôi chi tiết.
+      + 🎯 Mini Quiz Generator: Render 4 lựa chọn A, B, C, D trực tiếp trong bong bóng chat để chọn đáp án và xem giải thích tức thì (bảo vệ hệ thống: KHÔNG cộng Mastery Level & KHÔNG cộng Xu).
+    * Cơ chế Cách ly Phòng thi (Anti-Cheat Isolation): Nút AI Mentor tự động ẩn 100% khi người học đang ở các phòng thi/luyện tập (Quiz, Spelling, Speaking, AutoFC).
+    * Cơ chế Kinh tế & Bảo hiểm Hoàn Xu (Burn-on-Success): 5 lượt free/ngày (reset 00:00) ➔ 10 Xu/lượt sau đó. Chỉ trừ lượt/tiền khi AI phản hồi thành công; hoàn trả 100% nếu lỗi mạng/API.
+    * Đồng bộ Đám mây Cloud Sync (FIFO Buffer 30 tin): Lưu trữ nhẹ nhàng trên `/users/{uid}/aiChatHistory`, xem liền mạch trên mọi thiết bị.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7f-4 (Build 106 - CROSS-DEVICE NOTIFICATION SYNC & DEDUPLICATION ENGINE):
   - Khắc Phục Triệt Để Lỗi Đồng Bộ Thông Báo & Trùng Lặp Tin Bộ Từ Mới:
     * Đồng bộ trạng thái Đã đọc / Chưa đọc đa thiết bị (Cross-device Read Status): Khi đọc hoặc đánh dấu đã đọc ở máy A, máy B tự động cập nhật ngay tức thì.
