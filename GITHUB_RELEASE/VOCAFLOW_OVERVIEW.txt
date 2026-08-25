@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6p (Build 87)
+Phiên bản hiện tại : v0.10.6q (Build 88)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6q (Build 88 - CLUES IPA-TERM BINDING & MULTI-TAKE RETRY UNLOCK):
+  - Đồng bộ Manh Mối IPA và Từ Tiếng Anh (IPA Clue & Term Linkage):
+    * Từ tiếng Anh hiển thị (`spk-word-term`) gắn liền trực tiếp với manh mối IPA.
+    * Khi người học không chọn manh mối IPA (`ipa: false`), cả từ tiếng Anh và phiên âm IPA đều được ẩn hoàn toàn để đảm bảo tính thử thách ghi nhớ.
+    * Toàn bộ thông tin chi tiết (từ, phiên âm, định nghĩa, ví dụ, từ đồng nghĩa/trái nghĩa) sẽ tự động mở khóa đầy đủ trong thẻ chi tiết sau khi hoàn thành từ vựng.
+  - Sửa lỗi nút Thử lại (Retry) bị chặn nhầm bởi khóa lịch sử (Multi-Take Retry Unblock):
+    * Khắc phục triệt để lỗi đánh dấu `isCompleted` trong map lịch sử khi điểm chưa đạt sàn và vẫn còn lượt thu âm.
+    * Người học có thể tự do bấm nút vàng "Thử lại (còn X lượt)", phím Space hoặc bấm Mic để thu âm lượt 2, lượt 3 liên tục mà không bao giờ bị báo "Từ này đã hoàn thành".
+    * Nút "Từ Tiếp Theo" vẫn duy trì khóa nghiêm ngặt cho đến khi thực sự đạt sàn hoặc hết lượt.
+  - Xác thực thực nghiệm: Đã kiểm thử logic 100% tự động.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6q_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6p (Build 87 - HOTFIX: CLUES STATE REPAIR & STRICT NEXT BUTTON LOCKING):
   - Khắc phục triệt để lỗi Chọn Manh Mối (Clues Selection State Repair):
     * Sửa lỗi nghịch đảo boolean trong hàm `selectSpeakingSetupDifficulty`, `toggleSpeakingClue` và `updateSpeakingClueMultiplierBadge`.

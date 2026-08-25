@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6p</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6q</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4487,7 +4487,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6p</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6q</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13302,6 +13302,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     // =========================================================================
     // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6p - ELSA GRADE PHONETICS)
     // =========================================================================
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6q - ELSA GRADE PHONETICS)
+    // =========================================================================
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6q - ELSA GRADE PHONETICS)
+    // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
     let speakingMediaRecorder = null;
@@ -13319,8 +13323,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let speakingCurrentMediaStream = null;
     let speakingAutoPlayTimeout = null;
 
-    // v0.10.6p: History & State Locking
-    let speakingWordHistoryMap = {}; // index -> { evalData, takes, floorReached, currentTakeIndex, graded }
+    // v0.10.6q: History & State Locking
+    let speakingWordHistoryMap = {}; // index -> { evalData, takes, floorReached, currentTakeIndex, isCompleted }
     let speakingFireworksAnimationId = null;
 
     // Multi-Take Economy & Difficulty Engine
@@ -13447,6 +13451,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       }
       if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
       selectedSpeakingSetupDifficulty = diff;
+      currentSpeakingDifficulty = diff;
 
       ['easy', 'medium', 'hard'].forEach(d => {
         const card = document.getElementById('speaking-diff-card-' + d);
@@ -13493,7 +13498,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function toggleSpeakingClue(clueKey) {
-      const diff = selectedSpeakingSetupDifficulty || 'easy';
+      const diff = selectedSpeakingSetupDifficulty || currentSpeakingDifficulty || 'easy';
 
       if (diff === 'easy') {
         speakingCluesConfig = { def: true, ipa: true, audio: true };
@@ -13633,6 +13638,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function startSpeakingMode(useSelectionOnly = false, customWordList = null) {
+      if (selectedSpeakingSetupDifficulty) {
+        currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
+      }
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let targetWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
@@ -13737,7 +13745,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function updateSpeakingNextButtonState() {
       const nextBtn = document.getElementById('btn-spk-next');
       if (!nextBtn) return;
-      const isHistory = !!speakingWordHistoryMap[currentSpeakingIndex];
+      const isHistory = !!(speakingWordHistoryMap[currentSpeakingIndex] && speakingWordHistoryMap[currentSpeakingIndex].isCompleted);
       const canProceed = isHistory || speakingFloorReached || (speakingCurrentTakeIndex >= speakingMaxTakes);
 
       if (canProceed) {
@@ -13781,10 +13789,15 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const showDef = !!speakingCluesConfig.def;
       const showAudio = !!speakingCluesConfig.audio;
 
-      // 1. English Term & IPA
+      // 1. English Term & IPA (v0.10.6q: Từ tiếng Anh gắn liền với manh mối IPA)
       if (termEl) {
-        termEl.textContent = word.term || '';
-        termEl.style.display = 'block';
+        if (showIpa) {
+          termEl.textContent = word.term || '';
+          termEl.style.display = 'block';
+        } else {
+          termEl.textContent = '';
+          termEl.style.display = 'none';
+        }
       }
 
       if (ipaEl) {
@@ -13841,9 +13854,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const skipBtn = document.getElementById('btn-spk-skip');
       if (skipBtn) skipBtn.textContent = '⏭️ Bỏ qua (' + speakingWordSkipsLeft + ')';
 
-      // Check if this word was already graded in history (Read-Only Mode)
+      // Check if this word was already finished in history (Read-Only Mode)
       const hist = speakingWordHistoryMap[currentSpeakingIndex];
-      if (hist) {
+      if (hist && hist.isCompleted) {
         resetSpeakingWordState(false);
         speakingTakes = [...hist.takes];
         speakingCurrentTakeIndex = hist.currentTakeIndex;
@@ -13866,7 +13879,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         if (timerEl) timerEl.textContent = 'Lịch sử: ' + hist.takes.length + '/' + speakingMaxTakes + ' lượt thu';
         if (playbackCont) playbackCont.style.display = 'none';
 
-        renderDiagnosticResult(hist.evalData, false);
+        if (hist.evalData) {
+          renderDiagnosticResult(hist.evalData, false);
+        }
         updateSpeakingNextButtonState();
         return;
       }
@@ -13898,7 +13913,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         showToast('⚠️ Đang thu âm, cấm tuyệt đối phát âm mẫu!');
         return;
       }
-      if (speakingFloorReached || speakingWordHistoryMap[currentSpeakingIndex]) {
+      if (speakingFloorReached || (speakingWordHistoryMap[currentSpeakingIndex] && speakingWordHistoryMap[currentSpeakingIndex].isCompleted)) {
         const word = speakingWordsList[currentSpeakingIndex];
         if (word && word.term) speakText(word.term);
         return;
@@ -13935,7 +13950,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     function nextSpeakingWord() {
       if (isSpeakingRecording) stopSpeakingRecord();
 
-      const isHistory = !!speakingWordHistoryMap[currentSpeakingIndex];
+      const isHistory = !!(speakingWordHistoryMap[currentSpeakingIndex] && speakingWordHistoryMap[currentSpeakingIndex].isCompleted);
       const canProceed = isHistory || speakingFloorReached || (speakingCurrentTakeIndex >= speakingMaxTakes);
       if (!canProceed) {
         showToast('🔒 Bạn cần đạt từ ' + speakingFloorScore + 'đ hoặc dùng quyền Bỏ qua (Skip) để tiếp tục!');
@@ -13944,6 +13959,13 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       if (!isHistory) {
         speakingCompletedWords++;
+        speakingWordHistoryMap[currentSpeakingIndex] = {
+          evalData: speakingWordHistoryMap[currentSpeakingIndex]?.evalData || null,
+          takes: [...speakingTakes],
+          floorReached: speakingFloorReached,
+          currentTakeIndex: speakingCurrentTakeIndex,
+          isCompleted: true
+        };
       }
 
       if (currentSpeakingIndex < speakingWordsList.length - 1) {
@@ -13970,6 +13992,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       speakingWordSkipsLeft--;
       showToast('⏭️ Đã bỏ qua từ này (còn ' + speakingWordSkipsLeft + ' lượt skip)');
       speakingCompletedWords++;
+
+      speakingWordHistoryMap[currentSpeakingIndex] = {
+        evalData: null,
+        takes: [...speakingTakes],
+        floorReached: false,
+        currentTakeIndex: speakingCurrentTakeIndex,
+        isCompleted: true,
+        isSkipped: true
+      };
+
       if (currentSpeakingIndex < speakingWordsList.length - 1) {
         currentSpeakingIndex++;
         renderSpeakingCurrentWord();
@@ -14176,7 +14208,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (isSpeakingRecording) {
         stopSpeakingRecord();
       } else {
-        if (speakingWordHistoryMap[currentSpeakingIndex]) {
+        if (speakingWordHistoryMap[currentSpeakingIndex] && speakingWordHistoryMap[currentSpeakingIndex].isCompleted) {
           showToast('🔒 Từ này đã được hoàn thành trong phiên học!');
           return;
         }
@@ -14589,7 +14621,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const resultPanel = document.getElementById('speaking-result-panel');
       if (resultPanel) resultPanel.style.display = 'none';
       speakingFlowState = 'idle';
-      toggleSpeakingRecord();
+      return toggleSpeakingRecord();
     }
 
     function renderDiagnosticResult(data, countAsTake = true) {
@@ -14602,13 +14634,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         speakingCurrentTakeIndex = speakingTakes.length;
         if (score >= speakingFloorScore) speakingFloorReached = true;
 
-        speakingWordHistoryMap[currentSpeakingIndex] = {
-          evalData: data,
-          takes: [...speakingTakes],
-          floorReached: speakingFloorReached,
-          currentTakeIndex: speakingCurrentTakeIndex,
-          graded: true
-        };
+        // v0.10.6q: Only mark isCompleted in history if floor is reached OR all takes are exhausted
+        if (speakingFloorReached || speakingCurrentTakeIndex >= speakingMaxTakes) {
+          speakingWordHistoryMap[currentSpeakingIndex] = {
+            evalData: data,
+            takes: [...speakingTakes],
+            floorReached: speakingFloorReached,
+            currentTakeIndex: speakingCurrentTakeIndex,
+            isCompleted: true
+          };
+        }
       }
 
       const scoreNumEl = document.getElementById('spk-score-num');
@@ -14796,7 +14831,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       // Render Full Word Details Card if floor reached or all takes exhausted
       const detailsBox = document.getElementById('spk-word-details-box');
-      if (detailsBox && currentWord && (speakingFloorReached || speakingCurrentTakeIndex >= speakingMaxTakes || speakingWordHistoryMap[currentSpeakingIndex])) {
+      if (detailsBox && currentWord && (speakingFloorReached || speakingCurrentTakeIndex >= speakingMaxTakes || (speakingWordHistoryMap[currentSpeakingIndex] && speakingWordHistoryMap[currentSpeakingIndex].isCompleted))) {
         const detailTerm = document.getElementById('spk-detail-term');
         const detailPos = document.getElementById('spk-detail-pos');
         const detailCefr = document.getElementById('spk-detail-cefr');
@@ -14826,7 +14861,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         detailsBox.style.display = 'block';
       }
 
-      if (speakingCurrentTakeIndex >= speakingMaxTakes) {
+      if (speakingCurrentTakeIndex >= speakingMaxTakes && !speakingFloorReached) {
         const micBtn = document.getElementById('btn-speaking-mic');
         if (micBtn) {
           micBtn.disabled = true;
