@@ -67,14 +67,23 @@
     }
 
     /* =========================================================================
-       VIP GLOW & SHIMMER EFFECTS (v0.10.8-beta-2.9)
+       VIP GLOW & SHIMMER EFFECTS (v0.10.8-beta-2.10)
        ========================================================================= */
-    @keyframes vipChayNgang {
+    @keyframes vip-anh-kim {
       0% {
         background-position: 0% center;
       }
       100% {
         background-position: 200% center;
+      }
+    }
+
+    @keyframes vip-phat-sang {
+      0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.65)) drop-shadow(0 0 10px rgba(255, 154, 158, 0.45));
+      }
+      50% {
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 1)) drop-shadow(0 0 18px rgba(255, 154, 158, 0.85)) drop-shadow(0 0 28px rgba(254, 207, 239, 0.6));
       }
     }
 
@@ -101,17 +110,16 @@
     .vip-glowing-name,
     [data-theme="light"] .vip-glowing-name {
       display: inline-block !important;
-      background: linear-gradient(to right, #f59e0b, #fbbf24, #fffbeb, #f472b6, #ec4899, #f59e0b) !important;
+      background: linear-gradient(to right, #ffd700 0%, #ff9a9e 25%, #fecfef 50%, #ffd700 100%) !important;
       background-size: 200% auto !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       background-clip: text !important;
       text-fill-color: transparent !important;
-      animation: vipChayNgang 4s linear infinite !important;
+      animation: vip-anh-kim 3s linear infinite, vip-phat-sang 2.5s ease-in-out infinite !important;
       font-weight: 800 !important;
       letter-spacing: 0.3px !important;
       vertical-align: middle !important;
-      filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.65)) drop-shadow(0 0 14px rgba(236, 72, 153, 0.35)) !important;
     }
 
     .vip-crown-icon {
@@ -1971,7 +1979,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-2.9</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-2.10</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4776,7 +4784,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-2.9</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-2.10</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>

@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.9 (Build 133)
+Phiên bản hiện tại : v0.10.8-beta-2.10 (Build 134)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.10 (Build 134 - DUAL-ENGINE: HORIZONTAL LINEAR WAVE & NEON PULSE GLOW):
+  - Đồng Thời Kích Hoạt 2 Lớp Hiệu Ứng: Chạy Màu Tuyến Tính Ngang + Phát Sáng Nhấp Nháy Hào Quang:
+    * Animation 1 (`vip-anh-kim 3s linear infinite`): Dải màu Hoàng Kim Vàng Kim (`#ffd700`) ➔ Hồng Đào (`#ff9a9e`) ➔ Trắng Hồng Lấp Lánh (`#fecfef`) ➔ Vàng Kim (`#ffd700`) trôi chuyển dịch liên tục 60fps từ phải sang trái (`background-position: 0% center` ➔ `200% center`).
+    * Animation 2 (`vip-phat-sang 2.5s ease-in-out infinite`): Vòng hào quang đa tầng bên ngoài nhấp nháy phát sáng bồng bềnh (`drop-shadow` Vàng Kim `#ffd700` & Hồng Ánh Kim `#ff9a9e` & Sáng Hồng `#fecfef`).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.10_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.9 (Build 133 - PURE HORIZONTAL LINEAR TEXT GRADIENT WAVE):
   - Áp Dụng Kỹ Thuật Gradient Chạy Ngang Tuyến Tính (Horizontal Linear Text Flow):
     * Sử dụng cấu trúc `linear-gradient(to right, ...)` kết hợp `background-size: 200% auto` và animation `vipChayNgang 4s linear infinite` (`background-position: 0% center` ➔ `200% center`).
