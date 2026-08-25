@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7c</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7d</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4079,6 +4079,19 @@
           <span id="pub-view-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">🌟 Tác Giả Đóng Góp</span>
           <span id="pub-view-sub-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Thành Viên VocaFlow</span>
         </div>
+
+        <!-- v0.10.7d: Creator Follow Bar -->
+        <div id="pub-view-follow-bar" style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; flex-wrap: wrap;">
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <strong id="pub-view-follower-count" style="color: var(--text); font-size: 13.5px;">0</strong> Người theo dõi
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <strong id="pub-view-following-count" style="color: var(--text); font-size: 13.5px;">0</strong> Đang theo dõi
+          </div>
+          <button type="button" id="btn-pub-follow" class="btn btn-sm btn-primary" onclick="handlePubViewFollowToggle()" style="font-size: 11.5px; padding: 4px 12px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+            <span>➕ Theo dõi</span>
+          </button>
+        </div>
         
         <!-- BIO / PERSONAL GOALS -->
         <div id="pub-view-bio-box" style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px 14px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); text-align: left;">
@@ -4112,6 +4125,25 @@
 
       <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
         <button class="btn btn-primary btn-sm" onclick="closeModal('modal-public-profile')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SUBSCRIBERS / FOLLOWING LIST (v0.10.7d) -->
+  <div class="modal-overlay" id="modal-subscribers-list" style="z-index: 10006;">
+    <div class="modal" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;" id="subs-modal-icon">👥</span>
+          <strong id="subs-modal-title" style="font-size: 15px;">Danh Sách Theo Dõi</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-subscribers-list')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div id="subs-modal-body" style="overflow-y: auto; max-height: 55vh; padding: 4px 0; display: flex; flex-direction: column; gap: 8px;">
+        <!-- Populated dynamically -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-subscribers-list')">Đóng</button>
       </div>
     </div>
   </div>
@@ -4155,6 +4187,16 @@
             <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap;">
               <span id="profile-handle" style="font-size: 13.5px; font-weight: 800; color: #38bdf8; font-family: monospace;">@guest</span>
               <span id="profile-handle-badge" class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">UID</span>
+            </div>
+            <!-- v0.10.7d: Follower / Following Stats -->
+            <div style="display: flex; gap: 12px; margin-top: 6px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; align-items: center;">
+              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openSubscribersListModal('followers')" title="Bấm để xem danh sách người theo dõi">
+                <strong id="profile-follower-count" style="color: #38bdf8; font-size: 13px;">0</strong> Người theo dõi
+              </div>
+              <span>•</span>
+              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openSubscribersListModal('following')" title="Bấm để xem danh sách đang theo dõi">
+                <strong id="profile-following-count" style="color: #a5b4fc; font-size: 13px;">0</strong> Đang theo dõi
+              </div>
             </div>
             <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
             
@@ -4518,7 +4560,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7c</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7d</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6771,6 +6813,7 @@
       if (currentUser && currentUser.uid) {
         handleManualSync();
         loadEconomyFromCloud();
+        syncFollowStateWithCloud();
       }
       // Pre-fetch cloud library in background so author profiles are always ready (v0.10.6c)
       fetchCloudLibraryDecks().catch(() => {});
@@ -6876,6 +6919,228 @@
       } catch (e) {
         console.warn('Legacy data migration v0.10.7b note:', e);
       }
+    }
+
+    // =========================================================================
+    // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d)
+    // =========================================================================
+    let myFollowingMap = {};
+    let myFollowersMap = {};
+    let currentPublicProfileAuthor = null;
+
+    try {
+      const savedFollowing = localStorage.getItem('vocaflow_following_map');
+      if (savedFollowing) myFollowingMap = JSON.parse(savedFollowing) || {};
+      const savedFollowers = localStorage.getItem('vocaflow_followers_map');
+      if (savedFollowers) myFollowersMap = JSON.parse(savedFollowers) || {};
+    } catch (e) {}
+
+    async function syncFollowStateWithCloud() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      try {
+        // Fetch Following Map
+        const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
+        if (followingRes.ok) {
+          const data = await followingRes.json();
+          myFollowingMap = (data && typeof data === 'object') ? data : {};
+          localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+          currentUser.followingCount = Object.keys(myFollowingMap).length;
+        }
+
+        // Fetch Followers Map
+        const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
+        if (followersRes.ok) {
+          const fData = await followersRes.json();
+          myFollowersMap = (fData && typeof fData === 'object') ? fData : {};
+          localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+          currentUser.followerCount = Object.keys(myFollowersMap).length;
+        }
+
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
+      } catch (e) {
+        console.warn('Follow sync notice:', e);
+      }
+    }
+
+    async function toggleFollowCreator(targetUid, targetName, targetUsername) {
+      if (!requireLogin('Theo dõi Tác giả')) return;
+      if (!targetUid || targetUid === currentUser.uid || targetUid === 'undefined') {
+        showToast('⚠️ Bạn không thể tự theo dõi chính mình!');
+        return;
+      }
+
+      const isCurrentlyFollowing = !!myFollowingMap[targetUid];
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      if (isCurrentlyFollowing) {
+        // Unfollow
+        delete myFollowingMap[targetUid];
+        localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
+        updatePubViewFollowBtn(targetUid);
+        showToast(`Đã hủy theo dõi tác giả ${targetName || ''}.`);
+
+        // Cloud updates
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/following/${targetUid}.json${authParam}`, { method: 'DELETE' }).catch(() => {});
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/followingCount.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentUser.followingCount)
+        }).catch(() => {});
+        fetch(`${rtdbUrl}/users/${targetUid}/followers/${currentUser.uid}.json${authParam}`, { method: 'DELETE' }).catch(() => {});
+      } else {
+        // Follow
+        myFollowingMap[targetUid] = true;
+        localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
+        updatePubViewFollowBtn(targetUid);
+        showToast(`✨ Đã theo dõi tác giả ${targetName || ''}!`);
+
+        // Cloud updates
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/following/${targetUid}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(true)
+        }).catch(() => {});
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/followingCount.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentUser.followingCount)
+        }).catch(() => {});
+        fetch(`${rtdbUrl}/users/${targetUid}/followers/${currentUser.uid}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(true)
+        }).catch(() => {});
+      }
+    }
+
+    function updatePubViewFollowBtn(targetUid) {
+      const btn = document.getElementById('btn-pub-follow');
+      if (!btn) return;
+
+      if (!targetUid || (currentUser && targetUid === currentUser.uid) || targetUid === 'official' || targetUid === 'undefined') {
+        btn.style.display = 'none';
+        return;
+      }
+
+      btn.style.display = 'inline-flex';
+      const isFollowing = !!myFollowingMap[targetUid];
+      if (isFollowing) {
+        btn.innerHTML = '<span>✓ Đang theo dõi</span>';
+        btn.style.background = 'rgba(16,185,129,0.12)';
+        btn.style.color = '#34d399';
+        btn.style.borderColor = 'rgba(16,185,129,0.4)';
+        btn.className = 'btn btn-sm btn-outline';
+      } else {
+        btn.innerHTML = '<span>➕ Theo dõi</span>';
+        btn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+        btn.style.color = 'white';
+        btn.style.border = 'none';
+        btn.className = 'btn btn-sm btn-primary';
+      }
+    }
+
+    function handlePubViewFollowToggle() {
+      if (!currentPublicProfileAuthor || !currentPublicProfileAuthor.targetUid) return;
+      toggleFollowCreator(
+        currentPublicProfileAuthor.targetUid,
+        currentPublicProfileAuthor.resolvedName,
+        currentPublicProfileAuthor.resolvedHandle
+      );
+    }
+
+    async function openSubscribersListModal(type = 'following') {
+      const modal = document.getElementById('modal-subscribers-list');
+      const titleEl = document.getElementById('subs-modal-title');
+      const iconEl = document.getElementById('subs-modal-icon');
+      const bodyEl = document.getElementById('subs-modal-body');
+      if (!modal || !bodyEl) return;
+
+      const isFollowing = type === 'following';
+      if (titleEl) titleEl.textContent = isFollowing ? '✨ Danh Sách Đang Theo Dõi' : '👥 Danh Sách Người Theo Dõi';
+      if (iconEl) iconEl.textContent = isFollowing ? '✨' : '👥';
+
+      const map = isFollowing ? myFollowingMap : myFollowersMap;
+      const uids = Object.keys(map || {});
+
+      if (uids.length === 0) {
+        bodyEl.innerHTML = `
+          <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12.5px;">
+            <div style="font-size: 28px; margin-bottom: 6px;">${isFollowing ? '👥' : '🌱'}</div>
+            ${isFollowing ? 'Bạn chưa theo dõi tác giả nào. Ghé Thư Viện để theo dõi các tác giả yêu thích!' : 'Chưa có người theo dõi nào. Hãy xuất bản bộ từ hữu ích để kết nối bạn bè!'}
+          </div>
+        `;
+        openModal('modal-subscribers-list');
+        return;
+      }
+
+      bodyEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px;">🔄 Đang tải danh sách tác giả...</div>';
+      openModal('modal-subscribers-list');
+
+      const allDecks = getAllLibraryDecks();
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+      const userItems = await Promise.all(uids.map(async uid => {
+        let name = 'Tác giả VocaFlow';
+        let handle = 'user_' + uid.slice(0, 6);
+        let avatar = name;
+
+        // Try local matching from library decks
+        const foundDeck = allDecks.find(d => d.authorUid === uid);
+        if (foundDeck) {
+          name = foundDeck.author || name;
+          handle = foundDeck.authorUsername || (foundDeck.author ? foundDeck.author.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 15) : handle);
+          avatar = foundDeck.authorAvatar || name;
+        } else {
+          try {
+            const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
+            if (res.ok) {
+              const p = await res.json();
+              if (p) {
+                if (p.displayName) name = p.displayName;
+                if (p.username) handle = p.username;
+                if (p.avatar) avatar = p.avatar;
+              }
+            }
+          } catch (e) {}
+        }
+        return { uid, name, handle, avatar };
+      }));
+
+      let html = '';
+      userItems.forEach(u => {
+        const isFollowed = !!myFollowingMap[u.uid];
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; cursor: pointer;" onclick="closeModal('modal-subscribers-list'); openPublicProfileModal('${escapeHtml(u.name)}', '${u.uid}')">
+              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; overflow: hidden;">
+                ${renderAvatarHtml(u.avatar, 38, 16)}
+              </div>
+              <div style="min-width: 0; flex: 1;">
+                <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(u.name)}</div>
+                <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle)}</div>
+              </div>
+            </div>
+            ${currentUser && u.uid !== currentUser.uid ? `
+              <button class="btn btn-sm ${isFollowed ? 'btn-outline' : 'btn-primary'}" onclick="toggleFollowCreator('${u.uid}', '${escapeHtml(u.name)}', '${escapeHtml(u.handle)}'); openSubscribersListModal('${type}')" style="font-size: 11px; padding: 3px 8px; flex-shrink: 0; ${isFollowed ? 'color: #34d399; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08);' : ''}">
+                ${isFollowed ? '✓ Đang theo dõi' : '➕ Theo dõi'}
+              </button>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      bodyEl.innerHTML = html;
     }
 
     // =========================================================================
@@ -7257,6 +7522,11 @@
       }
 
       // Update metrics
+      const followerCountEl = document.getElementById('profile-follower-count');
+      const followingCountEl = document.getElementById('profile-following-count');
+      if (followerCountEl) followerCountEl.textContent = currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0;
+      if (followingCountEl) followingCountEl.textContent = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
+
       const statDecks = document.getElementById('profile-stat-decks');
       const statWords = document.getElementById('profile-stat-words');
       const lastSyncEl = document.getElementById('profile-last-sync');
@@ -8226,6 +8496,19 @@
       const decksCountEl = document.getElementById('pub-view-decks-count');
 
       const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
+
+      // v0.10.7d: Set current profile author state & update follow button
+      currentPublicProfileAuthor = {
+        targetUid: targetUid,
+        resolvedName: resolvedName,
+        resolvedHandle: resolvedHandle
+      };
+      updatePubViewFollowBtn(targetUid);
+
+      const pubFollowerEl = document.getElementById('pub-view-follower-count');
+      const pubFollowingEl = document.getElementById('pub-view-following-count');
+      if (pubFollowerEl) pubFollowerEl.textContent = targetDeck?.followerCount || (targetUid && targetUid === currentUser?.uid ? (currentUser?.followerCount || Object.keys(myFollowersMap).length) : 0);
+      if (pubFollowingEl) pubFollowingEl.textContent = targetDeck?.followingCount || (targetUid && targetUid === currentUser?.uid ? (currentUser?.followingCount || Object.keys(myFollowingMap).length) : 0);
 
       if (nameEl) nameEl.textContent = resolvedName;
       if (avEl) avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);

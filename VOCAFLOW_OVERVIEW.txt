@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7c (Build 98)
+Phiên bản hiện tại : v0.10.7d (Build 99)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7d (Build 99 - CREATOR FOLLOW ENGINE & SOCIAL GRAPH):
+  - Bộ Máy Theo Dõi Tác Giả & Cấu Trúc Mạng Xã Hội (Creator Follow Engine):
+    * Cấu trúc cơ sở dữ liệu Firebase Realtime Database phân quyền: `/users/{uid}/following/{targetUid}: true` và `/users/{uid}/followers/{fanUid}: true`.
+    * Quản lý bộ đệm theo dõi cục bộ `myFollowingMap` đồng bộ 2 chiều với Cloud.
+    * Cơ chế Toggle Follow / Unfollow nguyên tử, tự động tăng/giảm `followerCount` và `followingCount` thời gian thực.
+    * Nâng cấp giao diện Hồ sơ (`modal-profile`) và Hồ sơ công khai (`modal-public-profile`) với nút bấm Theo Dõi linh hoạt và số lượng Followers/Following.
+    * Bổ sung Modal hiển thị danh sách người theo dõi / đang theo dõi (`modal-subscribers-list`).
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7d_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7c (Build 98 - HANDLE CHANGE & VALIDATION PIPELINE):
   - Quy Trình Kiểm Tra & Đổi Tên Người Dùng Toàn Diện (Validation Pipeline):
     * Kiểm tra định dạng nghiêm ngặt: 3-20 ký tự thường (a-z), chữ số (0-9) và dấu gạch dưới (`_`), không chứa ký tự đặc biệt hay khoảng trắng.
