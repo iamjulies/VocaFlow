@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4393,14 +4393,14 @@
     </div>
   </div>
 
-  <!-- MODAL: VIP CROWN PRICING (v0.10.8-beta-3) -->
+  <!-- MODAL: VIP CROWN PRICING (v0.10.8-beta-3.1) -->
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
-    <div class="modal" style="max-width: 840px; max-height: 90vh; display: flex; flex-direction: column; padding: 24px; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
+    <div class="modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; padding: 24px; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 28px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));">👑</span>
           <div>
-            <h2 style="font-size: 20px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #ffd700, #ff9a9e, #fecfef); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Nâng Cấp VIP Crown</h2>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #ffd700, #ff9a9e, #fecfef); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bảng Giá Nâng Cấp VIP Crown</h2>
             <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">Mở khóa trọn bộ đặc quyền cao cấp, tên phát sáng ánh kim và trợ lý học tập AI không giới hạn.</p>
           </div>
         </div>
@@ -4408,14 +4408,26 @@
       </div>
 
       <div style="overflow-y: auto; padding: 14px 4px; flex: 1;">
+        <!-- Current VIP Status Banner if Active -->
+        <div id="vip-current-status-banner" style="display: none; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">👑</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 800; color: #fbbf24;">Gói hiện tại: <span id="vip-banner-current-tier">VIP 1 Tháng</span></div>
+              <div id="vip-banner-expiry-info" style="font-size: 11.5px; color: var(--text-muted);">Thời hạn đến: <strong>26/09/2026</strong></div>
+            </div>
+          </div>
+          <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">Đang Hoạt Động</span>
+        </div>
+
         <!-- 3 Pricing Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 10px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
           
           <!-- GÓI 1 THÁNG -->
-          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: transform 0.2s, border-color 0.2s;">
+          <div id="vip-card-monthly" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
+                <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
                 <span style="font-size: 22px;">🥉</span>
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">VIP 1 Tháng</h3>
@@ -4431,19 +4443,19 @@
                 <li style="display: flex; align-items: center; gap: 6px;">☁️ <span>Đồng bộ Cloud Realtime</span></li>
               </ul>
             </div>
-            <button class="btn btn-outline" onclick="selectVipPlan('monthly', 'VIP 1 Tháng', '39.000đ', 39000)" style="width: 100%; justify-content: center; font-weight: 700; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); padding: 10px;">
+            <button id="btn-plan-monthly" class="btn btn-outline" onclick="selectVipPlan('monthly', 'VIP 1 Tháng', '39.000đ', 39000)" style="width: 100%; justify-content: center; font-weight: 700; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); padding: 10px;">
               Chọn Gói Tháng
             </button>
           </div>
 
           <!-- GÓI 1 NĂM (POPULAR) -->
-          <div style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transform: scale(1.02);">
-            <div style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
+          <div id="vip-card-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+            <div id="vip-ribbon-yearly" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
               🔥 TIẾT KIỆM 36% • PHỔ BIẾN
             </div>
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span class="badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(236, 72, 153, 0.4);">💎 GÓI NĂM</span>
+                <span id="vip-badge-yearly" class="badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(236, 72, 153, 0.4);">💎 GÓI NĂM</span>
                 <span style="font-size: 22px;">🥈</span>
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #fbbf24; margin: 0 0 4px 0;">VIP 1 Năm</h3>
@@ -4460,19 +4472,19 @@
                 <li style="display: flex; align-items: center; gap: 6px;">🎁 <span>Tặng 100 Điểm Ví VocaShop</span></li>
               </ul>
             </div>
-            <button class="btn btn-primary" onclick="selectVipPlan('yearly', 'VIP 1 Năm', '299.000đ', 299000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+            <button id="btn-plan-yearly" class="btn btn-primary" onclick="selectVipPlan('yearly', 'VIP 1 Năm', '299.000đ', 299000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
               🚀 Nâng Cấp Gói Năm
             </button>
           </div>
 
           <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
-          <div style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
-            <div style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
+          <div id="vip-card-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+            <div id="vip-ribbon-lifetime" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
               👑 ĐẲNG CẤP HOÀNG GIA
             </div>
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(168, 85, 247, 0.4);">🌌 TRỌN ĐỜI</span>
+                <span id="vip-badge-lifetime" class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(168, 85, 247, 0.4);">🌌 TRỌN ĐỜI</span>
                 <span style="font-size: 22px;">👑</span>
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #c084fc; margin: 0 0 4px 0;">VIP Trọn Đời</h3>
@@ -4489,7 +4501,7 @@
                 <li style="display: flex; align-items: center; gap: 6px;">💬 <span>Kênh hỗ trợ kỹ thuật ưu tiên 24/7</span></li>
               </ul>
             </div>
-            <button class="btn btn-primary" onclick="selectVipPlan('lifetime', 'VIP Trọn Đời', '599.000đ', 599000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);">
+            <button id="btn-plan-lifetime" class="btn btn-primary" onclick="selectVipPlan('lifetime', 'VIP Trọn Đời', '599.000đ', 599000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);">
               👑 Sở Hữu Trọn Đời
             </button>
           </div>
@@ -4500,25 +4512,40 @@
         <div id="vip-payment-info-box" style="display: none; margin-top: 20px; background: var(--surface-elevated); border: 1.5px solid rgba(251, 191, 36, 0.5); border-radius: 14px; padding: 18px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 15px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
-              <span>💳</span> Hướng Dẫn Thanh Toán Nâng Cấp <span id="vip-selected-plan-name" style="color: var(--text);">VIP</span>
+              <span>💳</span> Hướng Dẫn Thanh Toán <span id="vip-selected-plan-name" style="color: var(--text);">VIP</span>
             </div>
             <span id="vip-selected-plan-price" class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 13px; font-weight: 800; padding: 4px 10px;">0đ</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: center;">
-            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; line-height: 1.7;">
+          <div id="vip-rollover-notice" style="margin-bottom: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
+            <span>🔄</span> <span id="vip-rollover-text">Thời hạn sẽ được cộng dồn tiếp tục sau khi gói hiện tại kết thúc.</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; align-items: center;">
+            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; line-height: 1.8;">
               <div>🏦 Ngân hàng: <strong style="color: var(--text);">MB Bank (Ngân hàng Quân Đội)</strong></div>
-              <div>🔢 Số tài khoản: <strong style="color: #38bdf8; font-family: monospace; font-size: 15px;">0358899888</strong></div>
-              <div>👤 Chủ tài khoản: <strong style="color: var(--text);">VOCALFLOW PREMIUM</strong></div>
-              <div>📝 Cú pháp chuyển khoản: <strong id="vip-transfer-syntax" style="color: #fbbf24; font-family: monospace; background: rgba(245,158,11,0.15); padding: 2px 6px; border-radius: 4px;">VOCA VIP</strong></div>
-              <div style="margin-top: 6px; font-size: 11.5px; color: var(--text-muted);">* Hệ thống sẽ kích hoạt tự động sau khi đối soát chuyển khoản.</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin: 3px 0;">
+                <span>🔢 Số tài khoản:</span>
+                <strong id="vip-acc-number" style="color: #38bdf8; font-family: monospace; font-size: 16px; letter-spacing: 0.5px;">0916541813</strong>
+                <button type="button" class="btn btn-xs" onclick="copyAccountNumber()" style="padding: 2px 7px; font-size: 11px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 4px; cursor: pointer;" title="Sao chép số tài khoản">📋 Copy</button>
+              </div>
+              <div>👤 Chủ tài khoản: <strong style="color: #ffd700; font-weight: 800;">NONG DUC HAO</strong></div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                <span>📝 Cú pháp:</span>
+                <strong id="vip-transfer-syntax" style="color: #fbbf24; font-family: monospace; background: rgba(245,158,11,0.15); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(245,158,11,0.3);">VOCA VIP</strong>
+                <button type="button" class="btn btn-xs" onclick="copyTransferSyntax()" style="padding: 2px 7px; font-size: 11px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 4px; cursor: pointer;" title="Sao chép cú pháp">📋 Copy</button>
+              </div>
+              <div style="margin-top: 8px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+                💡 <em>Quét mã VietQR bên cạnh sẽ tự động điền sẵn STK, số tiền và nội dung chính xác 100%.</em>
+              </div>
             </div>
 
             <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border);">
-              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Quét mã VietQR chuyển khoản nhanh:</div>
-              <div style="display: inline-block; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                <img id="vip-vietqr-img" src="https://api.vietqr.io/image/970422-0358899888-qUu9wVd.jpg?accountName=VOCAFLOW%20PREMIUM&amount=299000" alt="VietQR VIP Payment" style="width: 130px; height: 130px; object-fit: contain; display: block;">
+              <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">Quét mã VietQR bằng app Ngân hàng / Ví:</div>
+              <div style="display: inline-block; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                <img id="vip-vietqr-img" src="https://api.vietqr.io/image/970422-0916541813-compact2.jpg?accountName=NONG%20DUC%20HAO&amount=299000" alt="VietQR VIP Payment" style="width: 140px; height: 140px; object-fit: contain; display: block;">
               </div>
+              <div style="font-size: 11px; color: #34d399; font-weight: 600; margin-top: 6px;">✓ Tự động điền đầy đủ thông tin</div>
             </div>
           </div>
 
@@ -4571,7 +4598,7 @@
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
                 <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
-                <button type="button" class="btn btn-sm" onclick="openVipPricingModal()" style="font-size: 11px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; border: none; font-weight: 800; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 6px rgba(245,158,11,0.3);">👑 Nâng Cấp VIP</button>
+                <button type="button" id="btn-profile-upgrade-vip" class="btn btn-sm" onclick="openVipPricingModal()" style="font-size: 11px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; border: none; font-weight: 800; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 6px rgba(245,158,11,0.3);">👑 Nâng Cấp VIP</button>
               </div>
             </div>
             <!-- v0.10.7a: Unique Handle Row -->
@@ -4951,7 +4978,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8590,6 +8617,19 @@
             profileBadgeEl.style.fontWeight = 'normal';
             profileBadgeEl.style.border = 'none';
             profileBadgeEl.style.boxShadow = 'none';
+          }
+        }
+
+        const btnProfileUpgrade = document.getElementById('btn-profile-upgrade-vip');
+        if (btnProfileUpgrade) {
+          if (userVipActive && userVipTierName === 'lifetime') {
+            btnProfileUpgrade.style.display = 'none';
+          } else if (userVipActive && (userVipTierName === 'monthly' || userVipTierName === 'yearly')) {
+            btnProfileUpgrade.style.display = 'inline-flex';
+            btnProfileUpgrade.textContent = '👑 Nâng Cấp VIP';
+          } else {
+            btnProfileUpgrade.style.display = 'inline-flex';
+            btnProfileUpgrade.textContent = '👑 Nâng Cấp VIP';
           }
         }
 
@@ -22964,16 +23004,93 @@ Quy tắc phản hồi quan trọng:
     }
 
     // =========================================================================
-  // VIP PRICING & UPGRADE MODAL LOGIC (v0.10.8-beta-3)
+  // VIP PRICING & UPGRADE MODAL LOGIC (v0.10.8-beta-3.1 HIERARCHY ENGINE)
   // =========================================================================
   let currentSelectedVipPlan = { tier: 'yearly', name: 'VIP 1 Năm', priceStr: '299.000đ', amount: 299000 };
 
   function openVipPricingModal() {
     const modal = document.getElementById('modal-vip-pricing');
-    if (modal) {
-      modal.classList.add('active');
-      const box = document.getElementById('vip-payment-info-box');
-      if (box) box.style.display = 'none';
+    if (!modal) return;
+    modal.classList.add('active');
+
+    const box = document.getElementById('vip-payment-info-box');
+    if (box) box.style.display = 'none';
+
+    // Check user's current VIP status
+    const isVip = isUserVip();
+    const currentTier = getUserVipTier();
+    const expiryTimestamp = userVipExpiresAt || 0;
+    const expiryDateStr = expiryTimestamp > 0 ? new Date(expiryTimestamp).toLocaleDateString('vi-VN') : '';
+
+    const bannerEl = document.getElementById('vip-current-status-banner');
+    const bannerTierEl = document.getElementById('vip-banner-current-tier');
+    const bannerExpiryEl = document.getElementById('vip-banner-expiry-info');
+
+    // Cards & Buttons
+    const cardMonthly = document.getElementById('vip-card-monthly');
+    const btnMonthly = document.getElementById('btn-plan-monthly');
+
+    const cardYearly = document.getElementById('vip-card-yearly');
+    const btnYearly = document.getElementById('btn-plan-yearly');
+
+    const cardLifetime = document.getElementById('vip-card-lifetime');
+    const btnLifetime = document.getElementById('btn-plan-lifetime');
+
+    if (isVip) {
+      if (bannerEl) bannerEl.style.display = 'flex';
+      const tierTitles = { monthly: 'VIP 1 Tháng', yearly: 'VIP 1 Năm', lifetime: 'VIP Trọn Đời' };
+      if (bannerTierEl) bannerTierEl.textContent = tierTitles[currentTier] || 'VIP Crown';
+      if (bannerExpiryEl) {
+        bannerExpiryEl.innerHTML = currentTier === 'lifetime'
+          ? 'Đặc quyền sở hữu: <strong>Vĩnh Viễn (Không bao giờ hết hạn)</strong>'
+          : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong>`;
+      }
+
+      if (currentTier === 'lifetime') {
+        // All locked because already highest
+        if (cardMonthly) { cardMonthly.style.opacity = '0.5'; cardMonthly.style.filter = 'grayscale(0.6)'; }
+        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = '🔒 Đã có VIP Trọn Đời'; btnMonthly.style.cursor = 'not-allowed'; }
+
+        if (cardYearly) { cardYearly.style.opacity = '0.5'; cardYearly.style.filter = 'grayscale(0.6)'; }
+        if (btnYearly) { btnYearly.disabled = true; btnYearly.textContent = '🔒 Đã có VIP Trọn Đời'; btnYearly.style.cursor = 'not-allowed'; }
+
+        if (cardLifetime) { cardLifetime.style.opacity = '1'; cardLifetime.style.border = '2px solid #a855f7'; }
+        if (btnLifetime) { btnLifetime.disabled = true; btnLifetime.textContent = '👑 Đã Sở Hữu Vĩnh Viễn'; btnLifetime.style.cursor = 'default'; }
+
+      } else if (currentTier === 'yearly') {
+        // Monthly locked, Yearly active/locked, Lifetime open for upgrade
+        if (cardMonthly) { cardMonthly.style.opacity = '0.5'; cardMonthly.style.filter = 'grayscale(0.6)'; }
+        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = '🔒 Đã có gói VIP 1 Năm'; btnMonthly.style.cursor = 'not-allowed'; }
+
+        if (cardYearly) { cardYearly.style.opacity = '0.9'; cardYearly.style.border = '2px solid #10b981'; }
+        if (btnYearly) { btnYearly.disabled = true; btnYearly.textContent = `✓ Đang Dùng (Đến ${expiryDateStr})`; btnYearly.style.background = 'rgba(16,185,129,0.2)'; btnYearly.style.borderColor = 'rgba(16,185,129,0.5)'; btnYearly.style.cursor = 'default'; }
+
+        if (cardLifetime) { cardLifetime.style.opacity = '1'; cardLifetime.style.border = '2px solid #a855f7'; }
+        if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Nâng Cấp Lên Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
+
+      } else if (currentTier === 'monthly') {
+        // Monthly active/locked, Yearly open with rollover, Lifetime open
+        if (cardMonthly) { cardMonthly.style.opacity = '0.9'; cardMonthly.style.border = '2px solid #10b981'; }
+        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = `✓ Đang Dùng (Đến ${expiryDateStr})`; btnMonthly.style.background = 'rgba(16,185,129,0.2)'; btnMonthly.style.borderColor = 'rgba(16,185,129,0.5)'; btnMonthly.style.cursor = 'default'; }
+
+        if (cardYearly) { cardYearly.style.opacity = '1'; cardYearly.style.border = '2px solid #f59e0b'; }
+        if (btnYearly) { btnYearly.disabled = false; btnYearly.textContent = '🚀 Lên Đời Gói Năm (+365 Ngày)'; btnYearly.style.cursor = 'pointer'; }
+
+        if (cardLifetime) { cardLifetime.style.opacity = '1'; cardLifetime.style.border = '2px solid #a855f7'; }
+        if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Nâng Cấp Lên Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
+      }
+    } else {
+      // Non-VIP: All open
+      if (bannerEl) bannerEl.style.display = 'none';
+
+      if (cardMonthly) { cardMonthly.style.opacity = '1'; cardMonthly.style.filter = 'none'; cardMonthly.style.border = '1px solid var(--border)'; }
+      if (btnMonthly) { btnMonthly.disabled = false; btnMonthly.textContent = 'Chọn Gói Tháng'; btnMonthly.style.cursor = 'pointer'; }
+
+      if (cardYearly) { cardYearly.style.opacity = '1'; cardYearly.style.filter = 'none'; cardYearly.style.border = '2px solid #f59e0b'; }
+      if (btnYearly) { btnYearly.disabled = false; btnYearly.textContent = '🚀 Nâng Cấp Gói Năm'; btnYearly.style.cursor = 'pointer'; }
+
+      if (cardLifetime) { cardLifetime.style.opacity = '1'; cardLifetime.style.filter = 'none'; cardLifetime.style.border = '1.5px solid rgba(168, 85, 247, 0.6)'; }
+      if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Sở Hữu Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
     }
   }
 
@@ -22984,6 +23101,8 @@ Quy tắc phản hồi quan trọng:
     const planPriceEl = document.getElementById('vip-selected-plan-price');
     const syntaxEl = document.getElementById('vip-transfer-syntax');
     const qrImg = document.getElementById('vip-vietqr-img');
+    const rolloverNoticeEl = document.getElementById('vip-rollover-notice');
+    const rolloverTextEl = document.getElementById('vip-rollover-text');
 
     const email = (currentUser && currentUser.email) ? currentUser.email : 'guest';
     const syntax = `VOCA VIP ${email.toUpperCase()} ${tier.toUpperCase()}`;
@@ -22992,13 +23111,46 @@ Quy tắc phản hồi quan trọng:
     if (planPriceEl) planPriceEl.textContent = priceStr;
     if (syntaxEl) syntaxEl.textContent = syntax;
 
+    // Calculate rollover date if active
+    const isVip = isUserVip();
+    const currentTier = getUserVipTier();
+    const currentExpiry = userVipExpiresAt || 0;
+
+    if (isVip && currentExpiry > Date.now() && tier !== 'lifetime') {
+      const addedDays = tier === 'yearly' ? 365 : 30;
+      const newExpiry = new Date(currentExpiry + addedDays * 86400000);
+      if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'flex';
+      if (rolloverTextEl) {
+        rolloverTextEl.innerHTML = `Thời hạn gói ${name} sẽ được <strong>cộng dồn nối tiếp</strong> từ hạn gói cũ đến ngày: <strong style="color:#ffd700;">${newExpiry.toLocaleDateString('vi-VN')}</strong>.`;
+      }
+    } else if (tier === 'lifetime') {
+      if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'flex';
+      if (rolloverTextEl) {
+        rolloverTextEl.innerHTML = `👑 Gói VIP Trọn Đời sẽ kích hoạt <strong>vĩnh viễn</strong> ngay lập tức cho tài khoản ${escapeHtml(email)}.`;
+      }
+    } else {
+      if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'none';
+    }
+
     if (qrImg) {
-      qrImg.src = `https://api.vietqr.io/image/970422-0358899888-qUu9wVd.jpg?accountName=VOCAFLOW%20PREMIUM&amount=${amount}&addInfo=${encodeURIComponent(syntax)}`;
+      qrImg.src = `https://api.vietqr.io/image/970422-0916541813-compact2.jpg?accountName=NONG%20DUC%20HAO&amount=${amount}&addInfo=${encodeURIComponent(syntax)}`;
     }
 
     if (box) {
       box.style.display = 'block';
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function copyAccountNumber() {
+    const accEl = document.getElementById('vip-acc-number');
+    if (accEl) {
+      const text = accEl.textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Đã sao chép STK MB Bank: ' + text);
+      }).catch(() => {
+        showToast('STK: ' + text);
+      });
     }
   }
 

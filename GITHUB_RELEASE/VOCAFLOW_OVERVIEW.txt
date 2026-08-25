@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-3 (Build 136)
+Phiên bản hiện tại : v0.10.8-beta-3.1 (Build 137)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-3.1 (Build 137 - HIERARCHY VIP STATE & OFFICIAL MB BANK INTEGRATION):
+  - Chuẩn Hóa Phân Cấp & Trạng Thái Gói VIP (VIP Hierarchy Engine):
+    * Khi đang sở hữu VIP Trọn Đời: Tự động ẩn nút "👑 Nâng Cấp VIP" trong Hồ Sơ Cá Nhân; trong Modal Bảng Giá khóa cả 3 card và gắn nhãn "👑 Đã Sở Hữu Vĩnh Viễn".
+    * Khi đang sở hữu VIP 1 Tháng: Khóa Card Tháng (hiển thị "✓ Đang Dùng - Đến ngày DD/MM/YYYY"), mở quyền Nâng Cấp Gói Năm & Trọn Đời.
+    * Khi đang sở hữu VIP 1 Năm: Khóa Card Tháng & Card Năm (hiển thị "✓ Đang Dùng"), mở quyền Nâng Cấp Trọn Đời.
+    * Cơ chế cộng dồn hạn sử dụng: Khi gia hạn hoặc nâng cấp gói mới, thời hạn mới được tự động tính nối tiếp từ ngày kết thúc của gói hiện tại.
+  - Cập Nhật Thông Tin Chuyển Khoản Chính Thức & Trải Nghiệm Thanh Toán:
+    * Ngân hàng: MB Bank (Ngân hàng Quân Đội).
+    * Số tài khoản: 0916541813 (kèm nút 📋 Copy nhanh).
+    * Chủ tài khoản: NONG DUC HAO.
+    * Cú pháp chuẩn: VOCA VIP [EMAIL] [GÓI] (kèm nút 📋 Copy nhanh).
+    * Mã VietQR tự động điền sẵn 100% STK, Chủ tài khoản, Số tiền và Cú pháp khi quét bằng app Ngân hàng/Ví điện tử.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-3.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-3 (Build 136 - PHẦN 3: MODAL BẢNG GIÁ VIP CROWN & GÓI HỘI VIÊN CAO CẤP):
   - Ra Mắt Modal Bảng Giá VIP Crown Sang Trọng Với 3 Gói Hội Viên Toàn Diện:
     * 🥉 Gói VIP 1 Tháng (39.000đ/tháng): Mở khóa toàn bộ Thư Viện THPT, 50 lượt tạo Deck AI & Mentor/tháng, Tên phát sáng neon ánh kim & Vương miện VIP.
