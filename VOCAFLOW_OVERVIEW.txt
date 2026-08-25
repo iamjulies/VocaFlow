@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6w (Build 94)
+Phiên bản hiện tại : v0.10.6x (Build 95)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6x (Build 95 - COMPLETE WIN32 RESOURCE REBUILD & SHELL CACHE REFRESH):
+  - Khắc Phục Triệt Để Hiển Thị Icon Trên Windows File Explorer:
+    * Cấu hình tường minh cả `<ApplicationIcon>` và `<Win32Icon>` trong `VocaFlow.csproj`.
+    * Tái cấu trúc chuẩn Microsoft Windows Icon Format với thứ tự phân giải chuẩn và độ sâu màu 32-bit DIB/PNG.
+    * Gửi tín hiệu `SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST)` để ép Windows Explorer làm mới Icon Cache ngay lập tức.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6x_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6w (Build 94 - SLEEK TRANSPARENT BRAND ICON & NATIVE WINDOWS ASSETS):
   - Chuyển Đổi Sang Biểu Tượng Trong Suốt Cao Cấp (`VocaFlow_icon_transparent.png`):
     * Sử dụng logo không nền, căn chỉnh khung hình chuẩn vuông 1:1 và biên độ an toàn chống tràn viền.

@@ -10,6 +10,7 @@
     <AssemblyName>VocaFlow</AssemblyName>
     <RootNamespace>VocaFlow</RootNamespace>
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
+    <Win32Icon>app_icon.ico</Win32Icon>
   </PropertyGroup>
 
   <ItemGroup>
