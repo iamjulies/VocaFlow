@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-10</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-11</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-10</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-11</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7056,12 +7056,12 @@
                 changed = true;
               }
               const remoteUsername = prof.username || uData.username;
-              const remoteLastChange = prof.lastUsernameChangeTimestamp || uData.lastUsernameChangeTimestamp;
+              const remoteLastChange = (prof.lastUsernameChangeTimestamp !== undefined) ? prof.lastUsernameChangeTimestamp : uData.lastUsernameChangeTimestamp;
               if (remoteUsername && remoteUsername.trim().length >= 3 && remoteUsername !== currentUser.username) {
                 currentUser.username = remoteUsername.trim().toLowerCase();
                 changed = true;
               }
-              if (remoteLastChange && remoteLastChange !== currentUser.lastUsernameChangeTimestamp) {
+              if (remoteLastChange !== undefined && Number(remoteLastChange) !== currentUser.lastUsernameChangeTimestamp) {
                 currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
                 changed = true;
               }
@@ -9765,7 +9765,7 @@
                 const remoteProf = cloudData.profile || {};
                 const remoteName = remoteProf.displayName || cloudData.displayName;
                 const remoteUsername = remoteProf.username || cloudData.username;
-                const remoteLastChange = remoteProf.lastUsernameChangeTimestamp || cloudData.lastUsernameChangeTimestamp;
+                const remoteLastChange = (remoteProf.lastUsernameChangeTimestamp !== undefined) ? remoteProf.lastUsernameChangeTimestamp : cloudData.lastUsernameChangeTimestamp;
                 const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
                 if (remoteBio !== undefined && remoteBio !== null) {
                   localStorage.setItem('vocaflow_user_bio', remoteBio);
@@ -9784,7 +9784,7 @@
                     currentUser.username = remoteUsername.trim().toLowerCase();
                     profChanged = true;
                   }
-                  if (remoteLastChange && remoteLastChange !== currentUser.lastUsernameChangeTimestamp) {
+                  if (remoteLastChange !== undefined && Number(remoteLastChange) !== currentUser.lastUsernameChangeTimestamp) {
                     currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
                     profChanged = true;
                   }
