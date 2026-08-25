@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.5 (Build 129)
+Phiên bản hiện tại : v0.10.8-beta-2.6 (Build 130)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.6 (Build 130 - CONTINUOUS LINEAR WAVE SHIMMER ENGINE HOTFIX):
+  - Khắc Phục Lỗi Bitmap Caching & Tạo Làn Sóng Chạy Màu Vàng Hồng Liên Tục (Continuous Wave Flow):
+    * Khắc phục triệt để lỗi Chromium Compositor đóng băng `background-position` khi đi kèm `filter` trong `@keyframes`: Tách `filter: drop-shadow(...)` tĩnh ra ngoài và thiết lập animation `vipGradientWaveContinuous` với tốc độ `3.5s linear infinite`.
+    * Kết cấu dải màu 7 điểm dừng (`#f59e0b` ➔ `#fbbf24` ➔ `#ffffff` ➔ `#f472b6` ➔ `#ec4899` ➔ `#fbbf24` ➔ `#f59e0b`) trên khung nền `background-size: 200% 100%`: Màu sắc liên tục chảy tràn và lướt qua các ký tự theo từng làn sóng mượt mà 60fps mà không hề bị dừng hay đơ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.6_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.5 (Build 129 - BACKGROUND-POSITION FLOW ANIMATION FIX FOR VIP NICKNAME):
   - Khôi Phục & Nâng Cấp Luồng Chuyển Động Chạy Màu (Horizontal Color Wave Shimmer) Cho Tên VIP:
     * Khắc phục hiện tượng chữ VIP không chạy màu: Chuyển cấu trúc hiển thị sang `display: inline-block` để Chromium/WebKit tính toán và di chuyển `background-position` liên tục mượt mà.
