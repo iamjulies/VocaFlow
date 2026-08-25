@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.8 (Build 132)
+Phiên bản hiện tại : v0.10.8-beta-2.9 (Build 133)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.9 (Build 133 - PURE HORIZONTAL LINEAR TEXT GRADIENT WAVE):
+  - Áp Dụng Kỹ Thuật Gradient Chạy Ngang Tuyến Tính (Horizontal Linear Text Flow):
+    * Sử dụng cấu trúc `linear-gradient(to right, ...)` kết hợp `background-size: 200% auto` và animation `vipChayNgang 4s linear infinite` (`background-position: 0% center` ➔ `200% center`).
+    * Dải màu Hoàng Kim - Ánh Hồng (`#f59e0b` ➔ `#fbbf24` ➔ `#fffbeb` ➔ `#f472b6` ➔ `#ec4899` ➔ `#f59e0b`) liên tục trôi chuyển động theo chiều ngang 60fps mượt mà, rực rỡ và ổn định trên mọi nền tảng.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.9_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.8 (Build 132 - RESTORATION OF ORIGINAL VIBRANT GOLD-PINK SHIMMER):
   - Khôi Phục Hoàn Toàn Hiệu Ứng Lấp Lánh Hoàng Kim Vàng Hồng Chuẩn Bản 2.1:
     * Khôi phục chính xác cấu trúc `display: inline-flex` và animation `vipGoldShimmerDark` 3 giây nhấp nháy phát sáng: Dải màu Vàng Kim - Ánh Hồng (`#f59e0b` ➔ `#fbbf24` ➔ `#fffbeb` ➔ `#f472b6` ➔ `#ec4899`) lấp lánh phát sáng tự nhiên mà không bị biến dạng sang màu xanh lá hay bất kỳ sắc thái lạ nào.
