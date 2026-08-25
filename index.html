@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4557,6 +4557,31 @@
           </div>
         </div>
 
+        <!-- VIP FAQ / HELP SECTION (v0.10.8-beta-3.2) -->
+        <div style="margin-top: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
+          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <span>❓</span> Câu Hỏi Thường Gặp Khi Nâng Cấp VIP
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted);">
+            <div>
+              <strong style="color: var(--text);">⏱️ Thời gian xử lý giao dịch chuyển khoản là bao lâu?</strong>
+              <p style="margin: 2px 0 0 0;">Thông thường hệ thống xử lý đối soát tự động từ <strong>1 - 5 phút</strong>. Nếu ngân hàng bảo trì hoặc ngoài giờ cao điểm, tối đa từ <strong>10 - 15 phút</strong>.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">📱 Quét mã VietQR có cần gõ lại nội dung chuyển khoản không?</strong>
+              <p style="margin: 2px 0 0 0;"><strong>Không cần gõ!</strong> Khi quét mã QR bằng app ngân hàng hoặc ví điện tử, hệ thống đã tự động điền chuẩn 100% STK (0916541813), Chủ tài khoản (NONG DUC HAO), số tiền và cú pháp chuẩn.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">💸 Nếu chuyển khoản mà quên ghi cú pháp thì có bị mất tiền không?</strong>
+              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0916541813)</strong> để được hỗ trợ đối soát và kích hoạt VIP trong 1 phút.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">⚠️ Chưa chuyển tiền mà bấm "Tôi Đã Chuyển Khoản" thì sao?</strong>
+              <p style="margin: 2px 0 0 0;">Hệ thống sẽ ghi nhận yêu cầu và tự động đối soát với tài khoản MB Bank. Sau 2 - 5 phút nếu không tìm thấy giao dịch chuyển tiền thực tế, hệ thống sẽ gửi thông báo <em>"Đối soát chưa thành công"</em> vào Trung Tâm Thông Báo và không kích hoạt VIP.</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div style="display: flex; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
@@ -4978,7 +5003,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -23094,8 +23119,20 @@ Quy tắc phản hồi quan trọng:
     }
   }
 
+  function getCleanTransferSyntax(tier) {
+    const rawIdentifier = (currentUser && currentUser.username)
+      ? currentUser.username
+      : ((currentUser && currentUser.email)
+          ? currentUser.email.split('@')[0]
+          : 'GUEST');
+    const cleanId = rawIdentifier.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return `VOCA VIP ${cleanId || 'USER'} ${tier.toUpperCase()}`;
+  }
+
   function selectVipPlan(tier, name, priceStr, amount) {
-    currentSelectedVipPlan = { tier, name, priceStr, amount };
+    const syntax = getCleanTransferSyntax(tier);
+    currentSelectedVipPlan = { tier, name, priceStr, amount, syntax };
+
     const box = document.getElementById('vip-payment-info-box');
     const planNameEl = document.getElementById('vip-selected-plan-name');
     const planPriceEl = document.getElementById('vip-selected-plan-price');
@@ -23103,9 +23140,6 @@ Quy tắc phản hồi quan trọng:
     const qrImg = document.getElementById('vip-vietqr-img');
     const rolloverNoticeEl = document.getElementById('vip-rollover-notice');
     const rolloverTextEl = document.getElementById('vip-rollover-text');
-
-    const email = (currentUser && currentUser.email) ? currentUser.email : 'guest';
-    const syntax = `VOCA VIP ${email.toUpperCase()} ${tier.toUpperCase()}`;
 
     if (planNameEl) planNameEl.textContent = name;
     if (planPriceEl) planPriceEl.textContent = priceStr;
@@ -23126,7 +23160,8 @@ Quy tắc phản hồi quan trọng:
     } else if (tier === 'lifetime') {
       if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'flex';
       if (rolloverTextEl) {
-        rolloverTextEl.innerHTML = `👑 Gói VIP Trọn Đời sẽ kích hoạt <strong>vĩnh viễn</strong> ngay lập tức cho tài khoản ${escapeHtml(email)}.`;
+        const userEmail = (currentUser && currentUser.email) ? currentUser.email : 'của bạn';
+        rolloverTextEl.innerHTML = `👑 Gói VIP Trọn Đời sẽ kích hoạt <strong>vĩnh viễn</strong> ngay lập tức cho tài khoản ${escapeHtml(userEmail)}.`;
       }
     } else {
       if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'none';
@@ -23167,8 +23202,68 @@ Quy tắc phản hồi quan trọng:
   }
 
   function confirmVipPaymentSubmitted() {
-    showToast('🎉 Cảm ơn bạn! Yêu cầu nâng cấp ' + currentSelectedVipPlan.name + ' đã được ghi nhận. VIP sẽ kích hoạt sau khi hệ thống xác nhận thanh toán.');
+    const syntax = currentSelectedVipPlan.syntax || getCleanTransferSyntax(currentSelectedVipPlan.tier);
+    const pendingPayment = {
+      id: 'pay_' + Date.now(),
+      tier: currentSelectedVipPlan.tier,
+      planName: currentSelectedVipPlan.name,
+      priceStr: currentSelectedVipPlan.priceStr,
+      amount: currentSelectedVipPlan.amount,
+      syntax: syntax,
+      timestamp: Date.now(),
+      status: 'pending'
+    };
+    localStorage.setItem('vocaflow_pending_vip_payment', JSON.stringify(pendingPayment));
+
+    // 1. Send Pending Notification to Notification Center
+    if (typeof addNotification === 'function') {
+      addNotification(
+        'FINANCIAL',
+        `⏳ Đang Đối Soát Chuyển Khoản ${currentSelectedVipPlan.name}`,
+        `Hệ thống đã ghi nhận yêu cầu nâng cấp gói ${currentSelectedVipPlan.name} (${currentSelectedVipPlan.priceStr}) với cú pháp "${syntax}". Thời gian đối soát thông thường từ 1 - 5 phút.`
+      );
+    }
+
+    showToast('⏳ Đã gửi yêu cầu đối soát! Hệ thống đang kiểm tra giao dịch (1-5 phút).');
     closeModal('modal-vip-pricing');
+
+    // 2. Schedule verification check after 2.5 minutes
+    setTimeout(() => {
+      checkPendingVipPaymentStatus();
+    }, 150000);
+  }
+
+  function checkPendingVipPaymentStatus() {
+    const rawPending = localStorage.getItem('vocaflow_pending_vip_payment');
+    if (!rawPending) return;
+    try {
+      const pending = JSON.parse(rawPending);
+      if (pending.status === 'pending') {
+        const isVipNow = isUserVip();
+        const currentTier = getUserVipTier();
+        if (isVipNow && (currentTier === pending.tier || currentTier === 'lifetime')) {
+          // Activated by admin or verified
+          localStorage.removeItem('vocaflow_pending_vip_payment');
+          if (typeof addNotification === 'function') {
+            addNotification(
+              'FINANCIAL',
+              `👑 Kích Hoạt ${pending.planName} Thành Công!`,
+              `Hệ thống đã xác nhận thanh toán thành công. Toàn bộ đặc quyền VIP Crown của bạn đã được kích hoạt!`
+            );
+          }
+        } else {
+          // Not received / unverified after window
+          localStorage.removeItem('vocaflow_pending_vip_payment');
+          if (typeof addNotification === 'function') {
+            addNotification(
+              'FINANCIAL',
+              `⚠️ Đối Soát Chưa Thành Công (${pending.planName})`,
+              `Hệ thống chưa tìm thấy giao dịch ${pending.priceStr} với cú pháp "${pending.syntax}". Nếu bạn đã chuyển tiền thực tế, vui lòng liên hệ Admin NONG DUC HAO (SĐT/Zalo: 0916541813) kèm ảnh biên lai để được kích hoạt ngay nhé!`
+            );
+          }
+        }
+      }
+    } catch (e) {}
   }
 
 </script>
