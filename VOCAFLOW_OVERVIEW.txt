@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-11 (Build 120)
+Phiên bản hiện tại : v0.10.7g-12 (Build 121)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
+• 🛡️ v0.10.7g-12 (Build 121 - GEMINI MODERN MODEL CASCADE & DEPRECATION RESOLUTION):
+  - Khắc Phục Lỗi Không Thể Kết Nối Tới Google Gemini AI (Model Deprecation Resolution):
+    * Loại bỏ hoàn toàn các mã định danh mô hình đã bị Google khai tử trên API v1beta (`gemini-1.5-pro`, `gemini-1.5-flash`, `gemini-2.0-flash`, `gemini-2.0-flash-lite`, `gemini-1.5-flash-8b`).
+    * Nâng cấp đồng bộ toàn bộ hệ thống (Gia sư AI Mentor, Trắc nghiệm AI, Tạo ví dụ, Chấm điểm phát âm) sang chuỗi mô hình thế hệ mới với tốc độ siêu tốc và độ chính xác vượt bậc: `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.5-flash`, `gemini-3.6-flash`, `gemini-3.7-flash`, `gemini-flash-latest`, `gemini-pro-latest`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.7g-12_Windows_Portable.zip`.
+
 • 🛡️ v0.10.7g-11 (Build 120 - INSTANT USERNAME RECOVERY & COOLDOWN UNLOCK):
   - Khôi Phục Trực Tiếp Tên Định Danh @iamjulies & @tester & Mở Khóa Thời Gian Chờ (Cooldown Unlock):
     * Cập nhật tức thời trên Firebase RTDB gán vĩnh viễn username chuẩn xác `@iamjulies` cho tài khoản chính và `@tester` cho tài khoản thử nghiệm.
