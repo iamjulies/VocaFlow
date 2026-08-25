@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-2.4 (Build 128)
+Phiên bản hiện tại : v0.10.8-beta-2.5 (Build 129)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-2.5 (Build 129 - BACKGROUND-POSITION FLOW ANIMATION FIX FOR VIP NICKNAME):
+  - Khôi Phục & Nâng Cấp Luồng Chuyển Động Chạy Màu (Horizontal Color Wave Shimmer) Cho Tên VIP:
+    * Khắc phục hiện tượng chữ VIP không chạy màu: Chuyển cấu trúc hiển thị sang `display: inline-block` để Chromium/WebKit tính toán và di chuyển `background-position` liên tục mượt mà.
+    * Tinh chỉnh góc gradient 90 độ ngang (`linear-gradient(90deg, #f59e0b, #fbbf24, #fffbeb, #f472b6, #ec4899, #f59e0b)`) với độ rộng mở rộng `background-size: 250% 100%`: Các dải ánh sáng vàng kim và vàng hồng lướt qua tên thành làn sóng màu sắc sống động và cuốn hút.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-2.5_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-2.4 (Build 128 - UNIFIED GOLDEN-PINK VIP SHIMMER ACROSS THEMES):
   - Đồng Bộ Tuyệt Đối Hiệu Ứng Lấp Lánh Ánh Kim & Vàng Hồng (Rose-Gold Shimmer) Cho Cả 2 Giao Diện:
     * Loại bỏ hoàn toàn các thuộc tính đổ màu sẫm của Light Mode, đồng nhất 100% dải màu Hoàng Kim Lấp Lánh Ánh Hồng (`#f59e0b` ➔ `#fbbf24` ➔ `#fffbeb` ➔ `#f472b6` ➔ `#ec4899`) chuyển động đa chiều (`@keyframes vipGoldShimmer`).
