@@ -1993,7 +1993,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-3.8</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -5017,7 +5017,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-3.8</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5547,6 +5547,7 @@
 
       updateAuthUI();
       refreshAdminVipUI();
+      if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
       showToast(enable ? `👑 Đã kích hoạt chế độ VIP (${tier.toUpperCase()}) thành công!` : '❌ Đã tắt chế độ VIP (Tài khoản về trạng thái Thường)');
     }
 
@@ -22347,9 +22348,21 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
     function getAiChatQuotaStatus() {
       checkResetAiChatDailyQuota();
+      const isVip = isUserVip();
+      if (isVip) {
+        return {
+          isVip: true,
+          freeLimit: 999999,
+          usedToday: aiChatDailyCount,
+          remainingFree: 999999,
+          isFree: true,
+          costXu: 0
+        };
+      }
       const freeLimit = 5;
       const remainingFree = Math.max(0, freeLimit - aiChatDailyCount);
       return {
+        isVip: false,
         freeLimit,
         usedToday: aiChatDailyCount,
         remainingFree,
@@ -22365,12 +22378,27 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       const feeNotice = document.getElementById('ai-chat-fee-notice');
       const sendBtnLabel = document.getElementById('btn-ai-chat-send-label');
 
-      if (status.isFree) {
+      if (status.isVip) {
+        if (badge) {
+          badge.innerHTML = '👑 VIP Vô Hạn';
+          badge.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(236, 72, 153, 0.25))';
+          badge.style.color = '#fbbf24';
+          badge.style.border = '1px solid rgba(251, 191, 36, 0.5)';
+        }
+        if (fabBadge) {
+          fabBadge.innerHTML = '👑';
+          fabBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
+        }
+        if (feeNotice) {
+          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VIP:</span> Trò chuyện không giới hạn lượt & 0 Xu!';
+        }
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
+      } else if (status.isFree) {
         if (badge) {
           badge.textContent = `${status.remainingFree} lượt free`;
           badge.style.background = 'rgba(16,185,129,0.15)';
           badge.style.color = '#34d399';
-          badge.style.borderColor = 'rgba(16,185,129,0.3)';
+          badge.style.border = '1px solid rgba(16,185,129,0.3)';
         }
         if (fabBadge) {
           fabBadge.textContent = status.remainingFree;
@@ -22383,7 +22411,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           badge.textContent = `10 Xu / tin`;
           badge.style.background = 'rgba(245,158,11,0.15)';
           badge.style.color = '#fbbf24';
-          badge.style.borderColor = 'rgba(245,158,11,0.3)';
+          badge.style.border = '1px solid rgba(245,158,11,0.3)';
         }
         if (fabBadge) {
           fabBadge.textContent = '🪙';
@@ -23074,7 +23102,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (!rawText) return;
 
       const quota = getAiChatQuotaStatus();
-      if (!quota.isFree) {
+      if (!quota.isVip && !quota.isFree) {
         const curPoints = getUserPoints();
         if (curPoints < quota.costXu) {
           alert(`🪙 Bạn đã hết 5 lượt miễn phí hôm nay và không đủ Xu (cần ${quota.costXu} Xu, bạn đang có ${curPoints} Xu)!
@@ -23190,8 +23218,13 @@ Quy tắc phản hồi quan trọng:
       }
 
       if (fetchSuccess && replyText) {
-        // Burn-on-Success settlement
-        if (quota.isFree) {
+        // Burn-on-Success settlement (v0.10.8-beta-4 VIP Privilege)
+        if (quota.isVip) {
+          // VIP: 100% Free Unlimited, no points deducted
+          aiChatDailyCount++;
+          localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+          localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
+        } else if (quota.isFree) {
           aiChatDailyCount++;
           localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
           localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
