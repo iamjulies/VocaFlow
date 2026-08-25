@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.7g-12 (Build 121)
+Phiên bản hiện tại : v0.10.8-beta-1 (Build 122)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -21,6 +21,14 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-1 (Build 122 - GOD MODE VIP SWITCH & VIP DATA ARCHITECTURE - PHẦN 1/10):
+  - Khởi Tạo Động Cơ Hội Viên VIP & Bảng Điều Khiển God Mode Testing (Phần 1):
+    * Khởi tạo kiến trúc dữ liệu Hội viên VIP/Premium trong LocalStorage & Firebase Cloud: Quản lý các trường trạng thái `isVip`, `vipTier` ('monthly' | 'yearly' | 'lifetime'), `vipExpiresAt` và `adminVipOverride`.
+    * Thêm Bảng điều khiển Chuyển đổi trạng thái VIP trong Cổng Quản trị (God Mode): Cho phép nhà phát triển / người kiểm thử tùy ý Bật/Tắt chế độ VIP, gán gói Trọn Đời (Lifetime), 1 Năm (Yearly) hoặc 1 Tháng (Monthly) để kiểm thử toàn diện các đặc quyền VIP mà không cần thanh toán thật.
+    * Tự động đồng bộ và bảo lưu trạng thái VIP lên Firebase Cloud khi chỉnh sửa hoặc chuyển đổi tài khoản.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-1_Windows_Portable.zip`.
 
 🌟 [v0.10.7] - CREATOR FOLLOW SYSTEM & UNIQUE IDENTIFIER ARCHITECTURE
 • 🛡️ v0.10.7g-12 (Build 121 - GEMINI MODERN MODEL CASCADE & DEPRECATION RESOLUTION):

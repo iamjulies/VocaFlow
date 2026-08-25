@@ -1906,7 +1906,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.7g-12</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4711,7 +4711,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.7g-12</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -4857,6 +4857,28 @@
             <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">⚡ Áp Dụng Ví Ngay</button>
             <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200, 50)">+200 Gợi Ý, +50 Skip & +500đ</button>
             <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000, 200)">+1000 Gợi Ý, +200 Skip & +2000đ</button>
+          </div>
+        </div>
+
+        <!-- GOD MODE: VIP / PREMIUM SUBSCRIPTION OVERRIDE (v0.10.8-beta-1) -->
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 16px; margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+              <span>👑</span> <span>God Mode: Chuyển Đổi Trạng Thái VIP (Premium Testing)</span>
+            </div>
+            <span id="admin-vip-status-badge" class="badge" style="background: rgba(100,116,139,0.2); color: #94a3b8; font-size: 11px; font-weight: 700; padding: 3px 8px;">Chưa kích hoạt</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Bật/Tắt chế độ VIP cho tài khoản của bạn để trải nghiệm, kiểm thử các đặc quyền không giới hạn AI Mentor, AI Speaking Lab và các tính năng Premium mà không cần thanh toán thật.
+          </p>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" id="btn-admin-toggle-vip" onclick="toggleAdminVipStatus()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              👑 Bật Gói VIP Thử Nghiệm
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('lifetime')" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; font-weight: 600;">Trọn Đời (Lifetime)</button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('yearly')" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600;">1 Năm (Yearly)</button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('monthly')" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc; font-weight: 600;">1 Tháng (Monthly)</button>
+            <button class="btn btn-outline btn-sm" onclick="disableAdminVipStatus()" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4); font-weight: 600;">❌ Tắt VIP (Về Thường)</button>
           </div>
         </div>
       </div>
@@ -5161,6 +5183,109 @@
         aiChatDailyCount = 0;
         localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
         localStorage.setItem('vocaflow_ai_chat_daily_count', '0');
+      }
+    }
+
+    // =========================================================================
+    // VOCAFLOW VIP / PREMIUM MEMBERSHIP ENGINE (v0.10.8-beta-1)
+    // =========================================================================
+    let userIsVip = localStorage.getItem('vocaflow_user_is_vip') === 'true';
+    let userVipTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none'; // 'monthly' | 'yearly' | 'lifetime' | 'none'
+    let userVipExpiresAt = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+    let adminVipOverride = localStorage.getItem('vocaflow_admin_vip_override') === 'true';
+
+    function isUserVip() {
+      if (adminVipOverride) return true;
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) {
+        return adminVipOverride;
+      }
+      if (userIsVip) {
+        if (userVipTier === 'lifetime') return true;
+        if (userVipExpiresAt && userVipExpiresAt > Date.now()) return true;
+        // Expired check
+        if (userVipExpiresAt && userVipExpiresAt <= Date.now()) {
+          userIsVip = false;
+          userVipTier = 'none';
+          localStorage.setItem('vocaflow_user_is_vip', 'false');
+          localStorage.setItem('vocaflow_user_vip_tier', 'none');
+          return false;
+        }
+      }
+      return false;
+    }
+
+    function getUserVipTier() {
+      if (adminVipOverride) return userVipTier !== 'none' ? userVipTier : 'lifetime';
+      return isUserVip() ? userVipTier : 'none';
+    }
+
+    function setAdminVipStatus(enable, tier = 'lifetime', durationDays = 0) {
+      adminVipOverride = enable;
+      userIsVip = enable;
+      userVipTier = enable ? tier : 'none';
+      userVipExpiresAt = (enable && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
+      
+      localStorage.setItem('vocaflow_admin_vip_override', enable ? 'true' : 'false');
+      localStorage.setItem('vocaflow_user_is_vip', enable ? 'true' : 'false');
+      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
+      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+
+      if (currentUser) {
+        currentUser.isVip = enable;
+        currentUser.vipTier = userVipTier;
+        currentUser.vipExpiresAt = userVipExpiresAt;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        if (currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          pushCurrentDatabaseToCloud();
+        }
+      }
+
+      updateAuthUI();
+      refreshAdminVipUI();
+      showToast(enable ? `👑 Đã kích hoạt chế độ VIP (${tier.toUpperCase()}) thành công!` : '❌ Đã tắt chế độ VIP (Tài khoản về trạng thái Thường)');
+    }
+
+    function toggleAdminVipStatus() {
+      setAdminVipStatus(!adminVipOverride, 'lifetime');
+    }
+
+    function setAdminVipTier(tier) {
+      const days = tier === 'monthly' ? 30 : (tier === 'yearly' ? 365 : 0);
+      setAdminVipStatus(true, tier, days);
+    }
+
+    function disableAdminVipStatus() {
+      setAdminVipStatus(false, 'none', 0);
+    }
+
+    function refreshAdminVipUI() {
+      const badge = document.getElementById('admin-vip-status-badge');
+      const btnToggle = document.getElementById('btn-admin-toggle-vip');
+      const active = isUserVip();
+      const tier = getUserVipTier();
+
+      if (badge) {
+        if (active) {
+          badge.textContent = `👑 VIP ĐANG BẬT (${tier.toUpperCase()})`;
+          badge.style.background = 'rgba(245, 158, 11, 0.2)';
+          badge.style.color = '#fbbf24';
+          badge.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+        } else {
+          badge.textContent = '⚪ Chưa kích hoạt VIP';
+          badge.style.background = 'rgba(100, 116, 139, 0.2)';
+          badge.style.color = '#94a3b8';
+          badge.style.border = '1px solid rgba(100, 116, 139, 0.3)';
+        }
+      }
+
+      if (btnToggle) {
+        if (active) {
+          btnToggle.textContent = '❌ Tắt Chế Độ VIP';
+          btnToggle.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        } else {
+          btnToggle.textContent = '👑 Bật Gói VIP Thử Nghiệm';
+          btnToggle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        }
       }
     }
 
@@ -6793,6 +6918,7 @@
       if (setPts) setPts.value = getUserPoints();
       if (setHts) setHts.value = getUserHints();
       if (setSks) setSks.value = getUserSkips();
+      refreshAdminVipUI();
     }
 
     function applyAdminWalletChanges() {
@@ -9445,6 +9571,16 @@
       localStorage.removeItem('vocaflow_ai_chat_daily_count');
       localStorage.removeItem('vocaflow_ai_chat_daily_date');
       localStorage.removeItem('vocaflow_gemini_working_model');
+
+      // VIP state complete wipeout
+      userIsVip = false;
+      userVipTier = 'none';
+      userVipExpiresAt = 0;
+      adminVipOverride = false;
+      localStorage.removeItem('vocaflow_user_is_vip');
+      localStorage.removeItem('vocaflow_user_vip_tier');
+      localStorage.removeItem('vocaflow_user_vip_expires_at');
+      localStorage.removeItem('vocaflow_admin_vip_override');
       if (typeof renderAiChatMessages === 'function') renderAiChatMessages();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
@@ -9680,6 +9816,9 @@
             geminiApiKey: geminiApiKey || '',
             followerCount: Object.keys(myFollowersMap || {}).length,
             followingCount: Object.keys(myFollowingMap || {}).length,
+            isVip: isUserVip(),
+            vipTier: getUserVipTier(),
+            vipExpiresAt: userVipExpiresAt,
             lastSync: new Date().toISOString()
           },
           following: myFollowingMap,
@@ -9764,6 +9903,16 @@
                 // Sync Profile DisplayName, Username & Bio from Cloud (v0.10.7a)
                 const remoteProf = cloudData.profile || {};
                 const remoteName = remoteProf.displayName || cloudData.displayName;
+                // Sync VIP State from Cloud (v0.10.8-beta-1)
+                if (remoteProf.isVip !== undefined) {
+                  userIsVip = !!remoteProf.isVip;
+                  userVipTier = remoteProf.vipTier || 'none';
+                  userVipExpiresAt = remoteProf.vipExpiresAt || 0;
+                  localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
+                  localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
+                  localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+                }
+
                 const remoteUsername = remoteProf.username || cloudData.username;
                 const remoteLastChange = (remoteProf.lastUsernameChangeTimestamp !== undefined) ? remoteProf.lastUsernameChangeTimestamp : cloudData.lastUsernameChangeTimestamp;
                 const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
