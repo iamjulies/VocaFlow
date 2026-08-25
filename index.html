@@ -1890,7 +1890,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; border-radius: 9px; object-fit: contain; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); flex-shrink: 0;" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6q</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.6r</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
@@ -4487,7 +4487,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6q</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.6r</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13306,6 +13306,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     // =========================================================================
     // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6q - ELSA GRADE PHONETICS)
     // =========================================================================
+    // AI SPEAKING & PRONUNCIATION LAB ENGINE (v0.10.6r - ELSA GRADE PHONETICS)
+    // =========================================================================
     let speakingWordsList = [];
     let currentSpeakingIndex = 0;
     let speakingMediaRecorder = null;
@@ -13323,7 +13325,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     let speakingCurrentMediaStream = null;
     let speakingAutoPlayTimeout = null;
 
-    // v0.10.6q: History & State Locking
+    // v0.10.6r: History & State Locking
     let speakingWordHistoryMap = {}; // index -> { evalData, takes, floorReached, currentTakeIndex, isCompleted }
     let speakingFireworksAnimationId = null;
 
@@ -14145,6 +14147,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       speakingFlowState = 'idle';
       speakingRecordSeconds = 0;
       speakingAudioChunks = [];
+      if (speakingAudioBlobUrl) {
+        try { URL.revokeObjectURL(speakingAudioBlobUrl); } catch (e) {}
+      }
       speakingAudioBlob = null;
       speakingAudioBlobUrl = null;
       speakingCurrentAudioBase64 = null;
@@ -14164,6 +14169,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const timerEl = document.getElementById('speaking-record-timer');
       const waveEl = document.getElementById('speaking-wave-box');
       const playbackCont = document.getElementById('speaking-user-playback-container');
+      const btnSubmitEval = document.getElementById('btn-spk-submit-eval');
+      const btnPlayback = document.getElementById('btn-spk-playback-user');
+      const btnRetry = document.getElementById('btn-spk-retry');
 
       if (micBtn) {
         micBtn.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
@@ -14177,6 +14185,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (timerEl) timerEl.textContent = 'Giữ giọng rõ ràng • Tối đa 8 giây • Lượt: ' + speakingCurrentTakeIndex + '/' + speakingMaxTakes;
       if (waveEl) waveEl.style.display = 'none';
       if (playbackCont) playbackCont.style.display = 'none';
+      if (btnSubmitEval) btnSubmitEval.style.display = 'flex';
+      if (btnPlayback) {
+        btnPlayback.style.display = 'inline-flex';
+        btnPlayback.textContent = '🎧 Nghe lại';
+      }
+      if (btnRetry) btnRetry.style.display = 'inline-flex';
 
       const resultPanel = document.getElementById('speaking-result-panel');
       const aiLoading = document.getElementById('speaking-ai-loading');
@@ -14229,6 +14243,14 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         speakingMediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
         speakingAudioChunks = [];
 
+        // Revoke previous audio blob url when recording a new take
+        if (speakingAudioBlobUrl) {
+          try { URL.revokeObjectURL(speakingAudioBlobUrl); } catch (e) {}
+          speakingAudioBlobUrl = null;
+        }
+        speakingAudioBlob = null;
+        speakingCurrentAudioBase64 = null;
+
         speakingMediaRecorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) {
             speakingAudioChunks.push(e.data);
@@ -14258,6 +14280,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           const timerEl = document.getElementById('speaking-record-timer');
           const playbackCont = document.getElementById('speaking-user-playback-container');
           const waveEl = document.getElementById('speaking-wave-box');
+          const btnSubmitEval = document.getElementById('btn-spk-submit-eval');
+          const btnPlayback = document.getElementById('btn-spk-playback-user');
+          const btnRetry = document.getElementById('btn-spk-retry');
 
           if (statusEl) {
             statusEl.textContent = '✅ Đã thu âm xong! Nghe lại hoặc nhấn Chấm Điểm';
@@ -14265,6 +14290,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
           }
           if (timerEl) timerEl.textContent = 'Thời lượng: ' + speakingRecordSeconds + 's • Lượt: ' + (speakingCurrentTakeIndex + 1) + '/' + speakingMaxTakes;
           if (waveEl) waveEl.style.display = 'none';
+          if (btnSubmitEval) btnSubmitEval.style.display = 'flex';
+          if (btnPlayback) {
+            btnPlayback.style.display = 'inline-flex';
+            btnPlayback.textContent = '🎧 Nghe lại';
+          }
+          if (btnRetry) btnRetry.style.display = 'inline-flex';
           if (playbackCont) {
             playbackCont.style.display = 'flex';
             playbackCont.style.flexDirection = 'column';
@@ -14349,7 +14380,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         return;
       }
       if (!speakingCurrentAudioBase64 || !speakingAudioBlob) {
-        showToast('⚠️ Vui lòng nhấn Mic thu âm trước khi gửi chấm điểm nhé!');
+        showToast('⚠️ Bản thu âm này đã được chấm điểm hoặc chưa có dữ liệu! Hãy bấm Mic thu âm lại nhé.');
         return;
       }
 
@@ -14391,8 +14422,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (aiLoading) aiLoading.style.display = 'block';
       if (aiContent) aiContent.style.display = 'none';
 
-      const playbackCont = document.getElementById('speaking-user-playback-container');
-      if (playbackCont) playbackCont.style.display = 'none';
+      // Hide evaluation button while keeping playback visible
+      const btnSubmitEval = document.getElementById('btn-spk-submit-eval');
+      if (btnSubmitEval) btnSubmitEval.style.display = 'none';
 
       evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
     }
@@ -14540,7 +14572,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (aiContent) aiContent.style.display = 'block';
 
         if (evalSuccess && evalData) {
-          speakingAudioBlob = null;
+          // v0.10.6r: Preserve speakingAudioBlob & speakingAudioBlobUrl for user playback
+          // Only clear base64 so this specific take cannot be submitted for grading again
           speakingCurrentAudioBase64 = null;
           pendingAudioBlob = null;
           pendingAudioBase64 = null;
@@ -14634,7 +14667,6 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         speakingCurrentTakeIndex = speakingTakes.length;
         if (score >= speakingFloorScore) speakingFloorReached = true;
 
-        // v0.10.6q: Only mark isCompleted in history if floor is reached OR all takes are exhausted
         if (speakingFloorReached || speakingCurrentTakeIndex >= speakingMaxTakes) {
           speakingWordHistoryMap[currentSpeakingIndex] = {
             evalData: data,
@@ -14644,6 +14676,36 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             isCompleted: true
           };
         }
+      }
+
+      // v0.10.6r: Update Recording Box Status & Keep Playback Accessible
+      const statusEl = document.getElementById('speaking-record-status');
+      const timerEl = document.getElementById('speaking-record-timer');
+      const playbackCont = document.getElementById('speaking-user-playback-container');
+      const btnSubmitEval = document.getElementById('btn-spk-submit-eval');
+      const btnPlayback = document.getElementById('btn-spk-playback-user');
+      const btnRetry = document.getElementById('btn-spk-retry');
+
+      if (statusEl) {
+        statusEl.textContent = '🎉 Đã chấm điểm xong! Bạn có thể nghe lại giọng mình hoặc nhấn Mic để thu lại.';
+        statusEl.style.color = '#34d399';
+      }
+      if (timerEl) {
+        timerEl.textContent = 'Lượt hiện tại: ' + speakingCurrentTakeIndex + '/' + speakingMaxTakes + (speakingFloorReached ? ' • Đạt sàn (' + speakingFloorScore + 'đ) ✅' : ' • Chưa đạt sàn (' + speakingFloorScore + 'đ)');
+      }
+      if (btnSubmitEval) {
+        btnSubmitEval.style.display = 'none'; // Lock out duplicate evaluation for this take
+      }
+      if (btnPlayback) {
+        btnPlayback.style.display = speakingAudioBlobUrl ? 'inline-flex' : 'none';
+        btnPlayback.textContent = '🎧 Nghe lại giọng bạn' + (speakingCurrentTakeIndex > 0 ? ' (Lần ' + speakingCurrentTakeIndex + ')' : '');
+      }
+      if (btnRetry) {
+        const canRetry = speakingCurrentTakeIndex < speakingMaxTakes && !speakingFloorReached;
+        btnRetry.style.display = canRetry ? 'inline-flex' : 'none';
+      }
+      if (playbackCont) {
+        playbackCont.style.display = speakingAudioBlobUrl ? 'flex' : 'none';
       }
 
       const scoreNumEl = document.getElementById('spk-score-num');
@@ -14876,7 +14938,14 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function playSpeakingUserAudio() {
       if (speakingAudioBlobUrl) {
         const audio = new Audio(speakingAudioBlobUrl);
-        audio.play().catch(e => console.warn('Audio playback error:', e));
+        audio.play().then(() => {
+          showToast('🎧 Đang phát lại bản thu âm của bạn...');
+        }).catch(e => {
+          console.warn('Audio playback error:', e);
+          showToast('⚠️ Không thể phát bản thu âm!');
+        });
+      } else {
+        showToast('⚠️ Chưa có bản thu âm nào cho từ này!');
       }
     }
 

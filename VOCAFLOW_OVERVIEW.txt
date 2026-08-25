@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.6q (Build 88)
+Phiên bản hiện tại : v0.10.6r (Build 89)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -11,7 +11,7 @@ Trạng thái          : Production Ready - Đầy đủ tính năng, ổn đị
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
 VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
-được tối ưu hóa dựa trên các nghiên cứu khoa học về đường conc quên lãng (Forgetting
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
 Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
 
 Ứng dụng hỗ trợ đa nền tảng:
@@ -23,6 +23,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.5] - AI SPEAKING & PRONUNCIATION LAB (CHẾ ĐỘ LUYỆN PHÁT ÂM CHẤM ĐIỂM BẰNG AI)
+• 🛡️ v0.10.6r (Build 89 - POST-EVALUATION AUDIO PLAYBACK & STRICT SINGLE-EVAL LOCK):
+  - Bảo lưu Bản Thu Âm Để Nghe Lại Sau Khi Chấm Điểm (Post-Evaluation Voice Playback):
+    * Giữ nguyên `speakingAudioBlobUrl` và nút `🎧 Nghe lại giọng bạn (Lần X)` sau khi hoàn tất chấm điểm AI.
+    * Người học có thể nghe lại chính xác bản thu của mình để đối chiếu với nhận xét/phân tích âm vị của AI.
+    * Nút "Chấm Điểm AI" được ẩn ngay sau khi chấm và biến `speakingCurrentAudioBase64` được dọn sạch để đảm bảo mỗi bản thu chỉ được chấm điểm duy nhất 1 lần (chống gian lận/chấm trùng).
+    * Bản thu cũ chỉ bị xóa khi người học nhấn Mic thu âm bản mới hoặc chuyển sang từ vựng tiếp theo.
+  - Cập nhật dòng trạng thái trực quan:
+    * Sau khi chấm điểm, dòng trạng thái cập nhật rõ ràng: "🎉 Đã chấm điểm xong! Bạn có thể nghe lại giọng mình hoặc nhấn Mic để thu lại."
+  - Xác thực thực nghiệm: Đã kiểm thử logic 100% tự động.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.6r_Windows_Portable.zip`.
+
 • 🛡️ v0.10.6q (Build 88 - CLUES IPA-TERM BINDING & MULTI-TAKE RETRY UNLOCK):
   - Đồng bộ Manh Mối IPA và Từ Tiếng Anh (IPA Clue & Term Linkage):
     * Từ tiếng Anh hiển thị (`spk-word-term`) gắn liền trực tiếp với manh mối IPA.
