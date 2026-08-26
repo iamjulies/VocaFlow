@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.7</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -3305,6 +3305,29 @@
           <button class="btn btn-outline" onclick="exitQuizToHome()" style="padding: 9px 14px;">
             🏠 Tủ Sách
           </button>
+        </div>
+      </div>
+
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-7) -->
+      <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
+        <!-- METRICS & FILTER BAR -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="admin-bug-filter-buttons">
+            <button class="btn btn-sm btn-primary" onclick="filterAdminBugReports('all')" id="btn-bug-filter-all">Tất cả</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('open')" id="btn-bug-filter-open">🟡 Mới gửi</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('in_progress')" id="btn-bug-filter-in_progress">🔵 Đang xử lý</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('resolved')" id="btn-bug-filter-resolved">🟢 Đã fix</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('rejected')" id="btn-bug-filter-rejected">⚪ Từ chối</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminBugReportsList()" style="display: flex; align-items: center; gap: 4px;">
+            🔄 Tải lại danh sách
+          </button>
+        </div>
+
+        <div id="admin-bug-reports-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12.5px;">
+            <em>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em>
+          </div>
         </div>
       </div>
     </div>
@@ -5522,6 +5545,99 @@
       </div>
     </div>
   </div>
+  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-7) -->
+  <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">🐛</span>
+          <div>
+            <strong style="font-size: 16px; color: #f87171;">Báo Cáo Sự Cố & Đóng Góp Ý Kiến</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Đội ngũ phát triển sẽ kiểm tra và trao thưởng Xu/VIP cho báo cáo hữu ích</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; padding-right: 4px;">
+        <!-- CATEGORY SELECTOR -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">1. Danh mục vấn đề:</label>
+          <select id="bug-report-category" class="form-select" style="width: 100%; font-size: 13px; font-weight: 600;">
+            <option value="ui_ux">🎨 Lỗi Giao Diện & Hiển Thị (UI/UX)</option>
+            <option value="speaking">🎙️ Lỗi Thu Âm / Luyện Nói AI Speaking Lab</option>
+            <option value="ai">🤖 Lỗi AI Sinh Từ / AI Chat Mentor</option>
+            <option value="wheel_ad">🎡 Lỗi Vòng Quay / Xem Video Quảng Cáo</option>
+            <option value="wallet_vip">💳 Lỗi Ví Xu / Thanh Toán QR / Gói VIP</option>
+            <option value="cloud_sync">🔄 Lỗi Đồng Bộ Cloud / Mất Dữ Liệu</option>
+            <option value="feature_request">💡 Đóng Góp Tính Năng Mới (Feature Request)</option>
+            <option value="other" selected>❓ Vấn đề khác</option>
+          </select>
+        </div>
+
+        <!-- SEVERITY LEVEL -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">2. Mức độ ảnh hưởng:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <label class="btn btn-outline btn-sm" id="bug-sev-low-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.15); color: #34d399; font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="low" checked style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🟢 Nhẹ / Góp ý</span>
+            </label>
+            <label class="btn btn-outline btn-sm" id="bug-sev-med-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: var(--border); color: var(--text-muted); font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="medium" style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🟡 Vừa phải</span>
+            </label>
+            <label class="btn btn-outline btn-sm" id="bug-sev-high-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: var(--border); color: var(--text-muted); font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="high" style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🔴 Nghiêm trọng</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- TITLE -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">3. Tiêu đề sự cố:</label>
+          <input type="text" id="bug-report-title" class="form-input" placeholder="Tóm tắt ngắn gọn vấn đề gặp phải..." style="font-size: 13px;">
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">4. Mô tả chi tiết & các bước xảy ra lỗi:</label>
+          <textarea id="bug-report-desc" class="form-textarea" rows="4" placeholder="Mô tả cụ thể: Bạn đang làm gì khi lỗi xảy ra? Bạn mong muốn kết quả ra sao? (Có thể dán trực tiếp ảnh chụp màn hình Ctrl+V vào đây)..." style="font-size: 12.5px; resize: vertical;"></textarea>
+        </div>
+
+        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text); margin: 0;">5. Ảnh chụp màn hình (Tùy chọn):</label>
+            <span style="font-size: 10.5px; color: #38bdf8;">Hỗ trợ dán trực tiếp (Ctrl+V)</span>
+          </div>
+          <div id="bug-screenshot-preview-box" style="display: none; position: relative; margin-bottom: 8px; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); max-height: 180px; background: rgba(0,0,0,0.3); text-align: center;">
+            <img id="bug-screenshot-img" src="" style="max-height: 180px; width: auto; max-width: 100%; object-fit: contain; display: inline-block;">
+            <button type="button" onclick="removeBugReportScreenshot()" class="btn btn-danger btn-sm" style="position: absolute; top: 6px; right: 6px; padding: 2px 8px; font-size: 11px; border-radius: 6px;">❌ Xóa ảnh</button>
+          </div>
+          <input type="file" id="bug-screenshot-file-input" accept="image/*" style="display: none;" onchange="handleBugScreenshotFile(this)">
+          <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('bug-screenshot-file-input').click()" style="width: 100%; justify-content: center; gap: 6px; font-size: 12px;">
+            📷 Tải Ảnh Chụp Màn Hình Lên
+          </button>
+        </div>
+
+        <!-- AUTO-CAPTURED DIAGNOSTICS ACCORDION -->
+        <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 14px; font-size: 11.5px; color: var(--text-muted);">
+          <summary style="cursor: pointer; font-weight: 700; color: #a5b4fc;">⚙️ Thông tin chẩn đoán tự động đính kèm</summary>
+          <div id="bug-diagnostics-preview" style="margin-top: 8px; font-family: monospace; font-size: 10.5px; line-height: 1.5; color: var(--text-muted); word-break: break-all;"></div>
+        </details>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-bug-report')">Hủy Bỏ</button>
+        <button type="button" id="btn-submit-bug-report" class="btn btn-primary" onclick="submitBugReport()" style="background: linear-gradient(135deg, #f87171, #ef4444); border: none; font-weight: 700; padding: 8px 18px; box-shadow: 0 4px 14px rgba(239,68,68,0.35);">
+          🚀 Gửi Báo Cáo Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: SETTINGS -->
   <div class="modal-overlay" id="modal-settings">
     <div class="modal">
@@ -5694,10 +5810,18 @@
         </label>
       </div>
 
+      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-7) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
+          🐛 Gửi Báo Cáo Sự Cố / Góp Ý Tính Năng Cho Admin
+        </button>
+      </div>
+
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5733,6 +5857,10 @@
         </button>
         <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 6px;">
           <span>⚡</span> <strong>God Mode Ví Của Bạn</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-bugs" onclick="switchPublisherTab('bugs')" style="display: flex; align-items: center; gap: 6px;">
+          <span>🐛</span> <strong>Báo Cáo Lỗi & Góp Ý</strong>
+          <span id="pub-bugs-badge" class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 9px; display: none;">0</span>
         </button>
       </div>
 
@@ -7679,26 +7807,34 @@
       const isStudents = tab === 'students';
       const isCodes = tab === 'codes';
       const isWallet = tab === 'wallet';
+      const isBugs = tab === 'bugs';
 
       const sContent = document.getElementById('pub-tab-content-students');
       const cContent = document.getElementById('pub-tab-content-codes');
       const wContent = document.getElementById('pub-tab-content-wallet');
+      const bContent = document.getElementById('pub-tab-content-bugs');
       if (sContent) sContent.style.display = isStudents ? 'block' : 'none';
       if (cContent) cContent.style.display = isCodes ? 'block' : 'none';
       if (wContent) wContent.style.display = isWallet ? 'block' : 'none';
+      if (bContent) bContent.style.display = isBugs ? 'block' : 'none';
 
       const sBtn = document.getElementById('pub-tab-btn-students');
       const cBtn = document.getElementById('pub-tab-btn-codes');
       const wBtn = document.getElementById('pub-tab-btn-wallet');
+      const bBtn = document.getElementById('pub-tab-btn-bugs');
       if (sBtn) sBtn.className = isStudents ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
       if (cBtn) cBtn.className = isCodes ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
       if (wBtn) wBtn.className = isWallet ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      if (bBtn) bBtn.className = isBugs ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
 
       if (isStudents && adminStudentsData.length === 0) {
         fetchAdminStudentsList();
       }
       if (isCodes) {
         refreshAdminGiftCodesList();
+      }
+      if (isBugs) {
+        fetchAdminBugReportsList();
       }
     }
 
@@ -13054,6 +13190,467 @@
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
       return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted };
+    }
+
+    // =========================================================================
+    // IN-APP BUG REPORT & FEEDBACK SYSTEM (v0.10.8-beta-7)
+    // =========================================================================
+    let recentJsErrorsList = [];
+    let currentBugScreenshotBase64 = null;
+    let adminBugReportsData = [];
+    let currentAdminBugFilter = 'all';
+
+    // Global Javascript runtime error capture
+    window.addEventListener('error', (e) => {
+      try {
+        recentJsErrorsList.push({
+          msg: e.message || 'Unknown error',
+          file: e.filename ? e.filename.split('/').pop() : 'inline',
+          line: e.lineno,
+          col: e.colno,
+          time: new Date().toISOString()
+        });
+        if (recentJsErrorsList.length > 5) recentJsErrorsList.shift();
+      } catch (err) {}
+    });
+
+    function getSystemDiagnosticsInfo() {
+      const isOnline = navigator.onLine;
+      const ua = navigator.userAgent || 'Unknown';
+      const screenRes = `${window.innerWidth}x${window.innerHeight} (Màn hình: ${screen.width}x${screen.height})`;
+      const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
+      const version = 'v0.10.8-beta-7 (Build 165)';
+      const user = currentUser ? `${currentUser.displayName || currentUser.email || 'Khách'} (${currentUser.uid})` : 'Chưa đăng nhập';
+      const isVip = isUserVip() ? `VIP (${getUserVipTier()})` : 'Free';
+      const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'Không có lỗi JS nào';
+
+      return {
+        version,
+        platform: navigator.platform || 'Windows',
+        userAgent: ua,
+        screenResolution: screenRes,
+        memoryUsage,
+        isOnline,
+        user,
+        isVip,
+        lastJsError: lastError,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    function openBugReportModal(prefilledCategory = 'other', prefilledDesc = '') {
+      currentBugScreenshotBase64 = null;
+      const catSelect = document.getElementById('bug-report-category');
+      const titleInput = document.getElementById('bug-report-title');
+      const descInput = document.getElementById('bug-report-desc');
+      const previewBox = document.getElementById('bug-screenshot-preview-box');
+      const diagPreview = document.getElementById('bug-diagnostics-preview');
+      const submitBtn = document.getElementById('btn-submit-bug-report');
+
+      if (catSelect) catSelect.value = prefilledCategory;
+      if (titleInput) titleInput.value = '';
+      if (descInput) descInput.value = prefilledDesc;
+      if (previewBox) previewBox.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚀 Gửi Báo Cáo Ngay';
+      }
+
+      // Default severity low
+      const lowRadio = document.querySelector('input[name="bug-severity"][value="low"]');
+      if (lowRadio) lowRadio.checked = true;
+      updateBugSeverityUI();
+
+      // Render diagnostics info
+      const diag = getSystemDiagnosticsInfo();
+      if (diagPreview) {
+        diagPreview.innerHTML = `
+          <strong>Phiên bản:</strong> ${diag.version}<br>
+          <strong>Người dùng:</strong> ${diag.user} | ${diag.isVip}<br>
+          <strong>Màn hình:</strong> ${diag.screenResolution}<br>
+          <strong>Trạng thái mạng:</strong> ${diag.isOnline ? '🟢 Trực tuyến' : '🔴 Ngoại tuyến'}<br>
+          <strong>Trình duyệt:</strong> ${diag.userAgent}<br>
+          <strong>Nhật ký lỗi JS gần nhất:</strong> ${diag.lastJsError}
+        `;
+      }
+
+      openModal('modal-bug-report');
+
+      // Setup paste event listener
+      if (descInput) {
+        descInput.onpaste = handleBugReportPasteEvent;
+      }
+    }
+
+    function updateBugSeverityUI() {
+      const selected = document.querySelector('input[name="bug-severity"]:checked')?.value || 'low';
+      const lowLabel = document.getElementById('bug-sev-low-label');
+      const medLabel = document.getElementById('bug-sev-med-label');
+      const highLabel = document.getElementById('bug-sev-high-label');
+
+      if (lowLabel) {
+        lowLabel.style.borderColor = selected === 'low' ? 'rgba(16,185,129,0.6)' : 'var(--border)';
+        lowLabel.style.background = selected === 'low' ? 'rgba(16,185,129,0.15)' : 'transparent';
+        lowLabel.style.color = selected === 'low' ? '#34d399' : 'var(--text-muted)';
+      }
+      if (medLabel) {
+        medLabel.style.borderColor = selected === 'medium' ? 'rgba(245,158,11,0.6)' : 'var(--border)';
+        medLabel.style.background = selected === 'medium' ? 'rgba(245,158,11,0.15)' : 'transparent';
+        medLabel.style.color = selected === 'medium' ? '#fbbf24' : 'var(--text-muted)';
+      }
+      if (highLabel) {
+        highLabel.style.borderColor = selected === 'high' ? 'rgba(239,68,68,0.6)' : 'var(--border)';
+        highLabel.style.background = selected === 'high' ? 'rgba(239,68,68,0.15)' : 'transparent';
+        highLabel.style.color = selected === 'high' ? '#f87171' : 'var(--text-muted)';
+      }
+    }
+
+    function handleBugReportPasteEvent(e) {
+      if (e.clipboardData && e.clipboardData.items) {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const blob = items[i].getAsFile();
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              setBugReportScreenshot(event.target.result);
+              showToast('📷 Đã dán ảnh chụp màn hình thành công!');
+            };
+            reader.readAsDataURL(blob);
+            break;
+          }
+        }
+      }
+    }
+
+    function handleBugScreenshotFile(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 3 * 1024 * 1024) {
+          alert('⚠️ Ảnh quá lớn (vui lòng chọn ảnh dưới 3MB)!');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          setBugReportScreenshot(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function setBugReportScreenshot(base64) {
+      currentBugScreenshotBase64 = base64;
+      const previewBox = document.getElementById('bug-screenshot-preview-box');
+      const img = document.getElementById('bug-screenshot-img');
+      if (previewBox && img) {
+        img.src = base64;
+        previewBox.style.display = 'block';
+      }
+    }
+
+    function removeBugReportScreenshot() {
+      currentBugScreenshotBase64 = null;
+      const previewBox = document.getElementById('bug-screenshot-preview-box');
+      const fileInput = document.getElementById('bug-screenshot-file-input');
+      if (previewBox) previewBox.style.display = 'none';
+      if (fileInput) fileInput.value = '';
+    }
+
+    async function submitBugReport() {
+      const cat = document.getElementById('bug-report-category')?.value || 'other';
+      const title = (document.getElementById('bug-report-title')?.value || '').trim();
+      const desc = (document.getElementById('bug-report-desc')?.value || '').trim();
+      const severity = document.querySelector('input[name="bug-severity"]:checked')?.value || 'low';
+
+      if (!title) {
+        alert('Vui lòng nhập tiêu đề sự cố!');
+        document.getElementById('bug-report-title')?.focus();
+        return;
+      }
+      if (!desc) {
+        alert('Vui lòng nhập mô tả chi tiết sự cố!');
+        document.getElementById('bug-report-desc')?.focus();
+        return;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-bug-report');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Đang gửi báo cáo lên Cloud...';
+      }
+
+      const reportId = 'bug_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      const diag = getSystemDiagnosticsInfo();
+
+      const payload = {
+        id: reportId,
+        category: cat,
+        severity: severity,
+        title: title,
+        description: desc,
+        screenshot: currentBugScreenshotBase64 || null,
+        diagnostics: diag,
+        status: 'open', // 'open' | 'in_progress' | 'resolved' | 'rejected'
+        user: {
+          uid: currentUser ? currentUser.uid : 'GUEST',
+          displayName: currentUser ? (currentUser.displayName || currentUser.email) : 'Khách',
+          email: currentUser ? (currentUser.email || '') : '',
+          isVip: isUserVip()
+        },
+        createdAt: new Date().toISOString()
+      };
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        await fetch(`${rtdbUrl}/bug_reports/${reportId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        closeModal('modal-bug-report');
+        showToast('🎉 Đã gửi báo cáo thành công! Cảm ơn bạn đã đóng góp cho VocaFlow.');
+
+        if (typeof addNotification === 'function') {
+          addNotification('SYSTEM', '🐛 Đã Tiếp Nhận Báo Cáo', `Mã sự cố #${reportId.slice(0, 10)}: "${title}". Admin sẽ kiểm tra và phản hồi sớm nhất!`);
+        }
+
+      } catch (err) {
+        console.warn('Bug report submit fallback error:', err);
+        closeModal('modal-bug-report');
+        showToast('✅ Đã ghi nhận báo cáo cục bộ! Cảm ơn bạn.');
+      }
+    }
+
+    // =========================================================================
+    // ADMIN BUG REPORTS MANAGEMENT (PUBLISHER PORTAL TAB 4)
+    // =========================================================================
+    async function fetchAdminBugReportsList() {
+      const container = document.getElementById('admin-bug-reports-list');
+      if (!container) return;
+      container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);"><em>⏳ Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em></div>';
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/bug_reports.json${authParam}`);
+        if (!res.ok) throw new Error('Cannot fetch bug reports');
+        const data = await res.json();
+
+        if (!data || typeof data !== 'object') {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">🎉 Hiện không có báo cáo lỗi nào đang chờ xử lý!</div>';
+          adminBugReportsData = [];
+          updateAdminBugBadge(0);
+          return;
+        }
+
+        adminBugReportsData = Object.values(data).filter(b => b && b.id).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        const openCount = adminBugReportsData.filter(b => b.status === 'open').length;
+        updateAdminBugBadge(openCount);
+        renderAdminBugReportsList();
+
+      } catch (err) {
+        console.warn('Fetch bugs error:', err);
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #f87171;">⚠️ Lỗi kết nối Cloud khi tải báo cáo lỗi.</div>';
+      }
+    }
+
+    function updateAdminBugBadge(count) {
+      const badge = document.getElementById('pub-bugs-badge');
+      if (badge) {
+        badge.textContent = count.toString();
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function filterAdminBugReports(status) {
+      currentAdminBugFilter = status;
+      ['all', 'open', 'in_progress', 'resolved', 'rejected'].forEach(s => {
+        const btn = document.getElementById('btn-bug-filter-' + s);
+        if (btn) {
+          btn.className = s === status ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+        }
+      });
+      renderAdminBugReportsList();
+    }
+
+    function renderAdminBugReportsList() {
+      const container = document.getElementById('admin-bug-reports-list');
+      if (!container) return;
+
+      let filtered = adminBugReportsData;
+      if (currentAdminBugFilter !== 'all') {
+        filtered = adminBugReportsData.filter(b => b.status === currentAdminBugFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">Không có báo cáo nào trong mục này.</div>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(b => {
+        const statusColors = { open: '#fbbf24', in_progress: '#38bdf8', resolved: '#34d399', rejected: '#94a3b8' };
+        const statusLabels = { open: '🟡 Chờ xử lý', in_progress: '🔵 Đang xử lý', resolved: '🟢 Đã fix xong', rejected: '⚪ Đã từ chối' };
+        const sevColors = { low: '#34d399', medium: '#fbbf24', high: '#ef4444' };
+        const sevLabels = { low: '🟢 Nhẹ', medium: '🟡 Vừa', high: '🔴 Nghiêm trọng' };
+        const catLabels = {
+          ui_ux: '🎨 UI/UX',
+          speaking: '🎙️ Speaking',
+          ai: '🤖 AI Studio',
+          wheel_ad: '🎡 Vòng Quay / QC',
+          wallet_vip: '💳 Ví / VIP',
+          cloud_sync: '🔄 Cloud Sync',
+          feature_request: '💡 Tính Năng Mới',
+          other: '❓ Khác'
+        };
+
+        const timeStr = new Date(b.createdAt || Date.now()).toLocaleString('vi-VN');
+        const hasScreenshot = b.screenshot ? true : false;
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-left: 4px solid ${statusColors[b.status] || '#94a3b8'}; border-radius: 10px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10px;">${catLabels[b.category] || b.category}</span>
+                <span class="badge" style="background: rgba(0,0,0,0.2); color: ${sevColors[b.severity] || '#34d399'}; font-size: 10px;">${sevLabels[b.severity] || b.severity}</span>
+                <span class="badge" style="background: rgba(0,0,0,0.2); color: ${statusColors[b.status]}; font-weight: 700; font-size: 10px;">${statusLabels[b.status]}</span>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted);">${timeStr}</span>
+            </div>
+
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;">${escapeHtml(b.title || 'Không có tiêu đề')}</div>
+            <div style="font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap; background: rgba(0,0,0,0.15); padding: 8px 10px; border-radius: 6px;">${escapeHtml(b.description || '')}</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+              <div>
+                👤 <strong>${escapeHtml(b.user?.displayName || 'Ẩn danh')}</strong> (${b.user?.uid || 'GUEST'}) • ${b.user?.isVip ? '👑 VIP' : 'Free'}
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${hasScreenshot ? `<button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #38bdf8;" onclick="viewBugScreenshotModal('${b.id}')">📷 Xem ảnh lỗi</button>` : ''}
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS: STATUS & BOUNTY -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px;" onclick="updateAdminBugStatus('${b.id}', 'in_progress')">🔵 Đang xử lý</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #34d399;" onclick="updateAdminBugStatus('${b.id}', 'resolved')">🟢 Đã fix xong</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: var(--text-muted);" onclick="updateAdminBugStatus('${b.id}', 'rejected')">⚪ Từ chối</button>
+              </div>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-primary btn-sm" style="padding: 2px 8px; font-size: 10.5px; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none;" onclick="rewardBugReporter('${b.id}', '${b.user?.uid}', 50, 'coins')">🎁 Thưởng +50 Xu</button>
+                <button class="btn btn-primary btn-sm" style="padding: 2px 8px; font-size: 10.5px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none;" onclick="rewardBugReporter('${b.id}', '${b.user?.uid}', 1, 'vip')">👑 Thưởng +1 Ngày VIP</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function viewBugScreenshotModal(reportId) {
+      const report = adminBugReportsData.find(b => b.id === reportId);
+      if (!report || !report.screenshot) {
+        showToast('⚠️ Không có ảnh đính kèm trong báo cáo này!');
+        return;
+      }
+      const w = window.open('');
+      w.document.write(`<img src="${report.screenshot}" style="max-width: 100%; height: auto; display: block; margin: 20px auto; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">`);
+    }
+
+    async function updateAdminBugStatus(reportId, newStatus) {
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        await fetch(`${rtdbUrl}/bug_reports/${reportId}/status.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newStatus)
+        });
+
+        const r = adminBugReportsData.find(b => b.id === reportId);
+        if (r) r.status = newStatus;
+        renderAdminBugReportsList();
+        showToast(`✅ Đã cập nhật trạng thái sự cố: ${newStatus}!`);
+
+      } catch (err) {
+        showToast('⚠️ Lỗi khi cập nhật trạng thái lên Cloud!');
+      }
+    }
+
+    async function rewardBugReporter(reportId, userUid, amount, type = 'coins') {
+      if (!userUid || userUid === 'GUEST') {
+        alert('⚠️ Báo cáo này từ tài khoản Khách, không thể gửi thưởng ví!');
+        return;
+      }
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        if (type === 'coins') {
+          const curEcoRes = await fetch(`${rtdbUrl}/users/${userUid}/economy.json${authParam}`);
+          const curEco = (curEcoRes.ok ? await curEcoRes.json() : null) || {};
+          const newPoints = (curEco.points || 0) + amount;
+          await fetch(`${rtdbUrl}/users/${userUid}/economy/points.json${authParam}`, { method: 'PUT', body: JSON.stringify(newPoints) });
+
+          // Send inbox notification
+          const notifId = 'notif_bounty_' + Date.now();
+          await fetch(`${rtdbUrl}/users/${userUid}/notifications/${notifId}.json${authParam}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              id: notifId,
+              type: 'FINANCIAL',
+              title: '🎁 Thưởng Bắt Lỗi (Bug Bounty)',
+              content: `Admin đã xác nhận báo cáo sự cố của bạn và tặng thưởng +${amount} Xu vào ví. Cảm ơn bạn đã đồng hành cùng VocaFlow!`,
+              timestamp: new Date().toISOString(),
+              read: false
+            })
+          });
+
+          showToast(`🎉 Đã trao thưởng +${amount} Xu cho học viên!`);
+
+        } else if (type === 'vip') {
+          const curProfRes = await fetch(`${rtdbUrl}/users/${userUid}/profile.json${authParam}`);
+          const curProf = (curProfRes.ok ? await curProfRes.json() : null) || {};
+          const curExp = (curProf.vipExpiresAt && curProf.vipExpiresAt > Date.now()) ? curProf.vipExpiresAt : Date.now();
+          const newExp = curExp + (24 * 60 * 60 * 1000);
+
+          await fetch(`${rtdbUrl}/users/${userUid}/profile.json${authParam}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isVip: true, vipTier: curProf.vipTier || 'monthly', vipExpiresAt: newExp })
+          });
+
+          // Send inbox notification
+          const notifId = 'notif_bounty_vip_' + Date.now();
+          await fetch(`${rtdbUrl}/users/${userUid}/notifications/${notifId}.json${authParam}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              id: notifId,
+              type: 'VIP_BONUS',
+              title: '👑 Thưởng Bắt Lỗi VIP (Bug Bounty)',
+              content: `Admin đã xác nhận báo cáo sự cố của bạn và tặng thưởng +1 Ngày VIP Hoàng Gia. Cảm ơn bạn đã đồng hành cùng VocaFlow!`,
+              timestamp: new Date().toISOString(),
+              read: false
+            })
+          });
+
+          showToast('🎉 Đã trao thưởng +1 Ngày VIP cho học viên!');
+        }
+
+        // Auto mark report as resolved
+        updateAdminBugStatus(reportId, 'resolved');
+
+      } catch (err) {
+        console.warn('Reward bug reporter error:', err);
+        showToast('⚠️ Lỗi khi gửi phần thưởng lên Cloud!');
+      }
     }
 
     // =========================================================================

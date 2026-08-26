@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-6.7 (Build 164)
+Phiên bản hiện tại : v0.10.8-beta-7 (Build 165)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7 (Build 165 - IN-APP BUG REPORTING, AUTO-DIAGNOSTICS & BOUNTY ENGINE):
+  - Ra Mắt Trung Tâm Báo Cáo Sự Cố & Đóng Góp Ý Kiến (In-App Bug Report System):
+    * Bổ sung modal báo lỗi toàn diện `modal-bug-report` hỗ trợ phân loại 8 danh mục (UI/UX, Speaking Lab, AI Studio, Vòng Quay, Ví/VIP, Cloud Sync, Tính Năng Mới, Khác).
+    * Hỗ trợ 3 cấp độ nghiêm trọng (Nhẹ, Vừa, Nghiêm trọng) cùng công cụ đính kèm ảnh chụp màn hình qua tải tệp hoặc dán trực tiếp (`Ctrl + V`).
+  - Tự Động Thu Thập Chẩn Đoán Hệ Thống (Auto-Captured Diagnostics):
+    * Tự động đính kèm thông tin phiên bản (v0.10.8-beta-7), môi trường máy khách, User UID/Email, độ phân giải màn hình, trạng thái mạng và nhật ký lỗi JavaScript Runtime gần nhất.
+  - Quản Trị Báo Cáo & Cơ Chế Thưởng Bắt Lỗi (Admin Bug Bounty Engine):
+    * Tích hợp Tab 4 trong Publisher Portal cho Admin quản lý danh sách báo lỗi thời gian thực từ Cloud RTDB `/bug_reports`.
+    * Hỗ trợ lọc theo trạng thái (`Mới gửi`, `Đang xử lý`, `Đã fix xong`, `Từ chối`).
+    * Tích hợp nút Trao Thưởng Bắt Lỗi: Tự động cộng ngay `+50 Xu` hoặc `+1 Ngày VIP` cho người báo cáo và gửi thông báo cảm ơn về Notification Center của họ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-7_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-6.7 (Build 164 - BALANCE_VIP, AD-READY BADGE & EVENT DISCOUNT ENGINE):
   - Triển Khai Hệ Thống Cân Bằng Điểm Đặc Quyền VIP (balance_vip Engine):
     * Tăng thêm +0.1 vào tất cả hệ số thưởng (Completion Mult & Deck Length Mult) và +10% điểm mốc cho tài khoản VIP.
