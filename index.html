@@ -17,6 +17,10 @@
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="shortcut icon" href="icons/Icon-192.png">
 
+  <!-- Google AdSense Account (Publisher: pub-1343250003116465) -->
+  <meta name="google-adsense-account" content="ca-pub-1343250003116465">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1343250003116465" crossorigin="anonymous"></script>
+
   <script src="xlsx.full.min.js"></script>
   
   <style>
@@ -2249,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.4</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.5</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4247,17 +4251,17 @@
       </div>
 
       <!-- REWARDED ADS BANNER (AUTOMATICALLY HIDDEN FOR VIP USERS) -->
-      <div id="shop-rewarded-ad-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(16,185,129,0.1)); border: 1px dashed rgba(56,189,248,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <div id="shop-rewarded-ad-banner" onclick="openRewardedAdModal()" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(99,102,241,0.12)); border: 1.5px dashed rgba(56,189,248,0.5); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s;">
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
             <span style="font-size: 18px;">🎬</span>
             <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận Lượt Quay</strong>
-            <span class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.15); color: #38bdf8;">+1 Lượt Quay</span>
+            <span id="shop-ad-badge" class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.2); color: #38bdf8; font-weight: 700;">+1 Lượt Quay</span>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận ngay +1 lượt quay may mắn.</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận ngay +1 lượt quay may mắn miễn phí.</div>
         </div>
-        <button type="button" id="btn-shop-watch-ad" class="btn btn-sm btn-outline" onclick="openRewardedAdModal()" style="white-space: nowrap; font-weight: 700; color: #38bdf8; border-color: rgba(56,189,248,0.5); padding: 7px 12px; border-radius: 8px;">
-          🎬 Xem Video
+        <button type="button" id="btn-shop-watch-ad" class="btn btn-sm" onclick="event.stopPropagation(); openRewardedAdModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #38bdf8, #6366f1); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(56,189,248,0.35); cursor: pointer;">
+          🎬 Xem Ngay
         </button>
       </div>
 
@@ -5550,7 +5554,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.4</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.5</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12611,6 +12615,7 @@
     function updateAdButtonCooldownState() {
       const btn = document.getElementById('btn-shop-watch-ad');
       const wheelBtn = document.getElementById('btn-wheel-watch-ad');
+      const adBadge = document.getElementById('shop-ad-badge');
       
       const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
       const elapsed = Date.now() - lastWatch;
@@ -12623,21 +12628,35 @@
         if (btn) {
           btn.textContent = `⏱️ Chờ ${timeStr}`;
           btn.disabled = true;
-          btn.style.opacity = '0.6';
+          btn.style.opacity = '0.7';
           btn.style.cursor = 'not-allowed';
+          btn.style.background = 'var(--surface-elevated)';
+          btn.style.boxShadow = 'none';
+        }
+        if (adBadge) {
+          adBadge.textContent = `⏱️ ${timeStr}`;
+          adBadge.style.background = 'rgba(245,158,11,0.2)';
+          adBadge.style.color = '#fbbf24';
         }
         if (wheelBtn) {
           wheelBtn.textContent = `⏱️ Chờ ${timeStr} để xem tiếp`;
           wheelBtn.disabled = true;
-          wheelBtn.style.opacity = '0.6';
+          wheelBtn.style.opacity = '0.7';
           wheelBtn.style.cursor = 'not-allowed';
         }
       } else {
         if (btn) {
-          btn.textContent = '🎬 Xem Video';
+          btn.textContent = '🎬 Xem Ngay';
           btn.disabled = false;
           btn.style.opacity = '1';
           btn.style.cursor = 'pointer';
+          btn.style.background = 'linear-gradient(135deg, #38bdf8, #6366f1)';
+          btn.style.boxShadow = '0 3px 10px rgba(56,189,248,0.35)';
+        }
+        if (adBadge) {
+          adBadge.textContent = '+1 Lượt Quay';
+          adBadge.style.background = 'rgba(56,189,248,0.2)';
+          adBadge.style.color = '#38bdf8';
         }
         if (wheelBtn) {
           wheelBtn.textContent = '🎬 Xem Video 15s Nhận +1 Lượt Quay';

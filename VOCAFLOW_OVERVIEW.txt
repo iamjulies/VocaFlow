@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-5.4 (Build 154)
+Phiên bản hiện tại : v0.10.8-beta-5.5 (Build 155)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-5.5 (Build 155 - GOOGLE ADSENSE INTEGRATION & INTERACTIVE AD CARD FIX):
+  - Tích Hợp Mã Xác Minh Google AdSense Chính Thức (`ca-pub-1343250003116465`):
+    * Nhúng thẻ meta và thư viện script `adsbygoogle.js` với Publisher ID của chủ sở hữu vào `<head>` phục vụ việc duyệt trang web trên Google AdSense.
+  - Sửa Lỗi Tương Tác Thẻ Quảng Cáo Trong VocaShop (Clickable Interactive Ad Banner):
+    * Biến toàn bộ thẻ `#shop-rewarded-ad-banner` thành thẻ tương tác bấm mở trực tiếp (bấm vào bất kỳ đâu trên thẻ hoặc nút đều mở video tài trợ ngay).
+    * Thêm nút `🎬 Xem Ngay` gradient nổi bật và huy hiệu đếm ngược trực quan khi đang trong thời gian chờ cooldown 5 phút.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-5.5_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-5.4 (Build 154 - GIFT CODE REPOSITION, REWARDED AD FIX & +1 SPIN REWARD SPEC):
   - Di Chuyển Ô Nhập Mã Quà Tặng Lên Vị Trí Dễ Thấy (Gift Code Top Placement):
     * Đưa ô nhập Gift Code (`#shop-gift-code-box`) lên ngay dưới thẻ số dư 3 cột trong VocaShop, giúp người dùng nhìn thấy ngay mà không cần cuộn xuống đáy.
