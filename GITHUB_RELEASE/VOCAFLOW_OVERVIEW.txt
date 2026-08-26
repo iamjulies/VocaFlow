@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-6.4 (Build 161)
+Phiên bản hiện tại : v0.10.8-beta-6.5 (Build 162)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,23 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-6.5 (Build 162 - 7-POINT SYSTEM REFINEMENT & CLOUD PERFECTION):
+  - Đồng Bộ Số Lượt Spin Lên Cloud Realtime (Lucky Spins Cloud Sync):
+    * Đưa `luckySpins` và `luckySpinsDate` vào toàn bộ quy trình đồng bộ Cloud hai chiều (Push & Pull).
+  - Phạt Khi Bỏ Qua / Hủy Xem Quảng Cáo (Cancel Penalty Cooldown):
+    * Khi người dùng nhấn "Bỏ qua" hoặc đóng popup xem video, hệ thống tự động kích hoạt đồng hồ đếm ngược giãn cách 20 phút ngay lập tức.
+  - Nâng Thời Gian Video Lên 30 Giây & Giãn Cách 20 Phút (30s Ad & 20m Cooldown):
+    * Chuẩn hóa thời lượng video quảng cáo tài trợ 30s và thời gian chờ 20 phút.
+  - Tự Động Tra Cứu & Trao Thưởng VIP Cho Người Giới Thiệu (Cloud Referrer +1 VIP Day Reward):
+    * Tự động đăng ký chỉ mục mã giới thiệu `referrals_index/{code}`, tự động tra cứu người sở hữu mã, cộng ngay +1 Ngày VIP (+86.400.000 ms) và gửi thông báo trực tiếp vào hòm thư Notification Center của người giới thiệu.
+  - Căn Chuẩn Kim Chỉ & Cơ Chế Trúng Thưởng Vòng Quay (Mathematical Lucky Wheel Alignment):
+    * Chuyển đổi sang kiến trúc chuẩn: Xác định giải thưởng trước -> quay kim đến đúng tâm góc của ô trúng thưởng, đảm bảo khớp 100% giữa góc nhìn và phần quà thực tế.
+  - Tặng Thêm +1 Lượt Quay Miễn Phí Mỗi Ngày Cho Tài Khoản VIP (Daily Free VIP Spin Bonus):
+    * Tài khoản VIP nhận 2 lượt quay/ngày (kèm thông báo chúc mừng riêng tại Notification Center).
+  - Tách Biệt Sổ Cái Ví Xu (Loại Bỏ Giao Dịch 0 Xu Khỏi Sổ Cái):
+    * Sổ cái ví xu chỉ ghi nhận giao dịch tài chính có phát sinh biến động điểm (+Xu / -Xu). Các phần thưởng hiện vật (Gợi ý, Bỏ qua, Lượt quay) được điều hướng hiển thị tại Trung Tâm Thông Báo.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-6.5_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-6.4 (Build 161 - UNCONDITIONAL REWARDED AD ACCESS & ACTIVE TAB ANTI-CHEAT):
   - Mở Khóa Tuyệt Đối Thẻ & Nút Xem Video Quảng Cáo Nhận Lượt Quay (Unconditional Access):
     * Loại bỏ mọi rào cản ẩn thẻ: Dù tài khoản là Khách, Free-tier hay VIP thì thẻ `#shop-rewarded-ad-banner` và nút `🎬 Xem Ngay` / `⏱️ Chờ MM:SS` luôn luôn hiển thị 100%.

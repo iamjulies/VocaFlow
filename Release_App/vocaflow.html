@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.4</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.5</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4273,7 +4273,7 @@
             <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận Lượt Quay</strong>
             <span id="shop-ad-badge" class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.2); color: #38bdf8; font-weight: 700;">+1 Lượt Quay</span>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận ngay +1 lượt quay may mắn miễn phí.</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 30s để nhận ngay +1 lượt quay may mắn miễn phí.</div>
         </div>
         <button type="button" id="btn-shop-watch-ad" class="btn btn-sm" onclick="event.stopPropagation(); openRewardedAdModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #38bdf8, #6366f1); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(56,189,248,0.35); cursor: pointer;">
           🎬 Xem Ngay
@@ -4794,7 +4794,7 @@
         <!-- Extra Action for Non-VIP when out of spins -->
         <div id="lucky-wheel-ad-cta" style="display: none; padding: 6px 4px; margin: 0 4px 6px 4px;">
           <button type="button" id="btn-wheel-watch-ad" class="btn btn-primary" onclick="openRewardedAdModalFromWheel();" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; font-weight: 700; font-size: 12px; padding: 9px 12px;">
-            🎬 Xem Video 15s Nhận +1 Lượt Quay
+            🎬 Xem Video 30s Nhận +1 Lượt Quay
           </button>
         </div>
       </div>
@@ -4883,7 +4883,7 @@
           <span style="font-size: 20px;">🎬</span>
           <div>
             <strong style="font-size: 15px; color: #38bdf8;">Video Giới Thiệu & Nhận Thưởng</strong>
-            <div style="font-size: 11px; color: var(--text-muted);">Xem hết video 15s để nhận ngay +1 Lượt Quay May Mắn</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Xem hết video 30s để nhận ngay +1 Lượt Quay May Mắn</div>
           </div>
         </div>
       </div>
@@ -5681,7 +5681,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.4</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.5</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9851,17 +9851,26 @@
 
     function addLedgerEntry(type, amount, description) {
       if (isGuest()) return; // Never record guest transactions into user account ledger
+      const numAmount = Number(amount) || 0;
+      
+      // Do NOT record 0 Xu transactions into wallet balance ledger (v0.10.8-beta-6.5)
+      if (numAmount === 0) {
+        return;
+      }
+
       const currentBalance = getUserPoints();
       const tx = {
         id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         timestamp: new Date().toISOString(),
-        type: type, // 'STUDY' | 'SELL_DECK' | 'BUY_DECK' | 'BUY_HINT' | 'BUY_SKIP' | 'AI_GEN' | 'GIFTCODE' | 'DAILY_BONUS' | 'PENALTY_QUIT'
-        amount: Number(amount) || 0,
+        type: type,
+        amount: numAmount,
         balanceAfter: currentBalance,
         description: description || 'Giao dịch ví'
       };
 
       userLedger.unshift(tx);
+      // Clean up any legacy 0-amount entries
+      userLedger = userLedger.filter(e => e && e.amount !== 0);
       if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
       localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
 
@@ -10054,11 +10063,12 @@
       const container = document.getElementById('studio-ledger-list');
       if (!container) return;
 
-      let filtered = userLedger;
+      let validLedger = userLedger.filter(tx => tx && tx.amount !== 0);
+      let filtered = validLedger;
       if (currentLedgerFilter === 'income') {
-        filtered = userLedger.filter(tx => tx.amount > 0);
+        filtered = validLedger.filter(tx => tx.amount > 0);
       } else if (currentLedgerFilter === 'expense') {
-        filtered = userLedger.filter(tx => tx.amount < 0);
+        filtered = validLedger.filter(tx => tx.amount < 0);
       }
 
       if (filtered.length === 0) {
@@ -11097,6 +11107,8 @@
             points: getUserPoints(),
             hints: getUserHints(),
             skips: getUserSkips(),
+            luckySpins: getLuckySpinsCount(),
+            luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
             updatedAt: new Date().toISOString()
           },
           aiChatQuota: {
@@ -12614,11 +12626,11 @@
     // =========================================================================
     // DYNAMIC SHUFFLED LUCKY WHEEL & REWARDED ADS ENGINE (v0.10.8-beta-5.1)
     // =========================================================================
-    const AD_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown
+    const AD_COOLDOWN_MS = 20 * 60 * 1000; // 20 minutes cooldown (v0.10.8-beta-6.5)
     let luckyWheelIsSpinning = false;
     let luckyWheelCurrentRotation = 0;
     let adWatchInterval = null;
-    let adWatchSecondsLeft = 15;
+    let adWatchSecondsLeft = 30;
     let currentActiveWheelSlices = []; // 8 dynamic shuffled slices
     let currentWheelHasJackpot = false;
 
@@ -12672,10 +12684,18 @@
       let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
       
       if (lastSpinDate !== today) {
-        // Daily Free Spin reset
-        spins = 1;
+        const isVip = isUserVip();
+        // Regular user: 1 daily spin. VIP user: 2 daily spins (1 base + 1 VIP bonus)
+        spins = isVip ? 2 : 1;
         localStorage.setItem('vocaflow_last_spin_date', today);
-        localStorage.setItem('vocaflow_lucky_spins_left', '1');
+        localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
+        
+        if (isVip && typeof addNotification === 'function') {
+          addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được tặng thêm +1 Lượt Quay May Mắn hôm nay (Tổng 2 lượt/ngày)!');
+        }
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
       }
       return spins;
     }
@@ -12684,6 +12704,9 @@
       localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, count).toString());
       localStorage.setItem('vocaflow_last_spin_date', getTodayString());
       updateLuckyWheelUI();
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function updateShopBonusesUI() {
@@ -12804,7 +12827,7 @@
           adBadge.style.color = '#38bdf8';
         }
         if (wheelBtn) {
-          wheelBtn.textContent = '🎬 Xem Video 15s Nhận +1 Lượt Quay';
+          wheelBtn.textContent = '🎬 Xem Video 30s Nhận +1 Lượt Quay';
           wheelBtn.disabled = false;
           wheelBtn.style.opacity = '1';
           wheelBtn.style.cursor = 'pointer';
@@ -12999,7 +13022,7 @@
       const spins = getLuckySpinsCount();
       if (spins <= 0) {
         if (!isUserVip()) {
-          showToast('🎬 Bạn đã hết lượt quay! Hãy xem video 15s để nhận thêm lượt quay ngay!');
+          showToast('🎬 Bạn đã hết lượt quay! Hãy xem video 30s để nhận thêm lượt quay ngay!');
           closeModal('modal-lucky-wheel');
           openRewardedAdModal();
         } else {
@@ -13015,19 +13038,26 @@
       const resultBox = document.getElementById('lucky-wheel-result-box');
       if (resultBox) resultBox.innerHTML = '<span style="color:#38bdf8;">🔄 Đang quay... Chúc bạn may mắn!</span>';
 
-      // 5 full rotations + random angle
+      // 1. Pick winning index first (0..7) to guarantee 100% precision
+      const winningIndex = Math.floor(Math.random() * (currentActiveWheelSlices.length || 8));
+      const prize = currentActiveWheelSlices[winningIndex] || currentActiveWheelSlices[0];
+
+      // 2. Calculate exact angle to place the winning slice directly under top needle (0 deg)
+      // Center of winning slice is at: winningIndex * 45 + 22.5 deg
+      const sliceCenterAngle = winningIndex * 45 + 22.5;
+      const targetBaseRotation = (360 - sliceCenterAngle) % 360;
+      const jitter = (Math.random() - 0.5) * 16; // Small jitter +/- 8 deg within slice
+
       const extraRounds = 5;
-      const randomAngle = Math.floor(Math.random() * 360);
-      luckyWheelCurrentRotation += (extraRounds * 360) + randomAngle;
+      const currentMod = ((luckyWheelCurrentRotation % 360) + 360) % 360;
+      let diff = targetBaseRotation - currentMod;
+      if (diff <= 0) diff += 360;
+
+      luckyWheelCurrentRotation += (extraRounds * 360) + diff + jitter;
 
       if (wheel) {
         wheel.style.transform = `rotate(${luckyWheelCurrentRotation}deg)`;
       }
-
-      // Calculate winning slice at top needle (0 deg)
-      const actualAngle = (360 - (luckyWheelCurrentRotation % 360)) % 360;
-      const winningIndex = Math.floor(((actualAngle + 22.5) % 360) / 45);
-      const prize = currentActiveWheelSlices[winningIndex] || currentActiveWheelSlices[0];
 
       setTimeout(() => {
         luckyWheelIsSpinning = false;
@@ -13048,13 +13078,17 @@
           pushCurrentDatabaseToCloud();
         } else if (prize.type === 'HINTS') {
           setUserHints(getUserHints() + prize.val);
-          addLedgerEntry('LUCKY_WHEEL', 0, `🎁 Trúng +${prize.val} Lượt Gợi Ý AI từ Vòng Quay May Mắn`);
+          if (typeof addNotification === 'function') {
+            addNotification('STUDY', '💡 Trúng Gợi Ý AI', `Chúc mừng bạn đã trúng +${prize.val} Lượt Gợi Ý AI từ Vòng Quay May Mắn!`);
+          }
           prizeMsg = `💡 Chúc mừng bạn đã trúng +${prize.val} Lượt Gợi Ý AI!`;
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         } else if (prize.type === 'SKIPS') {
           setUserSkips(getUserSkips() + prize.val);
-          addLedgerEntry('LUCKY_WHEEL', 0, `🎁 Trúng +${prize.val} Lượt Bỏ Qua từ Vòng Quay May Mắn`);
+          if (typeof addNotification === 'function') {
+            addNotification('STUDY', '⏭️ Trúng Lượt Bỏ Qua', `Chúc mừng bạn đã trúng +${prize.val} Lượt Bỏ Qua từ Vòng Quay May Mắn!`);
+          }
           prizeMsg = `⏭️ Chúc mừng bạn đã trúng +${prize.val} Lượt Bỏ Qua!`;
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
@@ -13124,12 +13158,12 @@
       if (descEl) descEl.textContent = currentAdActiveSlide.desc;
       if (progressFill) progressFill.style.width = '0%';
 
-      adWatchSecondsLeft = 15;
+      adWatchSecondsLeft = 30; // 30 seconds ad watch
       isAdWatchPausedDueToTabSwitch = false;
       if (countdownEl) countdownEl.textContent = `Còn ${adWatchSecondsLeft}s`;
       if (claimBtn) {
         claimBtn.disabled = true;
-        claimBtn.textContent = '⏳ Đang xem video (15s)...';
+        claimBtn.textContent = '⏳ Đang xem video (30s)...';
         claimBtn.style.opacity = '0.5';
         claimBtn.style.cursor = 'not-allowed';
       }
@@ -13158,7 +13192,7 @@
         }
 
         adWatchSecondsLeft--;
-        const progressPct = Math.round(((15 - adWatchSecondsLeft) / 15) * 100);
+        const progressPct = Math.round(((30 - adWatchSecondsLeft) / 30) * 100);
         if (progressFill) progressFill.style.width = `${progressPct}%`;
         if (countdownEl) countdownEl.textContent = adWatchSecondsLeft > 0 ? `Còn ${adWatchSecondsLeft}s` : '✓ Hoàn tất!';
 
@@ -13181,20 +13215,29 @@
         adWatchInterval = null;
       }
       isAdWatchPausedDueToTabSwitch = false;
+      
+      // Cancel Penalty: count as spent attempt and start cooldown immediately
+      localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
+      updateAdButtonCooldownState();
+      updateShopBonusesUI();
+
       closeModal('modal-rewarded-ad');
+      showToast('⏱️ Đã hủy xem video. Thời gian chờ giãn cách 20 phút bắt đầu tính!');
     }
 
     function claimRewardedAdReward() {
       if (adWatchSecondsLeft > 0) return;
 
-      // 1. Grant +1 Lucky Spin (no 50 Xu)
+      // 1. Grant +1 Lucky Spin
       setLuckySpinsCount(getLuckySpinsCount() + 1);
 
       // 2. Set ad cooldown
       localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
 
-      // 3. Ledger entry & sync
-      addLedgerEntry('WATCH_AD', 0, '🎬 Xem video ngắn nhận +1 Lượt Quay May Mắn');
+      // 3. Notification & sync (No 0 Xu ledger entry)
+      if (typeof addNotification === 'function') {
+        addNotification('STUDY', '🎬 Thưởng Xem Video', 'Bạn đã xem xong video và nhận được +1 Lượt Quay May Mắn!');
+      }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
 
@@ -13227,6 +13270,20 @@
 
       const myCode = getUserReferralCode(currentUser);
       const codeDisplay = document.getElementById('ref-my-code-display');
+
+      // Auto-register code to global index for lookup
+      if (currentUser && currentUser.uid && firebaseConfig.databaseURL) {
+        const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+        fetch(`${firebaseConfig.databaseURL}/referrals_index/${myCode}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid: currentUser.uid,
+            displayName: currentUser.displayName || '',
+            email: currentUser.email || ''
+          })
+        }).catch(() => {});
+      }
       const linkInput = document.getElementById('ref-my-link-input');
       const badgeEarned = document.getElementById('ref-my-vip-earned-badge');
       const statFriends = document.getElementById('ref-stat-friends-count');
@@ -13356,11 +13413,14 @@
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
 
-      // 4. Record to Firebase Cloud & Grant +1 Day VIP to Referrer if RTDB is active
+      // 4. Record to Firebase Cloud & Grant +1 Day VIP to Referrer
       if (firebaseConfig.databaseURL) {
         try {
           const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
-          await fetch(`${firebaseConfig.databaseURL}/referral_claims/${rawCode}/${currentUser.uid}.json${authParam}`, {
+          const rtdbUrl = firebaseConfig.databaseURL;
+          
+          // Save claim record
+          await fetch(`${rtdbUrl}/referral_claims/${rawCode}/${currentUser.uid}.json${authParam}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -13370,6 +13430,74 @@
               newbieEmail: currentUser.email || ''
             })
           });
+
+          // Look up Referrer UID via referrals_index
+          const refLookupRes = await fetch(`${rtdbUrl}/referrals_index/${rawCode}.json${authParam}`);
+          if (refLookupRes.ok) {
+            const refOwner = await refLookupRes.json();
+            if (refOwner && refOwner.uid) {
+              const referrerUid = refOwner.uid;
+              
+              // Pull referrer current profile
+              const profRes = await fetch(`${rtdbUrl}/users/${referrerUid}/profile.json${authParam}`);
+              const refProf = (profRes.ok ? await profRes.json() : null) || {};
+              const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+              const currentExp = (refProf.vipExpiresAt && refProf.vipExpiresAt > Date.now()) ? refProf.vipExpiresAt : Date.now();
+              const newExp = currentExp + ONE_DAY_MS;
+              const newTier = (refProf.vipTier && refProf.vipTier !== 'none') ? refProf.vipTier : 'monthly';
+
+              // Grant VIP bonus to referrer on Cloud
+              await fetch(`${rtdbUrl}/users/${referrerUid}/profile.json${authParam}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  isVip: true,
+                  vipTier: newTier,
+                  vipExpiresAt: newExp,
+                  updatedAt: new Date().toISOString()
+                })
+              });
+
+              await fetch(`${rtdbUrl}/users/${referrerUid}.json${authParam}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  isVip: true,
+                  vipTier: newTier,
+                  vipExpiresAt: newExp
+                })
+              });
+
+              // Push direct notification to Referrer inbox
+              const notifId = 'notif_ref_' + Date.now();
+              const friendName = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Bạn mới');
+              await fetch(`${rtdbUrl}/users/${referrerUid}/notifications/${notifId}.json${authParam}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  id: notifId,
+                  type: 'VIP_BONUS',
+                  title: '👑 Thưởng +1 Ngày VIP Mời Bạn Bè',
+                  content: `Bạn bè ${friendName} vừa nhập mã giới thiệu của bạn! Bạn được tặng ngay +1 Ngày VIP Hoàng Gia.`,
+                  timestamp: new Date().toISOString(),
+                  read: false
+                })
+              });
+
+              // Increment referrer stats count
+              const statRes = await fetch(`${rtdbUrl}/referrals_stats/${referrerUid}/count.json${authParam}`);
+              const curCount = (statRes.ok ? await statRes.json() : 0) || 0;
+              await fetch(`${rtdbUrl}/referrals_stats/${referrerUid}.json${authParam}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  count: curCount + 1,
+                  lastFriend: friendName,
+                  updatedAt: new Date().toISOString()
+                })
+              });
+            }
+          }
         } catch (e) {
           console.warn('Cloud referral claim record warning:', e);
         }
