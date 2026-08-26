@@ -1,16 +1,54 @@
 ﻿================================================================================
-Phiên bản: v0.10.8-beta-7.3 (Build 168) - Publisher Portal Bug Reports Tab Fix
+Phiên bản: v0.10.8-beta-7.4 (Build 169) - Multi-Image Bug Reports, In-App Lightbox & Deck Author Visibility Fix
 ================================================================================
-1. [Khắc phục] Sửa lỗi Tab 4 "Báo Cáo Lỗi & Góp Ý" trong Cổng Quản Trị (Publisher Portal)
-   bị đặt nhầm vị trí khiến danh sách báo cáo hiển thị trống.
-2. [Tối ưu] Đặt đúng vị trí `pub-tab-content-bugs` vào bên trong `modal-publisher`,
-   tự động tải danh sách báo cáo sự cố & cập nhật huy hiệu số lượng lỗi ngay khi mở Cổng Quản Trị.
-3. [Triển khai] Xuất bản trực tiếp nhánh tĩnh `gh-pages` siêu nhẹ (~3.5 MB) giúp hệ thống
-   triển khai tức thì không phụ thuộc vào tình trạng quá tải của GitHub Actions.
+1. [Khắc phục] Sửa lỗi dòng tên tác giả ở bìa ngoài bộ từ vựng bị ẩn khi tắt hiển thị thời gian cập nhật.
+2. [Nâng cấp] Tên người báo cáo trong Tab Báo Cáo Lỗi có thể click xem hồ sơ (Profile Modal) và hiển thị phong cách VIP Hoàng Gia rực rỡ nếu là thành viên VIP.
+3. [Tính năng mới] Thiết kế Trình Xem Ảnh Sự Cố Riêng Biệt (In-App Lightbox Modal) thay thế việc mở tab trắng about:blank; hỗ trợ xem phóng to, chuyển ảnh mượt mà và dải thumbnail trực quan.
+4. [Mở rộng] Nâng giới hạn tải ảnh chụp màn hình khi gửi báo cáo sự cố từ 1 ảnh lên tối đa 5 ảnh (hỗ trợ chọn nhiều ảnh hoặc dán Ctrl+V liên tục).
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
+Phiên bản hiện tại : v0.10.8-beta-7.4 (Build 169)
+Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
+Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
+Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
+================================================================================
+
+I. TỔNG QUAN HỆ THỐNG
+--------------------------------------------------------------------------------
+VocaFlow là nền tảng học và ghi nhớ từ vựng Tiếng Anh thông minh chuẩn quốc tế,
+được tối ưu hóa dựa trên các nghiên cứu khoa học về đường cong quên lãng (Forgetting
+Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Repetition System - SRS).
+
+Ứng dụng hỗ trợ đa nền tảng:
+1. Web PWA Online: https://iamjulies.github.io/VocaFlow/ (Chạy mượt trên mọi thiết bị).
+2. Windows Desktop App: Gói nén Portable ZIP kèm Service Worker & Cache Offline.
+
+--------------------------------------------------------------------------------
+II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
+--------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.4 (Build 169 - MULTI-IMAGE BUG REPORTING, IN-APP LIGHTBOX & DECK AUTHOR VISIBILITY FIX):
+  - Khắc Phục Lỗi Hiển Thị Tên Tác Giả Trên Thẻ Bộ Từ Vựng (Deck Author Visibility Fix):
+    * Tách biệt cấu trúc DOM giữa dòng thời gian cập nhật (`span.deck-timestamp`) và tên tác giả (`div.deck-author-line`).
+    * Khi người dùng bật tùy chọn ẩn thời gian cập nhật (`body.hide-timestamps`), tên tác giả (kèm hiệu ứng VIP và liên kết hồ sơ) vẫn luôn được hiển thị trọn vẹn và đẹp mắt.
+  - Nâng Cấp Tương Tác Người Báo Cáo Trong Cổng Quản Trị (Interactive VIP Reporter Badges):
+    * Tên người báo cáo sự cố được tích hợp liên kết mở Modal Hồ Sơ Học Viên (`openPublicProfileModal`).
+    * Tự động áp dụng hiệu ứng vương miện và dải màu phát sáng VIP Hoàng Gia (`vip-glowing-name` + `👑 VIP`) cho tài khoản VIP.
+  - Ra Mắt Trình Xem Ảnh Sự Cố Độc Lập Trong Ứng Dụng (In-App Lightbox Screenshot Viewer):
+    * Bổ sung modal lightbox `modal-bug-screenshot-viewer` chuyên nghiệp, hiển thị ảnh sắc nét trên nền tối mờ (Backdrop Blur).
+    * Hỗ trợ điều hướng chuyển ảnh bằng mũi tên `‹` / `›`, bàn phím `Left` / `Right` / `Esc`, và dải thumbnail trực quan.
+  - Mở Rộng Hỗ Trợ Đính Kèm Tối Đa 5 Ảnh Chụp Màn Hình (Up to 5 Screenshots):
+    * Cho phép người dùng tải lên hoặc dán (`Ctrl + V`) tối đa 5 ảnh chụp màn hình chi tiết khi báo lỗi.
+    * Hiển thị lưới thumbnail thu nhỏ kèm nút xóa từng ảnh `✕` linh hoạt trước khi gửi lên Cloud.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-7.4_Windows_Portable.zip`.
+
+• 👑 v0.10.8-beta-7.3 (Build 168 - PUBLISHER PORTAL BUG REPORTS TAB FIX & GH-PAGES DEDICATED DEPLOY):
+  - Sửa lỗi vị trí hiển thị Tab 4 "Báo Cáo Lỗi & Góp Ý" trong Publisher Portal, kết nối tức thì danh sách sự cố từ Cloud.
+  - Tách nhánh tĩnh `gh-pages` siêu nhẹ giúp ứng dụng triển khai ngay tức thì.
+
 Phiên bản hiện tại : v0.10.8-beta-7.2 (Build 167)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
