@@ -152,6 +152,86 @@
       animation: avatarVipRingGlow 3s ease-in-out infinite !important;
     }
 
+    /* Segmented Pill Switcher for VIP Plans (v0.10.8-beta-4.2) */
+    .vip-plan-segmented-bar {
+      display: flex;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 14px;
+      gap: 6px;
+      position: relative;
+      user-select: none;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .vip-plan-segment-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      background: transparent;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .vip-plan-segment-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .vip-plan-segment-btn.active.tab-monthly {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(251, 191, 36, 0.15));
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+    }
+
+    .vip-plan-segment-btn.active.tab-yearly {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(236, 72, 153, 0.25));
+      color: #ffd700;
+      border-color: #f59e0b;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+    }
+
+    .vip-plan-segment-btn.active.tab-lifetime {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(236, 72, 153, 0.25));
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.35);
+    }
+
+    @media (max-width: 767px) {
+      .vip-cards-container .vip-plan-card {
+        display: none !important;
+      }
+      .vip-cards-container .vip-plan-card.active-tab-card {
+        display: flex !important;
+        animation: vipCardFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+
+    @keyframes vipCardFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -1992,7 +2072,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4.1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4.2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4419,11 +4499,24 @@
           <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">Đang Hoạt Động</span>
         </div>
 
-        <!-- 3 Pricing Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
+        <!-- Segmented Tab Switcher for Plans (v0.10.8-beta-4.2) -->
+        <div class="vip-plan-segmented-bar" id="vip-plan-tabs-bar">
+          <button type="button" class="vip-plan-segment-btn tab-monthly" id="vip-tab-btn-monthly" onclick="switchVipPlanTab('monthly')">
+            <span>🥉</span> <span>THÁNG</span>
+          </button>
+          <button type="button" class="vip-plan-segment-btn tab-yearly active" id="vip-tab-btn-yearly" onclick="switchVipPlanTab('yearly')">
+            <span>🔥</span> <span>NĂM</span> <span class="badge" style="font-size: 9.5px; padding: 1px 5px; background: rgba(245, 158, 11, 0.3); color: #ffd700; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 800;">-36%</span>
+          </button>
+          <button type="button" class="vip-plan-segment-btn tab-lifetime" id="vip-tab-btn-lifetime" onclick="switchVipPlanTab('lifetime')">
+            <span>👑</span> <span>TRỌN ĐỜI</span>
+          </button>
+        </div>
+
+        <!-- 3 Pricing Cards Grid Container -->
+        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
           
           <!-- GÓI 1 THÁNG -->
-          <div id="vip-card-monthly" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-monthly" class="vip-plan-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
@@ -4448,7 +4541,7 @@
           </div>
 
           <!-- GÓI 1 NĂM (POPULAR) -->
-          <div id="vip-card-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+          <div id="vip-card-yearly" class="vip-plan-card active-tab-card" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
             <div id="vip-ribbon-yearly" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
               🔥 TIẾT KIỆM 36% • PHỔ BIẾN
             </div>
@@ -4477,7 +4570,7 @@
           </div>
 
           <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
-          <div id="vip-card-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-lifetime" class="vip-plan-card" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div id="vip-ribbon-lifetime" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
               👑 ĐẲNG CẤP HOÀNG GIA
             </div>
@@ -5016,7 +5109,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4.1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4.2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -23291,6 +23384,29 @@ Quy tắc phản hồi quan trọng:
   // VIP PRICING & UPGRADE MODAL LOGIC (v0.10.8-beta-3.1 HIERARCHY ENGINE)
   // =========================================================================
   let currentSelectedVipPlan = { tier: 'yearly', name: 'VIP 1 Năm', priceStr: '299.000đ', amount: 299000 };
+  let currentActiveVipTab = 'yearly';
+
+  function switchVipPlanTab(tier) {
+    currentActiveVipTab = tier;
+    
+    // Update tab buttons
+    const btnMonthly = document.getElementById('vip-tab-btn-monthly');
+    const btnYearly = document.getElementById('vip-tab-btn-yearly');
+    const btnLifetime = document.getElementById('vip-tab-btn-lifetime');
+
+    if (btnMonthly) btnMonthly.classList.toggle('active', tier === 'monthly');
+    if (btnYearly) btnYearly.classList.toggle('active', tier === 'yearly');
+    if (btnLifetime) btnLifetime.classList.toggle('active', tier === 'lifetime');
+
+    // Update active-tab-card class on cards (for mobile display)
+    const cardMonthly = document.getElementById('vip-card-monthly');
+    const cardYearly = document.getElementById('vip-card-yearly');
+    const cardLifetime = document.getElementById('vip-card-lifetime');
+
+    if (cardMonthly) cardMonthly.classList.toggle('active-tab-card', tier === 'monthly');
+    if (cardYearly) cardYearly.classList.toggle('active-tab-card', tier === 'yearly');
+    if (cardLifetime) cardLifetime.classList.toggle('active-tab-card', tier === 'lifetime');
+  }
 
   function openVipPricingModal() {
     const modal = document.getElementById('modal-vip-pricing');
@@ -23376,6 +23492,20 @@ Quy tắc phản hồi quan trọng:
       if (cardLifetime) { cardLifetime.style.opacity = '1'; cardLifetime.style.filter = 'none'; cardLifetime.style.border = '1.5px solid rgba(168, 85, 247, 0.6)'; }
       if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Sở Hữu Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
     }
+
+    if (isVip) {
+      if (currentTier === 'yearly') {
+        switchVipPlanTab('lifetime');
+      } else if (currentTier === 'monthly') {
+        switchVipPlanTab('yearly');
+      } else if (currentTier === 'lifetime') {
+        switchVipPlanTab('lifetime');
+      } else {
+        switchVipPlanTab('yearly');
+      }
+    } else {
+      switchVipPlanTab('yearly');
+    }
   }
 
   function getCleanTransferSyntax(tier) {
@@ -23396,6 +23526,7 @@ Quy tắc phản hồi quan trọng:
   }
 
   function selectVipPlan(tier, name, priceStr, amount) {
+    switchVipPlanTab(tier);
     const syntax = getCleanTransferSyntax(tier);
     currentSelectedVipPlan = { tier, name, priceStr, amount, syntax };
 
