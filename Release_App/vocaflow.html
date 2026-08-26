@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.6</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.7</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -2264,8 +2264,9 @@
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
         💼 <span>Studio & Ví</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="position: relative; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
         🏪 <span id="header-points-display">0đ</span>
+        <span id="header-ad-ready-dot" style="display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: 2px solid var(--surface, #1e293b); border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: white; box-shadow: 0 0 8px #38bdf8; animation: pulse-ad 1.5s infinite; cursor: pointer;" title="🎬 Có video nhận +1 Lượt Quay!">🎬</span>
       </button>
 
       <!-- Desktop Action Buttons (Hidden on mobile) -->
@@ -5696,7 +5697,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.6</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6435,16 +6436,26 @@
       return 0;
     }
 
-    // 4. Hàm tính điểm tổng kết phiên học balance_v2 (v0.10.6c)
+    // 4. Hàm tính điểm tổng kết phiên học balance_v2 & balance_vip (v0.10.8-beta-6.7)
     function calculateSessionFinalPoints(basePoints, doneCount, totalCount, isCompleted = false) {
       const total = totalCount || 1;
       const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
 
-      const completionMult = isCompleted ? 1.0 : getIncompleteSessionMultiplier(done, total);
-      // Hệ số độ dài tính theo số từ đã học thực tế (done), tạo động lực học càng nhiều càng nhân cao
-      const deckLengthMult = getSessionDeckSizeMultiplier(done);
+      let completionMult = isCompleted ? 1.0 : getIncompleteSessionMultiplier(done, total);
+      let deckLengthMult = getSessionDeckSizeMultiplier(done);
+      let milestoneBonus = (basePoints > 0) ? getSessionMilestoneBonus(done) : 0;
+
+      // balance_vip (v0.10.8-beta-6.7): +0.1 vào mỗi hệ số thưởng & giảm nhẹ phạt cho VIP
+      const isVip = isUserVip();
+      if (isVip) {
+        completionMult = Math.round((completionMult + 0.1) * 1000) / 1000;
+        deckLengthMult = Math.round((deckLengthMult + 0.1) * 1000) / 1000;
+        if (milestoneBonus > 0) {
+          milestoneBonus = Math.round(milestoneBonus * 1.1);
+        }
+      }
+
       const combinedMult = Math.round((completionMult * deckLengthMult) * 1000) / 1000;
-      const milestoneBonus = (basePoints > 0) ? getSessionMilestoneBonus(done) : 0;
 
       let finalPts = 0;
       if (basePoints > 0) {
@@ -6460,6 +6471,10 @@
           // Đã nỗ lực làm nhiều từ (> 5 từ) mà âm điểm: Phạt đúng điểm âm thực tế
           finalPts = basePoints;
         }
+        // VIP Penalty Softening: Giảm 10% mức phạt cho tài khoản VIP
+        if (isVip) {
+          finalPts = Math.round(finalPts * 0.9);
+        }
       }
 
       return {
@@ -6468,6 +6483,7 @@
         deckLengthMult,
         combinedMult,
         milestoneBonus,
+        isVipBonus: isVip,
         done,
         total
       };
@@ -7191,7 +7207,8 @@
       }, 60);
     }
 
-        function buySkipsPackage(skipCount, costPoints) {
+        function buySkipsPackage(skipCount, basePoints) {
+      const costPoints = applyStoreDiscountToPrice(basePoints);
       if (!currentUser || !currentUser.email) {
         alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
         closeModal('modal-shop');
@@ -7215,7 +7232,8 @@
       }
     }
 
-    function buyHintsPackage(hintCount, costPoints) {
+    function buyHintsPackage(hintCount, basePoints) {
+      const costPoints = applyStoreDiscountToPrice(basePoints);
       if (!currentUser || !currentUser.email) {
         alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
         closeModal('modal-shop');
@@ -12761,6 +12779,30 @@
     function updateShopBonusesUI() {
       const isVip = isUserVip();
       const spins = getLuckySpinsCount();
+      const discount = getStoreActiveDiscount();
+
+      // Event Discount Banner in VocaShop
+      const existingSaleBanner = document.getElementById('shop-sale-event-banner');
+      if (discount.isDiscountActive) {
+        if (!existingSaleBanner) {
+          const shopModal = document.querySelector('#modal-shop .modal');
+          if (shopModal) {
+            const bannerDiv = document.createElement('div');
+            bannerDiv.id = 'shop-sale-event-banner';
+            bannerDiv.style.cssText = 'background: linear-gradient(135deg, #ef4444, #f59e0b); color: white; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(239,68,68,0.4); animation: pulse-ad 2s infinite;';
+            bannerDiv.innerHTML = `<span>${discount.bannerText}</span>`;
+            const titleEl = shopModal.querySelector('.modal-title');
+            if (titleEl && titleEl.nextSibling) {
+              shopModal.insertBefore(bannerDiv, titleEl.nextSibling);
+            }
+          }
+        } else {
+          existingSaleBanner.style.display = 'block';
+          existingSaleBanner.innerHTML = `<span>${discount.bannerText}</span>`;
+        }
+      } else if (existingSaleBanner) {
+        existingSaleBanner.style.display = 'none';
+      }
 
       // 1. Update Lucky Wheel banner in VocaShop
       const wheelTitle = document.getElementById('shop-wheel-title');
@@ -12833,7 +12875,10 @@
       const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
       const elapsed = Date.now() - lastWatch;
 
+      const headerAdDot = document.getElementById('header-ad-ready-dot');
+
       if (elapsed < AD_COOLDOWN_MS) {
+        if (headerAdDot) headerAdDot.style.display = 'none';
         const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
         const m = Math.floor(remainingSec / 60);
         const s = remainingSec % 60;
@@ -12860,6 +12905,7 @@
           wheelBtn.style.cursor = 'not-allowed';
         }
       } else {
+        if (headerAdDot) headerAdDot.style.display = 'flex';
         if (btn) {
           btn.textContent = '🎬 Xem Ngay';
           btn.disabled = false;
@@ -13011,12 +13057,64 @@
     }
 
     // =========================================================================
+    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.8-beta-6.7)
+    // =========================================================================
+    function getStoreActiveDiscount() {
+      const now = new Date();
+      const d = now.getDate();
+      const m = now.getMonth() + 1;
+
+      // 1. Creator Birthday: 10/08 -> EXACTLY 25% OFF
+      if (d === 10 && m === 8) {
+        return {
+          isDiscountActive: true,
+          discountPct: 25,
+          discountRate: 0.25,
+          eventName: '🎂 SIÊU SALE SINH NHẬT CREATOR (10/08)',
+          badgeText: '🎂 SALE SINH NHẬT -25%',
+          bannerText: '🎂 Chúc mừng Sinh Nhật Creator (10/08)! Siêu ưu đãi GIẢM NGAY 25% TOÀN BỘ CỬA HÀNG!'
+        };
+      }
+
+      // 2. Double Days: 1/1, 2/2, 3/3, 4/4, 5/5, 6/6, 7/7, 8/8, 9/9, 10/10, 11/11, 12/12
+      if (d === m) {
+        const seedPct = 15 + ((d * 7 + m * 13) % 11); // 15..25%
+        return {
+          isDiscountActive: true,
+          discountPct: seedPct,
+          discountRate: seedPct / 100,
+          eventName: `🔥 SIÊU SALE NGÀY ĐÔI ${d}/${m}`,
+          badgeText: `🔥 SALE NGÀY ĐÔI -${seedPct}%`,
+          bannerText: `🔥 Sự kiện Siêu Sale Ngày Đôi ${d}/${m}! Giảm giá ${seedPct}% toàn bộ Cửa Hàng VocaShop!`
+        };
+      }
+
+      return {
+        isDiscountActive: false,
+        discountPct: 0,
+        discountRate: 0,
+        eventName: '',
+        badgeText: '',
+        bannerText: ''
+      };
+    }
+
+    function applyStoreDiscountToPrice(originalPrice) {
+      const discount = getStoreActiveDiscount();
+      if (!discount.isDiscountActive) return originalPrice;
+      const discounted = Math.round(originalPrice * (1 - discount.discountRate));
+      return Math.max(1, discounted);
+    }
+
+    // =========================================================================
     // REAL-MONEY SPIN PURCHASE PAYMENT ENGINE (v0.10.8-beta-5.2)
     // =========================================================================
     let currentSpinPurchasePack = { code: 'SPIN15', name: '15 Lượt Quay May Mắn', amount: 25000, spins: 15 };
 
     function openSpinPurchasePaymentModal(code, name, amount, spins) {
-      currentSpinPurchasePack = { code, name, amount, spins };
+      const discount = getStoreActiveDiscount();
+      const finalAmount = applyStoreDiscountToPrice(amount);
+      currentSpinPurchasePack = { code, name, amount: finalAmount, spins };
 
       const nameEl = document.getElementById('spin-pay-pack-name');
       const amountEl = document.getElementById('spin-pay-amount-text');
@@ -25069,8 +25167,11 @@ Quy tắc phản hồi quan trọng:
 
   function selectVipPlan(tier, name, priceStr, amount) {
     switchVipPlanTab(tier);
+    const discount = getStoreActiveDiscount();
+    const finalAmount = applyStoreDiscountToPrice(amount);
+    const finalPriceStr = discount.isDiscountActive ? `${finalAmount.toLocaleString('vi-VN')}đ (-${discount.discountPct}%)` : priceStr;
     const syntax = getCleanTransferSyntax(tier);
-    currentSelectedVipPlan = { tier, name, priceStr, amount, syntax };
+    currentSelectedVipPlan = { tier, name, priceStr: finalPriceStr, amount: finalAmount, syntax };
 
     const box = document.getElementById('vip-payment-info-box');
     const planNameEl = document.getElementById('vip-selected-plan-name');

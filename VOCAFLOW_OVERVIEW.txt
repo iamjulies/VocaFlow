@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-6.6 (Build 163)
+Phiên bản hiện tại : v0.10.8-beta-6.7 (Build 164)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,18 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-6.7 (Build 164 - BALANCE_VIP, AD-READY BADGE & EVENT DISCOUNT ENGINE):
+  - Triển Khai Hệ Thống Cân Bằng Điểm Đặc Quyền VIP (balance_vip Engine):
+    * Tăng thêm +0.1 vào tất cả hệ số thưởng (Completion Mult & Deck Length Mult) và +10% điểm mốc cho tài khoản VIP.
+    * Giảm 10% mức trừ điểm khi thoát ngang hoặc gặp lỗi phạt (VIP Penalty Softening).
+  - Tích Hợp Huy Hiệu Video Sẵn Sàng (Rewarded Ad Ready Dot Indicator):
+    * Bổ sung icon `🎬` phát sáng nhấp nháy tại góc trên bên phải nút Ví / Cửa Hàng ở thanh điều hướng khi video quảng cáo đã sẵn sàng để xem nhận +1 Lượt Quay (tự động ẩn khi đang trong thời gian chờ giãn cách).
+  - Ra Mắt Động Cơ Siêu Sale & Giảm Giá Sự Kiện (Event Discount Engine):
+    * Giảm 25% ĐẶC BIỆT vào ngày Sinh Nhật Creator (10/08).
+    * Giảm từ 15% - 25% vào các Ngày Đôi Siêu Sale (1/1, 2/2, ..., 12/12).
+    * Tự động áp dụng giảm giá trên toàn bộ mặt hàng: Mua Lượt Quay May Mắn (VietQR), Đổi Gợi Ý AI (Xu), Đổi Lượt Bỏ Qua (Xu) và Nâng Cấp Gói VIP (VietQR) kèm banner sự kiện rực rỡ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-6.7_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-6.6 (Build 163 - DUAL VIP REFERRAL REWARDS & GOD MODE SPINS):
   - Cơ Chế Cộng Dồn +2 Lượt Quay VIP Mỗi Ngày (Cumulative VIP Daily Spins):
     * Tài khoản thường không nhận lượt quay cố định hàng ngày. Tài khoản VIP nhận cộng dồn +2 Lượt Quay mỗi ngày (tích lũy không giới hạn).
