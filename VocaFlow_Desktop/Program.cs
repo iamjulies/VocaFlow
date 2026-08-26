@@ -22,7 +22,7 @@ namespace VocaFlow
 
         public MainForm()
         {
-            Text = "VocaFlow - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
+            Text = "VocaFlow v0.10.8-beta-7.8 - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
             Width = 1100;
             Height = 760;
             StartPosition = FormStartPosition.CenterScreen;
@@ -70,6 +70,15 @@ namespace VocaFlow
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
+
+                // Sync title with web page title
+                _webView.CoreWebView2.DocumentTitleChanged += (s, e) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(_webView.CoreWebView2.DocumentTitle))
+                    {
+                        this.Text = _webView.CoreWebView2.DocumentTitle;
+                    }
+                };
 
                 // Path to local vocaflow.html
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;

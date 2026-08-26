@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.7 (Build 172) - Pristine UTF-8 Encoding & Comprehensive Font Fix
+Phiên bản: v0.10.8-beta-7.8 (Build 173) - Cloud Connectivity Fallback & Native EXE Auto-Rebuild
 ================================================================================
-1. [Khắc phục] Quét và sửa lỗi toàn diện 100% lỗi phông chữ / encoding mojibake trên toàn bộ ứng dụng (Báo cáo lỗi, Xử lý báo cáo, Thông báo hệ thống, Hộp thư quà tặng).
-2. [Tối ưu] Đảm bảo cấu trúc UTF-8 thuần khiết không còn bất kỳ ký tự rác hay hiển thị sai dấu Tiếng Việt.
-3. [Dọn dẹp] Tạm thời gỡ bỏ các thành tựu huy hiệu để chuẩn bị kiến trúc chuyên biệt cho v0.10.8-beta-8.
+1. [Khắc phục] Sửa lỗi kết nối Cloud khi tải danh sách báo cáo lỗi: Tự động làm mới Firebase ID Token và fallback truy xuất trực tiếp để luôn tải danh sách sự cố mượt mà.
+2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe với mốc thời gian phát hành thời gian thực.
+3. [Tối ưu] Đồng bộ tiêu đề cửa sổ Desktop App với web page title và đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.7 (Build 172)
+Phiên bản hiện tại : v0.10.8-beta-7.8 (Build 173)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.8 (Build 173 - CLOUD CONNECTIVITY FALLBACK & NATIVE EXE AUTO-REBUILD):
+  - Khắc Phục Triệt Để Lỗi Kết Nối Cloud Khi Tải Báo Cáo Lỗi (Publisher Portal Tab 4):
+    * Tích hợp cơ chế tự động làm mới Auth Token (getFreshCloudAuthToken) chống hết hạn phiên đăng nhập.
+    * Bổ sung cơ chế Fallback truy vấn trực tiếp RTDB giúp giao diện luôn tải dữ liệu ngay cả khi token auth hết hạn.
+    * Thêm nút bấm trực quan '🔄 Thử lại ngay' trong thẻ thông báo lỗi nếu có sự cố đường truyền mạng.
+  - Tự Động Đóng Tiến Trình & Biên Dịch Lại EXE Native Desktop Mới 100%:
+    * Đóng an toàn các tiến trình VocaFlow.exe đang chạy ngầm trước khi build.
+    * Biên dịch mới toàn bộ nhị phân Windows VocaFlow.exe qua dotnet publish (.NET 8.0 + WebView2) với mốc thời gian cập nhật mới nhất.
+    * Đóng gói VocaFlow_v0.10.8-beta-7.8_Windows_Portable.zip và đẩy code lên toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.7 (Build 172 - PRISTINE UTF-8 ENCODING & COMPREHENSIVE FONT FIX):
   - Khắc Phục Triệt Để 100% Lỗi Phông Chữ & Encoding Mojibake Toàn Ứng Dụng:
     * Quét sạch toàn bộ mã nguồn, đưa độ chính xác ký tự UTF-8 về mức 100% không tì vết (0 lỗi mojibake).
@@ -83,6 +92,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.8 (Build 173 - CLOUD CONNECTIVITY FALLBACK & NATIVE EXE AUTO-REBUILD):
+  - Khắc Phục Triệt Để Lỗi Kết Nối Cloud Khi Tải Báo Cáo Lỗi (Publisher Portal Tab 4):
+    * Tích hợp cơ chế tự động làm mới Auth Token (getFreshCloudAuthToken) chống hết hạn phiên đăng nhập.
+    * Bổ sung cơ chế Fallback truy vấn trực tiếp RTDB giúp giao diện luôn tải dữ liệu ngay cả khi token auth hết hạn.
+    * Thêm nút bấm trực quan '🔄 Thử lại ngay' trong thẻ thông báo lỗi nếu có sự cố đường truyền mạng.
+  - Tự Động Đóng Tiến Trình & Biên Dịch Lại EXE Native Desktop Mới 100%:
+    * Đóng an toàn các tiến trình VocaFlow.exe đang chạy ngầm trước khi build.
+    * Biên dịch mới toàn bộ nhị phân Windows VocaFlow.exe qua dotnet publish (.NET 8.0 + WebView2) với mốc thời gian cập nhật mới nhất.
+    * Đóng gói VocaFlow_v0.10.8-beta-7.8_Windows_Portable.zip và đẩy code lên toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.7 (Build 172 - PRISTINE UTF-8 ENCODING & COMPREHENSIVE FONT FIX):
   - Khắc Phục Triệt Để 100% Lỗi Phông Chữ & Encoding Mojibake Toàn Ứng Dụng:
     * Quét sạch toàn bộ mã nguồn, đưa độ chính xác ký tự UTF-8 về mức 100% không tì vết (0 lỗi mojibake).
