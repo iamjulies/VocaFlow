@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.1 (Build 166)
+Phiên bản hiện tại : v0.10.8-beta-7.2 (Build 167)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.2 (Build 167 - UNIVERSAL GUEST LOCK SCREEN & MEMBER PRIVILEGES SHIELD):
+  - Chuẩn Hóa Màn Hình Khóa Tính Năng Độc Quyền Cho Thành Viên (Member Exclusive Lock Screen):
+    * Đồng bộ hóa giao diện khóa tính năng (biểu tượng lớn, tiêu đề sang trọng, mô tả chi tiết quyền lợi và nút Đăng Nhập/Đăng Ký Ngay) chuẩn theo thiết kế Trung Tâm Studio & Ví Xu.
+    * Áp dụng bảo vệ chặn truy cập khách (Guest) trên toàn bộ 8 hệ thống trọng điểm:
+      1. Nâng Cấp VIP Hoàng Gia (`modal-vip-pricing`)
+      2. Mua Lượt Quay May Mắn (`modal-spin-purchase-payment`)
+      3. AI Deck Generator Studio (`modal-ai-deck-studio`)
+      4. Trợ Lý Học Thuật AI English Mentor (`modal-ai-mentor`)
+      5. Trung Tâm Thông Báo & Tương Tác (`modal-notifications`)
+      6. Báo Cáo Sự Cố & Bug Bounty (`modal-bug-report`)
+      7. Đồng Bộ Dữ Liệu Cloud 2 Chiều (`handleManualSync`)
+      8. Nhập Mã Quà Tặng Đổi Thưởng (`redeemShopGiftCode`)
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-7.2_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-7.1 (Build 166 - GOOGLE ADSENSE IN-FEED & MULTIPLEX RECOMMENDATIONS):
   - Tích Hợp Đơn Vị Quảng Cáo Trong Nguồn Cấp Dữ Liệu (In-Feed Native Ads - Slot 8893043969):
     * Triển khai quảng cáo dạng In-feed Native xen kẽ hài hòa bên trong danh sách bộ từ vựng (`screen-decks`), tối ưu trải nghiệm đọc liền mạch trên cả Desktop và Mobile.

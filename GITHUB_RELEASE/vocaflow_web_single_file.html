@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -3899,6 +3899,26 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-deck-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-7.2) -->
+      <div id="aideck-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🤖🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Tạo Bộ Từ Bằng AI Gemini, Tự Động Phân Tích CEFR & Lưu Trữ Cloud</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-deck-studio'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-deck-studio');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="aideck-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
       <!-- WALLET & PRICING STRIP -->
       <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(99, 102, 241, 0.1)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
         <div style="font-size: 12px; color: var(--text); display: flex; align-items: center; gap: 6px;">
@@ -4104,7 +4124,8 @@
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" class="btn btn-outline" onclick="closeModal('modal-import')">Đóng</button>
         <button type="button" class="btn btn-primary" onclick="processTextImport()">Nhập từ vựng</button>
-      </div>
+        </div>
+      </div> <!-- end aideck-main-authenticated-view -->
     </div>
   </div>
 
@@ -4734,6 +4755,7 @@
           <span id="ai-chat-char-counter">0/300</span>
         </div>
       </div>
+      </div> <!-- end aimentor-main-authenticated-view -->
     </div>
   </div>
 
@@ -4750,6 +4772,26 @@
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
+
+      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-7.2) -->
+      <div id="notif-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🔔🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để nhận <strong>Thông Báo Thưởng Xu, Quà Tặng VIP, Cập Nhật Bộ Từ Mới & Tương Tác Cộng Đồng</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-notifications'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-notifications');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="notif-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
 
       <!-- FILTER TABS & BULK ACTIONS -->
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
@@ -4778,6 +4820,7 @@
       <div style="display: flex; justify-content: flex-end; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px;">
         <button class="btn btn-outline" onclick="closeModal('modal-notifications')">Đóng</button>
       </div>
+      </div> <!-- end notif-main-authenticated-view -->
     </div>
   </div>
 
@@ -4863,6 +4906,26 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spin-purchase-payment')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-7.2) -->
+      <div id="spin-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🎡🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Mua Lượt Quay May Mắn, Lưu Trữ Vào Ví & Nhận Thưởng Đồng Bộ Cloud</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-spin-purchase-payment'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-spin-purchase-payment');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="spin-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
       <div style="overflow-y: auto; overflow-x: hidden; flex: 1; scrollbar-width: thin;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: center; margin-bottom: 14px;">
           <!-- QR Image Container -->
@@ -4916,6 +4979,7 @@
           </button>
         </div>
       </div>
+      </div> <!-- end spin-main-authenticated-view -->
     </div>
   </div>
 
@@ -4990,6 +5054,26 @@
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
+
+      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-7.2) -->
+      <div id="vip-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">👑🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Nâng Cấp Gói VIP Hoàng Gia, Sở Hữu Vương Miện Lấp Lánh & Phân Phối Đặc Quyền Chính Xác Đến Tài Khoản</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-vip-pricing'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-vip-pricing');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="vip-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
 
       <div style="overflow-y: auto; overflow-x: hidden; padding: 8px 2px; flex: 1; width: 100%; box-sizing: border-box;">
         <!-- Current VIP Status Banner if Active -->
@@ -5205,6 +5289,7 @@
       <div style="display: flex; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
         <button class="btn btn-primary" onclick="closeModal('modal-vip-pricing')">Đóng</button>
       </div>
+      </div> <!-- end vip-main-authenticated-view -->
     </div>
   </div>
 
@@ -5579,6 +5664,26 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
+      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-7.2) -->
+      <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Gửi Báo Cáo Sự Cố, Đóng Góp Ý Kiến & Nhận Thưởng Bắt Lỗi (+50 Xu / +1 Ngày VIP)</strong> từ Admin!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-bug-report'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-bug-report');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="bug-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
       <div style="flex: 1; overflow-y: auto; padding-right: 4px;">
         <!-- CATEGORY SELECTOR -->
         <div class="form-group" style="margin-bottom: 12px;">
@@ -5655,6 +5760,7 @@
           🚀 Gửi Báo Cáo Ngay
         </button>
       </div>
+      </div> <!-- end bug-main-authenticated-view -->
     </div>
   </div>
 
@@ -5841,7 +5947,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8786,6 +8892,17 @@
     }
 
     function openNotificationsModal() {
+      const isGuest = !currentUser || !currentUser.email;
+      const gView = document.getElementById('notif-guest-lock-view');
+      const aView = document.getElementById('notif-main-authenticated-view');
+      if (isGuest) {
+        if (gView) gView.style.display = 'block';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-notifications');
+        return;
+      }
+      if (gView) gView.style.display = 'none';
+      if (aView) aView.style.display = 'flex';
       updateNotificationsUI();
       renderNotificationsList();
       openModal('modal-notifications');
@@ -11349,6 +11466,11 @@
 
     // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
     async function handleManualSync() {
+      if (!currentUser || !currentUser.email) {
+        showToast('🔒 Bạn cần đăng nhập tài khoản để đồng bộ dữ liệu lên Firebase Cloud!');
+        openAuthModal('login');
+        return;
+      }
       if (isSyncing) return;
       isSyncing = true;
 
@@ -13297,6 +13419,18 @@
     }
 
     function openBugReportModal(prefilledCategory = 'other', prefilledDesc = '') {
+      const isGuest = !currentUser || !currentUser.email;
+      const gView = document.getElementById('bug-guest-lock-view');
+      const aView = document.getElementById('bug-main-authenticated-view');
+      if (isGuest) {
+        if (gView) gView.style.display = 'block';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-bug-report');
+        return;
+      }
+      if (gView) gView.style.display = 'none';
+      if (aView) aView.style.display = 'flex';
+
       currentBugScreenshotBase64 = null;
       const catSelect = document.getElementById('bug-report-category');
       const titleInput = document.getElementById('bug-report-title');
@@ -13767,6 +13901,18 @@
     let currentSpinPurchasePack = { code: 'SPIN15', name: '15 Lượt Quay May Mắn', amount: 25000, spins: 15 };
 
     function openSpinPurchasePaymentModal(code, name, amount, spins) {
+      const isGuest = !currentUser || !currentUser.email;
+      const gView = document.getElementById('spin-guest-lock-view');
+      const aView = document.getElementById('spin-main-authenticated-view');
+      if (isGuest) {
+        if (gView) gView.style.display = 'block';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-spin-purchase-payment');
+        return;
+      }
+      if (gView) gView.style.display = 'none';
+      if (aView) aView.style.display = 'flex';
+
       const discount = getStoreActiveDiscount();
       const finalAmount = applyStoreDiscountToPrice(amount);
       currentSpinPurchasePack = { code, name, amount: finalAmount, spins };
@@ -23999,6 +24145,18 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function openAiDeckStudioModal(optionalDeckId = null) {
+      const isGuest = !currentUser || !currentUser.email;
+      const gView = document.getElementById('aideck-guest-lock-view');
+      const aView = document.getElementById('aideck-main-authenticated-view');
+      if (isGuest) {
+        if (gView) gView.style.display = 'block';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-ai-deck-studio');
+        return;
+      }
+      if (gView) gView.style.display = 'none';
+      if (aView) aView.style.display = 'flex';
+
       aiStudioTargetDeckId = optionalDeckId;
       
       const pts = getUserPoints();
@@ -24965,6 +25123,18 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
     function openAiMentorModal() {
       try {
+        const isGuest = !currentUser || !currentUser.email;
+        const gView = document.getElementById('aimentor-guest-lock-view');
+        const aView = document.getElementById('aimentor-main-authenticated-view');
+        if (isGuest) {
+          if (gView) gView.style.display = 'flex';
+          if (aView) aView.style.display = 'none';
+          openModal('modal-ai-mentor');
+          return;
+        }
+        if (gView) gView.style.display = 'none';
+        if (aView) aView.style.display = 'flex';
+
         // Anti-Cheat: If on exam screen, prevent opening
         const activeExam = document.querySelector('.screen.active');
         if (activeExam && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeExam.id)) {
@@ -25706,6 +25876,19 @@ Quy tắc phản hồi quan trọng:
   function openVipPricingModal() {
     const modal = document.getElementById('modal-vip-pricing');
     if (!modal) return;
+
+    const isGuest = !currentUser || !currentUser.email;
+    const gView = document.getElementById('vip-guest-lock-view');
+    const aView = document.getElementById('vip-main-authenticated-view');
+    if (isGuest) {
+      if (gView) gView.style.display = 'block';
+      if (aView) aView.style.display = 'none';
+      modal.classList.add('active');
+      return;
+    }
+    if (gView) gView.style.display = 'none';
+    if (aView) aView.style.display = 'flex';
+
     modal.classList.add('active');
 
     const box = document.getElementById('vip-payment-info-box');
