@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.10 (Build 175) - Fix JS Runtime Parsing & Complete Initialization
+Phiên bản: v0.10.8-beta-7.11 (Build 176) - Declare Bug Filter State & Global Diagnostics
 ================================================================================
-1. [Khắc phục] Sửa lỗi khởi động không bấm được gì / trắng màn hình: Xóa bỏ khối mã trùng lặp gây thiếu ngoặc nhọn ở module báo cáo lỗi, khôi phục toàn vẹn 100% cú pháp JavaScript để ứng dụng khởi động tức thì.
-2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe v0.10.8-beta-7.10.
+1. [Khắc phục] Sửa lỗi 'currentAdminBugFilter is not defined': Bổ sung đầy đủ các biến trạng thái lọc và chẩn đoán hệ thống cho Cổng Quản Trị Tab 4.
+2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe v0.10.8-beta-7.11.
 3. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.10 (Build 175)
+Phiên bản hiện tại : v0.10.8-beta-7.11 (Build 176)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.11 (Build 176 - DECLARE BUG FILTER STATE & DIAGNOSTICS):
+  - Khắc Phục Triệt Để Lỗi 'currentAdminBugFilter is not defined':
+    * Khai báo đầy đủ các biến quản lý trạng thái (`currentAdminBugFilter`, `adminBugReportsData`, `recentJsErrorsList`, `currentBugScreenshotBase64`).
+    * Bổ sung hàm chẩn đoán thiết bị `getSystemDiagnosticsInfo` thu thập thông tin phiên bản, trạng thái mạng và nhật ký lỗi.
+    * Đảm bảo toàn bộ luồng tải và duyệt danh sách báo cáo lỗi trên Cổng Quản Trị hoạt động trơn tru 100%.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.11:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe` với mốc thời gian phát hành mới nhất.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.11_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.10 (Build 175 - FIX JS PARSER & APP INITIALIZATION):
   - Khắc Phục Triệt Để Lỗi Không Nhấn Được Gì Khi Mở App (App Freeze / Unresponsive):
     * Loại bỏ hoàn toàn khối mã trùng lặp cũ của hệ thống báo cáo lỗi (vốn gây lỗi cú pháp thiếu ngoặc đóng `}`).
@@ -107,6 +115,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.11 (Build 176 - DECLARE BUG FILTER STATE & DIAGNOSTICS):
+  - Khắc Phục Triệt Để Lỗi 'currentAdminBugFilter is not defined':
+    * Khai báo đầy đủ các biến quản lý trạng thái (`currentAdminBugFilter`, `adminBugReportsData`, `recentJsErrorsList`, `currentBugScreenshotBase64`).
+    * Bổ sung hàm chẩn đoán thiết bị `getSystemDiagnosticsInfo` thu thập thông tin phiên bản, trạng thái mạng và nhật ký lỗi.
+    * Đảm bảo toàn bộ luồng tải và duyệt danh sách báo cáo lỗi trên Cổng Quản Trị hoạt động trơn tru 100%.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.11:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe` với mốc thời gian phát hành mới nhất.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.11_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.10 (Build 175 - FIX JS PARSER & APP INITIALIZATION):
   - Khắc Phục Triệt Để Lỗi Không Nhấn Được Gì Khi Mở App (App Freeze / Unresponsive):
     * Loại bỏ hoàn toàn khối mã trùng lặp cũ của hệ thống báo cáo lỗi (vốn gây lỗi cú pháp thiếu ngoặc đóng `}`).
