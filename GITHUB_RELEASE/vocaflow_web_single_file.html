@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4265,6 +4265,17 @@
         </button>
       </div>
 
+      <!-- ADSENSE QC1 DISPLAY UNIT IN SHOP (AUTOMATICALLY HIDDEN FOR VIP USERS) -->
+      <div id="shop-adsense-qc1-container" style="margin-bottom: 16px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.15); min-height: 80px; text-align: center; border: 1px dashed rgba(255,255,255,0.06);">
+        <!-- QC1 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1343250003116465"
+             data-ad-slot="4836530250"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+
       <!-- REAL-MONEY SPIN PACKAGES SECTION (v0.10.8-beta-5.2) -->
       <div style="font-size: 13px; font-weight: 700; color: #ffd700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
         <span>🎡 Mua Lượt Quay May Mắn (VietQR)</span>
@@ -4863,12 +4874,23 @@
       </div>
 
       <div style="padding: 16px 10px; text-align: center;">
-        <!-- Simulated High-Reward Ad Screen -->
-        <div style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.3); padding: 24px 16px; margin-bottom: 14px; position: relative; overflow: hidden;">
-          <div style="font-size: 40px; margin-bottom: 8px; animation: crownFloatPulse 2s ease-in-out infinite;">🚀</div>
-          <h3 id="ad-player-feature-title" style="font-size: 17px; font-weight: 800; color: #ffd700; margin: 0 0 6px 0;">VocaFlow Pro - AI English Mentor</h3>
-          <p id="ad-player-feature-desc" style="font-size: 12px; color: #cbd5e1; line-height: 1.6; margin: 0;">Khám phá phương pháp ghi nhớ từ vựng ngắt quãng chuẩn Ebbinghaus kết hợp Trợ lý AI Gemini thông minh.</p>
-          <div style="margin-top: 14px; display: inline-flex; gap: 6px;">
+        <!-- Google AdSense QC1 Unit (Publisher: ca-pub-1343250003116465, Slot: 4836530250) -->
+        <div id="ad-player-adsense-box" style="margin-bottom: 14px; background: rgba(0,0,0,0.3); border-radius: 12px; min-height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+          <!-- QC1 -->
+          <ins class="adsbygoogle"
+               style="display:block; width: 100%;"
+               data-ad-client="ca-pub-1343250003116465"
+               data-ad-slot="4836530250"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+        </div>
+
+        <!-- Simulated High-Reward Ad Screen Fallback -->
+        <div id="ad-player-feature-card" style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.3); padding: 20px 16px; margin-bottom: 14px; position: relative; overflow: hidden;">
+          <div style="font-size: 36px; margin-bottom: 6px; animation: crownFloatPulse 2s ease-in-out infinite;">🚀</div>
+          <h3 id="ad-player-feature-title" style="font-size: 16px; font-weight: 800; color: #ffd700; margin: 0 0 6px 0;">VocaFlow Pro - AI English Mentor</h3>
+          <p id="ad-player-feature-desc" style="font-size: 11.5px; color: #cbd5e1; line-height: 1.6; margin: 0;">Khám phá phương pháp ghi nhớ từ vựng ngắt quãng chuẩn Ebbinghaus kết hợp Trợ lý AI Gemini thông minh.</p>
+          <div style="margin-top: 12px; display: inline-flex; gap: 6px;">
             <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">✓ Không giới hạn</span>
             <span class="badge" style="background: rgba(56,189,248,0.2); color: #38bdf8; font-size: 10px;">✓ Realtime Sync</span>
             <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px;">✓ VIP Crown</span>
@@ -5554,7 +5576,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12584,6 +12606,14 @@
       }
 
       // 2. Hide Rewarded Ads completely for VIP users
+      const shopAdsenseContainer = document.getElementById('shop-adsense-qc1-container');
+      if (shopAdsenseContainer) {
+        shopAdsenseContainer.style.display = isVip ? 'none' : 'block';
+        if (!isVip) {
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        }
+      }
+
       if (adBanner) {
         if (isVip) {
           adBanner.style.display = 'none';
@@ -12991,6 +13021,9 @@
       }
 
       openModal('modal-rewarded-ad');
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {}
 
       if (adWatchInterval) clearInterval(adWatchInterval);
       adWatchInterval = setInterval(() => {
