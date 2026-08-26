@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-6.2 (Build 159)
+Phiên bản hiện tại : v0.10.8-beta-6.3 (Build 160)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-6.3 (Build 160 - BULLETPROOF WATCH-AD BUTTON & STATE RESOLUTION):
+  - Tự Động Phục Hồi Nút Xem Video Trên Mọi Trạng Thái Tài Khoản (DOM Auto-Inject & Fail-Safe):
+    * Khắc phục triệt để hiện tượng mất nút ở một số phiên duyệt: Tích hợp cơ chế tự động kiểm tra và chèn nút `btn-shop-watch-ad` nếu bị thiếu trong DOM.
+    * Đảm bảo mọi tài khoản Thường (Free-tier - Đã đăng ký & Chưa đăng ký) đều luôn thấy nút `🎬 Xem Ngay` hoặc `⏱️ Chờ MM:SS` hoạt động mượt mà.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-6.3_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-6.2 (Build 159 - CLEAN ADSENSE PLACEHOLDERS & VIBRANT COOLDOWN UI):
   - Xóa Bỏ Hoàn Toàn Ô Đen Trống Trải Của Google AdSense (Zero-Height Collapsible Units):
     * Loại bỏ viền đứt và min-height thừa của container AdSense: Tự động thu gọn 0px khi Google chưa phân phối quảng cáo thật ("Sắp sẵn sàng"), chỉ nở ra khi có quảng cáo thực tế.
