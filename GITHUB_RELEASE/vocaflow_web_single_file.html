@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -2429,6 +2429,16 @@
       <div class="deck-grid" id="deck-grid">
         <!-- Rendered via JS -->
       </div>
+
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-7.1) -->
+      <div id="decks-footer-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
+        <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-1343250003116465"
+             data-ad-slot="4211562925"></ins>
+      </div>
     </section>
 
     <!-- SCREEN 2: DECK DETAIL -->
@@ -2588,6 +2598,16 @@
       <!-- WORD LIST -->
       <div class="word-list" id="word-list-container">
         <!-- Rendered via JS -->
+      </div>
+
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-7.1) -->
+      <div id="deck-detail-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
+        <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-1343250003116465"
+             data-ad-slot="4211562925"></ins>
       </div>
     </section>
 
@@ -5821,7 +5841,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12559,7 +12579,7 @@
         return;
       }
 
-      displayDecks.forEach(deck => {
+      displayDecks.forEach((deck, deckIdx) => {
         const deckWords = words.filter(w => w.deckId === deck.id);
         const total = deckWords.length;
         const mastered = deckWords.filter(w => getWordScore(w) >= 100).length;
@@ -12634,7 +12654,35 @@
           openDeckDetail(deck.id);
         });
         container.appendChild(card);
+
+        // In-feed Native AdSense Unit (v0.10.8-beta-7.1)
+        if (!isUserVip() && (deckIdx === 3 || (deckIdx > 3 && deckIdx % 8 === 3))) {
+          const infeedCard = document.createElement('div');
+          infeedCard.className = 'deck-card adsense-infeed-card';
+          infeedCard.style.cssText = 'grid-column: span 1; padding: 14px; background: var(--surface-elevated); border: 1.5px dashed rgba(99,102,241,0.3); border-radius: 14px; display: flex; flex-direction: column; justify-content: center; min-height: 180px; overflow: hidden; position: relative;';
+          infeedCard.innerHTML = `
+            <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Quảng cáo tài trợ</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="fluid"
+                 data-ad-layout-key="-gv-5+29-24-33"
+                 data-ad-client="ca-pub-1343250003116465"
+                 data-ad-slot="8893043969"></ins>
+          `;
+          container.appendChild(infeedCard);
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        }
       });
+
+      // Trigger Multiplex in decks screen
+      const decksMultiplex = document.getElementById('decks-footer-adsense-multiplex-container');
+      if (decksMultiplex) {
+        const isVip = isUserVip();
+        decksMultiplex.style.display = isVip ? 'none' : 'block';
+        if (!isVip) {
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        }
+      }
     }
 
 
@@ -12806,6 +12854,16 @@
       });
 
       updateSelectionUI();
+
+      // Trigger Multiplex in deck detail screen (v0.10.8-beta-7.1)
+      const detailMultiplex = document.getElementById('deck-detail-adsense-multiplex-container');
+      if (detailMultiplex) {
+        const isVip = isUserVip();
+        detailMultiplex.style.display = isVip ? 'none' : 'block';
+        if (!isVip) {
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        }
+      }
     }
 
     // MODAL CONTROL

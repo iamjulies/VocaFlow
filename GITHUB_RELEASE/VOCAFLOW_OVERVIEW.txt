@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7 (Build 165)
+Phiên bản hiện tại : v0.10.8-beta-7.1 (Build 166)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.1 (Build 166 - GOOGLE ADSENSE IN-FEED & MULTIPLEX RECOMMENDATIONS):
+  - Tích Hợp Đơn Vị Quảng Cáo Trong Nguồn Cấp Dữ Liệu (In-Feed Native Ads - Slot 8893043969):
+    * Triển khai quảng cáo dạng In-feed Native xen kẽ hài hòa bên trong danh sách bộ từ vựng (`screen-decks`), tối ưu trải nghiệm đọc liền mạch trên cả Desktop và Mobile.
+  - Tích Hợp Đơn Vị Quảng Cáo Khuyến Nghị Lưới (Multiplex Grid Ads - Slot 4211562925):
+    * Đặt khối quảng cáo Multiplex tự động co giãn (`data-ad-format="autorelaxed"`) tại chân trang Danh Sách Bộ Từ và Chi Tiết Bộ Từ (`screen-deck-detail`).
+  - Cơ Chế Tự Động Ẩn Quảng Cáo Cho VIP:
+    * Toàn bộ các vị trí In-feed và Multiplex tự động ẩn 100% khi người dùng nâng cấp VIP Hoàng Gia, đảm bảo trải nghiệm học tập không gián đoạn.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-7.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-7 (Build 165 - IN-APP BUG REPORTING, AUTO-DIAGNOSTICS & BOUNTY ENGINE):
   - Ra Mắt Trung Tâm Báo Cáo Sự Cố & Đóng Góp Ý Kiến (In-App Bug Report System):
     * Bổ sung modal báo lỗi toàn diện `modal-bug-report` hỗ trợ phân loại 8 danh mục (UI/UX, Speaking Lab, AI Studio, Vòng Quay, Ví/VIP, Cloud Sync, Tính Năng Mới, Khác).
