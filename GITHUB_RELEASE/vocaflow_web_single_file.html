@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -2430,7 +2430,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-7.5) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-7.6) -->
       <div id="decks-footer-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -2600,7 +2600,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-7.5) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-7.6) -->
       <div id="deck-detail-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -3877,7 +3877,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-deck-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-7.5) -->
+      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-7.6) -->
       <div id="aideck-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🤖🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4636,6 +4636,20 @@
           <div style="font-size: 11px; color: #a5b4fc; font-weight: 700; margin-bottom: 2px;">🎯 Ghi chú & Mục tiêu:</div>
           <p id="pub-view-bio-text" style="margin: 0; font-size: 12.5px; color: var(--text); font-style: italic; line-height: 1.45;">Chưa có ghi chú cá nhân.</p>
         </div>
+
+        <!-- 3 HONORARY BADGE SHOWCASE SLOTS (PUBLIC PROFILE - v0.10.8-beta-7.6 / beta-8) -->
+        <div class="badge-showcase-container" style="margin-top: 12px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>🏆</span>
+              <span>Danh Hiệu Danh Dự (Showcase)</span>
+            </div>
+            <span id="pub-view-badge-count" style="font-size: 10.5px; color: #a5b4fc; font-weight: 700;">0/3 Đã ghim</span>
+          </div>
+          <div class="badge-showcase-slots-grid" id="pub-profile-badge-slots" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <!-- 3 Slots rendered dynamically -->
+          </div>
+        </div>
       </div>
 
       <!-- 2-TILE STATS (CLEAN & BALANCED) -->
@@ -4751,7 +4765,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-7.5) -->
+      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-7.6) -->
       <div id="notif-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🔔🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4884,7 +4898,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spin-purchase-payment')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-7.5) -->
+      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-7.6) -->
       <div id="spin-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🎡🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5033,7 +5047,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-7.5) -->
+      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-7.6) -->
       <div id="vip-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">👑🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5435,6 +5449,22 @@
           <p id="profile-bio-display" style="margin: 0; font-size: 12.5px; color: var(--text); line-height: 1.45; font-style: italic;">Chưa thiết lập mục tiêu cá nhân.</p>
         </div>
 
+        <!-- 3 HONORARY BADGE SHOWCASE SLOTS (MY PROFILE - v0.10.8-beta-7.6 / beta-8) -->
+        <div class="badge-showcase-container" style="margin-top: 12px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>🏆</span>
+              <span>Danh Hiệu Danh Dự (Showcase)</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 10.5px; padding: 2px 8px; border-color: rgba(99,102,241,0.4); color: #818cf8; font-weight: 700;">
+              🎖️ Kho Huy Hiệu
+            </button>
+          </div>
+          <div class="badge-showcase-slots-grid" id="my-profile-badge-slots" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <!-- 3 Slots rendered dynamically -->
+          </div>
+        </div>
+
         <!-- COLLAPSIBLE EDIT FORM (Hidden by default, activated on click) -->
         <div id="profile-custom-fields-container" style="display: none; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px; flex-direction: column; gap: 10px;">
           <div>
@@ -5628,7 +5658,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-7.5) -->
+  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-7.6) -->
   <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5642,7 +5672,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-7.5) -->
+      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-7.6) -->
       <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5709,7 +5739,7 @@
           <textarea id="bug-report-desc" class="form-textarea" rows="4" placeholder="Mô tả cụ thể: Bạn đang làm gì khi lỗi xảy ra? Bạn mong muốn kết quả ra sao? (Có thể dán trực tiếp ảnh chụp màn hình Ctrl+V vào đây)..." style="font-size: 12.5px; resize: vertical;"></textarea>
         </div>
 
-        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE (UP TO 5 IMAGES v0.10.8-beta-7.5) -->
+        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE (UP TO 5 IMAGES v0.10.8-beta-7.6) -->
         <div class="form-group" style="margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text); margin: 0;">5. Ảnh chụp màn hình sự cố (<span id="bug-screenshot-count-label" style="color: #38bdf8;">0/5 ảnh</span>):</label>
@@ -5739,7 +5769,7 @@
     </div>
   </div>
 
-  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-beta-7.5) -->
+  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-beta-7.6) -->
   <div class="modal-overlay" id="modal-bug-screenshot-viewer" style="z-index: 10020; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);">
     <div class="modal" style="max-width: 900px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.8); padding: 18px;">
       <div class="modal-title" style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
@@ -5772,7 +5802,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-beta-7.5) -->
+  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-beta-7.6) -->
   <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
     <div class="modal" style="max-width: 520px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5787,10 +5817,12 @@
       </div>
 
       <div style="flex: 1; overflow-y: auto; padding-right: 2px;">
-        <!-- REPORTER & BUG INFO CARD -->
+        <!-- REPORTER & BUG INFO CARD WITH CLICKABLE VIP PROFILE LINK -->
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Há»c viÃªn nháº­n thÆ°á»Ÿng:</div>
-          <div id="bounty-reporter-info" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px;">ðŸ‘¤ Loading...</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Há»c viÃªn nháº­n thÆ°á»Ÿng:</div>
+          <div id="bounty-reporter-info" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            ðŸ‘¤ Loading...
+          </div>
           <div id="bounty-report-title" style="font-size: 11.5px; color: #a5b4fc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ðŸ› BÃ¡o cÃ¡o: ...</div>
         </div>
 
@@ -5848,6 +5880,53 @@
         <button type="button" id="btn-confirm-bounty" class="btn btn-primary" onclick="confirmSendCustomBugBounty()" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; padding: 8px 18px;">
           ðŸš€ XÃ¡c Nháº­n Trao ThÆ°á»Ÿng
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BADGE VAULT & ACHIEVEMENTS (v0.10.8-beta-7.6 / v0.10.8-beta-8 FRAMEWORK) -->
+  <div class="modal-overlay" id="modal-achievements" style="z-index: 10030;">
+    <div class="modal" style="max-width: 620px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; padding: 18px;">
+      <div class="modal-title" style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">ðŸŽ–ï¸</span>
+          <div>
+            <strong style="font-size: 16px; color: var(--text);">Kho Huy Hiá»‡u & ThÃ nh Tá»±u Danh Dá»±</strong>
+            <div id="achievements-modal-sub" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">KhÃ¡m phÃ¡ danh hiá»‡u, hoÃ n thÃ nh thá»­ thÃ¡ch & ghim lÃªn há»“ sÆ¡</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-achievements')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- SUMMARY PROGRESS STATS BANNER -->
+      <div style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.15)); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">Tá»•ng tiáº¿n Ä‘á»™ má»Ÿ khÃ³a:</div>
+          <div id="achievements-summary-count" style="font-size: 18px; font-weight: 800; color: #fbbf24;">0 / 15 Huy Hiá»‡u (0%)</div>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-achievements'); openProfileModal();" style="font-size: 11px; padding: 4px 10px;">
+            ðŸ‘¤ Xem Há»“ SÆ¡
+          </button>
+        </div>
+      </div>
+
+      <!-- CATEGORY FILTER TABS -->
+      <div id="achievement-filter-tabs" style="display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
+        <button type="button" class="btn btn-sm btn-primary ach-filter-btn active" data-cat="all" onclick="filterAchievements('all')">Táº¥t cáº£</button>
+        <button type="button" class="btn btn-sm btn-outline ach-filter-btn" data-cat="study" onclick="filterAchievements('study')">ðŸ“š Há»c táº­p</button>
+        <button type="button" class="btn btn-sm btn-outline ach-filter-btn" data-cat="bounty" onclick="filterAchievements('bounty')">ðŸ› Báº¯t lá»—i & ÄÃ³ng gÃ³p</button>
+        <button type="button" class="btn btn-sm btn-outline ach-filter-btn" data-cat="economy" onclick="filterAchievements('economy')">ðŸ’Ž TÃ i chÃ­nh & VIP</button>
+        <button type="button" class="btn btn-sm btn-outline ach-filter-btn" data-cat="unlocked" onclick="filterAchievements('unlocked')">âœ¨ ÄÃ£ má»Ÿ khÃ³a</button>
+      </div>
+
+      <!-- BADGE CARDS GRID -->
+      <div id="achievements-cards-grid" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; padding-right: 4px;">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div class="modal-actions" style="margin-top: 12px; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-achievements')">ÄÃ³ng</button>
       </div>
     </div>
   </div>
@@ -6024,7 +6103,7 @@
         </label>
       </div>
 
-      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-7.5) -->
+      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-7.6) -->
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
         <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
@@ -6035,7 +6114,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6214,7 +6293,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-7.5) -->
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-7.6) -->
       <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
         <!-- METRICS & FILTER BAR -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -12894,7 +12973,7 @@
         });
         container.appendChild(card);
 
-        // In-feed Native AdSense Unit (v0.10.8-beta-7.5)
+        // In-feed Native AdSense Unit (v0.10.8-beta-7.6)
         if (!isUserVip() && (deckIdx === 3 || (deckIdx > 3 && deckIdx % 8 === 3))) {
           const infeedCard = document.createElement('div');
           infeedCard.className = 'deck-card adsense-infeed-card';
@@ -13094,7 +13173,7 @@
 
       updateSelectionUI();
 
-      // Trigger Multiplex in deck detail screen (v0.10.8-beta-7.5)
+      // Trigger Multiplex in deck detail screen (v0.10.8-beta-7.6)
       const detailMultiplex = document.getElementById('deck-detail-adsense-multiplex-container');
       if (detailMultiplex) {
         const isVip = isUserVip();
@@ -13490,14 +13569,14 @@
     }
 
     // =========================================================================
-    // IN-APP BUG REPORT & FEEDBACK SYSTEM (v0.10.8-beta-7.5)
+    // IN-APP BUG REPORT & FEEDBACK SYSTEM (v0.10.8-beta-7.6)
     // =========================================================================
     let recentJsErrorsList = [];
-    let currentBugScreenshotsList = []; // Up to 5 base64 screenshots (v0.10.8-beta-7.5)
+    let currentBugScreenshotsList = []; // Up to 5 base64 screenshots (v0.10.8-beta-7.6)
     let adminBugReportsData = [];
     let currentAdminBugFilter = 'all';
 
-    // In-app Screenshot Viewer State (v0.10.8-beta-7.5)
+    // In-app Screenshot Viewer State (v0.10.8-beta-7.6)
     let activeBugViewerImages = [];
     let currentBugViewerIndex = 0;
     let currentBugViewerReport = null;
@@ -13521,7 +13600,7 @@
       const ua = navigator.userAgent || 'Unknown';
       const screenRes = `${window.innerWidth}x${window.innerHeight} (MÃ n hÃ¬nh: ${screen.width}x${screen.height})`;
       const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
-      const version = 'v0.10.8-beta-7.5 (Build 170)';
+      const version = 'v0.10.8-beta-7.6 (Build 171)';
       const user = currentUser ? `${currentUser.displayName || currentUser.email || 'KhÃ¡ch'} (${currentUser.uid})` : 'ChÆ°a Ä‘Äƒng nháº­p';
       const isVip = isUserVip() ? `VIP (${getUserVipTier()})` : 'Free';
       const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'KhÃ´ng cÃ³ lá»—i JS nÃ o';
@@ -13784,7 +13863,7 @@
       } catch (err) {
         console.warn('Bug report submit fallback error:', err);
         closeModal('modal-bug-report');
-        showToast('âœ… ÄÃ£ ghi nháº­n bÃ¡o cÃ¡o cá»¥c bá»™! Cáº£m Æ¡n báº¡n.');
+        showToast('🎉 Đã ghi nhận báo cáo cục bộ! Cảm ơn bạn.');
       }
     }
 
@@ -13794,7 +13873,7 @@
     async function fetchAdminBugReportsList() {
       const container = document.getElementById('admin-bug-reports-list');
       if (!container) return;
-      container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);"><em>â³ Äang táº£i danh sÃ¡ch bÃ¡o cÃ¡o lá»—i tá»« Firebase Cloud...</em></div>';
+      container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);"><em>⏳ Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em></div>';
 
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
@@ -13805,7 +13884,7 @@
         const data = await res.json();
 
         if (!data || typeof data !== 'object') {
-          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">ðŸŽ‰ Hiá»‡n khÃ´ng cÃ³ bÃ¡o cÃ¡o lá»—i nÃ o Ä‘ang chá» xá»­ lÃ½!</div>';
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">🎉 Hiện không có báo cáo lỗi nào đang chờ xử lý!</div>';
           adminBugReportsData = [];
           updateAdminBugBadge(0);
           return;
@@ -13818,7 +13897,7 @@
 
       } catch (err) {
         console.warn('Fetch bugs error:', err);
-        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #f87171;">âš ï¸ Lá»—i káº¿t ná»‘i Cloud khi táº£i bÃ¡o cÃ¡o lá»—i.</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #f87171;">⚠️ Lỗi kết nối Cloud khi tải báo cáo lỗi.</div>';
       }
     }
 
@@ -13851,53 +13930,53 @@
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">KhÃ´ng cÃ³ bÃ¡o cÃ¡o nÃ o trong má»¥c nÃ y.</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">Không có báo cáo nào trong mục này.</div>';
         return;
       }
 
       let html = '';
       filtered.forEach(b => {
         const statusColors = { open: '#fbbf24', in_progress: '#38bdf8', resolved: '#34d399', rejected: '#94a3b8' };
-        const statusLabels = { open: 'ðŸŸ¡ Chá» xá»­ lÃ½', in_progress: 'ðŸ”µ Äang xá»­ lÃ½', resolved: 'ðŸŸ¢ ÄÃ£ fix xong', rejected: 'âšª ÄÃ£ tá»« chá»‘i' };
+        const statusLabels = { open: '🟡 Chờ xử lý', in_progress: '🔵 Đang xử lý', resolved: '🟢 Đã fix xong', rejected: '⚪ Đã từ chối' };
         const sevColors = { low: '#34d399', medium: '#fbbf24', high: '#ef4444' };
-        const sevLabels = { low: 'ðŸŸ¢ Nháº¹', medium: 'ðŸŸ¡ Vá»«a', high: 'ðŸ”´ NghiÃªm trá»ng' };
+        const sevLabels = { low: '🟢 Nhẹ', medium: '🟡 Vừa', high: '🔴 Nghiêm trọng' };
         const catLabels = {
-          ui_ux: 'ðŸŽ¨ UI/UX',
-          speaking: 'ðŸŽ™ï¸ Speaking',
-          ai: 'ðŸ¤– AI Studio',
-          wheel_ad: 'ðŸŽ¡ VÃ²ng Quay / QC',
-          wallet_vip: 'ðŸ’³ VÃ­ / VIP',
-          cloud_sync: 'ðŸ”„ Cloud Sync',
-          feature_request: 'ðŸ’¡ TÃ­nh NÄƒng Má»›i',
-          other: 'â“ KhÃ¡c'
+          ui_ux: '🎨 UI/UX',
+          speaking: '🎙️ Speaking',
+          ai: '🤖 AI Studio',
+          wheel_ad: '🎡 Vòng Quay / QC',
+          wallet_vip: '💳 Ví / VIP',
+          cloud_sync: '🔄 Cloud Sync',
+          feature_request: '💡 Tính Năng Mới',
+          other: '❓ Khác'
         };
 
         const timeStr = new Date(b.createdAt || Date.now()).toLocaleString('vi-VN');
         
-        // Multi-image support (v0.10.8-beta-7.5)
+        // Multi-image support (v0.10.8-beta-7.6)
         const screenshots = (Array.isArray(b.screenshots) && b.screenshots.length > 0) 
           ? b.screenshots 
           : (b.screenshot ? [b.screenshot] : []);
         const hasScreenshots = screenshots.length > 0;
 
-        // Reporter VIP styling & clickable profile (v0.10.8-beta-7.5)
-        const authorName = b.user?.displayName || b.user?.email || 'áº¨n danh';
+        // Reporter VIP styling & clickable profile (v0.10.8-beta-7.6)
+        const authorName = b.user?.displayName || b.user?.email || 'Ẩn danh';
         const authorUid = b.user?.uid || '';
         const isVip = !!(b.user?.isVip || (authorUid && isAuthorVipUser(authorUid, authorName)));
 
         const reporterHtml = isVip ? `
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}')" title="Xem há»“ sÆ¡ há»c viÃªn VIP">
-              <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">ðŸ‘‘</span>
+            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}')" title="Xem hồ sơ học viên VIP">
+              <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
               <strong class="vip-glowing-name" style="font-size: 12px;">${escapeHtml(authorName)}</strong>
             </span>
-            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">ðŸ‘‘ VIP</span>
+            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VIP</span>
             <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
           </div>
         ` : `
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}')" title="Xem há»“ sÆ¡ há»c viÃªn">
-              ðŸ‘¤ <strong>${escapeHtml(authorName)}</strong>
+            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}')" title="Xem hồ sơ học viên">
+              👤 <strong>${escapeHtml(authorName)}</strong>
             </span>
             <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
           </div>
@@ -13914,16 +13993,16 @@
               <span style="font-size: 11px; color: var(--text-muted);">${timeStr}</span>
             </div>
 
-            <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;">${escapeHtml(b.title || 'KhÃ´ng cÃ³ tiÃªu Ä‘á»')}</div>
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;">${escapeHtml(b.title || 'Không có tiêu đề')}</div>
             <div style="font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap; background: rgba(0,0,0,0.15); padding: 8px 10px; border-radius: 6px;">${escapeHtml(b.description || '')}</div>
 
-            <!-- SCREENSHOTS MINI-GALLERY (v0.10.8-beta-7.5) -->
+            <!-- SCREENSHOTS MINI-GALLERY (v0.10.8-beta-7.6) -->
             ${hasScreenshots ? `
               <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">ðŸ“· áº¢nh Ä‘Ã­nh kÃ¨m (${screenshots.length}):</span>
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📷 Ảnh đính kèm (${screenshots.length}):</span>
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                   ${screenshots.map((s, sIdx) => `
-                    <div onclick="openBugScreenshotViewer('${b.id}', ${sIdx})" style="width: 42px; height: 42px; border-radius: 6px; overflow: hidden; border: 1.5px solid rgba(56,189,248,0.4); cursor: pointer; background: rgba(0,0,0,0.3); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Nháº¥n Ä‘á»ƒ xem áº£nh phÃ³ng to #${sIdx + 1}">
+                    <div onclick="openBugScreenshotViewer('${b.id}', ${sIdx})" style="width: 42px; height: 42px; border-radius: 6px; overflow: hidden; border: 1.5px solid rgba(56,189,248,0.4); cursor: pointer; background: rgba(0,0,0,0.3); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Nhấn để xem ảnh phóng to #${sIdx + 1}">
                       <img src="${s}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                   `).join('')}
@@ -13936,19 +14015,19 @@
                 ${reporterHtml}
               </div>
               <div style="display: flex; gap: 6px; align-items: center;">
-                ${hasScreenshots ? `<button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="openBugScreenshotViewer('${b.id}', 0)">ðŸ“· Xem ${screenshots.length} áº£nh lá»—i</button>` : ''}
+                ${hasScreenshots ? `<button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="openBugScreenshotViewer('${b.id}', 0)">📷 Xem ${screenshots.length} ảnh lỗi</button>` : ''}
               </div>
             </div>
 
             <!-- ACTION BUTTONS: STATUS & BOUNTY -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); flex-wrap: wrap; gap: 6px;">
               <div style="display: flex; gap: 4px;">
-                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px;" onclick="updateAdminBugStatus('${b.id}', 'in_progress')">ðŸ”µ Äang xá»­ lÃ½</button>
-                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #34d399;" onclick="updateAdminBugStatus('${b.id}', 'resolved')">ðŸŸ¢ ÄÃ£ fix xong</button>
-                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: var(--text-muted);" onclick="updateAdminBugStatus('${b.id}', 'rejected')">âšª Tá»« chá»‘i</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px;" onclick="updateAdminBugStatus('${b.id}', 'in_progress')">🔵 Đang xử lý</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #34d399;" onclick="updateAdminBugStatus('${b.id}', 'resolved')">🟢 Đã fix xong</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: var(--text-muted);" onclick="updateAdminBugStatus('${b.id}', 'rejected')">⚪ Từ chối</button>
               </div>
               <div style="display: flex; gap: 4px;">
-                <button class="btn btn-primary btn-sm" style="padding: 3px 10px; font-size: 11px; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(245,158,11,0.3);" onclick="openBugBountyPickerModal('${b.id}')">ðŸŽ Trao ThÆ°á»Ÿng Bug Bounty</button>
+                <button class="btn btn-primary btn-sm" style="padding: 3px 10px; font-size: 11px; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(245,158,11,0.3);" onclick="openBugBountyPickerModal('${b.id}')">🎁 Trao Thưởng Bug Bounty</button>
               </div>
             </div>
           </div>
@@ -13958,11 +14037,11 @@
       container.innerHTML = html;
     }
 
-    // IN-APP LIGHTBOX VIEWER FOR BUG SCREENSHOTS (v0.10.8-beta-7.5)
+    // IN-APP LIGHTBOX VIEWER FOR BUG SCREENSHOTS (v0.10.8-beta-7.6)
     function openBugScreenshotViewer(reportId, startIndex = 0) {
       const report = adminBugReportsData.find(b => b.id === reportId);
       if (!report) {
-        showToast('âš ï¸ KhÃ´ng tÃ¬m tháº¥y thÃ´ng tin bÃ¡o cÃ¡o lá»—i!');
+        showToast('⚠️ Không tìm thấy thông tin báo cáo lỗi!');
         return;
       }
       const screenshots = (Array.isArray(report.screenshots) && report.screenshots.length > 0)
@@ -13970,7 +14049,7 @@
         : (report.screenshot ? [report.screenshot] : []);
 
       if (screenshots.length === 0) {
-        showToast('âš ï¸ KhÃ´ng cÃ³ áº£nh Ä‘Ã­nh kÃ¨m trong bÃ¡o cÃ¡o nÃ y!');
+        showToast('⚠️ Không có ảnh đính kèm trong báo cáo này!');
         return;
       }
 
@@ -14007,13 +14086,13 @@
       imgEl.src = currentSrc;
 
       if (titleEl) {
-        titleEl.textContent = currentBugViewerReport ? `áº¢nh BÃ¡o CÃ¡o: "${currentBugViewerReport.title}"` : 'Xem áº¢nh Chá»¥p MÃ n HÃ¬nh';
+        titleEl.textContent = currentBugViewerReport ? `Ảnh Báo Cáo: "${currentBugViewerReport.title}"` : 'Xem Ảnh Chụp Màn Hình';
       }
       if (subEl) {
-        subEl.textContent = `áº¢nh ${currentBugViewerIndex + 1} / ${activeBugViewerImages.length}`;
+        subEl.textContent = `Ảnh ${currentBugViewerIndex + 1} / ${activeBugViewerImages.length}`;
       }
       if (infoEl && currentBugViewerReport) {
-        infoEl.textContent = `NgÆ°á»i gá»­i: ${currentBugViewerReport.user?.displayName || 'áº¨n danh'} â€¢ ${new Date(currentBugViewerReport.createdAt || Date.now()).toLocaleString('vi-VN')}`;
+        infoEl.textContent = `Người gửi: ${currentBugViewerReport.user?.displayName || 'Ẩn danh'} • ${new Date(currentBugViewerReport.createdAt || Date.now()).toLocaleString('vi-VN')}`;
       }
 
       // Arrows visibility
@@ -14082,58 +14161,78 @@
         const r = adminBugReportsData.find(b => b.id === reportId);
         if (r) r.status = newStatus;
         renderAdminBugReportsList();
-        showToast(`âœ… ÄÃ£ cáº­p nháº­t tráº¡ng thÃ¡i sá»± cá»‘: ${newStatus}!`);
+        showToast(`✅ Đã cập nhật trạng thái sự cố: ${newStatus}!`);
 
       } catch (err) {
-        showToast('âš ï¸ Lá»—i khi cáº­p nháº­t tráº¡ng thÃ¡i lÃªn Cloud!');
+        showToast('⚠️ Lỗi khi cập nhật trạng thái lên Cloud!');
       }
     }
 
     // =========================================================================
-    // CUSTOM BUG BOUNTY REWARD ENGINE (v0.10.8-beta-7.5)
+    // CUSTOM BUG BOUNTY REWARD ENGINE (v0.10.8-beta-7.6)
     // =========================================================================
     let currentBountyReportId = null;
     let currentBountyUserUid = null;
-    let currentBountyType = "coins";
+    let currentBountyType = 'coins';
 
     const BOUNTY_CONFIG = {
-      coins: { label: "Tiền Xu", unit: "Xu", icon: "🪙", presets: [20, 50, 100, 200, 500], defaultVal: 50 },
-      hints: { label: "Gợi Ý AI", unit: "Gợi Ý AI", icon: "💡", presets: [2, 5, 10, 20, 50], defaultVal: 5 },
-      skips: { label: "Thẻ Bỏ Qua", unit: "Thẻ Bỏ Qua", icon: "⏭️", presets: [1, 3, 5, 10, 20], defaultVal: 3 },
-      spins: { label: "Lượt Quay", unit: "Lượt Quay", icon: "🎡", presets: [1, 2, 5, 10, 20], defaultVal: 2 },
-      vip:   { label: "Ngày VIP", unit: "Ngày VIP", icon: "👑", presets: [1, 3, 7, 14, 30], defaultVal: 3 }
+      coins: { label: 'Tiền Xu', unit: 'Xu', icon: '🪙', presets: [20, 50, 100, 200, 500], defaultVal: 50 },
+      hints: { label: 'Gợi Ý AI', unit: 'Gợi Ý AI', icon: '💡', presets: [2, 5, 10, 20, 50], defaultVal: 5 },
+      skips: { label: 'Thẻ Bỏ Qua', unit: 'Thẻ Bỏ Qua', icon: '⏭️', presets: [1, 3, 5, 10, 20], defaultVal: 3 },
+      spins: { label: 'Lượt Quay', unit: 'Lượt Quay', icon: '🎡', presets: [1, 2, 5, 10, 20], defaultVal: 2 },
+      vip:   { label: 'Ngày VIP', unit: 'Ngày VIP', icon: '👑', presets: [1, 3, 7, 14, 30], defaultVal: 3 }
     };
 
     function openBugBountyPickerModal(reportId) {
       const report = adminBugReportsData.find(b => b.id === reportId);
       if (!report) {
-        showToast("⚠️ Không tìm thấy thông tin báo cáo!");
+        showToast('⚠️ Không tìm thấy thông tin báo cáo!');
         return;
       }
-      if (!report.user?.uid || report.user.uid === "GUEST") {
-        alert("⚠️ Báo cáo này từ tài khoản Khách (Guest), không thể trao thưởng ví!");
+      const userUid = report.user?.uid;
+      const displayName = report.user?.displayName || 'Học viên';
+      if (!userUid || userUid === 'GUEST') {
+        alert('⚠️ Báo cáo này từ tài khoản Khách (Guest), không thể trao thưởng ví!');
         return;
       }
 
       currentBountyReportId = reportId;
-      currentBountyUserUid = report.user.uid;
+      currentBountyUserUid = userUid;
 
-      const reporterEl = document.getElementById("bounty-reporter-info");
-      const titleEl = document.getElementById("bounty-report-title");
-      const noteInput = document.getElementById("bounty-custom-note");
+      const reporterEl = document.getElementById('bounty-reporter-info');
+      const titleEl = document.getElementById('bounty-report-title');
+      const noteInput = document.getElementById('bounty-custom-note');
 
       if (reporterEl) {
-        reporterEl.innerHTML = `👤 <strong>${escapeHtml(report.user.displayName || "Học viên")}</strong> (${escapeHtml(report.user.uid)}) • ${report.user.isVip ? "👑 VIP" : "Free"}`;
-      }
-      if (titleEl) {
-        titleEl.textContent = `🐛 Báo cáo: "${report.title || "Không có tiêu đề"}"`;
-      }
-      if (noteInput) {
-        noteInput.value = "Cảm ơn bạn đã phát hiện và đóng góp báo cáo sự cố cho VocaFlow!";
+        const isVip = (report.user?.isVip === true) || (typeof isAuthorVipUser === 'function' && isAuthorVipUser(userUid, displayName));
+        if (isVip) {
+          reporterEl.innerHTML = `
+            <span class="vip-name-wrapper" onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3);" title="Bấm để xem Hồ sơ học viên VIP">
+              <span class="vip-crown-icon" style="font-size: 16px;">👑</span>
+              <span class="vip-glowing-name" style="font-weight: 800; font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px;">${escapeHtml(displayName)}</span>
+              <span class="badge" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 800; font-size: 10px; padding: 1px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,215,0,0.4);">👑 VIP</span>
+            </span>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
+          `;
+        } else {
+          reporterEl.innerHTML = `
+            <span onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; color: #38bdf8; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;" title="Bấm để xem Hồ sơ học viên">
+              👤 ${escapeHtml(displayName)}
+            </span>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
+          `;
+        }
       }
 
-      selectBountyType("coins");
-      openModal("modal-bug-bounty-picker");
+      if (titleEl) {
+        titleEl.textContent = `🐛 Báo cáo: "${report.title || 'Không có tiêu đề'}"`;
+      }
+      if (noteInput) {
+        noteInput.value = 'Cảm ơn bạn đã phát hiện và đóng góp báo cáo sự cố cho VocaFlow!';
+      }
+
+      selectBountyType('coins');
+      openModal('modal-bug-bounty-picker');
     }
 
     function selectBountyType(type) {
@@ -14141,53 +14240,53 @@
       const cfg = BOUNTY_CONFIG[type] || BOUNTY_CONFIG.coins;
 
       // Update button highlights
-      ["coins", "hints", "skips", "spins", "vip"].forEach(t => {
-        const btn = document.getElementById("bounty-btn-" + t);
+      ['coins', 'hints', 'skips', 'spins', 'vip'].forEach(t => {
+        const btn = document.getElementById('bounty-btn-' + t);
         if (btn) {
           if (t === type) {
-            btn.style.borderColor = "#6366f1";
-            btn.style.background = "rgba(99,102,241,0.2)";
-            btn.style.color = "#fff";
+            btn.style.borderColor = '#6366f1';
+            btn.style.background = 'rgba(99,102,241,0.2)';
+            btn.style.color = '#fff';
           } else {
-            btn.style.borderColor = "var(--border)";
-            btn.style.background = "transparent";
-            btn.style.color = "var(--text-muted)";
+            btn.style.borderColor = 'var(--border)';
+            btn.style.background = 'transparent';
+            btn.style.color = 'var(--text-muted)';
           }
         }
       });
 
       // Update Unit Label
-      const unitLabel = document.getElementById("bounty-unit-label");
+      const unitLabel = document.getElementById('bounty-unit-label');
       if (unitLabel) unitLabel.textContent = cfg.unit;
 
       // Render Presets
-      const presetsCont = document.getElementById("bounty-presets-container");
+      const presetsCont = document.getElementById('bounty-presets-container');
       if (presetsCont) {
         presetsCont.innerHTML = cfg.presets.map(p => `
           <button type="button" class="btn btn-outline btn-sm" onclick="setBountyAmount(${p})" style="padding: 2px 8px; font-size: 11px; border-radius: 6px;">
             +${p} ${cfg.unit}
           </button>
-        `).join("");
+        `).join('');
       }
 
       // Set default value
-      const amtInput = document.getElementById("bounty-custom-amount");
+      const amtInput = document.getElementById('bounty-custom-amount');
       if (amtInput) amtInput.value = cfg.defaultVal;
 
       updateBountyPreview();
     }
 
     function setBountyAmount(amt) {
-      const amtInput = document.getElementById("bounty-custom-amount");
+      const amtInput = document.getElementById('bounty-custom-amount');
       if (amtInput) amtInput.value = amt;
       updateBountyPreview();
     }
 
     function updateBountyPreview() {
       const cfg = BOUNTY_CONFIG[currentBountyType] || BOUNTY_CONFIG.coins;
-      const amtInput = document.getElementById("bounty-custom-amount");
-      const amount = parseInt(amtInput?.value || "1", 10) || 1;
-      const previewText = document.getElementById("bounty-preview-text");
+      const amtInput = document.getElementById('bounty-custom-amount');
+      const amount = parseInt(amtInput?.value || '1', 10) || 1;
+      const previewText = document.getElementById('bounty-preview-text');
 
       if (previewText) {
         previewText.textContent = `+${amount} ${cfg.unit} (${cfg.icon} ${cfg.label})`;
@@ -14200,83 +14299,83 @@
       if (!report) return;
 
       const cfg = BOUNTY_CONFIG[currentBountyType] || BOUNTY_CONFIG.coins;
-      const amtInput = document.getElementById("bounty-custom-amount");
-      const noteInput = document.getElementById("bounty-custom-note");
-      const amount = Math.max(1, parseInt(amtInput?.value || "1", 10) || 1);
-      const customNote = (noteInput?.value || "").trim() || "Cảm ơn bạn đã phát hiện và đóng góp báo cáo sự cố!";
+      const amtInput = document.getElementById('bounty-custom-amount');
+      const noteInput = document.getElementById('bounty-custom-note');
+      const amount = Math.max(1, parseInt(amtInput?.value || '1', 10) || 1);
+      const customNote = (noteInput?.value || '').trim() || 'Cảm ơn bạn đã phát hiện và đóng góp báo cáo sự cố!';
 
-      const btnConfirm = document.getElementById("btn-confirm-bounty");
+      const btnConfirm = document.getElementById('btn-confirm-bounty');
       if (btnConfirm) {
         btnConfirm.disabled = true;
-        btnConfirm.textContent = "⏳ Đang trao thưởng...";
+        btnConfirm.textContent = '⏳ Đang trao thưởng...';
       }
 
-      const rtdbUrl = firebaseConfig.databaseURL || "https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app";
-      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : "";
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
       const userUid = currentBountyUserUid;
       const isSelf = (currentUser && currentUser.uid === userUid);
 
       try {
         let rewardSummary = `+${amount} ${cfg.unit}`;
 
-        if (currentBountyType === "coins") {
+        if (currentBountyType === 'coins') {
           const curEcoRes = await fetch(`${rtdbUrl}/users/${userUid}/economy.json${authParam}`);
           const curEco = (curEcoRes.ok ? await curEcoRes.json() : null) || {};
           const newPoints = (curEco.points || 0) + amount;
-          await fetch(`${rtdbUrl}/users/${userUid}/economy/points.json${authParam}`, { method: "PUT", body: JSON.stringify(newPoints) });
+          await fetch(`${rtdbUrl}/users/${userUid}/economy/points.json${authParam}`, { method: 'PUT', body: JSON.stringify(newPoints) });
           if (isSelf) {
             setUserPoints(getUserPoints() + amount);
-            addLedgerEntry("ADMIN_BOUNTY", amount, `Thưởng bắt lỗi sự cố: "${report.title}"`);
+            addLedgerEntry('ADMIN_BOUNTY', amount, `Thưởng bắt lỗi sự cố: "${report.title}"`);
           }
 
-        } else if (currentBountyType === "hints") {
+        } else if (currentBountyType === 'hints') {
           const curEcoRes = await fetch(`${rtdbUrl}/users/${userUid}/economy.json${authParam}`);
           const curEco = (curEcoRes.ok ? await curEcoRes.json() : null) || {};
           const newHints = (curEco.hints || 0) + amount;
-          await fetch(`${rtdbUrl}/users/${userUid}/economy/hints.json${authParam}`, { method: "PUT", body: JSON.stringify(newHints) });
+          await fetch(`${rtdbUrl}/users/${userUid}/economy/hints.json${authParam}`, { method: 'PUT', body: JSON.stringify(newHints) });
           if (isSelf) setUserHints(getUserHints() + amount);
 
-        } else if (currentBountyType === "skips") {
+        } else if (currentBountyType === 'skips') {
           const curEcoRes = await fetch(`${rtdbUrl}/users/${userUid}/economy.json${authParam}`);
           const curEco = (curEcoRes.ok ? await curEcoRes.json() : null) || {};
           const newSkips = (curEco.skips || 0) + amount;
-          await fetch(`${rtdbUrl}/users/${userUid}/economy/skips.json${authParam}`, { method: "PUT", body: JSON.stringify(newSkips) });
+          await fetch(`${rtdbUrl}/users/${userUid}/economy/skips.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSkips) });
           if (isSelf) setUserSkips(getUserSkips() + amount);
 
-        } else if (currentBountyType === "spins") {
+        } else if (currentBountyType === 'spins') {
           const curSpinsRes = await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json${authParam}`);
           const curSpins = (curSpinsRes.ok ? await curSpinsRes.json() : 0) || 0;
           const newSpins = (parseInt(curSpins, 10) || 0) + amount;
-          await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json${authParam}`, { method: "PUT", body: JSON.stringify(newSpins) });
+          await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSpins) });
           if (isSelf) setLuckySpinsCount(getLuckySpinsCount() + amount);
 
-        } else if (currentBountyType === "vip") {
+        } else if (currentBountyType === 'vip') {
           const curProfRes = await fetch(`${rtdbUrl}/users/${userUid}/profile.json${authParam}`);
           const curProf = (curProfRes.ok ? await curProfRes.json() : null) || {};
           const curExp = (curProf.vipExpiresAt && curProf.vipExpiresAt > Date.now()) ? curProf.vipExpiresAt : Date.now();
           const newExp = curExp + (amount * 24 * 60 * 60 * 1000);
 
           await fetch(`${rtdbUrl}/users/${userUid}/profile.json${authParam}`, {
-            method: "PATCH",
-            body: JSON.stringify({ isVip: true, vipTier: curProf.vipTier || "monthly", vipExpiresAt: newExp })
+            method: 'PATCH',
+            body: JSON.stringify({ isVip: true, vipTier: curProf.vipTier || 'monthly', vipExpiresAt: newExp })
           });
           if (isSelf) {
-            localStorage.setItem("vocaflow_vip_expiry", newExp.toString());
-            localStorage.setItem("vocaflow_vip_tier", "bounty");
+            localStorage.setItem('vocaflow_vip_expiry', newExp.toString());
+            localStorage.setItem('vocaflow_vip_tier', 'bounty');
             updateVipStatusUI();
           }
         }
 
         // Send clear, rich inbox notification with dual keys (message & content)
-        const notifId = "notif_bounty_" + Date.now();
+        const notifId = 'notif_bounty_' + Date.now();
         const notifMsg = `🎉 Admin đã trao thưởng cho bạn: ${rewardSummary} (${cfg.icon} ${cfg.label}) cho báo cáo sự cố "${report.title}". ${customNote}`;
         
         await fetch(`${rtdbUrl}/users/${userUid}/notifications/${notifId}.json${authParam}`, {
-          method: "PUT",
+          method: 'PUT',
           body: JSON.stringify({
             id: notifId,
-            type: currentBountyType === "vip" ? "VIP_BONUS" : "FINANCIAL",
-            title: "🎁 Thưởng Bắt Lỗi (Bug Bounty)",
+            type: currentBountyType === 'vip' ? 'VIP_BONUS' : 'FINANCIAL',
+            title: '🎁 Thưởng Bắt Lỗi (Bug Bounty)',
             message: notifMsg,
             content: notifMsg,
             rewardType: currentBountyType,
@@ -14286,10 +14385,10 @@
           })
         });
 
-        if (isSelf && typeof addNotification === "function") {
+        if (isSelf && typeof addNotification === 'function') {
           addNotification(
-            currentBountyType === "vip" ? "VIP_BONUS" : "FINANCIAL",
-            "🎁 Thưởng Bắt Lỗi (Bug Bounty)",
+            currentBountyType === 'vip' ? 'VIP_BONUS' : 'FINANCIAL',
+            '🎁 Thưởng Bắt Lỗi (Bug Bounty)',
             notifMsg,
             null,
             null,
@@ -14298,22 +14397,395 @@
         }
 
         // Auto update status to resolved
-        updateAdminBugStatus(currentBountyReportId, "resolved");
+        updateAdminBugStatus(currentBountyReportId, 'resolved');
 
-        closeModal("modal-bug-bounty-picker");
+        closeModal('modal-bug-bounty-picker');
         showToast(`🎉 Đã trao thưởng ${rewardSummary} thành công cho học viên!`);
 
       } catch (err) {
-        console.warn("Send bounty error:", err);
-        showToast("⚠️ Lỗi khi gửi phần thưởng lên Cloud!");
+        console.warn('Send bounty error:', err);
+        showToast('⚠️ Lỗi khi gửi phần thưởng lên Cloud!');
       } finally {
         if (btnConfirm) {
           btnConfirm.disabled = false;
-          btnConfirm.textContent = "🚀 Xác Nhận Trao Thưởng";
+          btnConfirm.textContent = '🚀 Xác Nhận Trao Thưởng';
         }
       }
     }
+
     // =========================================================================
+    // ACHIEVEMENTS & HONORARY BADGE VAULT ENGINE (v0.10.8-beta-7.6 / beta-8 FRAMEWORK)
+    // =========================================================================
+    const ACHIEVEMENT_DEFINITIONS = [
+      {
+        id: 'ach_first_step',
+        title: 'Bước Đầu Tiên',
+        icon: '🎯',
+        category: 'study',
+        tier: 'bronze',
+        desc: 'Hoàn thành bài luyện từ vựng Flashcard đầu tiên',
+        maxProgress: 1,
+        evaluator: () => (words && words.length > 0 ? 1 : 0)
+      },
+      {
+        id: 'ach_vocab_50',
+        title: 'Bác Học Tập Sự',
+        icon: '📚',
+        category: 'study',
+        tier: 'silver',
+        desc: 'Sở hữu 50 từ vựng trong kho từ cá nhân',
+        maxProgress: 50,
+        evaluator: () => (words ? Math.min(50, words.length) : 0)
+      },
+      {
+        id: 'ach_vocab_200',
+        title: 'Cao Thủ Từ Vựng',
+        icon: '🏆',
+        category: 'study',
+        tier: 'gold',
+        desc: 'Sở hữu 200 từ vựng trong kho từ cá nhân',
+        maxProgress: 200,
+        evaluator: () => (words ? Math.min(200, words.length) : 0)
+      },
+      {
+        id: 'ach_vocab_500',
+        title: 'Đại Sư Tri Thức',
+        icon: '🌟',
+        category: 'study',
+        tier: 'diamond',
+        desc: 'Sở hữu 500 từ vựng và làm chủ kiến thức',
+        maxProgress: 500,
+        evaluator: () => (words ? Math.min(500, words.length) : 0)
+      },
+      {
+        id: 'ach_speaking_pro',
+        title: 'Giọng Chuẩn Bản Xứ',
+        icon: '🎙️',
+        category: 'study',
+        tier: 'gold',
+        desc: 'Đạt điểm phát âm xuất sắc 90+ trong AI Speaking Lab',
+        maxProgress: 1,
+        evaluator: () => (localStorage.getItem('vocaflow_speaking_highest_score') >= 90 ? 1 : 0)
+      },
+      {
+        id: 'ach_bug_hunter',
+        title: 'Thợ Săn Sự Cố',
+        icon: '🐛',
+        category: 'bounty',
+        tier: 'bronze',
+        desc: 'Gửi báo cáo lỗi/góp ý đầu tiên cho nhà phát triển',
+        maxProgress: 1,
+        evaluator: () => (parseInt(localStorage.getItem('vocaflow_bugs_reported_count') || '0', 10) >= 1 ? 1 : 0)
+      },
+      {
+        id: 'ach_bounty_hero',
+        title: 'Hiệp Sĩ VocaFlow',
+        icon: '🛡️',
+        category: 'bounty',
+        tier: 'gold',
+        desc: 'Được Admin trao tặng phần thưởng Bug Bounty danh giá',
+        maxProgress: 1,
+        evaluator: () => (userNotifications && userNotifications.some(n => n.title && n.title.includes('Bug Bounty')) ? 1 : 0)
+      },
+      {
+        id: 'ach_deck_publisher',
+        title: 'Tác Giả Xuất Bản',
+        icon: '🎨',
+        category: 'bounty',
+        tier: 'silver',
+        desc: 'Chia sẻ bộ từ vựng tâm huyết lên Thư Viện Cộng Đồng',
+        maxProgress: 1,
+        evaluator: () => (decks && decks.some(d => d.isPublished || d.isPublic) ? 1 : 0)
+      },
+      {
+        id: 'ach_wealth_500',
+        title: 'Triệu Phú Học Đường',
+        icon: '💰',
+        category: 'economy',
+        tier: 'silver',
+        desc: 'Tích lũy từ 500 Xu trở lên trong ví cá nhân',
+        maxProgress: 500,
+        evaluator: () => Math.min(500, typeof getUserPoints === 'function' ? getUserPoints() : 0)
+      },
+      {
+        id: 'ach_vip_royal',
+        title: 'Hoàng Gia VocaFlow',
+        icon: '👑',
+        category: 'economy',
+        tier: 'diamond',
+        desc: 'Kích hoạt đặc quyền thành viên VIP Premium Hoàng Gia',
+        maxProgress: 1,
+        evaluator: () => (typeof isUserVip === 'function' && isUserVip() ? 1 : 0)
+      },
+      {
+        id: 'ach_lucky_spinner',
+        title: 'Thần Tài Gõ Cửa',
+        icon: '🎡',
+        category: 'economy',
+        tier: 'gold',
+        desc: 'Trải nghiệm Vòng Quay May Mắn nhận quà giá trị',
+        maxProgress: 1,
+        evaluator: () => (localStorage.getItem('vocaflow_last_spin_date') ? 1 : 0)
+      }
+    ];
+
+    let currentAchievementFilter = 'all';
+
+    function getUserShowcaseBadges() {
+      try {
+        const raw = localStorage.getItem('vocaflow_showcase_badges');
+        const list = raw ? JSON.parse(raw) : [];
+        while (list.length < 3) list.push(null);
+        return list.slice(0, 3);
+      } catch (e) {
+        return [null, null, null];
+      }
+    }
+
+    function setUserShowcaseBadges(slots) {
+      const clean = (Array.isArray(slots) ? slots : []).slice(0, 3);
+      while (clean.length < 3) clean.push(null);
+      localStorage.setItem('vocaflow_showcase_badges', JSON.stringify(clean));
+      renderMyProfileBadgeSlots();
+      syncShowcaseBadgesToCloud();
+    }
+
+    function syncShowcaseBadgesToCloud() {
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && firebaseConfig.databaseURL) {
+        const rtdbUrl = firebaseConfig.databaseURL;
+        const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+        const slots = getUserShowcaseBadges();
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/showcaseBadges.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(slots)
+        }).catch(err => console.warn('Sync showcase badges error:', err));
+      }
+    }
+
+    function isAchievementUnlocked(ach) {
+      if (!ach) return false;
+      const val = (typeof ach.evaluator === 'function') ? ach.evaluator() : 0;
+      return val >= ach.maxProgress;
+    }
+
+    function getAchievementProgress(ach) {
+      if (!ach) return { current: 0, max: 1, pct: 0, unlocked: false };
+      const val = (typeof ach.evaluator === 'function') ? ach.evaluator() : 0;
+      const cur = Math.min(ach.maxProgress, Math.max(0, val));
+      const pct = Math.round((cur / ach.maxProgress) * 100);
+      return { current: cur, max: ach.maxProgress, pct: pct, unlocked: cur >= ach.maxProgress };
+    }
+
+    function renderMyProfileBadgeSlots() {
+      const container = document.getElementById('my-profile-badge-slots');
+      if (!container) return;
+      const slots = getUserShowcaseBadges();
+
+      let html = '';
+      slots.forEach((badgeId, idx) => {
+        const ach = ACHIEVEMENT_DEFINITIONS.find(a => a.id === badgeId);
+        if (ach) {
+          html += `
+            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.03); border: 2px solid rgba(255,215,0,0.5); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s;" title="Ô ${idx+1}: ${escapeHtml(ach.title)} • Bấm để quản lý">
+              <div style="font-size: 22px; margin-bottom: 2px;">${ach.icon}</div>
+              <div style="font-size: 10.5px; font-weight: 700; color: #fbbf24; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(ach.title)}</div>
+              <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">${ach.tier}</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; transition: all 0.2s;" onmouseenter="this.style.borderColor='#6366f1'" onmouseleave="this.style.borderColor='var(--border)'" title="Ô ${idx+1}: Trống • Bấm để ghim danh hiệu">
+              <div style="font-size: 16px; color: var(--text-muted);">➕</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Ô ${idx+1}</div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderPublicProfileBadgeSlots(showcaseList = []) {
+      const container = document.getElementById('pub-profile-badge-slots');
+      const countEl = document.getElementById('pub-view-badge-count');
+      if (!container) return;
+
+      const slots = Array.isArray(showcaseList) ? showcaseList.slice(0, 3) : [null, null, null];
+      while (slots.length < 3) slots.push(null);
+
+      const activeCount = slots.filter(Boolean).length;
+      if (countEl) countEl.textContent = `${activeCount}/3 Đã ghim`;
+
+      let html = '';
+      slots.forEach((badgeId, idx) => {
+        const ach = ACHIEVEMENT_DEFINITIONS.find(a => a.id === badgeId);
+        if (ach) {
+          html += `
+            <div style="background: rgba(255,255,255,0.03); border: 2px solid rgba(255,215,0,0.4); border-radius: 10px; padding: 8px 4px; text-align: center;">
+              <div style="font-size: 22px; margin-bottom: 2px;">${ach.icon}</div>
+              <div style="font-size: 10.5px; font-weight: 700; color: #fbbf24; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(ach.title)}</div>
+              <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">${ach.tier}</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px;">
+              <div style="font-size: 14px; color: var(--text-muted); opacity: 0.4;">🎖️</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Trống</div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    function openAchievementsModal() {
+      currentAchievementFilter = 'all';
+      updateAchievementsModalUI();
+      openModal('modal-achievements');
+    }
+
+    function filterAchievements(cat) {
+      currentAchievementFilter = cat;
+      document.querySelectorAll('#achievement-filter-tabs .ach-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.className = 'btn btn-sm btn-primary ach-filter-btn active';
+        } else {
+          btn.className = 'btn btn-sm btn-outline ach-filter-btn';
+        }
+      });
+      updateAchievementsModalUI();
+    }
+
+    function updateAchievementsModalUI() {
+      const grid = document.getElementById('achievements-cards-grid');
+      const sumEl = document.getElementById('achievements-summary-count');
+      if (!grid) return;
+
+      const pinnedSlots = getUserShowcaseBadges();
+      let list = [...ACHIEVEMENT_DEFINITIONS];
+
+      // Stats
+      const total = list.length;
+      const unlockedCount = list.filter(a => isAchievementUnlocked(a)).length;
+      const pctTotal = Math.round((unlockedCount / total) * 100);
+      if (sumEl) sumEl.textContent = `${unlockedCount} / ${total} Huy Hiệu (${pctTotal}%)`;
+
+      // Filter
+      if (currentAchievementFilter === 'unlocked') {
+        list = list.filter(a => isAchievementUnlocked(a));
+      } else if (currentAchievementFilter !== 'all') {
+        list = list.filter(a => a.category === currentAchievementFilter);
+      }
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+            <div style="font-size: 32px; margin-bottom: 6px;">🎖️</div>
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text);">Chưa có huy hiệu nào trong mục này</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      list.forEach(ach => {
+        const prog = getAchievementProgress(ach);
+        const isPinned = pinnedSlots.includes(ach.id);
+        const pinnedSlotIdx = pinnedSlots.indexOf(ach.id);
+
+        const tierColors = {
+          bronze: { bg: 'rgba(180,83,9,0.12)', border: '#b45309', text: '#d97706', label: '🥉 Đồng' },
+          silver: { bg: 'rgba(148,163,184,0.12)', border: '#94a3b8', text: '#cbd5e1', label: '🥈 Bạc' },
+          gold: { bg: 'rgba(245,158,11,0.15)', border: '#f59e0b', text: '#fbbf24', label: '🥇 Vàng' },
+          diamond: { bg: 'rgba(56,189,248,0.15)', border: '#38bdf8', text: '#38bdf8', label: '💎 Kim Cương' }
+        };
+        const tcfg = tierColors[ach.tier] || tierColors.bronze;
+
+        html += `
+          <div class="achievement-card" style="background: ${prog.unlocked ? 'var(--surface-elevated)' : 'rgba(255,255,255,0.02)'}; border: 1px solid ${prog.unlocked ? tcfg.border : 'var(--border)'}; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; opacity: ${prog.unlocked ? '1' : '0.65'}; transition: all 0.2s;">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+              <div style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 10px; background: ${prog.unlocked ? tcfg.bg : 'var(--surface)'}; border: 1px solid ${prog.unlocked ? tcfg.border : 'var(--border)'}; display: flex; align-items: center; justify-content: center; font-size: 24px; filter: ${prog.unlocked ? 'none' : 'grayscale(100%)'};">
+                ${ach.icon}
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 2px;">
+                  <strong style="font-size: 13px; color: ${prog.unlocked ? 'var(--text)' : 'var(--text-muted)'};">${escapeHtml(ach.title)}</strong>
+                  <span class="badge" style="background: ${tcfg.bg}; color: ${tcfg.text}; font-size: 9.5px; padding: 1px 6px; border: 1px solid ${tcfg.border}; font-weight: 700;">${tcfg.label}</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">
+                  ${escapeHtml(ach.desc)}
+                </div>
+              </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-muted); margin-bottom: 3px;">
+                <span>${prog.unlocked ? '✅ Đã hoàn thành' : 'Tiến độ'}</span>
+                <span>${prog.current}/${prog.max} (${prog.pct}%)</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+                <div style="width: ${prog.pct}%; height: 100%; background: ${prog.unlocked ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #6366f1, #38bdf8)'}; border-radius: 4px; transition: width 0.3s;"></div>
+              </div>
+            </div>
+
+            <!-- ACTION: PIN / UNPIN -->
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 2px;">
+              ${prog.unlocked ? (
+                isPinned ? `
+                  <button type="button" class="btn btn-sm btn-outline" onclick="togglePinShowcaseBadge('${ach.id}')" style="font-size: 10.5px; padding: 3px 8px; color: #fbbf24; border-color: rgba(245,158,11,0.5);">
+                    ⭐ Đang ghim Ô ${pinnedSlotIdx + 1} (Bỏ ghim)
+                  </button>
+                ` : `
+                  <button type="button" class="btn btn-sm btn-primary" onclick="togglePinShowcaseBadge('${ach.id}')" style="font-size: 10.5px; padding: 3px 10px; font-weight: 700;">
+                    📌 Ghim lên Hồ Sơ
+                  </button>
+                `
+              ) : `
+                <span style="font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                  <span>🔒</span> <span>Chưa mở khóa</span>
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+    }
+
+    function togglePinShowcaseBadge(badgeId) {
+      let slots = getUserShowcaseBadges();
+      const existingIdx = slots.indexOf(badgeId);
+
+      if (existingIdx !== -1) {
+        // Unpin
+        slots[existingIdx] = null;
+        setUserShowcaseBadges(slots);
+        updateAchievementsModalUI();
+        showToast('🌟 Đã gỡ huy hiệu khỏi danh hiệu danh dự!');
+        return;
+      }
+
+      // Pin to first empty slot
+      const firstEmptyIdx = slots.indexOf(null);
+      if (firstEmptyIdx !== -1) {
+        slots[firstEmptyIdx] = badgeId;
+        setUserShowcaseBadges(slots);
+        updateAchievementsModalUI();
+        showToast(`🎉 Đã ghim huy hiệu vào Ô ${firstEmptyIdx + 1} trên Hồ Sơ!`);
+      } else {
+        // All 3 full: replace first slot
+        slots[0] = badgeId;
+        setUserShowcaseBadges(slots);
+        updateAchievementsModalUI();
+        showToast('🎉 Đã ghim huy hiệu vào Ô 1 trên Hồ Sơ!');
+      }
+    }
+
     // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.8-beta-6.7)
     // =========================================================================
     function getStoreActiveDiscount() {
