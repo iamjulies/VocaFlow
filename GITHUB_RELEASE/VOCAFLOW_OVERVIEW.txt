@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-5.2 (Build 152)
+Phiên bản hiện tại : v0.10.8-beta-5.3 (Build 153)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-5.3 (Build 153 - BEAUTIFIED VIP PAYMENT UI, COMPACT SPIN CODES & FAQ ENHANCEMENT):
+  - Rút Ngắn Mã Giao Dịch Mua Lượt Quay Chuẩn Tuyệt Đối (< 25 Ký Tự Napas 247):
+    * Đơn giản hóa mã gói: `SPIN5` -> `S5`, `SPIN15` -> `S15`, `SPIN40` -> `S40`. Cú pháp chuyển khoản ngắn gọn: `VOCA [UID] S15` (chỉ 22-23 ký tự, 100% không bị cắt trên mọi app ngân hàng).
+  - Đồng Bộ Giao Diện Hướng Dẫn Thanh Toán VIP Thành Thiết Kế 2 Cột Tuyệt Đẹp:
+    * Nâng cấp hộp thanh toán VIP (`#vip-payment-info-box`) theo phong cách thẻ giao diện cao cấp: Khung QR VietQR sắc nét nền trắng, 4 thẻ thông tin bo tròn hiện đại (Ngân hàng, STK, Chủ TK, Số tiền), hộp cú pháp vàng rực và nút hỗ trợ Zalo/Chuyển khoản trực tiếp.
+  - Bổ Sung Câu Hỏi Thường Gặp (FAQ):
+    * Thêm hướng dẫn rõ ràng: Nếu sau 5-10 phút chưa được kích hoạt thì chỉ cần liên hệ Zalo 0876048326 (Admin Nong Duc Hao) hỗ trợ ngay, KHÔNG CẦN CHUYỂN TIỀN LẠI LẦN 2.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-5.3_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-5.2 (Build 152 - VIP EXTENSION FIX, NO-SCROLLBAR WHEEL & REAL-MONEY SPIN PACKS):
   - Khắc Phục Gia Hạn VIP Năm / Tháng Khi Trúng Giải Độc Đắc (+1 Ngày VIP):
     * Sửa lỗi nhận diện tier: Hội viên VIP Tháng/Năm khi quay trúng ô Độc Đắc sẽ được cộng dồn gia hạn thêm đúng 24h (`userVipExpiresAt + 86400000`) thay vì bị chuyển nhầm thành 300 Xu. Chỉ riêng hội viên VIP Trọn Đời (Lifetime) mới nhận phần thưởng quy đổi 300 Xu + 5 Gợi Ý.

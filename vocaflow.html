@@ -2249,7 +2249,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4264,7 +4264,7 @@
             <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">🎡 5 Lượt Quay May Mắn</div>
             <div style="font-size: 11px; color: #34d399; font-weight: 700;">10.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 2.000đ/lượt)</span></div>
           </div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="openSpinPurchasePaymentModal('SPIN5', '5 Lượt Quay May Mắn', 10000, 5)" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="openSpinPurchasePaymentModal('S5', '5 Lượt Quay May Mắn', 10000, 5)" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700;">
             💳 Mua (10k)
           </button>
         </div>
@@ -4278,7 +4278,7 @@
             </div>
             <div style="font-size: 11px; color: #34d399; font-weight: 700;">25.000đ <span style="color: var(--text-muted); font-weight: normal;">(~1.600đ/lượt)</span></div>
           </div>
-          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('SPIN15', '15 Lượt Quay May Mắn', 25000, 15)" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 800;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('S15', '15 Lượt Quay May Mắn', 25000, 15)" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 800;">
             🚀 Mua (25k)
           </button>
         </div>
@@ -4292,7 +4292,7 @@
             </div>
             <div style="font-size: 11px; color: #34d399; font-weight: 700;">50.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 1.250đ/lượt)</span></div>
           </div>
-          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('SPIN40', '40 Lượt Quay Hoàng Gia', 50000, 40)" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; font-weight: 800;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('S40', '40 Lượt Quay Hoàng Gia', 50000, 40)" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; font-weight: 800;">
             👑 Mua (50k)
           </button>
         </div>
@@ -4830,7 +4830,7 @@
               📋 Sao Chép
             </button>
           </div>
-          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">💡 Độ dài &lt; 25 ký tự chuẩn Napas 247. Lượt quay sẽ được cộng tự động/duyệt trong 1-3 phút.</div>
+          <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">💡 Lượt quay sẽ được cộng tự động hoặc duyệt nhanh trong 1-3 phút.</div>
         </div>
 
         <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center;">
@@ -5020,8 +5020,8 @@
 
         </div>
 
-        <!-- PAYMENT DETAILS / BANK TRANSFER SECTION -->
-        <div id="vip-payment-info-box" style="display: none; margin-top: 20px; background: var(--surface-elevated); border: 1.5px solid rgba(251, 191, 36, 0.5); border-radius: 14px; padding: 18px;">
+        <!-- PAYMENT DETAILS / BANK TRANSFER SECTION (v0.10.8-beta-5.3 BEAUTIFIED) -->
+        <div id="vip-payment-info-box" style="display: none; margin-top: 20px; background: var(--surface-elevated); border: 1.5px solid rgba(251, 191, 36, 0.5); border-radius: 14px; padding: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 15px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
               <span>💳</span> Hướng Dẫn Thanh Toán <span id="vip-selected-plan-name" style="color: var(--text);">VIP</span>
@@ -5029,41 +5029,58 @@
             <span id="vip-selected-plan-price" class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 13px; font-weight: 800; padding: 4px 10px;">0đ</span>
           </div>
 
-          <div id="vip-rollover-notice" style="margin-bottom: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
+          <div id="vip-rollover-notice" style="margin-bottom: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
             <span>🔄</span> <span id="vip-rollover-text">Thời hạn sẽ được cộng dồn tiếp tục sau khi gói hiện tại kết thúc.</span>
           </div>
 
-          <div class="vip-payment-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: center; width: 100%; box-sizing: border-box;">
-            <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; line-height: 1.8;">
-              <div>🏦 Ngân hàng: <strong style="color: var(--text);">MB Bank (Ngân hàng Quân Đội)</strong></div>
-              <div style="display: flex; align-items: center; gap: 8px; margin: 3px 0;">
-                <span>🔢 Số tài khoản:</span>
-                <strong id="vip-acc-number" style="color: #38bdf8; font-family: monospace; font-size: 16px; letter-spacing: 0.5px;">0916541813</strong>
-                <button type="button" class="btn btn-xs" onclick="copyAccountNumber()" style="padding: 2px 7px; font-size: 11px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 4px; cursor: pointer;" title="Sao chép số tài khoản">📋 Copy</button>
-              </div>
-              <div>👤 Chủ tài khoản: <strong style="color: #ffd700; font-weight: 800;">NONG DUC HAO</strong></div>
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                <span>📝 Cú pháp:</span>
-                <strong id="vip-transfer-syntax" style="color: #fbbf24; font-family: monospace; background: rgba(245,158,11,0.15); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(245,158,11,0.3);">VOCA VIP</strong>
-                <button type="button" class="btn btn-xs" onclick="copyTransferSyntax()" style="padding: 2px 7px; font-size: 11px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 4px; cursor: pointer;" title="Sao chép cú pháp">📋 Copy</button>
-              </div>
-              <div style="margin-top: 8px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
-                💡 <em>Quét mã VietQR bên cạnh sẽ tự động điền sẵn STK, số tiền và nội dung chính xác 100%.</em>
-              </div>
+          <div class="vip-payment-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: center; margin-bottom: 14px;">
+            <!-- QR Image Container -->
+            <div style="text-align: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+              <img id="vip-vietqr-img" src="" alt="VietQR VIP Payment" style="width: 170px; height: 170px; object-fit: contain; display: block; margin: 0 auto;">
+              <div style="font-size: 10px; color: #475569; font-weight: 700; margin-top: 4px;">Quét mã VietQR bằng App Ngân Hàng</div>
             </div>
 
-            <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border);">
-              <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">Quét mã VietQR bằng app Ngân hàng / Ví:</div>
-              <div style="display: inline-block; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
-                <img id="vip-vietqr-img" src="https://api.vietqr.io/image/970422-0916541813-compact2.jpg?accountName=NONG%20DUC%20HAO&amount=299000" alt="VietQR VIP Payment" style="width: 140px; height: 140px; object-fit: contain; display: block;">
+            <!-- Transfer details -->
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Ngân hàng:</div>
+                <strong style="color: #38bdf8;">MB Bank (Ngân hàng Quân Đội)</strong>
               </div>
-              <div style="font-size: 11px; color: #34d399; font-weight: 600; margin-top: 6px;">✓ Tự động điền đầy đủ thông tin</div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Số tài khoản:</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong id="vip-acc-number" style="color: #34d399; font-size: 14px; font-family: monospace;">0916541813</strong>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="copyAccountNumber()" style="padding: 2px 6px; font-size: 10px;">Copy</button>
+                </div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Chủ tài khoản:</div>
+                <strong style="color: var(--text);">NONG DUC HAO</strong>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Số tiền:</div>
+                <strong id="vip-pay-amount-display" style="color: #fbbf24; font-size: 14px;">299.000đ</strong>
+              </div>
             </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
-            <button class="btn btn-outline btn-sm" onclick="copyTransferSyntax()">📋 Sao Chép Cú Pháp</button>
-            <button class="btn btn-primary btn-sm" onclick="confirmVipPaymentSubmitted()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700;">
+          <!-- Transfer Syntax box -->
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.5); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 4px;">Nội dung chuyển khoản (Bắt buộc chính xác):</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px;">
+              <code id="vip-transfer-syntax" style="font-size: 13px; font-weight: 800; color: #ffd700; font-family: monospace;">VOCA VIP</code>
+              <button type="button" class="btn btn-primary btn-sm" onclick="copyTransferSyntax()" style="padding: 4px 10px; font-size: 11px; white-space: nowrap; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none;">
+                📋 Sao Chép
+              </button>
+            </div>
+            <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">💡 Quét mã VietQR sẽ tự động điền đầy đủ STK, số tiền và cú pháp chuẩn 100%.</div>
+          </div>
+
+          <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <a href="https://zalo.me/0876048326" target="_blank" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56,189,248,0.4); text-decoration: none; font-size: 11px; padding: 6px 10px;">
+              💬 Hỗ trợ Zalo: 0876048326
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="confirmVipPaymentSubmitted()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 11.5px; padding: 6px 14px;">
               ✓ Tôi Đã Chuyển Khoản
             </button>
           </div>
@@ -5075,6 +5092,10 @@
             <span>❓</span> Câu Hỏi Thường Gặp Khi Nâng Cấp VIP
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted);">
+            <div style="background: rgba(245,158,11,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);">
+              <strong style="color: #fbbf24;">❓ Nếu sau 5 - 10 phút chưa được kích hoạt VIP hoặc Lượt quay thì sao?</strong>
+              <p style="margin: 2px 0 0 0; color: #ffd700; font-size: 11.5px;">Bạn <u style="font-weight: 800;">KHÔNG CẦN CHUYỂN TIỀN LẠI LẦN 2</u>! Chỉ cần bấm nút <strong>"💬 Hỗ trợ Zalo"</strong> hoặc nhắn tin hotline <strong>0876048326</strong> kèm ảnh biên lai chuyển khoản, Admin sẽ hỗ trợ kiểm tra và kích hoạt ngay tức thì.</p>
+            </div>
             <div>
               <strong style="color: var(--text);">⏱️ Thời gian xử lý giao dịch chuyển khoản là bao lâu?</strong>
               <p style="margin: 2px 0 0 0;">Thông thường hệ thống xử lý đối soát tự động từ <strong>1 - 5 phút</strong>. Nếu ngân hàng bảo trì hoặc ngoài giờ cao điểm, tối đa từ <strong>10 - 15 phút</strong>.</p>
@@ -5529,7 +5550,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -24502,8 +24523,11 @@ Quy tắc phản hồi quan trọng:
       if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'none';
     }
 
+    const payAmountDisplay = document.getElementById('vip-pay-amount-display');
+    if (payAmountDisplay) payAmountDisplay.textContent = priceStr;
+
     if (qrImg) {
-      qrImg.src = `https://api.vietqr.io/image/970422-0916541813-compact2.jpg?accountName=NONG%20DUC%20HAO&amount=${amount}&addInfo=${encodeURIComponent(syntax)}`;
+      qrImg.src = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(syntax)}&accountName=NONG%20DUC%20HAO`;
     }
 
     if (box) {
