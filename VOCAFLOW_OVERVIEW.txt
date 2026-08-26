@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-4.2 (Build 148)
+Phiên bản hiện tại : v0.10.8-beta-4.3 (Build 149)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-4.3 (Build 149 - COMPACT MOBILE ANTI-OVERFLOW VIP PRICING):
+  - Khắc Phục Triệt Để Tràn Viền Trên Mọi Màn Hình Hẹp (Mobile Anti-Overflow):
+    * Tinh chỉnh kích thước `vip-pricing-modal` co giãn thông minh (`width: 96vw`, padding `14px 10px`).
+    * Tối ưu thanh tab phân đoạn (`vip-plan-segmented-bar`): Áp dụng `min-width: 0`, `overflow: hidden`, cắt ngắn text tự động tránh tràn cạnh phải.
+    * Tối ưu thẻ gói giá (`vip-plan-card`): Padding hợp lý, nơ giảm giá (`#vip-ribbon-yearly`) gắn cố định trong khung, cuộn mượt mà `overflow-x: hidden`.
+    * Tương thích hoàn hảo từ màn hình siêu nhỏ (320px - 360px) đến máy tính bảng và màn hình lớn.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-4.3_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-4.2 (Build 148 - RESPONSIVE SEGMENTED VIP PLAN SWITCHER):
   - Tích Hợp Thanh Chuyển Tab Gói VIP Tiện Lợi (Segmented Pill Switcher):
     * Giải quyết vấn đề cuộn trang trên màn hình hẹp / điện thoại di động (Mobile / Responsive).

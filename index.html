@@ -152,36 +152,53 @@
       animation: avatarVipRingGlow 3s ease-in-out infinite !important;
     }
 
-    /* Segmented Pill Switcher for VIP Plans (v0.10.8-beta-4.2) */
+    /* Segmented Pill Switcher for VIP Plans (v0.10.8-beta-4.3 ANTI-OVERFLOW) */
+    .vip-pricing-modal {
+      padding: 22px;
+      width: 95vw;
+      box-sizing: border-box;
+    }
+
     .vip-plan-segmented-bar {
       display: flex;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 4px;
-      margin-bottom: 14px;
-      gap: 6px;
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 3px;
+      margin-bottom: 12px;
+      gap: 3px;
       position: relative;
       user-select: none;
+      overflow: hidden;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
     }
 
     .vip-plan-segment-btn {
       flex: 1;
+      min-width: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 9px 10px;
-      border-radius: 10px;
-      font-size: 12.5px;
+      gap: 4px;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       border: 1px solid transparent;
       background: transparent;
       text-align: center;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .vip-plan-segment-btn span {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
@@ -212,12 +229,56 @@
     }
 
     @media (max-width: 767px) {
+      #modal-vip-pricing {
+        padding: 6px !important;
+      }
+      .vip-pricing-modal {
+        width: 96vw !important;
+        max-width: 96vw !important;
+        max-height: 92vh !important;
+        padding: 14px 10px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
+      }
+      .vip-plan-segmented-bar {
+        padding: 2px !important;
+        gap: 2px !important;
+        margin-bottom: 10px !important;
+      }
+      .vip-plan-segment-btn {
+        font-size: 11px !important;
+        padding: 7px 2px !important;
+        gap: 2px !important;
+      }
+      .vip-plan-segment-btn .badge {
+        font-size: 8.5px !important;
+        padding: 0px 3px !important;
+      }
+      .vip-cards-container {
+        display: block !important;
+        width: 100% !important;
+        margin-top: 2px !important;
+        box-sizing: border-box !important;
+      }
       .vip-cards-container .vip-plan-card {
         display: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 16px 12px !important;
       }
       .vip-cards-container .vip-plan-card.active-tab-card {
         display: flex !important;
         animation: vipCardFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #vip-ribbon-yearly, #vip-ribbon-lifetime {
+        top: -9px !important;
+        right: 8px !important;
+        font-size: 8.5px !important;
+        padding: 2px 6px !important;
+      }
+      .vip-payment-grid {
+        grid-template-columns: 1fr !important;
       }
     }
 
@@ -2072,7 +2133,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4.2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4472,9 +4533,9 @@
     </div>
   </div>
 
-  <!-- MODAL: VIP CROWN PRICING (v0.10.8-beta-3.1) -->
+  <!-- MODAL: VIP CROWN PRICING (v0.10.8-beta-4.3) -->
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
-    <div class="modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; padding: 24px; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
+    <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 28px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));">👑</span>
@@ -4486,7 +4547,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div style="overflow-y: auto; padding: 14px 4px; flex: 1;">
+      <div style="overflow-y: auto; overflow-x: hidden; padding: 8px 2px; flex: 1; width: 100%; box-sizing: border-box;">
         <!-- Current VIP Status Banner if Active -->
         <div id="vip-current-status-banner" style="display: none; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -4613,7 +4674,7 @@
             <span>🔄</span> <span id="vip-rollover-text">Thời hạn sẽ được cộng dồn tiếp tục sau khi gói hiện tại kết thúc.</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; align-items: center;">
+          <div class="vip-payment-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: center; width: 100%; box-sizing: border-box;">
             <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; line-height: 1.8;">
               <div>🏦 Ngân hàng: <strong style="color: var(--text);">MB Bank (Ngân hàng Quân Đội)</strong></div>
               <div style="display: flex; align-items: center; gap: 8px; margin: 3px 0;">
@@ -5109,7 +5170,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4.2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4.3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
