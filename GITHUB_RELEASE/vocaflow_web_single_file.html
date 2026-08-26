@@ -152,6 +152,95 @@
       animation: avatarVipRingGlow 3s ease-in-out infinite !important;
     }
 
+    /* =========================================================================
+       LUCKY WHEEL & REWARDED ADS CSS (v0.10.8-beta-5)
+       ========================================================================= */
+    .lucky-wheel-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      max-width: 85vw;
+      max-height: 85vw;
+      margin: 10px auto 20px auto;
+    }
+
+    .lucky-wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid #ffd700;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
+      will-change: transform;
+    }
+
+    .lucky-wheel-needle {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 28px solid #ffd700;
+      z-index: 10;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+    }
+
+    .lucky-wheel-center-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 68px;
+      height: 68px;
+      background: radial-gradient(circle, #ffffff, #ffd700);
+      border: 3px solid #fff;
+      border-radius: 50%;
+      color: #0b0b0d;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6), 0 0 15px rgba(255, 215, 0, 0.6);
+      z-index: 5;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+
+    .lucky-wheel-center-btn:active {
+      transform: translate(-50%, -50%) scale(0.92);
+    }
+
+    .lucky-wheel-slice-label {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      padding-top: 14px;
+      font-size: 11px;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      box-sizing: border-box;
+    }
+
+    .ad-progress-bar-fill {
+      height: 6px;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      border-radius: 4px;
+      transition: width 1s linear;
+    }
+
     /* Segmented Pill Switcher for VIP Plans (v0.10.8-beta-4.3 ANTI-OVERFLOW) */
     .vip-pricing-modal {
       padding: 22px;
@@ -2133,7 +2222,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-4.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4105,6 +4194,36 @@
         </div>
       </div>
 
+      <!-- LUCKY WHEEL & REWARDED ADS SECTION (v0.10.8-beta-5) -->
+      <div id="shop-lucky-wheel-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎡</span>
+            <strong id="shop-wheel-title" style="font-size: 13.5px; color: #fbbf24;">Vòng Quay May Mắn</strong>
+            <span id="shop-wheel-badge" class="badge" style="font-size: 10px; background: rgba(16,185,129,0.2); color: #34d399;">1 Lượt Free</span>
+          </div>
+          <div id="shop-wheel-desc" style="font-size: 11px; color: var(--text-muted);">Cơ hội trúng 300 Xu, Gợi ý & Giải Độc Đắc +1 Ngày VIP!</div>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="openLuckyWheelModal()" style="white-space: nowrap; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; border: none; font-weight: 800; padding: 7px 12px; border-radius: 8px; box-shadow: 0 3px 10px rgba(245,158,11,0.35);">
+          Quay Ngay
+        </button>
+      </div>
+
+      <!-- REWARDED ADS BANNER (AUTOMATICALLY HIDDEN FOR VIP USERS) -->
+      <div id="shop-rewarded-ad-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(16,185,129,0.1)); border: 1px dashed rgba(56,189,248,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎬</span>
+            <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận 50 Xu</strong>
+            <span class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.15); color: #38bdf8;">+1 Lượt Quay</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận 50 Xu & thêm 1 lượt quay may mắn.</div>
+        </div>
+        <button type="button" id="btn-shop-watch-ad" class="btn btn-sm btn-outline" onclick="openRewardedAdModal()" style="white-space: nowrap; font-weight: 700; color: #38bdf8; border-color: rgba(56,189,248,0.5); padding: 7px 12px; border-radius: 8px;">
+          🎬 Xem Video
+        </button>
+      </div>
+
       <!-- Gift / Redeem Code Section (Moved to top v0.0.10.1m) -->
       <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
         <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
@@ -4529,6 +4648,102 @@
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
         <button class="btn btn-primary btn-sm" onclick="closeModal('modal-subscribers-list')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LUCKY WHEEL (v0.10.8-beta-5) -->
+  <div class="modal-overlay" id="modal-lucky-wheel" style="z-index: 10009;">
+    <div class="modal" style="max-width: 440px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25);">
+      <div class="modal-title" style="border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; align-items: center; gap: 8px; text-align: left;">
+          <span style="font-size: 24px;">🎡</span>
+          <div>
+            <strong id="lucky-wheel-modal-title" style="font-size: 16px; color: var(--text);">Vòng Quay May Mắn</strong>
+            <div id="lucky-wheel-modal-sub" style="font-size: 11px; color: var(--text-muted);">Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & VIP Hoàng Gia!</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-lucky-wheel')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="overflow-y: auto; padding: 10px 4px; flex: 1;">
+        <!-- Spins status badge -->
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 8px;">
+          <span style="font-size: 12px; color: #ffd700; font-weight: 700;">Lượt quay còn lại:</span>
+          <strong id="lucky-wheel-spins-count" style="font-size: 14px; color: #ffd700;">1</strong>
+        </div>
+
+        <!-- Wheel Container -->
+        <div class="lucky-wheel-container">
+          <div class="lucky-wheel-needle"></div>
+          <div class="lucky-wheel" id="lucky-wheel-element">
+            <!-- Dynamic Slices with Labels -->
+          </div>
+          <div class="lucky-wheel-center-btn" id="lucky-wheel-spin-btn" onclick="triggerLuckyWheelSpin()">QUAY</div>
+        </div>
+
+        <!-- Result Text Box -->
+        <div id="lucky-wheel-result-box" style="min-height: 42px; display: flex; align-items: center; justify-content: center; font-size: 14.5px; font-weight: 800; color: #ffd700; padding: 6px 12px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid var(--border); margin: 0 10px 10px 10px;">
+          Bấm QUAY để thử vận may ngay!
+        </div>
+
+        <!-- Extra Action for Non-VIP when out of spins -->
+        <div id="lucky-wheel-ad-cta" style="display: none; padding: 8px; margin: 0 10px;">
+          <button type="button" class="btn btn-primary" onclick="closeModal('modal-lucky-wheel'); openRewardedAdModal();" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; font-weight: 700; font-size: 12.5px;">
+            🎬 Xem Video 15s Để Nhận Thêm Lượt Quay (+50 Xu)
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-lucky-wheel')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REWARDED VIDEO AD PLAYER (v0.10.8-beta-5) -->
+  <div class="modal-overlay" id="modal-rewarded-ad" style="z-index: 10010;">
+    <div class="modal" style="max-width: 480px; width: 95vw; background: #0b0b0d; border: 1.5px solid rgba(56, 189, 248, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.85); display: flex; flex-direction: column;">
+      <div class="modal-title" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">🎬</span>
+          <div>
+            <strong style="font-size: 15px; color: #38bdf8;">Video Giới Thiệu & Nhận Thưởng</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">Xem hết video để nhận 50 Xu & +1 Lượt Quay May Mắn</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 16px 10px; text-align: center;">
+        <!-- Simulated High-Reward Ad Screen -->
+        <div style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.3); padding: 24px 16px; margin-bottom: 14px; position: relative; overflow: hidden;">
+          <div style="font-size: 40px; margin-bottom: 8px; animation: crownFloatPulse 2s ease-in-out infinite;">🚀</div>
+          <h3 id="ad-player-feature-title" style="font-size: 17px; font-weight: 800; color: #ffd700; margin: 0 0 6px 0;">VocaFlow Pro - AI English Mentor</h3>
+          <p id="ad-player-feature-desc" style="font-size: 12px; color: #cbd5e1; line-height: 1.6; margin: 0;">Khám phá phương pháp ghi nhớ từ vựng ngắt quãng chuẩn Ebbinghaus kết hợp Trợ lý AI Gemini thông minh.</p>
+          <div style="margin-top: 14px; display: inline-flex; gap: 6px;">
+            <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">✓ Không giới hạn</span>
+            <span class="badge" style="background: rgba(56,189,248,0.2); color: #38bdf8; font-size: 10px;">✓ Realtime Sync</span>
+            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px;">✓ VIP Crown</span>
+          </div>
+        </div>
+
+        <!-- Progress bar and timer countdown -->
+        <div style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: #94a3b8; font-weight: 700; margin-bottom: 6px;">
+            <span>Tiến trình xem video:</span>
+            <span id="ad-player-countdown" style="color: #38bdf8;">Đang tải... 15s</span>
+          </div>
+          <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+            <div id="ad-player-progress-fill" class="ad-progress-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <button class="btn btn-outline btn-sm" id="btn-ad-cancel" onclick="cancelRewardedAd()" style="font-size: 11px; color: var(--text-muted);">Bỏ qua</button>
+        <button class="btn btn-primary btn-sm" id="btn-ad-claim-reward" disabled onclick="claimRewardedAdReward()" style="font-size: 12px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 8px 16px; opacity: 0.5; cursor: not-allowed;">
+          ⏳ Đang xem video...
+        </button>
       </div>
     </div>
   </div>
@@ -5170,7 +5385,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-4.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6650,6 +6865,7 @@
 
     function openShopModal() {
       updateEconomyUI();
+      updateShopBonusesUI();
       openModal('modal-shop');
       setTimeout(() => {
         const giftInput = document.getElementById('shop-gift-code-input');
@@ -7685,6 +7901,7 @@
       updateAuthUI();
       updateEconomyUI();
       initGlobalVipRegistry();
+      if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
 
       // Proactively fetch latest profile from Cloud in background
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && firebaseConfig.databaseURL) {
@@ -12097,6 +12314,419 @@
         openModal(parentToRestore);
       }
     }
+
+    // =========================================================================
+    // LUCKY WHEEL & REWARDED ADS ENGINE (v0.10.8-beta-5)
+    // =========================================================================
+    const AD_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown
+    let luckyWheelIsSpinning = false;
+    let luckyWheelCurrentRotation = 0;
+    let adWatchInterval = null;
+    let adWatchSecondsLeft = 15;
+
+    const VIP_WHEEL_SLICES = [
+      { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Hoàng Gia' },
+      { id: 'pts_300', label: '🪙 300 Xu', type: 'POINTS', val: 300, color: '#ff4d4d', text: '300 Xu' },
+      { id: 'hints_10', label: '💡 10 Gợi Ý', type: 'HINTS', val: 10, color: '#ffaf40', text: '10 Gợi Ý' },
+      { id: 'skips_5', label: '⏩ 5 Bỏ Qua', type: 'SKIPS', val: 5, color: '#32ff7e', text: '5 Lượt Bỏ Qua' },
+      { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#3db5ff', text: '150 Xu' },
+      { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#7d5fff', text: '5 Gợi Ý' },
+      { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4b95', text: '200 Xu' },
+      { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#cd84f1', text: '3 Lượt Bỏ Qua' }
+    ];
+
+    const REGULAR_WHEEL_SLICES = [
+      { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Trải Nghiệm' },
+      { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4d4d', text: '200 Xu' },
+      { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#ffaf40', text: '5 Gợi Ý' },
+      { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#32ff7e', text: '3 Lượt Bỏ Qua' },
+      { id: 'pts_50', label: '🪙 50 Xu', type: 'POINTS', val: 50, color: '#3db5ff', text: '50 Xu' },
+      { id: 'hints_2', label: '💡 2 Gợi Ý', type: 'HINTS', val: 2, color: '#7d5fff', text: '2 Gợi Ý' },
+      { id: 'pts_100', label: '🪙 100 Xu', type: 'POINTS', val: 100, color: '#ff4b95', text: '100 Xu' },
+      { id: 'skips_1', label: '⏩ 1 Bỏ Qua', type: 'SKIPS', val: 1, color: '#cd84f1', text: '1 Lượt Bỏ Qua' }
+    ];
+
+    function getTodayString() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getLuckySpinsCount() {
+      const today = getTodayString();
+      const lastSpinDate = localStorage.getItem('vocaflow_last_spin_date') || '';
+      let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+      
+      if (lastSpinDate !== today) {
+        // Daily Free Spin reset
+        spins = 1;
+        localStorage.setItem('vocaflow_last_spin_date', today);
+        localStorage.setItem('vocaflow_lucky_spins_left', '1');
+      }
+      return spins;
+    }
+
+    function setLuckySpinsCount(count) {
+      localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, count).toString());
+      localStorage.setItem('vocaflow_last_spin_date', getTodayString());
+      updateLuckyWheelUI();
+    }
+
+    function updateShopBonusesUI() {
+      const isVip = isUserVip();
+      const spins = getLuckySpinsCount();
+
+      // 1. Update Lucky Wheel banner in VocaShop
+      const wheelTitle = document.getElementById('shop-wheel-title');
+      const wheelBadge = document.getElementById('shop-wheel-badge');
+      const wheelDesc = document.getElementById('shop-wheel-desc');
+      const adBanner = document.getElementById('shop-rewarded-ad-banner');
+
+      if (wheelTitle) {
+        wheelTitle.textContent = isVip ? '👑 Vòng Quay May Mắn VIP' : '🎡 Vòng Quay May Mắn';
+      }
+      if (wheelBadge) {
+        wheelBadge.textContent = `Còn ${spins} Lượt`;
+        wheelBadge.style.background = spins > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(148,163,184,0.15)';
+        wheelBadge.style.color = spins > 0 ? '#34d399' : '#94a3b8';
+      }
+      if (wheelDesc) {
+        wheelDesc.textContent = isVip 
+          ? '👑 Đặc quyền VIP: Cơ cấu giải 300 Xu, 10 Gợi ý & Độc Đắc +1 Ngày VIP'
+          : 'Cơ hội trúng 200 Xu, Gợi ý, Bỏ qua & Giải Độc Đắc +1 Ngày VIP!';
+      }
+
+      // 2. Hide Rewarded Ads completely for VIP users
+      if (adBanner) {
+        if (isVip) {
+          adBanner.style.display = 'none';
+        } else {
+          adBanner.style.display = 'flex';
+          updateAdButtonCooldownState();
+        }
+      }
+    }
+
+    function updateAdButtonCooldownState() {
+      const btn = document.getElementById('btn-shop-watch-ad');
+      if (!btn) return;
+      
+      const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
+      const elapsed = Date.now() - lastWatch;
+
+      if (elapsed < AD_COOLDOWN_MS) {
+        const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
+        const m = Math.floor(remainingSec / 60);
+        const s = remainingSec % 60;
+        const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        btn.textContent = `⏱️ Chờ ${timeStr}`;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+      } else {
+        btn.textContent = '🎬 Xem Video';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      }
+    }
+
+    function renderWheelSlices() {
+      const wheel = document.getElementById('lucky-wheel-element');
+      if (!wheel) return;
+
+      const isVip = isUserVip();
+      const slices = isVip ? VIP_WHEEL_SLICES : REGULAR_WHEEL_SLICES;
+
+      // 8 Segments conic gradient
+      const conicParts = slices.map((s, i) => `${s.color} ${i * 45}deg ${(i + 1) * 45}deg`).join(', ');
+      wheel.style.background = `conic-gradient(${conicParts})`;
+
+      let labelsHtml = '';
+      slices.forEach((s, i) => {
+        const angle = i * 45 + 22.5;
+        labelsHtml += `
+          <div class="lucky-wheel-slice-label" style="transform: rotate(${angle}deg);">
+            <span>${s.label}</span>
+          </div>
+        `;
+      });
+
+      wheel.innerHTML = labelsHtml;
+    }
+
+    function updateLuckyWheelUI() {
+      const isVip = isUserVip();
+      const spins = getLuckySpinsCount();
+
+      const titleEl = document.getElementById('lucky-wheel-modal-title');
+      const subEl = document.getElementById('lucky-wheel-modal-sub');
+      const spinsCountEl = document.getElementById('lucky-wheel-spins-count');
+      const adCta = document.getElementById('lucky-wheel-ad-cta');
+
+      if (titleEl) titleEl.textContent = isVip ? '👑 Vòng Quay May Mắn Hoàng Gia' : '🎡 Vòng Quay May Mắn';
+      if (subEl) subEl.textContent = isVip ? 'Đặc quyền VIP: Giải thưởng cực lớn & +1 Ngày VIP!' : 'Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & VIP Trải Nghiệm!';
+      if (spinsCountEl) spinsCountEl.textContent = spins.toString();
+
+      if (adCta) {
+        adCta.style.display = (!isVip && spins === 0) ? 'block' : 'none';
+      }
+    }
+
+    function openLuckyWheelModal() {
+      renderWheelSlices();
+      updateLuckyWheelUI();
+      const resultBox = document.getElementById('lucky-wheel-result-box');
+      if (resultBox) resultBox.textContent = 'Bấm QUAY để thử vận may ngay!';
+      openModal('modal-lucky-wheel');
+    }
+
+    function grantVipOneDayBonus() {
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+      const currentExp = (userVipExpiresAt && userVipExpiresAt > Date.now()) ? userVipExpiresAt : Date.now();
+      const newExp = currentExp + ONE_DAY_MS;
+      
+      if (userVipTier === 'lifetime') {
+        setUserPoints(getUserPoints() + 300);
+        setUserHints(getUserHints() + 5);
+        addLedgerEntry('LUCKY_WHEEL', 300, '👑 Giải Độc Đắc: +1 Ngày VIP (Đã quy đổi 300 Xu + 5 Gợi Ý cho VIP Trọn Đời)');
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        return { isLifetime: true, message: 'Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
+      }
+
+      userVipIsActive = true;
+      if (!userVipTier || userVipTier === 'none') {
+        userVipTier = 'monthly';
+      }
+      userVipExpiresAt = newExp;
+
+      localStorage.setItem('vocaflow_vip_active', 'true');
+      localStorage.setItem('vocaflow_vip_tier', userVipTier);
+      localStorage.setItem('vocaflow_vip_expires_at', userVipExpiresAt.toString());
+
+      const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
+      addLedgerEntry('LUCKY_WHEEL', 0, `👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`);
+
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
+
+      // Cloud Sync for VIP
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            isVip: true,
+            vipTier: userVipTier,
+            vipExpiresAt: userVipExpiresAt,
+            updatedAt: new Date().toISOString()
+          })
+        }).catch(() => {});
+      }
+
+      updateAuthUI();
+      if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
+      if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+
+      return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted };
+    }
+
+    function triggerLuckyWheelSpin() {
+      if (luckyWheelIsSpinning) return;
+
+      const spins = getLuckySpinsCount();
+      if (spins <= 0) {
+        if (!isUserVip()) {
+          showToast('🎬 Bạn đã hết lượt quay! Hãy xem video 15s để nhận thêm lượt quay ngay!');
+          closeModal('modal-lucky-wheel');
+          openRewardedAdModal();
+        } else {
+          showToast('⏳ Bạn đã dùng hết lượt quay VIP hôm nay. Hẹn gặp lại bạn vào ngày mai!');
+        }
+        return;
+      }
+
+      luckyWheelIsSpinning = true;
+      setLuckySpinsCount(spins - 1);
+
+      const wheel = document.getElementById('lucky-wheel-element');
+      const resultBox = document.getElementById('lucky-wheel-result-box');
+      if (resultBox) resultBox.innerHTML = '<span style="color:#38bdf8;">🔄 Đang quay... Chúc bạn may mắn!</span>';
+
+      const isVip = isUserVip();
+      const slices = isVip ? VIP_WHEEL_SLICES : REGULAR_WHEEL_SLICES;
+
+      // 5 full rotations + random angle
+      const extraRounds = 5;
+      const randomAngle = Math.floor(Math.random() * 360);
+      luckyWheelCurrentRotation += (extraRounds * 360) + randomAngle;
+
+      if (wheel) {
+        wheel.style.transform = `rotate(${luckyWheelCurrentRotation}deg)`;
+      }
+
+      // Calculate winning slice at top needle (0 deg)
+      const actualAngle = (360 - (luckyWheelCurrentRotation % 360)) % 360;
+      const winningIndex = Math.floor(((actualAngle + 22.5) % 360) / 45);
+      const prize = slices[winningIndex];
+
+      setTimeout(() => {
+        luckyWheelIsSpinning = false;
+
+        // Apply prize reward
+        let prizeMsg = '';
+        if (prize.type === 'VIP') {
+          const vipRes = grantVipOneDayBonus();
+          prizeMsg = vipRes.isLifetime ? vipRes.message : `👑 GIẢI ĐỘC ĐẮC: +1 Ngày VIP Hoàng Gia! (Đến ${vipRes.formatted})`;
+          if (typeof addNotification === 'function') {
+            addNotification('FINANCIAL', '👑 Trúng Giải Độc Đắc VIP', prizeMsg);
+          }
+        } else if (prize.type === 'POINTS') {
+          setUserPoints(getUserPoints() + prize.val);
+          addLedgerEntry('LUCKY_WHEEL', prize.val, `🎁 Trúng ${prize.val} Xu từ Vòng Quay May Mắn`);
+          prizeMsg = `🎉 Chúc mừng bạn đã trúng ${prize.val} Xu!`;
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        } else if (prize.type === 'HINTS') {
+          setUserHints(getUserHints() + prize.val);
+          addLedgerEntry('LUCKY_WHEEL', 0, `🎁 Trúng +${prize.val} Lượt Gợi Ý AI từ Vòng Quay May Mắn`);
+          prizeMsg = `💡 Chúc mừng bạn đã trúng +${prize.val} Lượt Gợi Ý AI!`;
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        } else if (prize.type === 'SKIPS') {
+          setUserSkips(getUserSkips() + prize.val);
+          addLedgerEntry('LUCKY_WHEEL', 0, `🎁 Trúng +${prize.val} Lượt Bỏ Qua từ Vòng Quay May Mắn`);
+          prizeMsg = `⏭️ Chúc mừng bạn đã trúng +${prize.val} Lượt Bỏ Qua!`;
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+
+        if (resultBox) {
+          resultBox.innerHTML = `<span style="color:#34d399;">${prizeMsg}</span>`;
+        }
+        showToast(prizeMsg);
+        updateEconomyUI();
+        updateShopBonusesUI();
+        updateLuckyWheelUI();
+      }, 5000);
+    }
+
+    // =========================================================================
+    // REWARDED VIDEO ADS ENGINE (v0.10.8-beta-5)
+    // =========================================================================
+    const AD_FEATURE_SLIDES = [
+      {
+        title: 'VocaFlow Pro - AI English Mentor',
+        desc: 'Trợ lý học thuật và luyện phản xạ giao tiếp tiếng Anh 24/7 không giới hạn.'
+      },
+      {
+        title: 'Spaced Repetition System (SRS)',
+        desc: 'Phương pháp lặp lại ngắt quãng dựa trên đường cong quên lãng Ebbinghaus chuẩn quốc tế.'
+      },
+      {
+        title: 'Đồng Bộ Cloud Realtime Siêu Tốc',
+        desc: 'Học tập liên tục mọi lúc mọi nơi trên cả Web Online và Windows Desktop App.'
+      },
+      {
+        title: 'Kho Thư Viện THPT & IELTS Khổng Lồ',
+        desc: 'Hơn 50+ bộ từ vựng tuyển chọn chuẩn SGK Global Success và đề thi THPT Quốc Gia.'
+      }
+    ];
+
+    function openRewardedAdModal() {
+      if (isUserVip()) {
+        showToast('👑 Tài khoản VIP không có quảng cáo!');
+        return;
+      }
+
+      const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
+      const elapsed = Date.now() - lastWatch;
+      if (elapsed < AD_COOLDOWN_MS) {
+        const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
+        showToast(`⏱️ Vui lòng chờ ${Math.floor(remainingSec / 60)} phút ${remainingSec % 60} giây để xem video tiếp theo!`);
+        return;
+      }
+
+      // Pick a random ad slide
+      const slide = AD_FEATURE_SLIDES[Math.floor(Math.random() * AD_FEATURE_SLIDES.length)];
+      const titleEl = document.getElementById('ad-player-feature-title');
+      const descEl = document.getElementById('ad-player-feature-desc');
+      const countdownEl = document.getElementById('ad-player-countdown');
+      const progressFill = document.getElementById('ad-player-progress-fill');
+      const claimBtn = document.getElementById('btn-ad-claim-reward');
+
+      if (titleEl) titleEl.textContent = slide.title;
+      if (descEl) descEl.textContent = slide.desc;
+      if (progressFill) progressFill.style.width = '0%';
+
+      adWatchSecondsLeft = 15;
+      if (countdownEl) countdownEl.textContent = `Còn ${adWatchSecondsLeft}s`;
+      if (claimBtn) {
+        claimBtn.disabled = true;
+        claimBtn.textContent = '⏳ Đang xem video (15s)...';
+        claimBtn.style.opacity = '0.5';
+        claimBtn.style.cursor = 'not-allowed';
+      }
+
+      openModal('modal-rewarded-ad');
+
+      if (adWatchInterval) clearInterval(adWatchInterval);
+      adWatchInterval = setInterval(() => {
+        adWatchSecondsLeft--;
+        const progressPct = Math.round(((15 - adWatchSecondsLeft) / 15) * 100);
+        if (progressFill) progressFill.style.width = `${progressPct}%`;
+        if (countdownEl) countdownEl.textContent = adWatchSecondsLeft > 0 ? `Còn ${adWatchSecondsLeft}s` : '✓ Hoàn tất!';
+
+        if (adWatchSecondsLeft <= 0) {
+          clearInterval(adWatchInterval);
+          adWatchInterval = null;
+          if (claimBtn) {
+            claimBtn.disabled = false;
+            claimBtn.textContent = '🎉 Nhận Thưởng (50 Xu + 1 Lượt Quay)';
+            claimBtn.style.opacity = '1';
+            claimBtn.style.cursor = 'pointer';
+          }
+        }
+      }, 1000);
+    }
+
+    function cancelRewardedAd() {
+      if (adWatchInterval) {
+        clearInterval(adWatchInterval);
+        adWatchInterval = null;
+      }
+      closeModal('modal-rewarded-ad');
+    }
+
+    function claimRewardedAdReward() {
+      if (adWatchSecondsLeft > 0) return;
+
+      // 1. Grant 50 Xu
+      setUserPoints(getUserPoints() + 50);
+
+      // 2. Grant +1 Lucky Spin
+      setLuckySpinsCount(getLuckySpinsCount() + 1);
+
+      // 3. Set ad cooldown
+      localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
+
+      // 4. Ledger entry & sync
+      addLedgerEntry('WATCH_AD', 50, '🎬 Xem video ngắn nhận thưởng 50 Xu & +1 Lượt Quay');
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
+
+      closeModal('modal-rewarded-ad');
+      showToast('🎉 Nhận thưởng thành công: +50 Xu & +1 Lượt Quay May Mắn!');
+      updateEconomyUI();
+      updateShopBonusesUI();
+      openLuckyWheelModal();
+    }
+
+    // Cooldown ticker every 1 second
+    setInterval(() => {
+      updateAdButtonCooldownState();
+    }, 1000);
 
     // DECK COLOR PALETTE PRESETS (v0.0.10.3h)
     const DECK_PALETTE_COLORS = [
