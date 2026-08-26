@@ -1,0 +1,21 @@
+﻿# GitHub Pages configuration
+exclude:
+  - GITHUB_RELEASE
+  - Release_App
+  - VocaFlow_Desktop
+  - .dart_tool
+  - build
+  - android
+  - ios
+  - windows
+  - lib
+  - test
+  - save
+  - prompt
+  - tools
+  - actions_log
+  - .idea
+  - "*.zip"
+  - "*.pdb"
+  - "*.exe"
+  - "*.dll"
