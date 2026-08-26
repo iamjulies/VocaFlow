@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -5681,7 +5681,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12720,20 +12720,12 @@
       }
 
       if (adBanner) {
-        if (isVip) {
-          adBanner.style.display = 'none';
-        } else {
-          adBanner.style.display = 'flex';
-          updateAdButtonCooldownState();
-        }
+        adBanner.style.display = 'flex';
+        updateAdButtonCooldownState();
       }
     }
 
     function openRewardedAdModalFromWheel() {
-      if (isUserVip()) {
-        showToast('👑 Tài khoản VIP không có quảng cáo!');
-        return;
-      }
       const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
       const elapsed = Date.now() - lastWatch;
       if (elapsed < AD_COOLDOWN_MS) {
@@ -13108,12 +13100,10 @@
       }
     ];
 
-    function openRewardedAdModal() {
-      if (isUserVip()) {
-        showToast('👑 Tài khoản VIP không có quảng cáo!');
-        return;
-      }
+    let isAdWatchPausedDueToTabSwitch = false;
+    let currentAdActiveSlide = null;
 
+    function openRewardedAdModal() {
       const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
       const elapsed = Date.now() - lastWatch;
       if (elapsed < AD_COOLDOWN_MS) {
@@ -13123,18 +13113,19 @@
       }
 
       // Pick a random ad slide
-      const slide = AD_FEATURE_SLIDES[Math.floor(Math.random() * AD_FEATURE_SLIDES.length)];
+      currentAdActiveSlide = AD_FEATURE_SLIDES[Math.floor(Math.random() * AD_FEATURE_SLIDES.length)];
       const titleEl = document.getElementById('ad-player-feature-title');
       const descEl = document.getElementById('ad-player-feature-desc');
       const countdownEl = document.getElementById('ad-player-countdown');
       const progressFill = document.getElementById('ad-player-progress-fill');
       const claimBtn = document.getElementById('btn-ad-claim-reward');
 
-      if (titleEl) titleEl.textContent = slide.title;
-      if (descEl) descEl.textContent = slide.desc;
+      if (titleEl) titleEl.textContent = currentAdActiveSlide.title;
+      if (descEl) descEl.textContent = currentAdActiveSlide.desc;
       if (progressFill) progressFill.style.width = '0%';
 
       adWatchSecondsLeft = 15;
+      isAdWatchPausedDueToTabSwitch = false;
       if (countdownEl) countdownEl.textContent = `Còn ${adWatchSecondsLeft}s`;
       if (claimBtn) {
         claimBtn.disabled = true;
@@ -13150,6 +13141,22 @@
 
       if (adWatchInterval) clearInterval(adWatchInterval);
       adWatchInterval = setInterval(() => {
+        // ANTI-CHEAT: Check if window / tab is active and visible
+        if (document.hidden || !document.hasFocus()) {
+          isAdWatchPausedDueToTabSwitch = true;
+          if (titleEl) titleEl.textContent = '⏸️ Video Đã Tạm Dừng';
+          if (descEl) descEl.textContent = '⚠️ Bạn vừa chuyển tab/ứng dụng khác! Vui lòng giữ màn hình VocaFlow để tiếp tục xem.';
+          if (countdownEl) countdownEl.textContent = `⏸️ Tạm dừng (Còn ${adWatchSecondsLeft}s)`;
+          return; // Freeze timer
+        }
+
+        // Resume if returning to tab
+        if (isAdWatchPausedDueToTabSwitch) {
+          isAdWatchPausedDueToTabSwitch = false;
+          if (titleEl && currentAdActiveSlide) titleEl.textContent = currentAdActiveSlide.title;
+          if (descEl && currentAdActiveSlide) descEl.textContent = currentAdActiveSlide.desc;
+        }
+
         adWatchSecondsLeft--;
         const progressPct = Math.round(((15 - adWatchSecondsLeft) / 15) * 100);
         if (progressFill) progressFill.style.width = `${progressPct}%`;
@@ -13173,6 +13180,7 @@
         clearInterval(adWatchInterval);
         adWatchInterval = null;
       }
+      isAdWatchPausedDueToTabSwitch = false;
       closeModal('modal-rewarded-ad');
     }
 
