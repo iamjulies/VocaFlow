@@ -2249,7 +2249,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.3</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.4</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4203,7 +4203,7 @@
       </div>
 
       <!-- Wallet Balance Card (3 Columns: Points, Hints, Skips) -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 14px 10px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(245,158,11,0.1)); padding: 14px 10px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.3);">
         <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 6px;">
           <div style="font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Số Xu Hiện Có</div>
           <div id="shop-user-points" style="font-size: 22px; font-weight: 800; color: #fbbf24; margin-top: 4px;">0</div>
@@ -4221,7 +4221,17 @@
         </div>
       </div>
 
-      <!-- LUCKY WHEEL & REWARDED ADS SECTION (v0.10.8-beta-5) -->
+      <!-- Gift / Redeem Code Section (Moved Up to Top v0.10.8-beta-5.4) -->
+      <div id="shop-gift-code-box" style="margin-bottom: 16px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);" onkeydown="if(event.key === 'Enter'){ redeemShopGiftCode(); event.preventDefault(); }">
+          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 700; padding: 0 16px;">Áp dụng</button>
+        </div>
+        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
+      </div>
+
+      <!-- LUCKY WHEEL BANNER (v0.10.8-beta-5) -->
       <div id="shop-lucky-wheel-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
@@ -4241,10 +4251,10 @@
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
             <span style="font-size: 18px;">🎬</span>
-            <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận 50 Xu</strong>
+            <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận Lượt Quay</strong>
             <span class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.15); color: #38bdf8;">+1 Lượt Quay</span>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận 50 Xu & thêm 1 lượt quay may mắn.</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 15s để nhận ngay +1 lượt quay may mắn.</div>
         </div>
         <button type="button" id="btn-shop-watch-ad" class="btn btn-sm btn-outline" onclick="openRewardedAdModal()" style="white-space: nowrap; font-weight: 700; color: #38bdf8; border-color: rgba(56,189,248,0.5); padding: 7px 12px; border-radius: 8px;">
           🎬 Xem Video
@@ -4296,16 +4306,6 @@
             👑 Mua (50k)
           </button>
         </div>
-      </div>
-
-      <!-- Gift / Redeem Code Section (Moved to top v0.0.10.1m) -->
-      <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);" onkeydown="if(event.key === 'Enter'){ redeemShopGiftCode(); event.preventDefault(); }">
-          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 700; padding: 0 16px;">Áp dụng</button>
-        </div>
-        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
       </div>
 
       <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📦 Các Gói Đổi Gợi Ý AI</div>
@@ -4762,9 +4762,9 @@
         </div>
 
         <!-- Extra Action for Non-VIP when out of spins -->
-        <div id="lucky-wheel-ad-cta" style="display: none; padding: 8px; margin: 0 10px;">
-          <button type="button" class="btn btn-primary" onclick="closeModal('modal-lucky-wheel'); openRewardedAdModal();" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; font-weight: 700; font-size: 12.5px;">
-            🎬 Xem Video 15s Để Nhận Thêm Lượt Quay (+50 Xu)
+        <div id="lucky-wheel-ad-cta" style="display: none; padding: 6px 4px; margin: 0 4px 6px 4px;">
+          <button type="button" id="btn-wheel-watch-ad" class="btn btn-primary" onclick="openRewardedAdModalFromWheel();" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; font-weight: 700; font-size: 12px; padding: 9px 12px;">
+            🎬 Xem Video 15s Nhận +1 Lượt Quay
           </button>
         </div>
       </div>
@@ -4853,7 +4853,7 @@
           <span style="font-size: 20px;">🎬</span>
           <div>
             <strong style="font-size: 15px; color: #38bdf8;">Video Giới Thiệu & Nhận Thưởng</strong>
-            <div style="font-size: 11px; color: var(--text-muted);">Xem hết video để nhận 50 Xu & +1 Lượt Quay May Mắn</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Xem hết video 15s để nhận ngay +1 Lượt Quay May Mắn</div>
           </div>
         </div>
       </div>
@@ -5550,7 +5550,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.4</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12590,9 +12590,27 @@
       }
     }
 
+    function openRewardedAdModalFromWheel() {
+      if (isUserVip()) {
+        showToast('👑 Tài khoản VIP không có quảng cáo!');
+        return;
+      }
+      const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
+      const elapsed = Date.now() - lastWatch;
+      if (elapsed < AD_COOLDOWN_MS) {
+        const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
+        const m = Math.floor(remainingSec / 60);
+        const s = remainingSec % 60;
+        showToast(`⏱️ Đang chờ giãn cách! Vui lòng đợi ${m} phút ${s} giây để xem tiếp!`);
+        return;
+      }
+      closeModal('modal-lucky-wheel');
+      openRewardedAdModal();
+    }
+
     function updateAdButtonCooldownState() {
       const btn = document.getElementById('btn-shop-watch-ad');
-      if (!btn) return;
+      const wheelBtn = document.getElementById('btn-wheel-watch-ad');
       
       const lastWatch = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
       const elapsed = Date.now() - lastWatch;
@@ -12602,15 +12620,31 @@
         const m = Math.floor(remainingSec / 60);
         const s = remainingSec % 60;
         const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        btn.textContent = `⏱️ Chờ ${timeStr}`;
-        btn.disabled = true;
-        btn.style.opacity = '0.6';
-        btn.style.cursor = 'not-allowed';
+        if (btn) {
+          btn.textContent = `⏱️ Chờ ${timeStr}`;
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+          btn.style.cursor = 'not-allowed';
+        }
+        if (wheelBtn) {
+          wheelBtn.textContent = `⏱️ Chờ ${timeStr} để xem tiếp`;
+          wheelBtn.disabled = true;
+          wheelBtn.style.opacity = '0.6';
+          wheelBtn.style.cursor = 'not-allowed';
+        }
       } else {
-        btn.textContent = '🎬 Xem Video';
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
+        if (btn) {
+          btn.textContent = '🎬 Xem Video';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+        }
+        if (wheelBtn) {
+          wheelBtn.textContent = '🎬 Xem Video 15s Nhận +1 Lượt Quay';
+          wheelBtn.disabled = false;
+          wheelBtn.style.opacity = '1';
+          wheelBtn.style.cursor = 'pointer';
+        }
       }
     }
 
@@ -12951,7 +12985,7 @@
           adWatchInterval = null;
           if (claimBtn) {
             claimBtn.disabled = false;
-            claimBtn.textContent = '🎉 Nhận Thưởng (50 Xu + 1 Lượt Quay)';
+            claimBtn.textContent = '🎉 Nhận Thưởng (+1 Lượt Quay May Mắn)';
             claimBtn.style.opacity = '1';
             claimBtn.style.cursor = 'pointer';
           }
@@ -12970,22 +13004,19 @@
     function claimRewardedAdReward() {
       if (adWatchSecondsLeft > 0) return;
 
-      // 1. Grant 50 Xu
-      setUserPoints(getUserPoints() + 50);
-
-      // 2. Grant +1 Lucky Spin
+      // 1. Grant +1 Lucky Spin (no 50 Xu)
       setLuckySpinsCount(getLuckySpinsCount() + 1);
 
-      // 3. Set ad cooldown
+      // 2. Set ad cooldown
       localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
 
-      // 4. Ledger entry & sync
-      addLedgerEntry('WATCH_AD', 50, '🎬 Xem video ngắn nhận thưởng 50 Xu & +1 Lượt Quay');
+      // 3. Ledger entry & sync
+      addLedgerEntry('WATCH_AD', 0, '🎬 Xem video ngắn nhận +1 Lượt Quay May Mắn');
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
 
       closeModal('modal-rewarded-ad');
-      showToast('🎉 Nhận thưởng thành công: +50 Xu & +1 Lượt Quay May Mắn!');
+      showToast('🎉 Nhận thưởng thành công: +1 Lượt Quay May Mắn!');
       updateEconomyUI();
       updateShopBonusesUI();
       openLuckyWheelModal();
