@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.8 (Build 173) - Cloud Connectivity Fallback & Native EXE Auto-Rebuild
+Phiên bản: v0.10.8-beta-7.9 (Build 174) - Fix escapeJsString Reference Error & Publisher Portal
 ================================================================================
-1. [Khắc phục] Sửa lỗi kết nối Cloud khi tải danh sách báo cáo lỗi: Tự động làm mới Firebase ID Token và fallback truy xuất trực tiếp để luôn tải danh sách sự cố mượt mà.
-2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe với mốc thời gian phát hành thời gian thực.
-3. [Tối ưu] Đồng bộ tiêu đề cửa sổ Desktop App với web page title và đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font.
+1. [Khắc phục] Sửa lỗi 'escapeJsString is not defined': Bổ sung hàm escapeJsString toàn cục để render danh sách báo cáo lỗi và hồ sơ tác giả không bị crash.
+2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe v0.10.8-beta-7.9.
+3. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.8 (Build 173)
+Phiên bản hiện tại : v0.10.8-beta-7.9 (Build 174)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.9 (Build 174 - FIX ESCAPEJSSTRING & PUBLISHER PORTAL UI):
+  - Khắc Phục Triệt Để Lỗi 'escapeJsString is not defined':
+    * Định nghĩa hàm `escapeJsString` chuẩn hóa chuỗi JavaScript an toàn khi hiển thị thông tin học viên VIP và UID trong Cổng Quản Trị Tab 4.
+    * Đảm bảo danh sách báo cáo lỗi và giao diện trao thưởng Bug Bounty render mượt mà 100%.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.9:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe` với mốc thời gian phát hành mới nhất.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.9_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.8 (Build 173 - CLOUD CONNECTIVITY FALLBACK & NATIVE EXE AUTO-REBUILD):
   - Khắc Phục Triệt Để Lỗi Kết Nối Cloud Khi Tải Báo Cáo Lỗi (Publisher Portal Tab 4):
     * Tích hợp cơ chế tự động làm mới Auth Token (getFreshCloudAuthToken) chống hết hạn phiên đăng nhập.
@@ -92,6 +99,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.9 (Build 174 - FIX ESCAPEJSSTRING & PUBLISHER PORTAL UI):
+  - Khắc Phục Triệt Để Lỗi 'escapeJsString is not defined':
+    * Định nghĩa hàm `escapeJsString` chuẩn hóa chuỗi JavaScript an toàn khi hiển thị thông tin học viên VIP và UID trong Cổng Quản Trị Tab 4.
+    * Đảm bảo danh sách báo cáo lỗi và giao diện trao thưởng Bug Bounty render mượt mà 100%.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.9:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe` với mốc thời gian phát hành mới nhất.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.9_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.8 (Build 173 - CLOUD CONNECTIVITY FALLBACK & NATIVE EXE AUTO-REBUILD):
   - Khắc Phục Triệt Để Lỗi Kết Nối Cloud Khi Tải Báo Cáo Lỗi (Publisher Portal Tab 4):
     * Tích hợp cơ chế tự động làm mới Auth Token (getFreshCloudAuthToken) chống hết hạn phiên đăng nhập.
