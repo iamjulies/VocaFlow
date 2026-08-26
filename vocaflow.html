@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.6</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4235,6 +4235,21 @@
         <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
       </div>
 
+      <!-- REFERRAL / AFFILIATE PROGRAM BANNER (v0.10.8-beta-6) -->
+      <div id="shop-referral-banner" onclick="openReferralModal()" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(236,72,153,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎁</span>
+            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Nhận +1 Ngày VIP</strong>
+            <span class="badge" style="font-size: 9.5px; background: rgba(236,72,153,0.2); color: #f472b6; font-weight: 700;">Thưởng VIP</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted);">Chia sẻ mã mời: Bạn nhận +1 Ngày VIP, bạn bè nhận ngay 100 Xu & Quà tân thủ!</div>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="event.stopPropagation(); openReferralModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #ec4899, #a855f7); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(236,72,153,0.35); cursor: pointer;">
+          Mời Ngay
+        </button>
+      </div>
+
       <!-- LUCKY WHEEL BANNER (v0.10.8-beta-5) -->
       <div id="shop-lucky-wheel-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
         <div style="min-width: 0; flex: 1;">
@@ -5149,6 +5164,92 @@
     </div>
   </div>
 
+  <!-- MODAL: REFERRAL & AFFILIATE PROGRAM (v0.10.8-beta-6) -->
+  <div class="modal-overlay" id="modal-referral" style="z-index: 10009;">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(236, 72, 153, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(236, 72, 153, 0.2);">
+      <div class="modal-title" style="margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(236,72,153,0.8));">🎁</span>
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #f472b6, #fb7185, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Giới Thiệu Bạn Bè - Nhận VIP Hoàng Gia</h2>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0;">Mời bạn bè cùng học: Bạn nhận +1 Ngày VIP, bạn bè nhận ngay 100 Xu & Quà tân thủ!</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-referral')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="overflow-y: auto; overflow-x: hidden; padding: 6px 2px; flex: 1;">
+        <!-- MY REFERRAL CODE & INVITE LINK CARD -->
+        <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(99, 102, 241, 0.12)); border: 1px solid rgba(236, 72, 153, 0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #f472b6; letter-spacing: 0.5px;">👑 Mã Giới Thiệu Của Bạn</span>
+            <span id="ref-my-vip-earned-badge" class="badge" style="font-size: 11px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">Đã nhận: +0 Ngày VIP</span>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <div id="ref-my-code-display" style="flex: 1; background: var(--surface-elevated); border: 1.5px dashed rgba(236,72,153,0.6); border-radius: 10px; padding: 10px 14px; font-size: 18px; font-weight: 900; font-family: monospace; color: #ffd700; letter-spacing: 2px; text-align: center;">
+              ĐANG TẢI...
+            </div>
+            <button type="button" class="btn btn-primary" onclick="copyMyReferralCode()" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 0 16px; font-size: 12.5px; white-space: nowrap;">
+              📋 Sao Chép Mã
+            </button>
+          </div>
+
+          <!-- Share Link Button -->
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="ref-my-link-input" readonly class="form-input" style="font-size: 11.5px; padding: 8px 10px; color: var(--text-muted); background: var(--surface-elevated);" onclick="this.select()">
+            <button type="button" class="btn btn-outline" onclick="copyMyReferralLink()" style="border-color: rgba(56,189,248,0.5); color: #38bdf8; font-weight: 700; font-size: 12px; white-space: nowrap; padding: 0 14px;">
+              🔗 Sao Chép Link
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 10.5px; color: var(--text-muted);">👥 Bạn bè đã mời</div>
+              <div id="ref-stat-friends-count" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 10.5px; color: var(--text-muted);">👑 Tổng ngày VIP nhận</div>
+              <div id="ref-stat-vip-days" style="font-size: 18px; font-weight: 800; color: #ffd700;">0 ngày</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTER REFERRAL CODE CARD (FOR NEWBIES) -->
+        <div id="ref-enter-code-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>🎁</span> <span>Nhập Mã Giới Thiệu Từ Bạn Bè (Dành Cho Tân Thủ)</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+            Nhập mã giới thiệu của người bạn đã rủ bạn vào VocaFlow để nhận ngay <strong>100 Xu + 3 Lượt Gợi Ý + 1 Lượt Quay May Mắn</strong>! (Mỗi tài khoản chỉ nhập 1 lần duy nhất).
+          </div>
+
+          <div id="ref-input-group" style="display: flex; gap: 8px;">
+            <input type="text" id="ref-input-code" class="form-input" placeholder="Nhập mã giới thiệu (ví dụ: MJFITS6B)..." style="font-size: 13px; font-family: monospace; text-transform: uppercase; font-weight: 700; padding: 8px 12px;" onkeydown="if(event.key === 'Enter'){ submitReferralCode(); event.preventDefault(); }">
+            <button type="button" class="btn btn-primary" onclick="submitReferralCode()" style="white-space: nowrap; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 800; padding: 0 16px; font-size: 12.5px;">
+              🎁 Nhận Quà
+            </button>
+          </div>
+          <div id="ref-claim-status-msg" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+        </div>
+
+        <!-- REFERRAL PROGRAM RULES & FAQ -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+          <strong style="color: var(--text); display: block; margin-bottom: 4px;">📜 Thể lệ chương trình Mời Bạn Bè:</strong>
+          <ul style="margin: 0; padding-left: 16px;">
+            <li>Mỗi người dùng mới khi nhập mã của bạn sẽ nhận ngay <strong>100 Xu + 3 Gợi Ý + 1 Lượt Quay May Mắn</strong>.</li>
+            <li>Ngay khi bạn bè mới nhập mã, tài khoản của bạn sẽ tự động được <strong>+1 Ngày VIP Hoàng Gia</strong> (cộng dồn 24h không giới hạn).</li>
+            <li>Chỉ áp dụng cho tài khoản đăng ký mới (hoặc tài khoản chưa từng nhập mã trước đó) để đảm bảo tính công bằng.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary" onclick="closeModal('modal-referral')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: PROFILE & CLOUD SYNC -->
   <div class="modal-overlay" id="modal-profile">
     <div class="modal" style="max-width: 500px;">
@@ -5214,6 +5315,10 @@
                 🗑️ Xóa Ảnh
               </button>
             </div>
+            <!-- Referral quick CTA in profile (v0.10.8-beta-6) -->
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-profile'); openReferralModal();" style="font-size: 11.5px; padding: 5px 12px; color: #f472b6; border-color: rgba(236,72,153,0.4); font-weight: 700; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 8px; background: rgba(236,72,153,0.08);">
+              🎁 Mã Giới Thiệu & Thưởng VIP Bạn Bè
+            </button>
           </div>
         </div>
 
@@ -5576,7 +5681,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.6</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13078,6 +13183,197 @@
     setInterval(() => {
       updateAdButtonCooldownState();
     }, 1000);
+
+    // =========================================================================
+    // REFERRAL & AFFILIATE PROGRAM ENGINE (v0.10.8-beta-6)
+    // =========================================================================
+    function getUserReferralCode(user) {
+      if (!user || !user.uid) return 'GUEST';
+      return user.uid.substring(0, 8).toUpperCase();
+    }
+
+    function openReferralModal() {
+      if (!currentUser || !currentUser.uid) {
+        alert('🔒 Vui lòng đăng nhập hoặc tạo tài khoản để lấy mã giới thiệu và nhận quà!');
+        openAuthModal('login');
+        return;
+      }
+
+      const myCode = getUserReferralCode(currentUser);
+      const codeDisplay = document.getElementById('ref-my-code-display');
+      const linkInput = document.getElementById('ref-my-link-input');
+      const badgeEarned = document.getElementById('ref-my-vip-earned-badge');
+      const statFriends = document.getElementById('ref-stat-friends-count');
+      const statVip = document.getElementById('ref-stat-vip-days');
+      const inputGroup = document.getElementById('ref-input-group');
+      const statusMsg = document.getElementById('ref-claim-status-msg');
+      const inputCode = document.getElementById('ref-input-code');
+
+      if (codeDisplay) codeDisplay.textContent = myCode;
+      if (linkInput) linkInput.value = `https://iamjulies.github.io/VocaFlow/?ref=${myCode}`;
+
+      // Check if user has already claimed a referrer
+      const claimedReferrer = localStorage.getItem('vocaflow_referred_by') || '';
+      if (claimedReferrer) {
+        if (inputGroup) inputGroup.style.display = 'none';
+        if (statusMsg) {
+          statusMsg.style.display = 'block';
+          statusMsg.innerHTML = `<span style="color: #34d399; font-weight: 700;">✅ Bạn đã nhận quà tân thủ từ mã giới thiệu: <strong>${claimedReferrer}</strong></span>`;
+        }
+      } else {
+        if (inputGroup) inputGroup.style.display = 'flex';
+        if (statusMsg) statusMsg.style.display = 'none';
+        // Auto-fill pending ref code if present from URL
+        const pendingRef = sessionStorage.getItem('vocaflow_pending_ref_code') || '';
+        if (pendingRef && inputCode && !inputCode.value) {
+          inputCode.value = pendingRef;
+        }
+      }
+
+      // Load referral stats from localStorage / memory
+      const friendsCount = parseInt(localStorage.getItem('vocaflow_referrals_count') || '0', 10);
+      if (statFriends) statFriends.textContent = friendsCount.toString();
+      if (statVip) statVip.textContent = `+${friendsCount} ngày`;
+      if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${friendsCount} Ngày VIP`;
+
+      openModal('modal-referral');
+
+      // Fetch cloud stats in background
+      syncReferralStatsFromCloud();
+    }
+
+    async function syncReferralStatsFromCloud() {
+      if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
+      try {
+        const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+        const res = await fetch(`${firebaseConfig.databaseURL}/referrals_stats/${currentUser.uid}.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            const count = data.count || 0;
+            localStorage.setItem('vocaflow_referrals_count', count.toString());
+            const statFriends = document.getElementById('ref-stat-friends-count');
+            const statVip = document.getElementById('ref-stat-vip-days');
+            const badgeEarned = document.getElementById('ref-my-vip-earned-badge');
+            if (statFriends) statFriends.textContent = count.toString();
+            if (statVip) statVip.textContent = `+${count} ngày`;
+            if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${count} Ngày VIP`;
+          }
+        }
+      } catch (e) {
+        console.warn('Sync referral stats warning:', e);
+      }
+    }
+
+    function copyMyReferralCode() {
+      const code = getUserReferralCode(currentUser);
+      if (!code || code === 'GUEST') return;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(`📋 Đã sao chép mã giới thiệu: ${code}`);
+      }).catch(() => {
+        prompt('Mã giới thiệu của bạn (nhấn Ctrl+C để sao chép):', code);
+      });
+    }
+
+    function copyMyReferralLink() {
+      const code = getUserReferralCode(currentUser);
+      if (!code || code === 'GUEST') return;
+      const link = `https://iamjulies.github.io/VocaFlow/?ref=${code}`;
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('🔗 Đã sao chép link mời bạn bè!');
+      }).catch(() => {
+        prompt('Link mời bạn bè của bạn (nhấn Ctrl+C để sao chép):', link);
+      });
+    }
+
+    async function submitReferralCode() {
+      if (!currentUser || !currentUser.uid) {
+        alert('🔒 Vui lòng đăng nhập để nhập mã nhận quà!');
+        return;
+      }
+
+      const input = document.getElementById('ref-input-code');
+      const rawCode = (input ? input.value : '').trim().toUpperCase();
+      if (!rawCode) {
+        alert('Vui lòng nhập mã giới thiệu!');
+        return;
+      }
+
+      const myCode = getUserReferralCode(currentUser);
+      if (rawCode === myCode || rawCode === currentUser.uid.toUpperCase()) {
+        alert('⚠️ Bạn không thể tự nhập mã giới thiệu của chính mình!');
+        return;
+      }
+
+      const claimedReferrer = localStorage.getItem('vocaflow_referred_by') || '';
+      if (claimedReferrer) {
+        alert('⚠️ Bạn đã từng nhận quà tân thủ trước đó rồi (chỉ áp dụng 1 lần duy nhất)!');
+        return;
+      }
+
+      showToast('⏳ Đang xác minh mã giới thiệu...');
+
+      // 1. Mark as claimed locally
+      localStorage.setItem('vocaflow_referred_by', rawCode);
+      sessionStorage.removeItem('vocaflow_pending_ref_code');
+
+      // 2. Award Newbie Rewards: 100 Xu + 3 Hints + 1 Lucky Spin
+      setUserPoints(getUserPoints() + 100);
+      setUserHints(getUserHints() + 3);
+      setLuckySpinsCount(getLuckySpinsCount() + 1);
+
+      // 3. Ledger entry & notifications
+      addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode}`);
+      if (typeof addNotification === 'function') {
+        addNotification('FINANCIAL', '🎁 Quà Tân Thủ', `Bạn đã nhận được 100 Xu, +3 Gợi Ý AI và +1 Lượt Quay từ mã ${rawCode}!`);
+      }
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
+
+      // 4. Record to Firebase Cloud & Grant +1 Day VIP to Referrer if RTDB is active
+      if (firebaseConfig.databaseURL) {
+        try {
+          const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+          await fetch(`${firebaseConfig.databaseURL}/referral_claims/${rawCode}/${currentUser.uid}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              claimedAt: Date.now(),
+              newbieUid: currentUser.uid,
+              newbieName: currentUser.displayName || currentUser.email,
+              newbieEmail: currentUser.email || ''
+            })
+          });
+        } catch (e) {
+          console.warn('Cloud referral claim record warning:', e);
+        }
+      }
+
+      // 5. Update UI
+      const inputGroup = document.getElementById('ref-input-group');
+      const statusMsg = document.getElementById('ref-claim-status-msg');
+      if (inputGroup) inputGroup.style.display = 'none';
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        statusMsg.innerHTML = `<span style="color: #34d399; font-weight: 700;">✅ Nhận quà thành công! Mã giới thiệu: <strong>${rawCode}</strong></span>`;
+      }
+
+      playVocaSfx('fireworks');
+      showToast('🎉 Chúc mừng bạn đã nhận +100 Xu, +3 Gợi Ý và +1 Lượt Quay May Mắn!');
+      updateEconomyUI();
+      updateShopBonusesUI();
+    }
+
+    // Auto-detect referral code from URL query params on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref') || urlParams.get('invite');
+        if (refCode) {
+          sessionStorage.setItem('vocaflow_pending_ref_code', refCode.trim().toUpperCase());
+        }
+      } catch (e) {}
+    });
 
     // DECK COLOR PALETTE PRESETS (v0.0.10.3h)
     const DECK_PALETTE_COLORS = [

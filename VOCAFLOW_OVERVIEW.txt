@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-5.6 (Build 156)
+Phiên bản hiện tại : v0.10.8-beta-6 (Build 157)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-6 (Build 157 - REFERRAL & AFFILIATE PROGRAM, INVITE LINK & ADS.TXT CREATION):
+  - Triển Khai Chương Trình Mời Bạn Bè & Affiliate Nhẹ (Referral & Win-Win Affiliate Engine):
+    * Mỗi tài khoản sở hữu 1 Mã Giới Thiệu cá nhân và 1 Đường Link Mời Bạn Bè chuyên nghiệp (`https://iamjulies.github.io/VocaFlow/?ref=MY_CODE`).
+    * Phần Thưởng Người Mới (Tân Thủ): Nhận ngay 100 Xu + 3 Lượt Gợi Ý AI + 1 Lượt Quay May Mắn khi nhập mã giới thiệu.
+    * Phần Thưởng Người Giới Thiệu (Chủ Mã): Tự động nhận ngay +1 Ngày VIP Hoàng Gia (cộng dồn 24h không giới hạn) mỗi khi có 1 bạn bè mới nhập mã.
+    * Cơ Chế Chống Gian Lận (Anti-Cheat): Mỗi tài khoản chỉ được nhập mã 1 lần duy nhất trong đời, không thể tự nhập mã của chính mình, ghi nhận lịch sử đồng bộ Cloud Realtime.
+  - Khởi Tạo Tệp ads.txt Chuẩn Cho Google AdSense:
+    * Tạo và đồng bộ file ads.txt (`google.com, pub-1343250003116465, DIRECT, f08c47fec0942fa0`) giải quyết trạng thái kiểm tra tệp ads.txt trên Google AdSense.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-6_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-5.6 (Build 156 - GOOGLE ADSENSE QC1 DISPLAY UNIT INTEGRATION):
   - Tích Hợp Đơn Vị Quảng Cáo Hiển Thị Google AdSense QC1 (`data-ad-slot="4836530250"`):
     * Nhúng khối quảng cáo hiển thị đáp ứng QC1 vào Trình xem quảng cáo nhận thưởng (`modal-rewarded-ad`) và VocaShop (`modal-shop`).
