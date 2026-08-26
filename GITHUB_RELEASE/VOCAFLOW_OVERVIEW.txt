@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-5.1 (Build 151)
+Phiên bản hiện tại : v0.10.8-beta-5.2 (Build 152)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-5.2 (Build 152 - VIP EXTENSION FIX, NO-SCROLLBAR WHEEL & REAL-MONEY SPIN PACKS):
+  - Khắc Phục Gia Hạn VIP Năm / Tháng Khi Trúng Giải Độc Đắc (+1 Ngày VIP):
+    * Sửa lỗi nhận diện tier: Hội viên VIP Tháng/Năm khi quay trúng ô Độc Đắc sẽ được cộng dồn gia hạn thêm đúng 24h (`userVipExpiresAt + 86400000`) thay vì bị chuyển nhầm thành 300 Xu. Chỉ riêng hội viên VIP Trọn Đời (Lifetime) mới nhận phần thưởng quy đổi 300 Xu + 5 Gợi Ý.
+  - Xóa Triệt Để Thanh Cuộn Xấu Xí Trên Vòng Quay May Mắn (No-Scrollbar Wheel):
+    * Tinh chỉnh kích thước `modal-lucky-wheel` (270px wheel, padding gọn nhẹ), loại bỏ hoàn toàn thanh cuộn dọc và ngang (overflow hidden, scrollbar-width: none), tạo giao diện phẳng sang trọng.
+  - Tích Hợp Các Gói Mua Lượt Quay May Mắn Bằng Tiền Thật (VietQR Spin Packages):
+    * Bổ sung vào VocaShop 3 gói nạp lượt quay: 5 lượt (10k), 15 lượt (25k - Tặng +3), 40 lượt Hoàng Gia (50k - Siêu ưu đãi).
+    * Hỗ trợ quét mã VietQR tự động, cú pháp Napas 247 ngắn gọn chuẩn hóa `VOCA [UID] [SPIN_CODE]`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-5.2_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-5.1 (Build 151 - DYNAMIC SHUFFLED LUCKY WHEEL & ANTI-EXPLOIT VIP JACKPOT):
   - Tối Ưu Cơ Chế Vòng Quay May Mắn Động & Chống Lạm Dụng Phần Thưởng:
     * Cơ chế xáo trộn ngẫu nhiên (Dynamic Shuffled Wheel): Vị trí các ô thưởng trên vòng quay tự động đảo ngẫu nhiên trước mỗi lượt quay mới, tạo cảm giác hồi hộp và kịch tính.

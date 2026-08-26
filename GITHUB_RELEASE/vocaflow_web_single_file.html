@@ -155,21 +155,48 @@
     /* =========================================================================
        LUCKY WHEEL & REWARDED ADS CSS (v0.10.8-beta-5)
        ========================================================================= */
+    /* Modal Lucky Wheel Cleanup (v0.10.8-beta-5.2 NO SCROLLBARS) */
+    #modal-lucky-wheel .modal {
+      max-width: 400px !important;
+      width: 95vw !important;
+      max-height: 92vh !important;
+      overflow: hidden !important;
+      padding: 16px 12px 14px 12px !important;
+      box-sizing: border-box !important;
+    }
+
+    #modal-lucky-wheel .lucky-wheel-body {
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      scrollbar-width: none !important; /* Firefox */
+      -ms-overflow-style: none !important; /* IE/Edge */
+      width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 2px !important;
+    }
+
+    #modal-lucky-wheel .lucky-wheel-body::-webkit-scrollbar {
+      display: none !important; /* Chrome, Safari, Edge */
+      width: 0 !important;
+      height: 0 !important;
+    }
+
     .lucky-wheel-container {
       position: relative;
-      width: 320px;
-      height: 320px;
-      max-width: 85vw;
-      max-height: 85vw;
-      margin: 10px auto 20px auto;
+      width: 270px;
+      height: 270px;
+      max-width: 75vw;
+      max-height: 75vw;
+      margin: 6px auto 10px auto;
+      box-sizing: border-box;
     }
 
     .lucky-wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 6px solid #ffd700;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.7);
+      border: 5px solid #ffd700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.45), 0 6px 24px rgba(0, 0, 0, 0.7);
       position: relative;
       overflow: hidden;
       transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
@@ -178,16 +205,16 @@
 
     .lucky-wheel-needle {
       position: absolute;
-      top: -14px;
+      top: -12px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 14px solid transparent;
-      border-right: 14px solid transparent;
-      border-top: 28px solid #ffd700;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 24px solid #ffd700;
       z-index: 10;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6));
     }
 
     .lucky-wheel-center-btn {
@@ -195,19 +222,19 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 68px;
-      height: 68px;
+      width: 58px;
+      height: 58px;
       background: radial-gradient(circle, #ffffff, #ffd700);
       border: 3px solid #fff;
       border-radius: 50%;
       color: #0b0b0d;
       font-weight: 900;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6), 0 0 15px rgba(255, 215, 0, 0.6);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 12px rgba(255, 215, 0, 0.6);
       z-index: 5;
       user-select: none;
       transition: transform 0.15s ease;
@@ -2222,7 +2249,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.1</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.2</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4224,6 +4251,53 @@
         </button>
       </div>
 
+      <!-- REAL-MONEY SPIN PACKAGES SECTION (v0.10.8-beta-5.2) -->
+      <div style="font-size: 13px; font-weight: 700; color: #ffd700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <span>🎡 Mua Lượt Quay May Mắn (VietQR)</span>
+        <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 10px;">Thanh toán tức thì</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <!-- Spin Package 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">🎡 5 Lượt Quay May Mắn</div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">10.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 2.000đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openSpinPurchasePaymentModal('SPIN5', '5 Lượt Quay May Mắn', 10000, 5)" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700;">
+            💳 Mua (10k)
+          </button>
+        </div>
+
+        <!-- Spin Package 2 (HOT) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(236,72,153,0.08)); border: 1.5px solid #f59e0b;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: #fbbf24;">🔥 15 Lượt Quay (Tặng +3)</span>
+              <span class="badge" style="background: rgba(245,158,11,0.25); color: #ffd700; font-size: 9.5px;">TIẾT KIỆM 17%</span>
+            </div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">25.000đ <span style="color: var(--text-muted); font-weight: normal;">(~1.600đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('SPIN15', '15 Lượt Quay May Mắn', 25000, 15)" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 800;">
+            🚀 Mua (25k)
+          </button>
+        </div>
+
+        <!-- Spin Package 3 (VIP PACK) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(236,72,153,0.08)); border: 1.5px solid rgba(168,85,247,0.6);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: #c084fc;">👑 40 Lượt Quay Hoàng Gia</span>
+              <span class="badge" style="background: rgba(168,85,247,0.25); color: #c084fc; font-size: 9.5px;">SIÊU ƯU ĐÃI</span>
+            </div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">50.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 1.250đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('SPIN40', '40 Lượt Quay Hoàng Gia', 50000, 40)" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; font-weight: 800;">
+            👑 Mua (50k)
+          </button>
+        </div>
+      </div>
+
       <!-- Gift / Redeem Code Section (Moved to top v0.0.10.1m) -->
       <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
         <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
@@ -4652,21 +4726,21 @@
     </div>
   </div>
 
-  <!-- MODAL: LUCKY WHEEL (v0.10.8-beta-5) -->
+  <!-- MODAL: LUCKY WHEEL (v0.10.8-beta-5.2) -->
   <div class="modal-overlay" id="modal-lucky-wheel" style="z-index: 10009;">
-    <div class="modal" style="max-width: 440px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25);">
-      <div class="modal-title" style="border-bottom: none; padding-bottom: 0;">
+    <div class="modal" style="max-width: 400px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25); overflow: hidden; padding: 16px 12px 14px 12px; box-sizing: border-box;">
+      <div class="modal-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
         <div style="display: flex; align-items: center; gap: 8px; text-align: left;">
           <span style="font-size: 24px;">🎡</span>
           <div>
-            <strong id="lucky-wheel-modal-title" style="font-size: 16px; color: var(--text);">Vòng Quay May Mắn</strong>
+            <strong id="lucky-wheel-modal-title" style="font-size: 15px; color: var(--text);">Vòng Quay May Mắn</strong>
             <div id="lucky-wheel-modal-sub" style="font-size: 11px; color: var(--text-muted);">Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & VIP Hoàng Gia!</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-lucky-wheel')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <div style="overflow-y: auto; padding: 10px 4px; flex: 1;">
+      <div class="lucky-wheel-body" style="overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; padding: 2px; flex: 1; width: 100%; box-sizing: border-box;">
         <!-- Spins status badge -->
         <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 8px;">
           <span style="font-size: 12px; color: #ffd700; font-weight: 700;">Lượt quay còn lại:</span>
@@ -4697,6 +4771,76 @@
 
       <div style="display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px;">
         <button class="btn btn-primary btn-sm" onclick="closeModal('modal-lucky-wheel')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REAL-MONEY SPIN PURCHASE PAYMENT (v0.10.8-beta-5.2) -->
+  <div class="modal-overlay" id="modal-spin-purchase-payment" style="z-index: 10011;">
+    <div class="modal" style="max-width: 520px; width: 95vw; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.5); box-shadow: 0 12px 48px rgba(0,0,0,0.7); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
+      <div class="modal-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">💳</span>
+          <div>
+            <strong style="font-size: 16px; color: #fbbf24;">Thanh Toán Mua Lượt Quay</strong>
+            <div id="spin-pay-pack-name" style="font-size: 11.5px; color: var(--text-muted);">Gói 15 Lượt Quay May Mắn (25.000đ)</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spin-purchase-payment')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="overflow-y: auto; overflow-x: hidden; flex: 1; scrollbar-width: thin;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: center; margin-bottom: 14px;">
+          <!-- QR Image Container -->
+          <div style="text-align: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+            <img id="spin-pay-qr-img" src="" alt="VietQR Mua Lượt Quay" style="width: 170px; height: 170px; object-fit: contain; display: block; margin: 0 auto;">
+            <div style="font-size: 10px; color: #475569; font-weight: 700; margin-top: 4px;">Quét mã VietQR bằng App Ngân Hàng</div>
+          </div>
+
+          <!-- Transfer details -->
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+            <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 10px; color: var(--text-muted);">Ngân hàng:</div>
+              <strong style="color: #38bdf8;">MB Bank (Ngân hàng Quân Đội)</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 10px; color: var(--text-muted);">Số tài khoản:</div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #34d399; font-size: 14px;">0916541813</strong>
+                <button class="btn btn-outline btn-sm" onclick="copySpinPayField('0916541813', 'Số tài khoản')" style="padding: 2px 6px; font-size: 10px;">Copy</button>
+              </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 10px; color: var(--text-muted);">Chủ tài khoản:</div>
+              <strong style="color: var(--text);">NONG DUC HAO</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 10px; color: var(--text-muted);">Số tiền:</div>
+              <strong id="spin-pay-amount-text" style="color: #fbbf24; font-size: 14px;">25.000đ</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transfer Syntax box -->
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.5); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+          <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 4px;">Nội dung chuyển khoản (Bắt buộc chính xác):</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px;">
+            <code id="spin-pay-syntax-code" style="font-size: 13px; font-weight: 800; color: #ffd700; font-family: monospace;">VOCA ABC123 SPIN15</code>
+            <button class="btn btn-primary btn-sm" onclick="copySpinPaySyntax()" style="padding: 4px 10px; font-size: 11px; white-space: nowrap; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none;">
+              📋 Sao Chép
+            </button>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">💡 Độ dài &lt; 25 ký tự chuẩn Napas 247. Lượt quay sẽ được cộng tự động/duyệt trong 1-3 phút.</div>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center;">
+          <a href="https://zalo.me/0876048326" target="_blank" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56,189,248,0.4); text-decoration: none; font-size: 11px; padding: 6px 10px;">
+            💬 Hỗ trợ Zalo: 0876048326
+          </a>
+          <button class="btn btn-primary btn-sm" onclick="confirmSpinTransferSent()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 11.5px; padding: 6px 14px;">
+            ✓ Tôi Đã Chuyển Khoản
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -5385,7 +5529,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.1</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.2</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12513,27 +12657,38 @@
 
     function grantVipOneDayBonus() {
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-      const currentExp = (userVipExpiresAt && userVipExpiresAt > Date.now()) ? userVipExpiresAt : Date.now();
-      const newExp = currentExp + ONE_DAY_MS;
+      const isCurrentlyVip = isUserVip();
       
-      if (userVipTier === 'lifetime') {
+      // ONLY true LIFETIME VIP gets converted to Xu + Hints
+      if (isCurrentlyVip && userVipTier === 'lifetime') {
         setUserPoints(getUserPoints() + 300);
         setUserHints(getUserHints() + 5);
         addLedgerEntry('LUCKY_WHEEL', 300, '👑 Giải Độc Đắc: +1 Ngày VIP (Đã quy đổi 300 Xu + 5 Gợi Ý cho VIP Trọn Đời)');
         saveDatabase(true);
         pushCurrentDatabaseToCloud();
-        return { isLifetime: true, message: 'Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
+        return { isLifetime: true, message: '👑 Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
       }
 
-      userVipIsActive = true;
+      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours
+      const currentExp = (userVipExpiresAt && userVipExpiresAt > Date.now()) ? userVipExpiresAt : Date.now();
+      const newExp = currentExp + ONE_DAY_MS;
+      
+      userIsVip = true;
+      userVipExpiresAt = newExp;
       if (!userVipTier || userVipTier === 'none') {
         userVipTier = 'monthly';
       }
-      userVipExpiresAt = newExp;
 
-      localStorage.setItem('vocaflow_vip_active', 'true');
-      localStorage.setItem('vocaflow_vip_tier', userVipTier);
-      localStorage.setItem('vocaflow_vip_expires_at', userVipExpiresAt.toString());
+      localStorage.setItem('vocaflow_user_is_vip', 'true');
+      localStorage.setItem('vocaflow_user_vip_active', 'true');
+      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
+      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+
+      if (currentUser) {
+        currentUser.isVip = true;
+        currentUser.vipTier = userVipTier;
+        currentUser.vipExpiresAt = userVipExpiresAt;
+      }
 
       const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
       addLedgerEntry('LUCKY_WHEEL', 0, `👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`);
@@ -12562,6 +12717,61 @@
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
       return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted };
+    }
+
+    // =========================================================================
+    // REAL-MONEY SPIN PURCHASE PAYMENT ENGINE (v0.10.8-beta-5.2)
+    // =========================================================================
+    let currentSpinPurchasePack = { code: 'SPIN15', name: '15 Lượt Quay May Mắn', amount: 25000, spins: 15 };
+
+    function openSpinPurchasePaymentModal(code, name, amount, spins) {
+      currentSpinPurchasePack = { code, name, amount, spins };
+
+      const nameEl = document.getElementById('spin-pay-pack-name');
+      const amountEl = document.getElementById('spin-pay-amount-text');
+      const syntaxEl = document.getElementById('spin-pay-syntax-code');
+      const qrImgEl = document.getElementById('spin-pay-qr-img');
+
+      if (nameEl) nameEl.textContent = `${name} (${amount.toLocaleString('vi-VN')}đ)`;
+      if (amountEl) amountEl.textContent = `${amount.toLocaleString('vi-VN')}đ`;
+
+      let rawUid = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
+      let cleanUid = rawUid.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (cleanUid.length > 14) cleanUid = cleanUid.slice(0, 14);
+      const syntax = `VOCA ${cleanUid} ${code}`;
+
+      if (syntaxEl) syntaxEl.textContent = syntax;
+
+      const encodedDesc = encodeURIComponent(syntax);
+      const qrUrl = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${amount}&addInfo=${encodedDesc}&accountName=NONG%20DUC%20HAO`;
+      if (qrImgEl) qrImgEl.src = qrUrl;
+
+      openModal('modal-spin-purchase-payment');
+    }
+
+    function copySpinPaySyntax() {
+      const syntaxEl = document.getElementById('spin-pay-syntax-code');
+      if (syntaxEl) {
+        navigator.clipboard.writeText(syntaxEl.textContent.trim()).then(() => {
+          showToast('📋 Đã sao chép nội dung chuyển khoản!');
+        }).catch(() => {
+          showToast('Nội dung: ' + syntaxEl.textContent.trim());
+        });
+      }
+    }
+
+    function copySpinPayField(val, label) {
+      navigator.clipboard.writeText(val).then(() => {
+        showToast(`📋 Đã sao chép ${label}: ${val}`);
+      });
+    }
+
+    function confirmSpinTransferSent() {
+      closeModal('modal-spin-purchase-payment');
+      showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Admin sẽ duyệt và cộng lượt quay cho bạn ngay!');
+      if (typeof addNotification === 'function') {
+        addNotification('FINANCIAL', '💳 Yêu Cầu Mua Lượt Quay', `Đã ghi nhận thanh toán gói ${currentSpinPurchasePack.name}. Hệ thống đang kiểm tra giao dịch.`);
+      }
     }
 
     function triggerLuckyWheelSpin() {
