@@ -2222,7 +2222,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-5.1</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -5385,7 +5385,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-5.1</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12316,35 +12316,55 @@
     }
 
     // =========================================================================
-    // LUCKY WHEEL & REWARDED ADS ENGINE (v0.10.8-beta-5)
+    // DYNAMIC SHUFFLED LUCKY WHEEL & REWARDED ADS ENGINE (v0.10.8-beta-5.1)
     // =========================================================================
     const AD_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown
     let luckyWheelIsSpinning = false;
     let luckyWheelCurrentRotation = 0;
     let adWatchInterval = null;
     let adWatchSecondsLeft = 15;
+    let currentActiveWheelSlices = []; // 8 dynamic shuffled slices
+    let currentWheelHasJackpot = false;
 
-    const VIP_WHEEL_SLICES = [
-      { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Hoàng Gia' },
-      { id: 'pts_300', label: '🪙 300 Xu', type: 'POINTS', val: 300, color: '#ff4d4d', text: '300 Xu' },
-      { id: 'hints_10', label: '💡 10 Gợi Ý', type: 'HINTS', val: 10, color: '#ffaf40', text: '10 Gợi Ý' },
-      { id: 'skips_5', label: '⏩ 5 Bỏ Qua', type: 'SKIPS', val: 5, color: '#32ff7e', text: '5 Lượt Bỏ Qua' },
-      { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#3db5ff', text: '150 Xu' },
-      { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#7d5fff', text: '5 Gợi Ý' },
-      { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4b95', text: '200 Xu' },
-      { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#cd84f1', text: '3 Lượt Bỏ Qua' }
-    ];
+    function prepareDynamicWheelSlices() {
+      const isVip = isUserVip();
 
-    const REGULAR_WHEEL_SLICES = [
-      { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Trải Nghiệm' },
-      { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4d4d', text: '200 Xu' },
-      { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#ffaf40', text: '5 Gợi Ý' },
-      { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#32ff7e', text: '3 Lượt Bỏ Qua' },
-      { id: 'pts_50', label: '🪙 50 Xu', type: 'POINTS', val: 50, color: '#3db5ff', text: '50 Xu' },
-      { id: 'hints_2', label: '💡 2 Gợi Ý', type: 'HINTS', val: 2, color: '#7d5fff', text: '2 Gợi Ý' },
-      { id: 'pts_100', label: '🪙 100 Xu', type: 'POINTS', val: 100, color: '#ff4b95', text: '100 Xu' },
-      { id: 'skips_1', label: '⏩ 1 Bỏ Qua', type: 'SKIPS', val: 1, color: '#cd84f1', text: '1 Lượt Bỏ Qua' }
-    ];
+      if (isVip) {
+        // VIP Wheel: 100% Always contains +1 Day VIP Jackpot
+        currentWheelHasJackpot = true;
+        const baseVipSlices = [
+          { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Hoàng Gia' },
+          { id: 'pts_300', label: '🪙 300 Xu', type: 'POINTS', val: 300, color: '#ff4d4d', text: '300 Xu' },
+          { id: 'hints_10', label: '💡 10 Gợi Ý', type: 'HINTS', val: 10, color: '#ffaf40', text: '10 Gợi Ý' },
+          { id: 'skips_5', label: '⏩ 5 Bỏ Qua', type: 'SKIPS', val: 5, color: '#32ff7e', text: '5 Lượt Bỏ Qua' },
+          { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#3db5ff', text: '150 Xu' },
+          { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#7d5fff', text: '5 Gợi Ý' },
+          { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4b95', text: '200 Xu' },
+          { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#cd84f1', text: '3 Lượt Bỏ Qua' }
+        ];
+        // Randomly shuffle all 8 slices
+        currentActiveWheelSlices = [...baseVipSlices].sort(() => Math.random() - 0.5);
+      } else {
+        // Regular Wheel: 33.3% chance to contain +1 Day VIP Jackpot
+        currentWheelHasJackpot = (Math.random() < 0.3333);
+        const jackpotSlice = currentWheelHasJackpot
+          ? { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Trải Nghiệm' }
+          : { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#f59e0b', text: '150 Xu' };
+
+        const baseRegularPool = [
+          jackpotSlice,
+          { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4d4d', text: '200 Xu' },
+          { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#ffaf40', text: '5 Gợi Ý' },
+          { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#32ff7e', text: '3 Lượt Bỏ Qua' },
+          { id: 'pts_50', label: '🪙 50 Xu', type: 'POINTS', val: 50, color: '#3db5ff', text: '50 Xu' },
+          { id: 'hints_2', label: '💡 2 Gợi Ý', type: 'HINTS', val: 2, color: '#7d5fff', text: '2 Gợi Ý' },
+          { id: 'pts_100', label: '🪙 100 Xu', type: 'POINTS', val: 100, color: '#ff4b95', text: '100 Xu' },
+          { id: 'skips_1', label: '⏩ 1 Bỏ Qua', type: 'SKIPS', val: 1, color: '#cd84f1', text: '1 Lượt Bỏ Qua' }
+        ];
+        // Randomly shuffle all 8 slices
+        currentActiveWheelSlices = [...baseRegularPool].sort(() => Math.random() - 0.5);
+      }
+    }
 
     function getTodayString() {
       return new Date().toISOString().slice(0, 10);
@@ -12433,15 +12453,16 @@
       const wheel = document.getElementById('lucky-wheel-element');
       if (!wheel) return;
 
-      const isVip = isUserVip();
-      const slices = isVip ? VIP_WHEEL_SLICES : REGULAR_WHEEL_SLICES;
+      if (!currentActiveWheelSlices || currentActiveWheelSlices.length !== 8) {
+        prepareDynamicWheelSlices();
+      }
 
       // 8 Segments conic gradient
-      const conicParts = slices.map((s, i) => `${s.color} ${i * 45}deg ${(i + 1) * 45}deg`).join(', ');
+      const conicParts = currentActiveWheelSlices.map((s, i) => `${s.color} ${i * 45}deg ${(i + 1) * 45}deg`).join(', ');
       wheel.style.background = `conic-gradient(${conicParts})`;
 
       let labelsHtml = '';
-      slices.forEach((s, i) => {
+      currentActiveWheelSlices.forEach((s, i) => {
         const angle = i * 45 + 22.5;
         labelsHtml += `
           <div class="lucky-wheel-slice-label" style="transform: rotate(${angle}deg);">
@@ -12463,7 +12484,15 @@
       const adCta = document.getElementById('lucky-wheel-ad-cta');
 
       if (titleEl) titleEl.textContent = isVip ? '👑 Vòng Quay May Mắn Hoàng Gia' : '🎡 Vòng Quay May Mắn';
-      if (subEl) subEl.textContent = isVip ? 'Đặc quyền VIP: Giải thưởng cực lớn & +1 Ngày VIP!' : 'Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & VIP Trải Nghiệm!';
+      if (subEl) {
+        if (isVip) {
+          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 700;">👑 Đặc quyền VIP: Luôn có ô Độc Đắc +1 Ngày VIP & 300 Xu!</span>';
+        } else if (currentWheelHasJackpot) {
+          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 800; animation: vip-combo 2.5s infinite;">✨ HOT: Ô ĐỘC ĐẮC +1 NGÀY VIP ĐANG XUẤT HIỆN! ✨</span>';
+        } else {
+          subEl.innerHTML = '<span style="color: var(--text-muted);">Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & Cơ hội săn VIP!</span>';
+        }
+      }
       if (spinsCountEl) spinsCountEl.textContent = spins.toString();
 
       if (adCta) {
@@ -12472,6 +12501,9 @@
     }
 
     function openLuckyWheelModal() {
+      if (!luckyWheelIsSpinning) {
+        prepareDynamicWheelSlices();
+      }
       renderWheelSlices();
       updateLuckyWheelUI();
       const resultBox = document.getElementById('lucky-wheel-result-box');
@@ -12554,9 +12586,6 @@
       const resultBox = document.getElementById('lucky-wheel-result-box');
       if (resultBox) resultBox.innerHTML = '<span style="color:#38bdf8;">🔄 Đang quay... Chúc bạn may mắn!</span>';
 
-      const isVip = isUserVip();
-      const slices = isVip ? VIP_WHEEL_SLICES : REGULAR_WHEEL_SLICES;
-
       // 5 full rotations + random angle
       const extraRounds = 5;
       const randomAngle = Math.floor(Math.random() * 360);
@@ -12569,7 +12598,7 @@
       // Calculate winning slice at top needle (0 deg)
       const actualAngle = (360 - (luckyWheelCurrentRotation % 360)) % 360;
       const winningIndex = Math.floor(((actualAngle + 22.5) % 360) / 45);
-      const prize = slices[winningIndex];
+      const prize = currentActiveWheelSlices[winningIndex] || currentActiveWheelSlices[0];
 
       setTimeout(() => {
         luckyWheelIsSpinning = false;
@@ -12608,7 +12637,15 @@
         showToast(prizeMsg);
         updateEconomyUI();
         updateShopBonusesUI();
-        updateLuckyWheelUI();
+
+        // Prepare fresh shuffled slices for the next spin
+        setTimeout(() => {
+          if (!luckyWheelIsSpinning) {
+            prepareDynamicWheelSlices();
+            renderWheelSlices();
+            updateLuckyWheelUI();
+          }
+        }, 1200);
       }, 5000);
     }
 

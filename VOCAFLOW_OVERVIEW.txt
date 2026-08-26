@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-5 (Build 150)
+Phiên bản hiện tại : v0.10.8-beta-5.1 (Build 151)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-5.1 (Build 151 - DYNAMIC SHUFFLED LUCKY WHEEL & ANTI-EXPLOIT VIP JACKPOT):
+  - Tối Ưu Cơ Chế Vòng Quay May Mắn Động & Chống Lạm Dụng Phần Thưởng:
+    * Cơ chế xáo trộn ngẫu nhiên (Dynamic Shuffled Wheel): Vị trí các ô thưởng trên vòng quay tự động đảo ngẫu nhiên trước mỗi lượt quay mới, tạo cảm giác hồi hộp và kịch tính.
+    * Tỉ lệ xuất hiện giải Độc Đắc cho tài khoản Thường (33.3% Rate): Ô `+1 Ngày VIP` xuất hiện ngẫu nhiên với tỉ lệ 1/3 lần mở/quay (nếu không xuất hiện sẽ thay bằng ô 150 Xu giá trị), giúp cân bằng kinh tế trong game và chống spam cày video.
+    * Đặc quyền VIP Hoàng Gia (100% Guaranteed): Ô Giải Độc Đắc `+1 Ngày VIP` LUÔN LUÔN CÓ MẶT 100% trên vòng quay của hội viên VIP.
+    * Hiệu ứng highlight rực rỡ khi ô Độc Đắc xuất hiện trên vòng quay của tài khoản thường.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-5.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-5 (Build 150 - LUCKY WHEEL & REWARDED VIDEO ADS ECOSYSTEM):
   - Kích Hoạt Phần 9: Vòng Quay May Mắn & Xem Video Nhận Thưởng (Lucky Wheel & Rewarded Ads):
     * Vòng quay may mắn hoàng gia VIP (`modal-lucky-wheel`): Tặng 1 lượt quay VIP miễn phí mỗi ngày, cơ cấu giải thưởng đỉnh cao (150-300 Xu, 5-10 Gợi ý, 3-5 Bỏ qua, Giải Độc Đắc +1 Ngày VIP).
