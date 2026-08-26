@@ -1,3 +1,12 @@
+﻿================================================================================
+Phiên bản: v0.10.8-beta-7.3 (Build 168) - Publisher Portal Bug Reports Tab Fix
+================================================================================
+1. [Khắc phục] Sửa lỗi Tab 4 "Báo Cáo Lỗi & Góp Ý" trong Cổng Quản Trị (Publisher Portal)
+   bị đặt nhầm vị trí khiến danh sách báo cáo hiển thị trống.
+2. [Tối ưu] Đặt đúng vị trí `pub-tab-content-bugs` vào bên trong `modal-publisher`,
+   tự động tải danh sách báo cáo sự cố & cập nhật huy hiệu số lượng lỗi ngay khi mở Cổng Quản Trị.
+3. [Triển khai] Xuất bản trực tiếp nhánh tĩnh `gh-pages` siêu nhẹ (~3.5 MB) giúp hệ thống
+   triển khai tức thì không phụ thuộc vào tình trạng quá tải của GitHub Actions.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN

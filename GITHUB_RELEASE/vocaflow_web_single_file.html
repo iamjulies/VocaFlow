@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.2</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-7.3</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -2430,7 +2430,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-7.1) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-7.3) -->
       <div id="decks-footer-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -2600,7 +2600,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-7.1) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-7.3) -->
       <div id="deck-detail-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -3327,28 +3327,6 @@
           </button>
         </div>
       </div>
-
-      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-7) -->
-      <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
-        <!-- METRICS & FILTER BAR -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="admin-bug-filter-buttons">
-            <button class="btn btn-sm btn-primary" onclick="filterAdminBugReports('all')" id="btn-bug-filter-all">Tất cả</button>
-            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('open')" id="btn-bug-filter-open">🟡 Mới gửi</button>
-            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('in_progress')" id="btn-bug-filter-in_progress">🔵 Đang xử lý</button>
-            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('resolved')" id="btn-bug-filter-resolved">🟢 Đã fix</button>
-            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('rejected')" id="btn-bug-filter-rejected">⚪ Từ chối</button>
-          </div>
-          <button class="btn btn-outline btn-sm" onclick="fetchAdminBugReportsList()" style="display: flex; align-items: center; gap: 4px;">
-            🔄 Tải lại danh sách
-          </button>
-        </div>
-
-        <div id="admin-bug-reports-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-          <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12.5px;">
-            <em>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -3899,7 +3877,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-deck-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-7.2) -->
+      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-7.3) -->
       <div id="aideck-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🤖🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4773,7 +4751,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-7.2) -->
+      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-7.3) -->
       <div id="notif-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🔔🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4906,7 +4884,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spin-purchase-payment')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-7.2) -->
+      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-7.3) -->
       <div id="spin-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🎡🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5055,7 +5033,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-7.2) -->
+      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-7.3) -->
       <div id="vip-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">👑🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5650,7 +5628,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-7) -->
+  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-7.3) -->
   <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5664,7 +5642,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-7.2) -->
+      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-7.3) -->
       <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5936,7 +5914,7 @@
         </label>
       </div>
 
-      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-7) -->
+      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-7.3) -->
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
         <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
@@ -5947,7 +5925,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.2</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-7.3</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6122,6 +6100,29 @@
             <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('lifetime')" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; font-weight: 600;">Trọn Đời (Lifetime)</button>
             <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('yearly')" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600;">1 Năm (Yearly)</button>
             <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('monthly')" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc; font-weight: 600;">1 Tháng (Monthly)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-7.3) -->
+      <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
+        <!-- METRICS & FILTER BAR -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="admin-bug-filter-buttons">
+            <button class="btn btn-sm btn-primary" onclick="filterAdminBugReports('all')" id="btn-bug-filter-all">Tất cả</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('open')" id="btn-bug-filter-open">🟡 Mới gửi</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('in_progress')" id="btn-bug-filter-in_progress">🔵 Đang xử lý</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('resolved')" id="btn-bug-filter-resolved">🟢 Đã fix</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('rejected')" id="btn-bug-filter-rejected">⚪ Từ chối</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminBugReportsList()" style="display: flex; align-items: center; gap: 4px;">
+            🔄 Tải lại danh sách
+          </button>
+        </div>
+
+        <div id="admin-bug-reports-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12.5px;">
+            <em>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em>
           </div>
         </div>
       </div>
@@ -7924,6 +7925,7 @@
       openModal('modal-publisher');
       switchPublisherTab(defaultTab);
       refreshAdminPublisherWalletUI();
+      fetchAdminBugReportsList();
       if (defaultTab === 'students') {
         fetchAdminStudentsList();
       }
@@ -12777,7 +12779,7 @@
         });
         container.appendChild(card);
 
-        // In-feed Native AdSense Unit (v0.10.8-beta-7.1)
+        // In-feed Native AdSense Unit (v0.10.8-beta-7.3)
         if (!isUserVip() && (deckIdx === 3 || (deckIdx > 3 && deckIdx % 8 === 3))) {
           const infeedCard = document.createElement('div');
           infeedCard.className = 'deck-card adsense-infeed-card';
@@ -12977,7 +12979,7 @@
 
       updateSelectionUI();
 
-      // Trigger Multiplex in deck detail screen (v0.10.8-beta-7.1)
+      // Trigger Multiplex in deck detail screen (v0.10.8-beta-7.3)
       const detailMultiplex = document.getElementById('deck-detail-adsense-multiplex-container');
       if (detailMultiplex) {
         const isVip = isUserVip();
@@ -13373,7 +13375,7 @@
     }
 
     // =========================================================================
-    // IN-APP BUG REPORT & FEEDBACK SYSTEM (v0.10.8-beta-7)
+    // IN-APP BUG REPORT & FEEDBACK SYSTEM (v0.10.8-beta-7.3)
     // =========================================================================
     let recentJsErrorsList = [];
     let currentBugScreenshotBase64 = null;
@@ -13399,7 +13401,7 @@
       const ua = navigator.userAgent || 'Unknown';
       const screenRes = `${window.innerWidth}x${window.innerHeight} (Màn hình: ${screen.width}x${screen.height})`;
       const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
-      const version = 'v0.10.8-beta-7 (Build 165)';
+      const version = 'v0.10.8-beta-7.3 (Build 168)';
       const user = currentUser ? `${currentUser.displayName || currentUser.email || 'Khách'} (${currentUser.uid})` : 'Chưa đăng nhập';
       const isVip = isUserVip() ? `VIP (${getUserVipTier()})` : 'Free';
       const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'Không có lỗi JS nào';
