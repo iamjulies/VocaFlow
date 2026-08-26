@@ -1,15 +1,14 @@
-﻿================================================================================
-Phiên bản: v0.10.8-beta-7.4 (Build 169) - Multi-Image Bug Reports, In-App Lightbox & Deck Author Visibility Fix
 ================================================================================
-1. [Khắc phục] Sửa lỗi dòng tên tác giả ở bìa ngoài bộ từ vựng bị ẩn khi tắt hiển thị thời gian cập nhật.
-2. [Nâng cấp] Tên người báo cáo trong Tab Báo Cáo Lỗi có thể click xem hồ sơ (Profile Modal) và hiển thị phong cách VIP Hoàng Gia rực rỡ nếu là thành viên VIP.
-3. [Tính năng mới] Thiết kế Trình Xem Ảnh Sự Cố Riêng Biệt (In-App Lightbox Modal) thay thế việc mở tab trắng about:blank; hỗ trợ xem phóng to, chuyển ảnh mượt mà và dải thumbnail trực quan.
-4. [Mở rộng] Nâng giới hạn tải ảnh chụp màn hình khi gửi báo cáo sự cố từ 1 ảnh lên tối đa 5 ảnh (hỗ trợ chọn nhiều ảnh hoặc dán Ctrl+V liên tục).
+Phiên bản: v0.10.8-beta-7.5 (Build 170) - Custom Bug Bounty Rewards & Rich Notification Details
+================================================================================
+1. [Nâng cấp] Trình Trao Thưởng Bắt Lỗi Tùy Chỉnh Toàn Diện (Custom Bug Bounty Picker Modal): Cho phép Dev/Admin lựa chọn linh hoạt loại phần thưởng trao tặng (Tiền Xu, Gợi Ý AI, Thẻ Bỏ Qua, Lượt Quay May Mắn, hoặc Ngày VIP Hoàng Gia) cùng số lượng tùy ý và lời nhắn ghi nhận đóng góp.
+2. [Khắc phục] Sửa lỗi thông báo thưởng Bug Bounty không hiển thị nội dung phần thưởng; bổ sung huy hiệu quà tặng nổi bật và ghi nhận rõ ràng loại quà đã trao tặng.
+3. [Tối ưu] Đồng bộ tức thì phần thưởng vào số dư Cloud Firebase RTDB và cập nhật trạng thái ví của học viên trong thời gian thực.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.4 (Build 169)
+Phiên bản hiện tại : v0.10.8-beta-7.5 (Build 170)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -30,6 +29,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.5 (Build 170 - CUSTOM BUG BOUNTY REWARDS & RICH NOTIFICATION DETAILS):
+  - Ra Mắt Trình Trao Thưởng Bắt Lỗi Tùy Chỉnh Cho Dev (Custom Bug Bounty Picker Modal):
+    * Bổ sung Modal Trao Thưởng `modal-bug-bounty-picker` chuyên nghiệp cho Dev/Admin trong Cổng Quản Trị Báo Cáo Lỗi.
+    * Tùy chọn 5 loại tài nguyên trao thưởng phong phú: 🪙 Tiền Xu (Coins), 💡 Gợi Ý AI (Hints), ⏭️ Thẻ Bỏ Qua (Skip Passes), 🎡 Lượt Quay Vòng Quay (Lucky Spins), 👑 Ngày VIP Hoàng Gia (VIP Days).
+    * Hỗ trợ các nút chọn nhanh (Presets Chips) cùng ô nhập số lượng tùy ý và lời nhắn ghi nhận đóng góp từ Dev.
+  - Sửa Lỗi Hiển Thị Thông Báo Phần Thưởng (Rich Notification Delivery):
+    * Khắc phục triệt để lỗi thông báo thiếu dòng nội dung giải thích quà tặng trong Trung Tâm Thông Báo.
+    * Tích hợp dải huy hiệu quà tặng màu vàng ánh kim (`🎁 Quà tặng: +X Xu / Ngày VIP...`), thông báo chi tiết mã sự cố và lời cảm ơn từ Admin.
+  - Tự Động Đồng Bộ Đa Nền Tảng & Cloud Ledger:
+    * Cập nhật tức thì số dư điểm, vật phẩm, lượt quay hoặc gia hạn thời hạn VIP trên Cloud Firebase RTDB và giao diện người dùng.
+
 • 👑 v0.10.8-beta-7.4 (Build 169 - MULTI-IMAGE BUG REPORTING, IN-APP LIGHTBOX & DECK AUTHOR VISIBILITY FIX):
   - Khắc Phục Lỗi Hiển Thị Tên Tác Giả Trên Thẻ Bộ Từ Vựng (Deck Author Visibility Fix):
     * Tách biệt cấu trúc DOM giữa dòng thời gian cập nhật (`span.deck-timestamp`) và tên tác giả (`div.deck-author-line`).
