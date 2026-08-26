@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-4 (Build 146)
+Phiên bản hiện tại : v0.10.8-beta-4.1 (Build 147)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-4.1 (Build 147 - ULTRA CRISP GPU-ACCELERATED VIP NAME & CROWN):
+  - Tinh Chỉnh Hiệu Ứng VIP Hoàng Gia Sắc Nét Cao Cấp (Ultra Crisp VIP Effects):
+    * Khắc phục triệt để hiện tượng mờ chữ / rung giật: Kích hoạt tăng tốc phần cứng GPU (`transform: translateZ(0)`, `will-change: transform`).
+    * Vương miện nảy nhịp nhàng (`crownFloatPulse 1.5s`): Bổ sung `filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))` và làm mượt răng cưa subpixel.
+    * Chữ VIP đổi màu đa sắc (`vip-combo 2.5s`): Gradient vàng ánh kim phối hồng phấn pastel (`#ffd700` -> `#ff9a9e` -> `#fecfef` -> `#ffd700`) phát sáng rực rỡ và sắc nét từng đường nét chữ.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-4.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-4 (Build 146 - UNLIMITED VIP GEMINI AI MENTOR & ZERO-XU PRIVILEGE):
   - Kích Hoạt Trọn Vẹn Đặc Quyền AI Mentor VIP (Phần 4):
     * Bỏ hoàn toàn giới hạn 5 lượt/ngày: Hội viên VIP thoải mái trò chuyện học thuật và luyện phản xạ vô hạn với Gia sư Gemini.
