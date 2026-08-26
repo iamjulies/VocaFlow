@@ -2253,7 +2253,7 @@
     <div class="brand" onclick="showScreen('screen-decks')">
       <img src="icons/Icon-192.png" alt="VocaFlow" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));" onerror="this.outerHTML='<div class=\'brand-icon\'><svg class=\'icon\'><use href=\'#i-book\'/></svg></div>'">
       <span>VocaFlow</span>
-      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.5</span>
+      <span style="font-size: 11px; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 2px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">v0.10.8-beta-6.6</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
@@ -4240,7 +4240,7 @@
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
             <span style="font-size: 18px;">🎁</span>
-            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Nhận +1 Ngày VIP</strong>
+            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Cả 2 Cùng Nhận +1 Ngày VIP</strong>
             <span class="badge" style="font-size: 9.5px; background: rgba(236,72,153,0.2); color: #f472b6; font-weight: 700;">Thưởng VIP</span>
           </div>
           <div style="font-size: 11px; color: var(--text-muted);">Chia sẻ mã mời: Bạn nhận +1 Ngày VIP, bạn bè nhận ngay 100 Xu & Quà tân thủ!</div>
@@ -5483,6 +5483,21 @@
           </div>
         </div>
 
+        <!-- SPINS FIELD (v0.10.8-beta-6.6 UPDATE) -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label class="form-label" style="font-weight: 700; color: #38bdf8; margin: 0;">🎡 Số Lượt Quay May Mắn (Spins):</label>
+            <span id="adjust-current-spins-badge" style="font-size: 11px; color: var(--text-muted);"></span>
+          </div>
+          <input type="number" id="adjust-wallet-spins-input" class="form-input" style="font-size: 15px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px;" onclick="addAdjustSpins(5)">+5 lượt</button>
+            <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px;" onclick="addAdjustSpins(10)">+10 lượt</button>
+            <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px;" onclick="addAdjustSpins(50)">+50 lượt</button>
+            <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="setAdjustSpins(0)">Reset 0</button>
+          </div>
+        </div>
+
         <!-- VIP MEMBERSHIP FIELD (v0.10.8-beta-3.5) -->
         <div class="form-group" style="margin-bottom: 0;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -5681,7 +5696,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.5</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-6.6</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -5809,7 +5824,7 @@
         <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 16px;">
           <div style="font-size: 14px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
           <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tùy ý nạp điểm ví và lượt gợi ý AI không giới hạn cho tài khoản quản trị của bạn.</p>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
             <div>
               <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Số Xu (Coins):</label>
               <input type="number" id="admin-set-points-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #fbbf24;">
@@ -5821,6 +5836,10 @@
             <div>
               <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">⏩ Bỏ Qua (Skips):</label>
               <input type="number" id="admin-set-skips-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #c084fc;">
+            </div>
+            <div>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">🎡 Lượt Quay (Spins):</label>
+              <input type="number" id="admin-set-spins-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #38bdf8;">
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -7473,6 +7492,10 @@
       if (ptsBadge) ptsBadge.textContent = 'Hiện có: ' + student.points + 'đ';
       if (htsBadge) htsBadge.textContent = 'Hiện có: ' + student.hints + ' gợi ý';
       if (sksBadge) sksBadge.textContent = 'Hiện có: ' + (student.skips || 0) + ' skip';
+      const spsInput = document.getElementById('adjust-wallet-spins-input');
+      const spsBadge = document.getElementById('adjust-current-spins-badge');
+      if (spsInput) spsInput.value = student.luckySpins || 0;
+      if (spsBadge) spsBadge.textContent = 'Hiện có: ' + (student.luckySpins || 0) + ' lượt';
 
       const vipSelect = document.getElementById('adjust-wallet-vip-select');
       const vipBadge = document.getElementById('adjust-current-vip-badge');
@@ -7506,6 +7529,14 @@
       const input = document.getElementById('adjust-wallet-skips-input');
       if (input) input.value = val;
     }
+    function addAdjustSpins(amount) {
+      const input = document.getElementById('adjust-wallet-spins-input');
+      if (input) input.value = (parseInt(input.value, 10) || 0) + amount;
+    }
+    function setAdjustSpins(val) {
+      const input = document.getElementById('adjust-wallet-spins-input');
+      if (input) input.value = val;
+    }
 
     async function saveAdjustStudentWalletCloud() {
       if (!editingStudentUid) return;
@@ -7515,9 +7546,11 @@
       const ptsInput = document.getElementById('adjust-wallet-points-input');
       const htsInput = document.getElementById('adjust-wallet-hints-input');
       const sksInput = document.getElementById('adjust-wallet-skips-input');
+      const spsInput = document.getElementById('adjust-wallet-spins-input');
       const newPoints = parseInt(ptsInput ? ptsInput.value : '0', 10) || 0;
       const newHints = parseInt(htsInput ? htsInput.value : '0', 10) || 0;
       const newSkips = parseInt(sksInput ? sksInput.value : '0', 10) || 0;
+      const newSpins = parseInt(spsInput ? spsInput.value : '0', 10) || 0;
       const vipSelect = document.getElementById('adjust-wallet-vip-select');
       const selectedVipTier = vipSelect ? vipSelect.value : 'none';
       const isVipGranted = (selectedVipTier !== 'none');
@@ -7535,6 +7568,7 @@
           points: newPoints,
           hints: newHints,
           skips: newSkips,
+          luckySpins: newSpins,
           updatedAt: new Date().toISOString(),
           updatedBy: 'Admin (Publisher Portal)'
         };
@@ -7944,9 +7978,11 @@
       const setPts = document.getElementById('admin-set-points-input');
       const setHts = document.getElementById('admin-set-hints-input');
       const setSks = document.getElementById('admin-set-skips-input');
+      const setSps = document.getElementById('admin-set-spins-input');
       if (setPts) setPts.value = getUserPoints();
       if (setHts) setHts.value = getUserHints();
       if (setSks) setSks.value = getUserSkips();
+      if (setSps) setSps.value = getLuckySpinsCount();
       refreshAdminVipUI();
     }
 
@@ -7954,18 +7990,21 @@
       const pts = parseInt(document.getElementById('admin-set-points-input')?.value, 10);
       const hts = parseInt(document.getElementById('admin-set-hints-input')?.value, 10);
       const sks = parseInt(document.getElementById('admin-set-skips-input')?.value, 10);
+      const sps = parseInt(document.getElementById('admin-set-spins-input')?.value, 10);
       if (!isNaN(pts)) setUserPoints(pts);
       if (!isNaN(hts)) setUserHints(hts);
       if (!isNaN(sks)) setUserSkips(sks);
-      showToast(`⚡ Đã cập nhật ví: ${getUserPoints()}đ, ${getUserHints()} gợi ý & ${getUserSkips()} skip!`);
+      if (!isNaN(sps)) setLuckySpinsCount(sps);
+      showToast(`⚡ Đã cập nhật ví: ${getUserPoints()}đ, ${getUserHints()} gợi ý, ${getUserSkips()} skip & ${getLuckySpinsCount()} lượt quay!`);
     }
 
-    function quickAddAdminRewards(ptsToAdd, htsToAdd, sksToAdd = 50) {
+    function quickAddAdminRewards(ptsToAdd, htsToAdd, sksToAdd = 50, spsToAdd = 10) {
       setUserPoints(getUserPoints() + ptsToAdd);
       setUserHints(getUserHints() + htsToAdd);
       setUserSkips(getUserSkips() + sksToAdd);
+      setLuckySpinsCount(getLuckySpinsCount() + spsToAdd);
       refreshAdminPublisherWalletUI();
-      showToast(`⚡ Đã cộng nhanh +${ptsToAdd}đ, +${htsToAdd} Gợi Ý & +${sksToAdd} Skip!`);
+      showToast(`⚡ Đã cộng nhanh +${ptsToAdd}đ, +${htsToAdd} Gợi Ý, +${sksToAdd} Skip & +${spsToAdd} Lượt Quay!`);
     }
 
     async function createAdminGiftCode() {
@@ -11367,8 +11406,17 @@
                   if (!isNaN(remoteSkips)) {
                     localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
                   }
+                  const remoteLuckySpins = typeof cloudData.economy.luckySpins === 'number' ? cloudData.economy.luckySpins : parseInt(cloudData.economy.luckySpins, 10);
+                  if (!isNaN(remoteLuckySpins)) {
+                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                  }
+                  if (cloudData.economy.luckySpinsDate) {
+                    localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
+                  }
                   localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
                   updateEconomyUI();
+                  updateLuckyWheelUI();
+                  updateShopBonusesUI();
                 }
 
                 // Sync ledger from cloud (Bidirectional Union Merge by ID)
@@ -12680,24 +12728,25 @@
 
     function getLuckySpinsCount() {
       const today = getTodayString();
-      const lastSpinDate = localStorage.getItem('vocaflow_last_spin_date') || '';
+      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
       let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
       
-      if (lastSpinDate !== today) {
+      if (lastDailyDate !== today) {
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
         const isVip = isUserVip();
-        // Regular user: 1 daily spin. VIP user: 2 daily spins (1 base + 1 VIP bonus)
-        spins = isVip ? 2 : 1;
-        localStorage.setItem('vocaflow_last_spin_date', today);
-        localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
-        
-        if (isVip && typeof addNotification === 'function') {
-          addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được tặng thêm +1 Lượt Quay May Mắn hôm nay (Tổng 2 lượt/ngày)!');
-        }
-        if (typeof pushCurrentDatabaseToCloud === 'function') {
-          pushCurrentDatabaseToCloud();
+        if (isVip) {
+          // VIP user: Cumulative +2 Free Lucky Spins per day (v0.10.8-beta-6.6)
+          spins += 2;
+          localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
+          if (typeof addNotification === 'function') {
+            addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!');
+          }
+          if (typeof pushCurrentDatabaseToCloud === 'function') {
+            pushCurrentDatabaseToCloud();
+          }
         }
       }
-      return spins;
+      return Math.max(0, spins);
     }
 
     function setLuckySpinsCount(count) {
@@ -13400,7 +13449,8 @@
       localStorage.setItem('vocaflow_referred_by', rawCode);
       sessionStorage.removeItem('vocaflow_pending_ref_code');
 
-      // 2. Award Newbie Rewards: 100 Xu + 3 Hints + 1 Lucky Spin
+      // 2. Award Newbie Rewards: +1 Day VIP + 100 Xu + 3 Hints + 1 Lucky Spin (v0.10.8-beta-6.6)
+      const vipGrantRes = grantVipOneDayBonus();
       setUserPoints(getUserPoints() + 100);
       setUserHints(getUserHints() + 3);
       setLuckySpinsCount(getLuckySpinsCount() + 1);
@@ -13408,7 +13458,7 @@
       // 3. Ledger entry & notifications
       addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode}`);
       if (typeof addNotification === 'function') {
-        addNotification('FINANCIAL', '🎁 Quà Tân Thủ', `Bạn đã nhận được 100 Xu, +3 Gợi Ý AI và +1 Lượt Quay từ mã ${rawCode}!`);
+        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +1 Ngày VIP', `Bạn đã nhận được +1 Ngày VIP Hoàng Gia, 100 Xu, +3 Gợi Ý AI và +1 Lượt Quay từ mã ${rawCode}!`);
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
