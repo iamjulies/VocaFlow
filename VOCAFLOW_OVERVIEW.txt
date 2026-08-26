@@ -2,7 +2,7 @@
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-6 (Build 157)
+Phiên bản hiện tại : v0.10.8-beta-6.1 (Build 158)
 Kiến trúc           : Single-File Progressive Web App (HTML5 / CSS3 / ES6+ JS) + Windows App EXE
 Đồng bộ dữ liệu     : Firebase Realtime Database + LocalStorage Hybrid Offline-First
 Trạng thái          : Production Ready - Đầy đủ tính năng, ổn định, bảo mật cao
@@ -23,6 +23,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-6.1 (Build 158 - TRIPLE GOOGLE ADSENSE VERIFICATION VERIFIED):
+  - Xác Nhận Trọn Bộ 3 Phương Pháp Xác Minh Quyền Sở Hữu Google AdSense:
+    * 1. Script Async: `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1343250003116465" crossorigin="anonymous"></script>` trong `<head>`.
+    * 2. Meta Account Tag: `<meta name="google-adsense-account" content="ca-pub-1343250003116465">` trong `<head>`.
+    * 3. Tệp ads.txt Root: `google.com, pub-1343250003116465, DIRECT, f08c47fec0942fa0` tại `https://iamjulies.github.io/ads.txt`.
+  - Biên dịch mới nhị phân Windows Native `VocaFlow.exe` và đóng gói `VocaFlow_v0.10.8-beta-6.1_Windows_Portable.zip`.
+
 • 👑 v0.10.8-beta-6 (Build 157 - REFERRAL & AFFILIATE PROGRAM, INVITE LINK & ADS.TXT CREATION):
   - Triển Khai Chương Trình Mời Bạn Bè & Affiliate Nhẹ (Referral & Win-Win Affiliate Engine):
     * Mỗi tài khoản sở hữu 1 Mã Giới Thiệu cá nhân và 1 Đường Link Mời Bạn Bè chuyên nghiệp (`https://iamjulies.github.io/VocaFlow/?ref=MY_CODE`).
