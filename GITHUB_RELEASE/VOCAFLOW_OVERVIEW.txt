@@ -1,16 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8 (Build 179) - Tiered Achievement & Badge System with Profile Showcase
+Phiên bản: v0.10.8-beta-8.1 (Build 180) - Skill Masters & Fortune Badges with Dual Tier Filters
 ================================================================================
-1. [Tính năng Mới] Bảng Thành Tựu & Huy Hiệu (Achievement & Badge System): Phân cấp 5 cấp độ hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
-2. [Giao diện] Kho Huy Hiệu (`modal-achievements`) & 3 Ô Danh Hiệu Trưng Bày trên Hồ Sơ Cá Nhân (`modal-profile` & `modal-public-profile`).
-3. [Bảo vệ Chống Gian Lận] Thuật toán đếm từ vựng thuần thục độc bản (Unique Distinct Terms), hoàn toàn miễn nhiễm với thủ thuật nhân bản/copy deck.
-4. [Đồng bộ Cloud] Tự động đồng bộ 2 chiều tiến độ mở khóa thành tựu và danh sách 3 huy hiệu đang ghim trên Firebase Cloud.
-5. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
+1. [Thành Tựu Mới] Bổ sung Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác) & Nhóm 4 (Vận Mệnh & Nhân Phẩm).
+2. [Lọc Đa Tầng] Bộ lọc kép thông minh trong Kho Huy Hiệu: Phân nhóm nội dung kết hợp lọc theo 5 Bậc Độ Hiếm (Đồng, Bạc, Vàng, Kim Cương, Thần Thoại).
+3. [Kỹ Năng & One-Take] Ghi nhận tự động Bản Lĩnh One-Take (>=95đ Khó), Chuẩn Bản Xứ, Đôi Tay Bão Táp (100% Siêu Khó), Bách Phát Bách Trúng (30 câu Quiz no-hint), Cỗ Máy Hoàn Hảo (50 từ 100%).
+4. [Nhân Phẩm & Vòng Quay] Ghi nhận Bàn Tay Vận Mệnh (10 lượt quay), Nhà Tài Trợ Bền Bỉ (30 video ads), Trúng Số Độc Đắc, Triệu Phú Nhân Phẩm (3 VIP liên tiếp), Đen Thôi Đỏ Là Red (3 ô thấp nhất).
+5. [Đồng Bộ & Build Native] Tự động đồng bộ 21 danh hiệu lên Cloud và đóng gói Windows Native VocaFlow.exe.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8 (Build 179)
+Phiên bản hiện tại : v0.10.8-beta-8.1 (Build 180)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +27,24 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.1 (Build 180 - SKILL MASTERS & FORTUNE BADGES + DUAL TIER FILTERS):
+  - Mở Rộng Hệ Thống 21 Thành Tựu & Huy Hiệu Toàn Diện:
+    * Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác):
+      - 🥈 Bản Lĩnh One-Take: Phát âm >= 95 điểm ở cấp độ Khó chỉ với 1 lần thu âm duy nhất.
+      - 🥇 Chuẩn Bản Xứ: Hoàn thành trọn vẹn 1 phiên Speaking cấp độ Khó không có lần thu nào dưới điểm sàn.
+      - 🥈 Đôi Tay Bão Táp: Hoàn thành bài Spelling cấp độ Siêu Khó đạt 100% độ chính xác không sai 1 ký tự.
+      - 🥇 Bách Phát Bách Trúng: Trả lời đúng 30 câu Quiz liên tiếp không dùng bất kỳ Gợi Ý nào.
+      - 💎 Cỗ Máy Hoàn Hảo: Hoàn thành phiên học 50 từ ở mức Khó nhất mà không sai một lỗi.
+    * Nhóm 4 (Vận Mệnh & Nhân Phẩm):
+      - 🥉 Bàn Tay Vận Mệnh: Thực hiện 10 lượt quay Vòng Quay May Mắn.
+      - 🥈 Nhà Tài Trợ Bền Bỉ: Xem 30 video quảng cáo tài trợ để nhận lượt quay.
+      - 🥇 Trúng Số Độc Đắc: Quay trúng ô giải độc đắc +1 Ngày VIP trên Vòng Quay 3 lần.
+      - 💎 Triệu Phú Nhân Phẩm: Quay trúng ô +1 Ngày VIP liên tiếp 3 lần.
+      - 🥈 Đen Thôi Đỏ Là Red: Quay trúng ô giải thấp nhất 3 lần liên tiếp.
+  - Bộ Lọc Phân Nhóm Kép (Dual Segmented Filter):
+    * Lọc theo Danh mục nội dung (Tất cả, Tân Thủ, Trí Nhớ & SRS, Kỹ Năng, Vận Mệnh, Đã Mở).
+    * Lọc theo Bậc Độ Hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
+  - Tự Động Ghi Nhận & Đồng Bộ Hóa Cloud 21 Danh Hiệu Lên Firebase RTDB.
 • 👑 v0.10.8-beta-8 (Build 179 - TIERED ACHIEVEMENT & BADGE SYSTEM):
   - Hệ Thống Thành Tựu & Huy Hiệu Đa Cấp Bậc (Tiered Achievements):
     * Phân chia rõ ràng 5 cấp bậc độ hiếm: Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑 với hiệu ứng viền phát sáng và màu sắc đặc trưng.
@@ -147,6 +165,24 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.1 (Build 180 - SKILL MASTERS & FORTUNE BADGES + DUAL TIER FILTERS):
+  - Mở Rộng Hệ Thống 21 Thành Tựu & Huy Hiệu Toàn Diện:
+    * Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác):
+      - 🥈 Bản Lĩnh One-Take: Phát âm >= 95 điểm ở cấp độ Khó chỉ với 1 lần thu âm duy nhất.
+      - 🥇 Chuẩn Bản Xứ: Hoàn thành trọn vẹn 1 phiên Speaking cấp độ Khó không có lần thu nào dưới điểm sàn.
+      - 🥈 Đôi Tay Bão Táp: Hoàn thành bài Spelling cấp độ Siêu Khó đạt 100% độ chính xác không sai 1 ký tự.
+      - 🥇 Bách Phát Bách Trúng: Trả lời đúng 30 câu Quiz liên tiếp không dùng bất kỳ Gợi Ý nào.
+      - 💎 Cỗ Máy Hoàn Hảo: Hoàn thành phiên học 50 từ ở mức Khó nhất mà không sai một lỗi.
+    * Nhóm 4 (Vận Mệnh & Nhân Phẩm):
+      - 🥉 Bàn Tay Vận Mệnh: Thực hiện 10 lượt quay Vòng Quay May Mắn.
+      - 🥈 Nhà Tài Trợ Bền Bỉ: Xem 30 video quảng cáo tài trợ để nhận lượt quay.
+      - 🥇 Trúng Số Độc Đắc: Quay trúng ô giải độc đắc +1 Ngày VIP trên Vòng Quay 3 lần.
+      - 💎 Triệu Phú Nhân Phẩm: Quay trúng ô +1 Ngày VIP liên tiếp 3 lần.
+      - 🥈 Đen Thôi Đỏ Là Red: Quay trúng ô giải thấp nhất 3 lần liên tiếp.
+  - Bộ Lọc Phân Nhóm Kép (Dual Segmented Filter):
+    * Lọc theo Danh mục nội dung (Tất cả, Tân Thủ, Trí Nhớ & SRS, Kỹ Năng, Vận Mệnh, Đã Mở).
+    * Lọc theo Bậc Độ Hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
+  - Tự Động Ghi Nhận & Đồng Bộ Hóa Cloud 21 Danh Hiệu Lên Firebase RTDB.
 • 👑 v0.10.8-beta-8 (Build 179 - TIERED ACHIEVEMENT & BADGE SYSTEM):
   - Hệ Thống Thành Tựu & Huy Hiệu Đa Cấp Bậc (Tiered Achievements):
     * Phân chia rõ ràng 5 cấp bậc độ hiếm: Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑 với hiệu ứng viền phát sáng và màu sắc đặc trưng.
