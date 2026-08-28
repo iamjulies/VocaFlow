@@ -1,15 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.8 (Build 187) - Mobile Header Direct Access (Studio & VIP Crown)
+Phiên bản: v0.10.8-beta-8.9 (Build 188) - Embedded Flow & Freeze Base64 Data URIs (Offline Desktop Fix)
 ================================================================================
-1. [Hiển Thị Nút VIP Crown Trên Mobile] Trực tiếp hiển thị nút 👑 VIP trên Header bar cho màn hình hẹp (<600px).
-2. [Hiển Thị Nút Studio & Ví Xu Trên Mobile] Mở trực tiếp 💼 Studio & Ví Xu từ Header bar trên mọi kích thước màn hình.
-3. [Tối Ưu Bố Cục Header Linh Hoạt] Tự động co giãn khoảng cách và kích thước nút bấm trên các thiết bị màn hình siêu nhỏ.
-4. [Tối Ưu Trải Nghiệm Điều Hướng Một Chạm] Truy cập nhanh các tính năng quan trọng mà không cần mở menu 3 chấm.
+1. [Nhúng Trực Tiếp Data URIs Cho Icon Flow & Freeze] Chuyển đổi toàn bộ icon Flow & Freeze sang Base64 Data URIs nhúng trực tiếp vào file đơn.
+2. [Khắc Phục Hoàn Toàn Lỗi Ảnh Desktop EXE] Đảm bảo hiển thị sắc nét 100% trên cả Desktop WebView2, PWA và Trình duyệt Web.
+3. [Tối Ưu Dung Lượng Icon Siêu Nhẹ] Nén tối ưu định dạng 128x128 với độ sắc nét Retina cao cấp chỉ ~17KB - 38KB.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.8 (Build 187)
+Phiên bản hiện tại : v0.10.8-beta-8.9 (Build 188)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -26,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.9 (Build 188 - EMBEDDED FLOW & FREEZE BASE64 DATA URIS):
+  - Khắc Phục Triệt Để Lỗi Không Hiển Thị Icon Flow & Freeze Trên Ứng Dụng EXE:
+    * Nhúng trực tiếp toàn bộ dữ liệu ảnh `flow.png` và `freeze.png` dưới dạng Base64 Data URIs chuẩn hóa vào file đơn `vocaflow.html`.
+    * Đảm bảo hiển thị hoàn hảo và độc lập 100% khi chạy offline không cần tải đường dẫn cục bộ trên Windows Desktop WebView2.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.9.
 • 👑 v0.10.8-beta-8.8 (Build 187 - MOBILE HEADER DIRECT ACCESS FOR STUDIO & VIP CROWN):
   - Hiển Thị Trực Tiếp Nút Gói VIP Crown & Studio Ví Xu Trên Màn Hình Hẹp:
     * Đưa nút 👑 VIP Crown và nút 💼 Studio & Ví Xu ra thanh Header cho màn hình <600px để người dùng dễ chạm một chạm.
@@ -238,6 +242,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.9 (Build 188 - EMBEDDED FLOW & FREEZE BASE64 DATA URIS):
+  - Khắc Phục Triệt Để Lỗi Không Hiển Thị Icon Flow & Freeze Trên Ứng Dụng EXE:
+    * Nhúng trực tiếp toàn bộ dữ liệu ảnh `flow.png` và `freeze.png` dưới dạng Base64 Data URIs chuẩn hóa vào file đơn `vocaflow.html`.
+    * Đảm bảo hiển thị hoàn hảo và độc lập 100% khi chạy offline không cần tải đường dẫn cục bộ trên Windows Desktop WebView2.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.9.
 • 👑 v0.10.8-beta-8.8 (Build 187 - MOBILE HEADER DIRECT ACCESS FOR STUDIO & VIP CROWN):
   - Hiển Thị Trực Tiếp Nút Gói VIP Crown & Studio Ví Xu Trên Màn Hình Hẹp:
     * Đưa nút 👑 VIP Crown và nút 💼 Studio & Ví Xu ra thanh Header cho màn hình <600px để người dùng dễ chạm một chạm.
