@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.11 (Build 190) - Local Date Timezone Alignment & Continuous Flow Paths
+Phiên bản: v0.10.8-beta-8.12 (Build 191) - Massive Flow Visual Presence in Calendar Cells
 ================================================================================
-1. [Khắc Phục Lệch Múi Giờ Lịch Flow] Chuẩn hóa ngày địa phương (Local Timezone), hiển thị viền vàng hôm nay chính xác 100%.
-2. [Thiết Kế Icon Flow Lớn Nổi Bật] Phóng to biểu tượng sóng Flow/Freeze ở vị trí trung tâm ô, thu gọn số ngày tinh tế ở góc trên.
-3. [Hiệu Ứng Vạch Nối Dòng Chảy Liên Tiếp] Tự động nối liền các ngày có Flow liên tiếp trong tuần thành một dải ánh sáng Cyan liền mạch.
+1. [Phóng To Biểu Tượng Flow & Freeze Cực Đại] Tăng kích thước biểu tượng Flow sóng biển lên 44px (85% diện tích ô).
+2. [Tối Ưu Bóng Đổ & Dải Ánh Sáng Phát Quang] Bổ sung drop-shadow phát sáng rực rỡ và hiệu ứng vạch nối dòng chảy 8px.
+3. [Tối Ưu Số Ngày Tinh Tế Có Bóng Đổ] Số ngày nhỏ ở góc trên có shadow tương phản rõ nét trên nền sóng Flow.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.11 (Build 190)
+Phiên bản hiện tại : v0.10.8-beta-8.12 (Build 191)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.12 (Build 191 - MASSIVE FLOW VISUAL PRESENCE IN CALENDAR CELLS):
+  - Phóng To Biểu Tượng Flow & Freeze Chiếm Trọn Trung Tâm Ô Lịch:
+    * Kích thước biểu tượng sóng Flow 🌊 và Freeze ❄️ được nâng lên 44px (chiếm 85% chiều cao/chiều rộng ô lịch).
+    * Thêm hiệu ứng phát sáng Cyan neon `drop-shadow(0 3px 12px rgba(6,182,212,0.85))` tạo cảm giác sống động và đã mắt khi nhìn vào lịch học.
+  - Tăng Kích Thước Vạch Nối Dòng Chảy Liên Tiếp:
+    * Dải sáng kết nối giữa các ngày liên tiếp được nâng độ dày lên 8px kèm quầng sáng rực rỡ.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.12.
 • 👑 v0.10.8-beta-8.11 (Build 190 - LOCAL DATE TIMEZONE ALIGNMENT & CONTINUOUS FLOW PATHS):
   - Khắc Phục Lệch Múi Giờ Giữa Ngày Thực & Viền Hôm Nay:
     * Đồng bộ hóa toàn bộ hàm xử lý lịch Flow theo múi giờ địa phương (`formatLocalDateString`), sửa lỗi viền vàng đánh dấu nhầm ngày UTC trước.
@@ -261,6 +268,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.12 (Build 191 - MASSIVE FLOW VISUAL PRESENCE IN CALENDAR CELLS):
+  - Phóng To Biểu Tượng Flow & Freeze Chiếm Trọn Trung Tâm Ô Lịch:
+    * Kích thước biểu tượng sóng Flow 🌊 và Freeze ❄️ được nâng lên 44px (chiếm 85% chiều cao/chiều rộng ô lịch).
+    * Thêm hiệu ứng phát sáng Cyan neon `drop-shadow(0 3px 12px rgba(6,182,212,0.85))` tạo cảm giác sống động và đã mắt khi nhìn vào lịch học.
+  - Tăng Kích Thước Vạch Nối Dòng Chảy Liên Tiếp:
+    * Dải sáng kết nối giữa các ngày liên tiếp được nâng độ dày lên 8px kèm quầng sáng rực rỡ.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.12.
 • 👑 v0.10.8-beta-8.11 (Build 190 - LOCAL DATE TIMEZONE ALIGNMENT & CONTINUOUS FLOW PATHS):
   - Khắc Phục Lệch Múi Giờ Giữa Ngày Thực & Viền Hôm Nay:
     * Đồng bộ hóa toàn bộ hàm xử lý lịch Flow theo múi giờ địa phương (`formatLocalDateString`), sửa lỗi viền vàng đánh dấu nhầm ngày UTC trước.
