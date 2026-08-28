@@ -1,16 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.6 (Build 185) - Easter Eggs & Secret Achievements (40 Badges Total)
+Phiên bản: v0.10.8-beta-8.7 (Build 186) - Flow & Flow Freeze System, Mobile Optimization & Rebalanced Economy
 ================================================================================
-1. [Thành Tựu Ẩn Easter Eggs] Bổ sung 5 thành tựu bí ẩn: Cú Đêm Học Bài (00:00-04:00), Kỷ Luật Thép (05:00-06:00), Bất Tử (Streak 30 ngày), Thoát Hiểm Ngoạn Mục (Take 3/3 Hard), Cẩn Thận Tuyệt Đối (Nghe 100% mẫu 10 từ).
-2. [Cơ Chế Ẩn Bí Mật] Giấu kín mô tả và điều kiện đạt được khi chưa mở khóa (chỉ hiện Tên & Emoji), chỉ giải mã khi hoàn thành.
-3. [Chuỗi Học Tập & Khiên Băng Bảo Hộ] Tích hợp hệ thống Daily Streak và Khiên Băng Bảo Hộ (Streak Freeze Shield) bảo toàn chuỗi ngày học.
-4. [Bảng Thành Tựu 40 Mục] Cập nhật 8 phân mục lọc chuyên sâu kết hợp 5 bậc độ hiếm và nút nhận Xu thủ công tiện lợi.
-5. [Biên Dịch & Phát Hành] Biên dịch nhị phân Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
+1. [Hệ Thống Dòng Chảy Học Tập Flow & Flow Freeze] Giám sát chuỗi ngày học Flow và bảo vệ chuỗi bằng Flow Freeze (bán tại VocaShop với giá 200 Xu).
+2. [Lịch Theo Dõi Dòng Chảy Flow Calendar] Modal lịch học tập hàng tháng cho phép xem lại toàn bộ các ngày có Flow và ngày dùng Freeze.
+3. [Tối Ưu Giao Diện Màn Hình Hẹp] Tự động ẩn Tên App và Version trên màn hình nhỏ để dành không gian cho Nút Flow trên Header bar.
+4. [Tái Cân Bằng Thưởng Thành Tựu] Điều chỉnh giải thưởng Xu: Đồng (50 Xu), Bạc (100 Xu), Vàng (200 Xu), Kim Cương (500 Xu), Thần Thoại (1.000 Xu).
+5. [Chuẩn Hóa Nhiệm Vụ Cú Đêm] Yêu cầu học ít nhất 1 câu Quiz / từ Spelling / từ Speaking thành công trong khung giờ 00:00 - 04:00 sáng.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.6 (Build 185)
+Phiên bản hiện tại : v0.10.8-beta-8.7 (Build 186)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +27,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.7 (Build 186 - FLOW & FLOW FREEZE SYSTEM, MOBILE OPTIMIZATION & REBALANCED ECONOMY):
+  - Hệ Thống Dòng Chảy Học Tập (Flow) & Flow Freeze (Đóng Băng Dòng Chảy):
+    * Theo dõi dòng chảy học tập hàng ngày với icon Flow sống động.
+    * Tích hợp Lịch Dòng Chảy (Flow Calendar Modal) trực quan hiển thị đầy đủ các ngày học và ngày dùng Freeze qua các tháng.
+    * Bán lẻ bình Flow Freeze tại VocaShop với giá 200 Xu / 1 cái để bảo vệ chuỗi ngày học.
+    * Hiển thị số ngày Flow trên Header bar và thẻ Hồ Sơ Cá Nhân (Profile).
+  - Tối Ưu Hóa Giao Diện Cho Màn Hình Hẹp:
+    * Ẩn tên app và số hiệu version ở góc trái trên màn hình hẹp để tạo không gian thoáng đãng cho nút Flow.
+  - Chuẩn Hóa Điều Kiện Thành Tựu Cú Đêm:
+    * Yêu cầu học ít nhất 1 câu hỏi thật sự (Quiz, Spelling hoặc Speaking đạt điểm sàn) trong khung giờ 00:00 - 04:00 sáng.
+  - Tái Cân Bằng Giải Thưởng Xu Bảng Thành Tựu:
+    * Đồng 🥉: 50 Xu | Bạc 🥈: 100 Xu | Vàng 🥇: 200 Xu | Kim Cương 💎: 500 Xu | Thần Thoại 👑: 1.000 Xu.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.7.
 • 👑 v0.10.8-beta-8.6 (Build 185 - EASTER EGGS & SECRET ACHIEVEMENTS - 40 BADGES TOTAL):
   - Bổ Sung 5 Trứng Phục Sinh & Danh Hiệu Ẩn (Secret Easter Eggs):
     * 🦉 Cú Đêm Học Bài: Hoàn thành 1 phiên học trong khung giờ từ 00:00 đến 04:00 sáng.
@@ -221,6 +234,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.7 (Build 186 - FLOW & FLOW FREEZE SYSTEM, MOBILE OPTIMIZATION & REBALANCED ECONOMY):
+  - Hệ Thống Dòng Chảy Học Tập (Flow) & Flow Freeze (Đóng Băng Dòng Chảy):
+    * Theo dõi dòng chảy học tập hàng ngày với icon Flow sống động.
+    * Tích hợp Lịch Dòng Chảy (Flow Calendar Modal) trực quan hiển thị đầy đủ các ngày học và ngày dùng Freeze qua các tháng.
+    * Bán lẻ bình Flow Freeze tại VocaShop với giá 200 Xu / 1 cái để bảo vệ chuỗi ngày học.
+    * Hiển thị số ngày Flow trên Header bar và thẻ Hồ Sơ Cá Nhân (Profile).
+  - Tối Ưu Hóa Giao Diện Cho Màn Hình Hẹp:
+    * Ẩn tên app và số hiệu version ở góc trái trên màn hình hẹp để tạo không gian thoáng đãng cho nút Flow.
+  - Chuẩn Hóa Điều Kiện Thành Tựu Cú Đêm:
+    * Yêu cầu học ít nhất 1 câu hỏi thật sự (Quiz, Spelling hoặc Speaking đạt điểm sàn) trong khung giờ 00:00 - 04:00 sáng.
+  - Tái Cân Bằng Giải Thưởng Xu Bảng Thành Tựu:
+    * Đồng 🥉: 50 Xu | Bạc 🥈: 100 Xu | Vàng 🥇: 200 Xu | Kim Cương 💎: 500 Xu | Thần Thoại 👑: 1.000 Xu.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.7.
 • 👑 v0.10.8-beta-8.6 (Build 185 - EASTER EGGS & SECRET ACHIEVEMENTS - 40 BADGES TOTAL):
   - Bổ Sung 5 Trứng Phục Sinh & Danh Hiệu Ẩn (Secret Easter Eggs):
     * 🦉 Cú Đêm Học Bài: Hoàn thành 1 phiên học trong khung giờ từ 00:00 đến 04:00 sáng.
