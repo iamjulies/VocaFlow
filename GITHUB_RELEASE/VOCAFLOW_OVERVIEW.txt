@@ -1,16 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.1 (Build 180) - Skill Masters & Fortune Badges with Dual Tier Filters
+Phiên bản: v0.10.8-beta-8.2 (Build 181) - Redesigned Achievement Pill Filter Tabs & UI Polish
 ================================================================================
-1. [Thành Tựu Mới] Bổ sung Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác) & Nhóm 4 (Vận Mệnh & Nhân Phẩm).
-2. [Lọc Đa Tầng] Bộ lọc kép thông minh trong Kho Huy Hiệu: Phân nhóm nội dung kết hợp lọc theo 5 Bậc Độ Hiếm (Đồng, Bạc, Vàng, Kim Cương, Thần Thoại).
-3. [Kỹ Năng & One-Take] Ghi nhận tự động Bản Lĩnh One-Take (>=95đ Khó), Chuẩn Bản Xứ, Đôi Tay Bão Táp (100% Siêu Khó), Bách Phát Bách Trúng (30 câu Quiz no-hint), Cỗ Máy Hoàn Hảo (50 từ 100%).
-4. [Nhân Phẩm & Vòng Quay] Ghi nhận Bàn Tay Vận Mệnh (10 lượt quay), Nhà Tài Trợ Bền Bỉ (30 video ads), Trúng Số Độc Đắc, Triệu Phú Nhân Phẩm (3 VIP liên tiếp), Đen Thôi Đỏ Là Red (3 ô thấp nhất).
-5. [Đồng Bộ & Build Native] Tự động đồng bộ 21 danh hiệu lên Cloud và đóng gói Windows Native VocaFlow.exe.
+1. [Sửa Lỗi Giao Diện] Tối ưu hóa toàn diện giao diện nút lọc trong Kho Huy Hiệu (`modal-achievements`).
+2. [Thiết Kế Nút Bo Tròn Plump Pills] Khắc phục triệt để tình trạng nút lọc bị dẹt/chồng lấn khi chọn cùng lúc "Tất Cả" và "Mọi Độ Hiếm".
+3. [Hộp Điều Khiển Bộ Lọc Kép] Đặt 2 hàng nút lọc bên trong khung điều khiển bo góc riêng biệt với khoảng cách thông thoáng.
+4. [Hiệu Ứng Phát Sáng Nổi Bật] Mỗi bậc độ hiếm khi kích hoạt sẽ có màu nền gradient và hiệu ứng phát sáng đặc trưng tương ứng.
+5. [Đồng Bộ Toàn Diện] Biên dịch mới Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.1 (Build 180)
+Phiên bản hiện tại : v0.10.8-beta-8.2 (Build 181)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +27,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.2 (Build 181 - REDESIGNED ACHIEVEMENT PILL FILTER TABS & UI POLISH):
+  - Tối Ưu Hóa Giao Diện Nút Lọc Thành Tựu (Pill Filter Tabs):
+    * Khắc phục triệt để lỗi nút bị dẹt hoặc chồng lấn không gian khi chọn đồng thời "Tất Cả" (Row 1) và "Mọi Độ Hiếm" (Row 2).
+    * Thiết kế lại nút dạng viên thuốc bo tròn (Plump Pills) với đệm lót rộng rãi (`padding: 5px 12px`, `font-size: 12px`, `font-weight: 700`).
+    * Bọc 2 hàng nút lọc vào khối bảng điều khiển bo góc thông thoáng (`background: rgba(0, 0, 0, 0.22)`, viền phân tách mờ).
+    * Bổ sung màu sắc gradient và bóng đổ phát sáng tương ứng cho từng bậc độ hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.2.
 • 👑 v0.10.8-beta-8.1 (Build 180 - SKILL MASTERS & FORTUNE BADGES + DUAL TIER FILTERS):
   - Mở Rộng Hệ Thống 21 Thành Tựu & Huy Hiệu Toàn Diện:
     * Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác):
@@ -165,6 +172,13 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.2 (Build 181 - REDESIGNED ACHIEVEMENT PILL FILTER TABS & UI POLISH):
+  - Tối Ưu Hóa Giao Diện Nút Lọc Thành Tựu (Pill Filter Tabs):
+    * Khắc phục triệt để lỗi nút bị dẹt hoặc chồng lấn không gian khi chọn đồng thời "Tất Cả" (Row 1) và "Mọi Độ Hiếm" (Row 2).
+    * Thiết kế lại nút dạng viên thuốc bo tròn (Plump Pills) với đệm lót rộng rãi (`padding: 5px 12px`, `font-size: 12px`, `font-weight: 700`).
+    * Bọc 2 hàng nút lọc vào khối bảng điều khiển bo góc thông thoáng (`background: rgba(0, 0, 0, 0.22)`, viền phân tách mờ).
+    * Bổ sung màu sắc gradient và bóng đổ phát sáng tương ứng cho từng bậc độ hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.2.
 • 👑 v0.10.8-beta-8.1 (Build 180 - SKILL MASTERS & FORTUNE BADGES + DUAL TIER FILTERS):
   - Mở Rộng Hệ Thống 21 Thành Tựu & Huy Hiệu Toàn Diện:
     * Nhóm 3 (Chiến Thần Kỹ Năng & Thao Tác):
