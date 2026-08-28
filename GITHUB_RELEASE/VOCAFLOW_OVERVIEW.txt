@@ -1,14 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.13 (Build 178) - Standardize Brand Logo Across Web & Desktop
+Phiên bản: v0.10.8-beta-8 (Build 179) - Tiered Achievement & Badge System with Profile Showcase
 ================================================================================
-1. [Khắc phục] Chuẩn hóa 100% Logo nhận diện thương hiệu VocaFlow (Icon cánh sách chữ V dạ quang) trên toàn bộ nền tảng Web & Desktop.
-2. [Đồng bộ] Đồng bộ đầy đủ thư mục `icons/` và favicon lên GitHub Pages và iamjulies.github.io, kèm cơ chế nhúng Base64 Data URI fallback siêu bền vững.
-3. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
+1. [Tính năng Mới] Bảng Thành Tựu & Huy Hiệu (Achievement & Badge System): Phân cấp 5 cấp độ hiếm (Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑).
+2. [Giao diện] Kho Huy Hiệu (`modal-achievements`) & 3 Ô Danh Hiệu Trưng Bày trên Hồ Sơ Cá Nhân (`modal-profile` & `modal-public-profile`).
+3. [Bảo vệ Chống Gian Lận] Thuật toán đếm từ vựng thuần thục độc bản (Unique Distinct Terms), hoàn toàn miễn nhiễm với thủ thuật nhân bản/copy deck.
+4. [Đồng bộ Cloud] Tự động đồng bộ 2 chiều tiến độ mở khóa thành tựu và danh sách 3 huy hiệu đang ghim trên Firebase Cloud.
+5. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.13 (Build 178)
+Phiên bản hiện tại : v0.10.8-beta-8 (Build 179)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +27,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8 (Build 179 - TIERED ACHIEVEMENT & BADGE SYSTEM):
+  - Hệ Thống Thành Tựu & Huy Hiệu Đa Cấp Bậc (Tiered Achievements):
+    * Phân chia rõ ràng 5 cấp bậc độ hiếm: Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑 với hiệu ứng viền phát sáng và màu sắc đặc trưng.
+    * Nhóm 1 (Khởi Đầu & Khai Phá): Hạt Mầm Tri Thức (🥉), Tia Chớp Phản Xạ (🥉), Nét Bút Khởi Nguyên (🥉), Tiếng Vang Đầu Đời (🥉), Chào Người Bạn Ảo (🥉).
+    * Nhóm 2 (Bậc Thầy Trí Nhớ & Khổ Luyện): Khởi Động Não Bộ (🥉 10 từ), Trí Nhớ Thép (🥈 50 từ), Bách Khoa Toàn Thư (🥇 200 từ), Từ Điển Sống (💎 500 từ), Vị Thần Ngôn Ngữ (👑 1.000 từ), Kẻ Thao Túng Thời Gian (🥇 7 ngày SRS streak).
+    * Cơ Chế Chống Gian Lận Mastery: Sử dụng hàm `getUniqueMasteredTermsCount()` chuẩn hóa chuỗi để đếm từ độc bản duy nhất, ngăn chặn 100% việc copy deck/nhân bản từ để cày thành tựu.
+  - Trưng Bày Danh Hiệu Trên Hồ Sơ (Profile Showcase):
+    * Tích hợp 3 ô danh hiệu danh dự ngay dưới Tên & Bio trong Hồ Sơ Cá Nhân (`modal-profile`) và Hồ Sơ Công Khai (`modal-public-profile`).
+    * Kho Huy Hiệu (`modal-achievements`) với thanh tiến độ, bộ lọc danh mục và nút "Ghim Lên Hồ Sơ" / "Bỏ Ghim" thông minh.
+    * Tự động trao thưởng Xu và gửi thông báo ăn mừng khi mở khóa thành tựu mới.
+    * Đồng bộ đầy đủ dữ liệu thành tựu và danh sách huy hiệu ghim lên Firebase Cloud.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-8_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.13 (Build 178 - STANDARDIZE BRAND LOGO ACROSS PLATFORMS):
   - Chuẩn Hóa Logo Nhận Diện Thương Hiệu VocaFlow Trên Web & Desktop:
     * Khắc phục triệt để lỗi hiển thị sai logo generic trên Web (hình tròn đỏ) do thiếu thư mục asset `icons/` khi deploy GitHub Pages.
@@ -131,6 +147,20 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8 (Build 179 - TIERED ACHIEVEMENT & BADGE SYSTEM):
+  - Hệ Thống Thành Tựu & Huy Hiệu Đa Cấp Bậc (Tiered Achievements):
+    * Phân chia rõ ràng 5 cấp bậc độ hiếm: Đồng 🥉, Bạc 🥈, Vàng 🥇, Kim Cương 💎, Thần Thoại 👑 với hiệu ứng viền phát sáng và màu sắc đặc trưng.
+    * Nhóm 1 (Khởi Đầu & Khai Phá): Hạt Mầm Tri Thức (🥉), Tia Chớp Phản Xạ (🥉), Nét Bút Khởi Nguyên (🥉), Tiếng Vang Đầu Đời (🥉), Chào Người Bạn Ảo (🥉).
+    * Nhóm 2 (Bậc Thầy Trí Nhớ & Khổ Luyện): Khởi Động Não Bộ (🥉 10 từ), Trí Nhớ Thép (🥈 50 từ), Bách Khoa Toàn Thư (🥇 200 từ), Từ Điển Sống (💎 500 từ), Vị Thần Ngôn Ngữ (👑 1.000 từ), Kẻ Thao Túng Thời Gian (🥇 7 ngày SRS streak).
+    * Cơ Chế Chống Gian Lận Mastery: Sử dụng hàm `getUniqueMasteredTermsCount()` chuẩn hóa chuỗi để đếm từ độc bản duy nhất, ngăn chặn 100% việc copy deck/nhân bản từ để cày thành tựu.
+  - Trưng Bày Danh Hiệu Trên Hồ Sơ (Profile Showcase):
+    * Tích hợp 3 ô danh hiệu danh dự ngay dưới Tên & Bio trong Hồ Sơ Cá Nhân (`modal-profile`) và Hồ Sơ Công Khai (`modal-public-profile`).
+    * Kho Huy Hiệu (`modal-achievements`) với thanh tiến độ, bộ lọc danh mục và nút "Ghim Lên Hồ Sơ" / "Bỏ Ghim" thông minh.
+    * Tự động trao thưởng Xu và gửi thông báo ăn mừng khi mở khóa thành tựu mới.
+    * Đồng bộ đầy đủ dữ liệu thành tựu và danh sách huy hiệu ghim lên Firebase Cloud.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-8_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.13 (Build 178 - STANDARDIZE BRAND LOGO ACROSS PLATFORMS):
   - Chuẩn Hóa Logo Nhận Diện Thương Hiệu VocaFlow Trên Web & Desktop:
     * Khắc phục triệt để lỗi hiển thị sai logo generic trên Web (hình tròn đỏ) do thiếu thư mục asset `icons/` khi deploy GitHub Pages.
