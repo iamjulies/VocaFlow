@@ -1,16 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.2 (Build 181) - Redesigned Achievement Pill Filter Tabs & UI Polish
+Phiên bản: v0.10.8-beta-8.3 (Build 182) - Creator, Community, Financial & Bug Bounty Badges (35 Badges)
 ================================================================================
-1. [Sửa Lỗi Giao Diện] Tối ưu hóa toàn diện giao diện nút lọc trong Kho Huy Hiệu (`modal-achievements`).
-2. [Thiết Kế Nút Bo Tròn Plump Pills] Khắc phục triệt để tình trạng nút lọc bị dẹt/chồng lấn khi chọn cùng lúc "Tất Cả" và "Mọi Độ Hiếm".
-3. [Hộp Điều Khiển Bộ Lọc Kép] Đặt 2 hàng nút lọc bên trong khung điều khiển bo góc riêng biệt với khoảng cách thông thoáng.
-4. [Hiệu Ứng Phát Sáng Nổi Bật] Mỗi bậc độ hiếm khi kích hoạt sẽ có màu nền gradient và hiệu ứng phát sáng đặc trưng tương ứng.
-5. [Đồng Bộ Toàn Diện] Biên dịch mới Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
+1. [Mở Rộng 35 Danh Hiệu] Bổ sung toàn diện Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội) & Nhóm 6 (Tài Chính & Thợ Săn Lỗi).
+2. [Creator & Community] Ghi nhận tự động Pháp Sư Tập Sự, Thương Gia Tri Thức (5 bộ bán), Mọt Sách (5 bộ mua), Idol Giới Trẻ (20 followers), Celebrity (50 followers), Bộ Từ Mô Phạm (5.0⭐), Đại Sứ Vẫy Khách (3 ref).
+3. [Tài Chính & Bug Bounty] Ghi nhận Khởi Nghiệp Vốn Âm (1.000 Xu học tập), Cá Mập VocaFlow (5.000 Xu ví), Dòng Máu Hoàng Gia (VIP), và 4 cấp độ Thợ Săn Bọ (1, 5, 10, 20 bug duyệt).
+4. [Kho Huy Hiệu 35 Mục] Phân loại 7 danh mục chuyên sâu kết hợp 5 bậc độ hiếm dạng viên thuốc thông thoáng.
+5. [Đồng Bộ & Đóng Gói] Đồng bộ Cloud RTDB và biên dịch Windows Native VocaFlow.exe.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.2 (Build 181)
+Phiên bản hiện tại : v0.10.8-beta-8.3 (Build 182)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +27,26 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.3 (Build 182 - CREATOR, COMMUNITY, FINANCIAL & BUG BOUNTY BADGES - 35 BADGES TOTAL):
+  - Mở Rộng Trọn Bộ 35 Danh Hiệu & Huy Hiệu Đa Lĩnh Vực:
+    * Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội):
+      - 🥉 Pháp Sư Tập Sự: Xuất bản bộ từ công khai đầu tiên lên Thư Viện Toàn Cầu.
+      - 🥈 Thương Gia Tri Thức: Bán được 5 bộ từ trên Creator Marketplace.
+      - 🥈 Mọt Sách: Mua 5 bộ từ trên Creator Marketplace.
+      - 🥇 Idol Giới Trẻ: Đạt mốc 20 người theo dõi (Followers) trên trang cá nhân.
+      - 💎 Celebrity: Đạt mốc 50 người theo dõi (Followers) trên trang cá nhân.
+      - 💎 Bộ Từ Mô Phạm: Sở hữu bộ từ đạt đánh giá trung bình 5.0⭐ (tối thiểu 10 lượt đánh giá).
+      - 🥈 Đại Sứ Vẫy Khách: Mời thành công 3 bạn bè tham gia qua Link/Mã Giới Thiệu.
+    * Nhóm 6 (Tài Chính & Thợ Săn Lỗi):
+      - 🥈 Khởi Nghiệp Vốn Âm Tì Địa Ngục: Tích lũy 1.000 Xu hoàn toàn từ việc học và tự tạo từ vựng.
+      - 🥇 Cá Mập VocaFlow: Số dư khả dụng trong ví chạm mốc 5.000 Xu.
+      - 💎 Dòng Máu Hoàng Gia: Kích hoạt thành công gói Hội Viên VIP (Tháng / Năm / Trọn Đời).
+      - 🥈 Thợ Săn Bọ Nghiệp Dư: Báo cáo >= 1 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 🥈 Thợ Săn Bọ Thành Thạo: Báo cáo >= 5 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 🥇 Thợ Săn Bọ Chuyên Nghiệp: Báo cáo >= 10 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 💎 Thợ Săn Bọ Bậc Thầy: Báo cáo >= 20 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+  - Tối Ưu Bảng Thành Tựu Với 7 Phân Mục và 5 Bậc Độ Hiếm.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.3.
 • 👑 v0.10.8-beta-8.2 (Build 181 - REDESIGNED ACHIEVEMENT PILL FILTER TABS & UI POLISH):
   - Tối Ưu Hóa Giao Diện Nút Lọc Thành Tựu (Pill Filter Tabs):
     * Khắc phục triệt để lỗi nút bị dẹt hoặc chồng lấn không gian khi chọn đồng thời "Tất Cả" (Row 1) và "Mọi Độ Hiếm" (Row 2).
@@ -172,6 +192,26 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.3 (Build 182 - CREATOR, COMMUNITY, FINANCIAL & BUG BOUNTY BADGES - 35 BADGES TOTAL):
+  - Mở Rộng Trọn Bộ 35 Danh Hiệu & Huy Hiệu Đa Lĩnh Vực:
+    * Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội):
+      - 🥉 Pháp Sư Tập Sự: Xuất bản bộ từ công khai đầu tiên lên Thư Viện Toàn Cầu.
+      - 🥈 Thương Gia Tri Thức: Bán được 5 bộ từ trên Creator Marketplace.
+      - 🥈 Mọt Sách: Mua 5 bộ từ trên Creator Marketplace.
+      - 🥇 Idol Giới Trẻ: Đạt mốc 20 người theo dõi (Followers) trên trang cá nhân.
+      - 💎 Celebrity: Đạt mốc 50 người theo dõi (Followers) trên trang cá nhân.
+      - 💎 Bộ Từ Mô Phạm: Sở hữu bộ từ đạt đánh giá trung bình 5.0⭐ (tối thiểu 10 lượt đánh giá).
+      - 🥈 Đại Sứ Vẫy Khách: Mời thành công 3 bạn bè tham gia qua Link/Mã Giới Thiệu.
+    * Nhóm 6 (Tài Chính & Thợ Săn Lỗi):
+      - 🥈 Khởi Nghiệp Vốn Âm Tì Địa Ngục: Tích lũy 1.000 Xu hoàn toàn từ việc học và tự tạo từ vựng.
+      - 🥇 Cá Mập VocaFlow: Số dư khả dụng trong ví chạm mốc 5.000 Xu.
+      - 💎 Dòng Máu Hoàng Gia: Kích hoạt thành công gói Hội Viên VIP (Tháng / Năm / Trọn Đời).
+      - 🥈 Thợ Săn Bọ Nghiệp Dư: Báo cáo >= 1 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 🥈 Thợ Săn Bọ Thành Thạo: Báo cáo >= 5 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 🥇 Thợ Săn Bọ Chuyên Nghiệp: Báo cáo >= 10 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+      - 💎 Thợ Săn Bọ Bậc Thầy: Báo cáo >= 20 lỗi được Admin duyệt và trao thưởng Bug Bounty.
+  - Tối Ưu Bảng Thành Tựu Với 7 Phân Mục và 5 Bậc Độ Hiếm.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.3.
 • 👑 v0.10.8-beta-8.2 (Build 181 - REDESIGNED ACHIEVEMENT PILL FILTER TABS & UI POLISH):
   - Tối Ưu Hóa Giao Diện Nút Lọc Thành Tựu (Pill Filter Tabs):
     * Khắc phục triệt để lỗi nút bị dẹt hoặc chồng lấn không gian khi chọn đồng thời "Tất Cả" (Row 1) và "Mọi Độ Hiếm" (Row 2).
