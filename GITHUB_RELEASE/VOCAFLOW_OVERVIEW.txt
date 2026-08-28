@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.11 (Build 176) - Declare Bug Filter State & Global Diagnostics
+Phiên bản: v0.10.8-beta-7.12 (Build 177) - Multi-Device Referral State Cloud Synchronization
 ================================================================================
-1. [Khắc phục] Sửa lỗi 'currentAdminBugFilter is not defined': Bổ sung đầy đủ các biến trạng thái lọc và chẩn đoán hệ thống cho Cổng Quản Trị Tab 4.
-2. [Nâng cấp] Tự động đóng tiến trình VocaFlow đang chạy và biên dịch mới nhị phân Windows Native VocaFlow.exe v0.10.8-beta-7.11.
+1. [Khắc phục] Đồng bộ hóa hoàn hảo 100% trạng thái đã nhập/chưa nhập mã giới thiệu: Lưu trữ `referredBy` lên Firebase Cloud và tự động đồng bộ 2 chiều giữa nhiều thiết bị/khi xóa cache.
+2. [Bảo vệ] Ngăn chặn trùng lặp nhập mã hoặc mất trạng thái khi đăng nhập lại/đổi máy; tự động ẩn khung nhập mã và hiển thị thông tin mã đã nhận quà.
 3. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.11 (Build 176)
+Phiên bản hiện tại : v0.10.8-beta-7.12 (Build 177)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.12 (Build 177 - MULTI-DEVICE REFERRAL STATE CLOUD SYNC):
+  - Đồng Bộ Hóa Hoàn Hảo Trạng Thái Nhập Mã Giới Thiệu (ReferredBy State Sync):
+    * Bổ sung lưu trữ trường `referredBy` vào thông tin tài khoản trên Firebase Realtime Cloud (`/users/{uid}/profile/referredBy`, `/users/{uid}/referredBy` và `/referrals_claimed_by/{uid}`).
+    * Cập nhật cơ chế `handleManualSync` và `syncReferralStatsFromCloud` tự động kéo trạng thái nhập mã từ Cloud về máy mới hoặc sau khi xóa cache, đảm bảo không bao giờ bị mất hoặc hiển thị sai giao diện.
+    * Khi mở Modal Giới Thiệu, nếu người dùng đã từng nhập mã trước đó trên bất kỳ thiết bị nào, hệ thống lập tức ẩn ô nhập và hiển thị nhãn xác nhận đã nhận quà thành công.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.12:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.12_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.11 (Build 176 - DECLARE BUG FILTER STATE & DIAGNOSTICS):
   - Khắc Phục Triệt Để Lỗi 'currentAdminBugFilter is not defined':
     * Khai báo đầy đủ các biến quản lý trạng thái (`currentAdminBugFilter`, `adminBugReportsData`, `recentJsErrorsList`, `currentBugScreenshotBase64`).
@@ -115,6 +123,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.12 (Build 177 - MULTI-DEVICE REFERRAL STATE CLOUD SYNC):
+  - Đồng Bộ Hóa Hoàn Hảo Trạng Thái Nhập Mã Giới Thiệu (ReferredBy State Sync):
+    * Bổ sung lưu trữ trường `referredBy` vào thông tin tài khoản trên Firebase Realtime Cloud (`/users/{uid}/profile/referredBy`, `/users/{uid}/referredBy` và `/referrals_claimed_by/{uid}`).
+    * Cập nhật cơ chế `handleManualSync` và `syncReferralStatsFromCloud` tự động kéo trạng thái nhập mã từ Cloud về máy mới hoặc sau khi xóa cache, đảm bảo không bao giờ bị mất hoặc hiển thị sai giao diện.
+    * Khi mở Modal Giới Thiệu, nếu người dùng đã từng nhập mã trước đó trên bất kỳ thiết bị nào, hệ thống lập tức ẩn ô nhập và hiển thị nhãn xác nhận đã nhận quà thành công.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.12:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.12_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.11 (Build 176 - DECLARE BUG FILTER STATE & DIAGNOSTICS):
   - Khắc Phục Triệt Để Lỗi 'currentAdminBugFilter is not defined':
     * Khai báo đầy đủ các biến quản lý trạng thái (`currentAdminBugFilter`, `adminBugReportsData`, `recentJsErrorsList`, `currentBugScreenshotBase64`).
