@@ -1,16 +1,15 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.3 (Build 182) - Creator, Community, Financial & Bug Bounty Badges (35 Badges)
+Phiên bản: v0.10.8-beta-8.4 (Build 183) - Audio SFX Polish (Gentle Chimes for Badges & VIP)
 ================================================================================
-1. [Mở Rộng 35 Danh Hiệu] Bổ sung toàn diện Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội) & Nhóm 6 (Tài Chính & Thợ Săn Lỗi).
-2. [Creator & Community] Ghi nhận tự động Pháp Sư Tập Sự, Thương Gia Tri Thức (5 bộ bán), Mọt Sách (5 bộ mua), Idol Giới Trẻ (20 followers), Celebrity (50 followers), Bộ Từ Mô Phạm (5.0⭐), Đại Sứ Vẫy Khách (3 ref).
-3. [Tài Chính & Bug Bounty] Ghi nhận Khởi Nghiệp Vốn Âm (1.000 Xu học tập), Cá Mập VocaFlow (5.000 Xu ví), Dòng Máu Hoàng Gia (VIP), và 4 cấp độ Thợ Săn Bọ (1, 5, 10, 20 bug duyệt).
-4. [Kho Huy Hiệu 35 Mục] Phân loại 7 danh mục chuyên sâu kết hợp 5 bậc độ hiếm dạng viên thuốc thông thoáng.
-5. [Đồng Bộ & Đóng Gói] Đồng bộ Cloud RTDB và biên dịch Windows Native VocaFlow.exe.
+1. [Tối Ưu Âm Thanh SFX] Thay thế âm thanh pháo hoa (fireworks sfx) ồn ào khi mở khóa danh hiệu/huy hiệu bằng âm thanh chuông dịu nhẹ (gentle success chime).
+2. [Trải Nghiệm Mượt Mà] Tắt âm thanh pháo hoa khi nhận thưởng mã giới thiệu và đăng ký/kích hoạt VIP để tránh gây chói tai hay khó chịu.
+3. [Bảo Toàn Hiệu Ứng Trực Quan] Giữ trọn vẹn hiệu ứng pháo hoa canvas tuyệt đẹp cho màn hình tổng kết học tập (Quiz, Spelling, Speaking).
+4. [Đồng Bộ Toàn Diện] Biên dịch nhị phân Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.3 (Build 182)
+Phiên bản hiện tại : v0.10.8-beta-8.4 (Build 183)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +26,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.4 (Build 183 - AUDIO SFX POLISH - GENTLE CHIMES FOR BADGES & VIP):
+  - Tối Ưu Hóa & Tinh Chỉnh Âm Thanh Hệ Thống (SFX Polish):
+    * Loại bỏ âm thanh pháo hoa (fireworks) gây ồn khi mở khóa huy hiệu/danh hiệu thành tựu và kích hoạt VIP.
+    * Chuyển sang âm thanh thông báo thành công êm ái, thanh lịch (`playVocaSfx('success')`).
+    * Duy trì trải nghiệm nghe dễ chịu khi học tập và thao tác nhận quà.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.4.
 • 👑 v0.10.8-beta-8.3 (Build 182 - CREATOR, COMMUNITY, FINANCIAL & BUG BOUNTY BADGES - 35 BADGES TOTAL):
   - Mở Rộng Trọn Bộ 35 Danh Hiệu & Huy Hiệu Đa Lĩnh Vực:
     * Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội):
@@ -192,6 +197,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.4 (Build 183 - AUDIO SFX POLISH - GENTLE CHIMES FOR BADGES & VIP):
+  - Tối Ưu Hóa & Tinh Chỉnh Âm Thanh Hệ Thống (SFX Polish):
+    * Loại bỏ âm thanh pháo hoa (fireworks) gây ồn khi mở khóa huy hiệu/danh hiệu thành tựu và kích hoạt VIP.
+    * Chuyển sang âm thanh thông báo thành công êm ái, thanh lịch (`playVocaSfx('success')`).
+    * Duy trì trải nghiệm nghe dễ chịu khi học tập và thao tác nhận quà.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.4.
 • 👑 v0.10.8-beta-8.3 (Build 182 - CREATOR, COMMUNITY, FINANCIAL & BUG BOUNTY BADGES - 35 BADGES TOTAL):
   - Mở Rộng Trọn Bộ 35 Danh Hiệu & Huy Hiệu Đa Lĩnh Vực:
     * Nhóm 5 (Pháp Sư Sáng Tạo & Xã Hội):
