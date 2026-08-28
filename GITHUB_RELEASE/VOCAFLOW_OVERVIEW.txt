@@ -1,16 +1,15 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.7 (Build 186) - Flow & Flow Freeze System, Mobile Optimization & Rebalanced Economy
+Phiên bản: v0.10.8-beta-8.8 (Build 187) - Mobile Header Direct Access (Studio & VIP Crown)
 ================================================================================
-1. [Hệ Thống Dòng Chảy Học Tập Flow & Flow Freeze] Giám sát chuỗi ngày học Flow và bảo vệ chuỗi bằng Flow Freeze (bán tại VocaShop với giá 200 Xu).
-2. [Lịch Theo Dõi Dòng Chảy Flow Calendar] Modal lịch học tập hàng tháng cho phép xem lại toàn bộ các ngày có Flow và ngày dùng Freeze.
-3. [Tối Ưu Giao Diện Màn Hình Hẹp] Tự động ẩn Tên App và Version trên màn hình nhỏ để dành không gian cho Nút Flow trên Header bar.
-4. [Tái Cân Bằng Thưởng Thành Tựu] Điều chỉnh giải thưởng Xu: Đồng (50 Xu), Bạc (100 Xu), Vàng (200 Xu), Kim Cương (500 Xu), Thần Thoại (1.000 Xu).
-5. [Chuẩn Hóa Nhiệm Vụ Cú Đêm] Yêu cầu học ít nhất 1 câu Quiz / từ Spelling / từ Speaking thành công trong khung giờ 00:00 - 04:00 sáng.
+1. [Hiển Thị Nút VIP Crown Trên Mobile] Trực tiếp hiển thị nút 👑 VIP trên Header bar cho màn hình hẹp (<600px).
+2. [Hiển Thị Nút Studio & Ví Xu Trên Mobile] Mở trực tiếp 💼 Studio & Ví Xu từ Header bar trên mọi kích thước màn hình.
+3. [Tối Ưu Bố Cục Header Linh Hoạt] Tự động co giãn khoảng cách và kích thước nút bấm trên các thiết bị màn hình siêu nhỏ.
+4. [Tối Ưu Trải Nghiệm Điều Hướng Một Chạm] Truy cập nhanh các tính năng quan trọng mà không cần mở menu 3 chấm.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.7 (Build 186)
+Phiên bản hiện tại : v0.10.8-beta-8.8 (Build 187)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +26,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.8 (Build 187 - MOBILE HEADER DIRECT ACCESS FOR STUDIO & VIP CROWN):
+  - Hiển Thị Trực Tiếp Nút Gói VIP Crown & Studio Ví Xu Trên Màn Hình Hẹp:
+    * Đưa nút 👑 VIP Crown và nút 💼 Studio & Ví Xu ra thanh Header cho màn hình <600px để người dùng dễ chạm một chạm.
+    * Tối ưu kích thước, padding và font chữ nút bấm linh hoạt, tương thích mượt mà từ màn hình 360px đến Desktop.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.8.
 • 👑 v0.10.8-beta-8.7 (Build 186 - FLOW & FLOW FREEZE SYSTEM, MOBILE OPTIMIZATION & REBALANCED ECONOMY):
   - Hệ Thống Dòng Chảy Học Tập (Flow) & Flow Freeze (Đóng Băng Dòng Chảy):
     * Theo dõi dòng chảy học tập hàng ngày với icon Flow sống động.
@@ -234,6 +238,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.8 (Build 187 - MOBILE HEADER DIRECT ACCESS FOR STUDIO & VIP CROWN):
+  - Hiển Thị Trực Tiếp Nút Gói VIP Crown & Studio Ví Xu Trên Màn Hình Hẹp:
+    * Đưa nút 👑 VIP Crown và nút 💼 Studio & Ví Xu ra thanh Header cho màn hình <600px để người dùng dễ chạm một chạm.
+    * Tối ưu kích thước, padding và font chữ nút bấm linh hoạt, tương thích mượt mà từ màn hình 360px đến Desktop.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.8.
 • 👑 v0.10.8-beta-8.7 (Build 186 - FLOW & FLOW FREEZE SYSTEM, MOBILE OPTIMIZATION & REBALANCED ECONOMY):
   - Hệ Thống Dòng Chảy Học Tập (Flow) & Flow Freeze (Đóng Băng Dòng Chảy):
     * Theo dõi dòng chảy học tập hàng ngày với icon Flow sống động.

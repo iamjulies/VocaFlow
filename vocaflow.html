@@ -1611,10 +1611,29 @@
         height: 32px !important;
         box-sizing: border-box;
       }
-      #btn-header-notifications, #btn-shop {
-        padding: 4px 8px !important;
+      #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop {
+        padding: 4px 6px !important;
         height: 32px !important;
-        font-size: 12px !important;
+        font-size: 11.5px !important;
+        flex-shrink: 0;
+      }
+      @media (max-width: 460px) {
+        .header-actions {
+          gap: 3px !important;
+        }
+        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
+          padding: 4px 5px !important;
+          font-size: 11px !important;
+        }
+      }
+      @media (max-width: 420px) {
+        .header-actions {
+          gap: 3px !important;
+        }
+        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
+          padding: 4px 5px !important;
+          font-size: 11px !important;
+        }
       }
       .hide-on-mobile {
         display: none !important;
@@ -2253,27 +2272,41 @@
 
   <!-- APP HEADER -->
   <header>
-    <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0;">
+    <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-beta-8.7</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-beta-8.8</span>
     </div>
     <div class="header-actions">
-      <!-- FLOW STREAK BUTTON (v0.10.8-beta-8.7) -->
-      <button type="button" class="btn btn-outline btn-sm" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 4px 8px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Dòng Chảy Học Tập (Flow) - Bấm để xem lịch">
-        <img src="icons/flow.png" alt="Flow" style="width: 17px; height: 17px; object-fit: contain;" onerror="this.outerHTML='🌊';">
+      <!-- VIP CROWN BUTTON (v0.10.8-beta-8.8: Visible on Desktop & Mobile) -->
+      <button type="button" class="btn btn-sm" id="btn-header-vip" onclick="openVipPricingModal()" title="Gói VIP Crown - Mở khóa toàn quyền tính năng" style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(236, 72, 153, 0.18)); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); cursor: pointer;">
+        <span style="font-size: 14px;">👑</span>
+        <span style="font-size: 11.5px; font-weight: 800;">VIP</span>
+      </button>
+
+      <!-- STUDIO & WALLET BUTTON (v0.10.8-beta-8.8: Visible on Desktop & Mobile) -->
+      <button type="button" class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="display: flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer;">
+        <span style="font-size: 13px;">💼</span>
+        <span style="font-size: 11.5px; font-weight: 700;">Studio</span>
+      </button>
+
+      <!-- FLOW STREAK BUTTON (v0.10.8-beta-8.8) -->
+      <button type="button" class="btn btn-outline btn-sm" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Dòng Chảy Học Tập (Flow) - Bấm để xem lịch">
+        <img src="icons/flow.png" alt="Flow" style="width: 16px; height: 16px; object-fit: contain;" onerror="this.outerHTML='🌊';">
         <span id="header-flow-count">0</span>
       </button>
-      <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
-        <span>🔔</span>
+
+      <!-- NOTIFICATIONS BUTTON -->
+      <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="display: flex; align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); height: 32px; padding: 4px 7px; border-radius: 8px; flex-shrink: 0;">
+        <span style="font-size: 13px;">🔔</span>
         <span class="hide-on-mobile">Thông Báo</span>
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="Ví Xu & Creator Studio" style="align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);">
-        💼 <span>Studio & Ví</span>
-      </button>
-      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="position: relative; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
-        🏪 <span id="header-points-display">0đ</span>
+
+      <!-- VOCASHOP / POINTS WALLET BUTTON -->
+      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="position: relative; display: flex; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">
+        <span style="font-size: 13px;">🏪</span>
+        <span id="header-points-display">0đ</span>
         <span id="header-ad-ready-dot" style="display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: 2px solid var(--surface, #1e293b); border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: white; box-shadow: 0 0 8px #38bdf8; animation: pulse-ad 1.5s infinite; cursor: pointer;" title="🎬 Có video nhận +1 Lượt Quay!">🎬</span>
       </button>
 
@@ -2287,7 +2320,7 @@
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
         ⚙️ <span>Cài đặt</span>
       </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;" onclick="triggerPwaInstall()">
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;">
         📲 <span>Cài App</span>
       </button>
       <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
@@ -2309,6 +2342,20 @@
               <small style="color: var(--text-muted); font-size: 10.5px;">Tháng 39k • Năm 299k • Trọn đời 599k</small>
             </div>
           </div>
+          <div class="dropdown-item" onclick="openWalletStudioModal(); closeHeaderMoreMenu();" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3);">
+            <span style="font-size: 16px;">💼</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: #c084fc;">Studio & Ví Xu</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Quản lý doanh thu & rút tiền</small>
+            </div>
+          </div>
+          <div class="dropdown-item" onclick="openAchievementsModal(); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.12)); border: 1px solid rgba(245, 158, 11, 0.35);">
+            <span style="font-size: 16px;">🏆</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: #fbbf24;">Bảng Thành Tựu & Danh Hiệu</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">40 Huy hiệu độc quyền & Nhận Xu</small>
+            </div>
+          </div>
           <div class="dropdown-item" onclick="openNotificationsModal(); closeHeaderMoreMenu();" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);">
             <span style="font-size: 16px;">🔔</span>
             <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
@@ -2319,33 +2366,18 @@
               <span id="mobile-notif-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 800;">0</span>
             </div>
           </div>
-          <div class="dropdown-item" onclick="openWalletStudioModal(); closeHeaderMoreMenu();" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3);">
-            <span style="font-size: 16px;">💼</span>
+          <div class="dropdown-item" onclick="openReferralModal(); closeHeaderMoreMenu();" style="background: rgba(236, 72, 153, 0.12); border: 1px solid rgba(236, 72, 153, 0.3);">
+            <span style="font-size: 16px;">🤝</span>
             <div>
-              <div style="font-weight: 700; font-size: 13px; color: #c084fc;">Studio & Ví Xu</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Lịch sử giao dịch & Quản lý bộ từ bán</small>
+              <div style="font-weight: 700; font-size: 13px; color: #f472b6;">Mời Bạn Bè (+150 Xu)</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Chia sẻ mã nhận Xu & VIP</small>
             </div>
           </div>
-          <div class="dropdown-item" onclick="openAiMentorModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
-            <span style="font-size: 16px;">🤖</span>
+          <div class="dropdown-item" onclick="openBugBountyModal(); closeHeaderMoreMenu();" style="background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3);">
+            <span style="font-size: 16px;">🕵️</span>
             <div>
-              <div style="font-weight: 700; font-size: 13px; color: #818cf8;">Gia Sư AI (Gemini Mentor)</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Hỏi đáp, luyện phát âm & tạo mini-quiz</small>
-            </div>
-          </div>
-          <div class="dropdown-item" onclick="openLibraryModal(); closeHeaderMoreMenu();">
-            <span style="font-size: 16px;">📚</span>
-            <div>
-              <div style="font-weight: 700; font-size: 13px; color: #a5b4fc;">Thư Viện Từ Vựng</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Kho từ mẫu THPT 10, 11, 12</small>
-            </div>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" onclick="handleManualSync(); closeHeaderMoreMenu();">
-            <span id="sync-icon-mobile" style="font-size: 16px;">☁️</span>
-            <div>
-              <div style="font-weight: 600; font-size: 13px;">Đồng bộ Cloud</div>
-              <small id="sync-text-mobile" style="color: var(--text-muted); font-size: 10.5px;">Sao lưu dữ liệu tức thì</small>
+              <div style="font-weight: 700; font-size: 13px; color: #f87171;">Săn Lỗi Nhận Thưởng</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Báo lỗi nhận tới 1.000 Xu & VIP</small>
             </div>
           </div>
           <div class="dropdown-item" onclick="openProfileModal(); closeHeaderMoreMenu();">
@@ -2355,26 +2387,33 @@
               <small style="color: var(--text-muted); font-size: 10.5px;">Hồ sơ & Đăng nhập</small>
             </div>
           </div>
+          <div class="dropdown-item" onclick="handleManualSync(); closeHeaderMoreMenu();">
+            <span style="font-size: 16px;">☁️</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: var(--text);">Đồng Bộ Cloud</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Sao lưu & tải dữ liệu</small>
+            </div>
+          </div>
           <div class="dropdown-item" onclick="openSettingsModal(); closeHeaderMoreMenu();">
             <span style="font-size: 16px;">⚙️</span>
             <div>
-              <div style="font-weight: 600; font-size: 13px;">Cài đặt & Giao diện</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Chủ đề, giọng đọc, AI Key</small>
+              <div style="font-weight: 700; font-size: 13px; color: var(--text);">Cài Đặt</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Giao diện, âm thanh, dữ liệu</small>
             </div>
           </div>
           <div class="dropdown-item" onclick="triggerPwaInstall(); closeHeaderMoreMenu();">
             <span style="font-size: 16px;">📲</span>
             <div>
-              <div style="font-weight: 600; font-size: 13px;">Cài đặt ứng dụng (PWA)</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Chạy mượt như app gốc</small>
+              <div style="font-weight: 700; font-size: 13px; color: var(--text);">Cài Đặt Ứng Dụng</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Cài PWA dùng Offline</small>
             </div>
           </div>
           <div class="dropdown-divider"></div>
           <div class="dropdown-item" onclick="exportAllBackup(); closeHeaderMoreMenu();">
             <span style="font-size: 16px;">💾</span>
             <div>
-              <div style="font-weight: 600; font-size: 13px;">Xuất file sao lưu</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Tải về file JSON dự phòng</small>
+              <div style="font-weight: 700; font-size: 13px; color: var(--text);">Xuất File Sao Lưu (.json)</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Lưu trữ cục bộ an toàn</small>
             </div>
           </div>
         </div>
@@ -2438,7 +2477,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-8.7) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT (v0.10.8-beta-8.8) -->
       <div id="decks-footer-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -2608,7 +2647,7 @@
         <!-- Rendered via JS -->
       </div>
 
-      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-8.7) -->
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-beta-8.8) -->
       <div id="deck-detail-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
         <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
         <ins class="adsbygoogle"
@@ -3885,7 +3924,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-deck-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-8.7) -->
+      <!-- GUEST LOCK VIEW FOR AI DECK STUDIO (v0.10.8-beta-8.8) -->
       <div id="aideck-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🤖🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4644,7 +4683,7 @@
           </button>
         </div>
         
-        <!-- PUBLIC AUTHOR SHOWCASE BADGES (v0.10.8-beta-8.7) -->
+        <!-- PUBLIC AUTHOR SHOWCASE BADGES (v0.10.8-beta-8.8) -->
         <div id="pub-view-badges-container" style="margin-top: 10px; display: none;">
           <div style="font-size: 11px; font-weight: 700; color: #ffd700; text-align: left; margin-bottom: 6px;">🎖️ Danh Hiệu Nổi Bật:</div>
           <div id="pub-view-badges-showcase" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
@@ -4770,7 +4809,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-8.7) -->
+      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-beta-8.8) -->
       <div id="notif-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🔔🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -4903,7 +4942,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spin-purchase-payment')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-8.7) -->
+      <!-- GUEST LOCK VIEW FOR SPIN PURCHASE (v0.10.8-beta-8.8) -->
       <div id="spin-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🎡🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5052,7 +5091,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-8.7) -->
+      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-beta-8.8) -->
       <div id="vip-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">👑🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5376,7 +5415,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ACHIEVEMENTS & BADGES SYSTEM (v0.10.8-beta-8.7 - 40 BADGES & EASTER EGGS) -->
+  <!-- MODAL: ACHIEVEMENTS & BADGES SYSTEM (v0.10.8-beta-8.8 - 40 BADGES & EASTER EGGS) -->
   <div class="modal-overlay" id="modal-achievements" style="z-index: 10010;">
     <div class="modal" style="max-width: 760px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(245, 158, 11, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 8px;">
@@ -5406,7 +5445,7 @@
         </div>
       </div>
 
-      <!-- DUAL FILTER BAR CONTAINER (v0.10.8-beta-8.7) -->
+      <!-- DUAL FILTER BAR CONTAINER (v0.10.8-beta-8.8) -->
       <div style="background: rgba(0, 0, 0, 0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
         <!-- ROW 1: CATEGORY TABS -->
         <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; align-items: center;">
@@ -5445,7 +5484,7 @@
   </div>
 
 
-  <!-- MODAL: FLOW CALENDAR & STREAK TRACKER (v0.10.8-beta-8.7) -->
+  <!-- MODAL: FLOW CALENDAR & STREAK TRACKER (v0.10.8-beta-8.8) -->
   <div class="modal-overlay" id="modal-flow-calendar" style="z-index: 10010;">
     <div class="modal" style="max-width: 480px; width: 92vw; background: var(--surface); border: 1.5px solid rgba(6, 182, 212, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(6, 182, 212, 0.25);">
       <div class="modal-title" style="margin-bottom: 12px;">
@@ -5577,7 +5616,7 @@
           </div>
         </div>
 
-        <!-- PROFILE SHOWCASE: 3 PINNED BADGES (v0.10.8-beta-8.7) -->
+        <!-- PROFILE SHOWCASE: 3 PINNED BADGES (v0.10.8-beta-8.8) -->
         <div style="margin-top: 12px; background: rgba(0,0,0,0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Trưng Bày (Tối đa 3)</span>
@@ -5789,7 +5828,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-8.7) -->
+  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-beta-8.8) -->
   <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5803,7 +5842,7 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-8.7) -->
+      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-beta-8.8) -->
       <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
@@ -5869,7 +5908,7 @@
           <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">4. Mô tả chi tiết & các bước xảy ra lỗi:</label>
           <textarea id="bug-report-desc" class="form-textarea" rows="4" placeholder="Mô tả cụ thể: Bạn đang làm gì khi lỗi xảy ra? Bạn mong muốn kết quả ra sao? (Có thể dán trực tiếp ảnh chụp màn hình Ctrl+V vào đây)..." style="font-size: 12.5px; resize: vertical;"></textarea>
         </div>
-        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE (UP TO 5 SCREENSHOTS - v0.10.8-beta-8.7) -->
+        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE (UP TO 5 SCREENSHOTS - v0.10.8-beta-8.8) -->
         <div class="form-group" style="margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text); margin: 0;">
@@ -5904,7 +5943,7 @@
     </div>
   </div>
 
-  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-beta-8.7) -->
+  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-beta-8.8) -->
   <div class="modal-overlay" id="modal-bug-screenshot-viewer" style="z-index: 10020; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
     <div class="modal" style="max-width: 900px; width: 95vw; max-height: 94vh; display: flex; flex-direction: column; padding: 14px; background: var(--surface); border: 1px solid var(--border);">
       <div class="modal-title" style="margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
@@ -5934,7 +5973,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-beta-8.7) -->
+  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-beta-8.8) -->
   <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
     <div class="modal" style="max-width: 520px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6188,7 +6227,7 @@
         </label>
       </div>
 
-      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-8.7) -->
+      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-beta-8.8) -->
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
         <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
@@ -6199,7 +6238,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-8.7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-beta-8.8</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6378,7 +6417,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-8.7) -->
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-beta-8.8) -->
       <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
         <!-- METRICS & FILTER BAR -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -8832,7 +8871,7 @@
                 currentUser.avatar = remoteAv;
                 changed = true;
               }
-              // Sync VIP status from Cloud on startup (v0.10.8-beta-8.7)
+              // Sync VIP status from Cloud on startup (v0.10.8-beta-8.8)
               if (prof.isVip !== undefined || uData.isVip !== undefined || uData.vip !== undefined) {
                 const remoteIsVip = (prof.isVip !== undefined) ? !!prof.isVip : (uData.isVip !== undefined ? !!uData.isVip : (uData.vip && !!uData.vip.isVip));
                 const remoteTier = prof.vipTier || uData.vipTier || (uData.vip && uData.vip.tier) || 'none';
@@ -8853,7 +8892,7 @@
                 }
               }
 
-              // Sync Achievements & Pinned Badges from Cloud (v0.10.8-beta-8.7)
+              // Sync Achievements & Pinned Badges from Cloud (v0.10.8-beta-8.8)
               if (uData.achievements && typeof uData.achievements === 'object') {
                 Object.keys(uData.achievements).forEach(k => {
                   const r = uData.achievements[k];
@@ -8897,7 +8936,7 @@
                 }
               }
 
-              // Sync Flow from Cloud (v0.10.8-beta-8.7)
+              // Sync Flow from Cloud (v0.10.8-beta-8.8)
               if (Array.isArray(uData.flowDates)) {
                 let localFlowDates = getFlowDates();
                 uData.flowDates.forEach(d => {
@@ -11408,7 +11447,7 @@
         }
       }
 
-      // Render Author Pinned Badges (v0.10.8-beta-8.7)
+      // Render Author Pinned Badges (v0.10.8-beta-8.8)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
       const authorPinnedBadges = (isCurrentUser ? userPinnedBadges : (targetDeck?.authorPinnedBadges || []));
@@ -11907,7 +11946,7 @@
                 const remoteProf = cloudData.profile || {};
                 const remoteName = remoteProf.displayName || cloudData.displayName;
                 // Sync VIP State from Cloud (v0.10.8-beta-3.5)
-                // Sync ReferredBy State from Cloud (v0.10.8-beta-8.7)
+                // Sync ReferredBy State from Cloud (v0.10.8-beta-8.8)
                 const remoteRef = (remoteProf && remoteProf.referredBy) || cloudData.referredBy;
                 if (remoteRef && typeof remoteRef === 'string') {
                   localStorage.setItem('vocaflow_referred_by', remoteRef);
@@ -12215,7 +12254,7 @@
                   if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
                 }
 
-                // Sync Achievements & Pinned Badges from Cloud (v0.10.8-beta-8.7)
+                // Sync Achievements & Pinned Badges from Cloud (v0.10.8-beta-8.8)
                 if (cloudData.achievements && typeof cloudData.achievements === 'object') {
                   Object.keys(cloudData.achievements).forEach(k => {
                     const r = cloudData.achievements[k];
@@ -12245,7 +12284,7 @@
                   renderProfilePinnedBadges();
                 }
 
-                // Sync Flow from Cloud (v0.10.8-beta-8.7)
+                // Sync Flow from Cloud (v0.10.8-beta-8.8)
                 if (Array.isArray(cloudData.flowDates)) {
                   let localFlowDates = getFlowDates();
                   cloudData.flowDates.forEach(d => {
@@ -13264,7 +13303,7 @@
         });
         container.appendChild(card);
 
-        // In-feed Native AdSense Unit (v0.10.8-beta-8.7)
+        // In-feed Native AdSense Unit (v0.10.8-beta-8.8)
         if (!isUserVip() && (deckIdx === 3 || (deckIdx > 3 && deckIdx % 8 === 3))) {
           const infeedCard = document.createElement('div');
           infeedCard.className = 'deck-card adsense-infeed-card';
@@ -13464,7 +13503,7 @@
 
       updateSelectionUI();
 
-      // Trigger Multiplex in deck detail screen (v0.10.8-beta-8.7)
+      // Trigger Multiplex in deck detail screen (v0.10.8-beta-8.8)
       const detailMultiplex = document.getElementById('deck-detail-adsense-multiplex-container');
       if (detailMultiplex) {
         const isVip = isUserVip();
@@ -13859,7 +13898,7 @@
       return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted };
     }
     // =========================================================================
-    // BUG REPORT & MULTI-SCREENSHOT ENGINE (v0.10.8-beta-8.7)
+    // BUG REPORT & MULTI-SCREENSHOT ENGINE (v0.10.8-beta-8.8)
     // =========================================================================
     let recentJsErrorsList = [];
     let currentBugScreenshotBase64 = null;
@@ -13889,7 +13928,7 @@
       const ua = navigator.userAgent || 'Unknown';
       const screenRes = `${window.innerWidth}x${window.innerHeight} (Màn hình: ${screen.width}x${screen.height})`;
       const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
-      const version = 'v0.10.8-beta-8.7 (Build 186)';
+      const version = 'v0.10.8-beta-8.8 (Build 187)';
       const user = currentUser ? `${currentUser.displayName || currentUser.email || 'Khách'} (${currentUser.uid})` : 'Chưa đăng nhập';
       const isVip = (typeof isUserVip === 'function' && isUserVip()) ? `VIP (${typeof getUserVipTier === 'function' ? getUserVipTier() : 'Active'})` : 'Free';
       const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'Không có lỗi JS nào';
@@ -14253,13 +14292,13 @@
 
         const timeStr = new Date(b.createdAt || Date.now()).toLocaleString('vi-VN');
         
-        // Multi-image support (v0.10.8-beta-8.7)
+        // Multi-image support (v0.10.8-beta-8.8)
         const screenshots = (Array.isArray(b.screenshots) && b.screenshots.length > 0) 
           ? b.screenshots 
           : (b.screenshot ? [b.screenshot] : []);
         const hasScreenshots = screenshots.length > 0;
 
-        // Reporter VIP styling & clickable profile (v0.10.8-beta-8.7)
+        // Reporter VIP styling & clickable profile (v0.10.8-beta-8.8)
         const authorName = b.user?.displayName || b.user?.email || 'Ẩn danh';
         const authorUid = b.user?.uid || '';
         const isVip = !!(b.user?.isVip || (authorUid && typeof isAuthorVipUser === 'function' && isAuthorVipUser(authorUid, authorName)));
@@ -14296,7 +14335,7 @@
             <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;">${escapeHtml(b.title || 'Không có tiêu đề')}</div>
             <div style="font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap; background: rgba(0,0,0,0.15); padding: 8px 10px; border-radius: 6px;">${escapeHtml(b.description || '')}</div>
 
-            <!-- SCREENSHOTS MINI-GALLERY (v0.10.8-beta-8.7) -->
+            <!-- SCREENSHOTS MINI-GALLERY (v0.10.8-beta-8.8) -->
             ${hasScreenshots ? `
               <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📷 Ảnh đính kèm (${screenshots.length}):</span>
@@ -14337,7 +14376,7 @@
       container.innerHTML = html;
     }
 
-    // IN-APP LIGHTBOX VIEWER FOR BUG SCREENSHOTS (v0.10.8-beta-8.7)
+    // IN-APP LIGHTBOX VIEWER FOR BUG SCREENSHOTS (v0.10.8-beta-8.8)
     function openBugScreenshotViewer(reportId, startIndex = 0) {
       const report = adminBugReportsData.find(b => b.id === reportId);
       if (!report) {
@@ -14478,7 +14517,7 @@
     }
 
     // =========================================================================
-    // CUSTOM BUG BOUNTY REWARD ENGINE (v0.10.8-beta-8.7)
+    // CUSTOM BUG BOUNTY REWARD ENGINE (v0.10.8-beta-8.8)
     // =========================================================================
     let currentBountyReportId = null;
     let currentBountyUserUid = null;
@@ -15114,7 +15153,7 @@
     }, 1000);
 
     // =========================================================================
-    // ACHIEVEMENT & BADGE SYSTEM ENGINE (v0.10.8-beta-8.7 - 40 BADGES & FLOW SYSTEM)
+    // ACHIEVEMENT & BADGE SYSTEM ENGINE (v0.10.8-beta-8.8 - 40 BADGES & FLOW SYSTEM)
     // =========================================================================
     const ACHIEVEMENTS_REGISTRY = {
       // GROUP 1: Khởi Đầu & Khai Phá (Tân Thủ) - Bronze: 50 Xu
@@ -15549,7 +15588,7 @@
         pointsReward: 500
       },
 
-      // GROUP 7: Trứng Phục Sinh & Ẩn Số (Easter Eggs & Secret Achievements) - v0.10.8-beta-8.7
+      // GROUP 7: Trứng Phục Sinh & Ẩn Số (Easter Eggs & Secret Achievements) - v0.10.8-beta-8.8
       'secret_night_owl': {
         id: 'secret_night_owl',
         group: 'easter_egg',
@@ -15811,7 +15850,7 @@
     }
 
     // =========================================================================
-    // FLOW & FLOW FREEZE ENGINE (v0.10.8-beta-8.7)
+    // FLOW & FLOW FREEZE ENGINE (v0.10.8-beta-8.8)
     // =========================================================================
     function getFlowDates() {
       try {
@@ -16496,7 +16535,7 @@
       container.innerHTML = html;
     }
 
-    // PROFILE 3-BADGE SHOWCASE (v0.10.8-beta-8.7: Fully Responsive on Narrow Mobile Screens)
+    // PROFILE 3-BADGE SHOWCASE (v0.10.8-beta-8.8: Fully Responsive on Narrow Mobile Screens)
     function renderProfilePinnedBadges() {
       const container = document.getElementById('profile-pinned-badges-showcase');
       if (!container) return;
@@ -16530,7 +16569,7 @@
     }
 
     // =========================================================================
-    // REFERRAL & AFFILIATE PROGRAM ENGINE (v0.10.8-beta-8.7)
+    // REFERRAL & AFFILIATE PROGRAM ENGINE (v0.10.8-beta-8.8)
     // =========================================================================
     function getUserReferralCode(user) {
       if (!user || !user.uid) return 'GUEST';
