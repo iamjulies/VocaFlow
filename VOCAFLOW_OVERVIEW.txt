@@ -1,15 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.10 (Build 189) - Flow Calendar Fix, Guest Achievements Lockout & Clean Logout Reset
+Phiên bản: v0.10.8-beta-8.11 (Build 190) - Local Date Timezone Alignment & Continuous Flow Paths
 ================================================================================
-1. [Khắc Phục Lỗi Mở Lịch Flow] Nhúng toàn diện biến dữ liệu ảnh Data URIs trong phạm vi JavaScript, mở lịch Flow mượt mà 100%.
-2. [Khóa Thành Tựu Cho Khách (Guest)] Ngăn tài khoản khách xem hoặc sở hữu thành tựu, hiển thị hộp thoại độc quyền thành viên.
-3. [Hiển Thị Ổ Khóa Danh Hiệu Profile] Thay thế các ô huy hiệu trống bằng biểu tượng ổ khóa lớn cho tài khoản Khách.
-4. [Đặt Lại Trạng Thái Nguyên Thủy Khi Đăng Xuất] Tự động sao lưu toàn bộ lên Cloud và xóa sạch dữ liệu cục bộ về trạng thái Khách ban đầu.
+1. [Khắc Phục Lệch Múi Giờ Lịch Flow] Chuẩn hóa ngày địa phương (Local Timezone), hiển thị viền vàng hôm nay chính xác 100%.
+2. [Thiết Kế Icon Flow Lớn Nổi Bật] Phóng to biểu tượng sóng Flow/Freeze ở vị trí trung tâm ô, thu gọn số ngày tinh tế ở góc trên.
+3. [Hiệu Ứng Vạch Nối Dòng Chảy Liên Tiếp] Tự động nối liền các ngày có Flow liên tiếp trong tuần thành một dải ánh sáng Cyan liền mạch.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.10 (Build 189)
+Phiên bản hiện tại : v0.10.8-beta-8.11 (Build 190)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -26,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.11 (Build 190 - LOCAL DATE TIMEZONE ALIGNMENT & CONTINUOUS FLOW PATHS):
+  - Khắc Phục Lệch Múi Giờ Giữa Ngày Thực & Viền Hôm Nay:
+    * Đồng bộ hóa toàn bộ hàm xử lý lịch Flow theo múi giờ địa phương (`formatLocalDateString`), sửa lỗi viền vàng đánh dấu nhầm ngày UTC trước.
+  - Phóng To Biểu Tượng Flow & Thu Nhỏ Số Ngày:
+    * Biểu tượng Flow 🌊 và Freeze ❄️ được hiển thị lớn 26px sắc nét giữa ô lịch, số ngày thu nhỏ 9px ở góc trên bên trái.
+  - Đường Nối Dòng Chảy Liên Tiếp (Continuous Flow Stream Path):
+    * Khi người dùng duy trì chuỗi học tập nhiều ngày liên tiếp, lịch tự động kết nối các ô bằng thanh nối dải sáng Cyan phát sáng liền mạch.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.11.
 • 👑 v0.10.8-beta-8.10 (Build 189 - FLOW CALENDAR FIX, GUEST ACHIEVEMENTS LOCKOUT & CLEAN LOGOUT RESET):
   - Khắc Phục Triệt Để Lỗi Không Nhấn Mở Được Lịch Flow:
     * Khai báo toàn cục biến Data URIs `FLOW_ICON_DATA_URI` và `FREEZE_ICON_DATA_URI` giúp `openFlowCalendarModal()` hoạt động hoàn hảo.
@@ -254,6 +261,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.11 (Build 190 - LOCAL DATE TIMEZONE ALIGNMENT & CONTINUOUS FLOW PATHS):
+  - Khắc Phục Lệch Múi Giờ Giữa Ngày Thực & Viền Hôm Nay:
+    * Đồng bộ hóa toàn bộ hàm xử lý lịch Flow theo múi giờ địa phương (`formatLocalDateString`), sửa lỗi viền vàng đánh dấu nhầm ngày UTC trước.
+  - Phóng To Biểu Tượng Flow & Thu Nhỏ Số Ngày:
+    * Biểu tượng Flow 🌊 và Freeze ❄️ được hiển thị lớn 26px sắc nét giữa ô lịch, số ngày thu nhỏ 9px ở góc trên bên trái.
+  - Đường Nối Dòng Chảy Liên Tiếp (Continuous Flow Stream Path):
+    * Khi người dùng duy trì chuỗi học tập nhiều ngày liên tiếp, lịch tự động kết nối các ô bằng thanh nối dải sáng Cyan phát sáng liền mạch.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.11.
 • 👑 v0.10.8-beta-8.10 (Build 189 - FLOW CALENDAR FIX, GUEST ACHIEVEMENTS LOCKOUT & CLEAN LOGOUT RESET):
   - Khắc Phục Triệt Để Lỗi Không Nhấn Mở Được Lịch Flow:
     * Khai báo toàn cục biến Data URIs `FLOW_ICON_DATA_URI` và `FREEZE_ICON_DATA_URI` giúp `openFlowCalendarModal()` hoạt động hoàn hảo.
