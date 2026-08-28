@@ -1,15 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.4 (Build 183) - Audio SFX Polish (Gentle Chimes for Badges & VIP)
+Phiên bản: v0.10.8-beta-8.5 (Build 184) - Manual Reward Claim, Mobile Optimization & Full Cloud Sync
 ================================================================================
-1. [Tối Ưu Âm Thanh SFX] Thay thế âm thanh pháo hoa (fireworks sfx) ồn ào khi mở khóa danh hiệu/huy hiệu bằng âm thanh chuông dịu nhẹ (gentle success chime).
-2. [Trải Nghiệm Mượt Mà] Tắt âm thanh pháo hoa khi nhận thưởng mã giới thiệu và đăng ký/kích hoạt VIP để tránh gây chói tai hay khó chịu.
-3. [Bảo Toàn Hiệu Ứng Trực Quan] Giữ trọn vẹn hiệu ứng pháo hoa canvas tuyệt đẹp cho màn hình tổng kết học tập (Quiz, Spelling, Speaking).
-4. [Đồng Bộ Toàn Diện] Biên dịch nhị phân Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
+1. [Nút Nhận Thưởng Thủ Công] Chuyển cơ chế tự động bắn Xu sang nút bấm "🎁 Nhận +X Xu" trực tiếp trên từng thẻ thành tựu.
+2. [Bảo Vệ Chống Nhận Lặp Xu] Tích hợp cơ chế xác thực Cloud 3 lớp ngăn chặn triệt để hành vi nhận thưởng trùng lặp.
+3. [Tối Ưu Giao Diện Màn Hình Hẹp] Tối ưu hóa 3 huy hiệu trưng bày trên hồ sơ và các nút hành động (🔒 Chưa mở, 📌 Ghim, ⭐ #X).
+4. [Đồng Bộ Toàn Diện Đa Nền Tảng] Khắc phục triệt để lỗi không đồng bộ VIP, Thành Tựu, Huy Hiệu Ghim và Xu ví giữa Web/Điện thoại và Desktop EXE.
+5. [Biên Dịch & Phát Hành] Biên dịch nhị phân Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.4 (Build 183)
+Phiên bản hiện tại : v0.10.8-beta-8.5 (Build 184)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -26,6 +27,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.5 (Build 184 - MANUAL REWARD CLAIM, MOBILE OPTIMIZATION & FULL CLOUD SYNC):
+  - Cơ Chế Tự Tay Nhận Thưởng Thành Tựu (Manual Claim Reward):
+    * Khi hoàn thành thành tựu, người dùng sẽ tự bấm nút "🎁 +{rewardPts} Xu" để nhận thưởng.
+    * Cơ chế Anti-Duplicate 3 lớp đối soát trạng thái với Cloud RTDB ngăn chặn việc nhận trùng lặp.
+  - Tối Ưu Hóa Giao Diện Cho Màn Hình Điện Thoại Hẹp:
+    * Khung 3 huy hiệu trưng bày trên Hồ Sơ Cá Nhân tự động co giãn (`grid-template-columns: repeat(3, minmax(0, 1fr))`, chữ có ellipsis, không bị tràn viền).
+    * Tối giản các nút hành động: `🔒` (Chưa mở), `📌 Ghim` (Chưa ghim), `⭐ #1 / #2 / #3` (Đang ghim).
+  - Sửa Lỗi Đồng Bộ Toàn Diện Giữa Web (Mobile) & Desktop (EXE):
+    * Đồng bộ 100% hai chiều trạng thái VIP (`isVip`, `vipTier`, `vipExpiresAt`), Thành Tựu (`achievements`), Huy Hiệu Ghim (`pinnedBadges`) và Ví Xu ngay từ lúc khởi động app.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.5.
 • 👑 v0.10.8-beta-8.4 (Build 183 - AUDIO SFX POLISH - GENTLE CHIMES FOR BADGES & VIP):
   - Tối Ưu Hóa & Tinh Chỉnh Âm Thanh Hệ Thống (SFX Polish):
     * Loại bỏ âm thanh pháo hoa (fireworks) gây ồn khi mở khóa huy hiệu/danh hiệu thành tựu và kích hoạt VIP.
@@ -197,6 +208,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.5 (Build 184 - MANUAL REWARD CLAIM, MOBILE OPTIMIZATION & FULL CLOUD SYNC):
+  - Cơ Chế Tự Tay Nhận Thưởng Thành Tựu (Manual Claim Reward):
+    * Khi hoàn thành thành tựu, người dùng sẽ tự bấm nút "🎁 +{rewardPts} Xu" để nhận thưởng.
+    * Cơ chế Anti-Duplicate 3 lớp đối soát trạng thái với Cloud RTDB ngăn chặn việc nhận trùng lặp.
+  - Tối Ưu Hóa Giao Diện Cho Màn Hình Điện Thoại Hẹp:
+    * Khung 3 huy hiệu trưng bày trên Hồ Sơ Cá Nhân tự động co giãn (`grid-template-columns: repeat(3, minmax(0, 1fr))`, chữ có ellipsis, không bị tràn viền).
+    * Tối giản các nút hành động: `🔒` (Chưa mở), `📌 Ghim` (Chưa ghim), `⭐ #1 / #2 / #3` (Đang ghim).
+  - Sửa Lỗi Đồng Bộ Toàn Diện Giữa Web (Mobile) & Desktop (EXE):
+    * Đồng bộ 100% hai chiều trạng thái VIP (`isVip`, `vipTier`, `vipExpiresAt`), Thành Tựu (`achievements`), Huy Hiệu Ghim (`pinnedBadges`) và Ví Xu ngay từ lúc khởi động app.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.5.
 • 👑 v0.10.8-beta-8.4 (Build 183 - AUDIO SFX POLISH - GENTLE CHIMES FOR BADGES & VIP):
   - Tối Ưu Hóa & Tinh Chỉnh Âm Thanh Hệ Thống (SFX Polish):
     * Loại bỏ âm thanh pháo hoa (fireworks) gây ồn khi mở khóa huy hiệu/danh hiệu thành tựu và kích hoạt VIP.
