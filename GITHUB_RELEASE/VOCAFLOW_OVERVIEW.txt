@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.2 (Build 194) - Customizable VIP Cat Meme Display Duration Slider
+Phiên bản: v0.10.8-beta-9.3 (Build 195) - Cloud Realtime Sync for VIP Meme Settings
 ================================================================================
-1. [Thanh Trượt Tùy Chỉnh Thời Gian Dừng Hình Meme] Tự do điều chỉnh thời lượng hiển thị Meme Mèo từ 1.0s (Nhanh) đến 6.0s (Lâu).
-2. [Đồng Bộ Cài Đặt Realtime] Nhãn hiển thị thời gian chính xác theo số giây được kéo, lưu bền vững vào bộ nhớ thiết bị.
-3. [Tối Ưu Trải Nghiệm Học Tập Cá Nhân Hóa] Người dùng có thể chiêm ngưỡng trọn vẹn meme mèo hài hước trước khi sang câu tiếp theo.
+1. [Đồng Bộ Cloud Trạng Thái Meme Mèo & Thời Gian Dừng Hình] Cài đặt bật/tắt và thời gian hiển thị meme được đồng bộ hai chiều lên Firebase Realtime Database.
+2. [Đồng Bộ Đa Thiết Bị Tức Thì] Khi người dùng đăng nhập tài khoản trên máy tính, điện thoại hay trình duyệt web, cấu hình meme mèo luôn được khôi phục nguyên vẹn.
+3. [Tự Động Lưu Debounced Realtime] Thay đổi trên thanh trượt và công tắc được tự động đẩy lên Cloud ngay lập tức.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.2 (Build 194)
+Phiên bản hiện tại : v0.10.8-beta-9.3 (Build 195)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.3 (Build 195 - CLOUD REALTIME SYNC FOR VIP MEME SETTINGS):
+  - Đồng Bộ Hai Chiều Trạng Thái & Thời Gian Meme Lên Cloud Realtime Database:
+    * Bổ sung `vipCatMemesEnabled` và `vipCatMemesDuration` vào đối tượng `settings` của tài khoản trên Firebase Cloud.
+    * Khi người dùng kéo thanh trượt hoặc bật/tắt meme, hệ thống tự động đẩy dữ liệu lên Cloud và đồng bộ về khi đăng nhập trên bất kỳ thiết bị nào.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.3.
 • 👑 v0.10.8-beta-9.2 (Build 194 - CUSTOMIZABLE VIP CAT MEME DISPLAY DURATION SLIDER):
   - Thanh Cài Đặt Tùy Chỉnh Độ Lâu Của Meme Mèo (Giai đoạn 2):
     * Bổ sung thanh trượt Slider trong mục Cài Đặt cho phép người dùng tùy biến thời gian hiển thị từ 1.0s đến 6.0s (bước nhảy 0.5s, mặc định 2.5s).
@@ -286,6 +291,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.3 (Build 195 - CLOUD REALTIME SYNC FOR VIP MEME SETTINGS):
+  - Đồng Bộ Hai Chiều Trạng Thái & Thời Gian Meme Lên Cloud Realtime Database:
+    * Bổ sung `vipCatMemesEnabled` và `vipCatMemesDuration` vào đối tượng `settings` của tài khoản trên Firebase Cloud.
+    * Khi người dùng kéo thanh trượt hoặc bật/tắt meme, hệ thống tự động đẩy dữ liệu lên Cloud và đồng bộ về khi đăng nhập trên bất kỳ thiết bị nào.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.3.
 • 👑 v0.10.8-beta-9.2 (Build 194 - CUSTOMIZABLE VIP CAT MEME DISPLAY DURATION SLIDER):
   - Thanh Cài Đặt Tùy Chỉnh Độ Lâu Của Meme Mèo (Giai đoạn 2):
     * Bổ sung thanh trượt Slider trong mục Cài Đặt cho phép người dùng tùy biến thời gian hiển thị từ 1.0s đến 6.0s (bước nhảy 0.5s, mặc định 2.5s).
