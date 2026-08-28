@@ -1,16 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-8.5 (Build 184) - Manual Reward Claim, Mobile Optimization & Full Cloud Sync
+Phiên bản: v0.10.8-beta-8.6 (Build 185) - Easter Eggs & Secret Achievements (40 Badges Total)
 ================================================================================
-1. [Nút Nhận Thưởng Thủ Công] Chuyển cơ chế tự động bắn Xu sang nút bấm "🎁 Nhận +X Xu" trực tiếp trên từng thẻ thành tựu.
-2. [Bảo Vệ Chống Nhận Lặp Xu] Tích hợp cơ chế xác thực Cloud 3 lớp ngăn chặn triệt để hành vi nhận thưởng trùng lặp.
-3. [Tối Ưu Giao Diện Màn Hình Hẹp] Tối ưu hóa 3 huy hiệu trưng bày trên hồ sơ và các nút hành động (🔒 Chưa mở, 📌 Ghim, ⭐ #X).
-4. [Đồng Bộ Toàn Diện Đa Nền Tảng] Khắc phục triệt để lỗi không đồng bộ VIP, Thành Tựu, Huy Hiệu Ghim và Xu ví giữa Web/Điện thoại và Desktop EXE.
+1. [Thành Tựu Ẩn Easter Eggs] Bổ sung 5 thành tựu bí ẩn: Cú Đêm Học Bài (00:00-04:00), Kỷ Luật Thép (05:00-06:00), Bất Tử (Streak 30 ngày), Thoát Hiểm Ngoạn Mục (Take 3/3 Hard), Cẩn Thận Tuyệt Đối (Nghe 100% mẫu 10 từ).
+2. [Cơ Chế Ẩn Bí Mật] Giấu kín mô tả và điều kiện đạt được khi chưa mở khóa (chỉ hiện Tên & Emoji), chỉ giải mã khi hoàn thành.
+3. [Chuỗi Học Tập & Khiên Băng Bảo Hộ] Tích hợp hệ thống Daily Streak và Khiên Băng Bảo Hộ (Streak Freeze Shield) bảo toàn chuỗi ngày học.
+4. [Bảng Thành Tựu 40 Mục] Cập nhật 8 phân mục lọc chuyên sâu kết hợp 5 bậc độ hiếm và nút nhận Xu thủ công tiện lợi.
 5. [Biên Dịch & Phát Hành] Biên dịch nhị phân Windows Native VocaFlow.exe và đồng bộ toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-8.5 (Build 184)
+Phiên bản hiện tại : v0.10.8-beta-8.6 (Build 185)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +27,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.6 (Build 185 - EASTER EGGS & SECRET ACHIEVEMENTS - 40 BADGES TOTAL):
+  - Bổ Sung 5 Trứng Phục Sinh & Danh Hiệu Ẩn (Secret Easter Eggs):
+    * 🦉 Cú Đêm Học Bài: Hoàn thành 1 phiên học trong khung giờ từ 00:00 đến 04:00 sáng.
+    * 🌅 Kỷ Luật Thép: Bắt đầu phiên học đầu tiên trong ngày từ 05:00 đến 06:00 sáng.
+    * 🔥 Bất Tử: Duy trì chuỗi học tập liên tục không ngắt quãng trong 30 ngày (chuỗi tự nhiên).
+    * 🏃 Thoát Hiểm Ngoạn Mục: Vượt qua điểm sàn phát âm ở đúng lượt thu âm cuối cùng (Lần 3/3 ở mức Khó).
+    * 🧘 Cẩn Thận Tuyệt Đối: Nghe đủ 100% số lượt âm thanh mẫu trước khi bấm thu âm ở 10 từ liên tiếp trong Speaking.
+  - Cơ Chế Ẩn Thông Tin Bí Mật:
+    * Giữ bí mật cách đạt được khi chưa mở khóa (chỉ hiển thị Emoji + Tên danh hiệu, mô tả ẩn: "🔒 Bí ẩn chưa được giải mã...").
+    * Tự động giải mã mô tả và gửi thông báo vinh danh khi hoàn thành thử thách.
+  - Hệ Thống Daily Streak & Khiên Băng Bảo Hộ (Streak Freeze Shield):
+    * Theo dõi chuỗi ngày học liên tục và bảo toàn chuỗi khi kích hoạt Khiên Băng Bảo Hộ.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.6.
 • 👑 v0.10.8-beta-8.5 (Build 184 - MANUAL REWARD CLAIM, MOBILE OPTIMIZATION & FULL CLOUD SYNC):
   - Cơ Chế Tự Tay Nhận Thưởng Thành Tựu (Manual Claim Reward):
     * Khi hoàn thành thành tựu, người dùng sẽ tự bấm nút "🎁 +{rewardPts} Xu" để nhận thưởng.
@@ -208,6 +221,19 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-8.6 (Build 185 - EASTER EGGS & SECRET ACHIEVEMENTS - 40 BADGES TOTAL):
+  - Bổ Sung 5 Trứng Phục Sinh & Danh Hiệu Ẩn (Secret Easter Eggs):
+    * 🦉 Cú Đêm Học Bài: Hoàn thành 1 phiên học trong khung giờ từ 00:00 đến 04:00 sáng.
+    * 🌅 Kỷ Luật Thép: Bắt đầu phiên học đầu tiên trong ngày từ 05:00 đến 06:00 sáng.
+    * 🔥 Bất Tử: Duy trì chuỗi học tập liên tục không ngắt quãng trong 30 ngày (chuỗi tự nhiên).
+    * 🏃 Thoát Hiểm Ngoạn Mục: Vượt qua điểm sàn phát âm ở đúng lượt thu âm cuối cùng (Lần 3/3 ở mức Khó).
+    * 🧘 Cẩn Thận Tuyệt Đối: Nghe đủ 100% số lượt âm thanh mẫu trước khi bấm thu âm ở 10 từ liên tiếp trong Speaking.
+  - Cơ Chế Ẩn Thông Tin Bí Mật:
+    * Giữ bí mật cách đạt được khi chưa mở khóa (chỉ hiển thị Emoji + Tên danh hiệu, mô tả ẩn: "🔒 Bí ẩn chưa được giải mã...").
+    * Tự động giải mã mô tả và gửi thông báo vinh danh khi hoàn thành thử thách.
+  - Hệ Thống Daily Streak & Khiên Băng Bảo Hộ (Streak Freeze Shield):
+    * Theo dõi chuỗi ngày học liên tục và bảo toàn chuỗi khi kích hoạt Khiên Băng Bảo Hộ.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-8.6.
 • 👑 v0.10.8-beta-8.5 (Build 184 - MANUAL REWARD CLAIM, MOBILE OPTIMIZATION & FULL CLOUD SYNC):
   - Cơ Chế Tự Tay Nhận Thưởng Thành Tựu (Manual Claim Reward):
     * Khi hoàn thành thành tựu, người dùng sẽ tự bấm nút "🎁 +{rewardPts} Xu" để nhận thưởng.
