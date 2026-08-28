@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9 (Build 192) - VIP Cat Meme Reaction Engine (Cloud-Optimized)
+Phiên bản: v0.10.8-beta-9.1 (Build 193) - Giant Center Vanilla VIP Cat Meme Reactions
 ================================================================================
-1. [Hiệu Ứng Phản Hồi Meme Mèo Cho Hội Viên VIP] Phản hồi ngẫu nhiên meme mèo hài hước khi học Quiz, Spelling, Speaking.
-2. [Tối Ưu Tải Động Qua Cloud CDN] Toàn bộ kho meme GIF được lưu trữ trên Cloud GitHub CDN, không làm nặng mã nguồn ứng dụng.
-3. [Tùy Bật/Tắt Linh Hoạt Trong Cài Đặt] Bổ sung tùy chọn bật/tắt hiệu ứng Meme Mèo VIP trong Cài Đặt Ứng Dụng.
+1. [Hiển Thị Meme Vanilla Giữa Màn Hình] Meme GIF xuất hiện trực tiếp ngay trung tâm màn hình, không viền, không bo góc, kích thước lớn sống động.
+2. [Hiệu Ứng 3 Giai Đoạn Hoàn Hảo] Đúng/Sai -> Xuất hiện chình ình phóng to mượt mà -> Tự động tan biến mất hút sau 1.8s.
+3. [Tùy Chọn Bật/Tắt Cài Đặt] Dễ dàng bật/tắt hiệu ứng Meme Mèo VIP trong Cài Đặt bất kỳ lúc nào.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9 (Build 192)
+Phiên bản hiện tại : v0.10.8-beta-9.1 (Build 193)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.1 (Build 193 - GIANT CENTER VANILLA VIP CAT MEME REACTIONS):
+  - Hiển Thị Meme Mèo Ngay Trung Tâm Màn Hình (Center Vanilla):
+    * Loại bỏ hoàn toàn khung viền bo góc, để ảnh GIF hiển thị mộc (vanilla) với kích thước cực lớn ở chính giữa màn hình.
+    * Quy trình 3 giai đoạn: Trả lời câu hỏi -> Xuất hiện chình ình với animation pop-in bắt mắt -> Tan biến mất hút sau 1.8 giây.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.1.
 • 👑 v0.10.8-beta-9 (Build 192 - VIP CAT MEME REACTION ENGINE):
   - Hiệu Ứng Phản Hồi Meme Mèo Độc Quyền Cho VIP:
     * Khi làm đúng / vượt điểm sàn: Tự động hiện ngẫu nhiên các meme mèo nhảy múa, ăn mừng phấn khích (Right).
@@ -276,6 +281,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.1 (Build 193 - GIANT CENTER VANILLA VIP CAT MEME REACTIONS):
+  - Hiển Thị Meme Mèo Ngay Trung Tâm Màn Hình (Center Vanilla):
+    * Loại bỏ hoàn toàn khung viền bo góc, để ảnh GIF hiển thị mộc (vanilla) với kích thước cực lớn ở chính giữa màn hình.
+    * Quy trình 3 giai đoạn: Trả lời câu hỏi -> Xuất hiện chình ình với animation pop-in bắt mắt -> Tan biến mất hút sau 1.8 giây.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.1.
 • 👑 v0.10.8-beta-9 (Build 192 - VIP CAT MEME REACTION ENGINE):
   - Hiệu Ứng Phản Hồi Meme Mèo Độc Quyền Cho VIP:
     * Khi làm đúng / vượt điểm sàn: Tự động hiện ngẫu nhiên các meme mèo nhảy múa, ăn mừng phấn khích (Right).
