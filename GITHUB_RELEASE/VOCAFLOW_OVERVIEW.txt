@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-7.12 (Build 177) - Multi-Device Referral State Cloud Synchronization
+Phiên bản: v0.10.8-beta-7.13 (Build 178) - Standardize Brand Logo Across Web & Desktop
 ================================================================================
-1. [Khắc phục] Đồng bộ hóa hoàn hảo 100% trạng thái đã nhập/chưa nhập mã giới thiệu: Lưu trữ `referredBy` lên Firebase Cloud và tự động đồng bộ 2 chiều giữa nhiều thiết bị/khi xóa cache.
-2. [Bảo vệ] Ngăn chặn trùng lặp nhập mã hoặc mất trạng thái khi đăng nhập lại/đổi máy; tự động ẩn khung nhập mã và hiển thị thông tin mã đã nhận quà.
+1. [Khắc phục] Chuẩn hóa 100% Logo nhận diện thương hiệu VocaFlow (Icon cánh sách chữ V dạ quang) trên toàn bộ nền tảng Web & Desktop.
+2. [Đồng bộ] Đồng bộ đầy đủ thư mục `icons/` và favicon lên GitHub Pages và iamjulies.github.io, kèm cơ chế nhúng Base64 Data URI fallback siêu bền vững.
 3. [Tối ưu] Đảm bảo 100% chuẩn UTF-8 thuần khiết không lỗi font trên toàn bộ các file.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-7.12 (Build 177)
+Phiên bản hiện tại : v0.10.8-beta-7.13 (Build 178)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.13 (Build 178 - STANDARDIZE BRAND LOGO ACROSS PLATFORMS):
+  - Chuẩn Hóa Logo Nhận Diện Thương Hiệu VocaFlow Trên Web & Desktop:
+    * Khắc phục triệt để lỗi hiển thị sai logo generic trên Web (hình tròn đỏ) do thiếu thư mục asset `icons/` khi deploy GitHub Pages.
+    * Tích hợp cơ chế tự động Fallback nhúng trực tiếp Base64 Data URI của Logo VocaFlow (Cánh sách chữ V gradient hoàng gia), đảm bảo ứng dụng luôn hiển thị đúng logo 100% ngay cả khi mở file độc lập không có asset.
+    * Đồng bộ đầy đủ thư mục `icons/`, `favicon.ico`, `manifest.json` lên toàn bộ các kho lưu trữ web (`gh-pages`, `iamjulies.github.io`).
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.13:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.13_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.12 (Build 177 - MULTI-DEVICE REFERRAL STATE CLOUD SYNC):
   - Đồng Bộ Hóa Hoàn Hảo Trạng Thái Nhập Mã Giới Thiệu (ReferredBy State Sync):
     * Bổ sung lưu trữ trường `referredBy` vào thông tin tài khoản trên Firebase Realtime Cloud (`/users/{uid}/profile/referredBy`, `/users/{uid}/referredBy` và `/referrals_claimed_by/{uid}`).
@@ -123,6 +131,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-7.13 (Build 178 - STANDARDIZE BRAND LOGO ACROSS PLATFORMS):
+  - Chuẩn Hóa Logo Nhận Diện Thương Hiệu VocaFlow Trên Web & Desktop:
+    * Khắc phục triệt để lỗi hiển thị sai logo generic trên Web (hình tròn đỏ) do thiếu thư mục asset `icons/` khi deploy GitHub Pages.
+    * Tích hợp cơ chế tự động Fallback nhúng trực tiếp Base64 Data URI của Logo VocaFlow (Cánh sách chữ V gradient hoàng gia), đảm bảo ứng dụng luôn hiển thị đúng logo 100% ngay cả khi mở file độc lập không có asset.
+    * Đồng bộ đầy đủ thư mục `icons/`, `favicon.ico`, `manifest.json` lên toàn bộ các kho lưu trữ web (`gh-pages`, `iamjulies.github.io`).
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-7.13:
+    * Biên dịch mới tệp thực thi `Release_App/VocaFlow.exe`.
+    * Đóng gói `VocaFlow_v0.10.8-beta-7.13_Windows_Portable.zip` và đồng bộ toàn bộ các nhánh GitHub.
 • 👑 v0.10.8-beta-7.12 (Build 177 - MULTI-DEVICE REFERRAL STATE CLOUD SYNC):
   - Đồng Bộ Hóa Hoàn Hảo Trạng Thái Nhập Mã Giới Thiệu (ReferredBy State Sync):
     * Bổ sung lưu trữ trường `referredBy` vào thông tin tài khoản trên Firebase Realtime Cloud (`/users/{uid}/profile/referredBy`, `/users/{uid}/referredBy` và `/referrals_claimed_by/{uid}`).
