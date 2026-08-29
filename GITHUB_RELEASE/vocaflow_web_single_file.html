@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.8</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.9</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -6712,76 +6712,7 @@
           </div>
         </div>
 
-        <!-- SECTION 3: MACRODROID ZERO-COST AUTOMATION SETUP GUIDE -->
-        <div style="background: rgba(99,102,241,0.06); border: 1px dashed rgba(99,102,241,0.35); border-radius: 14px; padding: 14px 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;" onclick="toggleMacroGuideDetails()">
-            <div style="font-size: 13px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;">
-              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Chuẩn 100% (Khắc Phục Lỗi MB Bank Multi-line)</span>
-            </div>
-            <span id="macro-guide-toggle-icon" style="font-size: 14px; color: #818cf8; font-weight: 800;">▼</span>
-          </div>
-
-          <div id="macro-guide-details-box" style="display: none; margin-top: 14px; font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-            <!-- CRITICAL MB BANK MULTI-LINE EXPLANATION -->
-            <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #fde68a;">
-              <strong style="font-size: 12.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                <span>💡</span> <span>VÌ SAO TRIGGER KHÔNG BẮT ĐƯỢC THÔNG BÁO MB BANK THẬT?</span>
-              </strong>
-              <div style="font-size: 11.5px; line-height: 1.5; color: #fef3c7;">
-                Thông báo MB Bank có <strong>3 dòng</strong>:
-                <br>• Dòng 1: <em>TK 09xxx813|GD: +10,000VND</em> (Dòng tiêu đề chính)
-                <br>• Dòng 2: <em>29/08/26 15:50 |SD: 720,505VND</em>
-                <br>• Dòng 3: <em>ND: 05CH7KCEA7D9-VOCA MJFITS6BTHWAJB6M S5</em> (Dòng mở rộng BigText)
-                <br><br>
-                👉 Nếu ở Trigger bạn cài <em>Nội dung: Chứa VOCA</em>, MacroDroid chỉ kiểm tra Dòng 1 (không có chữ VOCA) nên nó <strong>bỏ qua không kích hoạt</strong>!
-                <br>👉 <strong>CÁCH SỬA 100%:</strong> Đặt cả Tiêu đề và Nội dung tin nhắn trong Trigger là <strong>🔘 Bất kỳ</strong> (để cứ MB Bank có thông báo là kích hoạt ngay, VocaFlow trên máy tính sẽ tự lọc!).
-              </div>
-            </div>
-
-            <!-- PERMISSIONS -->
-            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; color: #fca5a5; font-size: 11.5px;">
-              <strong>⚠️ Đảm bảo đã cấp đủ 2 quyền hệ thống:</strong>
-              <br>1. <em>Quyền truy cập thông báo:</em> Cài đặt &gt; Ứng dụng &gt; Quyền đặc biệt &gt; Truy cập thông báo &gt; Bật MacroDroid.
-              <br>2. <em>Tắt tiết kiệm pin:</em> Cài đặt &gt; Quản lý ứng dụng &gt; MacroDroid &gt; Tiết kiệm pin chọn "Không giới hạn".
-            </div>
-
-            <!-- EXACT STEPS -->
-            <ol style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 12px;">
-              <li>
-                <strong style="color: #f87171; font-size: 12.5px;">🔴 1. TRIGGER (Kích hoạt - Màu đỏ):</strong>
-                <br>• Chọn <em>Sự kiện thiết bị / Thông báo &gt; Thông báo đã nhận</em>.
-                <br>• Chọn Ứng dụng: Tích chọn <strong>MB Bank</strong> &gt; Bấm OK.
-                <br>• Ở màn hình bộ lọc:
-                  <br>&nbsp;&nbsp;- <strong>Tiêu đề:</strong> Chọn <strong>🔘 Bất kỳ</strong>.
-                  <br>&nbsp;&nbsp;- <strong>Nội dung tin nhắn:</strong> Chọn <strong>🔘 Bất kỳ</strong>.
-              </li>
-              <li>
-                <strong style="color: #60a5fa; font-size: 12.5px;">🔵 2. ACTION (Hành động - Màu xanh dương):</strong>
-                <br>• Chọn <em>Kết nối &gt; Yêu cầu HTTP (HTTP Request)</em>.
-                <br>• <strong>Tab Cài đặt:</strong>
-                  <br>&nbsp;&nbsp;- Yêu cầu phương thức: <strong>POST</strong>
-                  <br>&nbsp;&nbsp;- URL: <code style="color:#38bdf8; word-break:break-all; font-weight:700;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
-                <br>• <strong>Tab Nội dung:</strong>
-                  <br>&nbsp;&nbsp;- Loại nội dung: <strong>application/json</strong>
-                  <br>&nbsp;&nbsp;- Nội dung (Văn bản): Dán đoạn JSON chuẩn sau:
-                  <pre style="background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin: 6px 0; color:#34d399; font-family: monospace; border: 1px solid rgba(16,185,129,0.3);">{
-  "content": "[not_text] [not_sub_text] [not_ticker]",
-  "title": "[not_title]",
-  "status": "pending",
-  "timestamp": [system_time]
-}</pre>
-              </li>
-              <li>
-                <strong style="color: #fbbf24; font-size: 12.5px;">🟢 3. LƯU MACRO (Dấu V) & HOÀN TẤT:</strong>
-                <br>• Bấm dấu <strong>Tích V</strong> góc trên bên phải để lưu.
-                <br>• Từ giờ, mỗi khi có thông báo chuyển tiền từ MB Bank, thông tin sẽ được đẩy thẳng về VocaFlow ngay lập tức!
-              </li>
-            </ol>
-          </div>
         </div>
-
-      </div>
-
       <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
         <button class="btn btn-primary" onclick="closeModal('modal-publisher')">Đóng Cổng Quản Trị</button>
       </div>
@@ -8797,7 +8728,222 @@
     }
     window.toggleMacroGuideDetails = toggleMacroGuideDetails;
 
-        // Helper for Smart Clipboard Paste
+        // =========================================================================
+    // UNIVERSAL GUEST FEATURE LOCK MODAL HANDLER
+    // =========================================================================
+    function openGuestFeatureLockModal(featureName, featureDesc, icon = '💼 🔒', subtitle = '') {
+      const modal = document.getElementById('modal-feature-guest-lock');
+      if (!modal) return;
+      
+      const iconEl = document.getElementById('guest-lock-icon');
+      const titleEl = document.getElementById('guest-lock-feature-title');
+      const descEl = document.getElementById('guest-lock-desc');
+
+      if (iconEl) iconEl.textContent = icon;
+      if (titleEl) titleEl.textContent = subtitle || 'Tính Năng Độc Quyền Cho Thành Viên';
+      if (descEl) {
+        descEl.innerHTML = `Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>${featureDesc}</strong>!`;
+      }
+      openModal('modal-feature-guest-lock');
+    }
+    window.openGuestFeatureLockModal = openGuestFeatureLockModal;
+
+    // OCR & IMAGE VISION PARSER FOR MB BANK SCREENSHOTS
+    let currentAdminOcrBase64 = null;
+
+    function resetAdminOcrDropzone() {
+      currentAdminOcrBase64 = null;
+      document.getElementById('admin-ocr-placeholder').style.display = 'block';
+      document.getElementById('admin-ocr-preview-container').style.display = 'none';
+      document.getElementById('admin-ocr-preview-img').src = '';
+      document.getElementById('admin-ocr-result').style.display = 'none';
+      document.getElementById('admin-ocr-file-input').value = '';
+    }
+    window.resetAdminOcrDropzone = resetAdminOcrDropzone;
+
+    function handleAdminBankingImagePaste(e) {
+      const clipboardData = e.clipboardData || window.clipboardData;
+      if (!clipboardData || !clipboardData.items) return;
+      for (const item of clipboardData.items) {
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          loadAdminBankingImageBlob(blob);
+          e.preventDefault();
+          break;
+        }
+      }
+    }
+    window.handleAdminBankingImagePaste = handleAdminBankingImagePaste;
+
+    // Listen on global window paste when publisher modal is open
+    window.addEventListener('paste', (e) => {
+      const pubModal = document.getElementById('modal-publisher');
+      if (pubModal && pubModal.classList.contains('active')) {
+        const vipTab = document.getElementById('pub-tab-content-vip-gateway');
+        if (vipTab && vipTab.style.display !== 'none') {
+          handleAdminBankingImagePaste(e);
+        }
+      }
+    });
+
+    function handleAdminBankingImageUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        loadAdminBankingImageBlob(file);
+      }
+    }
+    window.handleAdminBankingImageUpload = handleAdminBankingImageUpload;
+
+    function loadAdminBankingImageBlob(blob) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const fullDataUrl = evt.target.result;
+        currentAdminOcrBase64 = fullDataUrl.split(',')[1];
+        document.getElementById('admin-ocr-placeholder').style.display = 'none';
+        document.getElementById('admin-ocr-preview-container').style.display = 'flex';
+        document.getElementById('admin-ocr-preview-img').src = fullDataUrl;
+        showToast('📷 Đã tải ảnh lên! Bấm "AI Quét & Bóc Tách Ngay" để đối soát.');
+        processAdminBankingImageAi();
+      };
+      reader.readAsDataURL(blob);
+    }
+    window.loadAdminBankingImageBlob = loadAdminBankingImageBlob;
+
+    async function processAdminBankingImageAi() {
+      if (!currentAdminOcrBase64) {
+        showToast('⚠️ Vui lòng dán hoặc tải ảnh chụp màn hình lên trước!');
+        return;
+      }
+
+      const resultBox = document.getElementById('admin-ocr-result');
+      if (!resultBox) return;
+
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = '<div style="text-align: center; padding: 16px; color: #818cf8; font-weight: 700;">⏳ Đang dùng AI Gemini Vision phân tích ảnh chụp màn hình...</div>';
+
+      if (!adminStudentsData || adminStudentsData.length === 0) {
+        await fetchAdminStudentsList();
+      }
+
+      try {
+        const apiKey = localStorage.getItem('gemini_api_key') || (typeof defaultGeminiApiKey !== 'undefined' ? defaultGeminiApiKey : '');
+        let extractedText = '';
+        let extractedAmount = 0;
+        let extractedShortUid = '';
+        let extractedCode = '';
+
+        if (apiKey) {
+          const promptText = `Bạn là chuyên gia đối soát ngân hàng Việt Nam. Hãy đọc ảnh chụp màn hình giao dịch / biến động số dư MB Bank này và trích xuất:
+1. Số tiền giao dịch (VND)
+2. Mã 16 ký tự UID (nằm sau chữ VOCA)
+3. Mã gói (1M, 1Y, LT, S5, S15, S40...)
+4. Toàn bộ nội dung văn bản hiển thị trên thông báo
+
+Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ nào khác):
+{
+  "rawText": "toàn bộ chữ trên ảnh",
+  "amount": 50000,
+  "shortUid": "MJFITS6BTHWAJB6M",
+  "code": "S40"
+}`;
+
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: promptText },
+                  { inline_data: { mime_type: 'image/png', data: currentAdminOcrBase64 } }
+                ]
+              }],
+              generationConfig: { temperature: 0.1 }
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            let rawJsonStr = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            rawJsonStr = rawJsonStr.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+            try {
+              const aiParsed = JSON.parse(rawJsonStr);
+              extractedText = aiParsed.rawText || '';
+              extractedAmount = aiParsed.amount || 0;
+              extractedShortUid = aiParsed.shortUid || '';
+              extractedCode = aiParsed.code || '';
+            } catch (jsonErr) {
+              extractedText = rawJsonStr;
+            }
+          }
+        }
+
+        // Run multi-layer parser fallback if needed
+        const parsed = parseBankTransactionMultiLayer(extractedText || 'VOCA ' + extractedShortUid + ' ' + extractedCode, adminStudentsData);
+        const finalShortUid = extractedShortUid || (parsed ? parsed.shortUid : '');
+        const finalCode = (extractedCode || (parsed ? parsed.code : '')).toUpperCase();
+        const finalAmount = extractedAmount || (parsed ? parsed.amount : 0);
+        const matchedStudent = (parsed && parsed.matchedStudent) ? parsed.matchedStudent : adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === finalShortUid.toUpperCase());
+
+        const packageNames = {
+          '1M': '👑 VIP Tháng (39k)',
+          '1Y': '🟡 VIP Năm (299k)',
+          'LT': '👑 VIP Trọn Đời (599k)',
+          'S5': '🎡 5 Lượt Quay (10k)',
+          'S15': '🎡 15 Lượt Quay (25k)',
+          'S40': '🎡 40 Lượt Quay (50k)'
+        };
+
+        const pkgTitle = packageNames[finalCode] || (finalCode ? `Gói ${finalCode}` : 'Giao dịch ngân hàng');
+
+        resultBox.innerHTML = `
+          <div style="background: rgba(0,0,0,0.35); border: 1.5px solid ${matchedStudent && finalCode ? '#34d399' : '#fbbf24'}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <strong style="font-size: 14px; color: #38bdf8; font-family: monospace;">${escapeHtml(pkgTitle)}</strong>
+                ${finalAmount > 0 ? `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; font-size: 11.5px;">+${finalAmount.toLocaleString('vi-VN')} đ</span>` : ''}
+                <span class="badge" style="background: rgba(99,102,241,0.2); color: #a5b4fc; font-size: 10.5px;">📸 AI Vision OCR</span>
+              </div>
+
+              <div>
+                ${matchedStudent && finalCode ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="applyPastedTransactionAction('${matchedStudent.uid}', '${finalCode}', ${finalAmount}, \`${escapeHtml(extractedText || 'OCR Screenshot Transaction').replace(/`/g, '')}\`)" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(16,185,129,0.4);">
+                    ⚡ Kích Hoạt ${finalCode} Cho Học Viên Ngay
+                  </button>
+                ` : `
+                  <button type="button" class="btn btn-outline btn-sm" onclick="lookupVipStudentByInput('${finalShortUid}')" style="font-size: 11.5px; color: #fbbf24; border-color: rgba(245,158,11,0.4);">
+                    🔍 Tra Cứu Thủ Công
+                  </button>
+                `}
+              </div>
+            </div>
+
+            <!-- Student Match -->
+            <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              ${matchedStudent ? `
+                <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; overflow: hidden;">
+                  ${renderAvatarHtml(matchedStudent.avatar || matchedStudent.displayName, 36, 14)}
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 700; font-size: 13px; color: #ffd700;">${escapeHtml(matchedStudent.displayName)} <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(${escapeHtml(matchedStudent.email)})</span></div>
+                  <div style="font-size: 11px; color: var(--text-muted);">🔑 16 Ký tự: <strong style="color:#38bdf8; font-family:monospace;">${finalShortUid}</strong> • UID: ${matchedStudent.uid}</div>
+                </div>
+              ` : `
+                <div style="color: #f87171; font-size: 12px;">
+                  ❌ ${finalShortUid ? `Tìm thấy mã UID: <strong>${finalShortUid}</strong> nhưng chưa khớp học viên.` : 'Chưa nhận diện được 16 ký tự UID trên ảnh.'} Hãy dùng ô tra cứu ở trên.
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+
+      } catch (err) {
+        console.error('Vision OCR Error:', err);
+        resultBox.innerHTML = '<div style="color: #f87171; text-align: center; padding: 12px; font-size: 12px;">⚠️ Lỗi xử lý ảnh: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+    window.processAdminBankingImageAi = processAdminBankingImageAi;
+
+    // Helper for Smart Clipboard Paste
     async function pasteFromClipboardToSmsInput() {
       try {
         const text = await navigator.clipboard.readText();
@@ -9343,7 +9489,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const items = [];
         for (const [key, val] of Object.entries(data)) {
           if (val && typeof val === 'object') {
-            const rawContent = val.content || val.syntax || '';
+            const rawContent = val.text || val.content || val.syntax || val.message || '';
             const parsed = parseBankTransactionMultiLayer(rawContent, adminStudentsData);
 
             let sUid = val.shortUid || (parsed ? parsed.shortUid : '');
@@ -11442,6 +11588,11 @@ function switchPublisherTab(tab) {
     }
 
     function updateAuthUI() {
+      // Dynamic Meme Mèo setting visibility for VIP only
+      const memeSettingGroup = document.getElementById('setting-vip-cat-meme-group');
+      if (memeSettingGroup) {
+        memeSettingGroup.style.display = (userIsVip === true) ? 'block' : 'none';
+      }
       const nameEl = document.getElementById('user-display-name');
       const profileNameEl = document.getElementById('profile-name');
       const profileEmailEl = document.getElementById('profile-email');
@@ -13151,10 +13302,39 @@ function switchPublisherTab(tab) {
       handleManualSync();
     }
 
-    function handleForgotPassword() {
-      const email = prompt('Nhập địa chỉ email của bạn để nhận liên kết đặt lại mật khẩu:');
-      if (email && email.includes('@')) {
-        showToast('Đã gửi liên kết khôi phục tới: ' + email);
+    async function handleForgotPassword() {
+      const currentEmailInput = document.getElementById('auth-email')?.value || '';
+      const email = prompt('Nhập địa chỉ email của bạn để nhận liên kết đặt lại mật khẩu:', currentEmailInput);
+      if (!email || !email.includes('@')) {
+        if (email) showToast('⚠️ Vui lòng nhập địa chỉ email hợp lệ!');
+        return;
+      }
+
+      showToast('⏳ Đang gửi email khôi phục mật khẩu...');
+      try {
+        const apiKey = (typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey) ? firebaseConfig.apiKey : '';
+        if (apiKey) {
+          const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              requestType: 'PASSWORD_RESET',
+              email: email.trim()
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            let errDesc = data.error?.message || 'Không thể gửi email đặt lại mật khẩu.';
+            if (errDesc.includes('EMAIL_NOT_FOUND')) errDesc = 'Không tìm thấy tài khoản nào gắn với email này!';
+            alert('⚠️ ' + errDesc);
+            return;
+          }
+        }
+        alert(`📧 ĐÃ GỬI EMAIL THÀNH CÔNG!\n\nMột liên kết đặt lại mật khẩu đã được gửi tới: ${email}.\n\nVui lòng kiểm tra Hộp thư đến (và mục Thư rác / Spam) để bấm vào liên kết tạo mật khẩu mới nhé!`);
+        showToast('📧 Đã gửi link đặt lại mật khẩu qua email!');
+      } catch (err) {
+        console.error('Password reset error:', err);
+        showToast('⚠️ Lỗi kết nối gửi email khôi phục: ' + err.message);
       }
     }
 
@@ -17457,6 +17637,10 @@ function switchPublisherTab(tab) {
     }
 
     function openFlowCalendarModal() {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('Dòng Chảy Học Tập', 'Dòng Chảy Học Tập (Flow), Lịch Chuỗi Ngày Học, Đóng Băng Chuỗi & Nhận Thưởng', '🌊 🔒');
+        return;
+      }
       currentFlowCalendarMonthOffset = 0;
       renderFlowCalendar();
       openModal('modal-flow-calendar');
@@ -18273,6 +18457,10 @@ function switchPublisherTab(tab) {
     }
 
     function openReferralModal() {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('Mời Bạn Bè', 'Chương Trình Giới Thiệu Bạn Bè, Nhận VIP & Hoa Hồng Xu Thụ Động', '🤝 🔒');
+        return;
+      }
       if (!currentUser || !currentUser.uid) {
         alert('🔒 Vui lòng đăng nhập hoặc tạo tài khoản để lấy mã giới thiệu và nhận quà!');
         openAuthModal('login');
@@ -18704,6 +18892,13 @@ function switchPublisherTab(tab) {
     }
 
     // DECK MODAL
+    
+    window.openDeckModal = openDeckModal;
+    window.saveDeckForm = saveDeckForm;
+    window.editDeck = editDeck;
+    window.selectDeckPresetColor = selectDeckPresetColor;
+    window.selectDeckCustomColor = selectDeckCustomColor;
+    window.openWordModal = openWordModal;
     function openDeckModal() {
       document.getElementById('deck-id').value = '';
       document.getElementById('deck-title').value = '';
@@ -27274,6 +27469,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function openLibraryModal() {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('Thư Viện Từ Vựng', 'Thư Viện Từ Vựng VocaLibrary, Tải Bộ Từ Cộng Đồng & Theo Dõi Tác Giả', '📚 🔒');
+        return;
+      }
       if (!requireLogin('Thư Viện Từ Vựng')) {
         return;
       }

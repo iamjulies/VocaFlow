@@ -1,14 +1,15 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.8 (Build 213) - 1-Click Smart Paste Banking SMS & Instant Reconciler
+Phiên bản: v0.10.8-alpha-10.9 (Build 214) - Screenshot OCR AI Vision Reconciler, Real Password Reset & Guest Feature Gating
 ================================================================================
-1. [Khung Dán Nhanh Tin Nhắn Ngân Hàng 1-Click] Bổ sung tính năng dán nhanh dòng tin nhắn biến động số dư (MB Bank / SMS) trực tiếp vào Cổng VIP, không phụ thuộc vào app chạy ngầm.
-2. [Bộ Bóc Tách Tức Thì Đa Nguồn] Tự động trích xuất số tiền (+25k, +39k...), mã gói (S15, 1M...) và 16 ký tự UID học viên để kích hoạt VIP / lượt quay 1-Click ngay lập tức.
-3. [Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân] Xuất bản bản cài đặt Desktop và Web Single-File v0.10.8-alpha-10.8.
+1. [AI Vision OCR Bóc Tách Ảnh Chụp MB Bank] Cho phép dán ảnh chụp màn hình (Ctrl+V) hoặc tải ảnh lên để AI Gemini tự đọc số tiền, UID và kích hoạt 1-Click.
+2. [Hoạt Hóa Quên Mật Khẩu Thật] Tích hợp Firebase Auth REST API gửi email liên kết đặt lại mật khẩu thật tới hộp thư người dùng.
+3. [Chuẩn Hóa Khóa Tính Năng Cho Khách (Guest)] Gắn modal khóa thành viên chuyên nghiệp khi Guest bấm Dòng Chảy Học Tập, Mã Quà Tặng, Mời Bạn Bè, Thư Viện Từ Vựng.
+4. [Ẩn Setting Meme Mèo Cho Non-VIP & Fix Nút Thêm Bộ Từ] Ẩn setting Meme Mèo cho khách/user thường và đảm bảo tạo bộ từ hoạt động 100%.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.8 (Build 213)
+Phiên bản hiện tại : v0.10.8-alpha-10.9 (Build 214)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +26,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.9 (Build 214 - SCREENSHOT VISION OCR, REAL PASSWORD RESET & GUEST FEATURE GATING):
+  - Xóa bỏ toàn bộ phần hướng dẫn MacroDroid rườm rà.
+  - Tích hợp Tính Năng Đối Soát Qua Ảnh Chụp Màn Hình (Screenshot AI Vision OCR):
+    * Hỗ trợ dán ảnh (Ctrl+V) hoặc tải ảnh chụp thông báo MB Bank lên.
+    * Tự động bóc tách số tiền (+10k, +25k, +50k...), 16 ký tự UID và khớp học viên để kích hoạt 1-Click.
+  - Hoạt Hóa Đặt Lại Mật Khẩu: Kết nối API Firebase Auth gửi email khôi phục mật khẩu trực tiếp.
+  - Chuẩn Hóa Modal Khóa Độc Quyền Cho Thành Viên đối với Khách (Guest) ở 4 tính năng: Dòng Chảy Học Tập, Giftcode, Mời Bạn Bè, Thư Viện.
+  - Ẩn Cài Đặt Meme Mèo VIP cho tài khoản Khách và Người Dùng Thường (chỉ hiện khi có VIP).
+  - Tinh Chỉnh Nút "Thêm Bộ Từ" và Đóng Gói Nhị Phân Native Windows v0.10.8-alpha-10.9.
 • 👑 v0.10.8-alpha-10.8 (Build 213 - 1-CLICK SMART PASTE BANKING SMS & INSTANT RECONCILER):
   - Bổ Sung Tính Năng Dán Nhanh Tin Nhắn Biến Động Số Dư (Smart Paste & Instant Reconciler):
     * Giải pháp đối soát 0đ tối ưu 100%, không bị ảnh hưởng bởi việc Android tắt service chạy ngầm của MacroDroid.
@@ -421,6 +431,15 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.9 (Build 214 - SCREENSHOT VISION OCR, REAL PASSWORD RESET & GUEST FEATURE GATING):
+  - Xóa bỏ toàn bộ phần hướng dẫn MacroDroid rườm rà.
+  - Tích hợp Tính Năng Đối Soát Qua Ảnh Chụp Màn Hình (Screenshot AI Vision OCR):
+    * Hỗ trợ dán ảnh (Ctrl+V) hoặc tải ảnh chụp thông báo MB Bank lên.
+    * Tự động bóc tách số tiền (+10k, +25k, +50k...), 16 ký tự UID và khớp học viên để kích hoạt 1-Click.
+  - Hoạt Hóa Đặt Lại Mật Khẩu: Kết nối API Firebase Auth gửi email khôi phục mật khẩu trực tiếp.
+  - Chuẩn Hóa Modal Khóa Độc Quyền Cho Thành Viên đối với Khách (Guest) ở 4 tính năng: Dòng Chảy Học Tập, Giftcode, Mời Bạn Bè, Thư Viện.
+  - Ẩn Cài Đặt Meme Mèo VIP cho tài khoản Khách và Người Dùng Thường (chỉ hiện khi có VIP).
+  - Tinh Chỉnh Nút "Thêm Bộ Từ" và Đóng Gói Nhị Phân Native Windows v0.10.8-alpha-10.9.
 • 👑 v0.10.8-alpha-10.8 (Build 213 - 1-CLICK SMART PASTE BANKING SMS & INSTANT RECONCILER):
   - Bổ Sung Tính Năng Dán Nhanh Tin Nhắn Biến Động Số Dư (Smart Paste & Instant Reconciler):
     * Giải pháp đối soát 0đ tối ưu 100%, không bị ảnh hưởng bởi việc Android tắt service chạy ngầm của MacroDroid.
