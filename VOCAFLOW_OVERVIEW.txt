@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10 (Build 205) - VIP Multi-Key Pool (x3 AI Quota), Tiered Failover & 2-Way Sync
+Phiên bản: v0.10.8-alpha-10.1 (Build 206) - Auth Boot Lifecycle Hotfix, Multi-Key Pool & Zero-Downtime Session
 ================================================================================
-1. [Bể Đa Khóa API Dành Riêng Cho VIP] Mở khóa nhập tối đa 3 API Key từ các project Google khác nhau (nhân 3 hạn ngạch).
-2. [Cơ Chế Chuyển Khóa Thông Minh & Tự Động Dồn Hàng] Dùng hết hạn ngạch Khóa 1 tự động chuyển Khóa 2, 3; tự động dồn ô trống lên trên.
-3. [Đồng Bộ Đa Chiều 100% Lên Cloud] Lưu trữ và đồng bộ toàn vẹn danh sách đa khóa API giữa các thiết bị.
+1. [Khắc Phục Hoàn Toàn Lỗi Tự Đăng Xuất Khi F5] Tái cấu trúc chu trình khởi động DOMContentLoaded an toàn tuyệt đối.
+2. [Khai Báo Toàn Cục & Tương Thích Ngược geminiApiKey] Bổ sung đầy đủ khai báo biến và hàm alias tránh ReferenceError.
+3. [Đảm Bảo Trạng Thái Đăng Nhập & Dữ Liệu Bộ Từ Luôn Được Nạp Đầu Tiên] Giữ vững phiên làm việc và hiển thị trọn vẹn danh sách bộ từ.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10 (Build 205)
+Phiên bản hiện tại : v0.10.8-alpha-10.1 (Build 206)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.1 (Build 206 - AUTH BOOT LIFECYCLE HOTFIX & ZERO-DOWNTIME SESSION):
+  - Khắc Phục Lỗi Tự Động Đăng Xuất Khi Nhấn F5 (Refresh Page):
+    * Tái cấu trúc thứ tự thực thi trong sự kiện `DOMContentLoaded`: `loadAuthState()` và `loadDatabase()` được đưa lên chạy đầu tiên ngay khi tải trang.
+    * Đảm bảo đối tượng người dùng `currentUser`, danh sách bộ từ `decks` và từ vựng `words` luôn được nạp đầy đủ vào bộ nhớ trước khi chạy các tác vụ đồng bộ và di trú.
+  - Sửa Lỗi Khai Báo Biến `geminiApiKey` & Bổ Sung Hàm Alias Tương Thích Ngược:
+    * Khai báo chính xác `let geminiApiKey` và `let geminiApiKeys` trong phạm vi toàn cục.
+    * Bổ sung alias `saveGeminiApiKey()` và `openVipSubscriptionModal()`.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-alpha-10.1.
 • 👑 v0.10.8-alpha-10 (Build 205 - VIP MULTI-KEY POOL, TIERED FAILOVER & 2-WAY CLOUD SYNC):
   - Tính Năng Bể Đa Khóa API (Multi-Key Pool x3 Hạn Ngạch):
     * Thành viên VIP được nhập tối đa 3 API Key từ các dự án Google AI Studio khác nhau để nhân 3 hạn ngạch miễn phí.
@@ -357,6 +365,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.1 (Build 206 - AUTH BOOT LIFECYCLE HOTFIX & ZERO-DOWNTIME SESSION):
+  - Khắc Phục Lỗi Tự Động Đăng Xuất Khi Nhấn F5 (Refresh Page):
+    * Tái cấu trúc thứ tự thực thi trong sự kiện `DOMContentLoaded`: `loadAuthState()` và `loadDatabase()` được đưa lên chạy đầu tiên ngay khi tải trang.
+    * Đảm bảo đối tượng người dùng `currentUser`, danh sách bộ từ `decks` và từ vựng `words` luôn được nạp đầy đủ vào bộ nhớ trước khi chạy các tác vụ đồng bộ và di trú.
+  - Sửa Lỗi Khai Báo Biến `geminiApiKey` & Bổ Sung Hàm Alias Tương Thích Ngược:
+    * Khai báo chính xác `let geminiApiKey` và `let geminiApiKeys` trong phạm vi toàn cục.
+    * Bổ sung alias `saveGeminiApiKey()` và `openVipSubscriptionModal()`.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-alpha-10.1.
 • 👑 v0.10.8-alpha-10 (Build 205 - VIP MULTI-KEY POOL, TIERED FAILOVER & 2-WAY CLOUD SYNC):
   - Tính Năng Bể Đa Khóa API (Multi-Key Pool x3 Hạn Ngạch):
     * Thành viên VIP được nhập tối đa 3 API Key từ các dự án Google AI Studio khác nhau để nhân 3 hạn ngạch miễn phí.
