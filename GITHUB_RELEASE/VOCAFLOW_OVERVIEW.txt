@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.11 (Build 203) - Zero-Delay Details Card, Rich AI Breakdown & Multi-Source VIP Meme
+Phiên bản: v0.10.8-beta-9.12 (Build 204) - Focused AI Mnemonic & Etymology Engine with Markdown Parser
 ================================================================================
-1. [Khắc Phục Hoàn Toàn Lỗi Render Thẻ Thông Tin Từ Vựng] Điền chính xác 100% dữ liệu từ vựng thực tế.
-2. [Lời Nhận Xét & Phân Tích Thông Minh Từ AI] Luôn phân tích chi tiết lý do chọn đáp án, ngữ cảnh và mẹo học.
-3. [Kích Hoạt Meme Mèo VIP Resilient & Đa Nguồn] Xác minh VIP đa tầng, đảm bảo meme mèo xuất hiện chuẩn xác.
+1. [Lược Bỏ Phần Trùng Lặp Ở Thẻ AI] Xóa bỏ khối giải thích súc tích lặp lại thông tin định nghĩa.
+2. [Tập Trung 100% Vào Mẹo Ghi Nhớ & Nguồn Gốc Từ] Chỉ phân tích mẹo nhớ nhanh (mnemonics) và gốc từ (etymology).
+3. [Xử Lý Triệt Để Lỗi Dấu Sao Markdown **] Chuyển đổi chuẩn xác `**text**` thành in đậm `<strong>` và `*text*` in nghiêng `<em>`.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.11 (Build 203)
+Phiên bản hiện tại : v0.10.8-beta-9.12 (Build 204)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.12 (Build 204 - FOCUSED AI MNEMONIC & ETYMOLOGY ENGINE WITH MARKDOWN PARSER):
+  - Tối Ưu Hóa Khung Nhận Xét AI Chế Độ Quiz:
+    * Lược bỏ hoàn toàn khối 'Giải thích súc tích từ AI' trùng lặp với thẻ từ vựng phía trên.
+    * Giữ lại duy nhất khung '🤖 Nhận xét chuyên sâu từ AI' tập trung vào 2 trọng tâm: 💡 Mẹo ghi nhớ siêu tốc và 🏛️ Nguồn gốc / Gốc từ (etymology/tiền tố/hậu tố).
+    * Bộ Phân Tích Markdown `formatAiMarkdownText()`: Khắc phục triệt để lỗi hiển thị dấu sao `**`, chuyển đổi chuẩn sang `<strong>`, `<em>` và `<code>`.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.12.
 • 👑 v0.10.8-beta-9.11 (Build 203 - ZERO-DELAY DETAILS CARD, RICH AI BREAKDOWN & MULTI-SOURCE VIP MEME):
   - Khắc Phục Lỗi Placeholder & Điền Chính Xác 100% Thẻ Thông Tin Từ Vựng Quiz:
     * Chuyển các hàm `renderWordDetailsCard()` và `loadQuizAiExplanation()` lên vị trí ưu tiên số 1 ngay khi bấm chọn đáp án.
@@ -341,6 +347,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.12 (Build 204 - FOCUSED AI MNEMONIC & ETYMOLOGY ENGINE WITH MARKDOWN PARSER):
+  - Tối Ưu Hóa Khung Nhận Xét AI Chế Độ Quiz:
+    * Lược bỏ hoàn toàn khối 'Giải thích súc tích từ AI' trùng lặp với thẻ từ vựng phía trên.
+    * Giữ lại duy nhất khung '🤖 Nhận xét chuyên sâu từ AI' tập trung vào 2 trọng tâm: 💡 Mẹo ghi nhớ siêu tốc và 🏛️ Nguồn gốc / Gốc từ (etymology/tiền tố/hậu tố).
+    * Bộ Phân Tích Markdown `formatAiMarkdownText()`: Khắc phục triệt để lỗi hiển thị dấu sao `**`, chuyển đổi chuẩn sang `<strong>`, `<em>` và `<code>`.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.12.
 • 👑 v0.10.8-beta-9.11 (Build 203 - ZERO-DELAY DETAILS CARD, RICH AI BREAKDOWN & MULTI-SOURCE VIP MEME):
   - Khắc Phục Lỗi Placeholder & Điền Chính Xác 100% Thẻ Thông Tin Từ Vựng Quiz:
     * Chuyển các hàm `renderWordDetailsCard()` và `loadQuizAiExplanation()` lên vị trí ưu tiên số 1 ngay khi bấm chọn đáp án.
