@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VocaFlow")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ce7c2d6b5480fbcd95f7141adc8691cac732ed4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+df740eaf3e87cc9b4c7e477cf7408b6352ce299e")]
 [assembly: System.Reflection.AssemblyProductAttribute("VocaFlow")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VocaFlow")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
