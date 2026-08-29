@@ -1,15 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.9 (Build 214) - Screenshot OCR AI Vision Reconciler, Real Password Reset & Guest Feature Gating
+Phiên bản: v0.10.8-alpha-10.10 (Build 215) - Modal Isolation Fix, Guest Feature Gate & VIP Meme Visibility
 ================================================================================
-1. [AI Vision OCR Bóc Tách Ảnh Chụp MB Bank] Cho phép dán ảnh chụp màn hình (Ctrl+V) hoặc tải ảnh lên để AI Gemini tự đọc số tiền, UID và kích hoạt 1-Click.
-2. [Hoạt Hóa Quên Mật Khẩu Thật] Tích hợp Firebase Auth REST API gửi email liên kết đặt lại mật khẩu thật tới hộp thư người dùng.
-3. [Chuẩn Hóa Khóa Tính Năng Cho Khách (Guest)] Gắn modal khóa thành viên chuyên nghiệp khi Guest bấm Dòng Chảy Học Tập, Mã Quà Tặng, Mời Bạn Bè, Thư Viện Từ Vựng.
-4. [Ẩn Setting Meme Mèo Cho Non-VIP & Fix Nút Thêm Bộ Từ] Ẩn setting Meme Mèo cho khách/user thường và đảm bảo tạo bộ từ hoạt động 100%.
+1. [Khắc Phục 100% Lỗi Tạo Bộ Từ] Đóng thẻ modal-ai-deck-studio bị lồng thẻ modal-deck, tách biệt hoàn toàn nút "Thêm Bộ Từ" và "Tạo Bằng AI".
+2. [Kích Hoạt Modal Khóa Tính Năng Cho Guest] Chèn modal-feature-guest-lock chuẩn vào DOM, hiển thị modal thông báo độc quyền cho khách ở 4 tính năng.
+3. [Ẩn Hoàn Toàn Setting Meme Mèo Cho Non-VIP] Cài đặt Meme Mèo chỉ hiển thị khi tài khoản có quyền VIP (ẩn tuyệt đối với Guest và User thường).
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.9 (Build 214)
+Phiên bản hiện tại : v0.10.8-alpha-10.10 (Build 215)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -26,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.10 (Build 215 - MODAL ISOLATION FIX, GUEST FEATURE GATE & VIP MEME VISIBILITY):
+  - Khắc phục lỗi cấu trúc DOM lồng nhau khiến nút "Thêm Bộ Từ" bị khóa trong modal AI.
+  - Tách biệt độc lập nút "Thêm Bộ Từ" (mở modal-deck) và "Tạo Bằng AI" (mở modal-ai-deck-studio).
+  - Hoạt hóa trọn vẹn Modal Khóa Tính Năng Cho Khách (Guest Feature Lock Modal).
+  - Ẩn hoàn toàn cài đặt Hiệu Ứng Meme Mèo VIP đối với tài khoản Khách và Người Dùng Thường.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.10 và xuất bản Windows EXE & Web Single-File.
 • 👑 v0.10.8-alpha-10.9 (Build 214 - SCREENSHOT VISION OCR, REAL PASSWORD RESET & GUEST FEATURE GATING):
   - Xóa bỏ toàn bộ phần hướng dẫn MacroDroid rườm rà.
   - Tích hợp Tính Năng Đối Soát Qua Ảnh Chụp Màn Hình (Screenshot AI Vision OCR):
@@ -431,6 +436,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.10 (Build 215 - MODAL ISOLATION FIX, GUEST FEATURE GATE & VIP MEME VISIBILITY):
+  - Khắc phục lỗi cấu trúc DOM lồng nhau khiến nút "Thêm Bộ Từ" bị khóa trong modal AI.
+  - Tách biệt độc lập nút "Thêm Bộ Từ" (mở modal-deck) và "Tạo Bằng AI" (mở modal-ai-deck-studio).
+  - Hoạt hóa trọn vẹn Modal Khóa Tính Năng Cho Khách (Guest Feature Lock Modal).
+  - Ẩn hoàn toàn cài đặt Hiệu Ứng Meme Mèo VIP đối với tài khoản Khách và Người Dùng Thường.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.10 và xuất bản Windows EXE & Web Single-File.
 • 👑 v0.10.8-alpha-10.9 (Build 214 - SCREENSHOT VISION OCR, REAL PASSWORD RESET & GUEST FEATURE GATING):
   - Xóa bỏ toàn bộ phần hướng dẫn MacroDroid rườm rà.
   - Tích hợp Tính Năng Đối Soát Qua Ảnh Chụp Màn Hình (Screenshot AI Vision OCR):
