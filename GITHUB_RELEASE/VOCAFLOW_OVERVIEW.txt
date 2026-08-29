@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.4 (Build 196) - Instant Kill-Switch for VIP Cat Meme Reactions
+Phiên bản: v0.10.8-beta-9.5 (Build 197) - Tap Anywhere & Global Pointer Dismiss for VIP Memes
 ================================================================================
-1. [Đốt Cháy Giai Đoạn 3 Khi Bấm Tiếp Tục / Enter] Khi meme đang hiển thị mà người dùng bấm Tiếp tục hoặc Enter, meme lập tức tắt phụt ngay.
-2. [Triệt Tiêu Hoàn Toàn Độ Trễ Chuyển Câu] Người dùng có thể lướt nhanh sang câu hỏi tiếp theo mà không bị meme che chắn hay đợi hết giờ.
-3. [Tối Ưu Phím Tắt & Click Nhanh] Bấm chuột vào meme hoặc nhấn phím điều hướng bất kỳ sẽ đóng meme tức thì.
+1. [Bấm Chuột / Chạm Màn Hình Bất Kỳ Đâu Để Tắt Đột Ngột] Nhấp chuột hoặc chạm bất kỳ vị trí nào trên màn hình để đóng meme tức thì (0ms độ trễ).
+2. [Không Che Chắn Nội Dung Học Tập] Người dùng có thể ẩn meme sớm bất cứ lúc nào để tập trung đọc giải nghĩa từ, ví dụ hoặc phiên âm IPA.
+3. [Tối Ưu Sự Kiện Con Trỏ Toàn Cục] Bắt sự kiện ở giai đoạn Capture (Pointerdown), đảm bảo thao tác tự nhiên và mượt mà tuyệt đối.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.4 (Build 196)
+Phiên bản hiện tại : v0.10.8-beta-9.5 (Build 197)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.5 (Build 197 - TAP ANYWHERE & GLOBAL POINTER DISMISS FOR VIP MEMES):
+  - Nhấp Chuột Hoặc Nhấn Chạm Bất Kỳ Đâu Trên Màn Hình Để Tắt Đột Ngột Meme:
+    * Bổ sung trình lắng nghe sự kiện con trỏ toàn cục (`pointerdown` Capture Phase): Khi meme đang hiển thị, bất kỳ cú click chuột hoặc chạm màn hình nào ở bất kỳ vị trí nào cũng sẽ tắt phụt meme ngay lập tức.
+    * Giúp người dùng có thể ẩn meme sớm để đọc giải nghĩa, ngữ cảnh câu hoặc thao tác tiếp mà không phải đợi hết thời gian.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.5.
 • 👑 v0.10.8-beta-9.4 (Build 196 - INSTANT KILL-SWITCH FOR VIP CAT MEME REACTIONS):
   - Đốt Cháy Giai Đoạn 3 & Tắt Phụt Meme Tức Thì Khi Bấm Tiếp Tục (Enter / Phím Cách):
     * Khi người dùng nhấn nút 'Tiếp Tục', phím 'Enter' hoặc click trực tiếp vào meme trong lúc meme chưa hết giờ (Giai đoạn 2), hệ thống lập tức đóng meme tức thì (0ms latency), không cần chờ fade-out.
@@ -296,6 +301,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.5 (Build 197 - TAP ANYWHERE & GLOBAL POINTER DISMISS FOR VIP MEMES):
+  - Nhấp Chuột Hoặc Nhấn Chạm Bất Kỳ Đâu Trên Màn Hình Để Tắt Đột Ngột Meme:
+    * Bổ sung trình lắng nghe sự kiện con trỏ toàn cục (`pointerdown` Capture Phase): Khi meme đang hiển thị, bất kỳ cú click chuột hoặc chạm màn hình nào ở bất kỳ vị trí nào cũng sẽ tắt phụt meme ngay lập tức.
+    * Giúp người dùng có thể ẩn meme sớm để đọc giải nghĩa, ngữ cảnh câu hoặc thao tác tiếp mà không phải đợi hết thời gian.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.5.
 • 👑 v0.10.8-beta-9.4 (Build 196 - INSTANT KILL-SWITCH FOR VIP CAT MEME REACTIONS):
   - Đốt Cháy Giai Đoạn 3 & Tắt Phụt Meme Tức Thì Khi Bấm Tiếp Tục (Enter / Phím Cách):
     * Khi người dùng nhấn nút 'Tiếp Tục', phím 'Enter' hoặc click trực tiếp vào meme trong lúc meme chưa hết giờ (Giai đoạn 2), hệ thống lập tức đóng meme tức thì (0ms latency), không cần chờ fade-out.
