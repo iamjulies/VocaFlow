@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.6 (Build 198) - Permanent Fix for VIP Daily Spin Spam Notifications
+Phiên bản: v0.10.8-beta-9.7 (Build 199) - Cloud Realtime Sync & Auto-Recovery for Purchased Decks
 ================================================================================
-1. [Khắc Phục Triệt Để Spam Thông Báo VIP Hằng Ngày] Sử dụng ID thông báo cố định theo ngày (`notif_vip_daily_spin_YYYY-MM-DD`).
-2. [Đồng Bộ lastVipSpinDate Hai Chiều Lên Cloud] Ngày nhận quà VIP được đồng bộ lên Firebase RTDB, ngăn chặn cấp phát trùng lặp.
-3. [Tự Động Lọc & Hợp Nhất Trùng Lặp Trong Trung Tâm Thông Báo] Tự động gộp các thông báo trùng lặp thành 1 thông báo duy nhất.
+1. [Đồng Bộ Toàn Diện Hạng Mục Bộ Từ Đã Mua Lên Cloud] `purchasedDeckIds` được đồng bộ hai chiều lên Firebase RTDB.
+2. [Tự Động Phục Hồi Bộ Từ Đã Mua Trên Điện Thoại] Tự động quét sổ cái giao dịch `BUY_DECK` và bộ từ thư viện để đồng bộ tức thì.
+3. [Tối Ưu Tải Dữ Liệu Studio Dashboard] Đảm bảo hiển thị đầy đủ và cho phép tải lại bộ từ đã mua trên mọi thiết bị.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.6 (Build 198)
+Phiên bản hiện tại : v0.10.8-beta-9.7 (Build 199)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.7 (Build 199 - CLOUD REALTIME SYNC & AUTO-RECOVERY FOR PURCHASED DECKS):
+  - Đồng Bộ Hai Chiều Hạng Mục 'Bộ Từ Đã Mua' Ở Trung Tâm Studio Lên Cloud:
+    * Bổ sung `purchasedDeckIds` vào payload đồng bộ Firebase Realtime Database.
+    * Tích hợp cơ chế tự động phục hồi thông minh (Auto-Recovery Engine): Quét nhật ký sổ cái mua hàng `BUY_DECK` và bộ từ cài đặt để khôi phục toàn bộ danh sách bộ từ đã mua ngay khi đăng nhập trên điện thoại.
+    * Tự động kích hoạt tải thư viện nếu bộ nhớ đệm rỗng khi mở tab Studio trên di động.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.7.
 • 👑 v0.10.8-beta-9.6 (Build 198 - PERMANENT FIX FOR VIP DAILY SPIN SPAM NOTIFICATIONS):
   - Khắc Phục Triệt Để Hiện Tượng Spam Thông Báo 'Quà Tặng VIP Hằng Ngày':
     * Cố định mã định danh thông báo theo ngày lịch địa phương (`notif_vip_daily_spin_YYYY-MM-DD`).
@@ -308,6 +314,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.7 (Build 199 - CLOUD REALTIME SYNC & AUTO-RECOVERY FOR PURCHASED DECKS):
+  - Đồng Bộ Hai Chiều Hạng Mục 'Bộ Từ Đã Mua' Ở Trung Tâm Studio Lên Cloud:
+    * Bổ sung `purchasedDeckIds` vào payload đồng bộ Firebase Realtime Database.
+    * Tích hợp cơ chế tự động phục hồi thông minh (Auto-Recovery Engine): Quét nhật ký sổ cái mua hàng `BUY_DECK` và bộ từ cài đặt để khôi phục toàn bộ danh sách bộ từ đã mua ngay khi đăng nhập trên điện thoại.
+    * Tự động kích hoạt tải thư viện nếu bộ nhớ đệm rỗng khi mở tab Studio trên di động.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.7.
 • 👑 v0.10.8-beta-9.6 (Build 198 - PERMANENT FIX FOR VIP DAILY SPIN SPAM NOTIFICATIONS):
   - Khắc Phục Triệt Để Hiện Tượng Spam Thông Báo 'Quà Tặng VIP Hằng Ngày':
     * Cố định mã định danh thông báo theo ngày lịch địa phương (`notif_vip_daily_spin_YYYY-MM-DD`).
