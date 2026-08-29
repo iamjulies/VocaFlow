@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.7 (Build 199) - Cloud Realtime Sync & Auto-Recovery for Purchased Decks
+Phiên bản: v0.10.8-beta-9.8 (Build 200) - Cloud Realtime Sync for Rewarded Ad Cooldown
 ================================================================================
-1. [Đồng Bộ Toàn Diện Hạng Mục Bộ Từ Đã Mua Lên Cloud] `purchasedDeckIds` được đồng bộ hai chiều lên Firebase RTDB.
-2. [Tự Động Phục Hồi Bộ Từ Đã Mua Trên Điện Thoại] Tự động quét sổ cái giao dịch `BUY_DECK` và bộ từ thư viện để đồng bộ tức thì.
-3. [Tối Ưu Tải Dữ Liệu Studio Dashboard] Đảm bảo hiển thị đầy đủ và cho phép tải lại bộ từ đã mua trên mọi thiết bị.
+1. [Đồng Bộ Thời Gian Chờ Quảng Cáo Lên Cloud] `lastAdWatchTime` được đồng bộ hai chiều lên Firebase RTDB.
+2. [Ngăn Chặn Trùng Lặp Cooldown Đa Thiết Bị] Vừa xem video trên điện thoại thì máy tính cũng tự động đếm ngược 20 phút.
+3. [Tối Ưu Đồng Bộ Ngay Khi Hủy Hoặc Hoàn Thành] Đẩy timestamp cooldown lên Cloud tức thì ngay khi kết thúc xem video.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.7 (Build 199)
+Phiên bản hiện tại : v0.10.8-beta-9.8 (Build 200)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.8 (Build 200 - CLOUD REALTIME SYNC FOR REWARDED AD COOLDOWN):
+  - Đồng Bộ Hai Chiều Trạng Thái Chờ Xem Quảng Cáo (Rewarded Ad Cooldown) Lên Cloud:
+    * Bổ sung `lastAdWatchTime` vào gói `economy` trên Firebase Realtime Database.
+    * Khi người dùng xem video trên điện thoại (hoặc hủy xem giữa chừng), thời điểm xem video được lưu vào Cloud ngay lập tức.
+    * Khi chuyển sang máy tính (Laptop/PC), hệ thống tự động kéo `lastAdWatchTime` về và đồng bộ bộ đếm ngược 20 phút chính xác.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.8.
 • 👑 v0.10.8-beta-9.7 (Build 199 - CLOUD REALTIME SYNC & AUTO-RECOVERY FOR PURCHASED DECKS):
   - Đồng Bộ Hai Chiều Hạng Mục 'Bộ Từ Đã Mua' Ở Trung Tâm Studio Lên Cloud:
     * Bổ sung `purchasedDeckIds` vào payload đồng bộ Firebase Realtime Database.
@@ -314,6 +320,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.8 (Build 200 - CLOUD REALTIME SYNC FOR REWARDED AD COOLDOWN):
+  - Đồng Bộ Hai Chiều Trạng Thái Chờ Xem Quảng Cáo (Rewarded Ad Cooldown) Lên Cloud:
+    * Bổ sung `lastAdWatchTime` vào gói `economy` trên Firebase Realtime Database.
+    * Khi người dùng xem video trên điện thoại (hoặc hủy xem giữa chừng), thời điểm xem video được lưu vào Cloud ngay lập tức.
+    * Khi chuyển sang máy tính (Laptop/PC), hệ thống tự động kéo `lastAdWatchTime` về và đồng bộ bộ đếm ngược 20 phút chính xác.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.8.
 • 👑 v0.10.8-beta-9.7 (Build 199 - CLOUD REALTIME SYNC & AUTO-RECOVERY FOR PURCHASED DECKS):
   - Đồng Bộ Hai Chiều Hạng Mục 'Bộ Từ Đã Mua' Ở Trung Tâm Studio Lên Cloud:
     * Bổ sung `purchasedDeckIds` vào payload đồng bộ Firebase Realtime Database.

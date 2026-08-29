@@ -22,7 +22,7 @@ namespace VocaFlow
 
         public MainForm()
         {
-            Text = "VocaFlow v0.10.8-beta-9.7 - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
+            Text = "VocaFlow v0.10.8-beta-9.8 - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
             Width = 1100;
             Height = 760;
             StartPosition = FormStartPosition.CenterScreen;
