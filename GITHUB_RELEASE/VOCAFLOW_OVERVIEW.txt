@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.9 (Build 201) - Bulletproof Quiz Mode Evaluation & Guaranteed UI Display
+Phiên bản: v0.10.8-beta-9.10 (Build 202) - Guaranteed Quiz Details Card, AI Commentary & Meme Immunity
 ================================================================================
-1. [Khắc Phục Lỗi Đơ Khi Chọn Đáp Án Quiz] Tái cấu trúc `checkQuizAnswer` với cơ chế bảo vệ khối `try-finally`.
-2. [Đảm Bảo Hiển Thị Thông Tin Đúng/Sai & Nút Tiếp Tục 100%] Khối `finally` đảm bảo nút câu tiếp theo luôn xuất hiện.
-3. [Tối Ưu Đồng Bộ Thao Tác & Highlight Đáp Án] Luôn hiển thị trực quan đáp án đúng và phân tích chi tiết của từ vựng.
+1. [Hiển Thị Ô Chi Tiết Từ Vựng & Nút Câu Tiếp Theo 100%] Luôn mở thẻ chi tiết ngay bên dưới nút câu tiếp theo.
+2. [Bổ Sung Lời Nhận Xét & Phân Tích Thông Minh Từ AI] Luôn phân tích lý do chọn đáp án, ngữ cảnh và mẹo dùng từ.
+3. [Miễn Nhiễm 250ms Khi Kích Hoạt Meme Mèo] Ngăn chặn sự kiện tap/click chọn đáp án làm tắt meme 0ms ngoài ý muốn.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.9 (Build 201)
+Phiên bản hiện tại : v0.10.8-beta-9.10 (Build 202)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.10 (Build 202 - GUARANTEED QUIZ DETAILS CARD, AI COMMENTARY & MEME IMMUNITY):
+  - Khắc Phục Hoàn Toàn Giao Diện Trả Lời Câu Hỏi Ở Chế Độ Quiz:
+    * Ô Thông Tin Từ Vựng (`#quiz-word-details-box`) luôn hiển thị đầy đủ (Từ, Loại từ, Cấp độ CEFR, Phiên âm IPA, Định nghĩa, Ví dụ, Cụm từ đi kèm, Từ đồng nghĩa/trái nghĩa).
+    * Hộp Nhận Xét AI (`#quiz-ai-explanation-box`) luôn cung cấp phân tích súc tích vì sao đáp án đúng, gợi ý ngữ cảnh ứng dụng và mẹo ghi nhớ bổ sung.
+    * Cơ Chế Miễn Nhiễm 250ms Cho Meme Mèo: Tránh việc ngón tay/chuột khi bấm chọn đáp án vô tình kích hoạt sự kiện tắt đột ngột làm meme biến mất tức thì.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.10.
 • 👑 v0.10.8-beta-9.9 (Build 201 - BULLETPROOF QUIZ MODE EVALUATION & GUARANTEED UI DISPLAY):
   - Sửa Triệt Để Lỗi Đơ / Không Hiện Nút Tiếp Tục Ở Chế Độ Trắc Nghiệm (Quiz):
     * Tái cấu trúc hàm `checkQuizAnswer()` bằng kỹ thuật phòng thủ toàn diện (Defensive Execution Flow) với khối `try-finally`.
@@ -326,6 +332,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-beta-9.10 (Build 202 - GUARANTEED QUIZ DETAILS CARD, AI COMMENTARY & MEME IMMUNITY):
+  - Khắc Phục Hoàn Toàn Giao Diện Trả Lời Câu Hỏi Ở Chế Độ Quiz:
+    * Ô Thông Tin Từ Vựng (`#quiz-word-details-box`) luôn hiển thị đầy đủ (Từ, Loại từ, Cấp độ CEFR, Phiên âm IPA, Định nghĩa, Ví dụ, Cụm từ đi kèm, Từ đồng nghĩa/trái nghĩa).
+    * Hộp Nhận Xét AI (`#quiz-ai-explanation-box`) luôn cung cấp phân tích súc tích vì sao đáp án đúng, gợi ý ngữ cảnh ứng dụng và mẹo ghi nhớ bổ sung.
+    * Cơ Chế Miễn Nhiễm 250ms Cho Meme Mèo: Tránh việc ngón tay/chuột khi bấm chọn đáp án vô tình kích hoạt sự kiện tắt đột ngột làm meme biến mất tức thì.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-beta-9.10.
 • 👑 v0.10.8-beta-9.9 (Build 201 - BULLETPROOF QUIZ MODE EVALUATION & GUARANTEED UI DISPLAY):
   - Sửa Triệt Để Lỗi Đơ / Không Hiện Nút Tiếp Tục Ở Chế Độ Trắc Nghiệm (Quiz):
     * Tái cấu trúc hàm `checkQuizAnswer()` bằng kỹ thuật phòng thủ toàn diện (Defensive Execution Flow) với khối `try-finally`.
