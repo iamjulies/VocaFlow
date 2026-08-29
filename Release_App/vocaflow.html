@@ -6465,6 +6465,9 @@
           <span>🐛</span> <strong>Báo Cáo Lỗi & Góp Ý</strong>
           <span id="pub-bugs-badge" class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 9px; display: none;">0</span>
         </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-vip-gateway" onclick="switchPublisherTab('vip-gateway')" style="display: flex; align-items: center; gap: 6px; border-color: rgba(245,158,11,0.4); color: #fbbf24;">
+          <span>👑</span> <strong>Cổng VIP & Đối Soát</strong>
+        </button>
       </div>
 
       <!-- TAB 1: STUDENT MANAGEMENT PORTAL -->
@@ -6624,6 +6627,98 @@
             <em>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em>
           </div>
         </div>
+      </div>
+
+      <!-- TAB 5: VIP GATEWAY & MACRO RECONCILIATION (v0.10.8-alpha-10.4) -->
+      <div id="pub-tab-content-vip-gateway" style="display: none; flex: 1; overflow-y: auto;">
+        
+        <!-- SECTION 1: QUICK STUDENT LOOKUP BY 16-CHAR SHORT UID -->
+        <div style="background: var(--surface-elevated); border: 1.5px solid rgba(245,158,11,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 14px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+              <span>🔍</span> <span>Tra Cứu Học Viên & Kích Hoạt Nhanh (UID 16 Ký Tự / Email / Tên)</span>
+            </div>
+            <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10.5px; font-weight: 700;">Cú Pháp: VOCA &lt;UID_16&gt; &lt;MÃ_GÓI&gt;</span>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Dán 16 ký tự UID viết hoa từ thông báo chuyển tiền (ví dụ: <code style="color:#ffd700; font-weight:700;">MJFITS6BTHWAJB6M</code>), email hoặc tên để tra cứu chính xác học viên và kích hoạt VIP / lượt quay ngay lập tức.
+          </p>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="text" id="admin-vip-lookup-input" class="form-input" placeholder="🔍 Dán 16 ký tự UID (VD: MJFITS6BTHWAJB6M), Email hoặc Tên..." style="flex: 1; font-size: 13px; font-family: monospace; font-weight: 700; text-transform: uppercase; padding: 9px 12px;" oninput="lookupVipStudentByInput(this.value)">
+            <button type="button" class="btn btn-primary" onclick="lookupVipStudentByInput(document.getElementById('admin-vip-lookup-input').value)" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; white-space: nowrap; padding: 0 16px;">
+              ⚡ Tìm Học Viên
+            </button>
+          </div>
+
+          <!-- LOOKUP RESULT CARD -->
+          <div id="admin-vip-lookup-result" style="display: none;">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- SECTION 2: MACRODROID / REALTIME BANK TRANSACTIONS LOG -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                <span>📡</span> <span>Nhật Ký Giao Dịch MB Bank Tự Động (Macro Feed)</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Dữ liệu biến động số dư được MacroDroid trên điện thoại tự động đẩy lên Firebase Cloud</div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" onclick="fetchAdminBankTransactions()" style="font-size: 11.5px; padding: 4px 10px; display: flex; align-items: center; gap: 4px;">
+                🔄 Làm Mới Logs
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="clearAdminBankTransactionsLog()" style="font-size: 11.5px; padding: 4px 10px; color: #f87171; border-color: rgba(239,68,68,0.35);">
+                🗑️ Xóa Lịch Sử
+              </button>
+            </div>
+          </div>
+
+          <div id="admin-bank-transactions-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; border: 1px solid var(--border);">
+            <div style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 12px;">
+              <em>Chưa có giao dịch mới nào được gửi về từ MacroDroid.</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: MACRODROID ZERO-COST AUTOMATION SETUP GUIDE -->
+        <div style="background: rgba(99,102,241,0.06); border: 1px dashed rgba(99,102,241,0.35); border-radius: 14px; padding: 14px 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleMacroGuideDetails()">
+            <div style="font-size: 13px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;">
+              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Trên Android (Tự Động 100% - Phí 0đ)</span>
+            </div>
+            <span id="macro-guide-toggle-icon" style="font-size: 14px; color: #818cf8;">▼</span>
+          </div>
+
+          <div id="macro-guide-details-box" style="display: none; margin-top: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+            <ol style="margin: 0; padding-left: 18px;">
+              <li><strong>Tải MacroDroid:</strong> Mở CH Play trên điện thoại Android & cài đặt <em>MacroDroid - Tự động hóa thiết bị</em> (Bản miễn phí).</li>
+              <li><strong>Tạo Macro Mới:</strong>
+                <ul>
+                  <li><strong>Trigger (Kích hoạt):</strong> <em>Thông báo (Notification)</em> &gt; Chọn ứng dụng <strong>MB Bank</strong> &gt; Nội dung chứa văn bản: <code style="color:#38bdf8;">VOCA</code></li>
+                  <li><strong>Action 1 (Trích xuất chuỗi Regex):</strong> Bóc tách <code style="color:#ffd700;">[not_text]</code> theo biểu thức: <code style="color:#34d399;">VOCA\s+([A-Za-z0-9]{16})\s+([A-Za-z0-9]+)</code> thành 2 biến: <code>shortUid</code> và <code>pkgCode</code>.</li>
+                  <li><strong>Action 2 (Gửi HTTP Request lên Firebase):</strong>
+                    <br>• Method: <strong>POST</strong>
+                    <br>• URL: <code style="color:#38bdf8;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
+                    <br>• Body (JSON):
+                    <pre style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; font-size: 11px; margin: 4px 0; color:#34d399; font-family: monospace;">{
+  "content": "[not_text]",
+  "syntax": "VOCA {lv=shortUid} {lv=pkgCode}",
+  "shortUid": "{lv=shortUid}",
+  "code": "{lv=pkgCode}",
+  "status": "pending",
+  "timestamp": [system_time]
+}</pre>
+                  </li>
+                </ul>
+              </li>
+              <li><strong>Cấu hình Pin:</strong> Vào <em>Cài đặt điện thoại &gt; Ứng dụng &gt; MacroDroid &amp; MB Bank</em> &gt; Tắt <strong>Tối ưu hóa pin</strong> để nhận thông báo tức thì 1 giây!</li>
+            </ol>
+          </div>
+        </div>
+
       </div>
 
       <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
@@ -8630,24 +8725,31 @@
       const isCodes = tab === 'codes';
       const isWallet = tab === 'wallet';
       const isBugs = tab === 'bugs';
+      const isVipGateway = tab === 'vip-gateway';
 
       const sContent = document.getElementById('pub-tab-content-students');
       const cContent = document.getElementById('pub-tab-content-codes');
       const wContent = document.getElementById('pub-tab-content-wallet');
       const bContent = document.getElementById('pub-tab-content-bugs');
+      const vContent = document.getElementById('pub-tab-content-vip-gateway');
+
       if (sContent) sContent.style.display = isStudents ? 'block' : 'none';
       if (cContent) cContent.style.display = isCodes ? 'block' : 'none';
       if (wContent) wContent.style.display = isWallet ? 'block' : 'none';
       if (bContent) bContent.style.display = isBugs ? 'block' : 'none';
+      if (vContent) vContent.style.display = isVipGateway ? 'block' : 'none';
 
       const sBtn = document.getElementById('pub-tab-btn-students');
       const cBtn = document.getElementById('pub-tab-btn-codes');
       const wBtn = document.getElementById('pub-tab-btn-wallet');
       const bBtn = document.getElementById('pub-tab-btn-bugs');
+      const vBtn = document.getElementById('pub-tab-btn-vip-gateway');
+
       if (sBtn) sBtn.className = isStudents ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
       if (cBtn) cBtn.className = isCodes ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
       if (wBtn) wBtn.className = isWallet ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
       if (bBtn) bBtn.className = isBugs ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+      if (vBtn) vBtn.className = isVipGateway ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
 
       if (isStudents && adminStudentsData.length === 0) {
         fetchAdminStudentsList();
@@ -8657,6 +8759,10 @@
       }
       if (isBugs) {
         fetchAdminBugReportsList();
+      }
+      if (isVipGateway) {
+        if (adminStudentsData.length === 0) fetchAdminStudentsList();
+        fetchAdminBankTransactions();
       }
     }
 
@@ -8732,8 +8838,19 @@
           const isVipStudent = (currentUser && currentUser.uid === uid) ? isUserVip() : (prof.isVip === true || u.isVip === true);
           const vipTierStudent = (currentUser && currentUser.uid === uid) ? getUserVipTier() : (prof.vipTier || u.vipTier || 'none');
 
+          let spins = 0;
+          if (currentUser && currentUser.uid === uid) {
+            spins = typeof getUserLuckySpins === 'function' ? getUserLuckySpins() : 0;
+          } else if (typeof eco.spins === 'number') spins = eco.spins;
+          else if (typeof u.spins === 'number') spins = u.spins;
+          else if (typeof prof.spins === 'number') spins = prof.spins;
+          else if (eco.spins !== undefined) spins = parseInt(eco.spins, 10) || 0;
+
+          const vipExp = prof.vipExpiresAt || u.vipExpiresAt || 0;
+
           studentsList.push({
             uid: uid,
+            shortUid: getShortUidUpper(uid),
             displayName: prof.displayName || email.split('@')[0],
             email: email,
             avatar: avatar,
@@ -8741,13 +8858,15 @@
             points: points,
             hints: hints,
             skips: skips,
+            spins: spins,
             deckCount: uDecks.length,
             wordCount: uWords.length,
             lastSync: prof.lastSync || u.lastSync || '',
             rawDecks: uDecks,
             rawWords: uWords,
             isVip: isVipStudent,
-            vipTier: vipTierStudent
+            vipTier: vipTierStudent,
+            vipExpiresAt: vipExp
           });
         }
 
@@ -15386,9 +15505,7 @@
       if (amountEl) amountEl.textContent = `${amount.toLocaleString('vi-VN')}đ`;
 
       let rawUid = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
-      let cleanUid = rawUid.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      if (cleanUid.length > 14) cleanUid = cleanUid.slice(0, 14);
-      const syntax = `VOCA ${cleanUid} ${code}`;
+      const syntax = `VOCA ${getShortUidUpper(rawUid)} ${code}`;
 
       if (syntaxEl) syntaxEl.textContent = syntax;
 
@@ -29401,22 +29518,31 @@ Quy tắc phản hồi quan trọng:
     }
   }
 
-  function getCleanTransferSyntax(tier) {
-    let cleanUid = 'GUEST';
-    if (currentUser && currentUser.uid) {
-      cleanUid = currentUser.uid.replace(/^guest_/, 'G').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      if (cleanUid.length > 16) {
-        cleanUid = cleanUid.slice(0, 16);
-      }
-    }
+  function getShortUidUpper(uid) {
+    if (!uid) return 'GUEST';
+    const str = String(uid).trim();
+    return (str.length > 16 ? str.substring(0, 16) : str).toUpperCase();
+  }
+  window.getShortUidUpper = getShortUidUpper;
+
+  function getCleanTransferSyntax(tierOrCode) {
+    const rawUid = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
+    const shortUid = getShortUidUpper(rawUid);
     const tierCodes = {
       'monthly': '1M',
       'yearly': '1Y',
-      'lifetime': 'LT'
+      'lifetime': 'LT',
+      '1m': '1M',
+      '1y': '1Y',
+      'lt': 'LT',
+      's5': 'S5',
+      's15': 'S15',
+      's40': 'S40'
     };
-    const code = tierCodes[tier] || tier.toUpperCase();
-    return `VOCA ${cleanUid} ${code}`;
+    const code = tierCodes[String(tierOrCode).toLowerCase()] || String(tierOrCode).toUpperCase();
+    return `VOCA ${shortUid} ${code}`;
   }
+  window.getCleanTransferSyntax = getCleanTransferSyntax;
 
   function selectVipPlan(tier, name, priceStr, amount) {
     switchVipPlanTab(tier);

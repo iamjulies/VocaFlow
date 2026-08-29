@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.3 (Build 208) - Global VIP & Storage Key Architecture Rebuild & Complete Stability
+Phiên bản: v0.10.8-alpha-10.4 (Build 209) - Standardized Banking Syntax & VIP Admin Gateway with Macro Automation
 ================================================================================
-1. [Tái Cấu Trúc Toàn Diện Đầu Tệp Script] Đưa đầy đủ định nghĩa biến VIP, Âm thanh SFX, Kinh tế học tập và Storage Keys lên đầu tệp script.
-2. [Khắc Phục 100% Lỗi Không Nhấn Được Nút & Màn Hình Trống] Đảm bảo WebView2 và Trình duyệt thực thi liền mạch không gặp bất kỳ lỗi ReferenceError nào.
-3. [Xác Thực Tự Động Đầu Ra WebView2 Thành Công] Render mượt mà 100% các bộ từ, ví điểm, thông báo và hộp thoại cài đặt.
+1. [Chuẩn Hóa Cú Pháp Ngân Hàng 100%] Áp dụng chuẩn VOCA <UID_16> <MÃ_GÓI> (1M, 1Y, LT, S5, S15, S40) với 16 ký tự đầu của UID in hoa.
+2. [Cổng Quản Trị VIP & Đối Soát Giao Dịch] Bổ sung Tab Quản Trị VIP trong Studio với tính năng Tra cứu học viên theo 16 ký tự UID và nạp gói 1-Click.
+3. [Tích Hợp MacroDroid Feed 0đ] Bảng nhật ký giao dịch Realtime từ Firebase Cloud và hướng dẫn cài đặt tự động hóa 0đ cho MB Bank.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.3 (Build 208)
+Phiên bản hiện tại : v0.10.8-alpha-10.4 (Build 209)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.4 (Build 209 - STANDARDIZED BANKING SYNTAX & VIP ADMIN GATEWAY):
+  - Chuẩn Hóa Toàn Diện Cú Pháp Giao Dịch Chuyển Khoản:
+    * Cú pháp chuẩn: `VOCA <UID_16_IN_HOA> <KÍ_HIỆU_GÓI>` (Ví dụ: `VOCA MJFITS6BTHWAJB6M 1M`).
+    * Ký hiệu độc bản: `1M` (VIP Tháng), `1Y` (VIP Năm), `LT` (VIP Trọn Đời), `S5` (5 Spin), `S15` (15 Spin), `S40` (40 Spin).
+    * Mã VietQR sinh động tự động nhúng chuẩn 100% cú pháp trên cả màn hình Gói VIP và Mua Lượt Quay.
+  - Bổ Sung Tab Cổng VIP & Đối Soát Trong Studio Quản Trị (Admin Portal):
+    * Ô Tra Cứu Học Viên Theo 16 Ký Tự Đầu Của UID: Tìm kiếm tức thì hồ sơ học viên, hiển thị Avatar, Email, UID đầy đủ, Trạng thái VIP, Hạn dùng, Số Xu & Lượt quay.
+    * Nạp Nhanh 1-Click: Cụm nút `+1M`, `+1Y`, `+LT`, `+S5`, `+S15`, `+S40`, `Hủy VIP` lưu trực tiếp lên Firebase Cloud Realtime.
+  - Nhật Ký Giao Dịch MacroDroid 0đ & Hướng Dẫn Thiết Lập:
+    * Lắng nghe bảng log giao dịch `bank_transactions` thời gian thực, tự động khớp học viên và duyệt 1-Click.
+    * Tích hợp hướng dẫn cấu hình MacroDroid trên điện thoại Android tự động 100% không tốn chi phí duy trì cổng thanh toán.
 • 👑 v0.10.8-alpha-10.3 (Build 208 - GLOBAL VIP & STORAGE ARCHITECTURE REBUILD):
   - Tái Cấu Trúc Toàn Diện Khối Đầu Script (`<script>` Header):
     * Đưa toàn bộ các hàm VIP (`isUserVip`, `getUserVipTier`, `setAdminVipStatus`), Âm thanh SFX (`playVocaSfx`, `stopVocaSfx`), Kinh tế học tập (`calculateSessionFinalPoints`), Storage Keys và Hộp thoại Cài đặt lên vị trí chính xác ngay đầu script.
@@ -382,6 +393,17 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.4 (Build 209 - STANDARDIZED BANKING SYNTAX & VIP ADMIN GATEWAY):
+  - Chuẩn Hóa Toàn Diện Cú Pháp Giao Dịch Chuyển Khoản:
+    * Cú pháp chuẩn: `VOCA <UID_16_IN_HOA> <KÍ_HIỆU_GÓI>` (Ví dụ: `VOCA MJFITS6BTHWAJB6M 1M`).
+    * Ký hiệu độc bản: `1M` (VIP Tháng), `1Y` (VIP Năm), `LT` (VIP Trọn Đời), `S5` (5 Spin), `S15` (15 Spin), `S40` (40 Spin).
+    * Mã VietQR sinh động tự động nhúng chuẩn 100% cú pháp trên cả màn hình Gói VIP và Mua Lượt Quay.
+  - Bổ Sung Tab Cổng VIP & Đối Soát Trong Studio Quản Trị (Admin Portal):
+    * Ô Tra Cứu Học Viên Theo 16 Ký Tự Đầu Của UID: Tìm kiếm tức thì hồ sơ học viên, hiển thị Avatar, Email, UID đầy đủ, Trạng thái VIP, Hạn dùng, Số Xu & Lượt quay.
+    * Nạp Nhanh 1-Click: Cụm nút `+1M`, `+1Y`, `+LT`, `+S5`, `+S15`, `+S40`, `Hủy VIP` lưu trực tiếp lên Firebase Cloud Realtime.
+  - Nhật Ký Giao Dịch MacroDroid 0đ & Hướng Dẫn Thiết Lập:
+    * Lắng nghe bảng log giao dịch `bank_transactions` thời gian thực, tự động khớp học viên và duyệt 1-Click.
+    * Tích hợp hướng dẫn cấu hình MacroDroid trên điện thoại Android tự động 100% không tốn chi phí duy trì cổng thanh toán.
 • 👑 v0.10.8-alpha-10.3 (Build 208 - GLOBAL VIP & STORAGE ARCHITECTURE REBUILD):
   - Tái Cấu Trúc Toàn Diện Khối Đầu Script (`<script>` Header):
     * Đưa toàn bộ các hàm VIP (`isUserVip`, `getUserVipTier`, `setAdminVipStatus`), Âm thanh SFX (`playVocaSfx`, `stopVocaSfx`), Kinh tế học tập (`calculateSessionFinalPoints`), Storage Keys và Hộp thoại Cài đặt lên vị trí chính xác ngay đầu script.
