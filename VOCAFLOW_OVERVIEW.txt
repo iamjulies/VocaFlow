@@ -1,14 +1,12 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.10 (Build 215) - Modal Isolation Fix, Guest Feature Gate & VIP Meme Visibility
+Phiên bản: v0.10.8-alpha-10.11 (Build 216) - Lock Share Deck To Community For Guest
 ================================================================================
-1. [Khắc Phục 100% Lỗi Tạo Bộ Từ] Đóng thẻ modal-ai-deck-studio bị lồng thẻ modal-deck, tách biệt hoàn toàn nút "Thêm Bộ Từ" và "Tạo Bằng AI".
-2. [Kích Hoạt Modal Khóa Tính Năng Cho Guest] Chèn modal-feature-guest-lock chuẩn vào DOM, hiển thị modal thông báo độc quyền cho khách ở 4 tính năng.
-3. [Ẩn Hoàn Toàn Setting Meme Mèo Cho Non-VIP] Cài đặt Meme Mèo chỉ hiển thị khi tài khoản có quyền VIP (ẩn tuyệt đối với Guest và User thường).
+1. [Khóa Nút Chia Sẻ Thư Viện Cho Khách] Chặn tài khoản Guest bấm nút "Chia Sẻ Thư Viện" trên thanh công cụ bộ từ, hiển thị modal Tính Năng Độc Quyền Cho Thành Viên.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.10 (Build 215)
+Phiên bản hiện tại : v0.10.8-alpha-10.11 (Build 216)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +23,10 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.11 (Build 216 - LOCK SHARE DECK TO COMMUNITY FOR GUEST):
+  - Khóa nút "Chia Sẻ Thư Viện" ở màn hình chi tiết bộ từ đối với tài khoản Khách (Guest).
+  - Tự động kích hoạt Modal Tính Năng Độc Quyền Cho Thành Viên khi Guest bấm đóng góp bộ từ.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.11 và xuất bản Windows EXE & Web Single-File.
 • 👑 v0.10.8-alpha-10.10 (Build 215 - MODAL ISOLATION FIX, GUEST FEATURE GATE & VIP MEME VISIBILITY):
   - Khắc phục lỗi cấu trúc DOM lồng nhau khiến nút "Thêm Bộ Từ" bị khóa trong modal AI.
   - Tách biệt độc lập nút "Thêm Bộ Từ" (mở modal-deck) và "Tạo Bằng AI" (mở modal-ai-deck-studio).
@@ -436,6 +438,10 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.11 (Build 216 - LOCK SHARE DECK TO COMMUNITY FOR GUEST):
+  - Khóa nút "Chia Sẻ Thư Viện" ở màn hình chi tiết bộ từ đối với tài khoản Khách (Guest).
+  - Tự động kích hoạt Modal Tính Năng Độc Quyền Cho Thành Viên khi Guest bấm đóng góp bộ từ.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.11 và xuất bản Windows EXE & Web Single-File.
 • 👑 v0.10.8-alpha-10.10 (Build 215 - MODAL ISOLATION FIX, GUEST FEATURE GATE & VIP MEME VISIBILITY):
   - Khắc phục lỗi cấu trúc DOM lồng nhau khiến nút "Thêm Bộ Từ" bị khóa trong modal AI.
   - Tách biệt độc lập nút "Thêm Bộ Từ" (mở modal-deck) và "Tạo Bằng AI" (mở modal-ai-deck-studio).
