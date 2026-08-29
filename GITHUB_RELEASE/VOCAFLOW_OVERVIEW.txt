@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.7 (Build 212) - MB Bank Multi-line Notification Fix & Comprehensive Guide
+Phiên bản: v0.10.8-alpha-10.8 (Build 213) - 1-Click Smart Paste Banking SMS & Instant Reconciler
 ================================================================================
-1. [Khắc Phục 100% Lỗi Trigger Thông Báo MB Bank] Phân tích và hướng dẫn loại bỏ bộ lọc chữ ở Trigger để tránh lỗi MB Bank phân tách nội dung vào dòng mở rộng BigText.
-2. [Cập Nhật Bộ Nhận Diện Giao Dịch] Hỗ trợ trọn vẹn cú pháp tiền tố tài khoản phụ `05CH7KCEA7D9-VOCA <UID_16> <MÃ>`.
-3. [Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân] Xuất bản bản cài đặt Desktop và Web Single-File v0.10.8-alpha-10.7.
+1. [Khung Dán Nhanh Tin Nhắn Ngân Hàng 1-Click] Bổ sung tính năng dán nhanh dòng tin nhắn biến động số dư (MB Bank / SMS) trực tiếp vào Cổng VIP, không phụ thuộc vào app chạy ngầm.
+2. [Bộ Bóc Tách Tức Thì Đa Nguồn] Tự động trích xuất số tiền (+25k, +39k...), mã gói (S15, 1M...) và 16 ký tự UID học viên để kích hoạt VIP / lượt quay 1-Click ngay lập tức.
+3. [Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân] Xuất bản bản cài đặt Desktop và Web Single-File v0.10.8-alpha-10.8.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.7 (Build 212)
+Phiên bản hiện tại : v0.10.8-alpha-10.8 (Build 213)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.8 (Build 213 - 1-CLICK SMART PASTE BANKING SMS & INSTANT RECONCILER):
+  - Bổ Sung Tính Năng Dán Nhanh Tin Nhắn Biến Động Số Dư (Smart Paste & Instant Reconciler):
+    * Giải pháp đối soát 0đ tối ưu 100%, không bị ảnh hưởng bởi việc Android tắt service chạy ngầm của MacroDroid.
+    * Hỗ trợ nút "📋 Dán Từ Clipboard" $\rightarrow$ Tự động bóc tách số tiền (+25.000đ, +39.000đ...), mã gói (S15, 1M, 1Y...) và khớp học viên tức thì.
+    * Nút "⚡ Kích Hoạt Ngay" cập nhật trực tiếp lên Firebase Cloud và lưu vết vào lịch sử giao dịch.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.8.
 • 👑 v0.10.8-alpha-10.7 (Build 212 - MB BANK MULTI-LINE NOTIFICATION FIX):
   - Khắc Phục Triệt Để Cơ Chế Trigger MacroDroid Cho MB Bank:
     * Giải thích cơ chế MB Bank chia thông báo thành 3 dòng (Dòng 1 là số tiền, Dòng 3 mới là nội dung chuyển khoản).
@@ -415,6 +421,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.8 (Build 213 - 1-CLICK SMART PASTE BANKING SMS & INSTANT RECONCILER):
+  - Bổ Sung Tính Năng Dán Nhanh Tin Nhắn Biến Động Số Dư (Smart Paste & Instant Reconciler):
+    * Giải pháp đối soát 0đ tối ưu 100%, không bị ảnh hưởng bởi việc Android tắt service chạy ngầm của MacroDroid.
+    * Hỗ trợ nút "📋 Dán Từ Clipboard" $\rightarrow$ Tự động bóc tách số tiền (+25.000đ, +39.000đ...), mã gói (S15, 1M, 1Y...) và khớp học viên tức thì.
+    * Nút "⚡ Kích Hoạt Ngay" cập nhật trực tiếp lên Firebase Cloud và lưu vết vào lịch sử giao dịch.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.8.
 • 👑 v0.10.8-alpha-10.7 (Build 212 - MB BANK MULTI-LINE NOTIFICATION FIX):
   - Khắc Phục Triệt Để Cơ Chế Trigger MacroDroid Cho MB Bank:
     * Giải thích cơ chế MB Bank chia thông báo thành 3 dòng (Dòng 1 là số tiền, Dòng 3 mới là nội dung chuyển khoản).
