@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.5 (Build 210) - VIP Gateway & Macro Feed Engine Fix & Top-Left Version Alignment
+Phiên bản: v0.10.8-alpha-10.6 (Build 211) - AI Gemini Reconciler & Streamlined MacroDroid Guide
 ================================================================================
-1. [Khắc Phục 100% Cổng VIP & Macro Feed] Bổ sung trọn vẹn toàn bộ hàm xử lý JavaScript cho Cổng VIP & Đối Soát (toggleMacroGuideDetails, fetchAdminBankTransactions, lookupVipStudentByInput).
-2. [Sửa Lỗi Nút Bấm & Khung Hướng Dẫn Không Hoạt Động] Nút Làm Mới Logs, Xóa Lịch Sử và Khung mở rộng Hướng Dẫn MacroDroid hoạt động mượt mà tức thì.
-3. [Đồng Bộ Số Hiệu Phiên Bản Góc Trên Bên Trái] Cập nhật badge góc trên bên trái lên đúng chuẩn v0.10.8-alpha-10.5.
+1. [AI Gemini & Multi-Layer Transaction Reconciler] Nâng cấp bộ não đối soát 3 lớp (Regex chuẩn, Quét mờ Fuzzy, và Trợ lý AI Gemini đối soát giao dịch ghi chú tự do).
+2. [Cập Nhật Hướng Dẫn MacroDroid Chuẩn 100%] Hướng dẫn tinh gọn 1 Action duy nhất (gửi text thô [not_text]), kèm cảnh báo cấp quyền truy cập thông báo & tắt tiết kiệm pin trên Android.
+3. [Nâng Cấp Giao Diện Macro Feed Chi Tiết] Thẻ giao dịch hiển thị số tiền nạp, tên học viên kèm avatar, giải thích từ AI và nút bấm kích hoạt 1-Click.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.5 (Build 210)
+Phiên bản hiện tại : v0.10.8-alpha-10.6 (Build 211)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.6 (Build 211 - AI GEMINI RECONCILER & STREAMLINED MACRODROID GUIDE):
+  - Tích Hợp Trợ Lý AI Gemini Đối Soát Giao Dịch Ngân Hàng:
+    * Cơ chế 3 tầng: 1. Regex chuẩn `VOCA <UID_16> <MÃ>` $\rightarrow$ 2. Quét mờ Fuzzy so khớp danh sách học viên $\rightarrow$ 3. AI Gemini phân tích cú pháp tự do khi khách chuyển khoản ghi chú tùy ý.
+    * Tự động nhận diện số tiền giao dịch (`+39.000đ`, `+299.000đ`, `+599.000đ`...) và đề xuất gói tương ứng.
+  - Tinh Gọn 100% Cấu Hình MacroDroid Trên Điện Thoại:
+    * Điện thoại chỉ cần đúng 1 Action gửi `[not_text]` thô lên Firebase, không cần regex hay xử lý biến trên điện thoại.
+    * Cung cấp hướng dẫn trực quan về 2 quyền cốt tử: *Quyền truy cập thông báo* & *Tắt tối ưu hóa pin*.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.6.
 • 👑 v0.10.8-alpha-10.5 (Build 210 - VIP GATEWAY & MACRO FEED ENGINE FIX):
   - Khắc Phục Toàn Diện Khối Mã Xử Lý JavaScript Cho Cổng VIP:
     * Đưa toàn bộ các hàm `lookupVipStudentByInput`, `quickApplyStudentVipOrSpin`, `fetchAdminBankTransactions`, `toggleMacroGuideDetails`, `deleteAdminBankTransaction` vào vị trí thực thi chính xác.
@@ -401,6 +409,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.6 (Build 211 - AI GEMINI RECONCILER & STREAMLINED MACRODROID GUIDE):
+  - Tích Hợp Trợ Lý AI Gemini Đối Soát Giao Dịch Ngân Hàng:
+    * Cơ chế 3 tầng: 1. Regex chuẩn `VOCA <UID_16> <MÃ>` $\rightarrow$ 2. Quét mờ Fuzzy so khớp danh sách học viên $\rightarrow$ 3. AI Gemini phân tích cú pháp tự do khi khách chuyển khoản ghi chú tùy ý.
+    * Tự động nhận diện số tiền giao dịch (`+39.000đ`, `+299.000đ`, `+599.000đ`...) và đề xuất gói tương ứng.
+  - Tinh Gọn 100% Cấu Hình MacroDroid Trên Điện Thoại:
+    * Điện thoại chỉ cần đúng 1 Action gửi `[not_text]` thô lên Firebase, không cần regex hay xử lý biến trên điện thoại.
+    * Cung cấp hướng dẫn trực quan về 2 quyền cốt tử: *Quyền truy cập thông báo* & *Tắt tối ưu hóa pin*.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.6.
 • 👑 v0.10.8-alpha-10.5 (Build 210 - VIP GATEWAY & MACRO FEED ENGINE FIX):
   - Khắc Phục Toàn Diện Khối Mã Xử Lý JavaScript Cho Cổng VIP:
     * Đưa toàn bộ các hàm `lookupVipStudentByInput`, `quickApplyStudentVipOrSpin`, `fetchAdminBankTransactions`, `toggleMacroGuideDetails`, `deleteAdminBankTransaction` vào vị trí thực thi chính xác.

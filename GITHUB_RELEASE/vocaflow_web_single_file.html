@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.5</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.6</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -6685,36 +6685,69 @@
 
         <!-- SECTION 3: MACRODROID ZERO-COST AUTOMATION SETUP GUIDE -->
         <div style="background: rgba(99,102,241,0.06); border: 1px dashed rgba(99,102,241,0.35); border-radius: 14px; padding: 14px 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleMacroGuideDetails()">
+          <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;" onclick="toggleMacroGuideDetails()">
             <div style="font-size: 13px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;">
-              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Trên Android (Tự Động 100% - Phí 0đ)</span>
+              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Chuẩn 100% (Phí 0đ - AI Đối Soát)</span>
             </div>
-            <span id="macro-guide-toggle-icon" style="font-size: 14px; color: #818cf8;">▼</span>
+            <span id="macro-guide-toggle-icon" style="font-size: 14px; color: #818cf8; font-weight: 800;">▼</span>
           </div>
 
-          <div id="macro-guide-details-box" style="display: none; margin-top: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
-            <ol style="margin: 0; padding-left: 18px;">
-              <li><strong>Tải MacroDroid:</strong> Mở CH Play trên điện thoại Android & cài đặt <em>MacroDroid - Tự động hóa thiết bị</em> (Bản miễn phí).</li>
-              <li><strong>Tạo Macro Mới:</strong>
-                <ul>
-                  <li><strong>Trigger (Kích hoạt):</strong> <em>Thông báo (Notification)</em> &gt; Chọn ứng dụng <strong>MB Bank</strong> &gt; Nội dung chứa văn bản: <code style="color:#38bdf8;">VOCA</code></li>
-                  <li><strong>Action 1 (Trích xuất chuỗi Regex):</strong> Bóc tách <code style="color:#ffd700;">[not_text]</code> theo biểu thức: <code style="color:#34d399;">VOCA\s+([A-Za-z0-9]{16})\s+([A-Za-z0-9]+)</code> thành 2 biến: <code>shortUid</code> và <code>pkgCode</code>.</li>
-                  <li><strong>Action 2 (Gửi HTTP Request lên Firebase):</strong>
-                    <br>• Method: <strong>POST</strong>
-                    <br>• URL: <code style="color:#38bdf8;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
-                    <br>• Body (JSON):
-                    <pre style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; font-size: 11px; margin: 4px 0; color:#34d399; font-family: monospace;">{
+          <div id="macro-guide-details-box" style="display: none; margin-top: 14px; font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            <!-- CRITICAL PERMISSION WARNING -->
+            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #fca5a5;">
+              <strong style="font-size: 12.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <span>⚠️</span> <span>BƯỚC BẮT BUỘC ĐỂ BẮT ĐƯỢC THÔNG BÁO THỰC TẾ (RẤT QUAN TRỌNG):</span>
+              </strong>
+              <div style="font-size: 11.5px; line-height: 1.5; color: #fecaca;">
+                Điện thoại Android mặc định chặn app chạy ngầm và chặn đọc thông báo để tiết kiệm pin. Để MacroDroid tự động bắt thông báo thật 100%, bạn cần mở 2 cài đặt sau:
+                <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+                  <li><strong>1. Quyền Truy Cập Thông Báo:</strong> Vào <em>Cài đặt điện thoại &gt; Ứng dụng &gt; Quyền đặc biệt (hoặc Bảo mật) &gt; Quyền truy cập thông báo</em> &gt; <strong>Bật MacroDroid</strong> thành ON.</li>
+                  <li><strong>2. Tắt Tiết Kiệm Pin & Bật Tự Khởi Chạy:</strong> Vào <em>Cài đặt &gt; Quản lý ứng dụng &gt; MacroDroid</em> &gt; Tắt <strong>Tiết kiệm pin (chọn Không giới hạn)</strong> & Bật <strong>Tự khởi chạy (Autostart)</strong>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- STREAMLINED 1-ACTION CONFIG -->
+            <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #a7f3d0;">
+              <strong style="font-size: 12.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span>⚡</span> <span>CẤU HÌNH MACRODROID SIÊU ĐƠN GIẢN (CHỈ 1 ACTION DUY NHẤT):</span>
+              </strong>
+              <div style="font-size: 11.5px; color: #d1fae5;">
+                Điện thoại <strong>chỉ cần gửi nguyên văn nội dung tin nhắn thô</strong> lên Firebase. Toàn bộ việc bóc tách UID 16 ký tự, mã gói và đối soát sẽ được <strong>VocaFlow kết hợp với AI Gemini</strong> trên máy tính tự động giải quyết 100%!
+              </div>
+            </div>
+
+            <ol style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 12px;">
+              <li>
+                <strong style="color: #f87171; font-size: 12.5px;">🔴 1. TRIGGER (Kích hoạt - Màu đỏ):</strong>
+                <br>• Bấm dấu <strong>+ màu đỏ</strong> &gt; Chọn <em>Sự kiện thiết bị / Thông báo &gt; Thông báo đã nhận</em>.
+                <br>• Chọn Ứng dụng: Tích chọn <strong>MB Bank</strong> (hoặc app ngân hàng của bạn) &gt; Bấm OK.
+                <br>• Ở màn hình bộ lọc:
+                  <br>&nbsp;&nbsp;- <strong>Tiêu đề:</strong> Chọn hình tròn <strong>🔘 Bất kỳ</strong>.
+                  <br>&nbsp;&nbsp;- <strong>Nội dung tin nhắn:</strong> Chọn hình tròn <strong>🔘 Chứa</strong> &gt; Nhập vào ô: <code style="color:#38bdf8; font-weight:700; font-size:12.5px;">VOCA</code>
+                  <br>&nbsp;&nbsp;- Tích chọn: <strong>Không phân biệt chữ viết hoa/thường</strong>.
+              </li>
+              <li>
+                <strong style="color: #60a5fa; font-size: 12.5px;">🔵 2. ACTION (Hành động - Màu xanh dương - Chỉ cần 1 cái duy nhất):</strong>
+                <br>• Bấm dấu <strong>+ màu xanh dương</strong> &gt; Chọn <em>Kết nối &gt; Yêu cầu HTTP (HTTP Request)</em>.
+                <br>• <strong>Tab Cài đặt:</strong>
+                  <br>&nbsp;&nbsp;- Yêu cầu phương thức: Chọn <strong>POST</strong>
+                  <br>&nbsp;&nbsp;- Nhập URL: <code style="color:#38bdf8; word-break:break-all; font-weight:700;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
+                <br>• <strong>Tab Nội dung:</strong>
+                  <br>&nbsp;&nbsp;- Loại nội dung: Chọn <strong>application/json</strong>
+                  <br>&nbsp;&nbsp;- Nội dung (Văn bản): Xóa sạch và dán chính xác đoạn JSON sau:
+                  <pre style="background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin: 6px 0; color:#34d399; font-family: monospace; border: 1px solid rgba(16,185,129,0.3);">{
   "content": "[not_text]",
-  "syntax": "VOCA {lv=shortUid} {lv=pkgCode}",
-  "shortUid": "{lv=shortUid}",
-  "code": "{lv=pkgCode}",
+  "title": "[not_title]",
   "status": "pending",
   "timestamp": [system_time]
 }</pre>
-                  </li>
-                </ul>
               </li>
-              <li><strong>Cấu hình Pin:</strong> Vào <em>Cài đặt điện thoại &gt; Ứng dụng &gt; MacroDroid &amp; MB Bank</em> &gt; Tắt <strong>Tối ưu hóa pin</strong> để nhận thông báo tức thì 1 giây!</li>
+              <li>
+                <strong style="color: #fbbf24; font-size: 12.5px;">🟢 3. LƯU & HOÀN TẤT:</strong>
+                <br>• Bấm dấu <strong>Tích V</strong> ở góc trên bên phải &gt; Đặt tên Macro là <em>"VocaFlow MB Bank"</em>.
+                <br>• Thử nghiệm: Bấm dấu <strong>...</strong> bên cạnh Macro &gt; Chọn <strong>Thử nghiệm các hành động (Test Actions)</strong> &gt; Mở VocaFlow bấm <strong>🔄 Làm Mới Logs</strong> để xem kết quả!
+              </li>
             </ol>
           </div>
         </div>
@@ -8721,7 +8754,7 @@
     }
 
     // =========================================================================
-    // VIP GATEWAY & MACRO RECONCILIATION ENGINE (v0.10.8-alpha-10.5)
+    // VIP GATEWAY & MACRO RECONCILIATION ENGINE (v0.10.8-alpha-10.6 - AI RECONCILER)
     // =========================================================================
     let adminBankTransactions = [];
 
@@ -8736,19 +8769,174 @@
     }
     window.toggleMacroGuideDetails = toggleMacroGuideDetails;
 
-    function parseBankTransactionMessage(rawContent) {
+    // Multi-Layer Rule-Based & Fuzzy Extraction Engine
+    function parseBankTransactionMultiLayer(rawContent, studentsList = []) {
       if (!rawContent || typeof rawContent !== 'string') return null;
-      const regex = /VOCA\s+([A-Za-z0-9]{16})\s+([A-Za-z0-9]+)/i;
-      const match = rawContent.match(regex);
-      if (match) {
-        return {
-          shortUid: match[1].toUpperCase(),
-          code: match[2].toUpperCase()
-        };
+      const clean = rawContent.trim();
+
+      let detectedShortUid = '';
+      let detectedCode = '';
+      let detectedAmount = 0;
+      let matchedStudent = null;
+      let matchMethod = 'none';
+
+      // 1. Amount Extraction (e.g. +39,000VND or 39.000 đ or 39000)
+      const amtMatch = clean.match(/(?:\+|\b)(\d{1,3}(?:[.,]\d{3})+|\d{4,7})\s*(?:VND|VNĐ|Đ|D|\b)/i);
+      if (amtMatch) {
+        const numStr = amtMatch[1].replace(/[.,]/g, '');
+        detectedAmount = parseInt(numStr, 10) || 0;
       }
-      return null;
+
+      // 2. Layer 1: Standard Regex VOCA <UID_16> <CODE>
+      const stdRegex = /VOCA[\s:_.-]+([A-Za-z0-9]{16})[\s:_.-]+([A-Za-z0-9]+)/i;
+      const m1 = clean.match(stdRegex);
+      if (m1) {
+        detectedShortUid = m1[1].toUpperCase();
+        detectedCode = m1[2].toUpperCase();
+        matchMethod = 'regex_standard';
+      }
+
+      // 3. Layer 2: Fuzzy Token Scanner against Student List
+      if (!detectedShortUid && Array.isArray(studentsList) && studentsList.length > 0) {
+        for (const s of studentsList) {
+          const sUid16 = (s.shortUid || getShortUidUpper(s.uid)).toUpperCase();
+          if (sUid16 && clean.toUpperCase().includes(sUid16)) {
+            detectedShortUid = sUid16;
+            matchedStudent = s;
+            matchMethod = 'fuzzy_token_uid';
+            break;
+          }
+        }
+      }
+
+      // 4. Package Code Fallback Detection if not found in Layer 1
+      if (!detectedCode) {
+        const upper = clean.toUpperCase();
+        if (upper.includes(' 1M') || upper.includes('1M ') || upper.includes('VIP 1M') || upper.includes('VIP THANG') || upper.includes('VIP THÁNG') || detectedAmount === 39000) {
+          detectedCode = '1M';
+        } else if (upper.includes(' 1Y') || upper.includes('1Y ') || upper.includes('VIP 1Y') || upper.includes('VIP NAM') || upper.includes('VIP NĂM') || detectedAmount === 299000) {
+          detectedCode = '1Y';
+        } else if (upper.includes(' LT') || upper.includes('LT ') || upper.includes('VIP LT') || upper.includes('TRON DOI') || upper.includes('TRỌN ĐỜI') || detectedAmount === 599000) {
+          detectedCode = 'LT';
+        } else if (upper.includes(' S5') || upper.includes('S5 ') || upper.includes('SPIN 5') || upper.includes('5 QUAY') || detectedAmount === 10000) {
+          detectedCode = 'S5';
+        } else if (upper.includes(' S15') || upper.includes('S15 ') || upper.includes('SPIN 15') || upper.includes('15 QUAY') || detectedAmount === 25000) {
+          detectedCode = 'S15';
+        } else if (upper.includes(' S40') || upper.includes('S40 ') || upper.includes('SPIN 40') || upper.includes('40 QUAY') || detectedAmount === 50000) {
+          detectedCode = 'S40';
+        }
+      }
+
+      // Match student object if not matched yet
+      if (detectedShortUid && !matchedStudent && Array.isArray(studentsList)) {
+        matchedStudent = studentsList.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === detectedShortUid);
+      }
+
+      return {
+        shortUid: detectedShortUid,
+        code: detectedCode,
+        amount: detectedAmount,
+        matchedStudent: matchedStudent,
+        matchMethod: matchMethod
+      };
     }
-    window.parseBankTransactionMessage = parseBankTransactionMessage;
+    window.parseBankTransactionMultiLayer = parseBankTransactionMultiLayer;
+
+    // AI GEMINI BACKUP RECONCILER (For unstructured or messy remarks)
+    async function analyzeBankTransactionWithAi(txKey) {
+      const tx = adminBankTransactions.find(t => t.key === txKey);
+      if (!tx) return;
+
+      const rawMsg = tx.content || tx.syntax || '';
+      if (!rawMsg) {
+        showToast('⚠️ Không có nội dung giao dịch để phân tích!');
+        return;
+      }
+
+      showToast('🤖 AI Gemini đang phân tích nội dung đối soát...');
+
+      const studentsSummary = adminStudentsData.slice(0, 50).map(s => ({
+        displayName: s.displayName,
+        email: s.email,
+        shortUid: s.shortUid || getShortUidUpper(s.uid),
+        fullUid: s.uid
+      }));
+
+      const prompt = `Bạn là chuyên gia đối soát giao dịch ngân hàng tự động cho ứng dụng học từ vựng VocaFlow.
+Dưới đây là tin nhắn biến động số dư ngân hàng thực tế từ app MB Bank:
+"${rawMsg}"
+
+Danh sách 50 học viên đăng ký trên hệ thống:
+${JSON.stringify(studentsSummary)}
+
+Bảng mã gói dịch vụ của VocaFlow:
+- 1M: VIP 1 Tháng (39,000đ)
+- 1Y: VIP 1 Năm (299,000đ)
+- LT: VIP Trọn Đời (599,000đ)
+- S5: 5 Lượt quay may mắn (10,000đ)
+- S15: 15 Lượt quay may mắn (25,000đ)
+- S40: 40 Lượt quay may mắn (50,000đ)
+
+Nhiệm vụ: Hãy phân tích tin nhắn và tìm ra chính xác học viên nào đã chuyển khoản và mua gói nào.
+Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
+{
+  "matchedShortUid": "16_KY_TU_UID_VIET_HOA",
+  "matchedStudentName": "Ten hoc vien",
+  "packageCode": "1M | 1Y | LT | S5 | S15 | S40",
+  "amountVnd": 39000,
+  "confidenceScore": 0.95,
+  "aiExplanation": "Giải thích ngắn gọn lý do khớp"
+}`;
+
+      try {
+        let aiResult = null;
+        if (typeof callGeminiApiProxy === 'function') {
+          const rawResponse = await callGeminiApiProxy(prompt);
+          const cleanJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+          aiResult = JSON.parse(cleanJson);
+        } else if (typeof callActiveAiProvider === 'function') {
+          const rawResponse = await callActiveAiProvider(prompt);
+          const cleanJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+          aiResult = JSON.parse(cleanJson);
+        }
+
+        if (aiResult && aiResult.matchedShortUid) {
+          const sUid = String(aiResult.matchedShortUid).toUpperCase();
+          const pCode = String(aiResult.packageCode || '').toUpperCase();
+          
+          tx.shortUid = sUid;
+          tx.code = pCode;
+          tx.aiExplanation = aiResult.aiExplanation;
+          tx.aiConfidence = aiResult.confidenceScore;
+          tx.aiAnalyzed = true;
+
+          // Sync AI update to Cloud
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+          const authParam = token ? '?auth=' + token : '';
+          await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              shortUid: sUid,
+              code: pCode,
+              aiExplanation: aiResult.aiExplanation,
+              aiConfidence: aiResult.confidenceScore,
+              aiAnalyzed: true
+            })
+          });
+
+          showToast(`🎯 AI đã phân tích xong: Khớp ${aiResult.matchedStudentName} (${pCode})!`);
+          renderAdminBankTransactionsListUI();
+        } else {
+          showToast('⚠️ AI không thể xác định chắc chắn học viên từ tin nhắn này.');
+        }
+      } catch (err) {
+        console.error('AI Reconciler Error:', err);
+        showToast('⚠️ Lỗi kết nối AI: ' + err.message);
+      }
+    }
+    window.analyzeBankTransactionWithAi = analyzeBankTransactionWithAi;
 
     async function lookupVipStudentByInput(val) {
       const q = (val || '').toUpperCase().trim();
@@ -8982,6 +9170,10 @@
       listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải nhật ký giao dịch từ Firebase...</div>';
 
       try {
+        if (!adminStudentsData || adminStudentsData.length === 0) {
+          await fetchAdminStudentsList();
+        }
+
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
@@ -9005,66 +9197,29 @@
         const items = [];
         for (const [key, val] of Object.entries(data)) {
           if (val && typeof val === 'object') {
-            // Smart extraction if sent as raw text or structured JSON
-            let sUid = val.shortUid || '';
-            let pCode = val.code || '';
-            if (!sUid || !pCode) {
-              const parsed = parseBankTransactionMessage(val.content || val.syntax || '');
-              if (parsed) {
-                sUid = parsed.shortUid;
-                pCode = parsed.code;
-              }
-            }
-            items.push({ key, ...val, shortUid: sUid, code: pCode });
+            const rawContent = val.content || val.syntax || '';
+            const parsed = parseBankTransactionMultiLayer(rawContent, adminStudentsData);
+
+            let sUid = val.shortUid || (parsed ? parsed.shortUid : '');
+            let pCode = val.code || (parsed ? parsed.code : '');
+            let amount = val.amount || (parsed ? parsed.amount : 0);
+            let matchedStudent = (parsed && parsed.matchedStudent) ? parsed.matchedStudent : adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === sUid.toUpperCase());
+
+            items.push({
+              key,
+              ...val,
+              shortUid: sUid,
+              code: pCode,
+              amount: amount,
+              matchedStudent: matchedStudent,
+              matchMethod: parsed ? parsed.matchMethod : 'manual'
+            });
           }
         }
 
         items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         adminBankTransactions = items;
-
-        if (items.length === 0) {
-          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
-          return;
-        }
-
-        let html = '';
-        items.forEach(tx => {
-          const timeStr = tx.timestamp ? formatDateTime(new Date(tx.timestamp).toISOString()) : 'Vừa xong';
-          const shortUid = (tx.shortUid || '').toUpperCase();
-          const code = (tx.code || '').toUpperCase();
-          const status = tx.status || 'pending';
-          const matchedStudent = adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)) === shortUid);
-
-          const statusBadge = status === 'completed' || status === 'auto_processed'
-            ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">✅ Đã Xử Lý</span>'
-            : '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px;">⏳ Chờ Duyệt</span>';
-
-          html += `
-            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
-                  <strong style="font-size: 13px; color: #38bdf8; font-family: monospace;">${escapeHtml(tx.syntax || tx.content || 'Giao dịch MB')}</strong>
-                  ${statusBadge}
-                </div>
-                <div style="font-size: 11px; color: var(--text-muted);">
-                  ⏱️ ${timeStr} • Khớp học viên: <strong style="color: #ffd700;">${matchedStudent ? escapeHtml(matchedStudent.displayName) + ' (' + escapeHtml(matchedStudent.email) + ')' : (shortUid ? 'Mã 16 ký tự: ' + shortUid : 'Chưa khớp UID')}</strong>
-                </div>
-              </div>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                ${matchedStudent && code ? `
-                  <button type="button" class="btn btn-primary btn-sm" onclick="processAdminBankTransactionAction('${tx.key}', '${matchedStudent.uid}', '${code}')" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700;">
-                    ⚡ Kích Hoạt ${code}
-                  </button>
-                ` : ''}
-                <button type="button" class="btn btn-outline btn-sm" onclick="deleteAdminBankTransaction('${tx.key}')" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Xóa giao dịch này">
-                  🗑️
-                </button>
-              </div>
-            </div>
-          `;
-        });
-
-        listEl.innerHTML = html;
+        renderAdminBankTransactionsListUI();
         showToast('🔄 Đã làm mới nhật ký giao dịch Macro Feed!');
 
       } catch (e) {
@@ -9072,6 +9227,95 @@
       }
     }
     window.fetchAdminBankTransactions = fetchAdminBankTransactions;
+
+    function renderAdminBankTransactionsListUI() {
+      const listEl = document.getElementById('admin-bank-transactions-list');
+      if (!listEl) return;
+
+      if (!adminBankTransactions || adminBankTransactions.length === 0) {
+        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
+        return;
+      }
+
+      const packageNames = {
+        '1M': '👑 VIP Tháng (39k)',
+        '1Y': '🟡 VIP Năm (299k)',
+        'LT': '👑 VIP Trọn Đời (599k)',
+        'S5': '🎡 5 Lượt Quay (10k)',
+        'S15': '🎡 15 Lượt Quay (25k)',
+        'S40': '🎡 40 Lượt Quay (50k)'
+      };
+
+      let html = '';
+      adminBankTransactions.forEach(tx => {
+        const timeStr = tx.timestamp ? formatDateTime(new Date(tx.timestamp).toISOString()) : 'Vừa xong';
+        const shortUid = (tx.shortUid || '').toUpperCase();
+        const code = (tx.code || '').toUpperCase();
+        const status = tx.status || 'pending';
+        const matchedStudent = tx.matchedStudent || adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === shortUid);
+        const pkgTitle = packageNames[code] || (code ? `Gói ${code}` : 'Chưa nhận diện gói');
+
+        const isCompleted = status === 'completed' || status === 'auto_processed';
+        const statusBadge = isCompleted
+          ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight:700;">✅ Đã Xử Lý</span>'
+          : '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px; font-weight:700;">⏳ Chờ Duyệt</span>';
+
+        const aiBadge = tx.aiAnalyzed 
+          ? `<span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 9.5px;" title="Đã phân tích bởi AI Gemini">🤖 AI (${Math.round((tx.aiConfidence || 1) * 100)}%)</span>`
+          : '';
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1.5px solid ${isCompleted ? 'rgba(16,185,129,0.3)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+            <!-- Row 1: Status, Package & Actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <strong style="font-size: 13.5px; color: #38bdf8; font-family: monospace;">${escapeHtml(code ? pkgTitle : 'Giao dịch MB Bank')}</strong>
+                ${statusBadge}
+                ${aiBadge}
+                ${tx.amount ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; font-size: 11px;">+${tx.amount.toLocaleString('vi-VN')} đ</span>` : ''}
+              </div>
+
+              <!-- Action buttons -->
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${matchedStudent && code && !isCompleted ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="processAdminBankTransactionAction('${tx.key}', '${matchedStudent.uid}', '${code}')" style="font-size: 11.5px; padding: 4px 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
+                    ⚡ Kích Hoạt ${code}
+                  </button>
+                ` : ''}
+                ${(!matchedStudent || !code) && !isCompleted ? `
+                  <button type="button" class="btn btn-outline btn-sm" onclick="analyzeBankTransactionWithAi('${tx.key}')" style="font-size: 11px; padding: 4px 10px; border-color: rgba(99,102,241,0.5); color: #a5b4fc; background: rgba(99,102,241,0.1); font-weight: 700;" title="Nhờ AI Gemini đọc và bóc tách tự động">
+                    🤖 AI Đối Soát
+                  </button>
+                ` : ''}
+                <button type="button" class="btn btn-outline btn-sm" onclick="deleteAdminBankTransaction('${tx.key}')" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Xóa giao dịch này">
+                  🗑️
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 2: Raw Banking Content -->
+            <div style="font-size: 11.5px; background: rgba(0,0,0,0.35); border-radius: 6px; padding: 6px 10px; color: #cbd5e1; font-family: monospace; word-break: break-all; border-left: 3px solid #38bdf8;">
+              ${escapeHtml(tx.content || tx.syntax || 'Nội dung trống')}
+            </div>
+
+            <!-- Row 3: Matching & Student Profile Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+              <div>
+                ⏱️ ${timeStr} • Khớp học viên: 
+                ${matchedStudent ? `
+                  <strong style="color: #ffd700; text-decoration: underline; cursor: pointer;" onclick="lookupVipStudentByInput('${escapeHtml(matchedStudent.uid)}')" title="Bấm để tra cứu học viên này">
+                    ${escapeHtml(matchedStudent.displayName)} (${escapeHtml(matchedStudent.email)}) - [${shortUid}]
+                  </strong>
+                ` : `<span style="color: #f87171;">${shortUid ? 'Mã 16 ký tự: ' + shortUid + ' (Chưa có trên hệ thống)' : 'Chưa nhận diện UID'}</span>`}
+              </div>
+              ${tx.aiExplanation ? `<div style="font-size: 10.5px; color: #a5b4fc; font-style: italic;">💡 ${escapeHtml(tx.aiExplanation)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
 
     async function processAdminBankTransactionAction(txKey, uid, code) {
       await quickApplyStudentVipOrSpin(uid, code);
@@ -9084,7 +9328,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'completed', processedAt: Date.now() })
         });
-        fetchAdminBankTransactions();
+        const tx = adminBankTransactions.find(t => t.key === txKey);
+        if (tx) tx.status = 'completed';
+        renderAdminBankTransactionsListUI();
       } catch (e) {}
     }
     window.processAdminBankTransactionAction = processAdminBankTransactionAction;
@@ -9096,8 +9342,9 @@
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
         await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, { method: 'DELETE' });
+        adminBankTransactions = adminBankTransactions.filter(t => t.key !== txKey);
+        renderAdminBankTransactionsListUI();
         showToast('🗑️ Đã xóa bản ghi giao dịch!');
-        fetchAdminBankTransactions();
       } catch (e) {
         showToast('Lỗi xóa giao dịch: ' + e.message);
       }
@@ -9111,15 +9358,15 @@
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
         await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`, { method: 'DELETE' });
+        adminBankTransactions = [];
+        renderAdminBankTransactionsListUI();
         showToast('🗑️ Đã xóa sạch lịch sử giao dịch!');
-        fetchAdminBankTransactions();
       } catch (e) {
         showToast('Lỗi xóa: ' + e.message);
       }
     }
     window.clearAdminBankTransactionsLog = clearAdminBankTransactionsLog;
-
-    function switchPublisherTab(tab) {
+function switchPublisherTab(tab) {
       const isStudents = tab === 'students';
       const isCodes = tab === 'codes';
       const isWallet = tab === 'wallet';
