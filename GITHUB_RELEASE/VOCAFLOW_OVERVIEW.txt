@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.4 (Build 209) - Standardized Banking Syntax & VIP Admin Gateway with Macro Automation
+Phiên bản: v0.10.8-alpha-10.5 (Build 210) - VIP Gateway & Macro Feed Engine Fix & Top-Left Version Alignment
 ================================================================================
-1. [Chuẩn Hóa Cú Pháp Ngân Hàng 100%] Áp dụng chuẩn VOCA <UID_16> <MÃ_GÓI> (1M, 1Y, LT, S5, S15, S40) với 16 ký tự đầu của UID in hoa.
-2. [Cổng Quản Trị VIP & Đối Soát Giao Dịch] Bổ sung Tab Quản Trị VIP trong Studio với tính năng Tra cứu học viên theo 16 ký tự UID và nạp gói 1-Click.
-3. [Tích Hợp MacroDroid Feed 0đ] Bảng nhật ký giao dịch Realtime từ Firebase Cloud và hướng dẫn cài đặt tự động hóa 0đ cho MB Bank.
+1. [Khắc Phục 100% Cổng VIP & Macro Feed] Bổ sung trọn vẹn toàn bộ hàm xử lý JavaScript cho Cổng VIP & Đối Soát (toggleMacroGuideDetails, fetchAdminBankTransactions, lookupVipStudentByInput).
+2. [Sửa Lỗi Nút Bấm & Khung Hướng Dẫn Không Hoạt Động] Nút Làm Mới Logs, Xóa Lịch Sử và Khung mở rộng Hướng Dẫn MacroDroid hoạt động mượt mà tức thì.
+3. [Đồng Bộ Số Hiệu Phiên Bản Góc Trên Bên Trái] Cập nhật badge góc trên bên trái lên đúng chuẩn v0.10.8-alpha-10.5.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.4 (Build 209)
+Phiên bản hiện tại : v0.10.8-alpha-10.5 (Build 210)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.5 (Build 210 - VIP GATEWAY & MACRO FEED ENGINE FIX):
+  - Khắc Phục Toàn Diện Khối Mã Xử Lý JavaScript Cho Cổng VIP:
+    * Đưa toàn bộ các hàm `lookupVipStudentByInput`, `quickApplyStudentVipOrSpin`, `fetchAdminBankTransactions`, `toggleMacroGuideDetails`, `deleteAdminBankTransaction` vào vị trí thực thi chính xác.
+    * Giải quyết triệt để lỗi không bấm được nút "Làm Mới Logs" và khung "Hướng Dẫn Cài Đặt MacroDroid".
+  - Nâng Cấp Bộ Trích Xuất Thông Minh Giao Dịch Ngân Hàng:
+    * Tự động bóc tách Regex `VOCA <UID_16> <MÃ_GÓI>` ngay cả khi MacroDroid gửi dạng nội dung thô `[not_text]`.
+    * Tự động ghép nối với danh sách học viên và mở nút kích hoạt 1-Click.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.5.
 • 👑 v0.10.8-alpha-10.4 (Build 209 - STANDARDIZED BANKING SYNTAX & VIP ADMIN GATEWAY):
   - Chuẩn Hóa Toàn Diện Cú Pháp Giao Dịch Chuyển Khoản:
     * Cú pháp chuẩn: `VOCA <UID_16_IN_HOA> <KÍ_HIỆU_GÓI>` (Ví dụ: `VOCA MJFITS6BTHWAJB6M 1M`).
@@ -393,6 +401,14 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.5 (Build 210 - VIP GATEWAY & MACRO FEED ENGINE FIX):
+  - Khắc Phục Toàn Diện Khối Mã Xử Lý JavaScript Cho Cổng VIP:
+    * Đưa toàn bộ các hàm `lookupVipStudentByInput`, `quickApplyStudentVipOrSpin`, `fetchAdminBankTransactions`, `toggleMacroGuideDetails`, `deleteAdminBankTransaction` vào vị trí thực thi chính xác.
+    * Giải quyết triệt để lỗi không bấm được nút "Làm Mới Logs" và khung "Hướng Dẫn Cài Đặt MacroDroid".
+  - Nâng Cấp Bộ Trích Xuất Thông Minh Giao Dịch Ngân Hàng:
+    * Tự động bóc tách Regex `VOCA <UID_16> <MÃ_GÓI>` ngay cả khi MacroDroid gửi dạng nội dung thô `[not_text]`.
+    * Tự động ghép nối với danh sách học viên và mở nút kích hoạt 1-Click.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.5.
 • 👑 v0.10.8-alpha-10.4 (Build 209 - STANDARDIZED BANKING SYNTAX & VIP ADMIN GATEWAY):
   - Chuẩn Hóa Toàn Diện Cú Pháp Giao Dịch Chuyển Khoản:
     * Cú pháp chuẩn: `VOCA <UID_16_IN_HOA> <KÍ_HIỆU_GÓI>` (Ví dụ: `VOCA MJFITS6BTHWAJB6M 1M`).

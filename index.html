@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.3</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.5</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -8719,6 +8719,405 @@
         fetchAdminStudentsList();
       }
     }
+
+    // =========================================================================
+    // VIP GATEWAY & MACRO RECONCILIATION ENGINE (v0.10.8-alpha-10.5)
+    // =========================================================================
+    let adminBankTransactions = [];
+
+    function toggleMacroGuideDetails() {
+      const box = document.getElementById('macro-guide-details-box');
+      const icon = document.getElementById('macro-guide-toggle-icon');
+      if (box) {
+        const isHidden = (box.style.display === 'none' || !box.style.display);
+        box.style.display = isHidden ? 'block' : 'none';
+        if (icon) icon.textContent = isHidden ? '▲' : '▼';
+      }
+    }
+    window.toggleMacroGuideDetails = toggleMacroGuideDetails;
+
+    function parseBankTransactionMessage(rawContent) {
+      if (!rawContent || typeof rawContent !== 'string') return null;
+      const regex = /VOCA\s+([A-Za-z0-9]{16})\s+([A-Za-z0-9]+)/i;
+      const match = rawContent.match(regex);
+      if (match) {
+        return {
+          shortUid: match[1].toUpperCase(),
+          code: match[2].toUpperCase()
+        };
+      }
+      return null;
+    }
+    window.parseBankTransactionMessage = parseBankTransactionMessage;
+
+    async function lookupVipStudentByInput(val) {
+      const q = (val || '').toUpperCase().trim();
+      const resultBox = document.getElementById('admin-vip-lookup-result');
+      if (!resultBox) return;
+
+      if (!q) {
+        resultBox.style.display = 'none';
+        resultBox.innerHTML = '';
+        return;
+      }
+
+      if (!adminStudentsData || adminStudentsData.length === 0) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ danh sách học viên từ Cloud...</div>';
+        await fetchAdminStudentsList();
+      }
+
+      // Match by 16-char short UID, full UID, email, or displayName
+      const matched = adminStudentsData.filter(s => {
+        const short = (s.shortUid || getShortUidUpper(s.uid)).toUpperCase();
+        const full = (s.uid || '').toUpperCase();
+        const em = (s.email || '').toUpperCase();
+        const name = (s.displayName || '').toUpperCase();
+        return short === q || full === q || short.includes(q) || full.includes(q) || em.includes(q) || name.includes(q);
+      });
+
+      if (matched.length === 0) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+          <div style="background: rgba(239,68,68,0.08); border: 1px dashed rgba(239,68,68,0.35); border-radius: 10px; padding: 12px; text-align: center; color: #f87171; font-size: 12px;">
+            ❌ Không tìm thấy học viên nào khớp với mã tra cứu: <strong>${escapeHtml(q)}</strong>
+          </div>
+        `;
+        return;
+      }
+
+      resultBox.style.display = 'block';
+      let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+      matched.forEach(s => {
+        const shortUid = s.shortUid || getShortUidUpper(s.uid);
+        const isVip = !!s.isVip;
+        const tier = s.vipTier || 'none';
+        const expStr = s.vipExpiresAt ? new Date(s.vipExpiresAt).toLocaleDateString('vi-VN') : (tier === 'lifetime' ? 'Vĩnh viễn' : 'Chưa kích hoạt');
+        const spins = s.spins || 0;
+
+        html += `
+          <div style="background: rgba(0,0,0,0.3); border: 1.5px solid ${isVip ? '#fbbf24' : 'var(--border)'}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Header Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; overflow: hidden; ${isVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 12px rgba(251,191,36,0.6);' : ''}">
+                  ${renderAvatarHtml(s.avatar || s.displayName, 42, 16)}
+                </div>
+                <div>
+                  <div style="font-weight: 800; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                    <span>${escapeHtml(s.displayName)}</span>
+                    ${isVip ? `<span class="badge" style="background: rgba(245,158,11,0.25); color: #fbbf24; font-size: 10px; font-weight: 700;">👑 VIP (${tier.toUpperCase()})</span>` : `<span class="badge" style="background: rgba(100,116,139,0.2); color: #94a3b8; font-size: 10px;">Thường</span>`}
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted);">✉️ ${escapeHtml(s.email)} • Hạn VIP: <strong style="color:${isVip ? '#ffd700' : 'var(--text-muted)'};">${expStr}</strong></div>
+                </div>
+              </div>
+
+              <!-- UID Badges -->
+              <div style="text-align: right; font-size: 11px;">
+                <div style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); padding: 3px 8px; border-radius: 6px; color: #ffd700; font-family: monospace; font-weight: 800; font-size: 12px; display: inline-block;">
+                  🔑 16 Ký Tự: ${shortUid}
+                </div>
+                <div style="font-size: 9.5px; color: var(--text-muted); margin-top: 2px;">UID: ${s.uid}</div>
+              </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; text-align: center; font-size: 11px;">
+              <div><span style="color:var(--text-muted);">🪙 Xu:</span> <strong style="color:#fbbf24;">${s.points}đ</strong></div>
+              <div><span style="color:var(--text-muted);">🎡 Quay:</span> <strong style="color:#38bdf8;">${spins} lượt</strong></div>
+              <div><span style="color:var(--text-muted);">💡 Gợi ý:</span> <strong style="color:#34d399;">${s.hints}</strong></div>
+              <div><span style="color:var(--text-muted);">📚 Bộ từ:</span> <strong style="color:#a855f7;">${s.deckCount}</strong></div>
+            </div>
+
+            <!-- 1-Click Fast Actions -->
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">⚡ Nạp Gói 1-Click Nhanh Cho Học Viên Này:</div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', '1M')" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  🟢 + 1M (VIP Tháng)
+                </button>
+                <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', '1Y')" style="background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  🟡 + 1Y (VIP Năm)
+                </button>
+                <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'LT')" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  👑 + LT (Trọn Đời)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S5')" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  🎡 + S5 (5 Quay)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S15')" style="border-color: rgba(236,72,153,0.5); color: #f472b6; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  🎡 + S15 (15 Quay)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S40')" style="border-color: rgba(168,85,247,0.5); color: #c084fc; font-weight: 700; font-size: 11px; padding: 5px 10px;">
+                  🎡 + S40 (40 Quay)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'cancel_vip')" style="border-color: rgba(239,68,68,0.4); color: #f87171; font-weight: 600; font-size: 11px; padding: 5px 8px;">
+                  ❌ Hủy VIP
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      resultBox.innerHTML = html;
+    }
+    window.lookupVipStudentByInput = lookupVipStudentByInput;
+
+    async function quickApplyStudentVipOrSpin(uid, actionType) {
+      const student = adminStudentsData.find(s => s.uid === uid);
+      if (!student) return;
+
+      const act = String(actionType).toUpperCase();
+      let isVip = student.isVip;
+      let vipTier = student.vipTier || 'none';
+      let vipExpiresAt = student.vipExpiresAt || 0;
+      let spins = student.spins || 0;
+      let actionLabel = '';
+
+      if (act === '1M') {
+        isVip = true;
+        vipTier = 'monthly';
+        const base = (vipExpiresAt && vipExpiresAt > Date.now()) ? vipExpiresAt : Date.now();
+        vipExpiresAt = base + 30 * 86400000;
+        actionLabel = '👑 Kích hoạt VIP 1 Tháng (+30 ngày)';
+      } else if (act === '1Y') {
+        isVip = true;
+        vipTier = 'yearly';
+        const base = (vipExpiresAt && vipExpiresAt > Date.now()) ? vipExpiresAt : Date.now();
+        vipExpiresAt = base + 365 * 86400000;
+        actionLabel = '👑 Kích hoạt VIP 1 Năm (+365 ngày)';
+      } else if (act === 'LT') {
+        isVip = true;
+        vipTier = 'lifetime';
+        vipExpiresAt = 0;
+        actionLabel = '👑 Kích hoạt VIP Trọn Đời (Lifetime)';
+      } else if (act === 'S5') {
+        spins += 5;
+        actionLabel = '🎡 Cộng +5 Lượt Quay May Mắn';
+      } else if (act === 'S15') {
+        spins += 15;
+        actionLabel = '🎡 Cộng +15 Lượt Quay May Mắn';
+      } else if (act === 'S40') {
+        spins += 40;
+        actionLabel = '🎡 Cộng +40 Lượt Quay May Mắn';
+      } else if (act === 'CANCEL_VIP') {
+        isVip = false;
+        vipTier = 'none';
+        vipExpiresAt = 0;
+        actionLabel = '❌ Đã hủy kích hoạt VIP';
+      }
+
+      if (!confirm(`Xác nhận thực hiện: "${actionLabel}" cho học viên ${student.displayName} (UID: ${student.shortUid || getShortUidUpper(uid)})?`)) {
+        return;
+      }
+
+      showToast('⏳ Đang cập nhật dữ liệu lên Firebase Cloud...');
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+
+        // 1. Update Profile
+        await fetch(`${rtdbUrl}/users/${uid}/profile.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            isVip: isVip,
+            vipTier: vipTier,
+            vipExpiresAt: vipExpiresAt,
+            lastAdminUpdate: Date.now()
+          })
+        });
+
+        // 2. Update Economy
+        await fetch(`${rtdbUrl}/users/${uid}/economy.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            spins: spins,
+            lastAdminUpdate: Date.now()
+          })
+        });
+
+        // Update local cache
+        student.isVip = isVip;
+        student.vipTier = vipTier;
+        student.vipExpiresAt = vipExpiresAt;
+        student.spins = spins;
+
+        // If adjusting current logged-in account
+        if (currentUser && currentUser.uid === uid) {
+          currentUser.isVip = isVip;
+          currentUser.vipTier = vipTier;
+          currentUser.vipExpiresAt = vipExpiresAt;
+          userIsVip = isVip;
+          userVipTier = vipTier;
+          userVipExpiresAt = vipExpiresAt;
+          localStorage.setItem('vocaflow_user_is_vip', isVip ? 'true' : 'false');
+          localStorage.setItem('vocaflow_user_vip_tier', vipTier);
+          localStorage.setItem('vocaflow_user_vip_expires_at', vipExpiresAt.toString());
+          if (act.startsWith('S') && typeof setLuckySpinsCount === 'function') {
+            setLuckySpinsCount(spins);
+          }
+          updateAuthUI();
+          refreshAdminVipUI();
+        }
+
+        showToast(`🎉 ${actionLabel} thành công cho ${student.displayName}!`);
+        lookupVipStudentByInput(document.getElementById('admin-vip-lookup-input')?.value || student.uid);
+        renderAdminStudentsTable();
+
+      } catch (e) {
+        console.error('Quick Apply VIP Error:', e);
+        showToast('⚠️ Lỗi cập nhật Cloud: ' + e.message);
+      }
+    }
+    window.quickApplyStudentVipOrSpin = quickApplyStudentVipOrSpin;
+
+    async function fetchAdminBankTransactions() {
+      const listEl = document.getElementById('admin-bank-transactions-list');
+      if (!listEl) return;
+      listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải nhật ký giao dịch từ Firebase...</div>';
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        
+        let res = await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`);
+        if (!res.ok) {
+          res = await fetch(`${rtdbUrl}/bankTransactions.json${authParam}`);
+        }
+
+        if (!res.ok) {
+          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào trong cơ sở dữ liệu.</div>';
+          return;
+        }
+
+        const data = await res.json();
+        if (!data || typeof data !== 'object') {
+          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
+          return;
+        }
+
+        const items = [];
+        for (const [key, val] of Object.entries(data)) {
+          if (val && typeof val === 'object') {
+            // Smart extraction if sent as raw text or structured JSON
+            let sUid = val.shortUid || '';
+            let pCode = val.code || '';
+            if (!sUid || !pCode) {
+              const parsed = parseBankTransactionMessage(val.content || val.syntax || '');
+              if (parsed) {
+                sUid = parsed.shortUid;
+                pCode = parsed.code;
+              }
+            }
+            items.push({ key, ...val, shortUid: sUid, code: pCode });
+          }
+        }
+
+        items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        adminBankTransactions = items;
+
+        if (items.length === 0) {
+          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
+          return;
+        }
+
+        let html = '';
+        items.forEach(tx => {
+          const timeStr = tx.timestamp ? formatDateTime(new Date(tx.timestamp).toISOString()) : 'Vừa xong';
+          const shortUid = (tx.shortUid || '').toUpperCase();
+          const code = (tx.code || '').toUpperCase();
+          const status = tx.status || 'pending';
+          const matchedStudent = adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)) === shortUid);
+
+          const statusBadge = status === 'completed' || status === 'auto_processed'
+            ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">✅ Đã Xử Lý</span>'
+            : '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px;">⏳ Chờ Duyệt</span>';
+
+          html += `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+                  <strong style="font-size: 13px; color: #38bdf8; font-family: monospace;">${escapeHtml(tx.syntax || tx.content || 'Giao dịch MB')}</strong>
+                  ${statusBadge}
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted);">
+                  ⏱️ ${timeStr} • Khớp học viên: <strong style="color: #ffd700;">${matchedStudent ? escapeHtml(matchedStudent.displayName) + ' (' + escapeHtml(matchedStudent.email) + ')' : (shortUid ? 'Mã 16 ký tự: ' + shortUid : 'Chưa khớp UID')}</strong>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${matchedStudent && code ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="processAdminBankTransactionAction('${tx.key}', '${matchedStudent.uid}', '${code}')" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700;">
+                    ⚡ Kích Hoạt ${code}
+                  </button>
+                ` : ''}
+                <button type="button" class="btn btn-outline btn-sm" onclick="deleteAdminBankTransaction('${tx.key}')" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Xóa giao dịch này">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        listEl.innerHTML = html;
+        showToast('🔄 Đã làm mới nhật ký giao dịch Macro Feed!');
+
+      } catch (e) {
+        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: #f87171;">Lỗi nạp logs: ' + e.message + '</div>';
+      }
+    }
+    window.fetchAdminBankTransactions = fetchAdminBankTransactions;
+
+    async function processAdminBankTransactionAction(txKey, uid, code) {
+      await quickApplyStudentVipOrSpin(uid, code);
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'completed', processedAt: Date.now() })
+        });
+        fetchAdminBankTransactions();
+      } catch (e) {}
+    }
+    window.processAdminBankTransactionAction = processAdminBankTransactionAction;
+
+    async function deleteAdminBankTransaction(txKey) {
+      if (!confirm('Bạn có chắc muốn xóa bản ghi giao dịch này khỏi hệ thống?')) return;
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, { method: 'DELETE' });
+        showToast('🗑️ Đã xóa bản ghi giao dịch!');
+        fetchAdminBankTransactions();
+      } catch (e) {
+        showToast('Lỗi xóa giao dịch: ' + e.message);
+      }
+    }
+    window.deleteAdminBankTransaction = deleteAdminBankTransaction;
+
+    async function clearAdminBankTransactionsLog() {
+      if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử giao dịch MacroDroid trên Cloud?')) return;
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`, { method: 'DELETE' });
+        showToast('🗑️ Đã xóa sạch lịch sử giao dịch!');
+        fetchAdminBankTransactions();
+      } catch (e) {
+        showToast('Lỗi xóa: ' + e.message);
+      }
+    }
+    window.clearAdminBankTransactionsLog = clearAdminBankTransactionsLog;
 
     function switchPublisherTab(tab) {
       const isStudents = tab === 'students';
