@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-beta-9.12 (Build 204) - Focused AI Mnemonic & Etymology Engine with Markdown Parser
+Phiên bản: v0.10.8-alpha-10 (Build 205) - VIP Multi-Key Pool (x3 AI Quota), Tiered Failover & 2-Way Sync
 ================================================================================
-1. [Lược Bỏ Phần Trùng Lặp Ở Thẻ AI] Xóa bỏ khối giải thích súc tích lặp lại thông tin định nghĩa.
-2. [Tập Trung 100% Vào Mẹo Ghi Nhớ & Nguồn Gốc Từ] Chỉ phân tích mẹo nhớ nhanh (mnemonics) và gốc từ (etymology).
-3. [Xử Lý Triệt Để Lỗi Dấu Sao Markdown **] Chuyển đổi chuẩn xác `**text**` thành in đậm `<strong>` và `*text*` in nghiêng `<em>`.
+1. [Bể Đa Khóa API Dành Riêng Cho VIP] Mở khóa nhập tối đa 3 API Key từ các project Google khác nhau (nhân 3 hạn ngạch).
+2. [Cơ Chế Chuyển Khóa Thông Minh & Tự Động Dồn Hàng] Dùng hết hạn ngạch Khóa 1 tự động chuyển Khóa 2, 3; tự động dồn ô trống lên trên.
+3. [Đồng Bộ Đa Chiều 100% Lên Cloud] Lưu trữ và đồng bộ toàn vẹn danh sách đa khóa API giữa các thiết bị.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-beta-9.12 (Build 204)
+Phiên bản hiện tại : v0.10.8-alpha-10 (Build 205)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10 (Build 205 - VIP MULTI-KEY POOL, TIERED FAILOVER & 2-WAY CLOUD SYNC):
+  - Tính Năng Bể Đa Khóa API (Multi-Key Pool x3 Hạn Ngạch):
+    * Thành viên VIP được nhập tối đa 3 API Key từ các dự án Google AI Studio khác nhau để nhân 3 hạn ngạch miễn phí.
+    * Người dùng thông thường sử dụng 1 Khóa chính (Khóa 2 & 3 được khóa an toàn kèm hướng dẫn nâng cấp VIP).
+  - Cơ Chế Luân Chuyển Khóa Tuần Tự (Tiered Failover on 429 Quota Exceeded):
+    * Mặc định ưu tiên sử dụng Khóa 1. Khi Khóa 1 chạm giới hạn hạn ngạch (HTTP 429), hệ thống tự động chuyển sang Khóa 2 (rồi sang Khóa 3) trong tích tắc.
+    * Tự động dồn khóa lên vị trí trống phía trên khi nhập liệu (`auto-shift upward`).
+  - Hướng Dẫn Chi Tiết Lấy Đa Khóa 5 Bước Trực Quan Tích Hợp Sẵn Trong Cài Đặt.
+  - Đồng Bộ Hai Chiều Đa Khóa API Lên Firebase Cloud.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-alpha-10.
 • 👑 v0.10.8-beta-9.12 (Build 204 - FOCUSED AI MNEMONIC & ETYMOLOGY ENGINE WITH MARKDOWN PARSER):
   - Tối Ưu Hóa Khung Nhận Xét AI Chế Độ Quiz:
     * Lược bỏ hoàn toàn khối 'Giải thích súc tích từ AI' trùng lặp với thẻ từ vựng phía trên.
@@ -347,6 +357,16 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10 (Build 205 - VIP MULTI-KEY POOL, TIERED FAILOVER & 2-WAY CLOUD SYNC):
+  - Tính Năng Bể Đa Khóa API (Multi-Key Pool x3 Hạn Ngạch):
+    * Thành viên VIP được nhập tối đa 3 API Key từ các dự án Google AI Studio khác nhau để nhân 3 hạn ngạch miễn phí.
+    * Người dùng thông thường sử dụng 1 Khóa chính (Khóa 2 & 3 được khóa an toàn kèm hướng dẫn nâng cấp VIP).
+  - Cơ Chế Luân Chuyển Khóa Tuần Tự (Tiered Failover on 429 Quota Exceeded):
+    * Mặc định ưu tiên sử dụng Khóa 1. Khi Khóa 1 chạm giới hạn hạn ngạch (HTTP 429), hệ thống tự động chuyển sang Khóa 2 (rồi sang Khóa 3) trong tích tắc.
+    * Tự động dồn khóa lên vị trí trống phía trên khi nhập liệu (`auto-shift upward`).
+  - Hướng Dẫn Chi Tiết Lấy Đa Khóa 5 Bước Trực Quan Tích Hợp Sẵn Trong Cài Đặt.
+  - Đồng Bộ Hai Chiều Đa Khóa API Lên Firebase Cloud.
+  - Cập Nhật & Đóng Gói Nhị Phân Windows Native VocaFlow.exe v0.10.8-alpha-10.
 • 👑 v0.10.8-beta-9.12 (Build 204 - FOCUSED AI MNEMONIC & ETYMOLOGY ENGINE WITH MARKDOWN PARSER):
   - Tối Ưu Hóa Khung Nhận Xét AI Chế Độ Quiz:
     * Lược bỏ hoàn toàn khối 'Giải thích súc tích từ AI' trùng lặp với thẻ từ vựng phía trên.
