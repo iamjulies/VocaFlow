@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.6</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.7</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -6687,66 +6687,65 @@
         <div style="background: rgba(99,102,241,0.06); border: 1px dashed rgba(99,102,241,0.35); border-radius: 14px; padding: 14px 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;" onclick="toggleMacroGuideDetails()">
             <div style="font-size: 13px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;">
-              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Chuẩn 100% (Phí 0đ - AI Đối Soát)</span>
+              <span>📱</span> <span>Hướng Dẫn Cài Đặt MacroDroid Chuẩn 100% (Khắc Phục Lỗi MB Bank Multi-line)</span>
             </div>
             <span id="macro-guide-toggle-icon" style="font-size: 14px; color: #818cf8; font-weight: 800;">▼</span>
           </div>
 
           <div id="macro-guide-details-box" style="display: none; margin-top: 14px; font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-            <!-- CRITICAL PERMISSION WARNING -->
-            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #fca5a5;">
+            <!-- CRITICAL MB BANK MULTI-LINE EXPLANATION -->
+            <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #fde68a;">
               <strong style="font-size: 12.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                <span>⚠️</span> <span>BƯỚC BẮT BUỘC ĐỂ BẮT ĐƯỢC THÔNG BÁO THỰC TẾ (RẤT QUAN TRỌNG):</span>
+                <span>💡</span> <span>VÌ SAO TRIGGER KHÔNG BẮT ĐƯỢC THÔNG BÁO MB BANK THẬT?</span>
               </strong>
-              <div style="font-size: 11.5px; line-height: 1.5; color: #fecaca;">
-                Điện thoại Android mặc định chặn app chạy ngầm và chặn đọc thông báo để tiết kiệm pin. Để MacroDroid tự động bắt thông báo thật 100%, bạn cần mở 2 cài đặt sau:
-                <ul style="margin: 6px 0 0 0; padding-left: 18px;">
-                  <li><strong>1. Quyền Truy Cập Thông Báo:</strong> Vào <em>Cài đặt điện thoại &gt; Ứng dụng &gt; Quyền đặc biệt (hoặc Bảo mật) &gt; Quyền truy cập thông báo</em> &gt; <strong>Bật MacroDroid</strong> thành ON.</li>
-                  <li><strong>2. Tắt Tiết Kiệm Pin & Bật Tự Khởi Chạy:</strong> Vào <em>Cài đặt &gt; Quản lý ứng dụng &gt; MacroDroid</em> &gt; Tắt <strong>Tiết kiệm pin (chọn Không giới hạn)</strong> & Bật <strong>Tự khởi chạy (Autostart)</strong>.</li>
-                </ul>
+              <div style="font-size: 11.5px; line-height: 1.5; color: #fef3c7;">
+                Thông báo MB Bank có <strong>3 dòng</strong>:
+                <br>• Dòng 1: <em>TK 09xxx813|GD: +10,000VND</em> (Dòng tiêu đề chính)
+                <br>• Dòng 2: <em>29/08/26 15:50 |SD: 720,505VND</em>
+                <br>• Dòng 3: <em>ND: 05CH7KCEA7D9-VOCA MJFITS6BTHWAJB6M S5</em> (Dòng mở rộng BigText)
+                <br><br>
+                👉 Nếu ở Trigger bạn cài <em>Nội dung: Chứa VOCA</em>, MacroDroid chỉ kiểm tra Dòng 1 (không có chữ VOCA) nên nó <strong>bỏ qua không kích hoạt</strong>!
+                <br>👉 <strong>CÁCH SỬA 100%:</strong> Đặt cả Tiêu đề và Nội dung tin nhắn trong Trigger là <strong>🔘 Bất kỳ</strong> (để cứ MB Bank có thông báo là kích hoạt ngay, VocaFlow trên máy tính sẽ tự lọc!).
               </div>
             </div>
 
-            <!-- STREAMLINED 1-ACTION CONFIG -->
-            <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; color: #a7f3d0;">
-              <strong style="font-size: 12.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                <span>⚡</span> <span>CẤU HÌNH MACRODROID SIÊU ĐƠN GIẢN (CHỈ 1 ACTION DUY NHẤT):</span>
-              </strong>
-              <div style="font-size: 11.5px; color: #d1fae5;">
-                Điện thoại <strong>chỉ cần gửi nguyên văn nội dung tin nhắn thô</strong> lên Firebase. Toàn bộ việc bóc tách UID 16 ký tự, mã gói và đối soát sẽ được <strong>VocaFlow kết hợp với AI Gemini</strong> trên máy tính tự động giải quyết 100%!
-              </div>
+            <!-- PERMISSIONS -->
+            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; color: #fca5a5; font-size: 11.5px;">
+              <strong>⚠️ Đảm bảo đã cấp đủ 2 quyền hệ thống:</strong>
+              <br>1. <em>Quyền truy cập thông báo:</em> Cài đặt &gt; Ứng dụng &gt; Quyền đặc biệt &gt; Truy cập thông báo &gt; Bật MacroDroid.
+              <br>2. <em>Tắt tiết kiệm pin:</em> Cài đặt &gt; Quản lý ứng dụng &gt; MacroDroid &gt; Tiết kiệm pin chọn "Không giới hạn".
             </div>
 
+            <!-- EXACT STEPS -->
             <ol style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 12px;">
               <li>
                 <strong style="color: #f87171; font-size: 12.5px;">🔴 1. TRIGGER (Kích hoạt - Màu đỏ):</strong>
-                <br>• Bấm dấu <strong>+ màu đỏ</strong> &gt; Chọn <em>Sự kiện thiết bị / Thông báo &gt; Thông báo đã nhận</em>.
-                <br>• Chọn Ứng dụng: Tích chọn <strong>MB Bank</strong> (hoặc app ngân hàng của bạn) &gt; Bấm OK.
+                <br>• Chọn <em>Sự kiện thiết bị / Thông báo &gt; Thông báo đã nhận</em>.
+                <br>• Chọn Ứng dụng: Tích chọn <strong>MB Bank</strong> &gt; Bấm OK.
                 <br>• Ở màn hình bộ lọc:
-                  <br>&nbsp;&nbsp;- <strong>Tiêu đề:</strong> Chọn hình tròn <strong>🔘 Bất kỳ</strong>.
-                  <br>&nbsp;&nbsp;- <strong>Nội dung tin nhắn:</strong> Chọn hình tròn <strong>🔘 Chứa</strong> &gt; Nhập vào ô: <code style="color:#38bdf8; font-weight:700; font-size:12.5px;">VOCA</code>
-                  <br>&nbsp;&nbsp;- Tích chọn: <strong>Không phân biệt chữ viết hoa/thường</strong>.
+                  <br>&nbsp;&nbsp;- <strong>Tiêu đề:</strong> Chọn <strong>🔘 Bất kỳ</strong>.
+                  <br>&nbsp;&nbsp;- <strong>Nội dung tin nhắn:</strong> Chọn <strong>🔘 Bất kỳ</strong>.
               </li>
               <li>
-                <strong style="color: #60a5fa; font-size: 12.5px;">🔵 2. ACTION (Hành động - Màu xanh dương - Chỉ cần 1 cái duy nhất):</strong>
-                <br>• Bấm dấu <strong>+ màu xanh dương</strong> &gt; Chọn <em>Kết nối &gt; Yêu cầu HTTP (HTTP Request)</em>.
+                <strong style="color: #60a5fa; font-size: 12.5px;">🔵 2. ACTION (Hành động - Màu xanh dương):</strong>
+                <br>• Chọn <em>Kết nối &gt; Yêu cầu HTTP (HTTP Request)</em>.
                 <br>• <strong>Tab Cài đặt:</strong>
-                  <br>&nbsp;&nbsp;- Yêu cầu phương thức: Chọn <strong>POST</strong>
-                  <br>&nbsp;&nbsp;- Nhập URL: <code style="color:#38bdf8; word-break:break-all; font-weight:700;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
+                  <br>&nbsp;&nbsp;- Yêu cầu phương thức: <strong>POST</strong>
+                  <br>&nbsp;&nbsp;- URL: <code style="color:#38bdf8; word-break:break-all; font-weight:700;">https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app/bank_transactions.json</code>
                 <br>• <strong>Tab Nội dung:</strong>
-                  <br>&nbsp;&nbsp;- Loại nội dung: Chọn <strong>application/json</strong>
-                  <br>&nbsp;&nbsp;- Nội dung (Văn bản): Xóa sạch và dán chính xác đoạn JSON sau:
+                  <br>&nbsp;&nbsp;- Loại nội dung: <strong>application/json</strong>
+                  <br>&nbsp;&nbsp;- Nội dung (Văn bản): Dán đoạn JSON chuẩn sau:
                   <pre style="background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 8px; font-size: 12px; margin: 6px 0; color:#34d399; font-family: monospace; border: 1px solid rgba(16,185,129,0.3);">{
-  "content": "[not_text]",
+  "content": "[not_text] [not_sub_text] [not_ticker]",
   "title": "[not_title]",
   "status": "pending",
   "timestamp": [system_time]
 }</pre>
               </li>
               <li>
-                <strong style="color: #fbbf24; font-size: 12.5px;">🟢 3. LƯU & HOÀN TẤT:</strong>
-                <br>• Bấm dấu <strong>Tích V</strong> ở góc trên bên phải &gt; Đặt tên Macro là <em>"VocaFlow MB Bank"</em>.
-                <br>• Thử nghiệm: Bấm dấu <strong>...</strong> bên cạnh Macro &gt; Chọn <strong>Thử nghiệm các hành động (Test Actions)</strong> &gt; Mở VocaFlow bấm <strong>🔄 Làm Mới Logs</strong> để xem kết quả!
+                <strong style="color: #fbbf24; font-size: 12.5px;">🟢 3. LƯU MACRO (Dấu V) & HOÀN TẤT:</strong>
+                <br>• Bấm dấu <strong>Tích V</strong> góc trên bên phải để lưu.
+                <br>• Từ giờ, mỗi khi có thông báo chuyển tiền từ MB Bank, thông tin sẽ được đẩy thẳng về VocaFlow ngay lập tức!
               </li>
             </ol>
           </div>

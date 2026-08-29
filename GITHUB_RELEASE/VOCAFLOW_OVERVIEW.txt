@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.6 (Build 211) - AI Gemini Reconciler & Streamlined MacroDroid Guide
+Phiên bản: v0.10.8-alpha-10.7 (Build 212) - MB Bank Multi-line Notification Fix & Comprehensive Guide
 ================================================================================
-1. [AI Gemini & Multi-Layer Transaction Reconciler] Nâng cấp bộ não đối soát 3 lớp (Regex chuẩn, Quét mờ Fuzzy, và Trợ lý AI Gemini đối soát giao dịch ghi chú tự do).
-2. [Cập Nhật Hướng Dẫn MacroDroid Chuẩn 100%] Hướng dẫn tinh gọn 1 Action duy nhất (gửi text thô [not_text]), kèm cảnh báo cấp quyền truy cập thông báo & tắt tiết kiệm pin trên Android.
-3. [Nâng Cấp Giao Diện Macro Feed Chi Tiết] Thẻ giao dịch hiển thị số tiền nạp, tên học viên kèm avatar, giải thích từ AI và nút bấm kích hoạt 1-Click.
+1. [Khắc Phục 100% Lỗi Trigger Thông Báo MB Bank] Phân tích và hướng dẫn loại bỏ bộ lọc chữ ở Trigger để tránh lỗi MB Bank phân tách nội dung vào dòng mở rộng BigText.
+2. [Cập Nhật Bộ Nhận Diện Giao Dịch] Hỗ trợ trọn vẹn cú pháp tiền tố tài khoản phụ `05CH7KCEA7D9-VOCA <UID_16> <MÃ>`.
+3. [Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân] Xuất bản bản cài đặt Desktop và Web Single-File v0.10.8-alpha-10.7.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.6 (Build 211)
+Phiên bản hiện tại : v0.10.8-alpha-10.7 (Build 212)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.7 (Build 212 - MB BANK MULTI-LINE NOTIFICATION FIX):
+  - Khắc Phục Triệt Để Cơ Chế Trigger MacroDroid Cho MB Bank:
+    * Giải thích cơ chế MB Bank chia thông báo thành 3 dòng (Dòng 1 là số tiền, Dòng 3 mới là nội dung chuyển khoản).
+    * Hướng dẫn thiết lập Trigger chế độ Bất Kỳ (Any) để không bị Android/MacroDroid bỏ qua thông báo.
+    * Gửi chuỗi kết hợp `[not_text] [not_sub_text] [not_ticker]` lên Cloud để VocaFlow tự bóc tách.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.7.
 • 👑 v0.10.8-alpha-10.6 (Build 211 - AI GEMINI RECONCILER & STREAMLINED MACRODROID GUIDE):
   - Tích Hợp Trợ Lý AI Gemini Đối Soát Giao Dịch Ngân Hàng:
     * Cơ chế 3 tầng: 1. Regex chuẩn `VOCA <UID_16> <MÃ>` $\rightarrow$ 2. Quét mờ Fuzzy so khớp danh sách học viên $\rightarrow$ 3. AI Gemini phân tích cú pháp tự do khi khách chuyển khoản ghi chú tùy ý.
@@ -409,6 +415,12 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.7 (Build 212 - MB BANK MULTI-LINE NOTIFICATION FIX):
+  - Khắc Phục Triệt Để Cơ Chế Trigger MacroDroid Cho MB Bank:
+    * Giải thích cơ chế MB Bank chia thông báo thành 3 dòng (Dòng 1 là số tiền, Dòng 3 mới là nội dung chuyển khoản).
+    * Hướng dẫn thiết lập Trigger chế độ Bất Kỳ (Any) để không bị Android/MacroDroid bỏ qua thông báo.
+    * Gửi chuỗi kết hợp `[not_text] [not_sub_text] [not_ticker]` lên Cloud để VocaFlow tự bóc tách.
+  - Đồng Bộ Số Hiệu Phiên Bản & Đóng Gói Nhị Phân Windows Native v0.10.8-alpha-10.7.
 • 👑 v0.10.8-alpha-10.6 (Build 211 - AI GEMINI RECONCILER & STREAMLINED MACRODROID GUIDE):
   - Tích Hợp Trợ Lý AI Gemini Đối Soát Giao Dịch Ngân Hàng:
     * Cơ chế 3 tầng: 1. Regex chuẩn `VOCA <UID_16> <MÃ>` $\rightarrow$ 2. Quét mờ Fuzzy so khớp danh sách học viên $\rightarrow$ 3. AI Gemini phân tích cú pháp tự do khi khách chuyển khoản ghi chú tùy ý.
