@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.12</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.13</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -28925,7 +28925,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       // 3. Fallback regex
       const results = [];
-      const regex = /\\[\\s*"([^"]+)"\\s*,\\s*"([^"]*)"\\s*,\\s*"([^"]*)"\\s*,\\s*"([^"]*)"(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?\\s*\\]/g;
+      const regex = /\[\s*"([^"]+)"\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?\s*\]/g;
       let match;
       while ((match = regex.exec(cleaned)) !== null) {
         results.push([

@@ -1,14 +1,13 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.12 (Build 217) - Study Session Flow Fixes, Audio Replay & Universal AI Parser
+Phiên bản: v0.10.8-alpha-10.13 (Build 218) - Hotfix Regex Syntax & Complete App Initialization
 ================================================================================
-1. [Sửa Loa Phát Âm Khi Đã Trả Lời / Bỏ Qua] Cho phép nghe lại phát âm không giới hạn sau khi đã giải/bỏ qua từ ở Luyện Viết (Spelling) và Luyện Nói (Speaking).
-2. [Sửa Màn Hình Tổng Kết & Vòng Lặp Cộng Tiền] Khắc phục lỗi biến tỷ lệ quy mô khiến màn hình tổng kết Quiz/Spelling bị chặn và ngăn chặn cộng điểm lặp lại.
-3. [Chuẩn Hóa Điểm Tinh Thông & Parser AI Đa Năng] Đảm bảo cập nhật điểm tinh thông chuẩn xác và nâng cấp parser AI nhận diện trọn vẹn mọi định dạng JSON từ Gemini.
+1. [Khắc Phục Lỗi Cú Pháp Regex] Sửa lỗi thoát ký tự Regex trong bộ phân giải mảng AI làm chặn toàn bộ JavaScript lúc khởi tạo ứng dụng.
+2. [Khởi Tạo Trơn Tru 100%] Đảm bảo mọi màn hình (Danh sách bộ từ, Trắc nghiệm, Luyện viết, Luyện nói) hoạt động mượt mà và tương tác tức thì.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.12 (Build 217)
+Phiên bản hiện tại : v0.10.8-alpha-10.13 (Build 218)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +24,10 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.13 (Build 218 - HOTFIX REGEX SYNTAX & COMPLETE APP INITIALIZATION):
+  - Khắc phục triệt để lỗi cú pháp Regex trong bộ phân giải dữ liệu AI khiến ứng dụng bị đơ trắng/không bấm được.
+  - Phục hồi tương tác 100% cho toàn bộ các nút bấm, tải bộ từ, luyện viết và trắc nghiệm.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.13 trên toàn bộ các nền tảng Desktop & Web Single-File.
 • 👑 v0.10.8-alpha-10.12 (Build 217 - STUDY SESSION FLOW FIXES, AUDIO REPLAY & UNIVERSAL AI PARSER):
   - Mở khóa tính năng nghe lại phát âm không giới hạn sau khi đã trả lời đúng hoặc bỏ qua từ (Spelling & Speaking).
   - Khắc phục lỗi màn hình tổng kết không hiện ở Quiz và Luyện Viết (Spelling), chặn vòng lặp cộng tiền khi nhấn tiếp tục.
@@ -446,6 +449,10 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.13 (Build 218 - HOTFIX REGEX SYNTAX & COMPLETE APP INITIALIZATION):
+  - Khắc phục triệt để lỗi cú pháp Regex trong bộ phân giải dữ liệu AI khiến ứng dụng bị đơ trắng/không bấm được.
+  - Phục hồi tương tác 100% cho toàn bộ các nút bấm, tải bộ từ, luyện viết và trắc nghiệm.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.13 trên toàn bộ các nền tảng Desktop & Web Single-File.
 • 👑 v0.10.8-alpha-10.12 (Build 217 - STUDY SESSION FLOW FIXES, AUDIO REPLAY & UNIVERSAL AI PARSER):
   - Mở khóa tính năng nghe lại phát âm không giới hạn sau khi đã trả lời đúng hoặc bỏ qua từ (Spelling & Speaking).
   - Khắc phục lỗi màn hình tổng kết không hiện ở Quiz và Luyện Viết (Spelling), chặn vòng lặp cộng tiền khi nhấn tiếp tục.
