@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.11</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.12</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2927,7 +2927,7 @@
                 <span id="spelling-detail-cefr" class="badge badge-cefr">CEFR</span>
                 <span id="spelling-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
               </div>
-              <button class="btn btn-outline btn-icon" onclick="speakSpellingTerm()" style="width: 32px; height: 32px; border-radius: 50%;" title="Nghe phát âm">
+              <button class="btn btn-outline btn-icon" onclick="speakSpellingTerm(false)" style="width: 32px; height: 32px; border-radius: 50%; cursor: pointer;" title="Nghe phát âm miễn phí">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
             </div>
@@ -20500,6 +20500,13 @@ function switchPublisherTab(tab) {
         spellingActiveTimeMs += (Date.now() - spellingQuestionStartTime);
         spellingQuestionStartTime = null;
       }
+
+      if (spellingIsCompleted) {
+        openModal('modal-spelling-result');
+        return;
+      }
+      spellingIsCompleted = true;
+
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
       const elapsedSec = Math.max(1, Math.round(spellingActiveTimeMs / 1000));
       const mins = Math.floor(elapsedSec / 60);
@@ -20514,7 +20521,6 @@ function switchPublisherTab(tab) {
         if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
       }
 
-      spellingIsCompleted = true;
       const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
       spellingPointsEarned = res.finalPts;
       if (spellingPointsEarned !== 0) {
@@ -20543,7 +20549,7 @@ function switchPublisherTab(tab) {
       }
 
       if (scoreRatioEl) scoreRatioEl.textContent = spellingCorrectCount + '/' + totalWords + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' Xu (Quy mô x' + deckSizeMult + ')';
+      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' Xu (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
       if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
@@ -20729,7 +20735,12 @@ function switchPublisherTab(tab) {
       const btn = document.getElementById('spelling-clue-audio');
       if (!btn) return;
       const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
-      if (spellingAudioPlaysLeft <= 0) {
+      if (spellingIsAnswered) {
+        btn.innerHTML = `<svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Nghe lại phát âm</span>`;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        btn.disabled = false;
+      } else if (spellingAudioPlaysLeft <= 0) {
         btn.innerHTML = `<svg class="icon icon-sm"><use href="#i-volume"/></svg> <span>Hết lượt nghe (0/${max})</span>`;
         btn.style.opacity = '0.5';
         btn.style.cursor = 'not-allowed';
@@ -20749,6 +20760,12 @@ function switchPublisherTab(tab) {
 
       const max = getMaxSpellingAudioPlays(currentSpellingDifficulty);
       if (isManual) {
+        // When already answered or skipped, allow UNLIMITED listening so user can practice
+        if (spellingIsAnswered) {
+          speakText(questionWord.term);
+          return;
+        }
+
         if (spellingAudioPlaysLeft <= 0) {
           showToast(`⚠️ Bạn đã hết lượt nghe phát âm cho từ này (tối đa ${max} lần ở cấp độ ${getSpellingDifficultyLabel(currentSpellingDifficulty)})!`);
           return;
@@ -22097,6 +22114,13 @@ Yêu cầu nghiêm ngặt:
         quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
         quizQuestionStartTime = null;
       }
+
+      if (quizIsCompleted) {
+        openModal('modal-quiz-result');
+        return;
+      }
+      quizIsCompleted = true;
+
       const totalSeconds = Math.max(1, Math.round(quizActiveTimeMs / 1000));
       const mins = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
@@ -22105,7 +22129,6 @@ Yêu cầu nghiêm ngặt:
       const total = quizTotalQuestions || quizList.length || 1;
       const accuracyPct = Math.round((quizCorrectCount / total) * 100);
       const spq = (totalSeconds / total).toFixed(1);
-      quizIsCompleted = true;
 
       const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
       quizPointsEarned = res.finalPts;
@@ -22134,7 +22157,7 @@ Yêu cầu nghiêm ngặt:
         diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty) + ' (Hệ số x' + mult + ' Điểm)';
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' Xu (Quy mô x' + deckSizeMult + ')';
+      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' Xu (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
@@ -28834,32 +28857,75 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (!rawText || typeof rawText !== 'string') return [];
       let cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-      // Find outer array
-      const startIdx = cleaned.indexOf('[');
-      if (startIdx === -1) return [];
-      cleaned = cleaned.substring(startIdx);
+      function objectToRow(obj) {
+        if (!obj || typeof obj !== 'object') return null;
+        const term = (obj.term || obj.word || obj.vocab || obj.name || '').trim();
+        if (!term) return null;
+        const ipa = (obj.phonetic_ipa || obj.phonetic || obj.ipa || obj.pronunciation || '').trim();
+        const pos = (obj.part_of_speech || obj.pos || obj.type || 'noun').trim();
+        const def = (obj.definition_vietnamese || obj.definition || obj.meaning_vi || obj.meaning || obj.def || '').trim();
+        const ex = (obj.example_sentence || obj.example || obj.sentence || '').trim();
+        const cefr = (obj.cefr_level || obj.cefr || obj.level || 'B1').trim();
+        const colloc = Array.isArray(obj.collocations) ? obj.collocations.join(', ') : (obj.collocations_csv || obj.collocations || '').trim();
+        const syn = Array.isArray(obj.synonyms) ? obj.synonyms.join(', ') : (obj.synonyms_csv || obj.synonyms || '').trim();
+        const ant = Array.isArray(obj.antonyms) ? obj.antonyms.join(', ') : (obj.antonyms_csv || obj.antonyms || '').trim();
+        const note = (obj.note || obj.mnemonic || obj.tips || '').trim();
+        return [term, ipa, pos, def, ex, cefr, colloc, syn, ant, note];
+      }
 
-      // Attempt 1: Direct JSON.parse
+      // 1. Direct JSON.parse
       try {
         const parsed = JSON.parse(cleaned);
-        if (Array.isArray(parsed)) return parsed.filter(item => Array.isArray(item) && item.length >= 4);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed[0])) {
+            return parsed.filter(item => Array.isArray(item) && item.length >= 2);
+          } else if (typeof parsed[0] === 'object') {
+            const rows = parsed.map(objectToRow).filter(Boolean);
+            if (rows.length > 0) return rows;
+          }
+        } else if (parsed && typeof parsed === 'object') {
+          const arr = parsed.words || parsed.vocabulary || parsed.data || parsed.items || parsed.deck || Object.values(parsed).find(v => Array.isArray(v));
+          if (Array.isArray(arr) && arr.length > 0) {
+            if (Array.isArray(arr[0])) {
+              return arr.filter(item => Array.isArray(item) && item.length >= 2);
+            } else if (typeof arr[0] === 'object') {
+              const rows = arr.map(objectToRow).filter(Boolean);
+              if (rows.length > 0) return rows;
+            }
+          }
+        }
       } catch (e) {}
 
-      // Attempt 2: Auto-repair cut-off array by finding last closed element ']'
+      // 2. Substring between '[' and ']' or '{' and '}'
+      const startIdx = cleaned.indexOf('[');
       const lastClosed = cleaned.lastIndexOf(']');
-      if (lastClosed !== -1) {
-        const sub = cleaned.substring(0, lastClosed + 1);
+      if (startIdx !== -1 && lastClosed > startIdx) {
         try {
-          let testStr = sub;
-          if (!testStr.endsWith(']')) testStr += ']';
-          const p = JSON.parse(testStr);
-          if (Array.isArray(p)) return p.filter(item => Array.isArray(item) && item.length >= 4);
+          const p = JSON.parse(cleaned.substring(startIdx, lastClosed + 1));
+          if (Array.isArray(p)) {
+            if (Array.isArray(p[0])) return p.filter(item => Array.isArray(item) && item.length >= 2);
+            const rows = p.map(objectToRow).filter(Boolean);
+            if (rows.length > 0) return rows;
+          }
         } catch (err) {}
       }
 
-      // Attempt 3: Regex extract complete sub-arrays ["term", ...]
-      const regex = /\[\s*"([^"]+)"\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?(?:\s*,\s*"([^"]*)")?\s*\]/g;
+      const objStart = cleaned.indexOf('{');
+      const objEnd = cleaned.lastIndexOf('}');
+      if (objStart !== -1 && objEnd > objStart) {
+        try {
+          const p = JSON.parse(cleaned.substring(objStart, objEnd + 1));
+          const arr = p.words || p.vocabulary || p.data || p.items || Object.values(p).find(v => Array.isArray(v));
+          if (Array.isArray(arr)) {
+            const rows = arr.map(objectToRow).filter(Boolean);
+            if (rows.length > 0) return rows;
+          }
+        } catch (err) {}
+      }
+
+      // 3. Fallback regex
       const results = [];
+      const regex = /\\[\\s*"([^"]+)"\\s*,\\s*"([^"]*)"\\s*,\\s*"([^"]*)"\\s*,\\s*"([^"]*)"(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?(?:\\s*,\\s*"([^"]*)")?\\s*\\]/g;
       let match;
       while ((match = regex.exec(cleaned)) !== null) {
         results.push([
@@ -28871,7 +28937,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           match[6] || 'B1',
           match[7] || '',
           match[8] || '',
-          match[9] || ''
+          match[9] || '',
+          match[10] || ''
         ]);
       }
       return results;
