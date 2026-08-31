@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.14 (Build 219) - AI Distractor Restoration & Chameleon Matching Engine
+Phiên bản: v0.10.8-alpha-10.15 (Build 220) - 2-Way Realtime Cloud Sync & Flow / Streak Union Engine
 ================================================================================
-1. [Khôi Phục Phương Án Bẫy AI Quiz] Tích hợp bộ tạo phương án bẫy bằng AI cho các cấp độ: Trung bình (1 bẫy AI), Khó (2 bẫy AI) và Cực khó (3 bẫy AI).
-2. [Thuật Toán Mạo Danh Chameleon] Bẫy AI sao chép 100% văn phong, độ dài, từ loại, viết hoa và phần giải thích ngoặc đơn của đáp án đúng, tạo độ nhiễu siêu khó phân biệt.
-3. [Tải Nền Đệm Trước (Prefetch)] Tự động nạp trước bẫy AI cho 3 câu hỏi kế tiếp trong nền, đem lại trải nghiệm làm bài trắc nghiệm siêu tốc không có độ trễ.
+1. [Đồng Bộ Hai Chiều Dòng Chảy Học Tập (Flow)] Bổ sung flowDates, flowFreezeDates và flowFreezes vào payload pushCurrentDatabaseToCloud tự động nền.
+2. [Hợp Nhất Chuỗi Ngày Học (Union Merge)] Tự động hợp nhất (Union Set) tất cả các ngày học giữa điện thoại và máy tính, không bao giờ bị mất flow hay streak khi chuyển đổi thiết bị.
+3. [Tự Động Nạp Khi Khởi Động] Tải và cập nhật tức thì dữ liệu Dòng Chảy & Chuỗi ngày học từ Cloud ngay khi mở ứng dụng trên bất kỳ thiết bị nào.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.14 (Build 219)
+Phiên bản hiện tại : v0.10.8-alpha-10.15 (Build 220)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.15 (Build 220 - 2-WAY REALTIME CLOUD SYNC & FLOW / STREAK UNION ENGINE):
+  - Khắc phục triệt để lỗi không đồng bộ Dòng Chảy (Flow) và Chuỗi ngày học giữa Điện thoại và Máy tính (Laptop).
+  - Tích hợp trường dữ liệu Flow vào payload pushCurrentDatabaseToCloud tự động chạy nền sau mỗi bài học.
+  - Nâng cấp thuật toán Bidirectional Union Merge giúp gom toàn bộ ngày học từ mọi thiết bị, cập nhật giao diện Lịch Dòng Chảy tức thì.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.15 trên toàn bộ hệ sinh thái Web & Desktop.
 • 👑 v0.10.8-alpha-10.14 (Build 219 - AI DISTRACTOR RESTORATION & CHAMELEON MATCHING ENGINE):
   - Khôi phục tính năng tạo phương án bẫy AI trong Quiz: Trung bình (1 bẫy AI), Khó (2 bẫy AI), Cực khó (3 bẫy AI).
   - Thuật toán Chameleon Style Matching ngụy trang phương án bẫy bám sát 100% định dạng, dấu câu, chữ hoa và độ dài của câu trả lời thật.
@@ -455,6 +460,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.15 (Build 220 - 2-WAY REALTIME CLOUD SYNC & FLOW / STREAK UNION ENGINE):
+  - Khắc phục triệt để lỗi không đồng bộ Dòng Chảy (Flow) và Chuỗi ngày học giữa Điện thoại và Máy tính (Laptop).
+  - Tích hợp trường dữ liệu Flow vào payload pushCurrentDatabaseToCloud tự động chạy nền sau mỗi bài học.
+  - Nâng cấp thuật toán Bidirectional Union Merge giúp gom toàn bộ ngày học từ mọi thiết bị, cập nhật giao diện Lịch Dòng Chảy tức thì.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.15 trên toàn bộ hệ sinh thái Web & Desktop.
 • 👑 v0.10.8-alpha-10.14 (Build 219 - AI DISTRACTOR RESTORATION & CHAMELEON MATCHING ENGINE):
   - Khôi phục tính năng tạo phương án bẫy AI trong Quiz: Trung bình (1 bẫy AI), Khó (2 bẫy AI), Cực khó (3 bẫy AI).
   - Thuật toán Chameleon Style Matching ngụy trang phương án bẫy bám sát 100% định dạng, dấu câu, chữ hoa và độ dài của câu trả lời thật.

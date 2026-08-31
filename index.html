@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.14</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.15</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -10398,31 +10398,50 @@ function switchPublisherTab(tab) {
                 }
               }
 
-              // Sync Flow from Cloud (v0.10.8-alpha-10.3)
-              if (Array.isArray(uData.flowDates)) {
+              // Sync Flow from Cloud on Startup (v0.10.8-alpha-10.15 - Bidirectional Union Merge)
+              const remoteStartupFlowDates = Array.isArray(uData.flowDates) 
+                ? uData.flowDates 
+                : ((uData.flow && Array.isArray(uData.flow.dates)) 
+                  ? uData.flow.dates 
+                  : (Array.isArray(uData.studyDates) ? uData.studyDates : []));
+
+              if (remoteStartupFlowDates && remoteStartupFlowDates.length > 0) {
                 let localFlowDates = getFlowDates();
-                uData.flowDates.forEach(d => {
-                  if (!localFlowDates.includes(d)) localFlowDates.push(d);
-                });
-                localStorage.setItem('vocaflow_flow_dates', JSON.stringify(localFlowDates));
-                localStorage.setItem('vocaflow_study_dates', JSON.stringify(localFlowDates));
+                const unionSet = new Set([...localFlowDates, ...remoteStartupFlowDates]);
+                const mergedFlowDates = Array.from(unionSet).sort();
+                localStorage.setItem('vocaflow_flow_dates', JSON.stringify(mergedFlowDates));
+                localStorage.setItem('vocaflow_study_dates', JSON.stringify(mergedFlowDates));
               }
-              if (Array.isArray(uData.flowFreezeDates)) {
+
+              const remoteStartupFreezeDates = Array.isArray(uData.flowFreezeDates)
+                ? uData.flowFreezeDates
+                : ((uData.flow && Array.isArray(uData.flow.freezeDates))
+                  ? uData.flow.freezeDates
+                  : (Array.isArray(uData.streakFreezeHistory) ? uData.streakFreezeHistory : []));
+
+              if (remoteStartupFreezeDates && remoteStartupFreezeDates.length > 0) {
                 let localFreezeDates = getFlowFreezeDates();
-                uData.flowFreezeDates.forEach(d => {
-                  if (!localFreezeDates.includes(d)) localFreezeDates.push(d);
-                });
-                localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(localFreezeDates));
-                localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(localFreezeDates));
+                const unionSet = new Set([...localFreezeDates, ...remoteStartupFreezeDates]);
+                const mergedFreezeDates = Array.from(unionSet).sort();
+                localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
+                localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
               }
-              if (uData.flowFreezes !== undefined) {
-                const fz = parseInt(uData.flowFreezes, 10);
-                if (!isNaN(fz)) {
-                  localStorage.setItem('vocaflow_flow_freezes', fz.toString());
-                  localStorage.setItem('vocaflow_streak_freezes', fz.toString());
-                }
+
+              const remoteStartupFreezes = (uData.flowFreezes !== undefined)
+                ? parseInt(uData.flowFreezes, 10)
+                : ((uData.flow && uData.flow.freezes !== undefined)
+                  ? parseInt(uData.flow.freezes, 10)
+                  : (uData.streakFreezes !== undefined ? parseInt(uData.streakFreezes, 10) : NaN));
+
+              if (!isNaN(remoteStartupFreezes)) {
+                const localFreezes = getUserFlowFreezes();
+                const maxFreezes = Math.max(localFreezes, remoteStartupFreezes);
+                localStorage.setItem('vocaflow_flow_freezes', maxFreezes.toString());
+                localStorage.setItem('vocaflow_streak_freezes', maxFreezes.toString());
               }
+
               updateFlowUI();
+              if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
               if (changed) {
                 localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
                 updateAuthUI();
@@ -13456,6 +13475,17 @@ function switchPublisherTab(tab) {
             dailyCount: aiChatDailyCount,
             updatedAt: new Date().toISOString()
           },
+          flow: {
+            days: calculateCurrentFlow().currentFlow,
+            pureDays: calculateCurrentFlow().pureFlow,
+            max: calculateCurrentFlow().maxFlow,
+            freezes: getUserFlowFreezes(),
+            updatedAt: new Date().toISOString()
+          },
+          flowDates: getFlowDates(),
+          flowFreezeDates: getFlowFreezeDates(),
+          flowFreezes: getUserFlowFreezes(),
+          studyDates: getFlowDates(),
           points: getUserPoints(),
           hints: getUserHints(),
           skips: getUserSkips(),
@@ -13901,31 +13931,50 @@ function switchPublisherTab(tab) {
                   renderProfilePinnedBadges();
                 }
 
-                // Sync Flow from Cloud (v0.10.8-alpha-10.3)
-                if (Array.isArray(cloudData.flowDates)) {
+                // Sync Flow from Cloud (v0.10.8-alpha-10.15 - Bidirectional Union Merge)
+                const remoteFlowDates = Array.isArray(cloudData.flowDates) 
+                  ? cloudData.flowDates 
+                  : ((cloudData.flow && Array.isArray(cloudData.flow.dates)) 
+                    ? cloudData.flow.dates 
+                    : (Array.isArray(cloudData.studyDates) ? cloudData.studyDates : []));
+
+                if (remoteFlowDates && remoteFlowDates.length > 0) {
                   let localFlowDates = getFlowDates();
-                  cloudData.flowDates.forEach(d => {
-                    if (!localFlowDates.includes(d)) localFlowDates.push(d);
-                  });
-                  localStorage.setItem('vocaflow_flow_dates', JSON.stringify(localFlowDates));
-                  localStorage.setItem('vocaflow_study_dates', JSON.stringify(localFlowDates));
+                  const unionSet = new Set([...localFlowDates, ...remoteFlowDates]);
+                  const mergedFlowDates = Array.from(unionSet).sort();
+                  localStorage.setItem('vocaflow_flow_dates', JSON.stringify(mergedFlowDates));
+                  localStorage.setItem('vocaflow_study_dates', JSON.stringify(mergedFlowDates));
                 }
-                if (Array.isArray(cloudData.flowFreezeDates)) {
+
+                const remoteFreezeDates = Array.isArray(cloudData.flowFreezeDates)
+                  ? cloudData.flowFreezeDates
+                  : ((cloudData.flow && Array.isArray(cloudData.flow.freezeDates))
+                    ? cloudData.flow.freezeDates
+                    : (Array.isArray(cloudData.streakFreezeHistory) ? cloudData.streakFreezeHistory : []));
+
+                if (remoteFreezeDates && remoteFreezeDates.length > 0) {
                   let localFreezeDates = getFlowFreezeDates();
-                  cloudData.flowFreezeDates.forEach(d => {
-                    if (!localFreezeDates.includes(d)) localFreezeDates.push(d);
-                  });
-                  localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(localFreezeDates));
-                  localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(localFreezeDates));
+                  const unionSet = new Set([...localFreezeDates, ...remoteFreezeDates]);
+                  const mergedFreezeDates = Array.from(unionSet).sort();
+                  localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
+                  localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
                 }
-                if (cloudData.flowFreezes !== undefined) {
-                  const fz = parseInt(cloudData.flowFreezes, 10);
-                  if (!isNaN(fz)) {
-                    localStorage.setItem('vocaflow_flow_freezes', fz.toString());
-                    localStorage.setItem('vocaflow_streak_freezes', fz.toString());
-                  }
+
+                const remoteFreezes = (cloudData.flowFreezes !== undefined)
+                  ? parseInt(cloudData.flowFreezes, 10)
+                  : ((cloudData.flow && cloudData.flow.freezes !== undefined)
+                    ? parseInt(cloudData.flow.freezes, 10)
+                    : (cloudData.streakFreezes !== undefined ? parseInt(cloudData.streakFreezes, 10) : NaN));
+
+                if (!isNaN(remoteFreezes)) {
+                  const localFreezes = getUserFlowFreezes();
+                  const maxFreezes = Math.max(localFreezes, remoteFreezes);
+                  localStorage.setItem('vocaflow_flow_freezes', maxFreezes.toString());
+                  localStorage.setItem('vocaflow_streak_freezes', maxFreezes.toString());
                 }
+
                 updateFlowUI();
+                if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
 
                 // Sync Notifications from Cloud (with Tombstones & Read State Sync)
                 const cloudNotifs = (cloudData.notifications && typeof cloudData.notifications === 'object') ? Object.values(cloudData.notifications).filter(n => n && n.id) : [];
