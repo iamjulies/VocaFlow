@@ -1,14 +1,18 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 226 - Debug 0.4) - Multi-Image Banking Bill OCR & Admin Flow Freeze Adjustment
+Phiên bản: v0.10.8-released (Build 227 - Debug 0.5) - VIP Exclusive IELTS Vocabulary Decks (6.0-7.0, 7.0-8.0, 8.0-9.0)
 ================================================================================
-1. [AI Vision OCR Bóc Tách Nhiều Ảnh Bill Cùng Lúc] Hỗ trợ tải lên hoặc dán từ clipboard (Ctrl+V) tối đa 5 ảnh chụp màn hình / biên lai chuyển khoản ngân hàng trong 1 lần. AI Gemini Vision tự động nhận diện đồng loạt số tiền, mã 16 ký tự UID và gói dịch vụ; tích hợp nút "Kích Hoạt Toàn Bộ" 1-Click.
-2. [Điều Chỉnh Flow Freeze Trong Quản Trị Học Viên] Bổ sung trường nhập và các nút điều chỉnh nhanh (+1, +3, +5, Reset 0, Reset 3) số lượng Flow Freeze trực tiếp trong Modal Sửa Ví Học Viên (Publisher Portal), hiển thị badge Flow Freeze trực quan trên bảng danh sách học viên.
-3. [Đồng Bộ Flow Freeze Toàn Diện Lên Cloud] Cập nhật song song các nhánh `/economy/flowFreezes.json`, `/flowFreezes.json`, `/streakFreezes.json` và `/flow/freezes.json` trên Firebase RTDB, lập tức làm mới giao diện local nếu quản trị viên chỉnh sửa chính tài khoản đang đăng nhập.
+1. [3 Bộ Từ Vựng IELTS VIP Độc Quyền] Tích hợp sẵn 3 bộ từ vựng học thuật đỉnh cao biên soạn chuyên sâu theo chuẩn Cambridge & Oxford:
+   - IELTS 6.0 - 7.0 Trọng Tâm (B2-C1 Academic - 108 từ vựng).
+   - IELTS 7.0 - 8.0 Chuyên Sâu (C1-C2 Lexical Resource - 108 từ vựng).
+   - IELTS 8.0 - 9.0 Mastery (C2 Native Nuances - 108 từ vựng).
+2. [Đầy Đủ Thông Tin Học Thuật Chi Tiết] Mỗi từ vựng bao gồm: Từ vựng (Term), Phiên âm IPA chuẩn, Từ loại, Nghĩa tiếng Việt, Câu ví dụ học thuật dịch nghĩa, Collocations trọng tâm, Cấp độ CEFR và Ghi chú phân tích chi tiết.
+3. [Phân Quyền VIP & Trải Nghiệm Thư Viện] Gắn nhãn 👑 VIP Độc Quyền, khóa với tài khoản thông thường (xem trước 5 từ mẫu & hướng dẫn nâng cấp VIP), mở tải Miễn Phí 100% (0 Xu) cho Hội viên VIP. Bổ sung tab bộ lọc "👑 Gói VIP" trong Thư Viện VocaLibrary.
+4. [Bảo Toàn Trọn Đời Không Thu Hồi (Lifetime Offline Retention)] Bộ từ VIP khi đã cài đặt vào máy sẽ tồn tại vĩnh viễn trong danh sách bộ từ cục bộ, người dùng tiếp tục học tập và ôn luyện bình thường ngay cả khi gói VIP hết hạn.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 226)
+Phiên bản hiện tại : v0.10.8-released (Build 227 - Debug 0.5)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +27,16 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 227 - DEBUG 0.5 VIP EXCLUSIVE DECKS):
+  - Ra mắt 3 bộ từ vựng IELTS VIP Độc Quyền được trích xuất và tinh chỉnh từ kho dữ liệu học thuật chuẩn:
+    * `lib_deck_ielts_6_7`: Từ Vựng IELTS 6.0 - 7.0 Trọng Tâm (B2-C1 Academic - 108 từ).
+    * `lib_deck_ielts_7_8`: Từ Vựng IELTS 7.0 - 8.0 Chuyên Sâu (C1-C2 Lexical Resource - 108 từ).
+    * `lib_deck_ielts_8_9`: Từ Vựng IELTS 8.0 - 9.0 Mastery (C2 Native Nuances - 108 từ).
+  - Điền đầy đủ thông tin: Term, Phiên âm IPA, Từ loại, Nghĩa tiếng Việt, Câu ví dụ, Collocations, Cấp độ CEFR, Topic & Note.
+  - Khóa hoàn toàn cho tài khoản thường (xem trước 5 từ mẫu và mở modal nâng cấp VIP), mở tải miễn phí 100% (0 Xu) cho tài khoản VIP.
+  - Cơ chế Bảo Toàn Trọn Đời (Lifetime Offline Retention): Khi đã tải vào máy, sau khi gói VIP hết hạn người dùng vẫn học và sử dụng bình thường không bị thu hồi hay khóa lại.
+  - Bổ sung tab bộ lọc `👑 Gói VIP` trong Thư Viện VocaLibrary và gắn badge `👑 VIP` trên thẻ bộ từ cục bộ.
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 226 - DEBUG 0.4 POLISH):
   - Hỗ trợ tải lên và dán trực tiếp từ Clipboard (Ctrl+V) tối đa 5 ảnh biên lai / bill ngân hàng cùng lúc cho AI Gemini Vision OCR.
