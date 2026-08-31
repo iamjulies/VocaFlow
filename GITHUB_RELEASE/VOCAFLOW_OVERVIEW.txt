@@ -1,13 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.13 (Build 218) - Hotfix Regex Syntax & Complete App Initialization
+Phiên bản: v0.10.8-alpha-10.14 (Build 219) - AI Distractor Restoration & Chameleon Matching Engine
 ================================================================================
-1. [Khắc Phục Lỗi Cú Pháp Regex] Sửa lỗi thoát ký tự Regex trong bộ phân giải mảng AI làm chặn toàn bộ JavaScript lúc khởi tạo ứng dụng.
-2. [Khởi Tạo Trơn Tru 100%] Đảm bảo mọi màn hình (Danh sách bộ từ, Trắc nghiệm, Luyện viết, Luyện nói) hoạt động mượt mà và tương tác tức thì.
+1. [Khôi Phục Phương Án Bẫy AI Quiz] Tích hợp bộ tạo phương án bẫy bằng AI cho các cấp độ: Trung bình (1 bẫy AI), Khó (2 bẫy AI) và Cực khó (3 bẫy AI).
+2. [Thuật Toán Mạo Danh Chameleon] Bẫy AI sao chép 100% văn phong, độ dài, từ loại, viết hoa và phần giải thích ngoặc đơn của đáp án đúng, tạo độ nhiễu siêu khó phân biệt.
+3. [Tải Nền Đệm Trước (Prefetch)] Tự động nạp trước bẫy AI cho 3 câu hỏi kế tiếp trong nền, đem lại trải nghiệm làm bài trắc nghiệm siêu tốc không có độ trễ.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.13 (Build 218)
+Phiên bản hiện tại : v0.10.8-alpha-10.14 (Build 219)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -24,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.14 (Build 219 - AI DISTRACTOR RESTORATION & CHAMELEON MATCHING ENGINE):
+  - Khôi phục tính năng tạo phương án bẫy AI trong Quiz: Trung bình (1 bẫy AI), Khó (2 bẫy AI), Cực khó (3 bẫy AI).
+  - Thuật toán Chameleon Style Matching ngụy trang phương án bẫy bám sát 100% định dạng, dấu câu, chữ hoa và độ dài của câu trả lời thật.
+  - Tối ưu hóa xoay vòng đa API Key và nạp trước trong nền (Prefetching) giúp Quiz chạy mượt mà tức thì.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.14 trên toàn bộ hệ thống Desktop & Web.
 • 👑 v0.10.8-alpha-10.13 (Build 218 - HOTFIX REGEX SYNTAX & COMPLETE APP INITIALIZATION):
   - Khắc phục triệt để lỗi cú pháp Regex trong bộ phân giải dữ liệu AI khiến ứng dụng bị đơ trắng/không bấm được.
   - Phục hồi tương tác 100% cho toàn bộ các nút bấm, tải bộ từ, luyện viết và trắc nghiệm.
@@ -449,6 +455,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.14 (Build 219 - AI DISTRACTOR RESTORATION & CHAMELEON MATCHING ENGINE):
+  - Khôi phục tính năng tạo phương án bẫy AI trong Quiz: Trung bình (1 bẫy AI), Khó (2 bẫy AI), Cực khó (3 bẫy AI).
+  - Thuật toán Chameleon Style Matching ngụy trang phương án bẫy bám sát 100% định dạng, dấu câu, chữ hoa và độ dài của câu trả lời thật.
+  - Tối ưu hóa xoay vòng đa API Key và nạp trước trong nền (Prefetching) giúp Quiz chạy mượt mà tức thì.
+  - Đồng bộ số hiệu phiên bản v0.10.8-alpha-10.14 trên toàn bộ hệ thống Desktop & Web.
 • 👑 v0.10.8-alpha-10.13 (Build 218 - HOTFIX REGEX SYNTAX & COMPLETE APP INITIALIZATION):
   - Khắc phục triệt để lỗi cú pháp Regex trong bộ phân giải dữ liệu AI khiến ứng dụng bị đơ trắng/không bấm được.
   - Phục hồi tương tác 100% cho toàn bộ các nút bấm, tải bộ từ, luyện viết và trắc nghiệm.

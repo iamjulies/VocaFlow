@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.13</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.14</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -21338,83 +21338,130 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     async function fetchAiDistractors(questionWord, count) {
-      if (!count || count <= 0) return [];
-      const cacheKey = questionWord.id + '_' + count;
-      if (quizAiDistractorCache[cacheKey] && quizAiDistractorCache[cacheKey].length >= count) {
+      if (!questionWord || !count || count <= 0) return [];
+      const cacheKey = (questionWord.id || questionWord.term) + '_' + count;
+      if (quizAiDistractorCache[cacheKey] && Array.isArray(quizAiDistractorCache[cacheKey]) && quizAiDistractorCache[cacheKey].length >= count) {
         return quizAiDistractorCache[cacheKey].slice(0, count);
       }
 
-      const keys = getStoredApiKeys();
+      // Collect all available Gemini API keys
+      let keys = [];
+      if (typeof getStoredApiKeys === 'function') keys = getStoredApiKeys();
+      if (keys.length === 0 && Array.isArray(window.geminiApiKeys)) keys = window.geminiApiKeys.filter(k => k && k.trim());
+      if (keys.length === 0) {
+        const single = (window.geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+        if (single) keys.push(single);
+      }
+
       if (keys.length === 0) return [];
 
-      try {
-        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
-        const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
-        const pos = (questionWord.partOfSpeech || 'từ vựng').trim();
-        
-        const hasParens = /\([^)]+\)/.test(correctDef);
-        const isCap = /^[A-ZÀ-Ỹ]/.test(correctDef);
-        const hasDot = /\.$/.test(correctDef);
-        const wordCount = correctDef.split(/\s+/).length;
+      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+      if (!correctDef) return [];
+      const pos = (questionWord.partOfSpeech || questionWord.pos || 'từ vựng').trim();
+      const term = (questionWord.term || '').trim();
+      
+      const hasParens = /\([^)]+\)/.test(correctDef);
+      const isCap = /^[A-ZÀ-Ỹ]/.test(correctDef);
+      const hasDot = /\.$/.test(correctDef);
+      const wordCount = correctDef.split(/\s+/).length;
 
-        const prompt = 'Bạn là chuyên gia biên soạn đề thi trắc nghiệm tiếng Anh chuẩn quốc tế (SAT/IELTS Chameleon Distractor Generator).\n' +
-          'Từ tiếng Anh mục tiêu: "' + questionWord.term + '" (' + pos + ').\n' +
-          'Đáp án đúng chuẩn tiếng Việt: "' + correctDef + '".\n\n' +
-          'NHIỆM VỤ: Tạo chính xác ' + count + ' phương án SAI HOÀN TOÀN (distractors) 100% BẰNG TIẾNG VIỆT có phong cách trình bày MẠO DANH HOÀN HẢO ĐÁP ÁN ĐÚNG.\n\n' +
-          'QUY TẮC BẮT BUỘC ĐỂ MẠO DANH & ĐẢM BẢO ĐỀ THI ĐẲNG CẤP:\n' +
-          '1. NGÔN NGỮ BẮT BUỘC: 100% TIẾNG VIỆT TOÀN DIỆN. TUYỆT ĐỐI KHÔNG ĐƯỢC CHÈN HOẶC BẮT ĐẦU BẰNG TỪ/CỤM TỪ TIẾNG ANH (Ví dụ: CẤM ghi "Formal assessment (...)" hay bất kỳ từ tiếng Anh nào; BẮT BUỘC phải là nghĩa tiếng Việt như "Đánh giá tổng kết (...)" hoặc "Đánh giá định kỳ (...)").\n' +
-          '2. TUYỆT ĐỐI KHÔNG ĐƯỢC LÀ BẤT KỲ NÉT NGHĨA NÀO CỦA TỪ "' + questionWord.term + '" (Cấm nghĩa đen, nghĩa bóng, nghĩa lóng, nghĩa phụ của từ này).\n' +
-          '3. PHƯƠNG ÁN SAI PHẢI HOÀN TOÀN SAI ĐỐI VỚI TỪ "' + questionWord.term + '" nhưng tạo bẫy thông minh (nghĩa của từ phát âm tương tự, tiền tố/hậu tố dễ nhầm, từ cùng chủ đề - đều phải diễn đạt bằng tiếng Việt).\n' +
-          '4. MẠO DANH 100% PHONG CÁCH TRÌNH BÀY CỦA ĐÁP ÁN ĐÚNG:\n' +
-          '   - Viết hoa: ' + (isCap ? 'BẮT BUỘC VIẾT HOA chữ cái đầu tiên (như đáp án đúng)' : 'viết thường chữ cái đầu tiên (như đáp án đúng)') + '.\n' +
-          '   - Dấu ngoặc đơn: ' + (hasParens ? 'BẮT BUỘC PHẢI CÓ phần giải thích sắc thái trong dấu ngoặc đơn (...) tương tự độ dài đáp án đúng' : 'KHÔNG dùng dấu ngoặc đơn') + '.\n' +
-          '   - Độ dài & cấu trúc: Xấp xỉ ' + wordCount + ' từ, cấu trúc câu tương đương đáp án đúng.\n' +
-          '   - Dấu chấm cuối: ' + (hasDot ? 'BẮT BUỘC có dấu chấm (.) ở cuối' : 'KHÔNG có dấu chấm ở cuối') + '.\n' +
-          '5. ĐỊNH DẠNG: Trả về DUY NHẤT một JSON Array chuỗi tiếng Việt: ["phương án sai tiếng Việt 1"' + (count > 1 ? ', "phương án sai tiếng Việt 2"' : '') + (count > 2 ? ', "phương án sai tiếng Việt 3"' : '') + ']';
+      const prompt = 'Bạn là chuyên gia biên soạn đề thi tiếng Anh quốc tế (IELTS/SAT Chameleon Distractor Engine).\n' +
+        'Từ vựng tiếng Anh: "' + term + '" (' + pos + ').\n' +
+        'Định nghĩa đúng tiếng Việt: "' + correctDef + '".\n\n' +
+        'NHIỆM VỤ: Hãy tạo chính xác ' + count + ' phương án bẫy SAI HOÀN TOÀN bằng tiếng Việt để làm bài thi trắc nghiệm Quiz.\n\n' +
+        'CÁC YÊU CẦU BẮT BUỘC ĐỂ TẠO BẪY ĐỈNH CAO:\n' +
+        '1. HOÀN TOÀN SAI VỀ MẶT NGHĨA đối với từ "' + term + '", nhưng phải cực kỳ tinh vi và khó phân biệt (ví dụ: nghĩa của từ đồng âm, từ có tiền tố/hậu tố dễ nhầm, hoặc từ cùng chủ đề nhưng khác biệt về bản chất).\n' +
+        '2. MẠO DANH 100% PHONG CÁCH TRÌNH BÀY CỦA ĐÁP ÁN ĐÚNG:\n' +
+        '   - Cùng từ loại (' + pos + '), văn phong từ điển chuẩn mực.\n' +
+        '   - Độ dài câu xấp xỉ ' + wordCount + ' từ (cấu trúc ngữ pháp tương tự đáp án đúng).\n' +
+        '   - ' + (isCap ? 'Viết hoa chữ cái đầu tiên (như đáp án đúng).' : 'Viết thường chữ cái đầu tiên (như đáp án đúng).') + '\n' +
+        '   - ' + (hasParens ? 'BẮT BUỘC có phần giải thích sắc thái trong dấu ngoặc đơn (...) tương tự đáp án đúng.' : 'KHÔNG dùng dấu ngoặc đơn.') + '\n' +
+        '   - ' + (hasDot ? 'BẮT BUỘC có dấu chấm (.) ở cuối câu.' : 'KHÔNG có dấu chấm ở cuối câu.') + '\n' +
+        '3. 100% TIẾNG VIỆT TOÀN DIỆN: TUYỆT ĐỐI KHÔNG CHÈN TỪ TIẾNG ANH (Không ghi tiếng Anh rồi mới mở ngoặc tiếng Việt).\n' +
+        '4. ĐỊNH DẠNG TRẢ VỀ: DUY NHẤT một JSON Array chuỗi tiếng Việt chứa đúng ' + count + ' phương án:\n' +
+        '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4500);
+      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
+      const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+      const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
-        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
-          method: 'POST',
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              maxOutputTokens: 500,
-              temperature: 0.4,
-              responseMimeType: "application/json"
-            },
-            safetySettings: [
-              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-            ]
-          })
-        });
-        clearTimeout(timeoutId);
+      for (const k of keys) {
+        for (const m of models) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-        if (res.ok) {
-          const data = await res.json();
-          let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-          if (rawText) {
-            rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-            const parsed = JSON.parse(rawText);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              const cleanDistractors = parsed.map(s => chameleonStyleMatching((s || '').toString(), correctDef)).filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
-              if (cleanDistractors.length > 0) {
-                quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
-                saveAiDistractorCache();
-                return quizAiDistractorCache[cacheKey];
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+              method: 'POST',
+              signal: controller.signal,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  maxOutputTokens: 600,
+                  temperature: 0.35,
+                  responseMimeType: "application/json"
+                },
+                safetySettings: [
+                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ]
+              })
+            });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+              const data = await res.json();
+              let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+              if (rawText) {
+                rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                let parsed = null;
+                try {
+                  parsed = JSON.parse(rawText);
+                } catch (pe) {
+                  const sIdx = rawText.indexOf('[');
+                  const eIdx = rawText.lastIndexOf(']');
+                  if (sIdx !== -1 && eIdx > sIdx) {
+                    try { parsed = JSON.parse(rawText.substring(sIdx, eIdx + 1)); } catch (e) {}
+                  }
+                }
+
+                let distractorsList = [];
+                if (Array.isArray(parsed)) {
+                  distractorsList = parsed.map(s => typeof s === 'string' ? s : (s?.text || s?.definition || JSON.stringify(s)));
+                } else if (parsed && typeof parsed === 'object') {
+                  const arr = parsed.distractors || parsed.options || parsed.traps || parsed.choices || Object.values(parsed).find(v => Array.isArray(v));
+                  if (Array.isArray(arr)) {
+                    distractorsList = arr.map(s => typeof s === 'string' ? s : (s?.text || s?.definition || JSON.stringify(s)));
+                  }
+                }
+
+                if (distractorsList.length > 0) {
+                  const cleanDistractors = distractorsList
+                    .map(s => chameleonStyleMatching((s || '').toString().trim(), correctDef))
+                    .filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
+
+                  if (cleanDistractors.length >= count) {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                    quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
+                    saveAiDistractorCache();
+                    return quizAiDistractorCache[cacheKey];
+                  } else if (cleanDistractors.length > 0) {
+                    quizAiDistractorCache[cacheKey] = cleanDistractors;
+                    saveAiDistractorCache();
+                    return cleanDistractors;
+                  }
+                }
               }
             }
+          } catch (err) {
+            // Try next model / key on network timeout
           }
         }
-      } catch (err) {
-        console.warn('AI Distractors note:', err);
       }
+
       return [];
     }
 
@@ -21426,8 +21473,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       else if (currentQuizDifficulty === 'medium') count = 1;
       if (count <= 0) return;
 
-      // Asynchronously prefetch next 2 questions in background without blocking UI
-      [quizIndex + 1, quizIndex + 2].forEach(idx => {
+      [quizIndex + 1, quizIndex + 2, quizIndex + 3].forEach(idx => {
         if (idx < quizList.length) {
           const nextWord = quizList[idx];
           if (nextWord) {
@@ -21437,7 +21483,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       });
     }
 
-        // =========================================================================
+    // =========================================================================
     // DETAILED WORD CARD & AI QUIZ EXPLANATION ENGINE (v0.0.10.1g)
     // =========================================================================
     let currentQuizChoices = [];
