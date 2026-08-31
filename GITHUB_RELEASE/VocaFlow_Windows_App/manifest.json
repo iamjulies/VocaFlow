@@ -1,13 +1,16 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
   "name": "VocaFlow - Học Từ Vựng Tiếng Anh",
   "short_name": "VocaFlow",
-  "start_url": "./",
-  "scope": "./",
+  "id": "/VocaFlow/",
+  "start_url": "/VocaFlow/",
+  "scope": "/VocaFlow/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#4f46e5",
   "description": "Ứng dụng học từ vựng tiếng Anh cá nhân hóa với Flashcard 3D, Quiz trắc nghiệm và đồng bộ Excel offline.",
   "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "icons/Icon-192.png",

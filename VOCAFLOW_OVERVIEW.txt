@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 225 - Debug 0.3) - Real-Time Public Profile Balance & Multi-Layer Economy Sync
+Phiên bản: v0.10.8-released (Build 226 - Debug 0.4) - Multi-Image Banking Bill OCR & Admin Flow Freeze Adjustment
 ================================================================================
-1. [Đồng Bộ Số Dư Ví / Xu Lên Public Profile] Khắc phục triệt để lỗi người khác xem hồ sơ công khai hiển thị 0 Xu trong khi chủ tài khoản có số dư thực tế.
-2. [Đồng Bộ Kinh Tế Đa Tầng (Multi-Layer Economy Sync)] Tự động lưu và cập nhật song song số dư Xu vào /economy.json, /profile/points.json, /points.json và /wallet/points.json trên Firebase RTDB.
-3. [Truy Vấn Hồ Sơ Đa Nguồn Toàn Diện] openPublicProfileByAuthor tự động tra cứu UID qua danh bạ học viên, thư viện và VIP registry; truy xuất đồng thời các endpoint economy và root user để trích xuất số dư, chuỗi Flow và danh hiệu chính xác 100%.
+1. [AI Vision OCR Bóc Tách Nhiều Ảnh Bill Cùng Lúc] Hỗ trợ tải lên hoặc dán từ clipboard (Ctrl+V) tối đa 5 ảnh chụp màn hình / biên lai chuyển khoản ngân hàng trong 1 lần. AI Gemini Vision tự động nhận diện đồng loạt số tiền, mã 16 ký tự UID và gói dịch vụ; tích hợp nút "Kích Hoạt Toàn Bộ" 1-Click.
+2. [Điều Chỉnh Flow Freeze Trong Quản Trị Học Viên] Bổ sung trường nhập và các nút điều chỉnh nhanh (+1, +3, +5, Reset 0, Reset 3) số lượng Flow Freeze trực tiếp trong Modal Sửa Ví Học Viên (Publisher Portal), hiển thị badge Flow Freeze trực quan trên bảng danh sách học viên.
+3. [Đồng Bộ Flow Freeze Toàn Diện Lên Cloud] Cập nhật song song các nhánh `/economy/flowFreezes.json`, `/flowFreezes.json`, `/streakFreezes.json` và `/flow/freezes.json` trên Firebase RTDB, lập tức làm mới giao diện local nếu quản trị viên chỉnh sửa chính tài khoản đang đăng nhập.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 225)
+Phiên bản hiện tại : v0.10.8-released (Build 226)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +23,13 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 226 - DEBUG 0.4 POLISH):
+  - Hỗ trợ tải lên và dán trực tiếp từ Clipboard (Ctrl+V) tối đa 5 ảnh biên lai / bill ngân hàng cùng lúc cho AI Gemini Vision OCR.
+  - Tự động bóc tách số tiền, mã 16 ký tự UID, đối soát danh sách học viên và cung cấp nút Kích Hoạt Từng Học Viên / Kích Hoạt Toàn Bộ.
+  - Bổ sung trường quản lý và điều chỉnh Flow Freeze (+1, +3, +5, Reset) trong Modal Sửa Ví Học Viên trên Cổng Quản Trị (Publisher Portal).
+  - Đồng bộ số lượng Flow Freeze lên toàn bộ các nhánh RTDB tương thích ngược (`/economy`, `/flowFreezes`, `/streakFreezes`, `/flow/freezes`).
+  - Cập nhật hiển thị badge Flow Freeze (`❄️ X Freezes`) trên từng thẻ học viên trong bảng quản lý Publisher.
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 225 - DEBUG 0.3 POLISH):
   - Khắc phục lỗi số tiền (Tài Sản Ví / Xu) trên Public Profile của người khác hiển thị 0 Xu.
