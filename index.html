@@ -11604,36 +11604,30 @@ function switchPublisherTab(tab) {
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        // Fetch Following Map (Cloud Source of Truth + Self-Follow Filter)
+        // Fetch Following Map (Cloud Source of Truth + Bidirectional Union Merge)
         const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
         if (followingRes.ok) {
           const data = await followingRes.json();
           if (data && typeof data === 'object') {
-            myFollowingMap = { ...data };
+            myFollowingMap = { ...myFollowingMap, ...data };
             if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
             localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
-          } else {
-            myFollowingMap = {};
-            localStorage.removeItem('vocaflow_following_map');
           }
         }
 
-        // Fetch Followers Map (Cloud Source of Truth + Self-Follow Filter)
+        // Fetch Followers Map (Cloud Source of Truth + Bidirectional Union Merge)
         const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
         if (followersRes.ok) {
           const fData = await followersRes.json();
           if (fData && typeof fData === 'object') {
-            myFollowersMap = { ...fData };
+            myFollowersMap = { ...myFollowersMap, ...fData };
             if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
             localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
-          } else {
-            myFollowersMap = {};
-            localStorage.removeItem('vocaflow_followers_map');
           }
         }
 
-        currentUser.followingCount = Object.keys(myFollowingMap).length;
-        currentUser.followerCount = Object.keys(myFollowersMap).length;
+        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, currentUser.followingCount || 0);
+        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, currentUser.followerCount || 0);
 
         // Push bidirectional sync to cloud to guarantee data retention
         const followPatch = {};
@@ -14056,15 +14050,15 @@ function switchPublisherTab(tab) {
             achievementsCount: Object.values(userAchievements).filter(a => a && a.unlocked).length,
             geminiApiKey: geminiApiKey || '',
               geminiApiKeys: getStoredApiKeys(),
-            followerCount: Object.keys(myFollowersMap || {}).length,
-            followingCount: Object.keys(myFollowingMap || {}).length,
+            followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
+            followingCount: Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length),
             isVip: isUserVip(),
             vipTier: getUserVipTier(),
             vipExpiresAt: userVipExpiresAt,
             lastSync: new Date().toISOString()
           },
           following: myFollowingMap,
-          followers: myFollowersMap,
+          ...(Object.keys(myFollowersMap || {}).length > 0 ? { followers: myFollowersMap } : {}),
           notifications: (() => {
             const nMap = {};
             userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });
@@ -14473,26 +14467,27 @@ function switchPublisherTab(tab) {
                 localStorage.setItem('vocaflow_purchased_decks_count', userPurchasedDeckIds.size.toString());
                 if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
 
-                // Sync Following & Followers from Cloud (Cloud Source of Truth + Self-Follow Filter)
+                // Sync Following & Followers from Cloud (Cloud Source of Truth + Bidirectional Union Merge)
                 if (cloudData.following && typeof cloudData.following === 'object') {
-                  myFollowingMap = { ...cloudData.following };
+                  myFollowingMap = { ...myFollowingMap, ...cloudData.following };
                   if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
                   localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
-                } else {
-                  myFollowingMap = {};
-                  localStorage.removeItem('vocaflow_following_map');
                 }
                 if (cloudData.followers && typeof cloudData.followers === 'object') {
-                  myFollowersMap = { ...cloudData.followers };
+                  myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
                   if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
                   localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
-                } else {
-                  myFollowersMap = {};
-                  localStorage.removeItem('vocaflow_followers_map');
                 }
                 if (currentUser) {
-                  currentUser.followingCount = Object.keys(myFollowingMap).length;
-                  currentUser.followerCount = Object.keys(myFollowersMap).length;
+                  const cloudFollowerCount = (cloudData.profile && typeof cloudData.profile.followerCount === 'number')
+                    ? cloudData.profile.followerCount
+                    : (typeof cloudData.followerCount === 'number' ? cloudData.followerCount : 0);
+                  const cloudFollowingCount = (cloudData.profile && typeof cloudData.profile.followingCount === 'number')
+                    ? cloudData.profile.followingCount
+                    : (typeof cloudData.followingCount === 'number' ? cloudData.followingCount : 0);
+
+                  currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
+                  currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
                   localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
                   updateAuthUI();
                 }
@@ -14678,8 +14673,8 @@ function switchPublisherTab(tab) {
                 vipExpiresAt: userVipExpiresAt,
                 geminiApiKey: geminiApiKey || '',
               geminiApiKeys: getStoredApiKeys(),
-                followerCount: Object.keys(myFollowersMap || {}).length,
-                followingCount: Object.keys(myFollowingMap || {}).length,
+                followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
+                followingCount: Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length),
                 lastSync: new Date().toISOString()
               },
               vip: {
@@ -14698,7 +14693,7 @@ function switchPublisherTab(tab) {
               flowFreezeDates: getFlowFreezeDates(),
               flowFreezes: getUserFlowFreezes(),
               following: myFollowingMap,
-              followers: myFollowersMap,
+              ...(Object.keys(myFollowersMap || {}).length > 0 ? { followers: myFollowersMap } : {}),
               notifications: (() => {
                 const nMap = {};
                 userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });

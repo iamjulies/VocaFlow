@@ -1,7 +1,7 @@
 ﻿# 📌 QUY TRÌNH BẮT BUỘC MỖI KHI CẬP NHẬT VOCAFLOW (MANDATORY UPDATE WORKFLOW)
 
 > **LƯU Ý QUAN TRỌNG DÀNH CHO AI AGENT & DEVELOPER:**
-> Mỗi khi thực hiện cập nhật mã nguồn VocaFlow (sửa lỗi, thêm tính năng, nâng version), **BẮT BUỘC PHẢI THỰC HIỆN ĐỦ 4 BƯỚC SAU ĐÂY** mà không được bỏ sót bất kỳ bước nào:
+> Mỗi khi thực hiện cập nhật mã nguồn VocaFlow (sửa lỗi, thêm tính năng, nâng version), **BẮT BUỘC PHẢI THỰC HIỆN ĐỦ 4 BƯỚC VÀ TUÂN THỦ NGUYÊN TẮC BẢO TOÀN DỮ LIỆU SAU ĐÂY** mà không được bỏ sót bất kỳ điểm nào:
 
 ---
 
@@ -42,6 +42,19 @@
     3. **Học tập & Tiến độ (Study & Progress)**: `decks` (Bộ từ), `words` (Từ vựng), `flowDates` (Lịch sử chuỗi học), `flowFreezeDates` (Ngày dùng Freeze), `deletedWordIds` / `deletedDeckIds` (Tombstones xóa dữ liệu).
     4. **Cộng đồng & Thông báo (Social & Notifications)**: `following`, `followers`, `notifications`, `deletedNotificationIds`, `purchasedDeckIds`.
     5. **Cài đặt & AI Quota**: `settings` (Âm lượng, Meme mèo, Bộ lọc), `aiChatQuota` (Hạn ngạch AI Mentor), `geminiApiKeys` (Bể khóa API).
+
+---
+
+## 🛡️ NGUYÊN TẮC BẢO TOÀN SOCIAL GRAPH (FOLLOWERS & FOLLOWING)
+> ⚠️ **ĐẶC BIỆT LƯU Ý - TUYỆT ĐỐI KHÔNG ĐƯỢC LÀM MẤT HOẶC RESET VỀ 0 SỐ FOLLOWERS / FOLLOWING:**
+1. **Nguồn chân lý Followers là Cloud do cộng đồng đóng góp**: Danh sách `followers` của một người dùng do các người dùng khác ghi vào (`/users/{uid}/followers/{followerUid}`). Không bao giờ được dùng mảng rỗng `followers: {}` của một thiết bị mới để ghi đè làm mất followers trên Cloud.
+2. **Hợp nhất 2 chiều (Bidirectional Union Merge)**: Khi pull từ Cloud hoặc local, luôn sử dụng toán tử hợp nhất `{ ...myFollowingMap, ...cloudData.following }` và `{ ...myFollowersMap, ...cloudData.followers }`.
+3. **Bảo vệ chỉ số đếm (Non-Decreasing / Non-Zero Counter Protection)**:
+   ```javascript
+   currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
+   currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
+   ```
+4. **Không push đè `followers` khi mảng rỗng**: Chỉ cập nhật node `followers` khi `Object.keys(myFollowersMap).length > 0` để tránh xóa dữ liệu người theo dõi thực tế trên Firebase RTDB.
 
 ---
 
