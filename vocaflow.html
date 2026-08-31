@@ -5749,9 +5749,10 @@
         </button>
       </div>
 
+      <!-- USER PROFILE HERO CARD -->
       <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border);">
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div id="profile-avatar" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden; box-shadow: 0 4px 12px rgba(168,85,247,0.3);" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
+        <div style="display: flex; align-items: flex-start; gap: 16px;">
+          <div id="profile-avatar" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden; box-shadow: 0 4px 12px rgba(168,85,247,0.3); margin-top: 4px;" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
             👤
           </div>
           <div style="flex: 1; min-width: 0;">
@@ -5793,10 +5794,10 @@
                 <div id="profile-flow-count" style="font-size: 16px; font-weight: 800; color: #22d3ee; margin-top: 2px;">0 Ngày</div>
               </div>
             </div>
-          </div>
-<p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+
+            <p id="profile-email" style="margin: 8px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
             
-            <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+            <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; align-items: center;">
               <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
               <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatar-file-input').click()" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                 <span>📷</span> Đổi Avatar
@@ -5816,7 +5817,7 @@
         </div>
 
         <!-- PROFILE SHOWCASE: 3 PINNED BADGES (v0.10.8-alpha-10.3) -->
-        <div style="margin-top: 12px; background: rgba(0,0,0,0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;">
+        <div style="margin-top: 14px; background: rgba(0,0,0,0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Trưng Bày (Tối đa 3)</span>
             <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08);">
@@ -5872,7 +5873,8 @@
         </div>
       </div>
 
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+      <!-- CLOUD STATUS BOX -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <span style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
             ☁️ Trạng thái Cloud Firestore
@@ -5894,6 +5896,7 @@
         </div>
       </div>
 
+      <!-- SYNC & AUTH BUTTONS -->
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button type="button" class="btn btn-primary" id="btn-profile-sync" onclick="handleManualSync()">
           🔄 Đồng bộ ngay (Sync Now)
@@ -12911,6 +12914,9 @@ function switchPublisherTab(tab) {
       let targetFollowerCount = 0;
       let targetFollowingCount = 0;
       let authorDecks = [];
+      let targetPoints = 0;
+      let targetFlowDays = 0;
+      let targetPinnedBadges = [];
 
       if (isVocaFlowOfficial) {
         resolvedName = 'VocaFlow Chuẩn';
@@ -12918,23 +12924,21 @@ function switchPublisherTab(tab) {
         resolvedAvatar = 'icons/Icon-192.png';
         resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.';
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
+        targetPoints = 999999;
+        targetFlowDays = 365;
+        targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
       } else if (isCurrentUser) {
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
         resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
+        targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
+        targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
+        targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
       } else {
         // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
-        let targetPoints = 0;
-        let targetFlowDays = 0;
-        let targetPinnedBadges = [];
-
-        if (isCurrentUser) {
-          targetPoints = getUserPoints();
-          targetFlowDays = calculateCurrentFlow().currentFlow;
-          targetPinnedBadges = userPinnedBadges;
-        } else if (targetUid && targetUid !== 'undefined') {
+        if (targetUid && targetUid !== 'undefined') {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           try {
             const [pRes, fRes, fingRes, wRes, flRes] = await Promise.allSettled([
@@ -13023,6 +13027,61 @@ function switchPublisherTab(tab) {
         targetFollowingCount = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
       }
 
+      // v0.10.7d: Set current profile author state & update follow button
+      currentPublicProfileAuthor = {
+        targetUid: targetUid,
+        resolvedName: resolvedName,
+        resolvedHandle: resolvedHandle,
+        targetFollowerCount: targetFollowerCount,
+        targetFollowingCount: targetFollowingCount
+      };
+      updatePubViewFollowBtn(targetUid);
+
+      const pubFollowerEl = document.getElementById('pub-view-follower-count');
+      const pubFollowingEl = document.getElementById('pub-view-following-count');
+      if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
+      if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
+
+      const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
+      const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
+
+      if (nameEl) {
+        if (isAuthorVip) {
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+        } else {
+          nameEl.textContent = resolvedName;
+        }
+      }
+      if (avEl) {
+        avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+        if (isAuthorVip) {
+          avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
+          avEl.style.borderColor = '#fbbf24';
+        } else {
+          avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
+          avEl.style.borderColor = 'rgba(255,255,255,0.3)';
+        }
+      }
+      const pubBadgeEl = document.getElementById('pub-view-badge');
+      if (pubBadgeEl) {
+        if (isAuthorVip) {
+          const tierLabels = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
+          pubBadgeEl.innerHTML = `👑 VIP ${tierLabels[authorVipTier] || authorVipTier.toUpperCase()}`;
+          pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          pubBadgeEl.style.color = '#ffffff';
+          pubBadgeEl.style.fontWeight = '800';
+          pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+          pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+        } else {
+          pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+          pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+          pubBadgeEl.style.color = '#a5b4fc';
+          pubBadgeEl.style.fontWeight = '700';
+          pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+          pubBadgeEl.style.boxShadow = 'none';
+        }
+      }
+      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
       if (statPointsEl) statPointsEl.textContent = `${targetPoints} Xu`;
       if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
       if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
@@ -13052,7 +13111,7 @@ function switchPublisherTab(tab) {
       // Render Author Pinned Badges (v0.10.8-alpha-10.3)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
-      const authorPinnedBadges = (isCurrentUser ? userPinnedBadges : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+      const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
 
       if (pubBadgesContainer && pubBadgesShowcase) {
         if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
@@ -17616,8 +17675,17 @@ function switchPublisherTab(tab) {
 
     function getUserFlowFreezes() {
       const maxFreezes = getMaxFlowFreezes();
-      const val = parseInt(localStorage.getItem('vocaflow_flow_freezes') || localStorage.getItem('vocaflow_streak_freezes') || '1', 10);
-      return Math.min(maxFreezes, Math.max(0, isNaN(val) ? 1 : val));
+      const raw = localStorage.getItem('vocaflow_flow_freezes');
+      if (raw !== null) {
+        const parsed = parseInt(raw, 10);
+        return Math.min(maxFreezes, Math.max(0, isNaN(parsed) ? 0 : parsed));
+      }
+      const rawLegacy = localStorage.getItem('vocaflow_streak_freezes');
+      if (rawLegacy !== null) {
+        const parsed = parseInt(rawLegacy, 10);
+        return Math.min(maxFreezes, Math.max(0, isNaN(parsed) ? 0 : parsed));
+      }
+      return 1;
     }
 
     function setUserFlowFreezes(val) {

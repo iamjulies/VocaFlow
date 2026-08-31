@@ -1,15 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 223 - Debug 0.1) - Responsive Layout & Flow Freeze Accuracy
+Phiên bản: v0.10.8-released (Build 224 - Debug 0.2) - Profile Card Grid Fix & Flow Freeze Exact Deduction
 ================================================================================
-1. [Khắc phục che khuất nút FAB] Bổ sung khoảng đệm an toàn padding-bottom và bố cục lưới co giãn linh hoạt khi co kéo kích thước cửa sổ.
-2. [Hồ Sơ Cá Nhân & Công Khai] Tinh chỉnh hiển thị chuẩn xác Xu Ví và Chuỗi Flow thực tế, đồng bộ đầy đủ Huy hiệu nổi bật, Xu và Flow trên hồ sơ của người dùng khác.
-3. [Chuẩn Hóa Thuật Toán Flow Freeze] Đóng băng bảo vệ chuỗi ngày học không bị đứt đoạn nhưng không cộng dồn số ngày flow cho các ngày nghỉ.
-4. [Chuẩn Hóa Nhãn Phiên Bản] Cập nhật thông tin phiên bản đồng bộ VocaFlow v0.10.8-released trong cài đặt hệ thống.
+1. [Khắc phục Layout Hồ Sơ Cá Nhân] Cân bằng toàn bộ cấu trúc thẻ DOM của modal-profile, khôi phục giao diện hồ sơ chuẩn chỉnh, không bị vỡ cột hay méo khung.
+2. [Sửa Lỗi Xem Hồ Sơ Người Khác] Khắc phục lỗi phạm vi biến trong openPublicProfileByAuthor, cho phép mở xem hồ sơ tác giả bất kỳ trên Thư viện và Bảng xếp hạng mượt mà.
+3. [Chuẩn Hóa Tiêu Hao Flow Freeze] Mỗi ngày nghỉ được đóng băng bảo vệ sẽ tiêu hao chuẩn xác đúng 1 lượt Flow Freeze từ ví trữ.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 223)
+Phiên bản hiện tại : v0.10.8-released (Build 224)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,12 +24,11 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 223 - DEBUG 0.1 POLISH):
-  - Khắc phục lỗi nút FAB gia sư AI che khuất các nút thao tác bộ từ trên màn hình kích thước trung bình.
-  - Tinh chỉnh Hồ sơ cá nhân: chỉ hiển thị 2 chỉ số thực tế 💰 Xu Ví & 🌊 Dòng Chảy Flow.
-  - Nâng cấp Hồ sơ tác giả công khai (Public Profile): hiển thị đầy đủ Huy hiệu nổi bật, Xu ví và Dòng chảy Flow từ Cloud.
-  - Chuẩn hóa thuật toán Flow Freeze: chỉ giữ chuỗi không bị đứt, không cộng thêm ngày flow vào chuỗi.
-  - Đồng bộ hiển thị phiên bản chính thức v0.10.8-released trong toàn bộ cài đặt và tiêu đề.
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 224 - DEBUG 0.2 POLISH):
+  - Khắc phục lỗi vỡ layout trong Hồ sơ cá nhân (modal-profile) do thừa/lệch thẻ đóng div.
+  - Sửa lỗi không mở được hồ sơ công khai của người dùng khác (openPublicProfileByAuthor scope fix).
+  - Chuẩn hóa tiêu hao Flow Freeze: trừ đúng 1 lượt freeze cho mỗi ngày nghỉ được bảo vệ.
+
 
 
 • 👑 v0.10.8-beta-7.4 (Build 169 - MULTI-IMAGE BUG REPORTING, IN-APP LIGHTBOX & DECK AUTHOR VISIBILITY FIX):
@@ -72,12 +70,11 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 223 - DEBUG 0.1 POLISH):
-  - Khắc phục lỗi nút FAB gia sư AI che khuất các nút thao tác bộ từ trên màn hình kích thước trung bình.
-  - Tinh chỉnh Hồ sơ cá nhân: chỉ hiển thị 2 chỉ số thực tế 💰 Xu Ví & 🌊 Dòng Chảy Flow.
-  - Nâng cấp Hồ sơ tác giả công khai (Public Profile): hiển thị đầy đủ Huy hiệu nổi bật, Xu ví và Dòng chảy Flow từ Cloud.
-  - Chuẩn hóa thuật toán Flow Freeze: chỉ giữ chuỗi không bị đứt, không cộng thêm ngày flow vào chuỗi.
-  - Đồng bộ hiển thị phiên bản chính thức v0.10.8-released trong toàn bộ cài đặt và tiêu đề.
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 224 - DEBUG 0.2 POLISH):
+  - Khắc phục lỗi vỡ layout trong Hồ sơ cá nhân (modal-profile) do thừa/lệch thẻ đóng div.
+  - Sửa lỗi không mở được hồ sơ công khai của người dùng khác (openPublicProfileByAuthor scope fix).
+  - Chuẩn hóa tiêu hao Flow Freeze: trừ đúng 1 lượt freeze cho mỗi ngày nghỉ được bảo vệ.
+
 
 
 • 👑 v0.10.8-beta-7.1 (Build 166 - GOOGLE ADSENSE IN-FEED & MULTIPLEX RECOMMENDATIONS):
