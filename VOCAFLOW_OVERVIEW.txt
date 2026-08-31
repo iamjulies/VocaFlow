@@ -1,14 +1,16 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.16 (Build 221) - Flow Freeze Auto-Protection & VIP 7-Day Cap Engine
+Phiên bản: v0.10.8 (Official Release - Build 222) - VIP Monetization, AI Lab & Multi-Device Sync
 ================================================================================
-1. [Tự Động Kích Hoạt Flow Freeze] Tự động đóng băng chuỗi Flow khi bỏ lỡ ngày học (dùng dần cho đến khi hết freeze thì mới mất chuỗi).
-2. [Hạn Mức Sức Chứa Freeze Chuẩn Hóa] Người dùng thường tích lũy tối đa 3 Flow Freeze, người dùng VIP Crown tích lũy tối đa 7 Flow Freeze (bảo vệ chuỗi nghỉ liên tục 7 ngày).
-3. [Mua Trực Tiếp Trong VocaShop] Tích hợp thẻ mua Flow Freeze (200 Xu) trong VocaShop kèm hiển thị hạn mức theo cấp tài khoản.
+1. [AI Speaking Lab & Phonetics] Hệ thống chấm phát âm AI thời gian thực chuẩn ELSA với Voice Activity Detection (VAD) và bảng đánh giá ngữ âm chi tiết.
+2. [Quiz & AI Distractor Traps] Thuật toán sinh phương án bẫy trắc nghiệm thông minh theo ngữ cảnh từ điển Oxford, bám sát nghĩa thật.
+3. [Dòng Chảy & Flow Freeze Auto-Protection] Tự động bù ngày nghỉ bảo vệ chuỗi liên tục, phân tầng sức chứa (Thường: 3 lượt, VIP: 7 lượt).
+4. [Đồng Bộ Hai Chiều Cloud & Offline-First] Union Merge toàn diện cho từ vựng, chuỗi Flow, ngày đóng băng, ví xu và 40 thành tựu.
+5. [Gói VIP Crown & Kinh Tế Xu] Đa dạng hóa nguồn thu, không quảng cáo, x3 hạn ngạch API, mở khóa toàn diện thư viện từ vựng.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.16 (Build 221)
+Phiên bản hiện tại : v0.10.8 (Build 222 - Official Release)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -24,7 +26,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 222) - VIP MONETIZATION, AI LAB & MULTI-DEVICE SYNC:
+  - Hoàn thiện 100% hệ sinh thái học tập và luyện tập đa chế độ: Spelling, Quiz, AI Speaking Lab, Auto Flashcard.
+  - Phục hồi và tối ưu bộ sinh bẫy trắc nghiệm AI (Quiz AI Distractors) với định dạng ngụy trang tinh vi.
+  - Hoàn tất đồng bộ hai chiều thời gian thực (Bidirectional Cloud Sync) với cơ chế hợp nhất không mất mát dữ liệu (Union Merge).
+  - Ra mắt cơ chế bảo vệ chuỗi học tự động (Auto Flow Freeze Protection) với hạn mức 3 lượt (Free) và 7 lượt (VIP).
+  - Tối ưu hóa hiệu năng, giao diện Glassmorphism, 40 huy hiệu thành tựu và trải nghiệm học tập mượt mà trên mọi thiết bị.
 • 👑 v0.10.8-alpha-10.16 (Build 221 - FLOW FREEZE AUTO-PROTECTION & VIP 7-DAY CAP ENGINE):
   - Bổ sung cơ chế tự động kích hoạt Flow Freeze khi phát hiện ngày nghỉ học (evaluateAndAutoApplyFlowFreezes).
   - Giữ nguyên chuỗi Dòng Chảy (Flow) và Chuỗi ngày học liên tục bằng cách tự động bù Flow Freeze vào các ngày nghỉ học cho đến khi hết lượt freeze.
@@ -464,7 +471,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 222) - VIP MONETIZATION, AI LAB & MULTI-DEVICE SYNC:
+  - Hoàn thiện 100% hệ sinh thái học tập và luyện tập đa chế độ: Spelling, Quiz, AI Speaking Lab, Auto Flashcard.
+  - Phục hồi và tối ưu bộ sinh bẫy trắc nghiệm AI (Quiz AI Distractors) với định dạng ngụy trang tinh vi.
+  - Hoàn tất đồng bộ hai chiều thời gian thực (Bidirectional Cloud Sync) với cơ chế hợp nhất không mất mát dữ liệu (Union Merge).
+  - Ra mắt cơ chế bảo vệ chuỗi học tự động (Auto Flow Freeze Protection) với hạn mức 3 lượt (Free) và 7 lượt (VIP).
+  - Tối ưu hóa hiệu năng, giao diện Glassmorphism, 40 huy hiệu thành tựu và trải nghiệm học tập mượt mà trên mọi thiết bị.
 • 👑 v0.10.8-alpha-10.16 (Build 221 - FLOW FREEZE AUTO-PROTECTION & VIP 7-DAY CAP ENGINE):
   - Bổ sung cơ chế tự động kích hoạt Flow Freeze khi phát hiện ngày nghỉ học (evaluateAndAutoApplyFlowFreezes).
   - Giữ nguyên chuỗi Dòng Chảy (Flow) và Chuỗi ngày học liên tục bằng cách tự động bù Flow Freeze vào các ngày nghỉ học cho đến khi hết lượt freeze.

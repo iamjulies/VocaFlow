@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.16</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.8-released</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2454,7 +2454,7 @@
               <small style="color: var(--text-muted); font-size: 10.5px;">Chia sẻ mã nhận Xu & VIP</small>
             </div>
           </div>
-          <div class="dropdown-item" onclick="openBugBountyModal(); closeHeaderMoreMenu();" style="background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3);">
+          <div class="dropdown-item" onclick="openBugReportModal(); closeHeaderMoreMenu();" style="background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3);">
             <span style="font-size: 16px;">🕵️</span>
             <div>
               <div style="font-weight: 700; font-size: 13px; color: #f87171;">Săn Lỗi Nhận Thưởng</div>
@@ -4883,6 +4883,25 @@
         </div>
       </div>
 
+      <!-- GUEST LOCK VIEW FOR AI MENTOR (v0.10.8-released) -->
+      <div id="aimentor-guest-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 20px; flex: 1;">
+        <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(99,102,241,0.4));">🤖🔒</div>
+        <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng nhập hoặc tạo tài khoản miễn phí để mở khóa <strong>Gia Sư AI Gemini Mentor, Hỏi Đáp Ngữ Pháp, Phân Tích Từ Sâu & Luyện Hội Thoại</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openAuthModal('login');" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="aimentor-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
       <!-- CONTEXT BANNER -->
       <div id="ai-mentor-context-banner" style="padding: 7px 14px; background: rgba(99, 102, 241, 0.08); border-bottom: 1px dashed rgba(99, 102, 241, 0.25); font-size: 11.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;">
         <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -5740,6 +5759,26 @@
               <span>•</span>
               <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openSubscribersListModal('following')" title="Bấm để xem danh sách đang theo dõi">
                 <strong id="profile-following-count" style="color: #a5b4fc; font-size: 13px;">0</strong> Đang theo dõi
+              </div>
+            </div>
+
+            <!-- v0.10.8-released: User Asset & Progress Quick Stats Bar -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; padding: 8px 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 10px; text-align: center;">
+              <div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">💰 Xu Ví</div>
+                <div id="profile-user-points" style="font-size: 13px; font-weight: 800; color: #fbbf24;">0</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">🌊 Flow</div>
+                <div id="profile-flow-count" style="font-size: 13px; font-weight: 800; color: #22d3ee;">0</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">❄️ Freeze</div>
+                <div id="profile-user-freezes" style="font-size: 13px; font-weight: 800; color: #38bdf8;">0/3</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">💡 Gợi ý</div>
+                <div id="profile-user-hints" style="font-size: 13px; font-weight: 800; color: #f472b6;">0</div>
               </div>
             </div>
             <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
@@ -15663,6 +15702,7 @@ function switchPublisherTab(tab) {
       return (currentUser && currentUser.idToken) ? currentUser.idToken : '';
     }
 
+    function openBugBountyModal() { openBugReportModal(); }
     function openBugReportModal() {
       currentBugReportScreenshots = [];
       renderBugReportScreenshotsList();
