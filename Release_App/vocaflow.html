@@ -8291,17 +8291,39 @@
       if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
       const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
       try {
+        const pts = getUserPoints();
+        const hts = getUserHints();
+        const sks = getUserSkips();
+        const nowIso = new Date().toISOString();
         const payload = {
-          points: getUserPoints(),
-          hints: getUserHints(),
-          skips: getUserSkips(),
-          updatedAt: new Date().toISOString()
+          points: pts,
+          hints: hts,
+          skips: sks,
+          updatedAt: nowIso
         };
-        await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        const rtdbUrl = firebaseConfig.databaseURL;
+        await Promise.allSettled([
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/economy.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/points.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pts)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/points.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pts)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/wallet/points.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pts)
+          })
+        ]);
       } catch (e) {
         console.warn('Sync economy to cloud note:', e);
       }
@@ -12850,7 +12872,15 @@ function switchPublisherTab(tab) {
       openModal('modal-community-upload');
     }
 
-        async function openPublicProfileModal(authorName, authorUid, deckId) {
+    function openPublicProfileByStudent(studentUid) {
+      if (!studentUid) return;
+      const student = adminStudentsData.find(s => s.uid === studentUid);
+      const name = student?.displayName || 'Học viên';
+      openPublicProfileModal(name, studentUid);
+    }
+    window.openPublicProfileByStudent = openPublicProfileByStudent;
+
+    async function openPublicProfileModal(authorName, authorUid, deckId) {
       if (!authorName || authorName === 'Ẩn danh') return;
       if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
         try {
@@ -12937,21 +12967,34 @@ function switchPublisherTab(tab) {
         targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
         targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
       } else {
+        // Find targetUid from all available registries if not provided
+        if (!targetUid) {
+          const studentMatch = adminStudentsData.find(s => s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase());
+          if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
+          else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
+          else {
+            const deckMatch = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() && d.authorUid);
+            if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
+          }
+        }
+
         // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
         if (targetUid && targetUid !== 'undefined') {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           try {
-            const [pRes, fRes, fingRes, wRes, flRes] = await Promise.allSettled([
+            const [pRes, fRes, fingRes, wRes, flRes, ecoRes, rootUserRes] = await Promise.allSettled([
               fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
               fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
               fetch(`${rtdbUrl}/users/${targetUid}/following.json`),
               fetch(`${rtdbUrl}/users/${targetUid}/wallet/points.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/flow.json`)
+              fetch(`${rtdbUrl}/users/${targetUid}/flow.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}/economy.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}.json`)
             ]);
 
             if (pRes.status === 'fulfilled' && pRes.value.ok) {
               const uProf = await pRes.value.json();
-              if (uProf) {
+              if (uProf && typeof uProf === 'object') {
                 if (uProf.displayName) resolvedName = uProf.displayName;
                 if (uProf.username) resolvedHandle = uProf.username;
                 resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
@@ -12960,18 +13003,60 @@ function switchPublisherTab(tab) {
                 if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
                 if (Array.isArray(uProf.pinnedBadges)) targetPinnedBadges = uProf.pinnedBadges;
                 if (typeof uProf.points === 'number') targetPoints = uProf.points;
+                else if (uProf.points !== undefined && !isNaN(parseInt(uProf.points, 10))) targetPoints = parseInt(uProf.points, 10);
+              }
+            }
+
+            if (ecoRes.status === 'fulfilled' && ecoRes.value.ok) {
+              const ecoData = await ecoRes.value.json();
+              if (ecoData && typeof ecoData === 'object') {
+                if (typeof ecoData.points === 'number') targetPoints = ecoData.points;
+                else if (ecoData.points !== undefined && !isNaN(parseInt(ecoData.points, 10))) targetPoints = parseInt(ecoData.points, 10);
               }
             }
 
             if (wRes.status === 'fulfilled' && wRes.value.ok) {
               const wData = await wRes.value.json();
               if (typeof wData === 'number') targetPoints = wData;
+              else if (wData !== null && !isNaN(parseInt(wData, 10))) targetPoints = parseInt(wData, 10);
+            }
+
+            if (rootUserRes.status === 'fulfilled' && rootUserRes.value.ok) {
+              const uData = await rootUserRes.value.json();
+              if (uData && typeof uData === 'object') {
+                if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
+                else if (uData.economy && uData.economy.points !== undefined && !isNaN(parseInt(uData.economy.points, 10))) targetPoints = parseInt(uData.economy.points, 10);
+                else if (typeof uData.points === 'number') targetPoints = uData.points;
+                else if (uData.points !== undefined && !isNaN(parseInt(uData.points, 10))) targetPoints = parseInt(uData.points, 10);
+                else if (uData.profile && typeof uData.profile.points === 'number') targetPoints = uData.profile.points;
+                else if (uData.profile && uData.profile.points !== undefined && !isNaN(parseInt(uData.profile.points, 10))) targetPoints = parseInt(uData.profile.points, 10);
+
+                if (uData.profile && typeof uData.profile === 'object') {
+                  if (uData.profile.displayName && !resolvedName) resolvedName = uData.profile.displayName;
+                  if (uData.profile.username && !resolvedHandle) resolvedHandle = uData.profile.username;
+                  if (uData.profile.avatar) resolvedAvatar = uData.profile.avatar;
+                  if (uData.profile.bio) resolvedBio = uData.profile.bio;
+                  if (Array.isArray(uData.profile.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = uData.profile.pinnedBadges;
+                }
+                if (Array.isArray(uData.pinnedBadges) && targetPinnedBadges.length === 0) {
+                  targetPinnedBadges = uData.pinnedBadges;
+                }
+
+                if (uData.flow && typeof uData.flow.days === 'number') {
+                  targetFlowDays = uData.flow.days;
+                } else if (uData.flow && typeof uData.flow.currentFlow === 'number') {
+                  targetFlowDays = uData.flow.currentFlow;
+                } else if (typeof uData.flow === 'number') {
+                  targetFlowDays = uData.flow;
+                }
+              }
             }
 
             if (flRes.status === 'fulfilled' && flRes.value.ok) {
               const flData = await flRes.value.json();
-              if (flData && typeof flData === 'object' && typeof flData.days === 'number') {
-                targetFlowDays = flData.days;
+              if (flData && typeof flData === 'object') {
+                if (typeof flData.days === 'number') targetFlowDays = flData.days;
+                else if (typeof flData.currentFlow === 'number') targetFlowDays = flData.currentFlow;
               } else if (typeof flData === 'number') {
                 targetFlowDays = flData;
               }
@@ -12993,7 +13078,7 @@ function switchPublisherTab(tab) {
           } catch (e) {}
         }
 
-        const matchedStudent = adminStudentsData.find(s => (targetUid && s.uid === targetUid) || s.displayName.toLowerCase() === authorName.toLowerCase());
+        const matchedStudent = adminStudentsData.find(s => (targetUid && s.uid === targetUid) || (s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
         if (matchedStudent) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
@@ -28307,7 +28392,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       document.getElementById('lib-preview-category').textContent = deck.category || 'THPT';
       const authorEl = document.getElementById('lib-preview-author');
       if (authorEl) {
-        authorEl.textContent = `👤 Đóng góp: ${authorName}`;
+        if (deck.isAnonymous || authorName === 'Ẩn danh') {
+          authorEl.innerHTML = `👤 Đóng góp: Ẩn danh`;
+        } else {
+          authorEl.innerHTML = `👤 Đóng góp: <span style="color: #818cf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${escapeHtml(deck.id)}')" title="Xem hồ sơ tác giả">${escapeHtml(authorName)}</span>`;
+        }
       }
 
       const wordsList = document.getElementById('lib-preview-words-container');

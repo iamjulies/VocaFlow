@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 224 - Debug 0.2) - Profile Card Grid Fix & Flow Freeze Exact Deduction
+Phiên bản: v0.10.8-released (Build 225 - Debug 0.3) - Real-Time Public Profile Balance & Multi-Layer Economy Sync
 ================================================================================
-1. [Khắc phục Layout Hồ Sơ Cá Nhân] Cân bằng toàn bộ cấu trúc thẻ DOM của modal-profile, khôi phục giao diện hồ sơ chuẩn chỉnh, không bị vỡ cột hay méo khung.
-2. [Sửa Lỗi Xem Hồ Sơ Người Khác] Khắc phục lỗi phạm vi biến trong openPublicProfileByAuthor, cho phép mở xem hồ sơ tác giả bất kỳ trên Thư viện và Bảng xếp hạng mượt mà.
-3. [Chuẩn Hóa Tiêu Hao Flow Freeze] Mỗi ngày nghỉ được đóng băng bảo vệ sẽ tiêu hao chuẩn xác đúng 1 lượt Flow Freeze từ ví trữ.
+1. [Đồng Bộ Số Dư Ví / Xu Lên Public Profile] Khắc phục triệt để lỗi người khác xem hồ sơ công khai hiển thị 0 Xu trong khi chủ tài khoản có số dư thực tế.
+2. [Đồng Bộ Kinh Tế Đa Tầng (Multi-Layer Economy Sync)] Tự động lưu và cập nhật song song số dư Xu vào /economy.json, /profile/points.json, /points.json và /wallet/points.json trên Firebase RTDB.
+3. [Truy Vấn Hồ Sơ Đa Nguồn Toàn Diện] openPublicProfileByAuthor tự động tra cứu UID qua danh bạ học viên, thư viện và VIP registry; truy xuất đồng thời các endpoint economy và root user để trích xuất số dư, chuỗi Flow và danh hiệu chính xác 100%.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 224)
+Phiên bản hiện tại : v0.10.8-released (Build 225)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -24,9 +24,11 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 224 - DEBUG 0.2 POLISH):
-  - Khắc phục lỗi vỡ layout trong Hồ sơ cá nhân (modal-profile) do thừa/lệch thẻ đóng div.
-  - Sửa lỗi không mở được hồ sơ công khai của người dùng khác (openPublicProfileByAuthor scope fix).
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 225 - DEBUG 0.3 POLISH):
+  - Khắc phục lỗi số tiền (Tài Sản Ví / Xu) trên Public Profile của người khác hiển thị 0 Xu.
+  - Thiết lập cơ chế ghi đa tầng Multi-Layer Economy Sync đồng bộ tức thì số dư Xu khi có thay đổi.
+  - Bổ sung hàm openPublicProfileByStudent và liên kết tác giả trong bảng xem trước bộ từ.
+  - Khắc phục lỗi vỡ layout trong Hồ sơ cá nhân (modal-profile) và tối ưu hóa truy vấn Cloud RTDB.
   - Chuẩn hóa tiêu hao Flow Freeze: trừ đúng 1 lượt freeze cho mỗi ngày nghỉ được bảo vệ.
 
 

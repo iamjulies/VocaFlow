@@ -35,8 +35,8 @@ if ($token) {
 # 1. Cập nhật bản ZIP phát hành mới nhất
 Write-Host "[1/3] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
 $stage = Join-Path $root "VocaFlow_Windows_Portable"
-$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.0.1_Windows_Portable.zip"
-$rootZipPath = Join-Path $root "VocaFlow_v0.0.1_Windows_Portable.zip"
+$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.8_Windows_Portable.zip"
+$rootZipPath = Join-Path $root "VocaFlow_v0.10.8_Windows_Portable.zip"
 
 try {
     if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
