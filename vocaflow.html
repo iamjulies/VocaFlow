@@ -552,6 +552,7 @@
     .screen {
       display: none;
       animation: fadeIn 0.25s ease forwards;
+      padding-bottom: 96px; /* Safe clearance so floating FAB never obscures bottom card action buttons */
     }
     .screen.active {
       display: block;
@@ -4820,19 +4821,34 @@
         </div>
       </div>
 
-      <!-- 2-TILE STATS (CLEAN & BALANCED) -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
-          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">📚 Tổng số bộ chia sẻ</div>
-          <div id="pub-view-stat-decks" style="font-size: 20px; font-weight: 800; color: #818cf8; margin-top: 2px;">0</div>
+      <!-- 4-TILE USER PUBLIC STATS (v0.10.8-released - Badges, Xu & Flow) -->
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>💰</span> <span>Tài Sản Ví</span>
+          </div>
+          <div id="pub-view-stat-points" style="font-size: 17px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 Xu</div>
         </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
-          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">📝 Số từ chia sẻ</div>
-          <div id="pub-view-stat-words" style="font-size: 20px; font-weight: 800; color: #34d399; margin-top: 2px;">0</div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>🌊</span> <span>Dòng Chảy (Flow)</span>
+          </div>
+          <div id="pub-view-stat-flow" style="font-size: 17px; font-weight: 800; color: #22d3ee; margin-top: 2px;">0 Ngày</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>📚</span> <span>Bộ từ chia sẻ</span>
+          </div>
+          <div id="pub-view-stat-decks" style="font-size: 17px; font-weight: 800; color: #818cf8; margin-top: 2px;">0 bộ</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>📝</span> <span>Tổng số từ</span>
+          </div>
+          <div id="pub-view-stat-words" style="font-size: 17px; font-weight: 800; color: #34d399; margin-top: 2px;">0 từ</div>
         </div>
       </div>
-
-      <!-- AUTHOR PUBLIC DECKS LIST -->
+<!-- AUTHOR PUBLIC DECKS LIST -->
       <div>
         <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <span>📂 Danh Sách Bộ Từ:</span>
@@ -5762,26 +5778,23 @@
               </div>
             </div>
 
-            <!-- v0.10.8-released: User Asset & Progress Quick Stats Bar -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; padding: 8px 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 10px; text-align: center;">
+            <!-- v0.10.8-released: User Asset & Progress Stats (Xu Ví & Dòng Chảy Flow) -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; padding: 10px 14px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 12px; text-align: center;">
               <div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">💰 Xu Ví</div>
-                <div id="profile-user-points" style="font-size: 13px; font-weight: 800; color: #fbbf24;">0</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span>💰</span> <span>Xu Ví</span>
+                </div>
+                <div id="profile-user-points" style="font-size: 16px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 Xu</div>
               </div>
               <div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">🌊 Flow</div>
-                <div id="profile-flow-count" style="font-size: 13px; font-weight: 800; color: #22d3ee;">0</div>
-              </div>
-              <div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">❄️ Freeze</div>
-                <div id="profile-user-freezes" style="font-size: 13px; font-weight: 800; color: #38bdf8;">0/3</div>
-              </div>
-              <div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">💡 Gợi ý</div>
-                <div id="profile-user-hints" style="font-size: 13px; font-weight: 800; color: #f472b6;">0</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span>🌊</span> <span>Dòng Chảy (Flow)</span>
+                </div>
+                <div id="profile-flow-count" style="font-size: 16px; font-weight: 800; color: #22d3ee; margin-top: 2px;">0 Ngày</div>
               </div>
             </div>
-            <p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
+          </div>
+<p id="profile-email" style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
             
             <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
               <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
@@ -6506,7 +6519,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);">VocaFlow v0.10.8-alpha-10.3</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12913,13 +12926,23 @@ function switchPublisherTab(tab) {
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
       } else {
         // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
-        if (targetUid && targetUid !== 'undefined') {
+        let targetPoints = 0;
+        let targetFlowDays = 0;
+        let targetPinnedBadges = [];
+
+        if (isCurrentUser) {
+          targetPoints = getUserPoints();
+          targetFlowDays = calculateCurrentFlow().currentFlow;
+          targetPinnedBadges = userPinnedBadges;
+        } else if (targetUid && targetUid !== 'undefined') {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           try {
-            const [pRes, fRes, fingRes] = await Promise.allSettled([
+            const [pRes, fRes, fingRes, wRes, flRes] = await Promise.allSettled([
               fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
               fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/following.json`)
+              fetch(`${rtdbUrl}/users/${targetUid}/following.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}/wallet/points.json`),
+              fetch(`${rtdbUrl}/users/${targetUid}/flow.json`)
             ]);
 
             if (pRes.status === 'fulfilled' && pRes.value.ok) {
@@ -12931,6 +12954,22 @@ function switchPublisherTab(tab) {
                 resolvedBio = uProf.bio || resolvedBio;
                 if (typeof uProf.followerCount === 'number') targetFollowerCount = uProf.followerCount;
                 if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
+                if (Array.isArray(uProf.pinnedBadges)) targetPinnedBadges = uProf.pinnedBadges;
+                if (typeof uProf.points === 'number') targetPoints = uProf.points;
+              }
+            }
+
+            if (wRes.status === 'fulfilled' && wRes.value.ok) {
+              const wData = await wRes.value.json();
+              if (typeof wData === 'number') targetPoints = wData;
+            }
+
+            if (flRes.status === 'fulfilled' && flRes.value.ok) {
+              const flData = await flRes.value.json();
+              if (flData && typeof flData === 'object' && typeof flData.days === 'number') {
+                targetFlowDays = flData.days;
+              } else if (typeof flData === 'number') {
+                targetFlowDays = flData;
               }
             }
 
@@ -12955,6 +12994,8 @@ function switchPublisherTab(tab) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
           resolvedBio = matchedStudent.bio || resolvedBio || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+          if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
+          if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
         }
         authorDecks = allDecks.filter(d => (targetUid && d.authorUid === targetUid) || (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
       }
@@ -12971,6 +13012,7 @@ function switchPublisherTab(tab) {
       const statDecksEl = document.getElementById('pub-view-stat-decks');
       const statWordsEl = document.getElementById('pub-view-stat-words');
       const statPointsEl = document.getElementById('pub-view-stat-points');
+      const statFlowEl = document.getElementById('pub-view-stat-flow');
       const decksListEl = document.getElementById('pub-view-decks-list');
       const decksCountEl = document.getElementById('pub-view-decks-count');
 
@@ -12981,64 +13023,10 @@ function switchPublisherTab(tab) {
         targetFollowingCount = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
       }
 
-      // v0.10.7d: Set current profile author state & update follow button
-      currentPublicProfileAuthor = {
-        targetUid: targetUid,
-        resolvedName: resolvedName,
-        resolvedHandle: resolvedHandle,
-        targetFollowerCount: targetFollowerCount,
-        targetFollowingCount: targetFollowingCount
-      };
-      updatePubViewFollowBtn(targetUid);
-
-      const pubFollowerEl = document.getElementById('pub-view-follower-count');
-      const pubFollowingEl = document.getElementById('pub-view-following-count');
-      if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
-      if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
-
-      const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
-      const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
-
-      if (nameEl) {
-        if (isAuthorVip) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
-        } else {
-          nameEl.textContent = resolvedName;
-        }
-      }
-      if (avEl) {
-        avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
-        if (isAuthorVip) {
-          avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
-          avEl.style.borderColor = '#fbbf24';
-        } else {
-          avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
-          avEl.style.borderColor = 'rgba(255,255,255,0.3)';
-        }
-      }
-      const pubBadgeEl = document.getElementById('pub-view-badge');
-      if (pubBadgeEl) {
-        if (isAuthorVip) {
-          const tierLabels = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
-          pubBadgeEl.innerHTML = `👑 VIP ${tierLabels[authorVipTier] || authorVipTier.toUpperCase()}`;
-          pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-          pubBadgeEl.style.color = '#ffffff';
-          pubBadgeEl.style.fontWeight = '800';
-          pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
-          pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
-        } else {
-          pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
-          pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
-          pubBadgeEl.style.color = '#a5b4fc';
-          pubBadgeEl.style.fontWeight = '700';
-          pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
-          pubBadgeEl.style.boxShadow = 'none';
-        }
-      }
-      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
-      if (statDecksEl) statDecksEl.textContent = authorDecks.length;
-      if (statWordsEl) statWordsEl.textContent = totalWords;
-      if (statPointsEl) statPointsEl.textContent = '';
+      if (statPointsEl) statPointsEl.textContent = `${targetPoints} Xu`;
+      if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
+      if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
+      if (statWordsEl) statWordsEl.textContent = `${totalWords} từ`;
 
       if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' bộ từ';
       if (decksListEl) {
@@ -13064,7 +13052,7 @@ function switchPublisherTab(tab) {
       // Render Author Pinned Badges (v0.10.8-alpha-10.3)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
-      const authorPinnedBadges = (isCurrentUser ? userPinnedBadges : (targetDeck?.authorPinnedBadges || []));
+      const authorPinnedBadges = (isCurrentUser ? userPinnedBadges : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
 
       if (pubBadgesContainer && pubBadgesShowcase) {
         if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
@@ -17743,7 +17731,7 @@ function switchPublisherTab(tab) {
           pureFlow++;
           checkDate.setDate(checkDate.getDate() - 1);
         } else if (freezes.includes(dStr)) {
-          currentFlow++;
+          // Flow Freeze protects and bridges the continuous streak, but DOES NOT add to currentFlow!
           pureFlow = 0;
           checkDate.setDate(checkDate.getDate() - 1);
         } else {
