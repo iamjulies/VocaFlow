@@ -2356,7 +2356,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.15</span>
+      <span class="brand-version" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.22); color: #a5b4fc; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3); white-space: nowrap;">v0.10.8-alpha-10.16</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -4595,7 +4595,27 @@
         </div>
       </div>
 
-      <div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
+      <!-- FLOW FREEZE SECTION (v0.10.8-alpha-10.16 - Auto-Protection & VIP Cap) -->
+      <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span>❄️ Đóng Băng Dòng Chảy (Flow Freeze)</span>
+        <span id="shop-flow-freeze-cap-badge" class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700;">Tối đa: 3 lượt</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1)); border: 1px solid rgba(6,182,212,0.35);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: #a5f3fc; display: flex; align-items: center; gap: 6px;">
+              <span>❄️ 1 Flow Freeze Hộ Mệnh</span>
+              <span id="shop-freeze-owned-badge" class="badge" style="background: rgba(34,211,238,0.2); color: #22d3ee; font-size: 9.5px;">Đang có: 0</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Tự động đóng băng bảo vệ chuỗi khi bạn nghỉ học (Giá: 200 Xu)</div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-shop-buy-freeze" onclick="buyFlowFreezeItem()" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; font-weight: 700; padding: 6px 14px; white-space: nowrap;">
+            Mua (200đ)
+          </button>
+        </div>
+      </div>
+<div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
         <div>
           <strong style="color: var(--text);">🎯 Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - balance_v1):</strong><br>
           • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3 Xu) • Sai (-2% thuộc, -2 Xu)<br>
@@ -17548,8 +17568,12 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // FLOW & FLOW FREEZE ENGINE (v0.10.8-alpha-10.3 - LOCAL DATES & CONNECTED PATHS)
+    // FLOW & FLOW FREEZE ENGINE (v0.10.8-alpha-10.16 - AUTO GAP FREEZE & VIP CAP)
     // =========================================================================
+    function getMaxFlowFreezes() {
+      return (typeof isUserVip === 'function' && isUserVip()) ? 7 : 3;
+    }
+
     function getFlowDates() {
       try {
         return JSON.parse(localStorage.getItem('vocaflow_flow_dates') || localStorage.getItem('vocaflow_study_dates') || '[]');
@@ -17563,11 +17587,14 @@ function switchPublisherTab(tab) {
     }
 
     function getUserFlowFreezes() {
-      return parseInt(localStorage.getItem('vocaflow_flow_freezes') || localStorage.getItem('vocaflow_streak_freezes') || '1', 10);
+      const maxFreezes = getMaxFlowFreezes();
+      const val = parseInt(localStorage.getItem('vocaflow_flow_freezes') || localStorage.getItem('vocaflow_streak_freezes') || '1', 10);
+      return Math.min(maxFreezes, Math.max(0, isNaN(val) ? 1 : val));
     }
 
     function setUserFlowFreezes(val) {
-      const v = Math.max(0, parseInt(val, 10) || 0);
+      const maxFreezes = getMaxFlowFreezes();
+      const v = Math.min(maxFreezes, Math.max(0, parseInt(val, 10) || 0));
       localStorage.setItem('vocaflow_flow_freezes', v.toString());
       localStorage.setItem('vocaflow_streak_freezes', v.toString());
       updateFlowUI();
@@ -17575,17 +17602,96 @@ function switchPublisherTab(tab) {
       pushCurrentDatabaseToCloud();
     }
 
+    // Auto-consumption of Flow Freeze when missed days occur (v0.10.8-alpha-10.16)
+    function evaluateAndAutoApplyFlowFreezes() {
+      let flowDates = getFlowDates();
+      let freezeDates = getFlowFreezeDates();
+      let currentFreezes = getUserFlowFreezes();
+
+      const allActive = new Set([...flowDates, ...freezeDates]);
+      if (allActive.size === 0) return false;
+
+      let sortedDates = Array.from(allActive).sort();
+      let earliestDateStr = sortedDates[0];
+
+      const today = new Date();
+      let checkDate = new Date(today);
+      checkDate.setDate(checkDate.getDate() - 1); // Start checking backward from yesterday
+
+      let appliedCount = 0;
+      let appliedDatesList = [];
+
+      while (true) {
+        const dStr = formatLocalDateString(checkDate);
+        if (dStr < earliestDateStr) break;
+
+        if (allActive.has(dStr)) {
+          // Day was already active, step back
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          // Gap detected! Check if user had any study activity prior to this date
+          let hasPrior = false;
+          for (const act of allActive) {
+            if (act < dStr) {
+              hasPrior = true;
+              break;
+            }
+          }
+
+          if (!hasPrior) break;
+
+          if (currentFreezes > 0) {
+            currentFreezes--;
+            freezeDates.push(dStr);
+            allActive.add(dStr);
+            appliedCount++;
+            appliedDatesList.push(dStr);
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            // Out of freezes: chain is broken before this gap
+            break;
+          }
+        }
+      }
+
+      if (appliedCount > 0) {
+        freezeDates.sort();
+        localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(freezeDates));
+        localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(freezeDates));
+        localStorage.setItem('vocaflow_flow_freezes', currentFreezes.toString());
+        localStorage.setItem('vocaflow_streak_freezes', currentFreezes.toString());
+
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        updateFlowUI();
+        if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
+
+        const dateLabels = appliedDatesList.map(d => {
+          const parts = d.split('-');
+          return parts.length === 3 ? `${parts[2]}/${parts[1]}` : d;
+        }).reverse().join(', ');
+
+        showToast(`❄️ Đã tự động kích hoạt ${appliedCount} Flow Freeze bảo vệ chuỗi ngày học (${dateLabels})! (Còn ${currentFreezes}/${getMaxFlowFreezes()} lượt)`);
+        return true;
+      }
+
+      return false;
+    }
+
     function calculateCurrentFlow() {
+      // Auto apply Flow Freezes to bridge gaps if user missed days
+      evaluateAndAutoApplyFlowFreezes();
+
       const dates = getFlowDates();
       const freezes = getFlowFreezeDates();
-      if (dates.length === 0) return { currentFlow: 0, pureFlow: 0, maxFlow: 0 };
+      if (dates.length === 0 && freezes.length === 0) return { currentFlow: 0, pureFlow: 0, maxFlow: 0 };
 
       const todayStr = formatLocalDateString(new Date());
       let checkDate = new Date();
       let currentFlow = 0;
       let pureFlow = 0;
 
-      const todayIncluded = dates.includes(todayStr);
+      const todayIncluded = dates.includes(todayStr) || freezes.includes(todayStr);
       if (!todayIncluded) {
         checkDate.setDate(checkDate.getDate() - 1);
       }
@@ -17665,6 +17771,14 @@ function switchPublisherTab(tab) {
         return;
       }
 
+      const maxFreezes = getMaxFlowFreezes();
+      const currentFreezes = getUserFlowFreezes();
+
+      if (currentFreezes >= maxFreezes) {
+        alert(`⚠️ Bạn đã tích trữ tối đa ${maxFreezes}/${maxFreezes} Flow Freeze!\n\n${!isUserVip() ? '👑 Hãy nâng cấp VIP Crown để mở rộng sức chứa lên tối đa 7 Flow Freeze (bảo vệ chuỗi nghỉ liên tục 7 ngày)!' : 'Hãy sử dụng bớt khi cần thiết trước khi mua thêm nhé.'}`);
+        return;
+      }
+
       const costPoints = 200;
       const currentPoints = getUserPoints();
 
@@ -17674,12 +17788,11 @@ function switchPublisherTab(tab) {
       }
 
       setUserPoints(currentPoints - costPoints);
-      let currentFreezes = getUserFlowFreezes();
-      currentFreezes += 1;
-      setUserFlowFreezes(currentFreezes);
+      const newFreezes = Math.min(maxFreezes, currentFreezes + 1);
+      setUserFlowFreezes(newFreezes);
 
-      addLedgerEntry('BUY_FLOW_FREEZE', -costPoints, `Mua +1 Flow Freeze (Đóng Băng Dòng Chảy) trong VocaShop`);
-      showToast(`❄️ Đã mua thành công +1 Flow Freeze! (Hiện có: ${currentFreezes})`);
+      addLedgerEntry('BUY_FLOW_FREEZE', -costPoints, `Mua +1 Flow Freeze (Đóng Băng Dòng Chảy) trong VocaShop (${newFreezes}/${maxFreezes})`);
+      showToast(`❄️ Đã mua thành công +1 Flow Freeze! (Hiện có: ${newFreezes}/${maxFreezes})`);
       updateEconomyUI();
       updateFlowUI();
       saveDatabase(true);
@@ -17689,6 +17802,7 @@ function switchPublisherTab(tab) {
     function updateFlowUI() {
       const { currentFlow, maxFlow } = calculateCurrentFlow();
       const freezes = getUserFlowFreezes();
+      const maxFreezes = getMaxFlowFreezes();
 
       const headerFlow = document.getElementById('header-flow-count');
       if (headerFlow) headerFlow.textContent = currentFlow;
@@ -17703,10 +17817,29 @@ function switchPublisherTab(tab) {
       if (calMax) calMax.textContent = `${maxFlow} Ngày`;
 
       const calFreezes = document.getElementById('flow-cal-stat-freezes');
-      if (calFreezes) calFreezes.textContent = freezes;
+      if (calFreezes) calFreezes.textContent = `${freezes}/${maxFreezes}`;
 
       const shopFreezes = document.getElementById('shop-user-freezes');
-      if (shopFreezes) shopFreezes.textContent = freezes;
+      if (shopFreezes) shopFreezes.textContent = `${freezes}/${maxFreezes}`;
+
+      const capBadge = document.getElementById('shop-flow-freeze-cap-badge');
+      if (capBadge) capBadge.textContent = (typeof isUserVip === 'function' && isUserVip()) ? '👑 VIP: Tối đa 7 lượt' : 'Tối đa: 3 lượt';
+
+      const ownedBadge = document.getElementById('shop-freeze-owned-badge');
+      if (ownedBadge) ownedBadge.textContent = `Đang có: ${freezes}/${maxFreezes}`;
+
+      const buyBtn = document.getElementById('btn-shop-buy-freeze');
+      if (buyBtn) {
+        if (freezes >= maxFreezes) {
+          buyBtn.textContent = 'Đã Đầy';
+          buyBtn.disabled = true;
+          buyBtn.style.opacity = '0.5';
+        } else {
+          buyBtn.textContent = 'Mua (200đ)';
+          buyBtn.disabled = false;
+          buyBtn.style.opacity = '1';
+        }
+      }
     }
 
     function openFlowCalendarModal() {

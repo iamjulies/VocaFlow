@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-alpha-10.15 (Build 220) - 2-Way Realtime Cloud Sync & Flow / Streak Union Engine
+Phiên bản: v0.10.8-alpha-10.16 (Build 221) - Flow Freeze Auto-Protection & VIP 7-Day Cap Engine
 ================================================================================
-1. [Đồng Bộ Hai Chiều Dòng Chảy Học Tập (Flow)] Bổ sung flowDates, flowFreezeDates và flowFreezes vào payload pushCurrentDatabaseToCloud tự động nền.
-2. [Hợp Nhất Chuỗi Ngày Học (Union Merge)] Tự động hợp nhất (Union Set) tất cả các ngày học giữa điện thoại và máy tính, không bao giờ bị mất flow hay streak khi chuyển đổi thiết bị.
-3. [Tự Động Nạp Khi Khởi Động] Tải và cập nhật tức thì dữ liệu Dòng Chảy & Chuỗi ngày học từ Cloud ngay khi mở ứng dụng trên bất kỳ thiết bị nào.
+1. [Tự Động Kích Hoạt Flow Freeze] Tự động đóng băng chuỗi Flow khi bỏ lỡ ngày học (dùng dần cho đến khi hết freeze thì mới mất chuỗi).
+2. [Hạn Mức Sức Chứa Freeze Chuẩn Hóa] Người dùng thường tích lũy tối đa 3 Flow Freeze, người dùng VIP Crown tích lũy tối đa 7 Flow Freeze (bảo vệ chuỗi nghỉ liên tục 7 ngày).
+3. [Mua Trực Tiếp Trong VocaShop] Tích hợp thẻ mua Flow Freeze (200 Xu) trong VocaShop kèm hiển thị hạn mức theo cấp tài khoản.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-alpha-10.15 (Build 220)
+Phiên bản hiện tại : v0.10.8-alpha-10.16 (Build 221)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -25,6 +25,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.16 (Build 221 - FLOW FREEZE AUTO-PROTECTION & VIP 7-DAY CAP ENGINE):
+  - Bổ sung cơ chế tự động kích hoạt Flow Freeze khi phát hiện ngày nghỉ học (evaluateAndAutoApplyFlowFreezes).
+  - Giữ nguyên chuỗi Dòng Chảy (Flow) và Chuỗi ngày học liên tục bằng cách tự động bù Flow Freeze vào các ngày nghỉ học cho đến khi hết lượt freeze.
+  - Phân tầng hạn mức lưu trữ Flow Freeze: Tài khoản thường tối đa 3 lượt (3 ngày), tài khoản VIP Crown tối đa 7 lượt (7 ngày).
+  - Tích hợp tính năng mua Flow Freeze trực tiếp trong VocaShop (200 Xu/lượt) kèm hiển thị số lượng sở hữu và hạn mức tối đa.
 • 👑 v0.10.8-alpha-10.15 (Build 220 - 2-WAY REALTIME CLOUD SYNC & FLOW / STREAK UNION ENGINE):
   - Khắc phục triệt để lỗi không đồng bộ Dòng Chảy (Flow) và Chuỗi ngày học giữa Điện thoại và Máy tính (Laptop).
   - Tích hợp trường dữ liệu Flow vào payload pushCurrentDatabaseToCloud tự động chạy nền sau mỗi bài học.
@@ -460,6 +465,11 @@ II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
 🌟 [v0.10.8] - VIP PREMIUM SUBSCRIPTION & MONETIZATION ECOSYSTEM
+• 👑 v0.10.8-alpha-10.16 (Build 221 - FLOW FREEZE AUTO-PROTECTION & VIP 7-DAY CAP ENGINE):
+  - Bổ sung cơ chế tự động kích hoạt Flow Freeze khi phát hiện ngày nghỉ học (evaluateAndAutoApplyFlowFreezes).
+  - Giữ nguyên chuỗi Dòng Chảy (Flow) và Chuỗi ngày học liên tục bằng cách tự động bù Flow Freeze vào các ngày nghỉ học cho đến khi hết lượt freeze.
+  - Phân tầng hạn mức lưu trữ Flow Freeze: Tài khoản thường tối đa 3 lượt (3 ngày), tài khoản VIP Crown tối đa 7 lượt (7 ngày).
+  - Tích hợp tính năng mua Flow Freeze trực tiếp trong VocaShop (200 Xu/lượt) kèm hiển thị số lượng sở hữu và hạn mức tối đa.
 • 👑 v0.10.8-alpha-10.15 (Build 220 - 2-WAY REALTIME CLOUD SYNC & FLOW / STREAK UNION ENGINE):
   - Khắc phục triệt để lỗi không đồng bộ Dòng Chảy (Flow) và Chuỗi ngày học giữa Điện thoại và Máy tính (Laptop).
   - Tích hợp trường dữ liệu Flow vào payload pushCurrentDatabaseToCloud tự động chạy nền sau mỗi bài học.
