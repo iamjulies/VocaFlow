@@ -1,18 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 227 - Debug 0.5) - VIP Exclusive IELTS Vocabulary Decks (6.0-7.0, 7.0-8.0, 8.0-9.0)
+Phiên bản: v0.10.8-released (Build 228 - Debug 0.6) - Flow Freeze Auto-Deduction & Bidirectional Sync Fix
 ================================================================================
-1. [3 Bộ Từ Vựng IELTS VIP Độc Quyền] Tích hợp sẵn 3 bộ từ vựng học thuật đỉnh cao biên soạn chuyên sâu theo chuẩn Cambridge & Oxford:
-   - IELTS 6.0 - 7.0 Trọng Tâm (B2-C1 Academic - 108 từ vựng).
-   - IELTS 7.0 - 8.0 Chuyên Sâu (C1-C2 Lexical Resource - 108 từ vựng).
-   - IELTS 8.0 - 9.0 Mastery (C2 Native Nuances - 108 từ vựng).
-2. [Đầy Đủ Thông Tin Học Thuật Chi Tiết] Mỗi từ vựng bao gồm: Từ vựng (Term), Phiên âm IPA chuẩn, Từ loại, Nghĩa tiếng Việt, Câu ví dụ học thuật dịch nghĩa, Collocations trọng tâm, Cấp độ CEFR và Ghi chú phân tích chi tiết.
-3. [Phân Quyền VIP & Trải Nghiệm Thư Viện] Gắn nhãn 👑 VIP Độc Quyền, khóa với tài khoản thông thường (xem trước 5 từ mẫu & hướng dẫn nâng cấp VIP), mở tải Miễn Phí 100% (0 Xu) cho Hội viên VIP. Bổ sung tab bộ lọc "👑 Gói VIP" trong Thư Viện VocaLibrary.
-4. [Bảo Toàn Trọn Đời Không Thu Hồi (Lifetime Offline Retention)] Bộ từ VIP khi đã cài đặt vào máy sẽ tồn tại vĩnh viễn trong danh sách bộ từ cục bộ, người dùng tiếp tục học tập và ôn luyện bình thường ngay cả khi gói VIP hết hạn.
+1. [Khắc Phục Lỗi Không Trừ Flow Freeze Khi Nghỉ Học] Sửa triệt để cơ chế đối soát và đồng bộ Flow Freeze: loại bỏ phép toán Math.max() cưỡng bức số dư cũ, thiết lập công thức tính toán độ lệch tiêu hao (consumed offset) chuẩn xác giữa Local và Cloud.
+2. [Tự Động Bù Trừ & Tự Phục Hồi (Self-Healing Reconciler)] Hệ thống tự động phát hiện các ngày đã được đóng băng bảo vệ chuỗi trong lịch sử (như ngày 1/9) và tự động khấu trừ đúng số lượng Flow Freeze tương ứng từ 2/7 về 1/7 ngay khi ứng dụng khởi động.
+3. [Đồng Bộ Đa Chiều Không Hoàn Lại Lượt Đã Dùng] Đảm bảo các lượt Flow Freeze đã tiêu hao trên bất kỳ thiết bị nào (hoặc khi offline) sẽ không bao giờ bị Cloud ghi đè khôi phục lại số cũ, đồng thời bảo toàn hoàn hảo các giao dịch nạp/mua lượt mới từ VocaShop và Cổng Quản Trị.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 227 - Debug 0.5)
+Phiên bản hiện tại : v0.10.8-released (Build 228 - Debug 0.6)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -27,6 +23,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 228 - DEBUG 0.6 FLOW FREEZE FIX):
+  - Khắc phục lỗi số lượng Flow Freeze không tự động trừ khi người dùng nghỉ học (giữ nguyên 2/7 sau khi đã đóng băng ngày 1/9).
+  - Tái cấu trúc thuật toán đồng bộ Startup Sync & Manual Sync: tính toán `newlyConsumedByLocal` & `newlyConsumedByRemote` để khấu trừ chuẩn xác trước khi lưu trữ.
+  - Thêm cơ chế tự phục hồi (Self-Healing) tự động đối soát lịch sử đóng băng và đưa số dư Flow Freeze về giá trị chính xác ngay lập tức.
+  - Đồng bộ đa nhánh `economy.flowFreezes`, `flowFreezes`, `streakFreezes` và `flow.freezes` trên Firebase Cloud.
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 227 - DEBUG 0.5 VIP EXCLUSIVE DECKS):
   - Ra mắt 3 bộ từ vựng IELTS VIP Độc Quyền được trích xuất và tinh chỉnh từ kho dữ liệu học thuật chuẩn:

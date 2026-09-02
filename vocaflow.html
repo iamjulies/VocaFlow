@@ -6538,7 +6538,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.5)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.6)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10951,10 +10951,10 @@ function switchPublisherTab(tab) {
                   ? uData.flow.freezeDates
                   : (Array.isArray(uData.streakFreezeHistory) ? uData.streakFreezeHistory : []));
 
-              if (remoteStartupFreezeDates && remoteStartupFreezeDates.length > 0) {
-                let localFreezeDates = getFlowFreezeDates();
-                const unionSet = new Set([...localFreezeDates, ...remoteStartupFreezeDates]);
-                const mergedFreezeDates = Array.from(unionSet).sort();
+              const localFreezeDates = getFlowFreezeDates();
+              const unionFreezeSet = new Set([...localFreezeDates, ...remoteStartupFreezeDates]);
+              const mergedFreezeDates = Array.from(unionFreezeSet).sort();
+              if (mergedFreezeDates.length > 0) {
                 localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
                 localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
               }
@@ -10963,13 +10963,21 @@ function switchPublisherTab(tab) {
                 ? parseInt(uData.flowFreezes, 10)
                 : ((uData.flow && uData.flow.freezes !== undefined)
                   ? parseInt(uData.flow.freezes, 10)
-                  : (uData.streakFreezes !== undefined ? parseInt(uData.streakFreezes, 10) : NaN));
+                  : ((uData.economy && uData.economy.flowFreezes !== undefined)
+                    ? parseInt(uData.economy.flowFreezes, 10)
+                    : (uData.streakFreezes !== undefined ? parseInt(uData.streakFreezes, 10) : NaN)));
 
               if (!isNaN(remoteStartupFreezes)) {
                 const localFreezes = getUserFlowFreezes();
-                const maxFreezes = Math.max(localFreezes, remoteStartupFreezes);
-                localStorage.setItem('vocaflow_flow_freezes', maxFreezes.toString());
-                localStorage.setItem('vocaflow_streak_freezes', maxFreezes.toString());
+                const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteStartupFreezeDates.length);
+                const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
+                const effectiveRemote = Math.max(0, remoteStartupFreezes - newlyConsumedByLocal);
+                const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
+                const maxCap = getMaxFlowFreezes();
+                const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+
+                localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
+                localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
               }
 
               updateFlowUI();
@@ -14084,6 +14092,7 @@ function switchPublisherTab(tab) {
             points: getUserPoints(),
             hints: getUserHints(),
             skips: getUserSkips(),
+            flowFreezes: getUserFlowFreezes(),
             luckySpins: getLuckySpinsCount(),
             luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
             lastVipSpinDate: localStorage.getItem('vocaflow_last_vip_spin_date') || ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString()),
@@ -14105,6 +14114,7 @@ function switchPublisherTab(tab) {
           flowDates: getFlowDates(),
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
+          streakFreezes: getUserFlowFreezes(),
           studyDates: getFlowDates(),
           points: getUserPoints(),
           hints: getUserHints(),
@@ -14573,10 +14583,10 @@ function switchPublisherTab(tab) {
                     ? cloudData.flow.freezeDates
                     : (Array.isArray(cloudData.streakFreezeHistory) ? cloudData.streakFreezeHistory : []));
 
-                if (remoteFreezeDates && remoteFreezeDates.length > 0) {
-                  let localFreezeDates = getFlowFreezeDates();
-                  const unionSet = new Set([...localFreezeDates, ...remoteFreezeDates]);
-                  const mergedFreezeDates = Array.from(unionSet).sort();
+                const localFreezeDates = getFlowFreezeDates();
+                const unionFreezeSet = new Set([...localFreezeDates, ...remoteFreezeDates]);
+                const mergedFreezeDates = Array.from(unionFreezeSet).sort();
+                if (mergedFreezeDates.length > 0) {
                   localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
                   localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
                 }
@@ -14585,13 +14595,21 @@ function switchPublisherTab(tab) {
                   ? parseInt(cloudData.flowFreezes, 10)
                   : ((cloudData.flow && cloudData.flow.freezes !== undefined)
                     ? parseInt(cloudData.flow.freezes, 10)
-                    : (cloudData.streakFreezes !== undefined ? parseInt(cloudData.streakFreezes, 10) : NaN));
+                    : ((cloudData.economy && cloudData.economy.flowFreezes !== undefined)
+                      ? parseInt(cloudData.economy.flowFreezes, 10)
+                      : (cloudData.streakFreezes !== undefined ? parseInt(cloudData.streakFreezes, 10) : NaN)));
 
                 if (!isNaN(remoteFreezes)) {
                   const localFreezes = getUserFlowFreezes();
-                  const maxFreezes = Math.max(localFreezes, remoteFreezes);
-                  localStorage.setItem('vocaflow_flow_freezes', maxFreezes.toString());
-                  localStorage.setItem('vocaflow_streak_freezes', maxFreezes.toString());
+                  const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteFreezeDates.length);
+                  const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
+                  const effectiveRemote = Math.max(0, remoteFreezes - newlyConsumedByLocal);
+                  const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
+                  const maxCap = getMaxFlowFreezes();
+                  const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+
+                  localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
+                  localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
                 }
 
                 updateFlowUI();
@@ -18225,6 +18243,18 @@ function switchPublisherTab(tab) {
       let flowDates = getFlowDates();
       let freezeDates = getFlowFreezeDates();
       let currentFreezes = getUserFlowFreezes();
+
+      // One-time self-healing reconciliation for previously un-deducted freeze dates (v0.10.8-debug-0.6)
+      if (!localStorage.getItem('vocaflow_freeze_deducted_v0108_debug06')) {
+        if (freezeDates.length > 0 && currentFreezes >= 2) {
+          currentFreezes = Math.max(0, currentFreezes - 1);
+          localStorage.setItem('vocaflow_flow_freezes', currentFreezes.toString());
+          localStorage.setItem('vocaflow_streak_freezes', currentFreezes.toString());
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+        localStorage.setItem('vocaflow_freeze_deducted_v0108_debug06', 'true');
+      }
 
       const allActive = new Set([...flowDates, ...freezeDates]);
       if (allActive.size === 0) return false;
