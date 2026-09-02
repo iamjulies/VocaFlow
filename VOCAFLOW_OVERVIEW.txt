@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 229 - Debug 0.7) - Dynamic Author Name Resolution & Deck Creator Cascade Sync
+Phiên bản: v0.10.8-released (Build 230 - Debug 0.8) - VIP Daily Lucky Spins Delivery, Cloud Merge Fix & +4 Spins Compensation
 ================================================================================
-1. [Khắc Phục Lỗi Tên Tác Giả Ở Trang Chủ & Chi Tiết Bộ Từ] Tích hợp hàm phân giải thời gian thực `getLiveDeckAuthor(deck)`: tự động lấy `displayName` mới nhất của người dùng hiện tại áp dụng lên tất cả các bộ từ cá nhân (tạo bằng tay, tạo tự động bởi AI Studio, nhập file).
-2. [Tự Động Cập Nhật Đa Tầng Khi Đổi Tên Hồ Sơ (Profile Cascade Update)] Khi đổi tên hiển thị trong trang cá nhân, hệ thống tự động cập nhật tên tác giả trên toàn bộ danh sách bộ từ cục bộ (`decks`), đồng bộ lên Cloud Realtime RTDB và làm mới giao diện Trang Chủ (`renderDecks`) và Chi Tiết Bộ Từ (`openDeckDetail`) tức thì.
-3. [Tự Phục Hồi Dữ Liệu Tác Giả Khởi Động (Startup Self-Healing)] Tự động đối soát và vá `authorUid` cùng `author` khi mở ứng dụng, đảm bảo đồng bộ hoàn hảo danh tính người tạo.
+1. [Khắc Phục Lỗi Thông Báo Nhận Quà VIP Nhưng Không Được Cộng Lượt Quay] Sửa triệt để xung đột thứ tự khởi tạo và đồng bộ Cloud: loại bỏ việc Cloud Sync ghi đè lượt quay cục bộ về 0, thiết lập cơ chế kiểm tra đặc quyền VIP `checkAndGrantVipDailySpinBonus()` an toàn và cộng dồn thực tế vào `vocaflow_lucky_spins_left`.
+2. [Tự Động Bồi Hoàn +4 Lượt Quay May Mắn (Self-Healing Compensation)] Tự động phát hiện và bồi hoàn trực tiếp +4 Lượt Quay May Mắn VIP (tương đương 2 ngày đặc quyền VIP bị lỗi trước đó) vào tài khoản ngay khi khởi động ứng dụng.
+3. [Đồng Bộ Hai Chiều An Toàn Cao (Smart Spin Merge)] Trong cả Startup Sync và Manual Sync, số lượt quay luôn được đối soát `Math.max(local, remote)` và bảo toàn ngày tặng quà, ngăn ngừa hoàn toàn hiện tượng mất lượt quay khi đồng bộ.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 229 - Debug 0.7)
+Phiên bản hiện tại : v0.10.8-released (Build 230 - Debug 0.8)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +23,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 230 - DEBUG 0.8 VIP DAILY SPINS & COMPENSATION):
+  - Khắc phục lỗi Quà tặng VIP hàng ngày hiển thị thông báo trong Trung Tâm Thông Báo nhưng không được cộng lượt quay trên Vòng Quay May Mắn.
+  - Sửa cơ chế đồng bộ Cloud: ngăn chặn việc ghi đè số dư lượt quay cũ từ máy chủ đè mất lượt quay VIP mới được tặng.
+  - Tự động bồi hoàn +4 Lượt Quay May Mắn đặc quyền VIP cho 2 ngày bị thiếu.
+  - Đồng bộ an toàn số dư lượt quay đa thiết bị (`Math.max(local, remote)`).
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 229 - DEBUG 0.7 DYNAMIC AUTHOR SYNC):
   - Khắc phục lỗi tên tác giả cũ (`baby boy, horny bee`) vẫn hiển thị trên các thẻ bộ từ ở Trang Chủ và trong Chi Tiết Bộ Từ sau khi người dùng đổi tên tài khoản thành `horny bae`.

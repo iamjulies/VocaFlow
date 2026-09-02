@@ -6538,7 +6538,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.7)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.8)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10922,6 +10922,12 @@ function switchPublisherTab(tab) {
                   localStorage.setItem(STORAGE_KEY_USER_POINTS, pts.toString());
                   updateEconomyUI();
                 }
+                const remoteLuckySpins = typeof uData.economy.luckySpins === 'number' ? uData.economy.luckySpins : parseInt(uData.economy.luckySpins, 10);
+                const localLuckySpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+                if (!isNaN(remoteLuckySpins)) {
+                  const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
+                  localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
+                }
               } else if (uData.points !== undefined) {
                 const pts = typeof uData.points === 'number' ? uData.points : parseInt(uData.points, 10);
                 if (!isNaN(pts)) {
@@ -10982,6 +10988,13 @@ function switchPublisherTab(tab) {
 
               updateFlowUI();
               if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
+
+              if (typeof checkAndGrantVipDailySpinBonus === 'function') {
+                checkAndGrantVipDailySpinBonus();
+              }
+              updateLuckyWheelUI();
+              updateShopBonusesUI();
+
               if (changed) {
                 localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
                 updateAuthUI();
@@ -14453,13 +14466,17 @@ function switchPublisherTab(tab) {
                     localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
                   }
                   const remoteLuckySpins = typeof cloudData.economy.luckySpins === 'number' ? cloudData.economy.luckySpins : parseInt(cloudData.economy.luckySpins, 10);
+                  const localLuckySpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
                   if (!isNaN(remoteLuckySpins)) {
-                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                    const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
+                    localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
                   }
                   if (cloudData.economy.luckySpinsDate) {
                     localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
                   }
-                  if (cloudData.economy.lastVipSpinDate) {
+                  const todayStr = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
+                  const localVipSpinDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+                  if (cloudData.economy.lastVipSpinDate && localVipSpinDate !== todayStr) {
                     localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
                   }
                   if (cloudData.economy.lastAdWatchTime) {
@@ -15962,32 +15979,66 @@ function switchPublisherTab(tab) {
       return new Date().toISOString().slice(0, 10);
     }
 
-    function getLuckySpinsCount() {
+    function checkAndGrantVipDailySpinBonus() {
+      const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
+      if (!isVip) return false;
+
       const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
-      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-      let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
-      
-      if (lastDailyDate !== today) {
+      const notifId = 'notif_vip_daily_spin_' + today;
+
+      // 1. One-time self-healing compensation for missing VIP spins over the past 2 days (v0.10.8-debug-0.8)
+      if (!localStorage.getItem('vocaflow_vip_spin_healed_v0108_debug08')) {
+        let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+        if (isNaN(curSpins) || curSpins < 0) curSpins = 0;
+        curSpins += 4; // Bồi hoàn +4 lượt quay cho 2 ngày bị lỗi
+        localStorage.setItem('vocaflow_lucky_spins_left', curSpins.toString());
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
-        const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
-        if (isVip) {
-          const notifId = 'notif_vip_daily_spin_' + today;
-          const alreadyNotified = userNotifications.some(n => n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)));
-          
-          if (!alreadyNotified) {
-            // VIP user: Cumulative +2 Free Lucky Spins per day (v0.10.8-alpha-10.3)
-            spins += 2;
-            localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
-            if (typeof addNotification === 'function') {
-              addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!', null, null, notifId);
-            }
-          }
-          if (typeof pushCurrentDatabaseToCloud === 'function') {
-            pushCurrentDatabaseToCloud();
-          }
+        localStorage.setItem('vocaflow_vip_spin_healed_v0108_debug08', 'true');
+        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Bồi hoàn +4 Lượt Quay May Mắn VIP (Đặc quyền 2 ngày)');
+        updateLuckyWheelUI();
+        updateShopBonusesUI();
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
         }
+        showToast('👑 Đã bồi hoàn +4 Lượt Quay May Mắn VIP vào tài khoản của bạn!');
+        return true;
       }
-      return Math.max(0, spins);
+
+      // 2. Normal daily check & grant
+      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+      const alreadyNotified = userNotifications.some(n => n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)));
+
+      if (lastDailyDate !== today) {
+        let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+        if (isNaN(spins) || spins < 0) spins = 0;
+        spins += 2;
+        localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+
+        if (!alreadyNotified && typeof addNotification === 'function') {
+          addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!', null, null, notifId);
+        }
+
+        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Nhận +2 Lượt Quay May Mắn VIP hằng ngày');
+        updateLuckyWheelUI();
+        updateShopBonusesUI();
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function getLuckySpinsCount() {
+      if (typeof isUserVip === 'function' && isUserVip()) {
+        checkAndGrantVipDailySpinBonus();
+      }
+      const raw = localStorage.getItem('vocaflow_lucky_spins_left');
+      const parsed = parseInt(raw || '0', 10);
+      return Math.max(0, isNaN(parsed) ? 0 : parsed);
     }
 
     function setLuckySpinsCount(count) {
@@ -16205,6 +16256,9 @@ function switchPublisherTab(tab) {
     }
 
     function openLuckyWheelModal() {
+      if (typeof isUserVip === 'function' && isUserVip()) {
+        checkAndGrantVipDailySpinBonus();
+      }
       if (!luckyWheelIsSpinning) {
         prepareDynamicWheelSlices();
       }
