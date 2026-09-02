@@ -1,14 +1,14 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 228 - Debug 0.6) - Flow Freeze Auto-Deduction & Bidirectional Sync Fix
+Phiên bản: v0.10.8-released (Build 229 - Debug 0.7) - Dynamic Author Name Resolution & Deck Creator Cascade Sync
 ================================================================================
-1. [Khắc Phục Lỗi Không Trừ Flow Freeze Khi Nghỉ Học] Sửa triệt để cơ chế đối soát và đồng bộ Flow Freeze: loại bỏ phép toán Math.max() cưỡng bức số dư cũ, thiết lập công thức tính toán độ lệch tiêu hao (consumed offset) chuẩn xác giữa Local và Cloud.
-2. [Tự Động Bù Trừ & Tự Phục Hồi (Self-Healing Reconciler)] Hệ thống tự động phát hiện các ngày đã được đóng băng bảo vệ chuỗi trong lịch sử (như ngày 1/9) và tự động khấu trừ đúng số lượng Flow Freeze tương ứng từ 2/7 về 1/7 ngay khi ứng dụng khởi động.
-3. [Đồng Bộ Đa Chiều Không Hoàn Lại Lượt Đã Dùng] Đảm bảo các lượt Flow Freeze đã tiêu hao trên bất kỳ thiết bị nào (hoặc khi offline) sẽ không bao giờ bị Cloud ghi đè khôi phục lại số cũ, đồng thời bảo toàn hoàn hảo các giao dịch nạp/mua lượt mới từ VocaShop và Cổng Quản Trị.
+1. [Khắc Phục Lỗi Tên Tác Giả Ở Trang Chủ & Chi Tiết Bộ Từ] Tích hợp hàm phân giải thời gian thực `getLiveDeckAuthor(deck)`: tự động lấy `displayName` mới nhất của người dùng hiện tại áp dụng lên tất cả các bộ từ cá nhân (tạo bằng tay, tạo tự động bởi AI Studio, nhập file).
+2. [Tự Động Cập Nhật Đa Tầng Khi Đổi Tên Hồ Sơ (Profile Cascade Update)] Khi đổi tên hiển thị trong trang cá nhân, hệ thống tự động cập nhật tên tác giả trên toàn bộ danh sách bộ từ cục bộ (`decks`), đồng bộ lên Cloud Realtime RTDB và làm mới giao diện Trang Chủ (`renderDecks`) và Chi Tiết Bộ Từ (`openDeckDetail`) tức thì.
+3. [Tự Phục Hồi Dữ Liệu Tác Giả Khởi Động (Startup Self-Healing)] Tự động đối soát và vá `authorUid` cùng `author` khi mở ứng dụng, đảm bảo đồng bộ hoàn hảo danh tính người tạo.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 228 - Debug 0.6)
+Phiên bản hiện tại : v0.10.8-released (Build 229 - Debug 0.7)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +23,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 229 - DEBUG 0.7 DYNAMIC AUTHOR SYNC):
+  - Khắc phục lỗi tên tác giả cũ (`baby boy, horny bee`) vẫn hiển thị trên các thẻ bộ từ ở Trang Chủ và trong Chi Tiết Bộ Từ sau khi người dùng đổi tên tài khoản thành `horny bae`.
+  - Bổ sung hàm phân giải danh tính tác giả `getLiveDeckAuthor(deck)`: liên kết động với `currentUser.displayName` và `currentUser.uid`.
+  - Cập nhật cơ chế đa tầng `saveUserProfileCustomFields`: khi đổi tên, lập tức quét và cập nhật lại mảng bộ từ `decks` cục bộ và đồng bộ lên Cloud.
+  - Tự động vá và đồng bộ dữ liệu tác giả khi khởi động ứng dụng (`loadDatabase` & `runLegacyDataMigrationV0107b`).
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 228 - DEBUG 0.6 FLOW FREEZE FIX):
   - Khắc phục lỗi số lượng Flow Freeze không tự động trừ khi người dùng nghỉ học (giữ nguyên 2/7 sau khi đã đóng băng ngày 1/9).

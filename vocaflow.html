@@ -6538,7 +6538,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.6)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.7)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11007,24 +11007,24 @@ function switchPublisherTab(tab) {
           ensureUserHandleAssigned(currentUser);
         }
 
-        // 2. Auto-patch local decks missing authorUid
+        // 2. Auto-patch local decks missing authorUid or having outdated author names
         if (Array.isArray(decks) && currentUser && currentUser.uid) {
           let decksModified = false;
+          const curName = (currentUser.displayName || currentUser.username || '').trim();
           decks.forEach(deck => {
-            if (!deck.authorUid || deck.authorUid === '') {
-              if (!deck.libSourceId) {
-                deck.authorUid = currentUser.uid;
-                deck.author = deck.author || currentUser.displayName || 'Tác giả';
-                deck.authorUsername = currentUser.username || deck.authorUsername || '';
-                decksModified = true;
-              } else if (deck.author && currentUser.displayName && deck.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) {
-                deck.authorUid = currentUser.uid;
-                deck.authorUsername = currentUser.username || deck.authorUsername || '';
+            if (isDeckAuthor(deck) || (deck.authorUid && deck.authorUid === currentUser.uid) || (!deck.authorUid && !deck.id.startsWith('lib_deck_') && !deck.libSourceId)) {
+              if (curName && deck.author !== curName) {
+                deck.author = curName;
                 decksModified = true;
               }
-            } else if (deck.authorUid === currentUser.uid && currentUser.username && deck.authorUsername !== currentUser.username) {
-              deck.authorUsername = currentUser.username;
-              decksModified = true;
+              if (deck.authorUid !== currentUser.uid) {
+                deck.authorUid = currentUser.uid;
+                decksModified = true;
+              }
+              if (currentUser.username && deck.authorUsername !== currentUser.username) {
+                deck.authorUsername = currentUser.username;
+                decksModified = true;
+              }
             }
           });
           if (decksModified) {
@@ -12460,7 +12460,52 @@ function switchPublisherTab(tab) {
       if (!deck.authorUid && deck.author && currentUser.displayName && deck.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) {
         return true;
       }
+      // 4. Quaternary fallback: If deck is in user's personal decks (not from library and has no different authorUid):
+      if (!deck.libSourceId && !deck.authorUid && !deck.id.startsWith('lib_deck_')) {
+        return true;
+      }
       return false;
+    }
+
+    function getLiveDeckAuthor(deck) {
+      if (!deck) return { author: '', authorUid: '', isVip: false };
+      let liveAuthor = deck.author || '';
+      let liveAuthorUid = deck.authorUid || '';
+
+      // 1. If this is a deck imported from Library:
+      if (deck.libSourceId) {
+        const libDeck = getAllLibraryDecks().find(d => d.id === deck.libSourceId);
+        if (libDeck) {
+          if (libDeck.author && !libDeck.isAnonymous) liveAuthor = libDeck.author;
+          if (libDeck.authorUid) liveAuthorUid = libDeck.authorUid;
+        }
+      }
+
+      // 2. If this deck belongs to the current logged-in user:
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        const currentName = (currentUser.displayName || currentUser.username || '').trim();
+        if (currentName) {
+          if (isDeckAuthor(deck) || (deck.authorUid && deck.authorUid === currentUser.uid) || (!deck.authorUid && !deck.id.startsWith('lib_deck_') && !deck.libSourceId)) {
+            liveAuthor = currentName;
+            liveAuthorUid = currentUser.uid;
+            if (deck.author !== currentName || deck.authorUid !== currentUser.uid) {
+              deck.author = currentName;
+              deck.authorUid = currentUser.uid;
+            }
+          }
+        }
+      }
+
+      // 3. If authorUid belongs to a known user in adminStudentsData / Realtime Cloud:
+      if (liveAuthorUid && typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) {
+        const matchedStudent = adminStudentsData.find(s => s && s.uid === liveAuthorUid);
+        if (matchedStudent && matchedStudent.displayName) {
+          liveAuthor = matchedStudent.displayName;
+        }
+      }
+
+      const isVip = isAuthorVipUser(liveAuthorUid, liveAuthor);
+      return { author: liveAuthor, authorUid: liveAuthorUid, isVip };
     }
 
     async function saveUserProfileCustomFields() {
@@ -12560,10 +12605,37 @@ function switchPublisherTab(tab) {
           renderLibraryDecks();
         }
 
+        // 3. Cascade update all local personal decks in decks array
+        if (Array.isArray(decks)) {
+          let localDecksUpdated = false;
+          decks.forEach(d => {
+            if (isDeckAuthor(d) || (d.authorUid && d.authorUid === currentUser.uid) || (!d.authorUid && !d.id.startsWith('lib_deck_') && !d.libSourceId)) {
+              d.author = newName;
+              d.authorUid = currentUser.uid;
+              localDecksUpdated = true;
+            }
+          });
+          if (localDecksUpdated) {
+            saveDatabase(true);
+            renderDecks();
+            if (currentDeckId) openDeckDetail(currentDeckId);
+          }
+        }
+
         pushCurrentDatabaseToCloud();
+      } else if (Array.isArray(decks)) {
+        // Guest user local cascade update
+        decks.forEach(d => {
+          if (!d.libSourceId && !d.id.startsWith('lib_deck_')) {
+            d.author = newName;
+          }
+        });
+        saveDatabase(true);
+        renderDecks();
+        if (currentDeckId) openDeckDetail(currentDeckId);
       }
 
-      showToast('✨ Đã lưu và đồng bộ hồ sơ cá nhân lên Cloud thành công!');
+      showToast('✨ Đã lưu và cập nhật tác giả các bộ từ thành công!');
     }
 
         async function deletePublishedDeck(deckId) {
@@ -14806,6 +14878,24 @@ function switchPublisherTab(tab) {
         const storedWords = localStorage.getItem(STORAGE_KEY_WORDS);
         decks = storedDecks ? JSON.parse(storedDecks) : [];
         words = storedWords ? JSON.parse(storedWords) : [];
+
+        // Auto self-heal local decks with latest display name of current user
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && currentUser.displayName && Array.isArray(decks)) {
+          const currentName = currentUser.displayName.trim();
+          let modified = false;
+          decks.forEach(d => {
+            if (isDeckAuthor(d) || (d.authorUid && d.authorUid === currentUser.uid) || (!d.authorUid && !d.id.startsWith('lib_deck_') && !d.libSourceId)) {
+              if (d.author !== currentName || d.authorUid !== currentUser.uid) {
+                d.author = currentName;
+                d.authorUid = currentUser.uid;
+                modified = true;
+              }
+            }
+          });
+          if (modified) {
+            localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
+          }
+        }
       } catch (e) {
         console.error('Failed to parse database from localStorage:', e);
         decks = [];
@@ -15577,28 +15667,13 @@ function switchPublisherTab(tab) {
             <span>Đã thuộc: ${mastered}/${total}</span>
           </div>
           ${(() => {
-            let liveAuthor = deck.author || '';
-            let liveAuthorUid = deck.authorUid || '';
-            if (deck.libSourceId) {
-              const libDeck = getAllLibraryDecks().find(d => d.id === deck.libSourceId);
-              if (libDeck) {
-                if (libDeck.author && !libDeck.isAnonymous) liveAuthor = libDeck.author;
-                if (libDeck.authorUid) liveAuthorUid = libDeck.authorUid;
-              }
-            } else if (deck.authorUid && !deck.author) {
-              const libDeck = getAllLibraryDecks().find(d => d.authorUid === deck.authorUid && d.title === deck.title);
-              if (libDeck) {
-                if (libDeck.author && !libDeck.isAnonymous) liveAuthor = libDeck.author;
-                if (libDeck.authorUid) liveAuthorUid = libDeck.authorUid;
-              }
-            }
-        return `
-          <div class="deck-meta-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
-            <span class="deck-timestamp" style="margin-top: 0;">🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
-            ${liveAuthor ? `<div class="deck-author-line">${isAuthorVipUser(liveAuthorUid, liveAuthor) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="font-size: 11.5px;">${escapeHtml(liveAuthor)}</strong></span>` : `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>`}</div>` : ''}
-          </div>
-        `;
-
+            const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
+            return `
+              <div class="deck-meta-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
+                <span class="deck-timestamp" style="margin-top: 0;">🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
+                ${liveAuthor ? `<div class="deck-author-line">${isVipAuth ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="font-size: 11.5px;">${escapeHtml(liveAuthor)}</strong></span>` : `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>`}</div>` : ''}
+              </div>
+            `;
           })()}
 
           <div class="deck-actions-grid">
@@ -15687,24 +15762,9 @@ function switchPublisherTab(tab) {
       const timeEl = document.getElementById('deck-detail-timestamp');
       if (timeEl) {
         let timeText = '🕒 Tạo: ' + formatDateOnly(deck.createdAt || deck.updatedAt);
-        let liveAuthor = deck.author || '';
-        let liveAuthorUid = deck.authorUid || '';
-        if (deck.libSourceId) {
-          const libDeck = getAllLibraryDecks().find(d => d.id === deck.libSourceId);
-          if (libDeck) {
-            if (libDeck.author && !libDeck.isAnonymous) liveAuthor = libDeck.author;
-            if (libDeck.authorUid) liveAuthorUid = libDeck.authorUid;
-          }
-        } else if (deck.authorUid && !deck.author) {
-          const libDeck = getAllLibraryDecks().find(d => d.authorUid === deck.authorUid && d.title === deck.title);
-          if (libDeck) {
-            if (libDeck.author && !libDeck.isAnonymous) liveAuthor = libDeck.author;
-            if (libDeck.authorUid) liveAuthorUid = libDeck.authorUid;
-          }
-        }
+        const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
 
         if (liveAuthor) {
-          const isVipAuth = isAuthorVipUser(liveAuthorUid, liveAuthor);
           const authorHtml = isVipAuth
             ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; font-weight: 700; display: inline-flex; vertical-align: middle;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; font-size: 12.5px;">${escapeHtml(liveAuthor)}</strong></span>`
             : `<span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">${escapeHtml(liveAuthor)}</span>`;
