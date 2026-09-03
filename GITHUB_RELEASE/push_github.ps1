@@ -1,7 +1,7 @@
-# PowerShell Script - Auto Push VocaFlow to GitHub (1-Click)
+# PowerShell Script - Auto Push VocaFlow to GitHub (1-Click Multi-Deploy)
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
-$Host.UI.RawUI.WindowTitle = "VocaFlow - Đẩy Code Lên GitHub (iamjulies/VocaFlow)"
+$Host.UI.RawUI.WindowTitle = "VocaFlow - Đẩy Toàn Diện Lên GitHub (Main + Gh-Pages + User IO)"
 
 $root = (Get-Item $PSScriptRoot).Parent.FullName
 $git = "C:\Users\DELL\Documents\flutter_windows_3.47.0-stable\flutter\bin\mingit\cmd\git.exe"
@@ -10,7 +10,7 @@ $displayUrl = "https://github.com/iamjulies/VocaFlow.git"
 
 Clear-Host
 Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "   🚀 VOCAFLOW - ĐẨY CẬP NHẬT LÊN GITHUB (1-CLICK)" -ForegroundColor Yellow
+Write-Host "   🚀 VOCAFLOW - ĐẨY CẬP NHẬT LÊN GITHUB TOÀN DIỆN" -ForegroundColor Yellow
 Write-Host "   Repository: $displayUrl" -ForegroundColor White
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host ""
@@ -26,14 +26,17 @@ if (Test-Path $tokenFile) {
     $token = (Get-Content -Path $tokenFile -Raw).Trim()
 }
 
-if ($token) {
-    $repoUrl = "https://iamjulies:$token@github.com/iamjulies/VocaFlow.git"
-} else {
-    $repoUrl = "https://github.com/iamjulies/VocaFlow.git"
-}
+$vocaFlowRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/VocaFlow.git" } else { "https://github.com/iamjulies/VocaFlow.git" }
+$ioRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/iamjulies.github.io.git" } else { "https://github.com/iamjulies/iamjulies.github.io.git" }
 
-# 1. Cập nhật bản ZIP phát hành mới nhất
-Write-Host "[1/3] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
+# 1. Đồng bộ file sang index.html và Release_App
+Copy-Item "$root\vocaflow.html" "$root\index.html" -Force
+Copy-Item "$root\vocaflow.html" "$root\Release_App\vocaflow.html" -Force
+Copy-Item "$root\sw.js" "$root\Release_App\sw.js" -Force
+Copy-Item "$root\vocaflow.html" "$root\GITHUB_RELEASE\vocaflow_web_single_file.html" -Force
+
+# 2. Cập nhật bản ZIP phát hành mới nhất
+Write-Host "[1/4] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
 $stage = Join-Path $root "VocaFlow_Windows_Portable"
 $zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.8_Windows_Portable.zip"
 $rootZipPath = Join-Path $root "VocaFlow_v0.10.8_Windows_Portable.zip"
@@ -45,34 +48,77 @@ try {
     Compress-Archive -Path "$stage\*" -DestinationPath $zipPath -Force
     Copy-Item $zipPath -Destination $rootZipPath -Force
     Remove-Item -Recurse -Force $stage
-    Write-Host "  -> Đã tạo gói: VocaFlow_v0.0.1_Windows_Portable.zip" -ForegroundColor Green
+    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.8_Windows_Portable.zip" -ForegroundColor Green
 } catch {
     Write-Host "  [!] Thông báo ZIP: $_" -ForegroundColor Yellow
 }
 
-# 2. Đồng bộ Git và Commit
+# 3. Đẩy lên iamjulies/VocaFlow -> main
 Write-Host ""
-Write-Host "[2/3] Đang lưu các thay đổi mới nhất..." -ForegroundColor Cyan
+Write-Host "[2/4] Đang lưu và đẩy lên iamjulies/VocaFlow (main)..." -ForegroundColor Cyan
 & $git -C $root remote remove origin 2>$null
-& $git -C $root remote add origin $repoUrl
+& $git -C $root remote add origin $vocaFlowRemote
 & $git -C $root branch -M main
-
 & $git -C $root add .
-$commitMsg = "feat: Update VocaFlow $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+$commitMsg = "feat: Release v0.10.8 $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 & $git -C $root commit -m $commitMsg 2>$null
+& $git -C $root push -u origin main --force
 
-# 3. Đẩy lên GitHub
+# 4. Đẩy lên iamjulies/VocaFlow -> gh-pages
 Write-Host ""
-Write-Host "[3/3] Đang đẩy lên GitHub..." -ForegroundColor Cyan
-& $git -C $root push -u origin main
+Write-Host "[3/4] Đang cập nhật live site gh-pages..." -ForegroundColor Cyan
+$ghPagesDir = Join-Path $env:TEMP "vocaflow_gh_pages_deploy"
+if (Test-Path $ghPagesDir) { Remove-Item -Recurse -Force $ghPagesDir }
+New-Item -ItemType Directory -Path $ghPagesDir | Out-Null
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Green
-    Write-Host "  🎉 CHÚC MỪNG! ĐÃ ĐẨY LÊN GITHUB THÀNH CÔNG 100%!" -ForegroundColor Green
-    Write-Host "  👉 Xem ngay tại: https://github.com/iamjulies/VocaFlow" -ForegroundColor Cyan
-    Write-Host "========================================================" -ForegroundColor Green
-} else {
-    Write-Host ""
-    Write-Host "[!] Đẩy code gặp trục trặc, vui lòng kiểm tra kết nối mạng." -ForegroundColor Red
-}
+Copy-Item "$root\index.html" "$ghPagesDir\index.html" -Force
+Copy-Item "$root\vocaflow.html" "$ghPagesDir\vocaflow.html" -Force
+Copy-Item "$root\sw.js" "$ghPagesDir\sw.js" -Force
+Copy-Item "$root\manifest.json" "$ghPagesDir\manifest.json" -Force
+Copy-Item "$root\xlsx.full.min.js" "$ghPagesDir\xlsx.full.min.js" -Force
+Copy-Item "$root\ads.txt" "$ghPagesDir\ads.txt" -Force
+if (Test-Path "$root\icons") { Copy-Item "$root\icons" "$ghPagesDir\icons" -Recurse -Force }
+if (Test-Path "$root\audio") { Copy-Item "$root\audio" "$ghPagesDir\audio" -Recurse -Force }
+New-Item -ItemType File -Path "$ghPagesDir\.nojekyll" -Force | Out-Null
+
+& $git -C $ghPagesDir init | Out-Null
+& $git -C $ghPagesDir config user.email "dev@vocaflow.app"
+& $git -C $ghPagesDir config user.name "iamjulies"
+& $git -C $ghPagesDir remote add origin $vocaFlowRemote
+& $git -C $ghPagesDir add .
+& $git -C $ghPagesDir commit -m "deploy: GitHub Pages release $(Get-Date -Format 'yyyy-MM-dd HH:mm')" | Out-Null
+& $git -C $ghPagesDir branch -M gh-pages
+& $git -C $ghPagesDir push -u origin gh-pages --force
+
+# 5. Đẩy lên iamjulies/iamjulies.github.io -> main
+Write-Host ""
+Write-Host "[4/4] Đang cập nhật live site iamjulies.github.io..." -ForegroundColor Cyan
+$ioDir = Join-Path $env:TEMP "vocaflow_user_io_deploy"
+if (Test-Path $ioDir) { Remove-Item -Recurse -Force $ioDir }
+New-Item -ItemType Directory -Path $ioDir | Out-Null
+
+Copy-Item "$root\index.html" "$ioDir\index.html" -Force
+Copy-Item "$root\vocaflow.html" "$ioDir\vocaflow.html" -Force
+Copy-Item "$root\sw.js" "$ioDir\sw.js" -Force
+Copy-Item "$root\manifest.json" "$ioDir\manifest.json" -Force
+Copy-Item "$root\xlsx.full.min.js" "$ioDir\xlsx.full.min.js" -Force
+Copy-Item "$root\ads.txt" "$ioDir\ads.txt" -Force
+if (Test-Path "$root\icons") { Copy-Item "$root\icons" "$ioDir\icons" -Recurse -Force }
+if (Test-Path "$root\audio") { Copy-Item "$root\audio" "$ioDir\audio" -Recurse -Force }
+New-Item -ItemType File -Path "$ioDir\.nojekyll" -Force | Out-Null
+
+& $git -C $ioDir init | Out-Null
+& $git -C $ioDir config user.email "dev@vocaflow.app"
+& $git -C $ioDir config user.name "iamjulies"
+& $git -C $ioDir remote add origin $ioRemote
+& $git -C $ioDir add .
+& $git -C $ioDir commit -m "feat: VocaFlow live sync $(Get-Date -Format 'yyyy-MM-dd HH:mm')" | Out-Null
+& $git -C $ioDir branch -M main
+& $git -C $ioDir push -u origin main --force
+
+Write-Host ""
+Write-Host "========================================================" -ForegroundColor Green
+Write-Host "  🎉 HOÀN TẤT! ĐÃ ĐẨY CẬP NHẬT LÊN TOÀN BỘ 3 KHO GITHUB!" -ForegroundColor Green
+Write-Host "  👉 Repository: https://github.com/iamjulies/VocaFlow" -ForegroundColor Cyan
+Write-Host "  👉 Web Live PWA: https://iamjulies.github.io/VocaFlow/" -ForegroundColor Cyan
+Write-Host "========================================================" -ForegroundColor Green
