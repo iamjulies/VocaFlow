@@ -1,13 +1,43 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 232 - Debug 1.0) - VIP Daily Spin Transparency & Compensation Auditor
+Phiên bản: v0.10.9-alpha-1 (Build 233) - Comprehensive Step-by-Step User Guide & Knowledge Base System
 ================================================================================
-1. [Minh Bạch Hóa Cơ Chế Bồi Hoàn Lượt Quay VIP] Tích hợp thông báo persistent vào Trung Tâm Thông Báo khi kích hoạt bồi hoàn tự động (+4 Lượt Quay), tránh gây hiểu lầm cho người dùng khi số dư lượt quay tăng đột biến từ 2 lên 6.
-2. [Giải Thích Logic 6 Lượt Quay VIP] Làm rõ cơ chế cộng dồn: 0 + 2 lượt điểm danh VIP ngày mới + 4 lượt bồi hoàn cho 2 ngày trước = 6 lượt quay. Hệ thống đảm bảo 100% quyền lợi VIP mà không gây nhảy số hay lặp vô tận.
+1. [Nút Truy Cập Hướng Dẫn Nổi Bật] Bổ sung nút "📖 Hướng Dẫn" trực tiếp trên thanh công cụ Header (Desktop & Mobile) để người dùng xem lại hướng dẫn bất kỳ lúc nào.
+2. [Cẩm Nang 6 Danh Mục Chuẩn Nhất Quán Giao Diện] Thiết kế giao diện Modal Hướng Dẫn đồng bộ 100% với chất liệu, màu sắc và CSS variables của cả Theme Sáng và Theme Tối.
+3. [Quy Trình Từng Bước Cho Người Mới Bắt Đầu] Bộ Stepper 5 bước có chuyển trang `< >`, chấm tiến trình (Dots) và nút hành động nhanh:
+   - Bước 1: Hướng dẫn Đăng ký & Đăng nhập Cloud Sync đa thiết bị.
+   - Bước 2: Hướng dẫn lấy và dán Khóa API Gemini miễn phí từ Google AI Studio.
+   - Bước 3: Nhập Giftcode tân thủ (HELLOKHANG2011) nhận ngay +500 Xu khởi nghiệp.
+   - Bước 4: 3 Hướng nạp bài học (VocaLib, VocaDeck AI, Nhập thủ công).
+   - Bước 5: 4 Chế độ luyện tập cốt lõi (Luyện phát âm Speaking, Thẻ tự động Auto Flashcard, Luyện viết Spelling, Trắc nghiệm Smart Quiz).
+4. [5 Danh Mục Chuyên Sâu Mở Rộng]:
+   - Chuỗi ngày học (Flow) & Thuật toán Lặp lại ngắt quãng (SRS).
+   - Kinh tế Xu, Cửa hàng VocaShop & Vòng quay may mắn.
+   - Trung tâm Creator Studio & Xuất bản bộ từ kiếm doanh thu.
+   - Đặc quyền thành viên VIP Crown & Trợ lý học tập VocaAI.
+   - Bảng phím tắt máy tính & Hướng dẫn cài đặt Web App (PWA Offline).
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
-================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 232 - Debug 1.0)
+===============================================================================
+Phiên bản hiện tại : v0.10.9-alpha-1 (Build 233)
+
+--------------------------------------------------------------------------------
+II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
+--------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-1] - (BUILD 233 - STEP-BY-STEP USER GUIDE & KNOWLEDGE BASE MODAL):
+  - Ra mắt hệ thống Cẩm Nang Hướng Dẫn Toàn Diện (`modal-user-guide`) giải quyết triệt để rào cản làm quen ứng dụng cho người mới bắt đầu.
+  - Tích hợp nút kích hoạt `btn-header-guide` (`📖 Hướng Dẫn`) trên Header thanh công cụ và trong dropdown menu 3 chấm trên Mobile.
+  - Phân loại 6 chủ đề hướng dẫn rõ ràng với các tab cuộn ngang tiện lợi:
+    * 🚀 Người Mới (Từng Bước): Stepper 5 slide trực quan chuyển trang `<` và `>` kèm thanh tiến trình.
+    * 🌊 Chuỗi Học & SRS: Giới thiệu ngọn lửa Flow Streak và đường cong quên lãng Ebbinghaus.
+    * 🪙 Ví Xu & Shop: Cơ chế tích lũy Xu và danh mục vật phẩm VocaShop.
+    * 💼 Creator Studio: Hướng dẫn định giá bộ từ và nhận 100% doanh thu Xu.
+    * 👑 Đặc Quyền VIP: Tổng hợp ưu đãi x2 Xu, vòng quay miễn phí và VocaAI.
+    * ⌨️ Phím Tắt & Cài Đặt: Phím tắt thao tác nhanh và hướng dẫn cài đặt PWA Offline trên iOS/Android/PC.
+  - Thiết kế đồng bộ hoàn hảo với hệ thống CSS Variables (`--surface`, `--surface-elevated`, `--primary`, `--border`), tự động thích ứng mượt mà cả chế độ Sáng (Light) và Tối (Dark).
+  - Tích hợp các nút Deep-link chuyển hướng thông minh: Mở đăng ký ngay, mở AI Studio & dẫn tới ô điền API Key, tự động điền mã Giftcode `HELLOKHANG2011`, mở VocaLib, mở VocaDeck AI.
+
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
