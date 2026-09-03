@@ -1,14 +1,15 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 230 - Debug 0.8) - VIP Daily Lucky Spins Delivery, Cloud Merge Fix & +4 Spins Compensation
+Phiên bản: v0.10.8-released (Build 231 - Debug 0.9) - VIP Duration Formatter, Quiz 0-Delay Prefetch & Flow Action Sync Engine
 ================================================================================
-1. [Khắc Phục Lỗi Thông Báo Nhận Quà VIP Nhưng Không Được Cộng Lượt Quay] Sửa triệt để xung đột thứ tự khởi tạo và đồng bộ Cloud: loại bỏ việc Cloud Sync ghi đè lượt quay cục bộ về 0, thiết lập cơ chế kiểm tra đặc quyền VIP `checkAndGrantVipDailySpinBonus()` an toàn và cộng dồn thực tế vào `vocaflow_lucky_spins_left`.
-2. [Tự Động Bồi Hoàn +4 Lượt Quay May Mắn (Self-Healing Compensation)] Tự động phát hiện và bồi hoàn trực tiếp +4 Lượt Quay May Mắn VIP (tương đương 2 ngày đặc quyền VIP bị lỗi trước đó) vào tài khoản ngay khi khởi động ứng dụng.
-3. [Đồng Bộ Hai Chiều An Toàn Cao (Smart Spin Merge)] Trong cả Startup Sync và Manual Sync, số lượt quay luôn được đối soát `Math.max(local, remote)` và bảo toàn ngày tặng quà, ngăn ngừa hoàn toàn hiện tượng mất lượt quay khi đồng bộ.
+1. [Chuẩn Hóa Hiển Thị Thời Hạn VIP Theo Tuần / Ngày] Xây dựng hàm `formatVipDurationText` chuyển đổi thời gian VIP sang dạng `X tuần`, `X ngày`, `X giờ` (hoặc `Trọn Đời`), đồng bộ hiển thị toàn diện tại Header Avatar, Profile Badge, Account Info và Modal Nâng Cấp VIP.
+2. [Khắc Phục Độ Trễ Tải Câu 1 Trong Quiz] Áp dụng kỹ thuật Zero-Delay AI Pre-fetching ngay khi mở bảng Quiz Setup kết hợp cơ chế giới hạn thời gian phản hồi `Promise.race(1.2s)` ngăn ngừa hoàn toàn độ trễ ở câu hỏi đầu tiên.
+3. [Sửa Lỗi Speaking & Quiz Không Tăng Điểm/Thời Gian Flow] Kích hoạt `recordStudyFlowAction` đầy đủ sau mỗi lượt thu âm/chẩn đoán Speaking và trên từng câu trả lời Quiz (kể cả đúng/sai), kết thúc bài và thoát phiên học.
+4. [Hiệu Chỉnh Thang Điểm Speaking AI Liên Tục] Nâng cấp prompt ngữ âm Oxford/ELSA và tinh chỉnh `temperature: 0.15` giúp điểm số phản ánh chính xác từng sắc thái phát âm (91, 93, 94, 96, 98,...), không còn bị neo điểm 95.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 230 - Debug 0.8)
+Phiên bản hiện tại : v0.10.8-released (Build 231 - Debug 0.9)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +24,12 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 231 - DEBUG 0.9 VIP DURATION, QUIZ 0-DELAY & STUDY FLOW ENGINE):
+  - Chuẩn hóa hiển thị thời hạn VIP theo dạng X tuần / X ngày / X giờ (không còn hiển thị 1 tháng/năm cố định).
+  - Tối ưu tải bài Quiz: Pre-fetch ngầm bẫy AI và race timeout 1.2s giúp câu hỏi số 1 nạp tức thì.
+  - Sửa lỗi học Speaking và làm Quiz không lên Flow: tích hợp `recordStudyFlowAction` toàn diện.
+  - Hiệu chỉnh thang điểm Speaking AI đa bậc sắc thái (loại bỏ hiện tượng neo 95 điểm).
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 230 - DEBUG 0.8 VIP DAILY SPINS & COMPENSATION):
   - Khắc phục lỗi Quà tặng VIP hàng ngày hiển thị thông báo trong Trung Tâm Thông Báo nhưng không được cộng lượt quay trên Vòng Quay May Mắn.

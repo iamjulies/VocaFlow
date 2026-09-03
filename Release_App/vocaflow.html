@@ -11079,9 +11079,10 @@ function switchPublisherTab(tab) {
                 const name = prof.displayName || uData.displayName || '';
                 const username = prof.username || uData.username || '';
                 const avatar = prof.avatar || uData.avatar || '';
+                const vipExpiresAt = prof.vipExpiresAt || uData.vipExpiresAt || 0;
 
                 if (isVip) {
-                  const entry = { uid, isVip: true, vipTier, displayName: name, username, avatar };
+                  const entry = { uid, isVip: true, vipTier, displayName: name, username, avatar, vipExpiresAt };
                   globalVipRegistry[uid] = entry;
                   if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
                 }
@@ -11093,6 +11094,24 @@ function switchPublisherTab(tab) {
           }
         })
         .catch(() => {});
+    }
+
+    function formatVipDurationText(expiresAt, tier) {
+      if (tier === 'lifetime' || !expiresAt || expiresAt === 0 || expiresAt === Infinity) {
+        return 'Trọn Đời';
+      }
+      const now = Date.now();
+      const diffMs = Number(expiresAt) - now;
+      if (diffMs <= 0) return 'Hết hạn';
+
+      const totalDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(totalDays / 7);
+
+      if (weeks >= 1) {
+        return `${weeks} Tuần`;
+      } else {
+        return `${Math.max(1, totalDays)} Ngày`;
+      }
     }
 
     function isAuthorVipUser(authorUid, authorName) {
@@ -11117,6 +11136,18 @@ function switchPublisherTab(tab) {
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
       if (student && student.isVip && student.vipTier) return student.vipTier;
       return 'none';
+    }
+
+    function getAuthorVipExpiresAt(authorUid, authorName) {
+      if (authorUid && currentUser && authorUid === currentUser.uid) return currentUser.vipExpiresAt || userVipExpiresAt || 0;
+      if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return currentUser.vipExpiresAt || userVipExpiresAt || 0;
+      
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipExpiresAt || 0;
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipExpiresAt || 0;
+
+      const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+      if (student && student.isVip && student.vipExpiresAt) return student.vipExpiresAt;
+      return 0;
     }
 
     let userNotifications = [];
@@ -12231,9 +12262,8 @@ function switchPublisherTab(tab) {
 
         if (profileBadgeEl) {
           if (userVipActive) {
-            const tierNames = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
-            const tierLabel = tierNames[userVipTierName] || 'VIP';
-            profileBadgeEl.innerHTML = `👑 VIP ${tierLabel}`;
+            const durationLabel = formatVipDurationText(userVipExpiresAt, userVipTierName);
+            profileBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
             profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
             profileBadgeEl.style.color = '#ffffff';
             profileBadgeEl.style.fontWeight = '800';
@@ -13651,6 +13681,7 @@ function switchPublisherTab(tab) {
 
       const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
       const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
+      const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
 
       if (nameEl) {
         if (isAuthorVip) {
@@ -13672,8 +13703,8 @@ function switchPublisherTab(tab) {
       const pubBadgeEl = document.getElementById('pub-view-badge');
       if (pubBadgeEl) {
         if (isAuthorVip) {
-          const tierLabels = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
-          pubBadgeEl.innerHTML = `👑 VIP ${tierLabels[authorVipTier] || authorVipTier.toUpperCase()}`;
+          const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
+          pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
           pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
           pubBadgeEl.style.color = '#ffffff';
           pubBadgeEl.style.fontWeight = '800';
@@ -22168,6 +22199,16 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
       if (shuffleCb) shuffleCb.checked = isStudyShuffle;
 
+      // Zero-delay optimization: Prefetch first 3 words distractors immediately in background
+      if (Array.isArray(deckWords) && deckWords.length > 0) {
+        let count = 1;
+        if (savedDiff === 'extreme') count = 3;
+        else if (savedDiff === 'hard') count = 2;
+        deckWords.slice(0, 3).forEach(w => {
+          if (w) fetchAiDistractors(w, count).catch(() => {});
+        });
+      }
+
       openModal('modal-quiz-setup');
     }
 
@@ -22819,7 +22860,14 @@ Yêu cầu nghiêm ngặt:
 
       let aiDistractors = [];
       if (aiDistractorCount > 0) {
-        aiDistractors = await fetchAiDistractors(questionWord, aiDistractorCount);
+        try {
+          const fetchPromise = fetchAiDistractors(questionWord, aiDistractorCount);
+          const timeoutPromise = new Promise(res => setTimeout(() => res([]), 1200));
+          aiDistractors = await Promise.race([fetchPromise, timeoutPromise]);
+          if (!Array.isArray(aiDistractors)) aiDistractors = [];
+        } catch (e) {
+          aiDistractors = [];
+        }
       }
 
       const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
@@ -23044,6 +23092,9 @@ Yêu cầu nghiêm ngặt:
         const scoreEl = document.getElementById('quiz-score');
         if (scoreEl) scoreEl.textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
+        // Always record study flow action on practice
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+
         if (isCorrect) {
           quizCorrectCount++;
           try { playVocaSfx('correct'); } catch (e) {}
@@ -23056,7 +23107,6 @@ Yêu cầu nghiêm ngặt:
           } else {
             quizNoHintCurrentStreak = 0;
           }
-          try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
 
           if (questionWord) {
             try {
@@ -23173,6 +23223,7 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-quiz-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -23217,25 +23268,28 @@ Yêu cầu nghiêm ngặt:
         }
       }
 
-      createExplosion(canvas.width * 0.5, canvas.height * 0.35, Math.floor(count * 0.5));
-      setTimeout(() => createExplosion(canvas.width * 0.25, canvas.height * 0.4, Math.floor(count * 0.3)), 150);
-      setTimeout(() => createExplosion(canvas.width * 0.75, canvas.height * 0.4, Math.floor(count * 0.3)), 300);
-
-      if (intensity >= 0.8) {
-        setTimeout(() => createExplosion(canvas.width * 0.5, canvas.height * 0.25, Math.floor(count * 0.4)), 550);
+      function createRandomRocket() {
+        const x = Math.random() * (canvas.width * 0.7) + (canvas.width * 0.15);
+        const y = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.15);
+        createExplosion(x, y, Math.floor(count / 3));
       }
+
+      createRandomRocket();
+      createRandomRocket();
+      setTimeout(() => createRandomRocket(), 250);
+      setTimeout(() => createRandomRocket(), 500);
 
       let frames = 0;
       function animate() {
         frames++;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
           p.vy += p.gravity;
-          p.vx *= 0.98;
           p.alpha -= p.decay;
 
           if (p.alpha <= 0 || p.y > canvas.height + 20) {
@@ -23275,10 +23329,13 @@ Yêu cầu nghiêm ngặt:
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
+      const done = Math.min(quizTotalQuestions || (quizList ? quizList.length : 1), quizIndex + (quizIsAnswered ? 1 : 0));
+      if (done > 0) {
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+      }
       // Progressive incomplete session leniency / penalty (v0.10.6c)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
-        const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
         const mult = getIncompleteSessionMultiplier(done, total);
         let finalPts = 0;
         if (quizPointsEarned > 0) {
@@ -24189,6 +24246,10 @@ Yêu cầu nghiêm ngặt:
       resetSpeakingWordState();
       closeSpeakingResultModal();
 
+      if (speakingCompletedWords > 0 || speakingTotalTakesCount > 0) {
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
+      }
+
       if (speakingCurrentMediaStream) {
         try { speakingCurrentMediaStream.getTracks().forEach(track => track.stop()); } catch (e) {}
         speakingCurrentMediaStream = null;
@@ -24474,6 +24535,7 @@ Yêu cầu nghiêm ngặt:
 
     function finishSpeakingSession() {
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('speaking');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       speakingIsCompleted = true;
 
       const totalWords = speakingWordsList.length || 1;
@@ -24935,23 +24997,22 @@ MEANING: "${currentWord.definitionVi || ''}"
 ═══════════════════════════════════════════════════════
 OBJECTIVE & FAIR PHONETIC CRITERIA:
 ═══════════════════════════════════════════════════════
-1. ACCURATE SCORING CRITERIA:
-- 90 - 100 ("Xuất sắc" / "Rất tốt"): Clear, accurate, and fully intelligible pronunciation. Stress is placed on the correct syllable. All required phonemes (vowels, initial consonants, consonant clusters, and final stops/nasals/fricatives) are present and clear.
-  * IMPORTANT: If the speech is clear, natural, and correct, AWARD 90-100! Do NOT artificially deduct points down to 80s for minor accent variations.
-  * Feedback must be purely positive, encouraging, and highlight correct pronunciation.
+1. ACCURATE & CONTINUOUS SCORING (0 to 100):
+- Calculate a granular, realistic, and continuous score reflecting genuine acoustic accuracy:
+  * 96 - 100: Near-native excellence. Flawless syllable stress, perfect vowel quality, crisp consonant endings, and natural flow.
+  * 90 - 95: Very good / fluent. Clear and fully intelligible with correct stress and vowels, minor native tongue inflection.
+  * 80 - 89: Good / passing. Intelligible, but with a slight phonetic error (e.g. minor vowel openness difference /e/ vs /æ/ or softer ending sound).
+  * 65 - 79: Fair / needs work. Noticeable error (e.g. dropped final consonant /s, t, d, z/, misplaced primary stress).
+  * 40 - 64: Weak. Significant mispronunciation of core syllables.
+  * 0 - 39: Unintelligible noise, silence, or completely wrong word.
 
-- 75 - 89 ("Khá tốt" / "Đạt"): Understandable and generally correct, but with a REAL, identifiable phonetic inaccuracy (e.g. slight confusion between /iː/ and /ɪ/, /e/ and /æ/, /θ/ vs /s/, or reduced vowel omitted).
-  * Feedback MUST pinpoint the EXACT phoneme and provide concrete tongue/mouth placement tips.
-
-- 50 - 74 ("Cần cải thiện"): Significant phonetic error (e.g. dropped essential final consonant /s, z, t, d, k, l, f, v/, wrong syllable stress, or substituted vowel).
-
-- 0 - 49 ("Chưa chuẩn" / "Không phát hiện"): Wrong word, unintelligible noise, or silence.
+* CRITICAL INSTRUCTION ON SCORING: Evaluate acoustic details dynamically across the full spectrum. DO NOT anchor or default to 95 for every good recording. Differentiate 91, 93, 94, 96, 98 based on real acoustic nuances!
 
 2. STRICT LINGUISTIC SANITY RULES (ANTI-HALLUCINATION & ANTI-NITPICKING):
-- RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). In English, nasal endings (like /n/ in "foundation" /faʊnˈdeɪʃn/, "person", "sun") and stop endings are naturally brief closures. Elongating /n/ is unnatural and phonetically incorrect!
-- RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist (e.g., claiming "-ing" has a /k/ sound, or expecting extra sounds not in the IPA).
-- RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British phonetic variations (e.g., rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
-- RULE D (CONSTRUCTIVE FEEDBACK ONLY): If the word is pronounced correctly, say so warmly without inventing artificial flaws.
+- RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). Nasal endings (e.g. in "person", "foundation") and stop endings are naturally brief closures.
+- RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist in the standard IPA.
+- RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British variations (e.g. rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
+- RULE D (CONSTRUCTIVE FEEDBACK): If pronunciation is good, explain what sounded great. If not, give actionable mouth/tongue tips in Vietnamese.
 
 3. MULTI-WORD & COMPOUND PHRASES:
 - For multi-word phrases (e.g. "aqueous solution", "point out"): evaluate each word individually in "wordsBreakdown".
@@ -24961,15 +25022,15 @@ ${needSyllable ? '4. SYLLABLE COUNT: Count total syllables in the target phrase 
 RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 ═══════════════════════════════════════════════════════
 {
-  "score": 95,
-  "verdict": "Xuất sắc",
+  "score": 92,
+  "verdict": "Rất tốt",
   "detectedTranscript": "${currentWord.term}",
   "wordsBreakdown": [
     {
-      "word": "word",
-      "ipa": "/wɜːd/",
+      "word": "${currentWord.term.split(' ')[0] || 'word'}",
+      "ipa": "${currentWord.phonetic || '/.../'}",
       "status": "correct",
-      "feedback": "Phát âm chuẩn xác âm đuôi"
+      "feedback": "Phát âm rõ ràng, đúng trọng âm và âm đuôi"
     }
   ],
   "phonemeDiagnostics": {
@@ -24977,7 +25038,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     "endingSounds": "Âm đuôi phát âm đầy đủ",
     "vowels": "Nguyên âm chuẩn xác"
   },
-  "feedbackVi": "Nhận xét tiếng Việt tự nhiên, khen ngợi nếu đạt 90+, chỉ rõ lỗi thật và cách đặt khẩu hình lưỡi/môi nếu dưới 90"
+  "feedbackVi": "Nhận xét tiếng Việt súc tích, tự nhiên và chỉ dẫn cụ thể nếu có lỗi"
 }`;
 
       try {
@@ -25007,7 +25068,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 }],
                 generationConfig: {
                   responseMimeType: "application/json",
-                  temperature: 0.0,
+                  temperature: 0.15,
                   maxOutputTokens: 1024
                 },
                 safetySettings: [
@@ -25149,6 +25210,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (currentSpeakingDifficulty === 'hard' && speakingTakes.length === 1 && score >= 95) {
           if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_onetake_95');
         }
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       }
 
       // Update Recording Box Status & Keep Playback Accessible
@@ -36834,12 +36896,12 @@ Quy tắc phản hồi quan trọng:
 
     if (isVip) {
       if (bannerEl) bannerEl.style.display = 'flex';
-      const tierTitles = { monthly: 'VIP 1 Tháng', yearly: 'VIP 1 Năm', lifetime: 'VIP Trọn Đời' };
-      if (bannerTierEl) bannerTierEl.textContent = tierTitles[currentTier] || 'VIP Crown';
+      const durationLabel = formatVipDurationText(expiryTimestamp, currentTier);
+      if (bannerTierEl) bannerTierEl.textContent = `VIP ${durationLabel}`;
       if (bannerExpiryEl) {
         bannerExpiryEl.innerHTML = currentTier === 'lifetime'
           ? 'Đặc quyền sở hữu: <strong>Vĩnh Viễn (Không bao giờ hết hạn)</strong>'
-          : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong>`;
+          : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong> (${durationLabel})`;
       }
 
       if (currentTier === 'lifetime') {
@@ -36856,7 +36918,7 @@ Quy tắc phản hồi quan trọng:
       } else if (currentTier === 'yearly') {
         // Monthly locked, Yearly active/locked, Lifetime open for upgrade
         if (cardMonthly) { cardMonthly.style.opacity = '0.5'; cardMonthly.style.filter = 'grayscale(0.6)'; }
-        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = '🔒 Đã có gói VIP 1 Năm'; btnMonthly.style.cursor = 'not-allowed'; }
+        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = `🔒 Đã có VIP (${durationLabel})`; btnMonthly.style.cursor = 'not-allowed'; }
 
         if (cardYearly) { cardYearly.style.opacity = '0.9'; cardYearly.style.border = '2px solid #10b981'; }
         if (btnYearly) { btnYearly.disabled = true; btnYearly.textContent = `✓ Đang Dùng (Đến ${expiryDateStr})`; btnYearly.style.background = 'rgba(16,185,129,0.2)'; btnYearly.style.borderColor = 'rgba(16,185,129,0.5)'; btnYearly.style.cursor = 'default'; }
