@@ -16026,6 +16026,9 @@ function switchPublisherTab(tab) {
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
         localStorage.setItem('vocaflow_vip_spin_healed_v0108_debug08', 'true');
         addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Bồi hoàn +4 Lượt Quay May Mắn VIP (Đặc quyền 2 ngày)');
+        if (typeof addNotification === 'function') {
+          addNotification('VIP_BONUS', '👑 Bồi Hoàn Lượt Quay VIP', 'Hệ thống đã tự động bồi hoàn +4 Lượt Quay May Mắn VIP (đặc quyền 2 ngày trước) vào tài khoản của bạn!', null, null, 'notif_vip_spin_compensation_v0108');
+        }
         updateLuckyWheelUI();
         updateShopBonusesUI();
         saveDatabase(true);

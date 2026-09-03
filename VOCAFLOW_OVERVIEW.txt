@@ -1,15 +1,13 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 231 - Debug 0.9) - VIP Duration Formatter, Quiz 0-Delay Prefetch & Flow Action Sync Engine
+Phiên bản: v0.10.8-released (Build 232 - Debug 1.0) - VIP Daily Spin Transparency & Compensation Auditor
 ================================================================================
-1. [Chuẩn Hóa Hiển Thị Thời Hạn VIP Theo Tuần / Ngày] Xây dựng hàm `formatVipDurationText` chuyển đổi thời gian VIP sang dạng `X tuần`, `X ngày`, `X giờ` (hoặc `Trọn Đời`), đồng bộ hiển thị toàn diện tại Header Avatar, Profile Badge, Account Info và Modal Nâng Cấp VIP.
-2. [Khắc Phục Độ Trễ Tải Câu 1 Trong Quiz] Áp dụng kỹ thuật Zero-Delay AI Pre-fetching ngay khi mở bảng Quiz Setup kết hợp cơ chế giới hạn thời gian phản hồi `Promise.race(1.2s)` ngăn ngừa hoàn toàn độ trễ ở câu hỏi đầu tiên.
-3. [Sửa Lỗi Speaking & Quiz Không Tăng Điểm/Thời Gian Flow] Kích hoạt `recordStudyFlowAction` đầy đủ sau mỗi lượt thu âm/chẩn đoán Speaking và trên từng câu trả lời Quiz (kể cả đúng/sai), kết thúc bài và thoát phiên học.
-4. [Hiệu Chỉnh Thang Điểm Speaking AI Liên Tục] Nâng cấp prompt ngữ âm Oxford/ELSA và tinh chỉnh `temperature: 0.15` giúp điểm số phản ánh chính xác từng sắc thái phát âm (91, 93, 94, 96, 98,...), không còn bị neo điểm 95.
+1. [Minh Bạch Hóa Cơ Chế Bồi Hoàn Lượt Quay VIP] Tích hợp thông báo persistent vào Trung Tâm Thông Báo khi kích hoạt bồi hoàn tự động (+4 Lượt Quay), tránh gây hiểu lầm cho người dùng khi số dư lượt quay tăng đột biến từ 2 lên 6.
+2. [Giải Thích Logic 6 Lượt Quay VIP] Làm rõ cơ chế cộng dồn: 0 + 2 lượt điểm danh VIP ngày mới + 4 lượt bồi hoàn cho 2 ngày trước = 6 lượt quay. Hệ thống đảm bảo 100% quyền lợi VIP mà không gây nhảy số hay lặp vô tận.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 231 - Debug 0.9)
+Phiên bản hiện tại : v0.10.8-released (Build 232 - Debug 1.0)
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -24,6 +22,11 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 232 - DEBUG 1.0 VIP SPIN AUDITOR & TRANSPARENCY):
+  - Tích hợp thông báo persistent vào Trung Tâm Thông Báo khi bồi hoàn lượt quay VIP (+4 spins).
+  - Khẳng định tính đúng đắn của logic tính toán (0 + 2 quà ngày mới + 4 bồi hoàn = 6 lượt).
+  - Khóa vĩnh viễn cờ `vocaflow_vip_spin_healed_v0108_debug08` sau lần bồi hoàn duy nhất để các ngày tiếp theo cộng đúng chuẩn +2 lượt.
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 231 - DEBUG 0.9 VIP DURATION, QUIZ 0-DELAY & STUDY FLOW ENGINE):
   - Chuẩn hóa hiển thị thời hạn VIP theo dạng X tuần / X ngày / X giờ (không còn hiển thị 1 tháng/năm cố định).
