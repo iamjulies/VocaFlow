@@ -1,29 +1,31 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-1 (Build 233) - Comprehensive Step-by-Step User Guide & Knowledge Base System
+Phiên bản: v0.10.9-alpha-2 (Build 234) - User Guide UI Fix, VIP Keys Retention & Modal Return Stack
 ================================================================================
-1. [Nút Truy Cập Hướng Dẫn Nổi Bật] Bổ sung nút "📖 Hướng Dẫn" trực tiếp trên thanh công cụ Header (Desktop & Mobile) để người dùng xem lại hướng dẫn bất kỳ lúc nào.
-2. [Cẩm Nang 6 Danh Mục Chuẩn Nhất Quán Giao Diện] Thiết kế giao diện Modal Hướng Dẫn đồng bộ 100% với chất liệu, màu sắc và CSS variables của cả Theme Sáng và Theme Tối.
-3. [Quy Trình Từng Bước Cho Người Mới Bắt Đầu] Bộ Stepper 5 bước có chuyển trang `< >`, chấm tiến trình (Dots) và nút hành động nhanh:
-   - Bước 1: Hướng dẫn Đăng ký & Đăng nhập Cloud Sync đa thiết bị.
-   - Bước 2: Hướng dẫn lấy và dán Khóa API Gemini miễn phí từ Google AI Studio.
-   - Bước 3: Nhập Giftcode tân thủ (HELLOKHANG2011) nhận ngay +500 Xu khởi nghiệp.
-   - Bước 4: 3 Hướng nạp bài học (VocaLib, VocaDeck AI, Nhập thủ công).
-   - Bước 5: 4 Chế độ luyện tập cốt lõi (Luyện phát âm Speaking, Thẻ tự động Auto Flashcard, Luyện viết Spelling, Trắc nghiệm Smart Quiz).
-4. [5 Danh Mục Chuyên Sâu Mở Rộng]:
-   - Chuỗi ngày học (Flow) & Thuật toán Lặp lại ngắt quãng (SRS).
-   - Kinh tế Xu, Cửa hàng VocaShop & Vòng quay may mắn.
-   - Trung tâm Creator Studio & Xuất bản bộ từ kiếm doanh thu.
-   - Đặc quyền thành viên VIP Crown & Trợ lý học tập VocaAI.
-   - Bảng phím tắt máy tính & Hướng dẫn cài đặt Web App (PWA Offline).
+1. [Sửa Lỗi Giao Diện Tab Cẩm Nang Desktop] Khắc phục lỗi vỡ layout tab trên PC, bố trí hàng đơn cuộn ngang gọn gàng, hỗ trợ lăn chuột ngang (wheel scroll).
+2. [Hiển Thị Mũi Tên Trực Quan] Thay thế hoàn toàn các ký hiệu LaTeX `$\rightarrow$` thành mũi tên unicode `➔` trong toàn bộ cẩm nang.
+3. [Bảo Toàn Khóa API VIP Số 2 & 3] Cơ chế Smart-Merge deduplication chống mất key khi Firebase auth tải chậm hoặc sync Cloud.
+4. [Ngăn Xếp Trở Về Cẩm Nang (Return-on-Close / Esc Stack)] Nhấn X hoặc phím Esc từ các modal thao tác (Đăng ký, Đổi Giftcode, Cài đặt API,...) sẽ tự động đưa người dùng quay trở lại đúng vị trí, đúng slide bước và thanh cuộn của cẩm nang.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-1 (Build 233)
+Phiên bản hiện tại : v0.10.9-alpha-2 (Build 234)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-2] - (BUILD 234 - GUIDE UI FIX, VIP KEYS RETENTION & GUIDE RETURN STACK):
+  - Khắc phục lỗi vỡ layout tab cẩm nang trên máy tính để bàn (sửa thiếu ngoặc CSS media query và căn chỉnh nowrap cuộn ngang).
+  - Thay thế toàn bộ ký hiệu `$\rightarrow$` thành mũi tên unicode `➔` tại các bước cẩm nang tân thủ và hướng dẫn cài đặt PWA.
+  - Sửa dứt điểm lỗi mất API Key 2 và 3 đối với người dùng VIP:
+    * Chống cắt giảm mảng key (`slice`) trong lúc trạng thái VIP đang được xác thực bất đồng bộ.
+    * Thêm hàm `extractKeysList` hỗ trợ cả Array, Object tuần tự của Firebase Realtime Database và String đơn lẻ.
+    * Tích hợp cơ chế Smart Merge deduplication: không bao giờ ghi đè hoặc xóa mất key phụ cục bộ khi kéo dữ liệu Cloud.
+  - Xây dựng Ngăn xếp ghi nhớ cẩm nang (`guideReturnContext` & `navigateFromGuide`):
+    * Khi người dùng nhấn nút chuyển tiếp từ Cẩm nang đến các modal khác (Đăng ký tài khoản, Cài đặt API Gemini, Nhập Giftcode, Thư viện VocaLib, AI Deck Studio, Tạo bộ từ, Cửa hàng VocaShop, Creator Studio), hệ thống lưu lại chính xác danh mục, slide bước và độ cuộn (`scrollTop`).
+    * Khi đóng modal đích (bằng nút X, nút Đóng hoặc phím `Esc`), tự động mở lại Cẩm nang và khôi phục nguyên vẹn vị trí đang đọc dở.
+  - Bổ sung sự kiện lắng nghe lăn chuột ngang (`wheel scroll`) trên thanh tab cẩm nang cho chuột PC.
 
 🌟 [v0.10.9-alpha-1] - (BUILD 233 - STEP-BY-STEP USER GUIDE & KNOWLEDGE BASE MODAL):
   - Ra mắt hệ thống Cẩm Nang Hướng Dẫn Toàn Diện (`modal-user-guide`) giải quyết triệt để rào cản làm quen ứng dụng cho người mới bắt đầu.

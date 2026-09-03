@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -2311,8 +2311,10 @@
     max-width: 90vw;
     max-height: 50vh;
   }
+}
+
     /* ========================================================================= */
-    /* USER GUIDE & KNOWLEDGE BASE MODAL (v0.10.9-alpha-1)                      */
+    /* USER GUIDE & KNOWLEDGE BASE MODAL (v0.10.9-alpha-2)                      */
     /* ========================================================================= */
     #modal-user-guide .modal {
       max-width: 780px !important;
@@ -2328,8 +2330,11 @@
 
     .guide-tabs-nav {
       display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
       gap: 8px;
       overflow-x: auto;
+      overflow-y: hidden;
       padding-bottom: 8px;
       margin-bottom: 14px;
       scrollbar-width: none;
@@ -2342,8 +2347,8 @@
     }
     .guide-tab-btn {
       white-space: nowrap;
-      padding: 7px 14px;
-      border-radius: 10px;
+      padding: 8px 14px;
+      border-radius: 12px;
       font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
@@ -2351,20 +2356,25 @@
       background: var(--surface-elevated);
       color: var(--text-muted);
       transition: all 0.2s ease;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
+      outline: none;
+      user-select: none;
+      -webkit-appearance: none;
+      appearance: none;
     }
     .guide-tab-btn:hover {
       border-color: var(--primary);
       color: var(--text);
+      background: var(--surface);
     }
     .guide-tab-btn.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 3px 12px rgba(79, 70, 229, 0.35);
+      background: var(--primary) !important;
+      color: #ffffff !important;
+      border-color: var(--primary) !important;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
     }
 
     .guide-content-area {
@@ -2539,7 +2549,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-1</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-2</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2567,7 +2577,7 @@
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
 
-      <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-1) -->
+      <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-2) -->
       <button type="button" class="btn btn-outline btn-sm" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
         <span style="font-size: 14px;">📖</span>
         <span class="hide-on-mobile">Hướng Dẫn</span>
@@ -2605,7 +2615,7 @@
 
         <!-- Dropdown Menu -->
         <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
-          <!-- USER GUIDE (v0.10.9-alpha-1) -->
+          <!-- USER GUIDE (v0.10.9-alpha-2) -->
           <div class="dropdown-item" onclick="openUserGuideModal(); closeHeaderMoreMenu();" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);">
             <span style="font-size: 17px;">📖</span>
             <div>
@@ -4432,7 +4442,7 @@
       </div> <!-- end aideck-main-authenticated-view -->
     </div>
   <!-- ========================================================================= -->
-  <!-- MODAL: USER GUIDE & KNOWLEDGE BASE (v0.10.9-alpha-1)                      -->
+  <!-- MODAL: USER GUIDE & KNOWLEDGE BASE (v0.10.9-alpha-2)                      -->
   <!-- ========================================================================= -->
   <div class="modal-overlay" id="modal-user-guide">
     <div class="modal">
@@ -4519,7 +4529,7 @@
               </div>
 
               <div style="margin-top: 14px; text-align: right;">
-                <button class="btn btn-primary" onclick="closeModal('modal-user-guide'); openAuthModal('register');" style="font-size: 12px; font-weight: 700; padding: 7px 16px;">
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAuthModal('register'), 'modal-auth');" style="font-size: 12px; font-weight: 700; padding: 7px 16px;">
                   🚀 Mở Cửa Sổ Đăng Ký Ngay
                 </button>
               </div>
@@ -4549,7 +4559,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
-                  <span>Nhấn vào nút <strong style="color: var(--text);">"Get API key"</strong> $\rightarrow$ <strong style="color: var(--text);">"Create API key"</strong> rồi nhấn Sao chép (Copy).</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">"Get API key"</strong> ➔ <strong style="color: var(--text);">"Create API key"</strong> rồi nhấn Sao chép (Copy).</span>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">3</span>
@@ -4618,7 +4628,7 @@
                     <span style="font-size: 11.5px; color: var(--text-muted);">Tải nhanh các bộ từ biên soạn sẵn: IELTS, TOEIC, Giao tiếp hằng ngày, Oxford 3000...</span>
                   </div>
                 </div>
-                <button class="btn btn-outline" onclick="closeModal('modal-user-guide'); openLibraryModal();" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openLibraryModal(), 'modal-library');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
                   Mở VocaLib
                 </button>
               </div>
@@ -4632,7 +4642,7 @@
                     <span style="font-size: 11.5px; color: var(--text-muted);">Chỉ cần gõ chủ đề hoặc dán bài báo/đoạn văn, AI tự trích xuất từ vựng và tạo câu ví dụ trong 3 giây.</span>
                   </div>
                 </div>
-                <button class="btn btn-primary" onclick="closeModal('modal-user-guide'); openAiDeckStudioModal();" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #a855f7, #ec4899); border: none;">
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAiDeckStudioModal(), 'modal-ai-deck-studio');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #a855f7, #ec4899); border: none;">
                   Dùng AI Deck
                 </button>
               </div>
@@ -4646,7 +4656,7 @@
                     <span style="font-size: 11.5px; color: var(--text-muted);">Tự do thêm từ, tùy chỉnh định nghĩa, ghi chú riêng hoặc nhập nhanh từ file Excel/CSV.</span>
                   </div>
                 </div>
-                <button class="btn btn-outline" onclick="closeModal('modal-user-guide'); openDeckModal();" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openDeckModal(), 'modal-deck');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
                   Tạo Bộ Mới
                 </button>
               </div>
@@ -4764,7 +4774,7 @@
           <div class="guide-card" style="border: 1px dashed var(--border); text-align: center;">
             <div style="font-size: 13px; color: var(--text); font-weight: 700; margin-bottom: 4px;">🛡️ Bùa Bảo Vệ Chuỗi (Streak Freeze)</div>
             <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Lỡ bận việc đột xuất không kịp học? Bạn có thể mua Bùa Bảo Vệ trong VocaShop để giữ nguyên chuỗi ngày!</div>
-            <button class="btn btn-outline" onclick="closeModal('modal-user-guide'); openShopModal();" style="font-size: 11.5px; font-weight: 700;">
+            <button class="btn btn-outline" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 11.5px; font-weight: 700;">
               🛒 Đến VocaShop Xem Bùa
             </button>
           </div>
@@ -4804,7 +4814,7 @@
           </div>
 
           <div style="text-align: right; margin-top: 4px;">
-            <button class="btn btn-primary" onclick="closeModal('modal-user-guide'); openShopModal();" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #eab308, #ca8a04); border: none;">
+            <button class="btn btn-primary" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #eab308, #ca8a04); border: none;">
               🛒 Mở Cửa Hàng VocaShop
             </button>
           </div>
@@ -4839,7 +4849,7 @@
             </div>
 
             <div style="margin-top: 14px; text-align: right;">
-              <button class="btn btn-primary" onclick="closeModal('modal-user-guide'); openWalletStudioModal();" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;">
+              <button class="btn btn-primary" onclick="navigateFromGuide(() => openWalletStudioModal(), 'modal-wallet-studio');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;">
                 💼 Mở Trung Tâm Creator Studio
               </button>
             </div>
@@ -4946,8 +4956,8 @@
             </p>
             <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
               • <strong style="color: var(--text);">Trên Chrome / Edge Máy tính:</strong> Bấm biểu tượng <strong style="color: var(--primary);">⊕ Cài đặt</strong> trên thanh địa chỉ trình duyệt.<br>
-              • <strong style="color: var(--text);">Trên iPhone (Safari):</strong> Bấm nút Chia sẻ (Share) $\rightarrow$ Chọn <strong style="color: var(--primary);">"Thêm vào Màn hình chính"</strong>.<br>
-              • <strong style="color: var(--text);">Trên Android (Chrome):</strong> Bấm dấu 3 chấm ⋮ $\rightarrow$ Chọn <strong style="color: var(--primary);">"Cài đặt ứng dụng"</strong>.
+              • <strong style="color: var(--text);">Trên iPhone (Safari):</strong> Bấm nút Chia sẻ (Share) ➔ Chọn <strong style="color: var(--primary);">"Thêm vào Màn hình chính"</strong>.<br>
+              • <strong style="color: var(--text);">Trên Android (Chrome):</strong> Bấm dấu 3 chấm ⋮ ➔ Chọn <strong style="color: var(--primary);">"Cài đặt ứng dụng"</strong>.
             </div>
           </div>
         </div>
@@ -8343,7 +8353,7 @@
     }
     window.saveGeminiApiKey = saveGeminiApiKey;
 
-    function getStoredApiKeys() {
+    function getStoredApiKeys(forApiCall = false) {
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
       try {
         const raw = localStorage.getItem(STORAGE_KEY_GEMINI_KEYS);
@@ -8352,7 +8362,10 @@
           if (Array.isArray(arr)) {
             const cleaned = arr.map(k => String(k || '').trim()).filter(k => k);
             if (cleaned.length > 0) {
-              return isVip ? cleaned.slice(0, 3) : cleaned.slice(0, 1);
+              if (forApiCall && !isVip) {
+                return cleaned.slice(0, 1);
+              }
+              return cleaned.slice(0, 3);
             }
           }
         }
@@ -8363,11 +8376,8 @@
     }
 
     function saveApiKeysList(keysArray, pushCloud = true) {
-      const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
       let cleaned = (keysArray || []).map(k => String(k || '').trim()).filter(k => k);
-      if (!isVip && cleaned.length > 1) {
-        cleaned = cleaned.slice(0, 1);
-      } else if (cleaned.length > 3) {
+      if (cleaned.length > 3) {
         cleaned = cleaned.slice(0, 3);
       }
       geminiApiKeys = cleaned;
@@ -8381,7 +8391,7 @@
     }
 
     function getEffectiveGeminiApiKey() {
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(true);
       if (keys.length === 0) return '';
       const now = Date.now();
       for (const k of keys) {
@@ -8398,7 +8408,7 @@
     }
 
     async function callGeminiApiWithFailover(makeRequestFn) {
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(true);
       if (keys.length === 0) {
         throw new Error('NO_API_KEY');
       }
@@ -8477,16 +8487,20 @@
 
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
 
-      let cleaned = [v1, v2, v3].filter(k => k);
-      if (!isVip) {
-        cleaned = cleaned.slice(0, 1);
+      let cleaned = [];
+      if (isVip) {
+        cleaned = [v1, v2, v3].filter(k => k).slice(0, 3);
+        if (inp1) inp1.value = cleaned[0] || '';
+        if (inp2) inp2.value = cleaned[1] || '';
+        if (inp3) inp3.value = cleaned[2] || '';
       } else {
-        cleaned = cleaned.slice(0, 3);
+        // Non-VIP: update primary key, but preserve existing keys in slots 2 & 3 if they were previously entered!
+        const existing = getStoredApiKeys(false);
+        const k2 = v2 || existing[1] || '';
+        const k3 = v3 || existing[2] || '';
+        cleaned = [v1, k2, k3].filter(k => k).slice(0, 3);
+        if (inp1) inp1.value = cleaned[0] || '';
       }
-
-      if (inp1) inp1.value = cleaned[0] || '';
-      if (inp2) inp2.value = cleaned[1] || '';
-      if (inp3) inp3.value = cleaned[2] || '';
 
       saveApiKeysList(cleaned, true);
       updateSettingsApiKeysStatusText();
@@ -8495,13 +8509,19 @@
     function updateSettingsApiKeysStatusText() {
       const statusText = document.getElementById('gemini-status-text');
       if (!statusText) return;
-      const keys = getStoredApiKeys();
+      const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
+      const keys = getStoredApiKeys(false);
       if (keys.length === 0) {
         statusText.textContent = 'Chưa cài đặt API Key.';
         statusText.style.color = 'var(--text-muted)';
-      } else if (keys.length === 1) {
-        statusText.textContent = '✅ Đã lưu 1 Khóa API chính.';
-        statusText.style.color = '#34d399';
+      } else if (keys.length === 1 || !isVip) {
+        if (!isVip && keys.length > 1) {
+          statusText.textContent = `✅ Đã lưu Khóa chính. (${keys.length - 1} khóa phụ đang chờ kích hoạt VIP)`;
+          statusText.style.color = '#38bdf8';
+        } else {
+          statusText.textContent = '✅ Đã lưu 1 Khóa API chính.';
+          statusText.style.color = '#34d399';
+        }
       } else {
         statusText.textContent = `👑 Đã kích hoạt Bể Đa Khóa (${keys.length}/3 Key • x${keys.length} Hạn Ngạch)!`;
         statusText.style.color = '#fbbf24';
@@ -8510,7 +8530,7 @@
 
     function updateSettingsApiKeysUI() {
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(false);
 
       const inp1 = document.getElementById('gemini-api-key-input-1');
       const inp2 = document.getElementById('gemini-api-key-input-2');
@@ -8539,7 +8559,7 @@
           item.wrap.onclick = null;
         } else {
           item.inp.disabled = true;
-          item.inp.placeholder = `🔒 Khóa ${item.num} (Dành riêng cho VIP - Nhân 3 hạn ngạch)`;
+          item.inp.placeholder = item.inp.value ? `🔒 Khóa ${item.num} đã lưu (Kích hoạt VIP để sử dụng)` : `🔒 Khóa ${item.num} (Dành riêng cho VIP - Nhân 3 hạn ngạch)`;
           item.wrap.style.opacity = '0.55';
           item.wrap.onclick = () => {
             alert('👑 Tính năng Bể Đa Khóa API (Tối đa 3 Key từ các Project khác nhau để nhân 3 hạn ngạch) chỉ dành riêng cho thành viên VIP!\n\nNâng cấp VIP ngay để mở khóa toàn diện.');
@@ -15068,24 +15088,42 @@ function switchPublisherTab(tab) {
                   }
                 }
 
-                // Sync API Keys (Array & Single) from Cloud
-                const remoteKeys = (Array.isArray(cloudData.geminiApiKeys) && cloudData.geminiApiKeys.length > 0)
-                  ? cloudData.geminiApiKeys
-                  : ((cloudData.settings && Array.isArray(cloudData.settings.geminiApiKeys) && cloudData.settings.geminiApiKeys.length > 0)
-                    ? cloudData.settings.geminiApiKeys
-                    : ((cloudData.profile && Array.isArray(cloudData.profile.geminiApiKeys) && cloudData.profile.geminiApiKeys.length > 0)
-                      ? cloudData.profile.geminiApiKeys
-                      : (cloudData.geminiApiKey ? [cloudData.geminiApiKey] : [])));
+                // Sync API Keys (Array, Object & Single) from Cloud with Smart Merge
+                function extractKeysList(raw) {
+                  if (!raw) return [];
+                  if (Array.isArray(raw)) return raw.map(k => String(k || '').trim()).filter(k => k);
+                  if (typeof raw === 'object') return Object.values(raw).map(k => String(k || '').trim()).filter(k => k);
+                  if (typeof raw === 'string' && raw.trim()) return [raw.trim()];
+                  return [];
+                }
 
-                if (remoteKeys && remoteKeys.length > 0) {
-                  const cleanedRemote = remoteKeys.map(k => String(k || '').trim()).filter(k => k);
-                  if (cleanedRemote.length > 0) {
-                    saveApiKeysList(cleanedRemote, false);
-                    updateSettingsApiKeysUI();
+                let remoteKeys = extractKeysList(cloudData.geminiApiKeys);
+                if (remoteKeys.length === 0 && cloudData.settings) {
+                  remoteKeys = extractKeysList(cloudData.settings.geminiApiKeys);
+                }
+                if (remoteKeys.length === 0 && cloudData.profile) {
+                  remoteKeys = extractKeysList(cloudData.profile.geminiApiKeys);
+                }
+                if (remoteKeys.length === 0 && cloudData.geminiApiKey) {
+                  remoteKeys = extractKeysList(cloudData.geminiApiKey);
+                }
+
+                const localKeys = getStoredApiKeys(false);
+                // Smart Merge: combine remoteKeys and localKeys, deduplicate while preserving order up to 3 keys
+                let mergedKeys = [];
+                const combinedKeys = [...remoteKeys, ...localKeys];
+                for (const k of combinedKeys) {
+                  if (k && !mergedKeys.includes(k) && mergedKeys.length < 3) {
+                    mergedKeys.push(k);
                   }
+                }
+
+                if (mergedKeys.length > 0) {
+                  saveApiKeysList(mergedKeys, false);
+                  updateSettingsApiKeysUI();
                 } else if (geminiApiKey) {
                   cloudData.geminiApiKey = geminiApiKey;
-                  cloudData.geminiApiKeys = getStoredApiKeys();
+                  cloudData.geminiApiKeys = getStoredApiKeys(false);
                 }
 
                 const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
@@ -16672,6 +16710,17 @@ function switchPublisherTab(tab) {
         const parentToRestore = parentModalBeforePreview;
         parentModalBeforePreview = null;
         openModal(parentToRestore);
+      }
+      if (id === 'modal-user-guide') {
+        guideReturnContext = null;
+      } else if (typeof guideReturnContext !== 'undefined' && guideReturnContext && guideReturnContext.targetModalId === id) {
+        const ctx = guideReturnContext;
+        guideReturnContext = null;
+        setTimeout(() => {
+          if (typeof openUserGuideModal === 'function') {
+            openUserGuideModal(ctx.category, ctx.starterStep, ctx.scrollTop);
+          }
+        }, 60);
       }
     }
 
@@ -37860,11 +37909,12 @@ Quy tắc phản hồi quan trọng:
   }
 
   // =========================================================================
-  // USER GUIDE & KNOWLEDGE BASE ENGINE (v0.10.9-alpha-1)
+  // USER GUIDE & KNOWLEDGE BASE ENGINE (v0.10.9-alpha-2)
   // =========================================================================
   let currentGuideCategory = 'starter';
   let currentGuideStarterStep = 0;
   const guideStarterStepsCount = 5;
+  let guideReturnContext = null;
 
   const guideStarterTitles = [
     'Đăng Ký & Đăng Nhập Tài Khoản',
@@ -37874,15 +37924,21 @@ Quy tắc phản hồi quan trọng:
     '4 Chế Độ Học Cốt Lõi Tại VocaFlow'
   ];
 
-  function openUserGuideModal(category = 'starter', stepIndex = 0) {
-    switchUserGuideCategory(category);
+  function openUserGuideModal(category = 'starter', stepIndex = 0, targetScrollTop = null) {
+    switchUserGuideCategory(category, targetScrollTop === null);
     if (category === 'starter') {
-      goToStarterStep(stepIndex);
+      goToStarterStep(stepIndex, targetScrollTop === null);
     }
     openModal('modal-user-guide');
+    if (targetScrollTop !== null && targetScrollTop > 0) {
+      setTimeout(() => {
+        const contentArea = document.getElementById('guide-content-area');
+        if (contentArea) contentArea.scrollTop = targetScrollTop;
+      }, 50);
+    }
   }
 
-  function switchUserGuideCategory(catKey) {
+  function switchUserGuideCategory(catKey, resetScroll = true) {
     currentGuideCategory = catKey;
     const allCategories = ['starter', 'flow', 'economy', 'creator', 'vip', 'shortcuts'];
 
@@ -37906,11 +37962,13 @@ Quy tắc phản hồi quan trọng:
       }
     });
 
-    const contentArea = document.getElementById('guide-content-area');
-    if (contentArea) contentArea.scrollTop = 0;
+    if (resetScroll) {
+      const contentArea = document.getElementById('guide-content-area');
+      if (contentArea) contentArea.scrollTop = 0;
+    }
   }
 
-  function updateStarterStepUI() {
+  function updateStarterStepUI(resetScroll = true) {
     for (let i = 0; i < guideStarterStepsCount; i++) {
       const slide = document.getElementById(`guide-starter-slide-${i}`);
       if (slide) {
@@ -37954,8 +38012,10 @@ Quy tắc phản hồi quan trọng:
       }
     }
 
-    const contentArea = document.getElementById('guide-content-area');
-    if (contentArea) contentArea.scrollTop = 0;
+    if (resetScroll) {
+      const contentArea = document.getElementById('guide-content-area');
+      if (contentArea) contentArea.scrollTop = 0;
+    }
   }
 
   function navigateStarterStep(delta) {
@@ -37971,53 +38031,82 @@ Quy tắc phản hồi quan trọng:
     }
   }
 
-  function goToStarterStep(idx) {
+  function goToStarterStep(idx, resetScroll = true) {
     if (idx >= 0 && idx < guideStarterStepsCount) {
       currentGuideStarterStep = idx;
-      updateStarterStepUI();
+      updateStarterStepUI(resetScroll);
+    }
+  }
+
+  function navigateFromGuide(openActionFn, targetModalId) {
+    const contentArea = document.getElementById('guide-content-area');
+    guideReturnContext = {
+      category: currentGuideCategory,
+      starterStep: currentGuideStarterStep,
+      scrollTop: contentArea ? contentArea.scrollTop : 0,
+      targetModalId: targetModalId
+    };
+    closeModal('modal-user-guide');
+    if (typeof openActionFn === 'function') {
+      openActionFn();
     }
   }
 
   function applyGiftcodeFromGuide(code) {
-    closeModal('modal-user-guide');
-    openShopModal();
-    setTimeout(() => {
-      const codeInput = document.getElementById('shop-gift-code-input');
-      if (codeInput) {
-        codeInput.value = code;
-        codeInput.focus();
-        codeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        codeInput.style.transition = 'all 0.3s ease';
-        codeInput.style.boxShadow = '0 0 16px #f59e0b';
-        codeInput.style.borderColor = '#f59e0b';
-        setTimeout(() => {
-          codeInput.style.boxShadow = '';
-          codeInput.style.borderColor = '';
-        }, 1800);
-      }
-      showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 Xu nhé!');
-    }, 300);
+    navigateFromGuide(() => {
+      openShopModal();
+      setTimeout(() => {
+        const codeInput = document.getElementById('shop-gift-code-input');
+        if (codeInput) {
+          codeInput.value = code;
+          codeInput.focus();
+          codeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          codeInput.style.transition = 'all 0.3s ease';
+          codeInput.style.boxShadow = '0 0 16px #f59e0b';
+          codeInput.style.borderColor = '#f59e0b';
+          setTimeout(() => {
+            codeInput.style.boxShadow = '';
+            codeInput.style.borderColor = '';
+          }, 1800);
+        }
+        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 Xu nhé!');
+      }, 300);
+    }, 'modal-shop');
   }
 
   function openAiKeyFromGuide() {
-    closeModal('modal-user-guide');
-    openSettingsModal();
-    setTimeout(() => {
-      const keyInput = document.getElementById('gemini-api-key-input-1') || document.getElementById('gemini-api-key-input');
-      if (keyInput) {
-        keyInput.focus();
-        keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        keyInput.style.transition = 'all 0.3s ease';
-        keyInput.style.boxShadow = '0 0 16px #10b981';
-        keyInput.style.borderColor = '#10b981';
-        setTimeout(() => {
-          keyInput.style.boxShadow = '';
-          keyInput.style.borderColor = '';
-        }, 1800);
-      }
-      showToast('🔑 Dán mã API Gemini vào ô này rồi nhấn "Lưu Cài Đặt" nhé!');
-    }, 300);
+    navigateFromGuide(() => {
+      openSettingsModal();
+      setTimeout(() => {
+        const keyInput = document.getElementById('gemini-api-key-input-1') || document.getElementById('gemini-api-key-input');
+        if (keyInput) {
+          keyInput.focus();
+          keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          keyInput.style.transition = 'all 0.3s ease';
+          keyInput.style.boxShadow = '0 0 16px #10b981';
+          keyInput.style.borderColor = '#10b981';
+          setTimeout(() => {
+            keyInput.style.boxShadow = '';
+            keyInput.style.borderColor = '';
+          }, 1800);
+        }
+        showToast('🔑 Dán mã API Gemini vào ô này rồi nhấn "Lưu Cài Đặt" nhé!');
+      }, 300);
+    }, 'modal-settings');
   }
+
+  // Horizontal mouse-wheel scroll for guide tabs nav on PC
+  window.addEventListener('DOMContentLoaded', () => {
+    const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
+    if (guideTabsNav) {
+      guideTabsNav.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          guideTabsNav.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+    }
+  });
 
 </script>
 </body>
