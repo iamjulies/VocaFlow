@@ -1,0 +1,2 @@
+C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\bin\Release\net8.0-windows\win-x64\publish\VocaFlow.pdb
+C:\Users\DELL\Documents\Modding\browser\VocaFlow_Desktop\bin\Release\net8.0-windows\win-x64\publish\VocaFlow.exe

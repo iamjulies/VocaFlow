@@ -29,6 +29,28 @@ if (Test-Path $tokenFile) {
 $vocaFlowRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/VocaFlow.git" } else { "https://github.com/iamjulies/VocaFlow.git" }
 $ioRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/iamjulies.github.io.git" } else { "https://github.com/iamjulies/iamjulies.github.io.git" }
 
+# 0. Biên dịch và cập nhật VocaFlow.exe song song từ VocaFlow_Desktop
+Write-Host "[0/4] Đang biên dịch và cập nhật VocaFlow.exe mới nhất..." -ForegroundColor Cyan
+$desktopDir = Join-Path $root "VocaFlow_Desktop"
+if (Test-Path $desktopDir) {
+    # Tắt tiến trình VocaFlow đang chạy nếu có để tránh lock file khi ghi đè
+    Get-Process -Name "VocaFlow*" -ErrorAction SilentlyContinue | Stop-Process -Force
+    Start-Sleep -Milliseconds 500
+    
+    & dotnet publish "$desktopDir\VocaFlow.csproj" -c Release -r win-x64 --no-self-contained
+    $publishedExe = Join-Path $desktopDir "bin\Release\net8.0-windows\win-x64\publish\VocaFlow.exe"
+    $publishedPdb = Join-Path $desktopDir "bin\Release\net8.0-windows\win-x64\publish\VocaFlow.pdb"
+    if (Test-Path $publishedExe) {
+        Copy-Item $publishedExe "$root\Release_App\VocaFlow.exe" -Force
+        Copy-Item $publishedExe "$root\GITHUB_RELEASE\VocaFlow_Windows_App\VocaFlow.exe" -Force
+        if (Test-Path $publishedPdb) {
+            Copy-Item $publishedPdb "$root\Release_App\VocaFlow.pdb" -Force
+            Copy-Item $publishedPdb "$root\GITHUB_RELEASE\VocaFlow_Windows_App\VocaFlow.pdb" -Force
+        }
+        Write-Host "  -> Đã biên dịch & cập nhật VocaFlow.exe vào Release_App thành công!" -ForegroundColor Green
+    }
+}
+
 # 1. Đồng bộ file sang index.html và Release_App
 Copy-Item "$root\vocaflow.html" "$root\index.html" -Force
 Copy-Item "$root\vocaflow.html" "$root\Release_App\vocaflow.html" -Force
