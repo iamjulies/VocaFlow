@@ -1,19 +1,28 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-4 (Build 236) - Fix VIP Daily Spins Inflation & Cross-Device Idempotency
+Phiên bản: v0.10.9-alpha-5 (Build 237) - Auto-Lock AI Features Without Gemini Key
 ================================================================================
-1. [Khắc Phục Triệt Để Lỗi Cộng Dồn Lượt Quay VIP] Loại bỏ hoàn toàn khối mã bồi hoàn di sản (+4 lượt), áp dụng khóa Mutex Lock và kiểm tra đa tầng, đảm bảo chỉ cộng đúng +2 lượt quay/ngày cho VIP.
-2. [Đồng Bộ Ngày Quay Đa Thiết Bị Tuyệt Đối] Đồng bộ trường lastVipSpinDate ngay khi đăng nhập (onAuthStateChanged) và kéo Cloud (pullDatabaseFromCloud), chặn đứng tình trạng mỗi máy cộng lặp lại +2 lượt.
-3. [Chuẩn Hóa Múi Giờ Địa Phương] Chuyển đổi getTodayString() sang ngày cục bộ (YYYY-MM-DD), triệt tiêu hoàn toàn độ lệch 7 tiếng của UTC gây lỗi lặp quay ban đêm.
-4. [Tự Động Hiệu Chỉnh Lượt Quay Thừa (autoHealExcessVipSpinsToday)] Tự động nhận diện và khấu trừ 6 lượt quay bị cộng dư hôm nay về đúng mức chuẩn (+2 lượt/ngày), đồng thời dọn dẹp thông báo trùng lặp.
+1. [Khóa Tự Động 5 Tính Năng AI Khi Chưa Có API Key] Tự động khóa chặt Luyện nói (mọi cấp), Trắc nghiệm Quiz (trung bình, khó, cực khó), Gemini English Mentor, AI Điền tự động và VocaDeck AI Deck Studio đối với tài khoản chưa nhập ít nhất 1 API key.
+2. [Bảo Tồn Chế Độ Quiz Dễ Offline] Giữ nguyên quyền truy cập chế độ Trắc nghiệm Dễ (Easy) cho người dùng chưa có API key nhờ thuật toán xáo trộn từ vựng ngẫu nhiên offline không phụ thuộc Gemini.
+3. [Giao Diện Khóa Thân Thiện & Mở Khóa Tức Thì] Thiết kế màn hình khóa chuyên biệt hướng dẫn lý do và nút dẫn lối vào Cài Đặt (Settings); tự động mở khóa ngay khi người dùng lưu ít nhất 1 API key mà không cần tải lại trang.
+4. [Bảo Vệ Đa Tầng Cấp Độ API & Giao Diện] Bổ sung hàm kiểm tra chuẩn hóa hasAtLeastOneApiKey() tại toàn bộ các điểm kích hoạt, phím tắt, nút bấm và gửi yêu cầu mạng.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-4 (Build 236)
+Phiên bản hiện tại : v0.10.9-alpha-5 (Build 237)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-5] - (BUILD 237 - AUTO-LOCK AI FEATURES WITHOUT GEMINI KEY):
+  - Tự động khóa 5 tính năng phụ thuộc AI Gemini đối với người dùng chưa nhập ít nhất 1 API key (kể cả khi đã đăng nhập tài khoản):
+    * 🎙️ Luyện nói (Speaking Lab): Khóa toàn bộ mọi cấp độ (Dễ, Trung Bình, Khó) vì toàn bộ quá trình phân tích âm thanh, âm vị, ngữ điệu đều do Gemini AI đảm nhiệm.
+    * 🎯 Trắc nghiệm Quiz: Khóa các cấp độ Trung Bình (Medium), Khó (Hard), Cực Khó (Extreme) do yêu cầu AI sinh các phương án bẫy trắc nghiệm thông minh. Giữ mở cấp độ Dễ (Easy) chạy offline từ kho từ vựng.
+    * 🤖 Gemini English Mentor: Bổ sung màn hình khóa `aimentor-apikey-lock-view` giải thích chi tiết và dẫn hướng vào Cài Đặt.
+    * ✨ AI Điền Tự Động (Auto-Fill): Khóa nút AI Điền trong modal thêm/sửa từ vựng khi chưa có key.
+    * 📚 VocaDeck AI Deck Studio: Bổ sung màn hình khóa `aideck-apikey-lock-view` bảo vệ studio tạo bộ từ tự động.
+    * ⚡ Mở khóa tức thì (Zero-Delay Unlock): Ngay khi người dùng thêm ít nhất 1 API key hợp lệ trong Cài Đặt, cả 5 tính năng lập tức mở khóa bình thường.
 
 🌟 [v0.10.9-alpha-4] - (BUILD 236 - FIX VIP DAILY SPINS INFLATION & CROSS-DEVICE IDEMPOTENCY):
   - Khắc phục triệt để lỗi người dùng VIP bị cộng dồn +8 lượt quay hằng ngày:

@@ -1,4 +1,4 @@
-﻿  <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
+  <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
     <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
       
       <!-- HEADER -->
@@ -35,6 +35,23 @@
         <div style="display: flex; justify-content: center; gap: 12px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openAuthModal('login');" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
             🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- API KEY LOCK VIEW FOR AI MENTOR (v0.10.9-alpha-5) -->
+      <div id="aimentor-apikey-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 20px; flex: 1;">
+        <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(245,158,11,0.4));">🔑🔒</div>
+        <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Chưa Kết Nối Google Gemini API Key</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+          Tính năng <strong>Gia Sư Gemini English Mentor</strong> cần kết nối tài khoản Gemini của bạn để AI có thể trò chuyện, giải thích ngữ pháp và sửa lỗi trực tiếp.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openSettingsModal();" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.4);">
+            ⚙️ Thêm Gemini API Key Ngay
           </button>
           <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
             Đóng

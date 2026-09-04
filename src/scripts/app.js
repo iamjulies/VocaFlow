@@ -556,6 +556,12 @@
       return single ? [single] : [];
     }
 
+    function hasAtLeastOneApiKey() {
+      const keys = getStoredApiKeys(false);
+      return Array.isArray(keys) && keys.length > 0 && keys.some(k => typeof k === 'string' && k.trim().length > 5);
+    }
+    window.hasAtLeastOneApiKey = hasAtLeastOneApiKey;
+
     function saveApiKeysList(keysArray, pushCloud = true) {
       let cleaned = (keysArray || []).map(k => String(k || '').trim()).filter(k => k);
       if (cleaned.length > 3) {
@@ -12938,6 +12944,24 @@ function switchPublisherTab(tab) {
     }
 
     // WORD MODAL
+    function updateWordModalAiButtonState() {
+      const aiBtn = document.getElementById('btn-ai-generate');
+      const aiIcon = document.getElementById('ai-btn-icon');
+      const aiText = document.getElementById('ai-btn-text');
+      if (!aiBtn) return;
+      if (!hasAtLeastOneApiKey()) {
+        aiBtn.title = '🔒 Cần kết nối ít nhất 1 Gemini API Key trong Cài Đặt để dùng AI Điền Tự Động';
+        if (aiIcon) aiIcon.textContent = '🔒';
+        if (aiText) aiText.textContent = 'AI Điền (Cần Key)';
+        aiBtn.style.opacity = '0.75';
+      } else {
+        aiBtn.title = 'Tự động tra cứu nghĩa, IPA, ví dụ bằng Google Gemini AI';
+        if (aiIcon) aiIcon.textContent = '✨';
+        if (aiText) aiText.textContent = 'AI Điền Tự Động';
+        aiBtn.style.opacity = '1';
+      }
+    }
+
     function openWordModal() {
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
@@ -12964,6 +12988,7 @@ function switchPublisherTab(tab) {
 
       document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      updateWordModalAiButtonState();
       openModal('modal-word');
       setTimeout(() => {
         const termInput = document.getElementById('word-term');
@@ -13021,6 +13046,7 @@ function switchPublisherTab(tab) {
 
       document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      updateWordModalAiButtonState();
       openModal('modal-word');
     }
 
@@ -14813,6 +14839,11 @@ function switchPublisherTab(tab) {
     let isAiGenerating = false;
 
     async function handleAiGenerateWord() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng AI Điền Tự Động yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể tự động phân tích từ vựng, phiên âm và ví dụ.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (isAiGenerating) return;
       const termInput = document.getElementById('word-term');
       const rawTerm = (termInput ? termInput.value : '').trim();
@@ -15185,14 +15216,40 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
-      const savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+      let savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+      if (savedDiff !== 'easy' && (!hasAtLeastOneApiKey() || isGuest())) {
+        savedDiff = 'easy';
+      }
       selectQuizSetupDifficulty(savedDiff);
+
+      // Render visual lock indicators on cards if no API key
+      const hasKey = hasAtLeastOneApiKey();
+      ['medium', 'hard', 'extreme'].forEach(k => {
+        const card = document.getElementById('quiz-diff-card-' + k);
+        if (card) {
+          let badge = card.querySelector('.quiz-key-lock-badge');
+          if (!hasKey) {
+            card.style.opacity = '0.65';
+            if (!badge) {
+              badge = document.createElement('span');
+              badge.className = 'quiz-key-lock-badge badge';
+              badge.style.cssText = 'background: rgba(239, 68, 68, 0.18); color: #f87171; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(239, 68, 68, 0.3);';
+              badge.textContent = '🔒 Cần Gemini Key';
+              const titleWrapper = card.querySelector('strong');
+              if (titleWrapper && titleWrapper.parentNode) titleWrapper.parentNode.appendChild(badge);
+            }
+          } else {
+            card.style.opacity = '1';
+            if (badge) badge.remove();
+          }
+        }
+      });
 
       const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
       if (shuffleCb) shuffleCb.checked = isStudyShuffle;
 
-      // Zero-delay optimization: Prefetch first 3 words distractors immediately in background
-      if (Array.isArray(deckWords) && deckWords.length > 0) {
+      // Zero-delay optimization: Prefetch first 3 words distractors immediately in background (only if API key present)
+      if (hasKey && Array.isArray(deckWords) && deckWords.length > 0) {
         let count = 1;
         if (savedDiff === 'extreme') count = 3;
         else if (savedDiff === 'hard') count = 2;
@@ -15205,11 +15262,18 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function selectQuizSetupDifficulty(diff) {
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        closeModal('modal-quiz-setup');
-        openAuthModal('login');
-        return;
+      if (diff !== 'easy') {
+        if (isGuest()) {
+          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+          closeModal('modal-quiz-setup');
+          openAuthModal('login');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          alert('🔒 Cấp độ ' + (diff === 'medium' ? 'Bình Thường' : (diff === 'hard' ? 'Khó' : 'Cực Khó')) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể sinh các phương án bẫy trắc nghiệm thông minh!\n\nVui lòng vào Cài Đặt để nhập Gemini API Key hoặc chọn cấp độ Dễ (Easy).');
+          openSettingsModal();
+          return;
+        }
       }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
@@ -15250,6 +15314,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function confirmStartQuizFromModal() {
+      if (selectedSetupDifficulty !== 'easy' && !hasAtLeastOneApiKey()) {
+        alert('🔒 Cấp độ này yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!\n\nVui lòng vào Cài Đặt hoặc chọn cấp độ Dễ.');
+        openSettingsModal();
+        return;
+      }
       currentQuizDifficulty = selectedSetupDifficulty;
       localStorage.setItem('vocaflow_quiz_difficulty', currentQuizDifficulty);
 
@@ -15264,10 +15333,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function setQuizDifficulty(diff) {
-      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
-        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        openAuthModal('login');
-        return;
+      if (diff !== 'easy') {
+        if (!currentUser || !currentUser.email) {
+          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+          openAuthModal('login');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          alert('🔒 Cấp độ ' + getDifficultyLabel(diff) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key!');
+          openSettingsModal();
+          return;
+        }
       }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentQuizDifficulty = diff;
@@ -15280,6 +15356,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (isGuest()) {
         alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
         openAuthModal('login');
+        return;
+      }
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Các cấp độ nâng cao yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!');
+        openSettingsModal();
         return;
       }
       const order = ['easy', 'medium', 'hard', 'extreme'];
@@ -16984,6 +17065,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function selectSpeakingSetupDifficulty(diff) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (diff !== 'easy' && isGuest()) {
         alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
         openAuthModal('login');
@@ -17119,6 +17205,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function openSpeakingSetupModal(useSelectionOnly = false, customWordList = null) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       speakingSetupUseSelection = useSelectionOnly;
       speakingSetupCustomWordList = customWordList;
 
@@ -17157,6 +17248,12 @@ Yêu cầu nghiêm ngặt:
     }
 
     function confirmStartSpeakingFromModal() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        closeModal('modal-speaking-setup');
+        openSettingsModal();
+        return;
+      }
       const hasClue = !!(speakingCluesConfig.def || speakingCluesConfig.ipa || speakingCluesConfig.audio);
       if (!hasClue) {
         alert('Vui lòng chọn ít nhất 1 manh mối hiển thị (Nghĩa TV, Phiên âm hoặc Âm thanh)!');
@@ -17178,6 +17275,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function startSpeakingMode(useSelectionOnly = false, customWordList = null) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (selectedSpeakingSetupDifficulty) {
         currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
       }
@@ -17896,6 +17998,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     async function submitSpeakingEvaluation() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể chấm điểm âm thanh!\n\nVui lòng vào Cài Đặt để nhập API Key.');
+        openSettingsModal();
+        return;
+      }
       if (isEvaluatingSpeaking) {
         console.warn('Speaking evaluation is already in flight, ignoring duplicate call.');
         return;
@@ -28074,14 +28181,24 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function openAiDeckStudioModal(optionalDeckId = null) {
       const isGuest = !currentUser || !currentUser.email;
       const gView = document.getElementById('aideck-guest-lock-view');
+      const kView = document.getElementById('aideck-apikey-lock-view');
       const aView = document.getElementById('aideck-main-authenticated-view');
       if (isGuest) {
         if (gView) gView.style.display = 'block';
+        if (kView) kView.style.display = 'none';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-ai-deck-studio');
+        return;
+      }
+      if (!hasAtLeastOneApiKey()) {
+        if (gView) gView.style.display = 'none';
+        if (kView) kView.style.display = 'block';
         if (aView) aView.style.display = 'none';
         openModal('modal-ai-deck-studio');
         return;
       }
       if (gView) gView.style.display = 'none';
+      if (kView) kView.style.display = 'none';
       if (aView) aView.style.display = 'flex';
 
       aiStudioTargetDeckId = optionalDeckId;
@@ -28392,7 +28509,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
       let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
 
-      if (!key) {
+      if (!hasAtLeastOneApiKey()) {
         alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo bộ từ độc nhất và chính xác theo chủ đề, hãy mở mục Cài Đặt và dán API Key (miễn phí từ Google) vào nhé!');
         closeModal('modal-ai-deck-studio');
         openSettingsModal();
@@ -29096,14 +29213,24 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         const isGuest = !currentUser || !currentUser.email;
         const gView = document.getElementById('aimentor-guest-lock-view');
+        const kView = document.getElementById('aimentor-apikey-lock-view');
         const aView = document.getElementById('aimentor-main-authenticated-view');
         if (isGuest) {
           if (gView) gView.style.display = 'flex';
+          if (kView) kView.style.display = 'none';
+          if (aView) aView.style.display = 'none';
+          openModal('modal-ai-mentor');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          if (gView) gView.style.display = 'none';
+          if (kView) kView.style.display = 'flex';
           if (aView) aView.style.display = 'none';
           openModal('modal-ai-mentor');
           return;
         }
         if (gView) gView.style.display = 'none';
+        if (kView) kView.style.display = 'none';
         if (aView) aView.style.display = 'flex';
 
         // Anti-Cheat: If on exam screen, prevent opening
@@ -29622,6 +29749,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function handleSendAiChatMessage(e = null) {
       if (e) e.preventDefault();
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Gia Sư AI Gemini Mentor yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt để nhập API Key.');
+        openSettingsModal();
+        return;
+      }
       if (aiChatIsLoading) return;
 
       const input = document.getElementById('ai-chat-input');
