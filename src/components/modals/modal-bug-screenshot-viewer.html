@@ -1,0 +1,28 @@
+﻿  <div class="modal-overlay" id="modal-bug-screenshot-viewer" style="z-index: 10020; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+    <div class="modal" style="max-width: 900px; width: 95vw; max-height: 94vh; display: flex; flex-direction: column; padding: 14px; background: var(--surface); border: 1px solid var(--border);">
+      <div class="modal-title" style="margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📷</span>
+          <div>
+            <strong id="bug-viewer-title" style="font-size: 14px; color: var(--text);">Xem Ảnh Sự Cố</strong>
+            <div id="bug-viewer-subtitle" style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Ảnh 1 / 1</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-screenshot-viewer')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- MAIN IMAGE DISPLAY AREA WITH ARROWS -->
+      <div style="position: relative; flex: 1; min-height: 250px; max-height: 65vh; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; margin-bottom: 8px;">
+        <img id="bug-viewer-img" src="" style="max-width: 100%; max-height: 65vh; object-fit: contain; display: block; user-select: none;">
+        
+        <button id="btn-bug-viewer-prev" onclick="prevBugViewerImage()" class="btn btn-outline btn-icon" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); color: #fff; font-size: 18px; width: 38px; height: 38px; border-radius: 50%;">‹</button>
+        <button id="btn-bug-viewer-next" onclick="nextBugViewerImage()" class="btn btn-outline btn-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); color: #fff; font-size: 18px; width: 38px; height: 38px; border-radius: 50%;">›</button>
+      </div>
+
+      <!-- THUMBNAILS STRIP & FOOTER INFO -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div id="bug-viewer-thumbnails" style="display: flex; gap: 6px; overflow-x: auto; max-width: 70%;"></div>
+        <div id="bug-viewer-report-info" style="font-size: 11px; color: var(--text-muted); text-align: right;"></div>
+      </div>
+    </div>
+  </div>

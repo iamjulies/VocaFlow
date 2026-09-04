@@ -1,0 +1,73 @@
+﻿  <div class="modal-overlay" id="modal-quiz-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="quiz-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="quiz-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
+        <h2 id="quiz-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Xuất Sắc Hoàn Thành!</h2>
+        <p id="quiz-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành xuất sắc toàn bộ bài trắc nghiệm!</p>
+        <div style="margin-bottom: 16px;">
+          <span id="quiz-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">🎯 Cấp độ: Dễ (x1.0 Điểm)</span>
+        </div>
+
+        <!-- 5-Tile Stats Dashboard (màu mè, gọn gàng, siêu đẹp) -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Số câu đúng -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Kết quả đúng
+            </div>
+            <div id="quiz-res-score-ratio" style="font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace;">10/10 (100%)</div>
+          </div>
+
+          <!-- 2. Điểm ví nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> Điểm nhận được
+            </div>
+            <div id="quiz-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+60 điểm</div>
+          </div>
+
+          <!-- 3. Tổng thời gian -->
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="quiz-res-duration" style="font-size: 16px; font-weight: 800; color: #3b82f6; font-family: monospace;">45 giây</div>
+          </div>
+
+          <!-- 4. Tốc độ SPQ (Seconds Per Question) -->
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Tốc độ (SPQ)
+            </div>
+            <div id="quiz-res-spq" style="font-size: 16px; font-weight: 800; color: #8b5cf6; font-family: monospace;">4.5s / câu</div>
+          </div>
+        </div>
+
+        <!-- 5. Gợi ý đã dùng (Full width tile) -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+          <div style="font-size: 12px; color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <span>💡</span> Gợi ý AI đã dùng trong bài:
+          </div>
+          <div id="quiz-res-hints" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 lượt</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="retryQuizFromModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 9px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon"><use href="#i-repeat"/></svg> Làm Lại Quiz
+          </button>
+          <button class="btn btn-outline" onclick="exitQuizToDeck()" style="padding: 9px 14px;">
+            <svg class="icon"><use href="#i-book"/></svg> Xem Bộ Từ
+          </button>
+          <button class="btn btn-outline" onclick="exitQuizToHome()" style="padding: 9px 14px;">
+            🏠 Tủ Sách
+          </button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>

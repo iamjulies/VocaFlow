@@ -1,0 +1,63 @@
+﻿  <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
+    <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🔔</span>
+          <div>
+            <strong style="font-size: 17px; color: var(--text);">Trung Tâm Thông Báo</strong>
+            <div id="notif-header-subtitle" style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Cập nhật bộ từ mới từ tác giả bạn theo dõi & biến động tài khoản</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-notifications')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GUEST LOCK VIEW FOR NOTIFICATIONS (v0.10.8-alpha-10.3) -->
+      <div id="notif-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🔔🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để nhận <strong>Thông Báo Thưởng Xu, Quà Tặng VIP, Cập Nhật Bộ Từ Mới & Tương Tác Cộng Đồng</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-notifications'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-notifications');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="notif-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
+      <!-- FILTER TABS & BULK ACTIONS -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+        <div style="display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;" id="notif-filter-tabs">
+          <button class="btn btn-sm btn-primary notif-tab-btn active" data-filter="all" onclick="setNotificationFilter('all')" style="font-size: 11.5px; padding: 4px 10px;">Tất cả</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_DECK" onclick="setNotificationFilter('NEW_DECK')" style="font-size: 11.5px; padding: 4px 10px;">📘 Bộ từ mới</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_FOLLOWER" onclick="setNotificationFilter('NEW_FOLLOWER')" style="font-size: 11.5px; padding: 4px 10px;">👥 Tương tác</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="FINANCIAL" onclick="setNotificationFilter('FINANCIAL')" style="font-size: 11.5px; padding: 4px 10px;">💎 Ví Xu</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="markAllNotificationsRead()" title="Đánh dấu tất cả là đã đọc" style="font-size: 11px; padding: 4px 8px; color: #34d399; border-color: rgba(16,185,129,0.3);">
+            ✓ Đã đọc hết
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="clearAllNotifications()" title="Xóa toàn bộ thông báo" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(248,113,113,0.3);">
+            🗑️ Xóa hết
+          </button>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS LIST CONTAINER -->
+      <div id="notifications-list-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; scrollbar-width: thin;">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-notifications')">Đóng</button>
+      </div>
+      </div> <!-- end notif-main-authenticated-view -->
+    </div>
+  </div>

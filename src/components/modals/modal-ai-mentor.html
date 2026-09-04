@@ -1,0 +1,81 @@
+﻿  <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
+    <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+      
+      <!-- HEADER -->
+      <div style="padding: 12px 16px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+            🤖
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <strong style="font-size: 15px; color: var(--text);">Gemini English Mentor</strong>
+              <span id="ai-mentor-quota-badge" class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">5 lượt free</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Gia sư tiếng Anh học thuật & phản xạ thực chiến</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-icon" onclick="clearAiChatHistory()" title="Xóa lịch sử đoạn chat" style="font-size: 13px; padding: 6px 8px; color: var(--text-muted);">
+            🗑️
+          </button>
+          <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-mentor')">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- GUEST LOCK VIEW FOR AI MENTOR (v0.10.8-released) -->
+      <div id="aimentor-guest-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 20px; flex: 1;">
+        <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(99,102,241,0.4));">🤖🔒</div>
+        <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng nhập hoặc tạo tài khoản miễn phí để mở khóa <strong>Gia Sư AI Gemini Mentor, Hỏi Đáp Ngữ Pháp, Phân Tích Từ Sâu & Luyện Hội Thoại</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openAuthModal('login');" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="aimentor-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+      <!-- CONTEXT BANNER -->
+      <div id="ai-mentor-context-banner" style="padding: 7px 14px; background: rgba(99, 102, 241, 0.08); border-bottom: 1px dashed rgba(99, 102, 241, 0.25); font-size: 11.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <span>🎯 Ngữ cảnh:</span>
+          <span id="ai-mentor-context-text" style="font-weight: 700; color: var(--text);">Chế độ học tự do</span>
+        </div>
+        <span id="ai-mentor-context-badge" class="badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Tự do</span>
+      </div>
+
+      <!-- QUICK ACTION CHIPS (SCROLLABLE ROW) -->
+      <div id="ai-mentor-chips-container" style="display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none;">
+        <!-- Dynamic Quick Chips -->
+      </div>
+
+      <!-- MESSAGES CONTAINER -->
+      <div id="ai-chat-messages" style="flex: 1; overflow-y: auto; padding: 14px 14px; display: flex; flex-direction: column; gap: 12px; background: var(--bg);">
+        <!-- Messages -->
+      </div>
+
+      <!-- INPUT BAR -->
+      <div style="padding: 10px 14px; background: var(--surface-elevated); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+        <form onsubmit="handleSendAiChatMessage(event)" style="display: flex; gap: 8px; align-items: center; position: relative;">
+          <input type="text" id="ai-chat-input" class="form-input" placeholder="Hỏi gia sư tiếng Anh (tối đa 300 ký tự)..." maxlength="300" style="flex: 1; font-size: 13px; padding: 10px 12px; border-radius: 10px;" autocomplete="off" oninput="updateAiChatInputLength()">
+          <button type="submit" id="btn-ai-chat-send" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-weight: 700; padding: 10px 16px; border-radius: 10px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+            <span>🚀</span> <span id="btn-ai-chat-send-label">Gửi</span>
+          </button>
+        </form>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--text-muted); padding: 0 2px;">
+          <span id="ai-chat-fee-notice">Miễn phí 5 lượt mỗi ngày • Hết lượt: 10 Xu/lượt</span>
+          <span id="ai-chat-char-counter">0/300</span>
+        </div>
+      </div>
+      </div> <!-- end aimentor-main-authenticated-view -->
+    </div>
+  </div>

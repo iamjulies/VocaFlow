@@ -1,0 +1,37 @@
+﻿  <div class="modal-overlay" id="modal-import">
+    <div class="modal">
+      <div class="modal-title">
+        <span>Nhập Từ Vựng Từ File Excel / CSV</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-import')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Hỗ trợ định dạng Excel (.xlsx, .csv) với từng thông tin là 1 cột riêng biệt:<br>
+        <code style="display:block;margin-top:6px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-size:11px;color:#38bdf8;">Term | PartOfSpeech | Phonetic | Definition | CEFR | Example | Synonyms | Antonyms | Collocations | Note | Status</code>
+      </p>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(79,70,229,0.08); padding:10px 14px; border-radius:10px; border:1px solid rgba(79,70,229,0.2);">
+        <span style="font-size:13px; font-weight:600; color:#818cf8;">Chưa có file mẫu? Tải mẫu chuẩn tại đây:</span>
+        <button class="btn btn-outline btn-sm" style="border-color:#818cf8; color:#818cf8;" onclick="downloadSampleExcelTemplate()">
+          <svg class="icon icon-sm"><use href="#i-download"/></svg> Tải File Mẫu (.xlsx)
+        </button>
+      </div>
+
+      <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 16px;">
+        <input type="file" id="excel-file-input" accept=".csv,.xlsx" style="display: none;" onchange="handleExcelFileUpload(event)">
+        <button class="btn btn-outline" onclick="document.getElementById('excel-file-input').click()">
+          <svg class="icon"><use href="#i-upload"/></svg> Chọn file Excel / CSV từ máy tính
+        </button>
+        <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Hoặc dán nội dung từng dòng bên dưới</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dán nội dung bảng tính (Copy từ Excel / CSV):</label>
+        <textarea id="import-text-area" class="form-textarea" rows="4" placeholder="Term,PartOfSpeech,Phonetic,Definition,CEFR,Example,Synonyms,Antonyms,Collocations,Note,Status&#10;Resilient,adjective,/rɪˈzɪl.jənt/,Kiên cường,B2,She was resilient,tough,weak,resilient economy,Mẹo nhớ,Đang học"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-import')">Đóng</button>
+        <button type="button" class="btn btn-primary" onclick="processTextImport()">Nhập từ vựng</button>
+        </div>
+      </div> <!-- end aideck-main-authenticated-view -->
+    </div>

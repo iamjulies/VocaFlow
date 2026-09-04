@@ -1,0 +1,17 @@
+﻿  <div class="modal-overlay" id="modal-subscribers-list" style="z-index: 10006;">
+    <div class="modal" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;" id="subs-modal-icon">👥</span>
+          <strong id="subs-modal-title" style="font-size: 15px;">Danh Sách Theo Dõi</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-subscribers-list')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div id="subs-modal-body" style="overflow-y: auto; max-height: 55vh; padding: 4px 0; display: flex; flex-direction: column; gap: 8px;">
+        <!-- Populated dynamically -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-subscribers-list')">Đóng</button>
+      </div>
+    </div>
+  </div>

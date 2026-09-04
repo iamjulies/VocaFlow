@@ -1,0 +1,100 @@
+﻿  <div class="modal-overlay" id="modal-public-profile" style="z-index: 10005;">
+    <div class="modal" style="max-width: 500px; position: relative;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">👤</span>
+          <strong style="font-size: 16px;">Hồ Sơ Người Dùng</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-public-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- HERO BANNER & AVATAR -->
+      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 20px 16px; text-align: center; margin-bottom: 16px; position: relative;">
+        <div id="pub-view-avatar" style="width: 72px; height: 72px; min-width: 72px; min-height: 72px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; margin: 0 auto 10px; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 6px 18px rgba(168, 85, 247, 0.4); overflow: hidden;">
+          👤
+        </div>
+        <h3 id="pub-view-name" style="margin: 0 0 2px 0; font-size: 18px; font-weight: 800; color: var(--text);">Người dùng VocaFlow</h3>
+        <!-- v0.10.7a: Public Profile Handle -->
+        <div style="font-size: 13px; font-weight: 800; color: #38bdf8; font-family: monospace; margin-bottom: 6px;">
+          <span id="pub-view-handle">@member</span>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+          <span id="pub-view-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.3);">🌟 Tác Giả Đóng Góp</span>
+          <span id="pub-view-sub-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; padding: 3px 10px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Thành Viên VocaFlow</span>
+        </div>
+
+        <!-- v0.10.7d: Creator Follow Bar -->
+        <div id="pub-view-follow-bar" style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; flex-wrap: wrap;">
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <strong id="pub-view-follower-count" style="color: var(--text); font-size: 13.5px;">0</strong> Người theo dõi
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <strong id="pub-view-following-count" style="color: var(--text); font-size: 13.5px;">0</strong> Đang theo dõi
+          </div>
+          <button type="button" id="btn-pub-follow" class="btn btn-sm btn-primary" onclick="handlePubViewFollowToggle()" style="font-size: 11.5px; padding: 4px 12px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+            <span>➕ Theo dõi</span>
+          </button>
+        </div>
+        
+        <!-- PUBLIC AUTHOR SHOWCASE BADGES (v0.10.8-alpha-10.3) -->
+        <div id="pub-view-badges-container" style="margin-top: 10px; display: none;">
+          <div style="font-size: 11px; font-weight: 700; color: #ffd700; text-align: left; margin-bottom: 6px;">🎖️ Danh Hiệu Nổi Bật:</div>
+          <div id="pub-view-badges-showcase" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
+        </div>
+
+        <!-- BIO / PERSONAL GOALS -->
+        <div id="pub-view-bio-box" style="background: var(--surface-elevated); border-radius: 10px; padding: 10px 14px; margin-top: 10px; border: 1px solid var(--border); text-align: left;">
+          <div style="font-size: 11px; color: #a5b4fc; font-weight: 700; margin-bottom: 2px;">🎯 Ghi chú & Mục tiêu:</div>
+          <p id="pub-view-bio-text" style="margin: 0; font-size: 12.5px; color: var(--text); font-style: italic; line-height: 1.45;">Chưa có ghi chú cá nhân.</p>
+        </div>
+      </div>
+
+      <!-- 4-TILE USER PUBLIC STATS (v0.10.8-released - Badges, Xu & Flow) -->
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>💰</span> <span>Tài Sản Ví</span>
+          </div>
+          <div id="pub-view-stat-points" style="font-size: 17px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>🌊</span> <span>Dòng Chảy (Flow)</span>
+          </div>
+          <div id="pub-view-stat-flow" style="font-size: 17px; font-weight: 800; color: #22d3ee; margin-top: 2px;">0 Ngày</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>📚</span> <span>Bộ từ chia sẻ</span>
+          </div>
+          <div id="pub-view-stat-decks" style="font-size: 17px; font-weight: 800; color: #818cf8; margin-top: 2px;">0 bộ</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>📝</span> <span>Tổng số từ</span>
+          </div>
+          <div id="pub-view-stat-words" style="font-size: 17px; font-weight: 800; color: #34d399; margin-top: 2px;">0 từ</div>
+        </div>
+      </div>
+<!-- AUTHOR PUBLIC DECKS LIST -->
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <span>📂 Danh Sách Bộ Từ:</span>
+          <span id="pub-view-decks-count" style="font-size: 11px; color: var(--text-muted);"></span>
+        </div>
+        <div id="pub-view-decks-list" style="max-height: 200px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-public-profile')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g-1) -->
+  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; left: 18px; z-index: 999; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+    🤖
+    <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
+  </button>

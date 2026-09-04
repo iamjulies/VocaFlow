@@ -1,0 +1,94 @@
+﻿    <section id="screen-quiz" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitQuiz()" title="Quay lại">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="quiz-counter" style="font-weight: 700; color: var(--text-muted);">Câu 1 / 5</div>
+          <span id="quiz-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.3);" onclick="cycleQuizDifficulty()" title="Bấm để chuyển đổi nhanh độ khó (Dễ / Bình thường / Khó)">🟢 Dễ (x1.0)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentQuiz()" title="Xáo trộn ngẫu nhiên bộ câu hỏi Quiz">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
+            🏪 <span id="quiz-wallet-points">0đ</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="speakQuizTerm()" title="Phát âm từ vựng">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
+          </button>
+          <div id="quiz-score" style="font-weight: 700; color: var(--success);">Bài: 0đ</div>
+        </div>
+      </div>
+
+      <div class="quiz-container">
+        <div class="quiz-question-card" style="position: relative; padding: 18px 16px;">
+          <!-- Top Flex Row: Title + Hint/Skip Buttons (Never Overlap) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; text-align: left;">
+              CHỌN ĐỊNH NGHĨA ĐÚNG:
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
+              <button class="btn btn-outline btn-sm" id="btn-quiz-hint" onclick="showQuizAiHint()" title="Gợi ý thông minh (AI Hint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">❓</span>
+                <span id="quiz-card-hints-count" style="font-size: 11.5px; color: #fbbf24;">5</span>
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-quiz-skip" onclick="useQuizSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">⏭️</span>
+                <span id="quiz-card-skips-count" style="font-size: 11.5px; color: #818cf8;">3</span>
+              </button>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;">
+            <h2 id="quiz-question-term" style="font-size: 32px; font-weight: 800; color: var(--text); margin: 0;">Term</h2>
+            <button class="btn btn-outline btn-icon" id="btn-quiz-speak" onclick="speakQuizTerm()" title="Phát âm từ vựng" style="width: 38px; height: 38px; border-radius: 50%; color: var(--primary); border-color: rgba(99, 102, 241, 0.3);">
+              <svg class="icon"><use href="#i-volume"/></svg>
+            </button>
+          </div>
+          <div id="quiz-question-phonetic" style="font-family: monospace; color: var(--text-muted);">/phonetic/</div>
+          <div id="quiz-hint-box" class="quiz-hint-box" style="display: none;">
+            <span id="quiz-hint-text">💡 Gợi ý ngữ cảnh...</span>
+          </div>
+        </div>
+
+        <div class="quiz-options" id="quiz-options-container">
+          <!-- 4 Multiple Choices -->
+        </div>
+
+        <!-- NEXT QUESTION BUTTON (Placed ABOVE word details for instant progression) -->
+        <div id="quiz-next-container" style="text-align: center; margin-top: 18px; margin-bottom: 14px; display: none;">
+          <button class="btn btn-primary" style="padding: 12px 32px; display: inline-flex; align-items: center; gap: 8px;" onclick="nextQuizQuestion()">
+            <span>Câu tiếp theo</span>
+            <kbd class="key-shortcut-badge">Enter ↵</kbd>
+          </button>
+        </div>
+
+        <!-- WORD FULL DETAILS & AI EXPLANATION CARD (v0.0.10.1g) -->
+        <div id="quiz-word-details-box" style="display: none; margin-top: 10px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <strong id="quiz-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
+              <span id="quiz-detail-pos" class="badge badge-pos">POS</span>
+              <span id="quiz-detail-cefr" class="badge badge-cefr">CEFR</span>
+              <span id="quiz-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
+            </div>
+            <button class="btn btn-outline btn-icon" onclick="speakQuizTerm()" style="width: 32px; height: 32px; border-radius: 50%;" title="Nghe phát âm">
+              <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+            </button>
+          </div>
+
+          <div id="quiz-detail-def" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Định nghĩa tiếng Việt</div>
+          <div id="quiz-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
+          
+          <div id="quiz-detail-meta" style="background: var(--surface-elevated); border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text); margin-bottom: 12px;"></div>
+
+          <!-- AI INSIGHTS CARD: MNEMONICS & ETYMOLOGY (v0.10.8-alpha-10.3) -->
+          <div id="quiz-ai-explanation-box" style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.12)); border: 1px solid rgba(99,102,241,0.35); border-radius: 12px; padding: 12px 14px; font-size: 12.5px; color: #c7d2fe; line-height: 1.5; margin-top: 12px;">
+            <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span>🤖</span> <span>Nhận xét chuyên sâu từ AI:</span>
+            </div>
+            <div id="quiz-ai-explanation-text"><em>AI đang phân tích mẹo ghi nhớ & nguồn gốc từ...</em></div>
+          </div>
+        </div>
+      </div>
+    </section>

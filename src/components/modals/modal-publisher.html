@@ -1,0 +1,332 @@
+﻿  <div class="modal-overlay" id="modal-publisher">
+    <div class="modal" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">👑</span>
+          <div>
+            <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị & Quản Lý Học Viên (Publisher Portal)</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Quản lý toàn bộ học viên, ví điểm, mã quà tặng và kho thư viện trên Firebase Cloud</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- PORTAL TABS -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap;">
+        <button class="btn btn-sm btn-primary" id="pub-tab-btn-students" onclick="switchPublisherTab('students')" style="display: flex; align-items: center; gap: 6px;">
+          <span>👥</span> <strong>Quản Lý Học Viên</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-codes" onclick="switchPublisherTab('codes')" style="display: flex; align-items: center; gap: 6px;">
+          <span>🎁</span> <strong>Mã Quà Tặng</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 6px;">
+          <span>⚡</span> <strong>God Mode Ví Của Bạn</strong>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-bugs" onclick="switchPublisherTab('bugs')" style="display: flex; align-items: center; gap: 6px;">
+          <span>🐛</span> <strong>Báo Cáo Lỗi & Góp Ý</strong>
+          <span id="pub-bugs-badge" class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 9px; display: none;">0</span>
+        </button>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-vip-gateway" onclick="switchPublisherTab('vip-gateway')" style="display: flex; align-items: center; gap: 6px; border-color: rgba(245,158,11,0.4); color: #fbbf24;">
+          <span>👑</span> <strong>Cổng VIP & Đối Soát</strong>
+        </button>
+      </div>
+
+      <!-- TAB 1: STUDENT MANAGEMENT PORTAL -->
+      <div id="pub-tab-content-students" style="flex: 1; overflow-y: auto;">
+        <!-- OVERVIEW METRICS DASHBOARD -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;">
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #818cf8; font-weight: 700; margin-bottom: 2px;">👥 Tổng Học Viên</div>
+            <div id="admin-stat-total-students" style="font-size: 17px; font-weight: 800; color: var(--text);">0 người</div>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px;">📚 Tổng Bộ & Từ Vựng</div>
+            <div id="admin-stat-total-decks" style="font-size: 15px; font-weight: 800; color: #10b981;">0 bộ (0 từ)</div>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 10px 12px;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px;">💰 Điểm & Gợi Ý Lưu Hành</div>
+            <div id="admin-stat-total-points" style="font-size: 15px; font-weight: 800; color: #f59e0b;">0đ (0 gợi ý)</div>
+          </div>
+        </div>
+
+        <!-- SEARCH & ACTION BAR -->
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" id="admin-students-search-input" class="form-input" placeholder="🔍 Tìm kiếm học viên theo Tên, Email hoặc UID..." style="flex: 1; font-size: 12.5px;" oninput="filterAdminStudents(this.value)">
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminStudentsList()" style="white-space: nowrap; display: flex; align-items: center; gap: 4px;">
+            🔄 Làm Mới
+          </button>
+        </div>
+
+        <!-- STUDENTS LIST CONTAINER -->
+        <div id="admin-students-list-container" style="max-height: 400px; overflow-y: auto; background: var(--surface); border-radius: 10px; padding: 8px; border: 1px solid var(--border);">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+            <em>Đang tải dữ liệu học viên từ Firebase Cloud...</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: GIFT CODE STUDIO -->
+      <div id="pub-tab-content-codes" style="display: none; flex: 1; overflow-y: auto;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 10px;">
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
+              <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Gợi Ý:</label>
+              <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Bỏ Qua:</label>
+              <input type="number" id="admin-code-skips" class="form-input" value="10" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Số Xu:</label>
+              <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted);">Hạn Sử Dụng:</label>
+              <select id="admin-code-expiry" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                <option value="never">Vô thời hạn</option>
+                <option value="1h">1 Giờ</option>
+                <option value="24h">24 Giờ (1 Ngày)</option>
+                <option value="3d">3 Ngày</option>
+                <option value="7d" selected>7 Ngày (1 Tuần)</option>
+                <option value="30d">30 Ngày (1 Tháng)</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
+            🚀 Phát Hành Mã Quà Tặng Lên Cloud
+          </button>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
+            <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+          </div>
+          <div id="admin-active-codes-list" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
+            <em>Đang tải danh sách mã...</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: GOD MODE WALLET OVERRIDE -->
+      <div id="pub-tab-content-wallet" style="display: none; flex: 1; overflow-y: auto;">
+        <!-- GOD MODE: WALLET OVERRIDE -->
+        <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 14px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tùy ý nạp điểm ví và lượt gợi ý AI không giới hạn cho tài khoản quản trị của bạn.</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+            <div>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Số Xu (Coins):</label>
+              <input type="number" id="admin-set-points-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #fbbf24;">
+            </div>
+            <div>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💡 Gợi Ý AI (Hints):</label>
+              <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #f472b6;">
+            </div>
+            <div>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">⏩ Bỏ Qua (Skips):</label>
+              <input type="number" id="admin-set-skips-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #c084fc;">
+            </div>
+            <div>
+              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">🎡 Lượt Quay (Spins):</label>
+              <input type="number" id="admin-set-spins-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #38bdf8;">
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">⚡ Áp Dụng Ví Ngay</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200, 50)">+200 Gợi Ý, +50 Skip & +500đ</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000, 200)">+1000 Gợi Ý, +200 Skip & +2000đ</button>
+          </div>
+        </div>
+
+        <!-- GOD MODE: VIP / PREMIUM SUBSCRIPTION OVERRIDE (v0.10.8-alpha-10.3) -->
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 16px; margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+              <span>👑</span> <span>God Mode: Chuyển Đổi Trạng Thái VIP (Premium Testing)</span>
+            </div>
+            <span id="admin-vip-status-badge" class="badge" style="background: rgba(100,116,139,0.2); color: #94a3b8; font-size: 11px; font-weight: 700; padding: 3px 8px;">Chưa kích hoạt</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Bật/Tắt chế độ VIP cho tài khoản của bạn để trải nghiệm, kiểm thử các đặc quyền không giới hạn AI Mentor, AI Speaking Lab và các tính năng Premium mà không cần thanh toán thật.
+          </p>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" id="btn-admin-toggle-vip" onclick="toggleAdminVipStatus()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              👑 Bật Gói VIP Thử Nghiệm
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('lifetime')" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; font-weight: 600;">Trọn Đời (Lifetime)</button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('yearly')" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600;">1 Năm (Yearly)</button>
+            <button class="btn btn-outline btn-sm" onclick="setAdminVipTier('monthly')" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc; font-weight: 600;">1 Tháng (Monthly)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-alpha-10.3) -->
+      <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
+        <!-- METRICS & FILTER BAR -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="admin-bug-filter-buttons">
+            <button class="btn btn-sm btn-primary" onclick="filterAdminBugReports('all')" id="btn-bug-filter-all">Tất cả</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('open')" id="btn-bug-filter-open">🟡 Mới gửi</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('in_progress')" id="btn-bug-filter-in_progress">🔵 Đang xử lý</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('resolved')" id="btn-bug-filter-resolved">🟢 Đã fix</button>
+            <button class="btn btn-sm btn-outline" onclick="filterAdminBugReports('rejected')" id="btn-bug-filter-rejected">⚪ Từ chối</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminBugReportsList()" style="display: flex; align-items: center; gap: 4px;">
+            🔄 Tải lại danh sách
+          </button>
+        </div>
+
+        <div id="admin-bug-reports-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12.5px;">
+            <em>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: VIP GATEWAY & MACRO RECONCILIATION (v0.10.8-alpha-10.4) -->
+      <div id="pub-tab-content-vip-gateway" style="display: none; flex: 1; overflow-y: auto;">
+        
+        <!-- SECTION 1: QUICK STUDENT LOOKUP BY 16-CHAR SHORT UID -->
+        <div style="background: var(--surface-elevated); border: 1.5px solid rgba(245,158,11,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 14px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+              <span>🔍</span> <span>Tra Cứu Học Viên & Kích Hoạt Nhanh (UID 16 Ký Tự / Email / Tên)</span>
+            </div>
+            <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10.5px; font-weight: 700;">Cú Pháp: VOCA &lt;UID_16&gt; &lt;MÃ_GÓI&gt;</span>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Dán 16 ký tự UID viết hoa từ thông báo chuyển tiền (ví dụ: <code style="color:#ffd700; font-weight:700;">MJFITS6BTHWAJB6M</code>), email hoặc tên để tra cứu chính xác học viên và kích hoạt VIP / lượt quay ngay lập tức.
+          </p>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="text" id="admin-vip-lookup-input" class="form-input" placeholder="🔍 Dán 16 ký tự UID (VD: MJFITS6BTHWAJB6M), Email hoặc Tên..." style="flex: 1; font-size: 13px; font-family: monospace; font-weight: 700; text-transform: uppercase; padding: 9px 12px;" oninput="lookupVipStudentByInput(this.value)">
+            <button type="button" class="btn btn-primary" onclick="lookupVipStudentByInput(document.getElementById('admin-vip-lookup-input').value)" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; white-space: nowrap; padding: 0 16px;">
+              ⚡ Tìm Học Viên
+            </button>
+          </div>
+
+          <!-- LOOKUP RESULT CARD -->
+          <div id="admin-vip-lookup-result" style="display: none;">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- SECTION 1.5: INSTANT PASTE & AI SMART RECONCILER (KHÔNG CẦN CHỜ MACRO) -->
+        <div style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(99,102,241,0.4); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 14px; font-weight: 800; color: #818cf8; display: flex; align-items: center; gap: 8px;">
+              <span>⚡</span> <span>Dán Nhanh Tin Nhắn MB Bank / SMS (Bóc Tách & Kích Hoạt Tức Thì)</span>
+            </div>
+            <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; font-size: 10.5px;">✅ Hoạt Động 100% - Không Lo Lỗi App Ngầm</span>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5;">
+            Sao chép toàn bộ dòng thông báo biến động số dư từ điện thoại và dán vào đây. Hệ thống &amp; AI Gemini sẽ tự động bóc tách số tiền, mã gói, tìm học viên và kích hoạt 1-Click!
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+            <textarea id="admin-paste-sms-input" class="form-input" placeholder="📋 Dán dòng tin nhắn MB Bank vào đây (VD: TK 09xxx813|GD: +25,000VND 29/08/26 16:16 |SD: 745,505VND ND: 05CH7KCEB4QH-VOCA MJFITS6BTHWAJB6M S15)..." style="width: 100%; height: 68px; font-size: 12px; font-family: monospace; padding: 8px 10px; resize: vertical;"></textarea>
+            
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="pasteFromClipboardToSmsInput()" style="font-size: 11.5px; padding: 6px 12px; display: flex; align-items: center; gap: 4px;">
+                📋 Dán Từ Clipboard
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="processPastedBankingSms()" style="background: linear-gradient(135deg, #6366f1, #a855f7); border: none; font-weight: 700; font-size: 12px; padding: 6px 16px; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+                ⚡ Bóc Tách &amp; Đối Soát Ngay
+              </button>
+            </div>
+          </div>
+
+          <!-- SMART PASTE RESULT PREVIEW -->
+          <div id="admin-paste-sms-result" style="display: none;"></div>
+        </div>
+
+        <!-- SECTION 1.8: TẢI LÊN / DÁN ẢNH CHUYỂN KHOẢN NGÂN HÀNG (TỐI ĐA 5 ẢNH 1 LẦN) CHO AI VISION BÓC TÁCH & KÍCH HOẠT VIP -->
+        <div style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(99,102,241,0.08)); border: 1.5px solid rgba(16,185,129,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 14px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 8px;">
+              <span>📸</span> <span>Tải Lên / Dán Ảnh Bill Chuyển Khoản Ngân Hàng (Tối Đa 5 Ảnh)</span>
+            </div>
+            <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; font-size: 10.5px;">🤖 AI Gemini Vision OCR &amp; Đối Soát Tự Động</span>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Chọn tải lên file hoặc <strong>bấm Ctrl + V</strong> để dán trực tiếp ảnh chụp màn hình chuyển khoản / biên lai từ clipboard (hỗ trợ tối đa 5 ảnh 1 lần). AI sẽ bóc tách số tiền, mã 16 ký tự UID, gói VIP và chuẩn bị nút kích hoạt 1-Click tức thì!
+          </p>
+
+          <!-- MULTI-IMAGE DROPZONE & ACTION BAR -->
+          <div id="admin-multi-bill-dropzone" style="border: 2px dashed rgba(16,185,129,0.4); border-radius: 12px; padding: 18px; text-align: center; background: rgba(0,0,0,0.2); transition: all 0.2s ease; cursor: pointer;" onclick="document.getElementById('admin-multi-bill-file-input').click()" ondragover="event.preventDefault(); this.style.borderColor='#34d399'; this.style.background='rgba(16,185,129,0.1)';" ondragleave="this.style.borderColor='rgba(16,185,129,0.4)'; this.style.background='rgba(0,0,0,0.2)';" ondrop="event.preventDefault(); this.style.borderColor='rgba(16,185,129,0.4)'; this.style.background='rgba(0,0,0,0.2)'; handleAdminMultiBillFilesDropped(event);">
+            <input type="file" id="admin-multi-bill-file-input" accept="image/*" multiple style="display: none;" onchange="handleAdminMultiBillFilesSelected(event)" onclick="event.stopPropagation()">
+            <div style="font-size: 32px; margin-bottom: 6px;">📥</div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 4px;">Kéo thả ảnh bill vào đây hoặc nhấn để chọn file</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Hỗ trợ PNG, JPG, JPEG, WEBP • Tối đa 5 ảnh một lần • Hoặc dùng phím tắt <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Ctrl + V</kbd> để dán ảnh</div>
+          </div>
+
+          <!-- THUMBNAIL GALLERY & CONTROLS -->
+          <div id="admin-multi-bill-gallery-container" style="display: none; margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                <span>🖼️</span> <span id="admin-multi-bill-count-label">Danh sách ảnh đã nạp (0/5 ảnh)</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="pasteAdminMultiBillFromClipboard()" style="font-size: 11px; padding: 4px 10px; display: flex; align-items: center; gap: 4px;">
+                  📋 Dán Thêm Ảnh
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllAdminMultiBillImages()" style="font-size: 11px; padding: 4px 10px; color: #f87171; border-color: rgba(239,68,68,0.35);">
+                  🗑️ Xóa Hết
+                </button>
+              </div>
+            </div>
+
+            <!-- THUMBNAILS GRID -->
+            <div id="admin-multi-bill-thumbnails" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 12px;"></div>
+
+            <!-- PROCESS TRIGGER BUTTON -->
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+              <button type="button" class="btn btn-primary" id="btn-process-multi-bills" onclick="processAdminMultiBillImagesAi()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 13px; padding: 8px 18px; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: flex; align-items: center; gap: 6px;">
+                🚀 AI Quét &amp; Bóc Tách Tự Động Toàn Bộ Ảnh
+              </button>
+            </div>
+          </div>
+
+          <!-- MULTI-BILL AI EXTRACTION RESULTS -->
+          <div id="admin-multi-bill-results" style="display: none; margin-top: 14px; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- SECTION 2: MACRODROID / REALTIME BANK TRANSACTIONS LOG -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                <span>📡</span> <span>Nhật Ký Giao Dịch MB Bank Tự Động (Macro Feed)</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Dữ liệu biến động số dư được MacroDroid trên điện thoại tự động đẩy lên Firebase Cloud</div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" onclick="fetchAdminBankTransactions()" style="font-size: 11.5px; padding: 4px 10px; display: flex; align-items: center; gap: 4px;">
+                🔄 Làm Mới Logs
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="clearAdminBankTransactionsLog()" style="font-size: 11.5px; padding: 4px 10px; color: #f87171; border-color: rgba(239,68,68,0.35);">
+                🗑️ Xóa Lịch Sử
+              </button>
+            </div>
+          </div>
+
+          <div id="admin-bank-transactions-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; border: 1px solid var(--border);">
+            <div style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 12px;">
+              <em>Chưa có giao dịch mới nào được gửi về từ MacroDroid.</em>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary" onclick="closeModal('modal-publisher')">Đóng Cổng Quản Trị</button>
+      </div>
+    </div>
+  </div>

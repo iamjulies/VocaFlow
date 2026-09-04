@@ -1,0 +1,172 @@
+﻿  <div class="modal-overlay" id="modal-community-upload">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
+      <input type="hidden" id="pub-editing-deck-id" value="">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;" id="pub-modal-icon">🚀</span>
+          <div>
+            <strong style="font-size: 16px;" id="pub-modal-title">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;" id="pub-modal-subtitle">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" style="margin: 0; font-size: 12px; font-weight: 700; color: var(--text);">👤 Người Đóng Góp:</label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span id="pub-deck-author-avatar" style="width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(135deg, #a855f7, #6366f1); font-size: 11px; font-weight: 800; color: white;">👤</span>
+            <strong id="pub-deck-author-name" style="font-size: 13.5px; color: #a5b4fc;">Khách (Offline)</strong>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+            <input type="radio" name="pub-visibility" id="pub-visibility-public" value="public" checked>
+            <span>🌐 Công khai (Tên & Profile)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+            <input type="radio" name="pub-visibility" id="pub-visibility-anon" value="anon">
+            <span>🔒 Ẩn danh (Không hiện Profile)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- SOURCE SELECTION TABS -->
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">Chọn nguồn dữ liệu bộ từ:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-pub-source-file" onclick="setPublisherUploadSource('file')" style="font-size: 12px;">
+            📁 Tải lên File Excel / JSON
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-pub-source-deck" onclick="setPublisherUploadSource('deck')" style="font-size: 12px;">
+            📚 Chọn từ Bộ từ của tôi
+          </button>
+        </div>
+      </div>
+
+      <!-- SOURCE 1: FILE PICKER -->
+      <div id="pub-source-file-section" class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">Chọn File Excel (.xlsx/.xls) hoặc JSON từ máy:</label>
+        <input type="file" id="pub-upload-file-input" class="form-input" accept=".xlsx, .xls, .json" onchange="handlePublisherFileSelected(event)">
+        <small style="color: var(--text-muted); font-size: 10.5px; display: block; margin-top: 4px;">
+          💡 Hệ thống tự động nhận diện các cột: Từ vựng, Nghĩa, Phiên âm, Ví dụ, Loại từ... và lọc bỏ các sheet phụ.
+        </small>
+      </div>
+
+      <!-- SOURCE 2: LOCAL DECK SELECTOR -->
+      <div id="pub-source-deck-section" class="form-group" style="display: none; margin-bottom: 12px;">
+        <label class="form-label">Chọn 1 bộ từ đang có trong máy của bạn:</label>
+        <select id="pub-local-deck-select" class="form-input" onchange="handlePublisherLocalDeckSelected(this.value)">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tên Bộ Từ Hiển Thị:</label>
+        <input type="text" id="pub-deck-title" class="form-input" placeholder="VD: Tiếng Anh 10 - Kết Nối Tri Thức, 500 Từ Vựng IELTS Thường Gặp...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mô Tả Bộ Từ:</label>
+        <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
+      </div>
+
+      <!-- Price Setting for Deck (v0.10.6c) -->
+      <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
+        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+          <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
+          <span id="pub-price-label-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px;">🟢 Miễn Phí</span>
+        </label>
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(0)" style="font-size: 11px; padding: 3px 8px; border-color: #10b981; color: #34d399;">0đ (Free)</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(50)" style="font-size: 11px; padding: 3px 8px;">50 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(100)" style="font-size: 11px; padding: 3px 8px;">100 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(200)" style="font-size: 11px; padding: 3px 8px;">200 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(500)" style="font-size: 11px; padding: 3px 8px;">500 Xu</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="number" id="pub-deck-price" class="form-input" min="0" max="10000" value="0" placeholder="0" style="font-size: 13px; font-weight: 700; color: #fbbf24; max-width: 130px; padding: 5px 8px;" oninput="updatePublishPriceUI(this.value)">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Xu (Doanh thu chuyển thẳng về ví bạn khi có người mua)</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
+        <div>
+          <label class="form-label">Danh Mục / Cấp Độ:</label>
+          <select id="pub-deck-category" class="form-input" onchange="handlePublisherCategoryChange(this.value)">
+            <optgroup label="🏫 Giáo Dục Phổ Thông (K-12)">
+              <option value="THPT">THPT (Lớp 10-12 Tổng hợp)</option>
+              <option value="10">Lớp 10 (THPT)</option>
+              <option value="11">Lớp 11 (THPT)</option>
+              <option value="12">Lớp 12 (THPT)</option>
+              <option value="THCS">THCS (Lớp 6-9 Tổng hợp)</option>
+              <option value="6">Lớp 6 (THCS)</option>
+              <option value="7">Lớp 7 (THCS)</option>
+              <option value="8">Lớp 8 (THCS)</option>
+              <option value="9">Lớp 9 (THCS)</option>
+              <option value="TIEUHOC">Tiểu Học (Lớp 1-5)</option>
+            </optgroup>
+            <optgroup label="📜 Chứng Chỉ Quốc Tế">
+              <option value="IELTS">IELTS</option>
+              <option value="TOEIC">TOEIC</option>
+              <option value="TOEFL">TOEFL</option>
+              <option value="CAMBRIDGE">Cambridge (Starters/Movers/Flyers/KET/PET/FCE)</option>
+              <option value="SAT_GRE">SAT / ACT / GRE / GMAT</option>
+            </optgroup>
+            <optgroup label="💬 Giao Tiếp & Đời Sống">
+              <option value="GIAOTIEP">Giao Tiếp Đời Sống</option>
+              <option value="DULICH">Du Lịch & Khách Sạn</option>
+              <option value="DUHOC">Định Cư & Du Học</option>
+            </optgroup>
+            <optgroup label="💼 Chuyên Ngành & Nghề Nghiệp">
+              <option value="IT">Công Nghệ Thông Tin (IT)</option>
+              <option value="KINHTE">Kinh Tế / Marketing / Kinh Doanh</option>
+              <option value="YKHOA">Y Khoa & Dược Học</option>
+              <option value="KYTHUAT">Kỹ Thuật & Công Nghiệp</option>
+              <option value="CHUYENNGANH">Chuyên Ngành Khác</option>
+            </optgroup>
+            <optgroup label="✨ Khác & Tùy Biến">
+              <option value="CUSTOM">🏷️ Chủ đề khác (Tự nhập tay)...</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Icon / Màu Sắc:</label>
+          <select id="pub-deck-icon" class="form-input">
+            <option value="📘">📘 Xanh Dương</option>
+            <option value="📙">📙 Cam / Hổ Phách</option>
+            <option value="📕">📕 Đỏ / Hồng</option>
+            <option value="📗">📗 Xanh Lá</option>
+            <option value="⭐">⭐ Ngôi Sao Vàng</option>
+            <option value="🎓">🎓 Mũ Tốt Nghiệp</option>
+            <option value="💼">💼 Công Việc / Nghề</option>
+            <option value="✈️">✈️ Du Lịch / Du Học</option>
+            <option value="🔬">🔬 Khoa Học / Kỹ Thuật</option>
+            <option value="🏥">🏥 Y Tế / Sức Khỏe</option>
+            <option value="💻">💻 Công Nghệ / IT</option>
+            <option value="🎨">🎨 Nghệ Thuật / Đời Sống</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Custom Category Input (shown when CUSTOM selected) -->
+      <div id="pub-custom-category-group" class="form-group" style="display: none; margin-bottom: 12px;">
+        <label class="form-label">Nhập Tên Chủ Đề / Danh Mục Tự Chọn:</label>
+        <input type="text" id="pub-deck-custom-category" class="form-input" placeholder="VD: Sinh Học Phân Tử, Âm Nhạc, Từ Vựng Anime, Luyện Thi HSG...">
+      </div>
+
+      <div id="pub-upload-preview-status" style="font-size: 11.5px; margin-bottom: 12px; color: #10b981; font-weight: 600; display: none; background: rgba(16, 185, 129, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25);"></div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-community-upload')">Hủy</button>
+        <button class="btn btn-primary" id="btn-pub-do-upload" onclick="doPublishDeckToCloud()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
+          🚀 Đóng Góp Lên Thư Viện Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">Đã lưu thành công!</div>

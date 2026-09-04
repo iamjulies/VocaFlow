@@ -1,0 +1,134 @@
+﻿  <div class="modal-overlay" id="modal-word">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="modal-word-title">Thêm Từ Vựng Mới</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-word')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+        ✍️ <strong>Thêm thủ công:</strong> Điền các thông tin bạn muốn rồi bấm <strong>Lưu từ vựng</strong>.<br>
+        ✨ <strong>Dùng AI:</strong> Gõ từ tiếng Anh rồi bấm nút <strong>AI Điền Tự Động</strong> để gợi ý phiên âm & nghĩa.
+      </div>
+
+      <form id="word-form" onsubmit="saveWordForm(event)">
+        <input type="hidden" id="word-id">
+        
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Từ vựng tiếng Anh *</label>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-ai-generate" onclick="handleAiGenerateWord()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 11px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+              <span id="ai-btn-icon">✨</span> <span id="ai-btn-text">AI Điền Tự Động</span>
+            </button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Từ loại</label>
+            <select id="word-pos" class="form-select">
+              <option value="">(Tự động nhận diện / Không chọn)</option>
+              <option value="noun">noun (danh từ)</option>
+              <option value="verb">verb (động từ)</option>
+              <option value="adjective">adjective (tính từ)</option>
+              <option value="adverb">adverb (trạng từ)</option>
+              <option value="noun phrase">noun phrase (cụm danh từ)</option>
+              <option value="phrasal verb">phrasal verb (cụm động từ)</option>
+              <option value="phrase">phrase (cụm từ)</option>
+              <option value="idiom">idiom (thành ngữ)</option>
+              <option value="preposition">preposition (giới từ)</option>
+              <option value="conjunction">conjunction (liên từ)</option>
+              <option value="interjection">interjection (thán từ)</option>
+              <option value="other">other (khác)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cấp độ CEFR</label>
+            <select id="word-cefr" class="form-select">
+              <option value="">Không có</option>
+              <option value="A1">A1 - Beginner</option>
+              <option value="A2">A2 - Elementary</option>
+              <option value="B1">B1 - Intermediate</option>
+              <option value="B2">B2 - Upper Intermediate</option>
+              <option value="C1">C1 - Advanced</option>
+              <option value="C2">C2 - Mastery</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Phiên âm IPA</label>
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleIpaKeyboard()">
+              <svg class="icon icon-sm"><use href="#i-keyboard"/></svg> Bàn phím ảo IPA
+            </button>
+          </div>
+          <input type="text" id="word-phonetic" class="form-input" placeholder="/rɪˈzɪl.jənt/">
+          
+          <!-- EMBEDDED IPA KEYBOARD -->
+          <div id="ipa-keyboard-panel" class="ipa-keyboard-panel" style="display: none;">
+            <div class="ipa-tabs">
+              <div class="ipa-tab active" onclick="switchIpaTab('mono', this)">Nguyên âm đơn</div>
+              <div class="ipa-tab" onclick="switchIpaTab('dip', this)">Nguyên âm đôi</div>
+              <div class="ipa-tab" onclick="switchIpaTab('cons', this)">Phụ âm</div>
+              <div class="ipa-tab" onclick="switchIpaTab('spec', this)">Trọng âm & ký tự</div>
+            </div>
+            <div class="ipa-grid" id="ipa-keys-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Định nghĩa tiếng Việt *</label>
+          <textarea id="word-def" class="form-textarea" rows="2" placeholder="Nghĩa tiếng Việt của từ..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Câu ví dụ</label>
+          <textarea id="word-example" class="form-textarea" rows="2" placeholder="Ví dụ: She remained resilient in difficult times."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Từ đồng nghĩa (Synonyms)</label>
+            <input type="text" id="word-synonyms" class="form-input" placeholder="tough, adaptable (phân tách dấu phẩy)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Từ trái nghĩa (Antonyms)</label>
+            <input type="text" id="word-antonyms" class="form-input" placeholder="fragile, weak">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cụm từ đi kèm (Collocations)</label>
+          <input type="text" id="word-collocations" class="form-input" placeholder="resilient economy, highly resilient">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ghi chú thêm</label>
+          <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
+        </div>
+
+        <!-- MASTERY SLIDER: ONLY VISIBLE WHEN EDITING EXISTING WORD (v0.0.10.3h) -->
+        <div id="form-word-mastery-group" class="form-group" style="display: none; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">Mức độ thuộc từ:</label>
+            <span id="modal-word-mastery-badge" class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);">🌱 Mới 0%</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="range" id="word-mastery-slider" min="0" max="100" step="5" value="0" oninput="updateWordModalMasteryPreview(this.value)" style="flex: 1; accent-color: #6366f1;">
+            <span id="modal-word-mastery-val" style="font-size: 13px; font-weight: 700; font-family: monospace; color: #818cf8; width: 42px; text-align: right;">0%</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-word')">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu từ vựng</button>
+        </div>
+      </form>
+    </div>
+  </div>

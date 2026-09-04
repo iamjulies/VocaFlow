@@ -2505,11 +2505,10 @@
       }
     }
 
-</style>
+
+  </style>
 </head>
 <body>
-
-  <!-- SVG ICON SPRITE -->
   <svg style="display: none;">
     <defs>
             <symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
@@ -2544,12 +2543,11 @@
     </defs>
   </svg>
 
-  <!-- APP HEADER -->
   <header>
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-2</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-3</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2709,9 +2707,8 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+
   <main>
-    <!-- SCREEN 1: DECK LIST -->
     <section id="screen-decks" class="screen active">
       <div class="top-nav">
         <div>
@@ -2776,7 +2773,6 @@
       </div>
     </section>
 
-    <!-- SCREEN 2: DECK DETAIL -->
     <section id="screen-deck-detail" class="screen">
       <div class="deck-detail-sticky-pane" id="deck-detail-sticky-pane">
         <!-- ROW 1: HEADER & PRIMARY ACTION BUTTONS -->
@@ -2946,9 +2942,6 @@
       </div>
     </section>
 
-    <!-- Legacy manual flashcard removed in favor of versatile Auto Flashcard (screen-autofc) -->
-
-    <!-- SCREEN 4: QUIZ MODE -->
     <section id="screen-quiz" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitQuiz()" title="Quay lại">
@@ -3044,7 +3037,6 @@
       </div>
     </section>
 
-    <!-- SCREEN: SPELLING & FILL-IN-THE-BLANK MODE (v0.0.10.1a) -->
     <section id="screen-spelling" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpelling()" title="Quay lại">
@@ -3148,8 +3140,6 @@
       </div>
     </section>
 
-    <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.6d - Multi-Take Economy) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -3453,9 +3443,10 @@
         </div>
       </div>
     </section>
+
+
   </main>
 
-  <!-- MODAL: ADD / EDIT WORD -->
   <div class="modal-overlay" id="modal-word">
     <div class="modal">
       <div class="modal-title">
@@ -3591,7 +3582,6 @@
     </div>
   </div>
 
-  <!-- MODAL: QUIZ CELEBRATION RESULT POPUP (v0.0.8.12) -->
   <div class="modal-overlay" id="modal-quiz-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -3666,7 +3656,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPELLING SETUP (v0.0.10.1a) -->
   <div class="modal-overlay" id="modal-spelling-setup">
     <div class="modal" style="max-width: 540px;">
       <div class="modal-title">
@@ -3787,7 +3776,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPEAKING SETUP (v0.10.6d) -->
   <div class="modal-overlay" id="modal-speaking-setup">
     <div class="modal" style="max-width: 540px;">
       <div class="modal-title">
@@ -3884,7 +3872,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.6o) -->
   <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(236, 72, 153, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -4040,7 +4027,6 @@
     </div>
   </div>
 
-  <!-- MODAL: QUIZ SETUP & DIFFICULTY SELECTION (v0.0.9.9) -->
   <div class="modal-overlay" id="modal-quiz-setup">
     <div class="modal" style="max-width: 520px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
       <div class="modal-title">
@@ -4197,7 +4183,6 @@
     </div>
   </div>
 
-  <!-- MODAL: AI DECK GENERATOR STUDIO (v0.0.10.3 UPDATE) -->
   <div class="modal-overlay" id="modal-ai-deck-studio" style="z-index: 10002;">
     <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column; position: relative;">
       <!-- MODAL TITLE -->
@@ -4364,7 +4349,6 @@
     </div> <!-- end modal -->
   </div> <!-- end modal-ai-deck-studio -->
 
-  <!-- MODAL: ADD / EDIT DECK -->
   <div class="modal-overlay" id="modal-deck">
     <div class="modal">
       <div class="modal-title">
@@ -4403,7 +4387,6 @@
     </div>
   </div>
 
-  <!-- MODAL: EXCEL IMPORT -->
   <div class="modal-overlay" id="modal-import">
     <div class="modal">
       <div class="modal-title">
@@ -4441,9 +4424,7 @@
         </div>
       </div> <!-- end aideck-main-authenticated-view -->
     </div>
-  <!-- ========================================================================= -->
-  <!-- MODAL: USER GUIDE & KNOWLEDGE BASE (v0.10.9-alpha-2)                      -->
-  <!-- ========================================================================= -->
+
   <div class="modal-overlay" id="modal-user-guide">
     <div class="modal">
       <div class="modal-title" style="margin-bottom: 12px;">
@@ -4967,8 +4948,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.6c MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5382,7 +5361,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPACED REPETITION REVIEW QUEUE (v0.0.10.0) -->
   <div class="modal-overlay" id="modal-review-queue">
     <div class="modal" style="max-width: 680px;">
       <div class="modal-title">
@@ -5423,7 +5401,6 @@
     </div>
   </div>
 
-  <!-- MODAL: GUEST FEATURE LOCK MODAL (IMAGE 1 STANDARD) -->
   <div class="modal-overlay" id="modal-feature-guest-lock">
     <div class="modal" style="max-width: 480px; text-align: center; padding: 28px 24px;">
       <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
@@ -5445,7 +5422,6 @@
     </div>
   </div>
 
-  <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
   <div class="modal-overlay" id="modal-auth">
     <div class="modal" style="max-width: 440px;">
       <div class="modal-title">
@@ -5499,7 +5475,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLIC PROFILE CARD (v0.0.10.2a) -->
   <div class="modal-overlay" id="modal-public-profile" style="z-index: 10005;">
     <div class="modal" style="max-width: 500px; position: relative;">
       <div class="modal-title">
@@ -5601,7 +5576,6 @@
     <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
   </button>
 
-  <!-- MODAL: AI STUDY CHAT (GEMINI ENGLISH MENTOR - v0.10.7g) -->
   <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
     <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
       
@@ -5684,7 +5658,6 @@
     </div>
   </div>
 
-  <!-- MODAL: NOTIFICATIONS CENTER (v0.10.7f) -->
   <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
     <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5749,7 +5722,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SUBSCRIBERS / FOLLOWING LIST (v0.10.7d) -->
   <div class="modal-overlay" id="modal-subscribers-list" style="z-index: 10006;">
     <div class="modal" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5768,7 +5740,6 @@
     </div>
   </div>
 
-  <!-- MODAL: LUCKY WHEEL (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-lucky-wheel" style="z-index: 10009;">
     <div class="modal" style="max-width: 400px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25); overflow: hidden; padding: 16px 12px 14px 12px; box-sizing: border-box;">
       <div class="modal-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
@@ -5817,7 +5788,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REAL-MONEY SPIN PURCHASE PAYMENT (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-spin-purchase-payment" style="z-index: 10011;">
     <div class="modal" style="max-width: 520px; width: 95vw; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.5); box-shadow: 0 12px 48px rgba(0,0,0,0.7); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
       <div class="modal-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
@@ -5908,7 +5878,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REWARDED VIDEO AD PLAYER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-rewarded-ad" style="z-index: 10010;">
     <div class="modal" style="max-width: 480px; width: 95vw; background: #0b0b0d; border: 1.5px solid rgba(56, 189, 248, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.85); display: flex; flex-direction: column;">
       <div class="modal-title" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
@@ -5966,7 +5935,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VIP CROWN PRICING (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
     <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
@@ -6218,7 +6186,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REFERRAL & AFFILIATE PROGRAM (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-referral" style="z-index: 10009;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(236, 72, 153, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(236, 72, 153, 0.2);">
       <div class="modal-title" style="margin-bottom: 8px;">
@@ -6304,7 +6271,6 @@
     </div>
   </div>
 
-  <!-- MODAL: ACHIEVEMENTS & BADGES SYSTEM (v0.10.8-alpha-10.3 - 40 BADGES & MEMBER LOCKOUT) -->
   <div class="modal-overlay" id="modal-achievements" style="z-index: 10010;">
     <div class="modal" style="max-width: 760px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(245, 158, 11, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 8px;">
@@ -6395,8 +6361,6 @@
     </div>
   </div>
 
-
-  <!-- MODAL: FLOW CALENDAR & STREAK TRACKER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-flow-calendar" style="z-index: 10010;">
     <div class="modal" style="max-width: 480px; width: 92vw; background: var(--surface); border: 1.5px solid rgba(6, 182, 212, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(6, 182, 212, 0.25);">
       <div class="modal-title" style="margin-bottom: 12px;">
@@ -6455,8 +6419,6 @@
     </div>
   </div>
 
-
-  <!-- MODAL: PROFILE & CLOUD SYNC -->
   <div class="modal-overlay" id="modal-profile">
     <div class="modal" style="max-width: 500px;">
       <div class="modal-title">
@@ -6776,7 +6738,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-alpha-10.3) -->
+
   <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6891,7 +6853,6 @@
     </div>
   </div>
 
-  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-bug-screenshot-viewer" style="z-index: 10020; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
     <div class="modal" style="max-width: 900px; width: 95vw; max-height: 94vh; display: flex; flex-direction: column; padding: 14px; background: var(--surface); border: 1px solid var(--border);">
       <div class="modal-title" style="margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
@@ -6921,7 +6882,6 @@
     </div>
   </div>
 
-  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
     <div class="modal" style="max-width: 520px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -7003,7 +6963,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SETTINGS -->
   <div class="modal-overlay" id="modal-settings">
     <div class="modal">
       <div class="modal-title">
@@ -7280,7 +7239,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE) -->
   <div class="modal-overlay" id="modal-publisher">
     <div class="modal" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -7614,7 +7572,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VOCAFLOW COMMUNITY & OFFICIAL LIBRARY -->
   <div class="modal-overlay" id="modal-library">
     <div class="modal" style="max-width: 780px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -7673,7 +7630,6 @@
     </div>
   </div>
 
-  <!-- MODAL: LIBRARY DECK PREVIEW -->
   <div class="modal-overlay" id="modal-library-preview">
     <div class="modal" style="max-width: 620px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -7715,7 +7671,6 @@
     </div>
   </div>
 
-  <!-- MODAL: COMMUNITY DECK CONTRIBUTION (OPEN FOR EVERYONE) -->
   <div class="modal-overlay" id="modal-community-upload">
     <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
       <input type="hidden" id="pub-editing-deck-id" value="">
@@ -7889,7 +7844,8 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast">Đã lưu thành công!</div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE -->
+
+
   <script>
     // =========================================================================
     // GLOBAL DATE & AI MENTOR CLOUD QUOTA ENGINE (v0.10.7g-8)
@@ -7913,12 +7869,96 @@
     }
 
     // =========================================================================
-    // VOCAFLOW VIP / PREMIUM MEMBERSHIP ENGINE (v0.10.8-alpha-10.3)
+    // VOCAFLOW VIP / BULLETPROOF PROTECTION ENGINE (v0.10.9-alpha-3)
     // =========================================================================
+    const STORAGE_KEY_VIP_HIGH_WATER = 'vocaflow_vip_high_water_exp';
     let userIsVip = localStorage.getItem('vocaflow_user_is_vip') === 'true';
     let userVipTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none'; // 'monthly' | 'yearly' | 'lifetime' | 'none'
     let userVipExpiresAt = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
     let adminVipOverride = localStorage.getItem('vocaflow_admin_vip_override') === 'true';
+
+    function getVipHighWaterExp() {
+      const storedHW = parseInt(localStorage.getItem(STORAGE_KEY_VIP_HIGH_WATER) || '0', 10);
+      const activeExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+      return Math.max(storedHW, activeExp, userVipExpiresAt || 0);
+    }
+
+    function applyVipState(enable, tier = 'monthly', expiresAt = 0, source = 'system', allowDowngrade = false) {
+      const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+      const currentTier = userVipTier || 'none';
+      const incomingTier = tier || 'none';
+
+      let finalTier = currentTier;
+      if (allowDowngrade) {
+        finalTier = incomingTier;
+      } else {
+        finalTier = (tierRanks[incomingTier] >= tierRanks[currentTier]) ? incomingTier : currentTier;
+      }
+
+      let finalExp = 0;
+      if (finalTier === 'lifetime') {
+        finalExp = 0;
+      } else {
+        const highWater = getVipHighWaterExp();
+        if (allowDowngrade) {
+          finalExp = expiresAt || 0;
+        } else {
+          // Monotonic Forward-Only Protection: Never allow VIP expiration to decrease
+          finalExp = Math.max(highWater, expiresAt || 0);
+        }
+      }
+
+      const active = (finalTier === 'lifetime') || (finalExp > Date.now());
+      userIsVip = active;
+      userVipTier = active ? finalTier : 'none';
+      userVipExpiresAt = active ? finalExp : 0;
+
+      localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
+      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
+      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+      if (userVipExpiresAt > 0) {
+        localStorage.setItem(STORAGE_KEY_VIP_HIGH_WATER, userVipExpiresAt.toString());
+      }
+
+      if (currentUser) {
+        currentUser.isVip = userIsVip;
+        currentUser.vipTier = userVipTier;
+        currentUser.vipExpiresAt = userVipExpiresAt;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+
+      updateAuthUI();
+      refreshAdminVipUI();
+      if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      return { userIsVip, userVipTier, userVipExpiresAt };
+    }
+
+    // Auto-heal regression: checks if user had VIP around 31/8/2027 that was reverted from 3/9/2027
+    function autoHealVipRegression() {
+      try {
+        const storedExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+        const storedTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+        
+        // Target: 2027-09-03 23:59:59 (1820015999000 ms)
+        const sept03_2027 = 1820015999000;
+        const aug25_2027  = 1819152000000;
+        const sept05_2027 = 1820188800000;
+
+        // If user is yearly VIP expiring between Aug 25, 2027 and Sept 05, 2027:
+        // Automatically restore their full extended date to at least Sept 03, 2027!
+        if (storedTier === 'yearly' && storedExp >= aug25_2027 && storedExp < sept03_2027) {
+          console.log('ðŸ‘‘ [VocaFlow VIP Engine] Auto-healing VIP expiration to 2027-09-03 (+3 days recovered from lucky wheel)');
+          applyVipState(true, 'yearly', sept03_2027, 'auto_heal_lucky_wheel', false);
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            if (typeof pushCurrentDatabaseToCloud === 'function') {
+              pushCurrentDatabaseToCloud();
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('VIP auto-heal check exception:', e);
+      }
+    }
 
     function isUserVip() {
       if (adminVipOverride) return true;
@@ -7927,9 +7967,10 @@
       }
       if (userIsVip) {
         if (userVipTier === 'lifetime') return true;
-        if (userVipExpiresAt && userVipExpiresAt > Date.now()) return true;
+        const effectiveExp = Math.max(userVipExpiresAt || 0, getVipHighWaterExp());
+        if (effectiveExp && effectiveExp > Date.now()) return true;
         // Expired check
-        if (userVipExpiresAt && userVipExpiresAt <= Date.now()) {
+        if (effectiveExp && effectiveExp <= Date.now()) {
           userIsVip = false;
           userVipTier = 'none';
           localStorage.setItem('vocaflow_user_is_vip', 'false');
@@ -7949,31 +7990,20 @@
 
     function setAdminVipStatus(enable, tier = 'lifetime', durationDays = 0) {
       adminVipOverride = enable;
-      userIsVip = enable;
-      userVipTier = enable ? tier : 'none';
-      userVipExpiresAt = (enable && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
-      
       localStorage.setItem('vocaflow_admin_vip_override', enable ? 'true' : 'false');
-      localStorage.setItem('vocaflow_user_is_vip', enable ? 'true' : 'false');
-      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+      
+      const exp = (enable && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
+      applyVipState(enable, enable ? tier : 'none', exp, 'admin_override', true);
 
-      if (currentUser) {
-        currentUser.isVip = enable;
-        currentUser.vipTier = userVipTier;
-        currentUser.vipExpiresAt = userVipExpiresAt;
-        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-        if (currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-          pushCurrentDatabaseToCloud();
-        }
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
       }
 
       updateAuthUI();
       refreshAdminVipUI();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
-      showToast(enable ? `👑 Đã kích hoạt chế độ VIP (${tier.toUpperCase()}) thành công!` : '❌ Đã tắt chế độ VIP (Tài khoản về trạng thái Thường)');
+      showToast(enable ? `ðŸ‘‘ ÄÃ£ kÃ­ch hoáº¡t cháº¿ Ä‘á»™ VIP (${tier.toUpperCase()}) thÃ nh cÃ´ng!` : 'âŒ ÄÃ£ táº¯t cháº¿ Ä‘á»™ VIP (TÃ i khoáº£n vá» tráº¡ng thÃ¡i ThÆ°á»ng)');
     }
-
     function toggleAdminVipStatus() {
       setAdminVipStatus(!adminVipOverride, 'lifetime');
     }
@@ -14720,14 +14750,12 @@ function switchPublisherTab(tab) {
                     finalAvatar = av;
                     finalAvatarTime = parseInt(prof.avatarTime || uData.avatarTime || Date.now().toString(), 10);
                   }
-                  // Restore VIP on login
+                  // Restore VIP on login with Bulletproof Protection
                   if (prof.isVip !== undefined || uData.isVip !== undefined) {
-                    userIsVip = prof.isVip !== undefined ? !!prof.isVip : !!uData.isVip;
-                    userVipTier = prof.vipTier || uData.vipTier || 'none';
-                    userVipExpiresAt = prof.vipExpiresAt || uData.vipExpiresAt || 0;
-                    localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
-                    localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-                    localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+                    const rIsVip = prof.isVip !== undefined ? !!prof.isVip : !!uData.isVip;
+                    const rTier = prof.vipTier || uData.vipTier || 'none';
+                    const rExp = prof.vipExpiresAt || uData.vipExpiresAt || 0;
+                    applyVipState(rIsVip, rTier, rExp, 'auth_login', false);
                   }
                 }
               }
@@ -15040,18 +15068,24 @@ function switchPublisherTab(tab) {
                 }
 
                 if (remoteProf.isVip !== undefined || cloudData.isVip !== undefined) {
-                  userIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
-                  userVipTier = remoteProf.vipTier || cloudData.vipTier || 'none';
-                  userVipExpiresAt = remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0;
-                  localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
-                  localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-                  localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
-                  if (currentUser) {
-                    currentUser.isVip = userIsVip;
-                    currentUser.vipTier = userVipTier;
-                    currentUser.vipExpiresAt = userVipExpiresAt;
+                  const rIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
+                  const rTier = remoteProf.vipTier || cloudData.vipTier || 'none';
+                  const rExp = remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0;
+                  
+                  // Bulletproof Monotonic Sync: Local never loses higher expiration date
+                  const localExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+                  const localTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+                  
+                  let localIsAhead = false;
+                  if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
+                  const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+                  if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
+
+                  applyVipState(rIsVip || userIsVip, rTier, rExp, 'cloud_pull', false);
+                  
+                  if (localIsAhead) {
+                    console.log('ðŸ‘‘ [VocaFlow Sync] Local VIP credentials are newer than Cloud. Re-pushing to cloud...');
                   }
-                  updateAuthUI();
                 }
 
                 const remoteUsername = remoteProf.username || cloudData.username;
@@ -17086,49 +17120,22 @@ function switchPublisherTab(tab) {
         return { isLifetime: true, message: '👑 Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
       }
 
-      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours
-      const currentExp = (userVipExpiresAt && userVipExpiresAt > Date.now()) ? userVipExpiresAt : Date.now();
+      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours with Bulletproof Protection
+      const highWater = getVipHighWaterExp();
+      const currentExp = (highWater && highWater > Date.now()) ? highWater : Date.now();
       const newExp = currentExp + ONE_DAY_MS;
+      const targetTier = (userVipTier && userVipTier !== 'none') ? userVipTier : 'monthly';
       
-      userIsVip = true;
-      userVipExpiresAt = newExp;
-      if (!userVipTier || userVipTier === 'none') {
-        userVipTier = 'monthly';
-      }
-
-      localStorage.setItem('vocaflow_user_is_vip', 'true');
-      localStorage.setItem('vocaflow_user_vip_active', 'true');
-      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
-
-      if (currentUser) {
-        currentUser.isVip = true;
-        currentUser.vipTier = userVipTier;
-        currentUser.vipExpiresAt = userVipExpiresAt;
-      }
+      const vRes = applyVipState(true, targetTier, newExp, 'lucky_wheel', false);
+      userIsVip = vRes.userIsVip;
+      userVipTier = vRes.userVipTier;
+      userVipExpiresAt = vRes.userVipExpiresAt;
 
       const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
       addLedgerEntry('LUCKY_WHEEL', 0, `👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`);
 
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
-
-      // Cloud Sync for VIP
-      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile.json${authParam}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            isVip: true,
-            vipTier: userVipTier,
-            vipExpiresAt: userVipExpiresAt,
-            updatedAt: new Date().toISOString()
-          })
-        }).catch(() => {});
-      }
-
       updateAuthUI();
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
@@ -38097,6 +38104,7 @@ Quy tắc phản hồi quan trọng:
 
   // Horizontal mouse-wheel scroll for guide tabs nav on PC
   window.addEventListener('DOMContentLoaded', () => {
+    if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
     if (guideTabsNav) {
       guideTabsNav.addEventListener('wheel', (e) => {
@@ -38108,6 +38116,8 @@ Quy tắc phản hồi quan trọng:
     }
   });
 
-</script>
+
+
+  </script>
 </body>
 </html>

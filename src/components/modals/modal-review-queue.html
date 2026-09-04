@@ -1,0 +1,39 @@
+﻿  <div class="modal-overlay" id="modal-review-queue">
+    <div class="modal" style="max-width: 680px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🔔 Hàng Đợi Ôn Tập Hôm Nay</span>
+          <span id="review-queue-modal-count-badge" class="badge" style="background: #ef4444; color: #fff; font-size: 11px; font-weight: 700;">0 từ</span>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-review-queue')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+
+
+      <!-- Quick Action Buttons for Due Words -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-primary" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span>
+        </button>
+        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span>
+        </button>
+      </div>
+
+      <!-- Due Words Table / List Container -->
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span>📋 Danh sách từ đến hạn ôn tập:</span>
+        <span id="review-queue-summary-text" style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;"></span>
+      </div>
+
+      <div id="review-queue-words-container" style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>

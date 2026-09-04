@@ -1,0 +1,102 @@
+﻿    <section id="screen-spelling" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitSpelling()" title="Quay lại">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="spelling-counter" style="font-weight: 700; color: var(--text-muted);">Từ 1 / 10</div>
+          <span id="spelling-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.3);" onclick="cycleSpellingDifficulty()" title="Bấm để chuyển đổi nhanh độ khó (Dễ / Trung bình / Khó)">🟢 Dễ (x1.0)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentSpelling()" title="Xáo trộn ngẫu nhiên danh sách từ">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openShopModal()" title="Cửa hàng Đổi Điểm (VocaShop)" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 4px 8px;">
+            🏪 <span id="spelling-wallet-points">0đ</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-spelling-speak" onclick="speakSpellingTerm()" title="Phát âm từ vựng">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span class="hide-on-mobile">Phát âm</span>
+          </button>
+          <div id="spelling-score" style="font-weight: 700; color: var(--success);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="spelling-container" style="max-width: 680px; margin: 20px auto; padding: 0 16px;">
+        <!-- Card Hiển Thị Manh Mối (Clues Card) -->
+        <div class="spelling-clue-card" id="spelling-clue-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px 18px; text-align: center; position: relative; margin-bottom: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
+          <!-- Top Flex Row: Title + Hint/Skip Buttons (Never Overlap) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; text-align: left;">
+              ✍️ HÃY GÕ CHÍNH TẢ:
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-left: auto;">
+              <button class="btn btn-outline btn-sm" id="btn-spelling-hint" onclick="useSpellingHint()" title="Gợi ý mở 1 chữ cái (50đ ví hoặc 1 lượt)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">❓</span>
+                <span id="spelling-hints-count" style="font-size: 11.5px; color: #fbbf24;">5</span>
+              </button>
+              <button class="btn btn-outline btn-sm" id="btn-spelling-skip" onclick="useSpellingSkip()" title="Bỏ qua câu hỏi này (100đ ví hoặc 1 lượt Skip)" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.1); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-weight: 700; font-size: 11.5px;">
+                <span style="font-size: 13px; line-height: 1;">⏭️</span>
+                <span id="spelling-skips-count" style="font-size: 11.5px; color: #818cf8;">3</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Nghĩa Tiếng Việt Clue -->
+          <div id="spelling-clue-def" style="font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 8px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Phiên Âm IPA Clue -->
+          <div id="spelling-clue-ipa" style="font-size: 15px; font-family: monospace; color: #818cf8; margin-bottom: 8px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Nút Nghe Lại Phát Âm (Interactive Button) -->
+          <button id="spelling-clue-audio" class="btn btn-primary btn-sm" onclick="speakSpellingTerm(true)" style="border-radius: 20px; padding: 6px 16px; font-size: 12px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; cursor: pointer; transition: all 0.2s;">
+            <svg class="icon icon-sm"><use href="#i-volume"/></svg> <span id="spelling-audio-btn-text">Nghe lại phát âm</span>
+          </button>
+
+          <div id="spelling-hint-box" style="display: none; margin-top: 14px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 10px; font-size: 12.5px; color: #fbbf24; text-align: left;"></div>
+        </div>
+
+        <!-- Khung Gõ Từ Chữ Cái Dạng Box Vuông (Interactive Letter Boxes) -->
+        <div id="spelling-boxes-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; padding: 10px;">
+          <!-- Dynamically generated letter boxes -->
+        </div>
+
+        <!-- Feedback & Next Action Bar -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+          <div id="spelling-feedback-msg" style="font-size: 14px; font-weight: 700; min-height: 24px; text-align: center;"></div>
+
+          <!-- ACTION BUTTONS: Placed ABOVE word details for instant progression -->
+          <div id="spelling-action-container" style="display: flex; gap: 10px; width: 100%; max-width: 360px; margin-bottom: 6px;">
+            <button class="btn btn-primary" id="btn-spelling-check" onclick="checkSpellingAnswer()" style="flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
+              Kiểm Tra [Enter ↵]
+            </button>
+            <button class="btn btn-success" id="btn-spelling-next" onclick="nextSpellingQuestion()" style="display: none; flex: 1; padding: 12px; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
+              Từ Tiếp Theo [Enter ↵]
+            </button>
+          </div>
+
+          <!-- WORD FULL DETAILS CARD (v0.0.10.1g) -->
+          <div id="spelling-word-details-box" style="display: none; width: 100%; max-width: 580px; margin: 0 auto; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: fadeIn 0.25s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <strong id="spelling-detail-term" style="font-size: 20px; color: var(--primary);">Term</strong>
+                <span id="spelling-detail-pos" class="badge badge-pos">POS</span>
+                <span id="spelling-detail-cefr" class="badge badge-cefr">CEFR</span>
+                <span id="spelling-detail-phonetic" style="font-family: monospace; color: var(--text-muted); font-size: 13px;">/phonetic/</span>
+              </div>
+              <button class="btn btn-outline btn-icon" onclick="speakSpellingTerm(false)" style="width: 32px; height: 32px; border-radius: 50%; cursor: pointer;" title="Nghe phát âm miễn phí">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+            </div>
+
+            <div id="spelling-detail-def" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Định nghĩa tiếng Việt</div>
+            <div id="spelling-detail-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;"></div>
+            
+            <div id="spelling-detail-meta" style="background: var(--surface-elevated); border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text);"></div>
+          </div>
+        </div>
+      </div>
+    </section>

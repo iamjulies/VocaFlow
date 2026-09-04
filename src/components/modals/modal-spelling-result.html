@@ -1,0 +1,78 @@
+﻿  <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="spelling-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="spelling-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
+        <h2 id="spelling-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Tuyệt Đối Xuất Sắc!</h2>
+        <p id="spelling-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã gõ đúng 100% tất cả các từ vựng!</p>
+        
+        <div style="margin-bottom: 16px;">
+          <span id="spelling-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">✍️ Cấp độ: Khó (x2.0) (Hệ số x2.0 Điểm)</span>
+        </div>
+
+        <!-- 5-Tile Stats Dashboard -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Số từ đúng -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Kết quả đúng
+            </div>
+            <div id="spelling-res-score-ratio" style="font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace;">13/13 (100%)</div>
+          </div>
+
+          <!-- 2. Điểm nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> Điểm nhận được
+            </div>
+            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 Xu</div>
+          </div>
+
+          <!-- 3. Tổng thời gian -->
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="spelling-res-duration" style="font-size: 16px; font-weight: 800; color: #3b82f6; font-family: monospace;">02:43</div>
+          </div>
+
+          <!-- 4. Tốc độ SPW (Seconds Per Word) -->
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Tốc độ (SPW)
+            </div>
+            <div id="spelling-res-spw" style="font-size: 16px; font-weight: 800; color: #8b5cf6; font-family: monospace;">12.5s / từ</div>
+          </div>
+        </div>
+
+        <!-- 5. Chi tiết gõ sai / gợi ý / bỏ qua (Full width tile) -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
+          <div style="color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>💡</span> Gợi ý: <strong id="spelling-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
+          </div>
+          <div style="color: #818cf8; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>⏭️</span> Bỏ qua: <strong id="spelling-res-skips" style="color: #6366f1; font-family: monospace;">0 từ</strong>
+          </div>
+          <div style="color: #f87171; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>❌</span> Gõ sai: <strong id="spelling-res-wrongs" style="color: #ef4444; font-family: monospace;">0 lần</strong>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="retrySpellingFromModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; padding: 9px 16px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon"><use href="#i-repeat"/></svg> Làm Lại Luyện Viết
+          </button>
+          <button class="btn btn-outline" onclick="exitSpellingToDeck()" style="padding: 9px 14px;" id="btn-spelling-result-deck">
+            <svg class="icon"><use href="#i-book"/></svg> Xem Bộ Từ
+          </button>
+          <button class="btn btn-outline" onclick="exitSpellingToHome()" style="padding: 9px 14px;">
+            🏠 Tủ Sách
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

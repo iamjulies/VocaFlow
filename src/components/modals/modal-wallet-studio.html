@@ -1,0 +1,129 @@
+﻿  <div class="modal-overlay" id="modal-wallet-studio">
+    <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">💼</span>
+          <div>
+            <strong style="font-size: 16.5px; color: var(--text);">Trung Tâm Studio & Ví Xu</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Sổ cái giao dịch bất biến & Quản lý gian hàng bộ từ</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-wallet-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GUEST LOCK VIEW (v0.10.6c) -->
+      <div id="studio-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">💼🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Ví Xu, Sổ Cái Biến Động Số Dư, Gian Hàng Xuất Bản Bộ Từ & Bảng Xếp Hạng Pháp Sư</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-wallet-studio'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-wallet-studio');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="studio-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1;">
+      <!-- Financial Summary Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">🪙 Số Dư Ví</div>
+          <div id="studio-wallet-balance" style="font-size: 20px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">📈 Tổng Thu Nhập</div>
+          <div id="studio-total-earned" style="font-size: 18px; font-weight: 800; color: #34d399; margin-top: 2px;">+0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">🛍️ Tổng Đã Chi</div>
+          <div id="studio-total-spent" style="font-size: 18px; font-weight: 800; color: #f87171; margin-top: 2px;">-0 Xu</div>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">📦 Bộ Từ Bán</div>
+          <div id="studio-decks-selling-count" style="font-size: 18px; font-weight: 800; color: #a855f7; margin-top: 2px;">0 bộ</div>
+        </div>
+      </div>
+
+      <!-- Studio Navigation Tabs -->
+      <div style="display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-wrap: wrap;">
+        <button class="btn btn-outline btn-sm studio-tab-btn active" id="tab-btn-ledger" onclick="switchStudioTab('ledger')" style="font-size: 12px; font-weight: 700; border-color: #c084fc; color: #c084fc; background: rgba(168,85,247,0.12);">
+          📜 Sổ Cái Biến Động Số Dư
+        </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-store" onclick="switchStudioTab('store')" style="font-size: 12px; font-weight: 700;">
+          📦 Gian Hàng Của Tôi
+        </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-purchased" onclick="switchStudioTab('purchased')" style="font-size: 12px; font-weight: 700;">
+          🛍️ Bộ Từ Đã Mua
+        </button>
+        <button class="btn btn-outline btn-sm studio-tab-btn" id="tab-btn-leaderboard" onclick="switchStudioTab('leaderboard')" style="font-size: 12px; font-weight: 700; color: #f59e0b;">
+          🏆 BXH Pháp Sư
+        </button>
+      </div>
+
+      <!-- TAB 1: IMMUTABLE LEDGER -->
+      <div id="studio-tab-sec-ledger" style="display: block; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Sổ cái bất biến, tự động ghi nhận mọi luồng tiền ra vào ví</span>
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <button class="btn btn-outline btn-sm" onclick="manualSyncStudioLedger()" title="Làm mới và đồng bộ Sổ cái từ Cloud tức thì" style="font-size: 10.5px; padding: 2px 8px; border-color: rgba(56,189,248,0.4); color: #38bdf8;">
+              🔄 Làm mới
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('all')" style="font-size: 10.5px; padding: 2px 7px;">Tất cả</button>
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('income')" style="font-size: 10.5px; padding: 2px 7px; color: #34d399;">Cộng (+)</button>
+            <button class="btn btn-outline btn-sm" onclick="filterLedger('expense')" style="font-size: 10.5px; padding: 2px 7px; color: #f87171;">Trừ (-)</button>
+          </div>
+        </div>
+        <div id="studio-ledger-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 2: CREATOR STORE -->
+      <div id="studio-tab-sec-store" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 11.5px; color: var(--text-muted);">Danh sách các bộ từ bạn đã xuất bản và thiết lập giá bán</span>
+          <button class="btn btn-primary btn-sm" onclick="closeModal('modal-wallet-studio'); openCommunityDeckUploadModal();" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
+            ➕ Đăng Bộ Từ Mới
+          </button>
+        </div>
+        <div id="studio-store-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 3: PURCHASED DECKS -->
+      <div id="studio-tab-sec-purchased" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="margin-bottom: 8px; font-size: 11.5px; color: var(--text-muted);">
+          Các bộ từ có phí bạn đã mua thành công, có thể tải về máy bất cứ lúc nào
+        </div>
+        <div id="studio-purchased-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- TAB 4: TOP CREATORS LEADERBOARD (v0.10.6c) -->
+      <div id="studio-tab-sec-leaderboard" style="display: none; flex: 1; overflow-y: auto; max-height: 380px;">
+        <div style="margin-bottom: 10px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+          <span>Vinh danh các "Pháp Sư Biên Soạn" có doanh thu Xu cao nhất cộng đồng</span>
+          <span style="color: #fbbf24; font-weight: 700;">🔥 Doanh Thu Thực</span>
+        </div>
+        <div id="studio-leaderboard-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-wallet-studio')">Đóng</button>
+        <button class="btn btn-outline btn-sm" onclick="openShopModal(); closeModal('modal-wallet-studio');" style="color: #fbbf24; border-color: rgba(245,158,11,0.4);">
+          🏪 Mở Cửa Hàng VocaShop
+        </button>
+      </div>
+      </div> <!-- end studio-main-authenticated-view -->
+    </div>
+  </div>

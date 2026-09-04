@@ -1,0 +1,75 @@
+﻿  <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(236, 72, 153, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="speaking-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="spk-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(236, 72, 153, 0.4));">🏆</div>
+        <h2 id="spk-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Luyện Nói AI!</h2>
+        <p id="spk-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành phiên luyện phát âm chuẩn xác với Gemini AI.</p>
+
+        <div style="margin-bottom: 16px;">
+          <span id="spk-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">🎙️ Cấp độ: Dễ (x1.0)</span>
+        </div>
+
+        <!-- 5-Tile Stats Dashboard (v0.10.6t) -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Tỉ lệ đạt điểm sàn (lượt thu âm) -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Tỉ lệ đạt sàn
+            </div>
+            <div id="spk-res-floor-ratio" style="font-size: 15px; font-weight: 800; color: #10b981; font-family: monospace;">0/0 (0%)</div>
+          </div>
+
+          <!-- 2. Điểm nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> Điểm nhận được
+            </div>
+            <div id="spk-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 Xu</div>
+          </div>
+
+          <!-- 3. Điểm phát âm TB -->
+          <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #f472b6; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Điểm phát âm TB
+            </div>
+            <div id="spk-res-avg-score" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 / 100</div>
+          </div>
+
+          <!-- 4. Lượt Bỏ qua (Skip Pass) đã dùng -->
+          <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⏭️</span> Bỏ qua (Skip)
+            </div>
+            <div id="spk-res-skips-used" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0 lượt</div>
+          </div>
+
+          <!-- 5. Tổng thời gian (Span 2 cols) -->
+          <div style="grid-column: span 2; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 11.5px; color: #60a5fa; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="spk-res-duration" style="font-size: 14px; font-weight: 800; color: #3b82f6; font-family: monospace;">00:00</div>
+          </div>
+        </div>
+
+        <!-- Bonus breakdown pill -->
+        <div id="spk-res-bonus-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px dashed rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 8px 12px; font-size: 11.5px; color: #a5b4fc; margin-bottom: 16px; text-align: center;">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button class="btn btn-outline" onclick="closeSpeakingResultModal(); openSpeakingSetupModal(speakingSetupUseSelection, speakingSetupCustomWordList);" style="flex: 1; justify-content: center; font-weight: 700;">
+            🔁 Luyện Lại
+          </button>
+          <button class="btn btn-primary" onclick="closeSpeakingResultModal(); exitSpeakingMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);">
+            🚪 Về Bộ Từ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

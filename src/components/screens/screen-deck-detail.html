@@ -1,0 +1,168 @@
+﻿    <section id="screen-deck-detail" class="screen">
+      <div class="deck-detail-sticky-pane" id="deck-detail-sticky-pane">
+        <!-- ROW 1: HEADER & PRIMARY ACTION BUTTONS -->
+        <div class="deck-detail-nav">
+          <div class="deck-detail-left">
+            <button class="btn btn-outline btn-icon btn-sm" onclick="showScreen('screen-decks')" title="Quay lại danh sách bộ từ">
+              <svg class="icon icon-sm"><use href="#i-arrow-back"/></svg>
+            </button>
+            <div class="deck-title-group">
+              <h1 class="screen-title" id="deck-detail-title">Deck Title</h1>
+              <div class="deck-quick-actions">
+                <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-pin" onclick="togglePinDeck(currentDeckId)" title="Ghim / Bỏ ghim"><svg class="icon icon-sm"><use href="#i-pin"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-archive" onclick="toggleArchiveDeck(currentDeckId)" title="Lưu trữ / Khôi phục"><svg class="icon icon-sm"><use href="#i-archive"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+              </div>
+            </div>
+            <span id="deck-detail-desc" style="display: none;"></span>
+            <span id="deck-detail-timestamp" class="deck-timestamp hide-on-mobile"></span>
+          </div>
+
+          <div class="deck-detail-right">
+            <button class="btn btn-primary btn-sm" onclick="openWordModal()" title="Thêm từ vựng mới vào bộ này">
+              <svg class="icon icon-sm"><use href="#i-add"/></svg> <span>Thêm Từ</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="importExcelModal()" title="Nhập danh sách từ vựng từ Excel">
+              <svg class="icon icon-sm"><use href="#i-upload"/></svg> <span>Nhập Excel</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()" title="Xuất bộ từ ra file Excel (.xlsx)">
+              <svg class="icon icon-sm"><use href="#i-download"/></svg> <span>Xuất Excel</span>
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="shareCurrentDeckToLibrary()" title="Đóng góp bộ từ này lên Thư Viện Cộng Đồng" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
+              <span>🚀</span> <span>Chia sẻ Thư Viện</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 2: SLIM SELECTION & STUDY BAR -->
+        <div id="selection-study-bar" class="selection-study-bar">
+          <div class="selection-bar-left">
+            <label class="selection-checkbox-label" title="Chọn/Bỏ chọn tất cả từ trong bộ này">
+              <input type="checkbox" id="select-all-words-checkbox" onchange="toggleSelectAllWords(this.checked)" class="word-select-checkbox">
+              <span>Chọn tất cả</span>
+            </label>
+            <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600; font-size: 11px;">0 từ</span>
+            
+            <!-- CLIPBOARD MULTI ACTION BUTTONS -->
+            <button class="btn btn-outline btn-sm" onclick="copySelectedWords()" id="btn-copy-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08);" title="Sao chép các từ đã chọn">
+              <svg class="icon icon-sm"><use href="#i-copy"/></svg> Sao chép
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="cutSelectedWords()" id="btn-cut-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08);" title="Cắt các từ đã chọn để chuyển sang bộ khác">
+              <svg class="icon icon-sm"><use href="#i-cut"/></svg> Cắt
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="pasteWordsFromClipboard()" id="btn-paste-words" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.1);" title="Dán từ vựng từ bộ nhớ tạm vào bộ này">
+              <svg class="icon icon-sm"><use href="#i-paste"/></svg> <span id="paste-words-label">Dán từ</span>
+            </button>
+
+            <button class="btn btn-outline btn-sm" onclick="deleteSelectedWords()" id="btn-delete-selected" style="display: none; color: var(--danger); border-color: rgba(239, 68, 68, 0.3); padding: 2px 7px; font-size: 11px;">
+              <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg> Xóa
+            </button>
+          </div>
+          
+          <div class="selection-study-actions">
+
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
+              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span><span id="speaking-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
+              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span><span id="spelling-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
+              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 3: SLIM FILTER & SEARCH BAR WITH MASTERY SLIDER, POS & CEFR SELECTORS (v0.0.9.23) -->
+        <div class="filter-bar" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <input type="text" id="word-search-input" class="search-input" placeholder="🔍 Tìm từ vựng, định nghĩa, từ đồng nghĩa..." oninput="renderWordList()" style="flex: 1; min-width: 140px;">
+          
+          <div class="deck-filter-controls-row" style="display: flex; gap: 6px; align-items: center;">
+            <!-- Dropdown Lọc Theo Từ Loại -->
+            <select id="filter-word-pos-select" class="form-select" onchange="setWordPosFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo từ loại">
+              <option value="all">🏷️ Tất cả từ loại</option>
+              <option value="noun">noun (danh từ)</option>
+              <option value="verb">verb (động từ)</option>
+              <option value="adjective">adjective (tính từ)</option>
+              <option value="adverb">adverb (trạng từ)</option>
+              <option value="noun phrase">noun phrase (cụm danh từ)</option>
+              <option value="phrasal verb">phrasal verb (cụm động từ)</option>
+              <option value="phrase">phrase (cụm từ chung)</option>
+              <option value="idiom">idiom (thành ngữ)</option>
+              <option value="preposition">preposition (giới từ)</option>
+              <option value="conjunction">conjunction (liên từ)</option>
+              <option value="other">khác (other)</option>
+            </select>
+
+            <!-- Dropdown Lọc Theo Cấp Độ CEFR -->
+            <select id="filter-word-cefr-select" class="form-select" onchange="setWordCefrFilter(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-color: rgba(99, 102, 241, 0.35); background: var(--surface); color: var(--text); border-radius: 8px;" title="Lọc theo cấp độ CEFR">
+              <option value="all">🎯 Tất cả cấp độ</option>
+              <option value="A1">A1 (Beginner)</option>
+              <option value="A2">A2 (Elementary)</option>
+              <option value="B1">B1 (Intermediate)</option>
+              <option value="B2">B2 (Upper Intermediate)</option>
+              <option value="C1">C1 (Advanced)</option>
+              <option value="C2">C2 (Mastery / Proficiency)</option>
+            </select>
+
+            <button class="btn btn-outline btn-sm" id="btn-toggle-mastery-slider" onclick="toggleMasterySliderPanel()" title="Bộ lọc thanh trượt mức độ thuộc (0-100%)" style="white-space: nowrap; height: 32px; padding: 0 10px; font-size: 11.5px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); display: inline-flex; align-items: center; gap: 4px;">
+              🎚️ <span class="hide-on-mobile">Lọc điểm</span>
+            </button>
+          </div>
+          <div class="chip-group" id="deck-word-filter-chips">
+            <div class="chip active" onclick="setWordFilter('all', this)">🎓 Tất cả (<span id="chip-count-all">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('0', this)">🌱 Mới 0% (<span id="chip-count-0">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('1-25', this)">🐣 Vừa học 1-25% (<span id="chip-count-1-25">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('26-50', this)">🌿 Hơi thuộc 26-50% (<span id="chip-count-26-50">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('51-75', this)">🌳 Khá thuộc 51-75% (<span id="chip-count-51-75">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('76-99', this)">⭐ Sắp thuộc 76-99% (<span id="chip-count-76-99">0</span>)</div>
+            <div class="chip" onclick="setWordFilter('100', this)">👑 Đã thuộc 100% (<span id="chip-count-100">0</span>)</div>
+          </div>
+        </div>
+
+        <!-- EXPANDABLE RANGE SLIDER FILTER PANEL -->
+        <div id="mastery-slider-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-top: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>🎚️</span> Thanh Trượt Lọc Mức Độ Thuộc: <span id="slider-range-val" style="color: #818cf8; font-family: monospace; font-size: 13px;">0% - 100%</span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="resetMasterySlider()" style="font-size: 11px; padding: 2px 8px;">🔄 Đặt lại (0 - 100%)</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
+                <span>Điểm tối thiểu (Min):</span>
+                <strong id="label-min-score" style="color: #818cf8;">0%</strong>
+              </div>
+              <input type="range" id="mastery-min-slider" min="0" max="100" value="0" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #6366f1;">
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">
+                <span>Điểm tối đa (Max):</span>
+                <strong id="label-max-score" style="color: #10b981;">100%</strong>
+              </div>
+              <input type="range" id="mastery-max-slider" min="0" max="100" value="100" step="5" oninput="handleMasterySliderChange()" style="width: 100%; accent-color: #10b981;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORD LIST -->
+      <div class="word-list" id="word-list-container">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- ADSENSE MULTIPLEX RECOMMENDATION AD UNIT IN DECK DETAIL (v0.10.8-alpha-10.3) -->
+      <div id="deck-detail-adsense-multiplex-container" style="margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--border); text-align: center; overflow: hidden;">
+        <div style="font-size: 11px; color: var(--text-muted); text-align: left; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Gợi ý tài trợ dành cho bạn</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-1343250003116465"
+             data-ad-slot="4211562925"></ins>
+      </div>
+    </section>

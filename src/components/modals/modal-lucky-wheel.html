@@ -1,0 +1,47 @@
+﻿  <div class="modal-overlay" id="modal-lucky-wheel" style="z-index: 10009;">
+    <div class="modal" style="max-width: 400px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25); overflow: hidden; padding: 16px 12px 14px 12px; box-sizing: border-box;">
+      <div class="modal-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
+        <div style="display: flex; align-items: center; gap: 8px; text-align: left;">
+          <span style="font-size: 24px;">🎡</span>
+          <div>
+            <strong id="lucky-wheel-modal-title" style="font-size: 15px; color: var(--text);">Vòng Quay May Mắn</strong>
+            <div id="lucky-wheel-modal-sub" style="font-size: 11px; color: var(--text-muted);">Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & VIP Hoàng Gia!</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-lucky-wheel')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div class="lucky-wheel-body" style="overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; padding: 2px; flex: 1; width: 100%; box-sizing: border-box;">
+        <!-- Spins status badge -->
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 8px;">
+          <span style="font-size: 12px; color: #ffd700; font-weight: 700;">Lượt quay còn lại:</span>
+          <strong id="lucky-wheel-spins-count" style="font-size: 14px; color: #ffd700;">1</strong>
+        </div>
+
+        <!-- Wheel Container -->
+        <div class="lucky-wheel-container">
+          <div class="lucky-wheel-needle"></div>
+          <div class="lucky-wheel" id="lucky-wheel-element">
+            <!-- Dynamic Slices with Labels -->
+          </div>
+          <div class="lucky-wheel-center-btn" id="lucky-wheel-spin-btn" onclick="triggerLuckyWheelSpin()">QUAY</div>
+        </div>
+
+        <!-- Result Text Box -->
+        <div id="lucky-wheel-result-box" style="min-height: 42px; display: flex; align-items: center; justify-content: center; font-size: 14.5px; font-weight: 800; color: #ffd700; padding: 6px 12px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid var(--border); margin: 0 10px 10px 10px;">
+          Bấm QUAY để thử vận may ngay!
+        </div>
+
+        <!-- Extra Action for Non-VIP when out of spins -->
+        <div id="lucky-wheel-ad-cta" style="display: none; padding: 6px 4px; margin: 0 4px 6px 4px;">
+          <button type="button" id="btn-wheel-watch-ad" class="btn btn-primary" onclick="openRewardedAdModalFromWheel();" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; font-weight: 700; font-size: 12px; padding: 9px 12px;">
+            🎬 Xem Video 30s Nhận +1 Lượt Quay
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px;">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-lucky-wheel')">Đóng</button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,119 @@
+﻿  <div class="modal-overlay" id="modal-spelling-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">✍️</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Chế Độ Luyện Viết (Spelling)</strong>
+            <div id="spelling-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách và manh mối gợi ý</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-spelling-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          1. Chọn Cấp Độ Thử Thách:
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="spelling-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="spelling-diff-card" id="spelling-diff-card-easy" onclick="selectSpellingSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn ngẫu nhiên 1/3 số chữ cái (gợi ý sẵn 2/3 chữ cái). Phù hợp làm quen từ mới.</p>
+          </div>
+
+          <!-- TRUNG BÌNH -->
+          <div class="spelling-diff-card" id="spelling-diff-card-medium" onclick="selectSpellingSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x1.5 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn ngẫu nhiên 2/3 số chữ cái (gợi ý sẵn 1/3 chữ cái). Thử thách trí nhớ từ.</p>
+          </div>
+
+          <!-- KHÓ -->
+          <div class="spelling-diff-card" id="spelling-diff-card-hard" onclick="selectSpellingSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard / Mastery)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.0 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Ẩn 100% chữ cái (toàn bộ ô trống). Luyện trí nhớ cơ bắp gõ chính xác 100%!</p>
+          </div>
+
+          <!-- SIÊU KHÓ (EXTREME / NIGHTMARE) -->
+          <div class="spelling-diff-card" id="spelling-diff-card-extreme" onclick="selectSpellingSetupDifficulty('extreme')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟣</span>
+                <strong style="font-size: 13.5px; color: #c084fc;">Cấp độ SIÊU KHÓ (Extreme)</strong>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10px;">x2.5 Điểm</span>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Không hiện số ô hay độ dài từ! Tự gõ toàn bộ từ vựng (bao gồm dấu space, -, /) vào 1 ô duy nhất.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CHỌN MANH MỐI HIỂN THỊ (KNOWN-THING CLUES) -->
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text);">
+            2. Manh Mối Hiển Thị (Chọn ít nhất 1):
+          </label>
+          <span id="spelling-clues-multiplier-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🌱 3 Manh mối (x1.0 Chuẩn)</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <!-- CLUE 1: NGHĨA TIẾNG VIỆT -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-def" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-def" checked onchange="toggleSpellingClue('def')" style="display: none;">
+            <span style="font-size: 18px;">🇻🇳</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Nghĩa TV</span>
+          </label>
+
+          <!-- CLUE 2: PHIÊN ÂM IPA -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-ipa" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-ipa" checked onchange="toggleSpellingClue('ipa')" style="display: none;">
+            <span style="font-size: 18px;">🗣️</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Phiên âm IPA</span>
+          </label>
+
+          <!-- CLUE 3: PHÁT ÂM THANH -->
+          <label class="btn btn-outline" id="spelling-clue-toggle-audio" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; cursor: pointer; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center; border-radius: 10px;">
+            <input type="checkbox" id="spelling-chk-audio" checked onchange="toggleSpellingClue('audio')" style="display: none;">
+            <span style="font-size: 18px;">🔊</span>
+            <span style="font-size: 11.5px; font-weight: 700;">Âm thanh</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. TÙY CHỌN BỔ SUNG (SHUFFLE) -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="spelling-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ</span>
+        </label>
+        <input type="checkbox" id="spelling-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-spelling-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartSpellingFromModal()" style="flex: 2; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(245,158,11,0.3);">
+          🚀 Bắt Đầu Luyện Viết
+        </button>
+      </div>
+    </div>
+  </div>

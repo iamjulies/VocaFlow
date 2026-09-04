@@ -1,0 +1,522 @@
+﻿  <div class="modal-overlay" id="modal-user-guide">
+    <div class="modal">
+      <div class="modal-title" style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(99,102,241,0.3);">📖</div>
+          <div>
+            <strong style="font-size: 16.5px; color: var(--text); display: block;">Cẩm Nang & Hướng Dẫn Sử Dụng</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Làm quen từng bước & khai thác trọn vẹn sức mạnh VocaFlow</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-user-guide')" title="Đóng hướng dẫn"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- CATEGORY TABS -->
+      <div class="guide-tabs-nav" id="guide-tabs-container">
+        <button class="guide-tab-btn active" id="guide-tab-btn-starter" onclick="switchUserGuideCategory('starter')">
+          <span>🚀</span> Người Mới (Từng Bước)
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-flow" onclick="switchUserGuideCategory('flow')">
+          <span>🌊</span> Chuỗi Học & SRS
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-economy" onclick="switchUserGuideCategory('economy')">
+          <span>🪙</span> Ví Xu & Shop
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-creator" onclick="switchUserGuideCategory('creator')">
+          <span>💼</span> Creator Studio
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-vip" onclick="switchUserGuideCategory('vip')">
+          <span>👑</span> Đặc Quyền VIP
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-shortcuts" onclick="switchUserGuideCategory('shortcuts')">
+          <span>⌨️</span> Phím Tắt & Cài Đặt
+        </button>
+      </div>
+
+      <!-- CONTENT BODY -->
+      <div class="guide-content-area" id="guide-content-area">
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 1: BEGINNER STEPPER                                      -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel active" id="guide-cat-panel-starter">
+          <!-- Stepper Header -->
+          <div class="guide-stepper-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="guide-starter-step-badge" class="badge badge-primary" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700;">Bước 1 / 5</span>
+              <span id="guide-starter-step-title" style="font-size: 13.5px; font-weight: 700; color: var(--text);">Đăng Ký & Đăng Nhập Tài Khoản</span>
+            </div>
+            <div class="guide-dots-container" id="guide-starter-dots">
+              <div class="guide-step-dot active" onclick="goToStarterStep(0)" title="Bước 1: Tài khoản"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(1)" title="Bước 2: API Key Gemini"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(2)" title="Bước 3: Nhập Giftcode"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(3)" title="Bước 4: 3 Cách tạo bài"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(4)" title="Bước 5: 4 Kiểu học cốt lõi"></div>
+            </div>
+          </div>
+
+          <!-- SLIDE 1: Đăng ký & Đăng nhập -->
+          <div class="guide-step-slide active" id="guide-starter-slide-0">
+            <div class="guide-card" style="border-left: 4px solid #6366f1;">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">☁️</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Đồng Bộ Đám Mây Đa Thiết Bị</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Khi tạo tài khoản VocaFlow, toàn bộ dữ liệu từ vựng, tiến độ học tập, chuỗi ngày học (Streak) và số dư Xu tích lũy sẽ được bảo vệ tuyệt đối và đồng bộ tức thì giữa Điện thoại, Máy tính và Trình duyệt web.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 2 Bước Thao Tác Cực Dễ:</h4>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">👤 Tài khoản</strong> ở góc trên bên phải thanh công cụ.</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
+                  <span>Chuyển sang tab <strong style="color: var(--text);">Đăng ký</strong>, điền Email và Mật khẩu của bạn là xong!</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; text-align: right;">
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAuthModal('register'), 'modal-auth');" style="font-size: 12px; font-weight: 700; padding: 7px 16px;">
+                  🚀 Mở Cửa Sổ Đăng Ký Ngay
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 2: Cài đặt API Key Gemini -->
+          <div class="guide-step-slide" id="guide-starter-slide-1">
+            <div class="guide-card" style="border-left: 4px solid #10b981;">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">🔑</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Mở Khóa Toàn Bộ Trí Tuệ Nhân Tạo (Hoàn Toàn Miễn Phí!)</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    VocaFlow tích hợp công nghệ AI đỉnh cao từ Google Gemini để chấm điểm giọng nói, giải thích ngữ nghĩa và tự động tạo bộ từ. Bạn chỉ cần lấy 1 mã khóa miễn phí từ Google để kích hoạt mọi tính năng thông minh này.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 Cách Lấy & Điền Khóa API Chỉ Trong 1 Phút:</h4>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
+                  <span>Bấm nút <strong style="color: var(--text);">🌐 Mở Google AI Studio</strong> bên dưới và đăng nhập bằng tài khoản Gmail của bạn.</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">"Get API key"</strong> ➔ <strong style="color: var(--text);">"Create API key"</strong> rồi nhấn Sao chép (Copy).</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">3</span>
+                  <span>Quay lại VocaFlow, mở Cài đặt và dán mã vừa copy vào ô <strong style="color: var(--text);">"Gemini API Key"</strong>.</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="window.open('https://aistudio.google.com/app/apikey', '_blank');" style="font-size: 12px; font-weight: 700; padding: 7px 14px;">
+                  🌐 Mở Google AI Studio
+                </button>
+                <button class="btn btn-primary" onclick="openAiKeyFromGuide()" style="font-size: 12px; font-weight: 700; padding: 7px 14px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                  🔑 Mở Cài Đặt & Điền Key Ngay
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: Nhập Giftcode Tân thủ -->
+          <div class="guide-step-slide" id="guide-starter-slide-2">
+            <div class="guide-card" style="border-left: 4px solid #f59e0b; background: linear-gradient(135deg, rgba(245,158,11,0.08), transparent);">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">🎁</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: #f59e0b; margin-bottom: 6px;">Quà Tặng Khởi Nghiệp: Nhập Mã Nhận +500 Xu!</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Dành riêng cho bạn mới! Sử dụng ngay mã quà tặng tân thủ để nhận ngay 500 Xu vào tài khoản, tha hồ trải nghiệm Vòng quay may mắn và sắm sửa trong VocaShop!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card" style="text-align: center; padding: 20px 16px;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Mã Giftcode Độc Quyền Tân Thủ:</div>
+              <div style="display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 2px dashed #f59e0b; border-radius: 12px; padding: 10px 20px; margin-bottom: 16px;">
+                <span style="font-size: 20px; font-weight: 900; letter-spacing: 2px; color: #fbbf24; font-family: monospace;">HELLOKHANG2011</span>
+                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 11px; font-weight: 800;">+500 Xu</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                Bạn chỉ cần bấm nút nhận thưởng bên dưới, VocaFlow sẽ tự động điền mã và mở cửa sổ nhận quà ngay lập tức!
+              </div>
+              <div>
+                <button class="btn btn-primary" onclick="applyGiftcodeFromGuide('HELLOKHANG2011')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-size: 13px; font-weight: 800; padding: 10px 22px; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
+                  🎁 Nhận Ngay 500 Xu Tân Thủ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 4: 3 Hướng tạo bài học -->
+          <div class="guide-step-slide" id="guide-starter-slide-3">
+            <div class="guide-card" style="border-left: 4px solid #3b82f6;">
+              <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🎯 3 Cách Nạp Từ Vựng & Tạo Bài Học</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Tùy theo nhu cầu và phong cách học tập, bạn có thể lựa chọn 1 trong 3 phương thức linh hoạt:
+              </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Hướng 1 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">📚</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">1. Thư Viện Cộng Đồng (VocaLib)</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Tải nhanh các bộ từ biên soạn sẵn: IELTS, TOEIC, Giao tiếp hằng ngày, Oxford 3000...</span>
+                  </div>
+                </div>
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openLibraryModal(), 'modal-library');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                  Mở VocaLib
+                </button>
+              </div>
+
+              <!-- Hướng 2 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">✨</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">2. Soạn Tự Động Với VocaDeck AI</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Chỉ cần gõ chủ đề hoặc dán bài báo/đoạn văn, AI tự trích xuất từ vựng và tạo câu ví dụ trong 3 giây.</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAiDeckStudioModal(), 'modal-ai-deck-studio');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #a855f7, #ec4899); border: none;">
+                  Dùng AI Deck
+                </button>
+              </div>
+
+              <!-- Hướng 3 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">✍️</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">3. Tự Soạn & Nhập Thủ Công</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Tự do thêm từ, tùy chỉnh định nghĩa, ghi chú riêng hoặc nhập nhanh từ file Excel/CSV.</span>
+                  </div>
+                </div>
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openDeckModal(), 'modal-deck');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                  Tạo Bộ Mới
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 5: 4 Kiểu học cơ bản -->
+          <div class="guide-step-slide" id="guide-starter-slide-4">
+            <div class="guide-card" style="border-left: 4px solid #ec4899;">
+              <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">⚡ 4 Chế Độ Học Cốt Lõi Tại VocaFlow</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Mỗi chế độ rèn luyện một giác quan và kỹ năng ngôn ngữ chuyên biệt:
+              </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+              <!-- Mode 1: Speaking -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🎙️</span>
+                  <strong style="font-size: 13px; color: #ec4899;">1. Luyện Phát Âm (Speaking)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Thu âm giọng đọc, AI chấm điểm ngữ âm IPA từng âm tiết, phát hiện lỗi nuốt phụ âm cuối và sửa khẩu hình trực quan.
+                </p>
+              </div>
+
+              <!-- Mode 2: Auto Flashcard -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🎴</span>
+                  <strong style="font-size: 13px; color: #6366f1;">2. Thẻ Tự Động (Auto Flashcard)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Lật thẻ từ vựng rảnh tay kết hợp giọng đọc AI chuẩn bản xứ. Rất thích hợp học thụ động khi di chuyển hoặc thư giãn.
+                </p>
+              </div>
+
+              <!-- Mode 3: Spelling -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">✍️</span>
+                  <strong style="font-size: 13px; color: #10b981;">3. Luyện Viết (Spelling)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Nghe âm thanh và gõ lại từng ký tự từ vựng vào ô phím. Khắc sâu trí nhớ cơ bắp và ghi nhớ chính tả chuẩn xác 100%.
+                </p>
+              </div>
+
+              <!-- Mode 4: Quiz -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🧠</span>
+                  <strong style="font-size: 13px; color: #f59e0b;">4. Trắc Nghiệm (Smart Quiz)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Thử thách phản xạ nghĩa từ qua 4 lựa chọn nhanh kèm các bẫy phân tâm thông minh, giúp củng cố nhận diện từ vựng.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stepper Action Bar -->
+          <div class="guide-action-bar">
+            <button class="btn btn-outline" id="guide-starter-btn-prev" onclick="navigateStarterStep(-1)" style="font-size: 12px; font-weight: 700; padding: 8px 16px;" disabled>
+              ❮ Trang Trước
+            </button>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="guide-starter-page-indicator">
+              Trang 1 / 5
+            </div>
+            <button class="btn btn-primary" id="guide-starter-btn-next" onclick="navigateStarterStep(1)" style="font-size: 12px; font-weight: 700; padding: 8px 18px;">
+              Trang Tiếp ❯
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 2: CHUỖI HỌC (FLOW) & SRS                               -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-flow">
+          <div class="guide-card" style="border-left: 4px solid #06b6d4;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🌊 Chuỗi Ngày Học (Flow Streak)</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Thành công trong học ngoại ngữ đến từ tính kỷ luật đều đặn mỗi ngày! Chỉ cần hoàn thành tối thiểu 1 bài học mỗi ngày, bạn sẽ giữ vững ngọn lửa <strong style="color: #f59e0b;">🔥 Chuỗi Flow</strong>.
+            </p>
+          </div>
+
+          <div class="guide-card">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">🧠 Thuật Toán Lặp Lại Ngắt Quãng (Spaced Repetition - SRS):</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+              <p style="margin: 0;">
+                Não bộ tự nhiên sẽ quên dần từ vựng theo thời gian. VocaFlow tự động tính toán thời điểm vàng trước khi bạn kịp quên để đưa từ vào <strong style="color: var(--primary);">Hàng Đợi Ôn Tập (Review Queue)</strong>.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 4px;">
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #ef4444; font-size: 14px;">Giai đoạn 1</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 1 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #f59e0b; font-size: 14px;">Giai đoạn 2</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 3 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #3b82f6; font-size: 14px;">Giai đoạn 3</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 7 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #10b981; font-size: 14px;">Giai đoạn 4</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Nhớ vĩnh viễn</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card" style="border: 1px dashed var(--border); text-align: center;">
+            <div style="font-size: 13px; color: var(--text); font-weight: 700; margin-bottom: 4px;">🛡️ Bùa Bảo Vệ Chuỗi (Streak Freeze)</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Lỡ bận việc đột xuất không kịp học? Bạn có thể mua Bùa Bảo Vệ trong VocaShop để giữ nguyên chuỗi ngày!</div>
+            <button class="btn btn-outline" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 11.5px; font-weight: 700;">
+              🛒 Đến VocaShop Xem Bùa
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 3: KINH TẾ XU & VOCASHOP                                 -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-economy">
+          <div class="guide-card" style="border-left: 4px solid #eab308;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🪙 Hệ Thống Ví Xu & Sổ Cái Giao Dịch</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Xu (Points) là đơn vị tiền tệ trung tâm trong VocaFlow. Bạn có thể kiếm Xu bằng chính nỗ lực học tập và dùng để mở khóa các tiện ích thú vị.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div class="guide-card" style="margin: 0;">
+              <strong style="font-size: 13px; color: #10b981; display: block; margin-bottom: 6px;">📥 Cách Tích Lũy Xu:</strong>
+              <ul style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+                <li>Hoàn thành bài tập Speaking, Flashcard, Spelling, Quiz.</li>
+                <li>Đạt mốc chuỗi ngày học Flow liên tiếp.</li>
+                <li>Mở quà điểm danh hàng ngày tại Vòng Quay.</li>
+                <li>Bán bộ từ vựng do bạn tự biên soạn trên VocaLib.</li>
+              </ul>
+            </div>
+
+            <div class="guide-card" style="margin: 0;">
+              <strong style="font-size: 13px; color: #f59e0b; display: block; margin-bottom: 6px;">🛍️ Tiêu Dùng Tại VocaShop:</strong>
+              <ul style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+                <li>Đổi gợi ý chữ cái trong chế độ Luyện viết (Spelling).</li>
+                <li>Mua thêm lượt quay Vòng Quay May Mắn.</li>
+                <li>Mua Bùa bảo vệ chuỗi ngày học khi có việc bận.</li>
+                <li>Tải các bộ từ độc quyền có trả phí từ tác giả khác.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 4px;">
+            <button class="btn btn-primary" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #eab308, #ca8a04); border: none;">
+              🛒 Mở Cửa Hàng VocaShop
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 4: CREATOR STUDIO & BÁN BỘ TỪ                           -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-creator">
+          <div class="guide-card" style="border-left: 4px solid #8b5cf6;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">💼 Creator Studio: Kiếm Doanh Thu Từ Bộ Từ</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Bạn là giáo viên, trợ giảng hoặc người học có bộ từ chất lượng? VocaFlow cho phép bạn xuất bản bộ từ lên Thư viện VocaLib và tự đặt giá bán bằng Xu!
+            </p>
+          </div>
+
+          <div class="guide-card">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 Quy Trình Trở Thành Tác Giả:</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">1.</span>
+                <span>Tạo bộ từ vựng và trau chuốt từ ngữ, định nghĩa, ví dụ minh họa thật chuẩn xác.</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">2.</span>
+                <span>Vào chi tiết bộ từ, nhấn <strong style="color: var(--text);">"Xuất bản lên VocaLib"</strong> và đặt giá Xu (hoặc để Miễn phí nếu muốn chia sẻ cộng đồng).</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">3.</span>
+                <span>Mỗi khi có học viên tải bộ từ, 100% doanh thu Xu sẽ được chuyển thẳng vào Ví Creator của bạn với Sổ cái ghi nhận bất biến!</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; text-align: right;">
+              <button class="btn btn-primary" onclick="navigateFromGuide(() => openWalletStudioModal(), 'modal-wallet-studio');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;">
+                💼 Mở Trung Tâm Creator Studio
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 5: ĐẶC QUYỀN VIP CROWN                                  -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-vip">
+          <div class="guide-card" style="border-left: 4px solid #f59e0b; background: linear-gradient(135deg, rgba(245,158,11,0.1), transparent);">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <span style="font-size: 32px;">👑</span>
+              <div>
+                <h4 style="font-size: 15px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Đặc Quyền Thành Viên VIP Crown</h4>
+                <div style="font-size: 12px; color: var(--text-muted);">Trải nghiệm đẳng cấp cao nhất với các ưu đãi học tập vượt trội</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>⚡</span> Nhân Đôi Điểm Học Tập
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Nhận thêm hệ số thưởng x2 Xu trong mọi chế độ học tập và thử thách.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>🎰</span> Thêm 2 Lượt Quay Mỗi Ngày
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Mỗi ngày đăng nhập nhận thêm +2 lượt quay Vòng quay may mắn miễn phí trọn đời gói VIP.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>🤖</span> Trợ Lý VocaAI Không Giới Hạn
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Trò chuyện, hỏi ngữ pháp, sửa bài viết tiếng Anh 24/7 cùng trợ lý AI thông minh nhất.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>✨</span> Biểu Tượng Vương Miện Vàng
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Tỏa sáng trên Bảng xếp hạng danh vọng với huy hiệu VIP Crown vàng lấp lánh bên tên bạn.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 6: PHÍM TẮT & CÀI ĐẶT PWA                               -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-shortcuts">
+          <div class="guide-card" style="border-left: 4px solid #6366f1;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">⌨️ Phím Tắt Toàn Năng (Dành Cho Máy Tính)</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              Sử dụng bàn phím giúp bạn học nhanh gấp đôi mà không cần với tay chạm chuột:
+            </p>
+          </div>
+
+          <div class="guide-card" style="padding: 12px 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; font-size: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Lật thẻ Flashcard / Phát âm</span>
+                <span class="guide-key-badge">Space</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Thẻ tiếp theo / Câu tiếp</span>
+                <span class="guide-key-badge">→ hoặc D</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Thẻ trước đó</span>
+                <span class="guide-key-badge">← hoặc A</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Chọn đáp án Quiz (A, B, C, D)</span>
+                <span class="guide-key-badge">1, 2, 3, 4</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Xác nhận / Nộp câu trả lời</span>
+                <span class="guide-key-badge">Enter</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Tìm kiếm từ vựng nhanh</span>
+                <span class="guide-key-badge">Ctrl + K</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card" style="border-left: 4px solid #10b981;">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">📲 Cài Đặt VocaFlow Như Ứng Dụng (PWA Offline):</h4>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 0 0 10px 0;">
+              Bạn có thể cài đặt VocaFlow lên màn hình chính điện thoại (iOS, Android) hoặc máy tính (Windows, Mac) để mở lên học nhanh không cần mở trình duyệt, hỗ trợ học tập cả khi không có mạng Internet.
+            </p>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+              • <strong style="color: var(--text);">Trên Chrome / Edge Máy tính:</strong> Bấm biểu tượng <strong style="color: var(--primary);">⊕ Cài đặt</strong> trên thanh địa chỉ trình duyệt.<br>
+              • <strong style="color: var(--text);">Trên iPhone (Safari):</strong> Bấm nút Chia sẻ (Share) ➔ Chọn <strong style="color: var(--primary);">"Thêm vào Màn hình chính"</strong>.<br>
+              • <strong style="color: var(--text);">Trên Android (Chrome):</strong> Bấm dấu 3 chấm ⋮ ➔ Chọn <strong style="color: var(--primary);">"Cài đặt ứng dụng"</strong>.
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- end guide-content-area -->
+
+    </div>
+  </div>

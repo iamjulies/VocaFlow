@@ -1,0 +1,105 @@
+﻿    <section id="screen-autofc" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Thoát">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">🎧 Auto Flashcard</span>
+            <span id="autofc-counter" style="font-weight: 700; color: var(--text-muted);">Thẻ 1 / 10</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="minimizeAutoFlashcardToPip()" title="Thu nhỏ dạng cửa sổ nổi (Picture-in-Picture)" style="font-size: 11.5px; padding: 5px 9px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(168,85,247,0.5); color: #c084fc; background: rgba(168,85,247,0.1); font-weight: 600;">
+            <svg class="icon icon-xs" style="width: 13px; height: 13px;"><use href="#i-minimize"/></svg>
+            <span>Thu nhỏ</span>
+          </button>
+          <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Đóng">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="progress-bar-bg" style="max-width: 540px; margin: 0 auto 12px;">
+        <div class="progress-bar-fill" id="autofc-progress-bar" style="width: 10%; background: linear-gradient(90deg, #10b981, #38bdf8);"></div>
+      </div>
+
+      <!-- Auto Flashcard 3D Card Display -->
+      <div class="flashcard-container" onclick="handleAutoCardManualFlip()" title="Chạm để lật thẻ (khi tạm dừng)" style="cursor: pointer;">
+        <div class="flashcard" id="autofc-card-element">
+          <!-- Front Face -->
+          <div class="card-face card-front">
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 10px;">
+              <div id="autofc-front-cefr" class="badge badge-cefr" style="display: none;">B2</div>
+              <div id="autofc-front-pos" class="badge badge-pos">NOUN</div>
+              <div id="autofc-status-indicator" class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🔊 Đang đọc tiếng Anh...</div>
+            </div>
+            <div class="card-term-large" id="autofc-front-term">Term</div>
+            <div class="word-phonetic" id="autofc-front-phonetic">/phonetic/</div>
+
+            <div style="margin-top: 24px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span id="autofc-hint-text">⏳ Tự động lật và đọc tiếng Việt sau khi phát âm</span>
+            </div>
+          </div>
+
+          <!-- Back Face -->
+          <div class="card-face card-back">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
+              <div id="autofc-back-term" style="font-size: 20px; font-weight: 700; color: var(--primary);">Term</div>
+              <div class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">🔊 Đọc tiếng Việt</div>
+            </div>
+            <div class="card-def-large" id="autofc-back-def">Định nghĩa tiếng Việt</div>
+            <div id="autofc-back-example" style="font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px;"></div>
+            
+            <div id="autofc-back-meta" style="font-size: 12px; text-align: left; width: 100%; background: var(--surface-elevated); border: 1px solid var(--border); padding: 10px; border-radius: 10px; margin-top: 6px;">
+              <!-- Meta tags -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto Control Bar -->
+      <div class="autofc-controls-panel">
+        <div class="autofc-main-controls">
+          <button class="btn btn-outline btn-icon" onclick="prevAutoFlashcard()" title="Thẻ trước">
+            <svg class="icon"><use href="#i-skip-prev"/></svg>
+          </button>
+          <button class="btn btn-primary btn-icon" id="btn-autofc-playpause" onclick="toggleAutoFlashcardPlayPause()" style="width: 48px; height: 48px; border-radius: 50%; font-size: 18px;" title="Tạm dừng / Tiếp tục">
+            <svg class="icon" id="icon-autofc-playpause"><use href="#i-pause"/></svg>
+          </button>
+          <button class="btn btn-outline btn-icon" onclick="nextAutoFlashcard()" title="Thẻ tiếp theo">
+            <svg class="icon"><use href="#i-skip-next"/></svg>
+          </button>
+          <button class="btn btn-outline btn-icon" id="btn-autofc-loop" onclick="toggleAutoFlashcardLoop()" title="Lặp vô tận danh sách">
+            <svg class="icon"><use href="#i-repeat"/></svg>
+          </button>
+          <button class="btn btn-outline btn-icon" id="btn-autofc-shuffle" onclick="shuffleCurrentAutoFlashcard()" title="Trộn ngẫu nhiên danh sách phát">
+            <span style="font-size: 14px;">🔀</span>
+          </button>
+        </div>
+
+        <!-- Keyboard Shortcuts Hint Guide (v0.0.9.18) -->
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <span><kbd class="key-shortcut-badge">Space</kbd> Tạm dừng / Tiếp tục</span>
+          <span><kbd class="key-shortcut-badge">A / ◀</kbd> Thẻ trước</span>
+          <span><kbd class="key-shortcut-badge">D / ▶</kbd> Thẻ sau</span>
+          <span><kbd class="key-shortcut-badge">Enter</kbd> Lật thẻ (khi dừng)</span>
+        </div>
+
+        <!-- Speed & Delay Controls -->
+        <div class="autofc-speed-grid">
+          <div class="autofc-speed-item">
+            <label>🇬🇧 Tốc độ Tiếng Anh: <strong id="autofc-speed-en-label">0.9x</strong></label>
+            <input type="range" min="0.5" max="1.5" step="0.1" value="0.9" id="autofc-speed-en-slider" oninput="updateSpeechRateEn(this.value)">
+          </div>
+          <div class="autofc-speed-item">
+            <label>🇻🇳 Tốc độ Tiếng Việt: <strong id="autofc-speed-vi-label">1.0x</strong></label>
+            <input type="range" min="0.5" max="1.5" step="0.1" value="1.0" id="autofc-speed-vi-slider" oninput="updateSpeechRateVi(this.value)">
+          </div>
+          <div class="autofc-speed-item">
+            <label>⏱️ Thời gian nghỉ: <strong id="autofc-delay-label">1.0s</strong></label>
+            <input type="range" min="0.5" max="4.0" step="0.5" value="1.0" id="autofc-delay-slider" oninput="updateAutoDelay(this.value)">
+          </div>
+        </div>
+      </div>
+    </section>

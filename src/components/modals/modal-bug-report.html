@@ -1,0 +1,113 @@
+﻿  <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">🐛</span>
+          <div>
+            <strong style="font-size: 16px; color: #f87171;">Báo Cáo Sự Cố & Đóng Góp Ý Kiến</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Đội ngũ phát triển sẽ kiểm tra và trao thưởng Xu/VIP cho báo cáo hữu ích</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-alpha-10.3) -->
+      <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Gửi Báo Cáo Sự Cố, Đóng Góp Ý Kiến & Nhận Thưởng Bắt Lỗi (+50 Xu / +1 Ngày VIP)</strong> từ Admin!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-bug-report'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-bug-report');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="bug-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
+      <div style="flex: 1; overflow-y: auto; padding-right: 4px;">
+        <!-- CATEGORY SELECTOR -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">1. Danh mục vấn đề:</label>
+          <select id="bug-report-category" class="form-select" style="width: 100%; font-size: 13px; font-weight: 600;">
+            <option value="ui_ux">🎨 Lỗi Giao Diện & Hiển Thị (UI/UX)</option>
+            <option value="speaking">🎙️ Lỗi Thu Âm / Luyện Nói AI Speaking Lab</option>
+            <option value="ai">🤖 Lỗi AI Sinh Từ / AI Chat Mentor</option>
+            <option value="wheel_ad">🎡 Lỗi Vòng Quay / Xem Video Quảng Cáo</option>
+            <option value="wallet_vip">💳 Lỗi Ví Xu / Thanh Toán QR / Gói VIP</option>
+            <option value="cloud_sync">🔄 Lỗi Đồng Bộ Cloud / Mất Dữ Liệu</option>
+            <option value="feature_request">💡 Đóng Góp Tính Năng Mới (Feature Request)</option>
+            <option value="other" selected>❓ Vấn đề khác</option>
+          </select>
+        </div>
+
+        <!-- SEVERITY LEVEL -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">2. Mức độ ảnh hưởng:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <label class="btn btn-outline btn-sm" id="bug-sev-low-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.15); color: #34d399; font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="low" checked style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🟢 Nhẹ / Góp ý</span>
+            </label>
+            <label class="btn btn-outline btn-sm" id="bug-sev-med-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: var(--border); color: var(--text-muted); font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="medium" style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🟡 Vừa phải</span>
+            </label>
+            <label class="btn btn-outline btn-sm" id="bug-sev-high-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; cursor: pointer; border-color: var(--border); color: var(--text-muted); font-size: 11.5px;">
+              <input type="radio" name="bug-severity" value="high" style="display: none;" onchange="updateBugSeverityUI()">
+              <span>🔴 Nghiêm trọng</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- TITLE -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">3. Tiêu đề sự cố:</label>
+          <input type="text" id="bug-report-title" class="form-input" placeholder="Tóm tắt ngắn gọn vấn đề gặp phải..." style="font-size: 13px;">
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">4. Mô tả chi tiết & các bước xảy ra lỗi:</label>
+          <textarea id="bug-report-desc" class="form-textarea" rows="4" placeholder="Mô tả cụ thể: Bạn đang làm gì khi lỗi xảy ra? Bạn mong muốn kết quả ra sao? (Có thể dán trực tiếp ảnh chụp màn hình Ctrl+V vào đây)..." style="font-size: 12.5px; resize: vertical;"></textarea>
+        </div>
+        <!-- SCREENSHOT UPLOAD & CLIPBOARD PASTE (UP TO 5 SCREENSHOTS - v0.10.8-alpha-10.3) -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text); margin: 0;">
+              5. Ảnh chụp màn hình (<span id="bug-screenshot-count-label">0/5</span>):
+            </label>
+            <span style="font-size: 10.5px; color: #38bdf8;">Dán Ctrl+V hoặc chọn tối đa 5 ảnh</span>
+          </div>
+          
+          <!-- MULTI-SCREENSHOT PREVIEWS GRID -->
+          <div id="bug-screenshots-container" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;"></div>
+
+          <input type="file" id="bug-screenshot-file-input" accept="image/*" multiple style="display: none;" onchange="handleBugScreenshotFiles(this)">
+          <button type="button" id="btn-add-bug-screenshot" class="btn btn-outline btn-sm" onclick="document.getElementById('bug-screenshot-file-input').click()" style="width: 100%; justify-content: center; gap: 6px; font-size: 12px;">
+            📷 Tải Thêm Ảnh Chụp Màn Hình (Tối đa 5 ảnh)
+          </button>
+        </div>
+
+        <!-- AUTO-CAPTURED DIAGNOSTICS ACCORDION -->
+        <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 14px; font-size: 11.5px; color: var(--text-muted);">
+          <summary style="cursor: pointer; font-weight: 700; color: #a5b4fc;">⚙️ Thông tin chẩn đoán tự động đính kèm</summary>
+          <div id="bug-diagnostics-preview" style="margin-top: 8px; font-family: monospace; font-size: 10.5px; line-height: 1.5; color: var(--text-muted); word-break: break-all;"></div>
+        </details>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-bug-report')">Hủy Bỏ</button>
+        <button type="button" id="btn-submit-bug-report" class="btn btn-primary" onclick="submitBugReport()" style="background: linear-gradient(135deg, #f87171, #ef4444); border: none; font-weight: 700; padding: 8px 18px; box-shadow: 0 4px 14px rgba(239,68,68,0.35);">
+          🚀 Gửi Báo Cáo Ngay
+        </button>
+      </div>
+      </div> <!-- end bug-main-authenticated-view -->
+    </div>
+  </div>

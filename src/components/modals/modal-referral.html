@@ -1,0 +1,84 @@
+﻿  <div class="modal-overlay" id="modal-referral" style="z-index: 10009;">
+    <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(236, 72, 153, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(236, 72, 153, 0.2);">
+      <div class="modal-title" style="margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(236,72,153,0.8));">🎁</span>
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #f472b6, #fb7185, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Giới Thiệu Bạn Bè - Nhận VIP Hoàng Gia</h2>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0;">Mời bạn bè cùng học: Bạn nhận +1 Ngày VIP, bạn bè nhận ngay 100 Xu & Quà tân thủ!</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-referral')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="overflow-y: auto; overflow-x: hidden; padding: 6px 2px; flex: 1;">
+        <!-- MY REFERRAL CODE & INVITE LINK CARD -->
+        <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(99, 102, 241, 0.12)); border: 1px solid rgba(236, 72, 153, 0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #f472b6; letter-spacing: 0.5px;">👑 Mã Giới Thiệu Của Bạn</span>
+            <span id="ref-my-vip-earned-badge" class="badge" style="font-size: 11px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">Đã nhận: +0 Ngày VIP</span>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <div id="ref-my-code-display" style="flex: 1; background: var(--surface-elevated); border: 1.5px dashed rgba(236,72,153,0.6); border-radius: 10px; padding: 10px 14px; font-size: 18px; font-weight: 900; font-family: monospace; color: #ffd700; letter-spacing: 2px; text-align: center;">
+              ĐANG TẢI...
+            </div>
+            <button type="button" class="btn btn-primary" onclick="copyMyReferralCode()" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 0 16px; font-size: 12.5px; white-space: nowrap;">
+              📋 Sao Chép Mã
+            </button>
+          </div>
+
+          <!-- Share Link Button -->
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="ref-my-link-input" readonly class="form-input" style="font-size: 11.5px; padding: 8px 10px; color: var(--text-muted); background: var(--surface-elevated);" onclick="this.select()">
+            <button type="button" class="btn btn-outline" onclick="copyMyReferralLink()" style="border-color: rgba(56,189,248,0.5); color: #38bdf8; font-weight: 700; font-size: 12px; white-space: nowrap; padding: 0 14px;">
+              🔗 Sao Chép Link
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 10.5px; color: var(--text-muted);">👥 Bạn bè đã mời</div>
+              <div id="ref-stat-friends-count" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 10.5px; color: var(--text-muted);">👑 Tổng ngày VIP nhận</div>
+              <div id="ref-stat-vip-days" style="font-size: 18px; font-weight: 800; color: #ffd700;">0 ngày</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTER REFERRAL CODE CARD (FOR NEWBIES) -->
+        <div id="ref-enter-code-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>🎁</span> <span>Nhập Mã Giới Thiệu Từ Bạn Bè (Dành Cho Tân Thủ)</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+            Nhập mã giới thiệu của người bạn đã rủ bạn vào VocaFlow để nhận ngay <strong>100 Xu + 3 Lượt Gợi Ý + 1 Lượt Quay May Mắn</strong>! (Mỗi tài khoản chỉ nhập 1 lần duy nhất).
+          </div>
+
+          <div id="ref-input-group" style="display: flex; gap: 8px;">
+            <input type="text" id="ref-input-code" class="form-input" placeholder="Nhập mã giới thiệu (ví dụ: MJFITS6B)..." style="font-size: 13px; font-family: monospace; text-transform: uppercase; font-weight: 700; padding: 8px 12px;" onkeydown="if(event.key === 'Enter'){ submitReferralCode(); event.preventDefault(); }">
+            <button type="button" class="btn btn-primary" onclick="submitReferralCode()" style="white-space: nowrap; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 800; padding: 0 16px; font-size: 12.5px;">
+              🎁 Nhận Quà
+            </button>
+          </div>
+          <div id="ref-claim-status-msg" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+        </div>
+
+        <!-- REFERRAL PROGRAM RULES & FAQ -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+          <strong style="color: var(--text); display: block; margin-bottom: 4px;">📜 Thể lệ chương trình Mời Bạn Bè:</strong>
+          <ul style="margin: 0; padding-left: 16px;">
+            <li>Mỗi người dùng mới khi nhập mã của bạn sẽ nhận ngay <strong>100 Xu + 3 Gợi Ý + 1 Lượt Quay May Mắn</strong>.</li>
+            <li>Ngay khi bạn bè mới nhập mã, tài khoản của bạn sẽ tự động được <strong>+1 Ngày VIP Hoàng Gia</strong> (cộng dồn 24h không giới hạn).</li>
+            <li>Chỉ áp dụng cho tài khoản đăng ký mới (hoặc tài khoản chưa từng nhập mã trước đó) để đảm bảo tính công bằng.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary" onclick="closeModal('modal-referral')">Đóng</button>
+      </div>
+    </div>
+  </div>

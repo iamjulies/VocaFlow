@@ -1,0 +1,275 @@
+﻿  <div class="modal-overlay" id="modal-settings">
+    <div class="modal">
+      <div class="modal-title">
+        <span>⚙️ Cài Đặt Ứng Dụng</span>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-settings')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. GIAO DIỆN & CHỦ ĐỀ (1-ROW 3-TILE PICKER) -->
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🌓 Giao Diện & Chủ Đề</label>
+        <div class="theme-picker-grid">
+          <label class="theme-card" onclick="setAppTheme('dark')">
+            <input type="radio" name="app-theme" value="dark" id="theme-dark-radio">
+            <span class="theme-icon">🌙</span>
+            <strong>Giao diện Tối</strong>
+            <small>Êm dịu mắt</small>
+          </label>
+
+          <label class="theme-card" onclick="setAppTheme('light')">
+            <input type="radio" name="app-theme" value="light" id="theme-light-radio">
+            <span class="theme-icon">☀️</span>
+            <strong>Giao diện Sáng</strong>
+            <small>Tương phản cao</small>
+          </label>
+
+          <label class="theme-card" onclick="setAppTheme('system')">
+            <input type="radio" name="app-theme" value="system" id="theme-system-radio">
+            <span class="theme-icon">🌓</span>
+            <strong>Theo thiết bị</strong>
+            <small>Tự động HĐH</small>
+          </label>
+        </div>
+      </div>
+
+      <!-- 2. GOOGLE GEMINI AI (VIP MULTI-KEY POOL UP TO 3 KEYS - v0.10.8-alpha-10.3) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0; display: flex; align-items: center; gap: 6px;">
+            <span>✨</span> <span>Google Gemini AI</span>
+            <span id="gemini-vip-pool-badge" class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 Bể Đa Khóa VIP (x3 Hạn Ngạch)</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeminiKeyGuide(event)" title="Xem hướng dẫn lấy API Key" style="font-size: 11px; padding: 2px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); font-weight: 700; cursor: pointer;">
+              ❓ Hướng dẫn
+            </button>
+            <a href="https://aistudio.google.com/projects" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 2px 7px; text-decoration: none; color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
+              🔑 Lấy Key AI Studio
+            </a>
+          </div>
+        </div>
+
+        <!-- HƯỚNG DẪN LẤY KEY CHI TIẾT DÀNH CHO USER & VIP (v0.10.8-alpha-10.3) -->
+        <div id="gemini-key-guide-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 11.5px; line-height: 1.6; color: var(--text);">
+          <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span>📖 Hướng dẫn lấy & nhân 3 hạn ngạch API Key (Miễn phí 100%):</span>
+            <span onclick="toggleGeminiKeyGuide(event)" style="cursor: pointer; opacity: 0.7; font-size: 13px;">✕</span>
+          </div>
+          
+          <div style="margin-bottom: 8px; padding: 6px 10px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 3px solid #f59e0b; font-size: 11px; color: #fde68a;">
+            💡 <strong>Cơ chế tự động:</strong> Dùng hết hạn ngạch Khóa 1 mới sang Khóa 2 (rồi sang Khóa 3). Khóa 1 là bắt buộc, Khóa 2 & 3 dành riêng cho VIP giúp nhân 3 hạn ngạch gọi AI.
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div><strong style="color: #60a5fa;">Bước 1:</strong> Truy cập <a href="https://aistudio.google.com/projects" target="_blank" style="color: #93c5fd; text-decoration: underline; font-weight: 700;">https://aistudio.google.com/projects</a> (đăng nhập tài khoản Google).</div>
+            <div><strong style="color: #60a5fa;">Bước 2:</strong> Nhấn nút <strong>"Create a new project"</strong> (Tạo dự án mới).</div>
+            <div><strong style="color: #60a5fa;">Bước 3:</strong> Đặt tên project dễ nhớ (ví dụ: <em>VocaFlow1</em>, <em>VocaFlow2</em>, <em>VocaFlow3</em>).</div>
+            <div><strong style="color: #60a5fa;">Bước 4:</strong> Nhấn <strong>"Create API key"</strong> (Tạo khóa API mới) từ project vừa tạo.</div>
+            <div><strong style="color: #60a5fa;">Bước 5:</strong> Copy mã API Key và dán lần lượt vào các ô Khóa 1, Khóa 2, Khóa 3 bên dưới. Nhấn <strong>"🧪 Thử kết nối"</strong> để hoàn tất!</div>
+          </div>
+        </div>
+
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+          Nhập Gemini API Key để mở khóa AI phân tích từ vựng, phát âm, chấm điểm Speaking và nhận xét chuyên sâu.
+        </p>
+
+        <!-- 3-SLOT API KEY POOL INPUTS -->
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="gemini-keys-container">
+          <!-- KEY 1 (PRIMARY) -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
+              <span style="font-weight: 700; color: #a5b4fc;">🔑 Khóa API 1 (Chính • Bắt buộc):</span>
+              <span id="gemini-key-1-status-badge" style="font-size: 10px; color: #34d399;"></span>
+            </div>
+            <input type="password" id="gemini-api-key-input-1" class="form-input" placeholder="Dán Gemini API Key 1 (AIzaSy...)" style="width: 100%; font-family: monospace; font-size: 12px;" oninput="handleApiKeyInput(1, this.value)" onblur="compactAndSaveApiKeys()">
+          </div>
+
+          <!-- KEY 2 (SECONDARY - VIP) -->
+          <div id="gemini-key-2-wrapper" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
+              <span style="font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 4px;">
+                <span>🔑 Khóa API 2 (Dự phòng 1):</span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 9px; padding: 1px 4px;">👑 VIP</span>
+              </span>
+              <span id="gemini-key-2-status-badge" style="font-size: 10px; color: #34d399;"></span>
+            </div>
+            <input type="password" id="gemini-api-key-input-2" class="form-input" placeholder="Dán Gemini API Key 2 (Tạo từ Project 2)" style="width: 100%; font-family: monospace; font-size: 12px;" oninput="handleApiKeyInput(2, this.value)" onblur="compactAndSaveApiKeys()">
+          </div>
+
+          <!-- KEY 3 (TERTIARY - VIP) -->
+          <div id="gemini-key-3-wrapper" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
+              <span style="font-weight: 700; color: #ec4899; display: flex; align-items: center; gap: 4px;">
+                <span>🔑 Khóa API 3 (Dự phòng 2):</span>
+                <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 9px; padding: 1px 4px;">👑 VIP</span>
+              </span>
+              <span id="gemini-key-3-status-badge" style="font-size: 10px; color: #34d399;"></span>
+            </div>
+            <input type="password" id="gemini-api-key-input-3" class="form-input" placeholder="Dán Gemini API Key 3 (Tạo từ Project 3)" style="width: 100%; font-family: monospace; font-size: 12px;" oninput="handleApiKeyInput(3, this.value)" onblur="compactAndSaveApiKeys()">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 8px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="testGeminiConnection()" id="btn-test-gemini" title="Kiểm tra kết nối toàn bộ các khóa" style="padding: 6px 12px; font-weight: 700;">
+            🧪 Thử kết nối toàn bộ khóa
+          </button>
+          <div id="gemini-status-text" style="font-size: 11px; color: var(--text-muted); text-align: right; flex: 1;"></div>
+        </div>
+      </div>
+
+      <!-- 3. TỐC ĐỘ PHÁT ÂM (TEXT-TO-SPEECH) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🔊 Tốc Độ Phát Âm (Text-to-Speech)</label>
+        
+        <div style="margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span>🇬🇧 Tiếng Anh (English):</span>
+            <strong id="settings-speech-en-label" style="color: var(--primary);">0.9x</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="range" id="settings-speech-en-slider" min="0.5" max="1.5" step="0.1" value="0.9" style="flex: 1; accent-color: var(--primary);" oninput="updateSpeechRateEn(this.value)">
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span>🇻🇳 Tiếng Việt (Vietnamese):</span>
+            <strong id="settings-speech-vi-label" style="color: #10b981;">1.0x</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="range" id="settings-speech-vi-slider" min="0.5" max="1.5" step="0.1" value="1.0" style="flex: 1; accent-color: #10b981;" oninput="updateSpeechRateVi(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.1. HIỆU ỨNG ÂM THANH (SFX) (v0.0.10.3k) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎮 Hiệu Ứng Âm Thanh (Sound Effects - SFX)</label>
+        
+        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text);">🔔 Bật Hiệu Ứng Âm Thanh</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Âm thanh trả lời đúng/sai, bỏ qua, pháo hoa ăn mừng & mua sắm</div>
+          </div>
+          <input type="checkbox" id="settings-sfx-enabled-checkbox" checked onchange="toggleSfxSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+        </label>
+
+        <div id="settings-sfx-volume-container">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span>🔊 Âm lượng Hiệu Ứng (Volume):</span>
+            <strong id="settings-sfx-volume-label" style="color: #ec4899;">80%</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="range" id="settings-sfx-volume-slider" min="0" max="100" step="5" value="80" style="flex: 1; accent-color: #ec4899;" oninput="updateSfxVolumeSetting(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. BỘ LỌC & TÙY BIẾN GIAO DIỆN (v0.0.10.2g) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎛️ Tùy Biến Bộ Lọc & Hàng Đợi Ôn Tập</label>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- 1. Review Queue Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-review-queue-checkbox" checked onchange="toggleShowReviewQueueSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🔁 Hàng Đợi Ôn Tập (Spaced Repetition)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị banner nhắc nhở từ vựng đến chu kỳ ôn tập trên trang chủ</div>
+            </div>
+          </label>
+
+          <!-- 2. POS Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-pos-checkbox" checked onchange="toggleShowFilterPosSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🏷️ Bộ lọc Từ Loại (Part of Speech)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo noun, verb, adjective... trong bộ từ</div>
+            </div>
+          </label>
+
+          <!-- 3. CEFR Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-cefr-checkbox" checked onchange="toggleShowFilterCefrSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🎯 Bộ lọc Cấp Độ CEFR (A1 - C2)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo cấp độ khó quốc tế</div>
+            </div>
+          </label>
+
+          <!-- 4. Score Filter Toggle -->
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+            <input type="checkbox" id="settings-filter-score-checkbox" checked onchange="toggleShowFilterScoreSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text);">🎚️ Nút Lọc Điểm Ghi Nhớ (Slider Panel)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị nút bật thanh trượt lọc mức độ thuộc 0% - 100%</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 5. HIỂN THỊ THỜI GIAN -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🕒 Hiển Thị Thời Gian (Date & Timestamps)</label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+          <input type="checkbox" id="settings-timestamp-checkbox" checked onchange="toggleShowTimestampSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text);">Hiện ngày tạo & chỉnh sửa</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng bộ từ và thẻ từ vựng</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-alpha-10.3) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
+          🐛 Gửi Báo Cáo Sự Cố / Góp Ý Tính Năng Cho Admin
+        </button>
+      </div>
+
+      <!-- VIP MEME REACTION TOGGLE & DURATION (v0.10.8-alpha-10.3) -->
+      <div class="form-group" id="setting-vip-cat-meme-group" style="margin-bottom: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <span>😸</span> <span>Hiệu Ứng Meme Mèo VIP</span>
+            <span class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 VIP</span>
+          </span>
+        </label>
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--text);">Phản hồi Meme Mèo khi học</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Tự động hiện meme hài hước khi Đúng/Sai ở Quiz, Spelling, Speaking</div>
+            </div>
+            <input type="checkbox" id="setting-vip-cat-meme" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleVipCatMemeSetting(this.checked)">
+          </div>
+
+          <div id="setting-vip-cat-meme-duration-container" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; transition: opacity 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11.5px; color: var(--text); font-weight: 600;">⏱️ Thời gian dừng hình (Giai đoạn 2):</span>
+              <span id="vip-cat-meme-duration-label" style="font-size: 11.5px; color: #ec4899; font-weight: 800; background: rgba(236,72,153,0.15); padding: 1px 8px; border-radius: 6px; border: 1px solid rgba(236,72,153,0.3);">2.5 giây</span>
+            </div>
+            <input type="range" id="setting-vip-cat-meme-duration" min="1.0" max="6.0" step="0.5" value="2.5" oninput="updateVipCatMemeDuration(this.value)" class="form-range" style="width: 100%; accent-color: #ec4899; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted);">
+              <span>1.0s (Nhanh)</span>
+              <span>2.5s (Chuẩn)</span>
+              <span>6.0s (Lâu)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.8)</strong></div>
+          <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
+          <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn btn-primary" onclick="closeModal('modal-settings')">Đóng</button>
+      </div>
+    </div>
+  </div>

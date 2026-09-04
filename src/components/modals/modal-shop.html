@@ -1,0 +1,282 @@
+﻿  <div class="modal-overlay" id="modal-shop">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">🏪</span>
+          <strong style="font-size: 17px;">Cửa Hàng Điểm Thưởng (VocaShop)</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-shop')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- Wallet Balance Card (4 Columns: Points, Hints, Skips, Flow Freeze) -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(6,182,212,0.1)); padding: 12px 8px; border-radius: 14px; border: 1px solid rgba(6,182,212,0.3);">
+        <div style="text-align: center; border-right: 1px solid var(--border); padding-right: 4px;">
+          <div style="font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">🪙 Số Xu</div>
+          <div id="shop-user-points" style="font-size: 18px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0</div>
+          <div style="font-size: 9px; color: var(--text-muted);">Ví Xu</div>
+        </div>
+        <div style="text-align: center; border-right: 1px solid var(--border); padding: 0 4px;">
+          <div style="font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">💡 Gợi Ý</div>
+          <div id="shop-user-hints" style="font-size: 18px; font-weight: 800; color: #38bdf8; margin-top: 2px;">0</div>
+          <div style="font-size: 9px; color: var(--text-muted);">AI Hint</div>
+        </div>
+        <div style="text-align: center; border-right: 1px solid var(--border); padding: 0 4px;">
+          <div style="font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">⏭️ Bỏ Qua</div>
+          <div id="shop-user-skips" style="font-size: 18px; font-weight: 800; color: #818cf8; margin-top: 2px;">0</div>
+          <div style="font-size: 9px; color: var(--text-muted);">Skip</div>
+        </div>
+        <div style="text-align: center; padding-left: 4px;">
+          <div style="font-size: 9.5px; color: #a5f3fc; text-transform: uppercase; font-weight: 700;">❄️ Freeze</div>
+          <div id="shop-user-freezes" style="font-size: 18px; font-weight: 800; color: #38bdf8; margin-top: 2px;">0</div>
+          <div style="font-size: 9px; color: var(--text-muted);">Hộ mệnh</div>
+        </div>
+      </div>
+
+      <!-- Gift / Redeem Code Section (Moved Up to Top v0.10.8-alpha-10.3) -->
+      <div id="shop-gift-code-box" style="margin-bottom: 16px; padding: 12px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(99,102,241,0.08)); border: 1px dashed rgba(236,72,153,0.4);">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #f472b6; margin-bottom: 6px;">🎁 Nhập mã quà tặng (Gift Code):</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="shop-gift-code-input" class="form-input" placeholder="Nhập mã quà tặng..." style="font-size: 12px; padding: 7px 10px; text-transform: uppercase; border-color: rgba(236,72,153,0.3);" onkeydown="if(event.key === 'Enter'){ redeemShopGiftCode(); event.preventDefault(); }">
+          <button class="btn btn-primary btn-sm" onclick="redeemShopGiftCode()" style="white-space: nowrap; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 700; padding: 0 16px;">Áp dụng</button>
+        </div>
+        <div id="shop-gift-msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
+      </div>
+
+      <!-- REFERRAL / AFFILIATE PROGRAM BANNER (v0.10.8-alpha-10.3) -->
+      <div id="shop-referral-banner" onclick="openReferralModal()" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(236,72,153,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎁</span>
+            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Cả 2 Cùng Nhận +1 Ngày VIP</strong>
+            <span class="badge" style="font-size: 9.5px; background: rgba(236,72,153,0.2); color: #f472b6; font-weight: 700;">Thưởng VIP</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted);">Chia sẻ mã mời: Bạn nhận +1 Ngày VIP, bạn bè nhận ngay 100 Xu & Quà tân thủ!</div>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="event.stopPropagation(); openReferralModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #ec4899, #a855f7); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(236,72,153,0.35); cursor: pointer;">
+          Mời Ngay
+        </button>
+      </div>
+
+      <!-- LUCKY WHEEL BANNER (v0.10.8-alpha-10.3) -->
+      <div id="shop-lucky-wheel-banner" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎡</span>
+            <strong id="shop-wheel-title" style="font-size: 13.5px; color: #fbbf24;">Vòng Quay May Mắn</strong>
+            <span id="shop-wheel-badge" class="badge" style="font-size: 10px; background: rgba(16,185,129,0.2); color: #34d399;">1 Lượt Free</span>
+          </div>
+          <div id="shop-wheel-desc" style="font-size: 11px; color: var(--text-muted);">Cơ hội trúng 300 Xu, Gợi ý & Giải Độc Đắc +1 Ngày VIP!</div>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="openLuckyWheelModal()" style="white-space: nowrap; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; border: none; font-weight: 800; padding: 7px 12px; border-radius: 8px; box-shadow: 0 3px 10px rgba(245,158,11,0.35);">
+          Quay Ngay
+        </button>
+      </div>
+
+      <!-- REWARDED ADS BANNER (AUTOMATICALLY HIDDEN FOR VIP USERS) -->
+      <div id="shop-rewarded-ad-banner" onclick="openRewardedAdModal()" style="margin-bottom: 16px; background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(99,102,241,0.12)); border: 1.5px dashed rgba(56,189,248,0.5); border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s;">
+        <div style="min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+            <span style="font-size: 18px;">🎬</span>
+            <strong style="font-size: 13.5px; color: #38bdf8;">Xem Video Nhận Lượt Quay</strong>
+            <span id="shop-ad-badge" class="badge" style="font-size: 9.5px; background: rgba(56,189,248,0.2); color: #38bdf8; font-weight: 700;">+1 Lượt Quay</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted);">Xem video giới thiệu 30s để nhận ngay +1 lượt quay may mắn miễn phí.</div>
+        </div>
+        <button type="button" id="btn-shop-watch-ad" class="btn btn-sm" onclick="event.stopPropagation(); openRewardedAdModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #38bdf8, #6366f1); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(56,189,248,0.35); cursor: pointer;">
+          🎬 Xem Ngay
+        </button>
+      </div>
+
+      <!-- ADSENSE QC1 DISPLAY UNIT IN SHOP (Auto-expands only when ad is delivered by Google) -->
+      <div id="shop-adsense-qc1-container" style="margin-bottom: 0px; overflow: hidden; text-align: center;">
+        <!-- QC1 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1343250003116465"
+             data-ad-slot="4836530250"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+
+      <!-- REAL-MONEY SPIN PACKAGES SECTION (v0.10.8-alpha-10.3) -->
+      <div style="font-size: 13px; font-weight: 700; color: #ffd700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <span>🎡 Mua Lượt Quay May Mắn (VietQR)</span>
+        <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 10px;">Thanh toán tức thì</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <!-- Spin Package 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">🎡 5 Lượt Quay May Mắn</div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">10.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 2.000đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openSpinPurchasePaymentModal('S5', '5 Lượt Quay May Mắn', 10000, 5)" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700;">
+            💳 Mua (10k)
+          </button>
+        </div>
+
+        <!-- Spin Package 2 (HOT) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(236,72,153,0.08)); border: 1.5px solid #f59e0b;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: #fbbf24;">🔥 15 Lượt Quay (Tặng +3)</span>
+              <span class="badge" style="background: rgba(245,158,11,0.25); color: #ffd700; font-size: 9.5px;">TIẾT KIỆM 17%</span>
+            </div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">25.000đ <span style="color: var(--text-muted); font-weight: normal;">(~1.600đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('S15', '15 Lượt Quay May Mắn', 25000, 15)" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 800;">
+            🚀 Mua (25k)
+          </button>
+        </div>
+
+        <!-- Spin Package 3 (VIP PACK) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(236,72,153,0.08)); border: 1.5px solid rgba(168,85,247,0.6);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: #c084fc;">👑 40 Lượt Quay Hoàng Gia</span>
+              <span class="badge" style="background: rgba(168,85,247,0.25); color: #c084fc; font-size: 9.5px;">SIÊU ƯU ĐÃI</span>
+            </div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">50.000đ <span style="color: var(--text-muted); font-weight: normal;">(Chỉ 1.250đ/lượt)</span></div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openSpinPurchasePaymentModal('S40', '40 Lượt Quay Hoàng Gia', 50000, 40)" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; font-weight: 800;">
+            👑 Mua (50k)
+          </button>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📦 Các Gói Đổi Gợi Ý AI</div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <!-- Package 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 1 Lượt Gợi Ý AI</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 50 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(1, 50)">
+            Đổi (50đ)
+          </button>
+        </div>
+
+        <!-- Package 2 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--text);">💡 5 Lượt Gợi Ý AI</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 250 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buyHintsPackage(5, 250)">
+            Đổi (250đ)
+          </button>
+        </div>
+
+        <!-- Package 3 (Discount) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(99,102,241,0.1)); border: 1px solid rgba(16,185,129,0.3);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 14px; color: var(--text);">💡 10 Lượt Gợi Ý AI</span>
+              <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">TIẾT KIỆM 50đ</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 450 điểm</div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="buyHintsPackage(10, 450)">
+            Đổi (450đ)
+          </button>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">⏭️ Các Gói Đổi Lượt Bỏ Qua (Skip Pass)</div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <!-- Skip 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 1 Lượt Bỏ Qua</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 100 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buySkipsPackage(1, 100)" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;">
+            Đổi (100đ)
+          </button>
+        </div>
+
+        <!-- Skip 5 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: var(--surface-elevated); border: 1px solid var(--border);">
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 5 Lượt Bỏ Qua</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá: 500 điểm</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="buySkipsPackage(5, 500)" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;">
+            Đổi (500đ)
+          </button>
+        </div>
+
+        <!-- Skip 10 (Discount) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(99,102,241,0.3);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 700; font-size: 13.5px; color: var(--text);">⏭️ 10 Lượt Bỏ Qua</span>
+              <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 9.5px;">TIẾT KIỆM 100đ</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Giá ưu đãi: 900 điểm</div>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="buySkipsPackage(10, 900)">
+            Đổi (900đ)
+          </button>
+        </div>
+      </div>
+
+      <!-- FLOW FREEZE SECTION (v0.10.8-alpha-10.16 - Auto-Protection & VIP Cap) -->
+      <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span>❄️ Đóng Băng Dòng Chảy (Flow Freeze)</span>
+        <span id="shop-flow-freeze-cap-badge" class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700;">Tối đa: 3 lượt</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1)); border: 1px solid rgba(6,182,212,0.35);">
+          <div>
+            <div style="font-weight: 700; font-size: 14px; color: #a5f3fc; display: flex; align-items: center; gap: 6px;">
+              <span>❄️ 1 Flow Freeze Hộ Mệnh</span>
+              <span id="shop-freeze-owned-badge" class="badge" style="background: rgba(34,211,238,0.2); color: #22d3ee; font-size: 9.5px;">Đang có: 0</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Tự động đóng băng bảo vệ chuỗi khi bạn nghỉ học (Giá: 200 Xu)</div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-shop-buy-freeze" onclick="buyFlowFreezeItem()" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; font-weight: 700; padding: 6px 14px; white-space: nowrap;">
+            Mua (200đ)
+          </button>
+        </div>
+      </div>
+<div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
+        <div>
+          <strong style="color: var(--text);">🎯 Quy tắc điểm Quiz (Theo Cấp Độ Thử Thách - balance_v1):</strong><br>
+          • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3 Xu) • Sai (-2% thuộc, -2 Xu)<br>
+          • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5 Xu) • Sai (-3% thuộc, -3 Xu)<br>
+          • 🔴 <strong>Khó:</strong> Đúng (+7% thuộc, +7 Xu) • Sai (-4% thuộc, -4 Xu)<br>
+          • 🟣 <strong>Cực khó:</strong> Đúng (+9% thuộc, +9 Xu) • Sai (-5% thuộc, -5 Xu)
+        </div>
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
+          <strong style="color: var(--text);">✍️ Quy tắc điểm Luyện Viết (Spelling - balance_v1):</strong><br>
+          • 💰 <strong>Điểm ví (Xu):</strong> Nhận theo ký tự × Hệ số cấp độ (Dễ x1.0, TB x1.5, Khó x2.0, Siêu Khó x2.5) × Hệ số manh mối (3 manh mối x1.0, 2 manh mối x1.2, 1 manh mối x1.5). Giới hạn tối đa/từ: Dễ (8 Xu), TB (12 Xu), Khó (16 Xu), Siêu Khó (22 Xu).<br>
+          • 📈 <strong>Điểm tinh thông:</strong> Tăng chuẩn theo cấp độ, giới hạn tối đa/từ: Dễ (+4%), TB (+6%), Khó (+8%), Siêu Khó (+10%).<br>
+          • 🔊 <strong>Giới hạn nghe phát âm:</strong> Dễ (6 lần), TB (5 lần), Khó (4 lần), Siêu Khó (3 lần)/từ.<br>
+          • ❌ <strong>Gõ sai / Bỏ qua:</strong> Ở Siêu Khó phạt 75% điểm câu; các cấp độ khác phạt nhẹ theo số ô sai; Bỏ qua không bị trừ phạt.
+        </div>
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
+          <strong style="color: var(--text);">🎙️ Quy tắc điểm Luyện Phát Âm (AI Speaking Lab - balance_v1):</strong><br>
+          • 👑 <strong>Điểm 100 (Hoàn Hảo):</strong> +10 Xu • 🌟 +5% Mức độ thuộc từ (Bắn pháo hoa 🎉)<br>
+          • 🪙 <strong>Điểm 80 - 99 (Chuẩn xác):</strong> +5 Xu • 📈 +2% Mức độ thuộc từ<br>
+          • 💡 <strong>Dưới 80 điểm:</strong> Không cộng Xu • Nhận chẩn đoán chi tiết âm vị và lời khuyên khẩu hình tiếng Việt để luyện lại.
+        </div>
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
+          <strong style="color: var(--text);">⚖️ Quy tắc Hệ số Tích Lũy Khối Lượng Thực Học (balance_v2):</strong><br>
+          • 📏 <strong>Hệ số độ dài (Theo số từ thực học):</strong> ≤5 từ (x0.8), ≤10 từ (x0.9), ≤25 từ (x1.0), ≤45 từ (x1.1), ≤70 từ (x1.2), >70 từ (x1.3).<br>
+          • ⏱️ <strong>Hệ số hoàn thành thông minh:</strong> Ôn tập SRS / Session lớn (≥50 từ) hoặc làm ≥30 từ luôn nhận trọn vẹn <strong>x1.0</strong>; Làm ≥15 từ (x0.85); Làm ≥8 từ (x0.7); Làm ≥4 từ (x0.5); Dưới 4 từ và bỏ dở (x0.25).<br>
+          • 🎁 <strong>Thưởng Cột Mốc Phiên Dài:</strong> Đạt mốc 25 từ (+15 Xu), 50 từ (+40 Xu), 70 từ (+75 Xu), 100 từ (+150 Xu).<br>
+          • ✖️ <strong>Tổng Xu nhận:</strong> (Điểm gốc × Hệ số hoàn thành × Hệ số độ dài) + Thưởng cột mốc.<br>
+          • ➗ <strong>Phạt bỏ dở khi âm điểm:</strong> Chỉ phạt chia hệ số khi mới làm 1-5 từ mà thoát ngang (-10 Xu ÷ 0.2 = -50 Xu).
+        </div>
+        <div style="border-top: 1px dashed var(--border); padding-top: 6px; color: #34d399; font-weight: 600;">
+          🎁 Tặng sẵn <strong>5 lượt Gợi Ý AI</strong> và <strong>3 lượt Bỏ Qua</strong> miễn phí cho tài khoản mới!
+        </div>
+      </div>
+    </div>
+  </div>

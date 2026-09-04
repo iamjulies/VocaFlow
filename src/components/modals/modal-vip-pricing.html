@@ -1,0 +1,250 @@
+﻿  <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
+    <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
+      <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 28px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));">👑</span>
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #ffd700, #ff9a9e, #fecfef); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bảng Giá Nâng Cấp VIP Crown</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;">Mở khóa trọn bộ đặc quyền cao cấp, tên phát sáng ánh kim và trợ lý học tập AI không giới hạn.</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vip-pricing')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GUEST LOCK VIEW FOR VIP PRICING (v0.10.8-alpha-10.3) -->
+      <div id="vip-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">👑🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Nâng Cấp Gói VIP Hoàng Gia, Sở Hữu Vương Miện Lấp Lánh & Phân Phối Đặc Quyền Chính Xác Đến Tài Khoản</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-vip-pricing'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-vip-pricing');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="vip-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+
+      <div style="overflow-y: auto; overflow-x: hidden; padding: 8px 2px; flex: 1; width: 100%; box-sizing: border-box;">
+        <!-- Current VIP Status Banner if Active -->
+        <div id="vip-current-status-banner" style="display: none; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">👑</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 800; color: #fbbf24;">Gói hiện tại: <span id="vip-banner-current-tier">VIP 1 Tháng</span></div>
+              <div id="vip-banner-expiry-info" style="font-size: 11.5px; color: var(--text-muted);">Thời hạn đến: <strong>26/09/2026</strong></div>
+            </div>
+          </div>
+          <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">Đang Hoạt Động</span>
+        </div>
+
+        <!-- Segmented Tab Switcher for Plans (v0.10.8-alpha-10.3) -->
+        <div class="vip-plan-segmented-bar" id="vip-plan-tabs-bar">
+          <button type="button" class="vip-plan-segment-btn tab-monthly" id="vip-tab-btn-monthly" onclick="switchVipPlanTab('monthly')">
+            <span>🥉</span> <span>THÁNG</span>
+          </button>
+          <button type="button" class="vip-plan-segment-btn tab-yearly active" id="vip-tab-btn-yearly" onclick="switchVipPlanTab('yearly')">
+            <span>🔥</span> <span>NĂM</span> <span class="badge" style="font-size: 9.5px; padding: 1px 5px; background: rgba(245, 158, 11, 0.3); color: #ffd700; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 800;">-36%</span>
+          </button>
+          <button type="button" class="vip-plan-segment-btn tab-lifetime" id="vip-tab-btn-lifetime" onclick="switchVipPlanTab('lifetime')">
+            <span>👑</span> <span>TRỌN ĐỜI</span>
+          </button>
+        </div>
+
+        <!-- 3 Pricing Cards Grid Container -->
+        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
+          
+          <!-- GÓI 1 THÁNG -->
+          <div id="vip-card-monthly" class="vip-plan-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
+                <span style="font-size: 22px;">🥉</span>
+              </div>
+              <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">VIP 1 Tháng</h3>
+              <div style="margin: 12px 0 16px 0;">
+                <span style="font-size: 28px; font-weight: 900; color: #fbbf24;">39.000đ</span>
+                <span style="font-size: 12px; color: var(--text-muted);">/ tháng</span>
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+                <li style="display: flex; align-items: center; gap: 6px;">✨ <span>Tên phát sáng neon ánh kim</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">👑 <span>Vương miện VIP Crown độc quyền</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">📚 <span>Mở khóa toàn bộ Thư Viện THPT</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🤖 <span>50 lượt tạo Deck AI & Mentor/tháng</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">☁️ <span>Đồng bộ Cloud Realtime</span></li>
+              </ul>
+            </div>
+            <button id="btn-plan-monthly" class="btn btn-outline" onclick="selectVipPlan('monthly', 'VIP 1 Tháng', '39.000đ', 39000)" style="width: 100%; justify-content: center; font-weight: 700; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); padding: 10px;">
+              Chọn Gói Tháng
+            </button>
+          </div>
+
+          <!-- GÓI 1 NĂM (POPULAR) -->
+          <div id="vip-card-yearly" class="vip-plan-card active-tab-card" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+            <div id="vip-ribbon-yearly" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
+              🔥 TIẾT KIỆM 36% • PHỔ BIẾN
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span id="vip-badge-yearly" class="badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(236, 72, 153, 0.4);">💎 GÓI NĂM</span>
+                <span style="font-size: 22px;">🥈</span>
+              </div>
+              <h3 style="font-size: 17px; font-weight: 800; color: #fbbf24; margin: 0 0 4px 0;">VIP 1 Năm</h3>
+              <div style="margin: 12px 0 4px 0;">
+                <span style="font-size: 28px; font-weight: 900; color: #fbbf24;">299.000đ</span>
+                <span style="font-size: 12px; color: var(--text-muted);">/ năm</span>
+              </div>
+              <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 14px;">Chỉ ~25.000đ / tháng</div>
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+                <li style="display: flex; align-items: center; gap: 6px;">⭐ <strong>Tất cả đặc quyền Gói Tháng</strong></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🤖 <strong>Không giới hạn</strong> AI Deck & Mentor</li>
+                <li style="display: flex; align-items: center; gap: 6px;">⚡ <span>Tốc độ đồng bộ Cloud Realtime siêu tốc</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🥈 <span>Huy hiệu VIP 1 Năm lấp lánh</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🎁 <span>Tặng 100 Điểm Ví VocaShop</span></li>
+              </ul>
+            </div>
+            <button id="btn-plan-yearly" class="btn btn-primary" onclick="selectVipPlan('yearly', 'VIP 1 Năm', '299.000đ', 299000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+              🚀 Nâng Cấp Gói Năm
+            </button>
+          </div>
+
+          <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
+          <div id="vip-card-lifetime" class="vip-plan-card" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+            <div id="vip-ribbon-lifetime" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
+              👑 ĐẲNG CẤP HOÀNG GIA
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span id="vip-badge-lifetime" class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(168, 85, 247, 0.4);">🌌 TRỌN ĐỜI</span>
+                <span style="font-size: 22px;">👑</span>
+              </div>
+              <h3 style="font-size: 17px; font-weight: 800; color: #c084fc; margin: 0 0 4px 0;">VIP Trọn Đời</h3>
+              <div style="margin: 12px 0 4px 0;">
+                <span style="font-size: 28px; font-weight: 900; color: #c084fc;">599.000đ</span>
+                <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
+              </div>
+              <div style="font-size: 11px; color: #a855f7; font-weight: 700; margin-bottom: 14px;">Thanh toán 1 lần duy nhất</div>
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+                <li style="display: flex; align-items: center; gap: 6px;">👑 <strong>Sở hữu vĩnh viễn toàn bộ tính năng</strong></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🌌 <span>Tên & Vương Miện Hoàng Gia vĩnh cửu</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🚀 <span>Mở khóa trước mọi tính năng tương lai</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">🛠️ <span>Đặc quyền Creator & Xuất bản Pro</span></li>
+                <li style="display: flex; align-items: center; gap: 6px;">💬 <span>Kênh hỗ trợ kỹ thuật ưu tiên 24/7</span></li>
+              </ul>
+            </div>
+            <button id="btn-plan-lifetime" class="btn btn-primary" onclick="selectVipPlan('lifetime', 'VIP Trọn Đời', '599.000đ', 599000)" style="width: 100%; justify-content: center; font-weight: 800; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; padding: 10px; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);">
+              👑 Sở Hữu Trọn Đời
+            </button>
+          </div>
+
+        </div>
+
+        <!-- PAYMENT DETAILS / BANK TRANSFER SECTION (v0.10.8-alpha-10.3 BEAUTIFIED) -->
+        <div id="vip-payment-info-box" style="display: none; margin-top: 20px; background: var(--surface-elevated); border: 1.5px solid rgba(251, 191, 36, 0.5); border-radius: 14px; padding: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 15px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+              <span>💳</span> Hướng Dẫn Thanh Toán <span id="vip-selected-plan-name" style="color: var(--text);">VIP</span>
+            </div>
+            <span id="vip-selected-plan-price" class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 13px; font-weight: 800; padding: 4px 10px;">0đ</span>
+          </div>
+
+          <div id="vip-rollover-notice" style="margin-bottom: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
+            <span>🔄</span> <span id="vip-rollover-text">Thời hạn sẽ được cộng dồn tiếp tục sau khi gói hiện tại kết thúc.</span>
+          </div>
+
+          <div class="vip-payment-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: center; margin-bottom: 14px;">
+            <!-- QR Image Container -->
+            <div style="text-align: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+              <img id="vip-vietqr-img" src="" alt="VietQR VIP Payment" style="width: 170px; height: 170px; object-fit: contain; display: block; margin: 0 auto;">
+              <div style="font-size: 10px; color: #475569; font-weight: 700; margin-top: 4px;">Quét mã VietQR bằng App Ngân Hàng</div>
+            </div>
+
+            <!-- Transfer details -->
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Ngân hàng:</div>
+                <strong style="color: #38bdf8;">MB Bank (Ngân hàng Quân Đội)</strong>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Số tài khoản:</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong id="vip-acc-number" style="color: #34d399; font-size: 14px; font-family: monospace;">0916541813</strong>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="copyAccountNumber()" style="padding: 2px 6px; font-size: 10px;">Copy</button>
+                </div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Chủ tài khoản:</div>
+                <strong style="color: var(--text);">NONG DUC HAO</strong>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="font-size: 10px; color: var(--text-muted);">Số tiền:</div>
+                <strong id="vip-pay-amount-display" style="color: #fbbf24; font-size: 14px;">299.000đ</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transfer Syntax box -->
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.5); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 4px;">Nội dung chuyển khoản (Bắt buộc chính xác):</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px;">
+              <code id="vip-transfer-syntax" style="font-size: 13px; font-weight: 800; color: #ffd700; font-family: monospace;">VOCA VIP</code>
+              <button type="button" class="btn btn-primary btn-sm" onclick="copyTransferSyntax()" style="padding: 4px 10px; font-size: 11px; white-space: nowrap; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none;">
+                📋 Sao Chép
+              </button>
+            </div>
+            <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">💡 Quét mã VietQR sẽ tự động điền đầy đủ STK, số tiền và cú pháp chuẩn 100%.</div>
+          </div>
+
+          <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <a href="https://zalo.me/0876048326" target="_blank" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56,189,248,0.4); text-decoration: none; font-size: 11px; padding: 6px 10px;">
+              💬 Hỗ trợ Zalo: 0876048326
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="confirmVipPaymentSubmitted()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 11.5px; padding: 6px 14px;">
+              ✓ Tôi Đã Chuyển Khoản
+            </button>
+          </div>
+        </div>
+
+        <!-- VIP FAQ / HELP SECTION (v0.10.8-alpha-10.3) -->
+        <div style="margin-top: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
+          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <span>❓</span> Câu Hỏi Thường Gặp Khi Nâng Cấp VIP
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted);">
+            <div style="background: rgba(245,158,11,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);">
+              <strong style="color: #fbbf24;">❓ Nếu sau 5 - 10 phút chưa được kích hoạt VIP hoặc Lượt quay thì sao?</strong>
+              <p style="margin: 2px 0 0 0; color: #ffd700; font-size: 11.5px;">Bạn <u style="font-weight: 800;">KHÔNG CẦN CHUYỂN TIỀN LẠI LẦN 2</u>! Chỉ cần bấm nút <strong>"💬 Hỗ trợ Zalo"</strong> hoặc nhắn tin hotline <strong>0876048326</strong> kèm ảnh biên lai chuyển khoản, Admin sẽ hỗ trợ kiểm tra và kích hoạt ngay tức thì.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">⏱️ Thời gian xử lý giao dịch chuyển khoản là bao lâu?</strong>
+              <p style="margin: 2px 0 0 0;">Thông thường hệ thống xử lý đối soát tự động từ <strong>1 - 5 phút</strong>. Nếu ngân hàng bảo trì hoặc ngoài giờ cao điểm, tối đa từ <strong>10 - 15 phút</strong>.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">📱 Quét mã VietQR có cần gõ lại nội dung chuyển khoản không?</strong>
+              <p style="margin: 2px 0 0 0;"><strong>Không cần gõ!</strong> Khi quét mã QR bằng app ngân hàng hoặc ví điện tử, hệ thống đã tự động điền chuẩn 100% STK (0916541813), Chủ tài khoản (NONG DUC HAO), số tiền và cú pháp chuẩn.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">💸 Nếu chuyển khoản mà quên ghi cú pháp thì có bị mất tiền không?</strong>
+              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0876048326)</strong> để được hỗ trợ đối soát và kích hoạt VIP trong 1 phút.</p>
+            </div>
+            <div>
+              <strong style="color: var(--text);">⚠️ Chưa chuyển tiền mà bấm "Tôi Đã Chuyển Khoản" thì sao?</strong>
+              <p style="margin: 2px 0 0 0;">Hệ thống sẽ ghi nhận yêu cầu và tự động đối soát với tài khoản MB Bank. Sau 2 - 5 phút nếu không tìm thấy giao dịch chuyển tiền thực tế, hệ thống sẽ gửi thông báo <em>"Đối soát chưa thành công"</em> vào Trung Tâm Thông Báo và không kích hoạt VIP.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <button class="btn btn-primary" onclick="closeModal('modal-vip-pricing')">Đóng</button>
+      </div>
+      </div> <!-- end vip-main-authenticated-view -->
+    </div>
+  </div>

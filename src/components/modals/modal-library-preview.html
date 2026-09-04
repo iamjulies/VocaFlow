@@ -1,0 +1,40 @@
+﻿  <div class="modal-overlay" id="modal-library-preview">
+    <div class="modal" style="max-width: 620px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="lib-preview-icon" style="font-size: 20px;">📘</span>
+          <strong id="lib-preview-title" style="font-size: 16px;">Xem Trước Bộ Từ</strong>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-library-preview')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <p id="lib-preview-desc" style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px;"></p>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <span id="lib-preview-count" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700;">60 từ vựng</span>
+          <span id="lib-preview-category" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">THPT</span>
+          <span id="lib-preview-author" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 600;">👤 Đóng góp: Cộng đồng</span>
+        </div>
+      </div>
+
+      <!-- WORD PREVIEW LIST -->
+      <div id="lib-preview-words-container" style="flex: 1; overflow-y: auto; background: var(--surface); border-radius: 10px; padding: 10px; border: 1px solid var(--border); font-size: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 380px;">
+        <!-- Words rendered via JS -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-outline" onclick="closeModal('modal-library-preview')">Đóng</button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-outline btn-sm" id="btn-lib-preview-edit" style="display: none; color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;" onclick="closeModal('modal-library-preview'); openEditPublishedDeckModal(currentPreviewDeck?.id)">
+            ✏️ Sửa Bộ Từ
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-lib-preview-delete" style="display: none; color: #f87171; border-color: rgba(248,113,113,0.4); font-weight: 700;" onclick="deletePublishedDeck(currentPreviewDeck?.id)">
+            🗑️ Xóa Khỏi Thư Viện
+          </button>
+          <button class="btn btn-primary" id="btn-lib-preview-install" onclick="installPreviewedDeck()">
+            📥 Thêm Vào Bộ Từ Của Tôi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
