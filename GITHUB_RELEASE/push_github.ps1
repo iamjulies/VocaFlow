@@ -90,7 +90,7 @@ Write-Host "[2/4] Đang lưu và đẩy lên iamjulies/VocaFlow (main)..." -Fore
 & $git -C $root remote add origin $vocaFlowRemote
 & $git -C $root branch -M main
 & $git -C $root add .
-$commitMsg = "feat: Release v0.10.9-alpha-5 $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+$commitMsg = "feat: Release v0.10.9-alpha-6 $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 & $git -C $root commit -m $commitMsg 2>$null
 & $git -C $root push -u origin main --force
 

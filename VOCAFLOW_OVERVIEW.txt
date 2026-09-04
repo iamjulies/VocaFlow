@@ -1,19 +1,34 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-5 (Build 237) - Auto-Lock AI Features Without Gemini Key
+Phiên bản: v0.10.9-alpha-6 (Build 238) - Flow Freeze Fix, Anti-Clock Exploit & VIP Expiry Purge
 ================================================================================
-1. [Khóa Tự Động 5 Tính Năng AI Khi Chưa Có API Key] Tự động khóa chặt Luyện nói (mọi cấp), Trắc nghiệm Quiz (trung bình, khó, cực khó), Gemini English Mentor, AI Điền tự động và VocaDeck AI Deck Studio đối với tài khoản chưa nhập ít nhất 1 API key.
-2. [Bảo Tồn Chế Độ Quiz Dễ Offline] Giữ nguyên quyền truy cập chế độ Trắc nghiệm Dễ (Easy) cho người dùng chưa có API key nhờ thuật toán xáo trộn từ vựng ngẫu nhiên offline không phụ thuộc Gemini.
-3. [Giao Diện Khóa Thân Thiện & Mở Khóa Tức Thì] Thiết kế màn hình khóa chuyên biệt hướng dẫn lý do và nút dẫn lối vào Cài Đặt (Settings); tự động mở khóa ngay khi người dùng lưu ít nhất 1 API key mà không cần tải lại trang.
-4. [Bảo Vệ Đa Tầng Cấp Độ API & Giao Diện] Bổ sung hàm kiểm tra chuẩn hóa hasAtLeastOneApiKey() tại toàn bộ các điểm kích hoạt, phím tắt, nút bấm và gửi yêu cầu mạng.
+1. [Khắc Phục Lỗi Tự Trừ Oan Flow Freeze] Xóa triệt để mã debug cũ vô tình trừ oan Freeze; sửa lỗi trừ đúp delta khi đồng bộ Cloud; thu hẹp phạm vi bảo vệ Flow chỉ cho chuỗi đang học (không quét lùi vào các khoảng trống cũ); bổ sung cơ chế tự phục hồi hoàn lại +1 Flow Freeze (1/7) cho tài khoản bị trừ nhầm.
+2. [Hệ Thống Chống Can Thiệp Giờ Máy (Anti-Time-Travel)] Quản lý thời gian tin cậy qua HTTP header Date từ Firebase; theo dõi mốc thời gian tịnh tiến cao nhất (maxObservedTimestamp); chặn việc chỉnh lùi ngày để học gian lận Flow streak hay lạm dụng nhận quà/lượt quay hằng ngày; ngăn việc nhảy ngày làm ngốn oan Freeze.
+3. [Dọn Dẹp Mác VIP & Khóa Toàn Bộ Quyền VIP Khi Hết Hạn] Cập nhật kiểm tra thời hạn thực tế trong initGlobalVipRegistry và isAuthorVipUser; tự động xóa vương miện 👑 khỏi tên người dùng; chuyển huy hiệu hồ sơ về thành viên thường (🌟 Tác Giả Đóng Góp); khóa chặt mọi đặc quyền VIP khi hết hạn.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
-           TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
+            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-5 (Build 237)
+Phiên bản hiện tại : v0.10.9-alpha-6 (Build 238)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-6] - (BUILD 238 - FLOW FREEZE FIX, ANTI-CLOCK EXPLOIT & VIP EXPIRY PURGE):
+  - ❄️ Sửa lỗi tự động trừ Flow Freeze:
+    * Xóa khối mã debug cũ `vocaflow_freeze_deducted_v0108_debug06` từng tự động trừ 1 freeze khi có lịch sử freeze.
+    * Khắc phục lỗi trừ lặp đúp delta khi đồng bộ Cloud ở cả `onAuthStateChanged` và `pullDatabaseFromCloud`.
+    * Tái cấu trúc `evaluateAndAutoApplyFlowFreezes`: Chỉ bảo vệ chuỗi liên tục tiếp nối với ngày học gần nhất (tối đa bằng số Freeze hiện có), không bao giờ quét lùi vào các khoảng trống cũ đã gãy.
+    * Tự động hoàn trả 1 lần (`healErroneousFreezeDeduction`): Phục hồi +1 Flow Freeze (`1/7`) cho người dùng bị mất lượt freeze oan và ghi nhận nhật ký ví `RECOVER_FLOW_FREEZE`.
+  - 🛡️ Chống can thiệp ngày giờ (Anti-Time-Travel Engine):
+    * Đồng bộ thời gian thực chuẩn từ Cloud thông qua HTTP response header `Date` của Google Firebase RTDB.
+    * Lưu vết thời gian tịnh tiến cao nhất (`vocaflow_max_observed_timestamp` & `vocaflow_max_observed_date`).
+    * Ngăn chặn việc chỉnh lùi ngày giờ hệ thống để học gian lận Flow streak hoặc nhận quà/lượt quay hằng ngày lặp lại.
+  - 👑 Dọn dẹp sạch mác VIP khi hết hạn & Khóa chặt mọi đặc quyền:
+    * Cập nhật `initGlobalVipRegistry` và `isAuthorVipUser` luôn đối chiếu thời hạn `vipExpiresAt > now` (trừ khi là `lifetime`).
+    * Tự động xóa vương miện `👑` khỏi tên người dùng trong hồ sơ công khai, danh sách bộ từ, bảng xếp hạng khi VIP hết hạn.
+    * Chuyển huy hiệu hồ sơ từ `👑 VIP Hết hạn` về chuẩn thành viên thường `🌟 Tác Giả Đóng Góp` và gỡ bỏ viền phát sáng hoàng kim VIP.
+    * Khóa chặt toàn bộ tính năng VIP khi hết hạn: Bộ từ VIP, Khe Gemini API Key 2 & 3, thưởng quay VIP (+2 lượt), trần Flow Freeze trở về 3 lượt.
 
 🌟 [v0.10.9-alpha-5] - (BUILD 237 - AUTO-LOCK AI FEATURES WITHOUT GEMINI KEY):
   - Tự động khóa 5 tính năng phụ thuộc AI Gemini đối với người dùng chưa nhập ít nhất 1 API key (kể cả khi đã đăng nhập tài khoản):

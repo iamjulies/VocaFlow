@@ -2547,7 +2547,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-5</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-6</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -7882,12 +7882,71 @@
 
   <script>
     // =========================================================================
-    // GLOBAL DATE & AI MENTOR CLOUD QUOTA ENGINE (v0.10.7g-8)
+    // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-6)
     // =========================================================================
+    let serverTimeDeltaMs = 0;
+    let hasServerTimeSync = false;
+    const STORAGE_KEY_MAX_OBSERVED_TIME = 'vocaflow_max_observed_timestamp';
+    const STORAGE_KEY_MAX_OBSERVED_DATE = 'vocaflow_max_observed_date';
+
+    function getTrustedCurrentTimestamp() {
+      const localNow = Date.now();
+      if (hasServerTimeSync) {
+        return localNow + serverTimeDeltaMs;
+      }
+      return localNow;
+    }
+
+    function recordTrustedTimeObservation(timestamp) {
+      const ts = Number(timestamp) || Date.now();
+      const maxStored = parseInt(localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_TIME) || '0', 10);
+      if (ts > maxStored) {
+        localStorage.setItem(STORAGE_KEY_MAX_OBSERVED_TIME, ts.toString());
+        const d = new Date(ts);
+        const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const maxDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+        if (dStr > maxDate) {
+          localStorage.setItem(STORAGE_KEY_MAX_OBSERVED_DATE, dStr);
+        }
+      }
+    }
+
+    function isSystemClockManipulatedBackward() {
+      const maxStored = parseInt(localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_TIME) || '0', 10);
+      if (maxStored > 0) {
+        const current = getTrustedCurrentTimestamp();
+        // Allow up to 10 minutes tolerance for minor clock drift / NTP adjustment
+        if (current < maxStored - 600000) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function syncTrustedServerTimeFromHeader(dateHeaderString) {
+      if (!dateHeaderString) return;
+      try {
+        const sTime = new Date(dateHeaderString).getTime();
+        if (!isNaN(sTime) && sTime > 1700000000000) {
+          serverTimeDeltaMs = sTime - Date.now();
+          hasServerTimeSync = true;
+          recordTrustedTimeObservation(sTime);
+        }
+      } catch (e) {}
+    }
+
     function getTodayDateString() {
-      const d = new Date();
+      const ts = getTrustedCurrentTimestamp();
+      recordTrustedTimeObservation(ts);
+      const d = new Date(ts);
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
+
+    function stripVipAffixes(name) {
+      if (!name || typeof name !== 'string') return '';
+      return name.replace(/\s*👑\s*/g, ' ').replace(/\s*\(VIP\)\s*/gi, ' ').trim();
+    }
+    window.stripVipAffixes = stripVipAffixes;
 
     var aiChatDailyDate = localStorage.getItem('vocaflow_ai_chat_daily_date') || '';
     var aiChatDailyCount = parseInt(localStorage.getItem('vocaflow_ai_chat_daily_count') || '0', 10);
@@ -8003,14 +8062,21 @@
         if (userVipTier === 'lifetime') return true;
         const effectiveExp = Math.max(userVipExpiresAt || 0, getVipHighWaterExp());
         if (effectiveExp && effectiveExp > Date.now()) return true;
-        // Expired check
-        if (effectiveExp && effectiveExp <= Date.now()) {
-          userIsVip = false;
-          userVipTier = 'none';
-          localStorage.setItem('vocaflow_user_is_vip', 'false');
-          localStorage.setItem('vocaflow_user_vip_tier', 'none');
-          return false;
+        // Expired check: Purge and Lock all VIP state immediately
+        userIsVip = false;
+        userVipTier = 'none';
+        userVipExpiresAt = 0;
+        localStorage.setItem('vocaflow_user_is_vip', 'false');
+        localStorage.setItem('vocaflow_user_vip_tier', 'none');
+        localStorage.setItem('vocaflow_user_vip_expires_at', '0');
+        localStorage.removeItem(STORAGE_KEY_VIP_HIGH_WATER);
+        if (currentUser) {
+          currentUser.isVip = false;
+          currentUser.vipTier = 'none';
+          currentUser.vipExpiresAt = 0;
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
+        return false;
       }
       return false;
     }
@@ -11675,18 +11741,27 @@ function switchPublisherTab(tab) {
                 currentUser.avatar = remoteAv;
                 changed = true;
               }
-              // Sync VIP status from Cloud on startup (v0.10.8-alpha-10.3)
+              // Sync VIP status from Cloud on startup (v0.10.8-alpha-10.3 / v0.10.9-alpha-6)
               if (prof.isVip !== undefined || uData.isVip !== undefined || uData.vip !== undefined) {
-                const remoteIsVip = (prof.isVip !== undefined) ? !!prof.isVip : (uData.isVip !== undefined ? !!uData.isVip : (uData.vip && !!uData.vip.isVip));
+                const rawRemoteIsVip = (prof.isVip !== undefined) ? !!prof.isVip : (uData.isVip !== undefined ? !!uData.isVip : (uData.vip && !!uData.vip.isVip));
                 const remoteTier = prof.vipTier || uData.vipTier || (uData.vip && uData.vip.tier) || 'none';
                 const remoteExpires = Number(prof.vipExpiresAt || uData.vipExpiresAt || (uData.vip && uData.vip.expiresAt) || 0);
-                if (remoteIsVip !== userIsVip || remoteTier !== userVipTier || remoteExpires !== userVipExpiresAt) {
-                  userIsVip = remoteIsVip;
-                  userVipTier = remoteTier;
-                  userVipExpiresAt = remoteExpires;
+                const isRemoteActive = rawRemoteIsVip && (remoteTier === 'lifetime' || remoteExpires > Date.now());
+
+                const finalIsVip = isRemoteActive;
+                const finalTier = isRemoteActive ? remoteTier : 'none';
+                const finalExpires = isRemoteActive ? remoteExpires : 0;
+
+                if (finalIsVip !== userIsVip || finalTier !== userVipTier || finalExpires !== userVipExpiresAt) {
+                  userIsVip = finalIsVip;
+                  userVipTier = finalTier;
+                  userVipExpiresAt = finalExpires;
                   localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
                   localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
                   localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+                  if (!userIsVip) {
+                    localStorage.removeItem(STORAGE_KEY_VIP_HIGH_WATER);
+                  }
                   if (currentUser) {
                     currentUser.isVip = userIsVip;
                     currentUser.vipTier = userVipTier;
@@ -11792,12 +11867,18 @@ function switchPublisherTab(tab) {
 
               if (!isNaN(remoteStartupFreezes)) {
                 const localFreezes = getUserFlowFreezes();
-                const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteStartupFreezeDates.length);
-                const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
-                const effectiveRemote = Math.max(0, remoteStartupFreezes - newlyConsumedByLocal);
-                const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
                 const maxCap = getMaxFlowFreezes();
-                const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+                let syncedFreezes = localFreezes;
+                const localUsed = localFreezeDates.length;
+                const remoteUsed = remoteStartupFreezeDates.length;
+                if (localUsed === remoteUsed) {
+                  syncedFreezes = Math.max(localFreezes, remoteStartupFreezes);
+                } else if (localUsed > remoteUsed) {
+                  syncedFreezes = Math.max(0, Math.min(localFreezes, remoteStartupFreezes - (localUsed - remoteUsed)));
+                } else {
+                  syncedFreezes = Math.max(0, Math.min(remoteStartupFreezes, localFreezes - (remoteUsed - localUsed)));
+                }
+                syncedFreezes = Math.min(maxCap, syncedFreezes);
 
                 localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                 localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -11885,24 +11966,38 @@ function switchPublisherTab(tab) {
     function initGlobalVipRegistry() {
       if (!firebaseConfig.databaseURL) return;
       fetch(`${firebaseConfig.databaseURL}/users.json`)
-        .then(res => res.ok ? res.json() : null)
+        .then(res => {
+          if (res.headers && res.headers.get('date')) {
+            syncTrustedServerTimeFromHeader(res.headers.get('date'));
+          }
+          return res.ok ? res.json() : null;
+        })
         .then(allUsers => {
           if (allUsers && typeof allUsers === 'object') {
+            const now = getTrustedCurrentTimestamp();
             Object.entries(allUsers).forEach(([uid, uData]) => {
               if (uData && typeof uData === 'object') {
                 const prof = uData.profile || {};
-                const isVip = prof.isVip === true || uData.isVip === true;
+                const rawIsVip = prof.isVip === true || uData.isVip === true;
                 const vipTier = prof.vipTier || uData.vipTier || 'none';
                 const name = prof.displayName || uData.displayName || '';
                 const username = prof.username || uData.username || '';
                 const avatar = prof.avatar || uData.avatar || '';
-                const vipExpiresAt = prof.vipExpiresAt || uData.vipExpiresAt || 0;
+                const vipExpiresAt = Number(prof.vipExpiresAt || uData.vipExpiresAt || 0);
 
-                if (isVip) {
-                  const entry = { uid, isVip: true, vipTier, displayName: name, username, avatar, vipExpiresAt };
-                  globalVipRegistry[uid] = entry;
-                  if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
-                }
+                const isActiveVip = rawIsVip && (vipTier === 'lifetime' || (vipExpiresAt > now));
+
+                const entry = {
+                  uid,
+                  isVip: isActiveVip,
+                  vipTier: isActiveVip ? vipTier : 'none',
+                  displayName: name,
+                  username,
+                  avatar,
+                  vipExpiresAt: isActiveVip ? vipExpiresAt : 0
+                };
+                globalVipRegistry[uid] = entry;
+                if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
               }
             });
             // Re-render components with fresh VIP data
@@ -11917,7 +12012,7 @@ function switchPublisherTab(tab) {
       if (tier === 'lifetime' || !expiresAt || expiresAt === 0 || expiresAt === Infinity) {
         return 'Trọn Đời';
       }
-      const now = Date.now();
+      const now = getTrustedCurrentTimestamp();
       const diffMs = Number(expiresAt) - now;
       if (diffMs <= 0) return 'Hết hạn';
 
@@ -11935,20 +12030,34 @@ function switchPublisherTab(tab) {
       if (authorUid && currentUser && authorUid === currentUser.uid) return isUserVip();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return isUserVip();
       
-      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].isVip === true;
-      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].isVip === true;
+      const now = getTrustedCurrentTimestamp();
+      let entry = null;
+      if (authorUid && globalVipRegistry[authorUid]) entry = globalVipRegistry[authorUid];
+      else if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) entry = globalVipRegistryNameMap[authorName.trim().toLowerCase()];
+
+      if (entry) {
+        if (!entry.isVip) return false;
+        if (entry.vipTier === 'lifetime') return true;
+        const exp = Number(entry.vipExpiresAt || 0);
+        return exp > now;
+      }
 
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
-      if (student && student.isVip) return true;
+      if (student && student.isVip) {
+        if (student.vipTier === 'lifetime') return true;
+        const exp = Number(student.vipExpiresAt || 0);
+        return exp > now;
+      }
       return false;
     }
 
     function getAuthorVipTier(authorUid, authorName) {
+      if (!isAuthorVipUser(authorUid, authorName)) return 'none';
       if (authorUid && currentUser && authorUid === currentUser.uid) return getUserVipTier();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return getUserVipTier();
       
-      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipTier || 'lifetime';
-      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipTier || 'lifetime';
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipTier || 'none';
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipTier || 'none';
 
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
       if (student && student.isVip && student.vipTier) return student.vipTier;
@@ -13046,10 +13155,11 @@ function switchPublisherTab(tab) {
       const nameMobileEl = document.getElementById('user-display-name-mobile');
       if (currentUser && currentUser.email) {
         if (guestBanner) guestBanner.style.display = 'none';
-        const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-        const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        const rawDisplayName = currentUser.displayName || currentUser.email.split('@')[0];
         const userVipActive = isUserVip();
         const userVipTierName = getUserVipTier();
+        const displayName = userVipActive ? rawDisplayName : stripVipAffixes(rawDisplayName);
+        const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
         if (nameEl) {
           if (userVipActive) {
@@ -13080,12 +13190,21 @@ function switchPublisherTab(tab) {
         if (profileBadgeEl) {
           if (userVipActive) {
             const durationLabel = formatVipDurationText(userVipExpiresAt, userVipTierName);
-            profileBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
-            profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-            profileBadgeEl.style.color = '#ffffff';
-            profileBadgeEl.style.fontWeight = '800';
-            profileBadgeEl.style.border = '1px solid rgba(251, 191, 36, 0.6)';
-            profileBadgeEl.style.boxShadow = '0 2px 10px rgba(245, 158, 11, 0.4)';
+            if (durationLabel !== 'Hết hạn') {
+              profileBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+              profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+              profileBadgeEl.style.color = '#ffffff';
+              profileBadgeEl.style.fontWeight = '800';
+              profileBadgeEl.style.border = '1px solid rgba(251, 191, 36, 0.6)';
+              profileBadgeEl.style.boxShadow = '0 2px 10px rgba(245, 158, 11, 0.4)';
+            } else {
+              profileBadgeEl.textContent = 'Đã liên kết Cloud';
+              profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
+              profileBadgeEl.style.color = '#34d399';
+              profileBadgeEl.style.fontWeight = 'normal';
+              profileBadgeEl.style.border = 'none';
+              profileBadgeEl.style.boxShadow = 'none';
+            }
           } else {
             profileBadgeEl.textContent = 'Đã liên kết Cloud';
             profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
@@ -14499,12 +14618,13 @@ function switchPublisherTab(tab) {
       const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
       const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
       const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
+      const cleanResolvedName = stripVipAffixes(resolvedName);
 
       if (nameEl) {
         if (isAuthorVip) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
         } else {
-          nameEl.textContent = resolvedName;
+          nameEl.textContent = cleanResolvedName;
         }
       }
       if (avEl) {
@@ -14521,12 +14641,21 @@ function switchPublisherTab(tab) {
       if (pubBadgeEl) {
         if (isAuthorVip) {
           const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
-          pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
-          pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-          pubBadgeEl.style.color = '#ffffff';
-          pubBadgeEl.style.fontWeight = '800';
-          pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
-          pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+          if (durationLabel !== 'Hết hạn') {
+            pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+            pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            pubBadgeEl.style.color = '#ffffff';
+            pubBadgeEl.style.fontWeight = '800';
+            pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+            pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+          } else {
+            pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+            pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+            pubBadgeEl.style.color = '#a5b4fc';
+            pubBadgeEl.style.fontWeight = '700';
+            pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+            pubBadgeEl.style.boxShadow = 'none';
+          }
         } else {
           pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
           pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
@@ -15100,6 +15229,9 @@ function switchPublisherTab(tab) {
           // -----------------------------------------------------------
           try {
             const pullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`);
+            if (pullRes.headers && pullRes.headers.get('date')) {
+              syncTrustedServerTimeFromHeader(pullRes.headers.get('date'));
+            }
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
@@ -15117,21 +15249,27 @@ function switchPublisherTab(tab) {
                 if (remoteProf.isVip !== undefined || cloudData.isVip !== undefined) {
                   const rIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
                   const rTier = remoteProf.vipTier || cloudData.vipTier || 'none';
-                  const rExp = remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0;
+                  const rExp = Number(remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0);
+                  const isRemoteActive = rIsVip && (rTier === 'lifetime' || rExp > getTrustedCurrentTimestamp());
                   
                   // Bulletproof Monotonic Sync: Local never loses higher expiration date
                   const localExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
                   const localTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+                  const isLocalActive = userIsVip && (localTier === 'lifetime' || localExp > getTrustedCurrentTimestamp());
                   
-                  let localIsAhead = false;
-                  if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
-                  const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
-                  if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
+                  if (isRemoteActive || isLocalActive) {
+                    let localIsAhead = false;
+                    if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
+                    const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+                    if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
 
-                  applyVipState(rIsVip || userIsVip, rTier, rExp, 'cloud_pull', false);
-                  
-                  if (localIsAhead) {
-                    console.log('ðŸ‘‘ [VocaFlow Sync] Local VIP credentials are newer than Cloud. Re-pushing to cloud...');
+                    applyVipState(true, localIsAhead ? localTier : rTier, Math.max(localExp, rExp), 'cloud_pull', false);
+                    if (localIsAhead) {
+                      console.log('👑 [VocaFlow Sync] Local VIP credentials are newer than Cloud. Re-pushing to cloud...');
+                    }
+                  } else {
+                    // Both are expired or revoked
+                    applyVipState(false, 'none', 0, 'cloud_pull', true);
                   }
                 }
 
@@ -15562,12 +15700,18 @@ function switchPublisherTab(tab) {
 
                 if (!isNaN(remoteFreezes)) {
                   const localFreezes = getUserFlowFreezes();
-                  const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteFreezeDates.length);
-                  const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
-                  const effectiveRemote = Math.max(0, remoteFreezes - newlyConsumedByLocal);
-                  const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
                   const maxCap = getMaxFlowFreezes();
-                  const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+                  let syncedFreezes = localFreezes;
+                  const localUsed = localFreezeDates.length;
+                  const remoteUsed = remoteFreezeDates.length;
+                  if (localUsed === remoteUsed) {
+                    syncedFreezes = Math.max(localFreezes, remoteFreezes);
+                  } else if (localUsed > remoteUsed) {
+                    syncedFreezes = Math.max(0, Math.min(localFreezes, remoteFreezes - (localUsed - remoteUsed)));
+                  } else {
+                    syncedFreezes = Math.max(0, Math.min(remoteFreezes, localFreezes - (remoteUsed - localUsed)));
+                  }
+                  syncedFreezes = Math.min(maxCap, syncedFreezes);
 
                   localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                   localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -16859,8 +17003,7 @@ function switchPublisherTab(tab) {
     }
 
     function getTodayString() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      return getTodayDateString();
     }
 
     let isGrantingVipDailySpin = false;
@@ -16870,12 +17013,22 @@ function switchPublisherTab(tab) {
       const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
       if (!isVip) return false;
 
+      // Anti-clock manipulation guard
+      if (isSystemClockManipulatedBackward()) {
+        return false;
+      }
+
       const today = getTodayString();
+      const maxObservedDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+      if (maxObservedDate && today < maxObservedDate) {
+        return false;
+      }
+
       const notifId = 'notif_vip_daily_spin_' + today;
 
       // 1. Multi-layer idempotency guard: Ensure exactly ONE grant per calendar day
       const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-      if (lastDailyDate === today) {
+      if (lastDailyDate && (lastDailyDate === today || today <= lastDailyDate)) {
         return false;
       }
 
@@ -19036,7 +19189,7 @@ function switchPublisherTab(tab) {
 
     // Helper: Local Date Formatter YYYY-MM-DD
     function formatLocalDateString(d) {
-      if (!d) d = new Date();
+      if (!d) d = new Date(getTrustedCurrentTimestamp());
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
@@ -19264,23 +19417,40 @@ function switchPublisherTab(tab) {
       pushCurrentDatabaseToCloud();
     }
 
-    // Auto-consumption of Flow Freeze when missed days occur (v0.10.8-alpha-10.16)
+    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-6)
+    function healErroneousFreezeDeduction() {
+      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a6';
+      if (localStorage.getItem(HEAL_KEY)) return;
+      try {
+        const freezeDates = getFlowFreezeDates();
+        let currentFreezes = getUserFlowFreezes();
+        const maxCap = getMaxFlowFreezes();
+
+        // If user used only 1 freeze date, but had their remaining freeze wiped out to 0:
+        if (freezeDates.length === 1 && currentFreezes === 0) {
+          currentFreezes = 1;
+          setUserFlowFreezes(currentFreezes);
+          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ v0.10.9-alpha-6 (1/' + maxCap + ')');
+          if (typeof showToast === 'function') {
+            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bị trừ nhầm vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
+          }
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+      } catch (e) {
+        console.warn('Freeze heal error:', e);
+      } finally {
+        localStorage.setItem(HEAL_KEY, 'true');
+      }
+    }
+
+    // Auto-consumption of Flow Freeze when missed days occur (v0.10.8-alpha-10.16 / v0.10.9-alpha-6)
     function evaluateAndAutoApplyFlowFreezes() {
       let flowDates = getFlowDates();
       let freezeDates = getFlowFreezeDates();
       let currentFreezes = getUserFlowFreezes();
 
-      // One-time self-healing reconciliation for previously un-deducted freeze dates (v0.10.8-debug-0.6)
-      if (!localStorage.getItem('vocaflow_freeze_deducted_v0108_debug06')) {
-        if (freezeDates.length > 0 && currentFreezes >= 2) {
-          currentFreezes = Math.max(0, currentFreezes - 1);
-          localStorage.setItem('vocaflow_flow_freezes', currentFreezes.toString());
-          localStorage.setItem('vocaflow_streak_freezes', currentFreezes.toString());
-          saveDatabase(true);
-          pushCurrentDatabaseToCloud();
-        }
-        localStorage.setItem('vocaflow_freeze_deducted_v0108_debug06', 'true');
-      }
+      if (currentFreezes <= 0) return false;
 
       const allActive = new Set([...flowDates, ...freezeDates]);
       if (allActive.size === 0) return false;
@@ -19288,42 +19458,50 @@ function switchPublisherTab(tab) {
       let sortedDates = Array.from(allActive).sort();
       let earliestDateStr = sortedDates[0];
 
-      const today = new Date();
-      let checkDate = new Date(today);
-      checkDate.setDate(checkDate.getDate() - 1); // Start checking backward from yesterday
+      let checkDate = new Date(getTrustedCurrentTimestamp());
+      checkDate.setDate(checkDate.getDate() - 1); // Yesterday
+      const yesterdayStr = formatLocalDateString(checkDate);
+
+      // If yesterday is already active (studied or frozen), current active streak is NOT broken!
+      if (allActive.has(yesterdayStr)) {
+        return false;
+      }
+
+      // Yesterday was missed! Scan backward consecutive missed days
+      let consecutiveMissedDays = [];
+      let tempDate = new Date(checkDate);
+      while (true) {
+        const dStr = formatLocalDateString(tempDate);
+        if (dStr < earliestDateStr) break;
+        if (allActive.has(dStr)) break;
+        consecutiveMissedDays.push(dStr);
+        tempDate.setDate(tempDate.getDate() - 1);
+        // Do not look back further than the number of freezes we currently hold
+        if (consecutiveMissedDays.length > currentFreezes) break;
+      }
 
       let appliedCount = 0;
       let appliedDatesList = [];
 
-      while (true) {
-        const dStr = formatLocalDateString(checkDate);
-        if (dStr < earliestDateStr) break;
-
-        if (allActive.has(dStr)) {
-          // Day was already active, step back
-          checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-          // Gap detected! Check if user had any study activity prior to this date
-          let hasPrior = false;
-          for (const act of allActive) {
-            if (act < dStr) {
-              hasPrior = true;
-              break;
-            }
+      // Only apply if the missed gap can be bridged by current freezes
+      // AND there was activity before the gap (genuine streak protection)
+      if (consecutiveMissedDays.length > 0 && consecutiveMissedDays.length <= currentFreezes) {
+        const earliestMissed = consecutiveMissedDays[consecutiveMissedDays.length - 1];
+        let hasPrior = false;
+        for (const act of allActive) {
+          if (act < earliestMissed) {
+            hasPrior = true;
+            break;
           }
+        }
 
-          if (!hasPrior) break;
-
-          if (currentFreezes > 0) {
+        if (hasPrior) {
+          for (const dStr of consecutiveMissedDays) {
             currentFreezes--;
             freezeDates.push(dStr);
             allActive.add(dStr);
             appliedCount++;
             appliedDatesList.push(dStr);
-            checkDate.setDate(checkDate.getDate() - 1);
-          } else {
-            // Out of freezes: chain is broken before this gap
-            break;
           }
         }
       }
@@ -19360,8 +19538,9 @@ function switchPublisherTab(tab) {
       const freezes = getFlowFreezeDates();
       if (dates.length === 0 && freezes.length === 0) return { currentFlow: 0, pureFlow: 0, maxFlow: 0 };
 
-      const todayStr = formatLocalDateString(new Date());
-      let checkDate = new Date();
+      const trustedNow = getTrustedCurrentTimestamp();
+      const todayStr = formatLocalDateString(new Date(trustedNow));
+      let checkDate = new Date(trustedNow);
       let currentFlow = 0;
       let pureFlow = 0;
 
@@ -19398,7 +19577,19 @@ function switchPublisherTab(tab) {
     }
 
     function recordStudyFlowAction(actionType = 'study') {
-      const todayStr = formatLocalDateString(new Date());
+      const todayStr = formatLocalDateString(new Date(getTrustedCurrentTimestamp()));
+
+      // Anti-cheat: check if clock was rolled back
+      const maxObservedDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+      if (maxObservedDate && todayStr < maxObservedDate) {
+        showToast('⚠️ Đồng hồ thiết bị đang ở quá khứ so với lịch sử học (' + todayStr + ' < ' + maxObservedDate + ')! Vui lòng chỉnh đúng ngày giờ.');
+        return;
+      }
+      if (isSystemClockManipulatedBackward()) {
+        showToast('⚠️ Phát hiện đồng hồ hệ thống bị chỉnh lùi! Vui lòng chỉnh đúng ngày giờ chuẩn để tiếp tục tích lũy Flow.');
+        return;
+      }
+
       let dates = getFlowDates();
       let isNewDay = false;
 
@@ -38334,6 +38525,7 @@ Quy tắc phản hồi quan trọng:
   window.addEventListener('DOMContentLoaded', () => {
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
+    if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
     const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
     if (guideTabsNav) {
       guideTabsNav.addEventListener('wheel', (e) => {
