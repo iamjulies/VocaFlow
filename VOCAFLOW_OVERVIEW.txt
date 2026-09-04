@@ -1,20 +1,27 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-3 (Build 235) - Bulletproof VIP Protection & Modular Architecture (CHIA ĐỂ TRỊ)
+Phiên bản: v0.10.9-alpha-4 (Build 236) - Fix VIP Daily Spins Inflation & Cross-Device Idempotency
 ================================================================================
-1. [Bảo Vệ Hạn VIP Bất Khả Xâm Phạm] Áp dụng nguyên tắc Chỉ Tiến Không Lùi (Monotonic Forward-Only với Math.max): Hạn VIP không bao giờ bị giảm hay ghi đè khi đồng bộ Cloud 2 chiều hoặc đăng nhập.
-2. [Tự Động Chữa Lành VIP (+3 Ngày Vòng Quay)] Khôi phục ngay lập tức ngày hạn VIP của người dùng về mốc 03/09/2027 (bảo toàn trọn vẹn số ngày trúng từ Vòng Quay May Mắn).
-3. [Đồng Bộ Ngược Lên Cloud Thông Minh] Tự động đẩy ngược ngày VIP mới nhất lên Firebase Cloud khi máy cục bộ có hạn xa hơn Cloud.
-4. [Tái Cấu Trúc Toàn Diện "CHIA ĐỂ TRỊ"] Tách nhỏ file đơn 38.000 dòng thành cây thư mục src/: 36 Modals HTML riêng biệt, 6 Màn hình riêng biệt, CSS và Script module hóa độc lập.
-5. [Công Cụ Lắp Ghép Tự Động build_vocaflow.ps1] Tự động ghép nối các module thành vocaflow.html và index.html trong < 1 giây, tích hợp thẳng vào quy trình phát hành exe và GitHub.
+1. [Khắc Phục Triệt Để Lỗi Cộng Dồn Lượt Quay VIP] Loại bỏ hoàn toàn khối mã bồi hoàn di sản (+4 lượt), áp dụng khóa Mutex Lock và kiểm tra đa tầng, đảm bảo chỉ cộng đúng +2 lượt quay/ngày cho VIP.
+2. [Đồng Bộ Ngày Quay Đa Thiết Bị Tuyệt Đối] Đồng bộ trường lastVipSpinDate ngay khi đăng nhập (onAuthStateChanged) và kéo Cloud (pullDatabaseFromCloud), chặn đứng tình trạng mỗi máy cộng lặp lại +2 lượt.
+3. [Chuẩn Hóa Múi Giờ Địa Phương] Chuyển đổi getTodayString() sang ngày cục bộ (YYYY-MM-DD), triệt tiêu hoàn toàn độ lệch 7 tiếng của UTC gây lỗi lặp quay ban đêm.
+4. [Tự Động Hiệu Chỉnh Lượt Quay Thừa (autoHealExcessVipSpinsToday)] Tự động nhận diện và khấu trừ 6 lượt quay bị cộng dư hôm nay về đúng mức chuẩn (+2 lượt/ngày), đồng thời dọn dẹp thông báo trùng lặp.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-3 (Build 235)
+Phiên bản hiện tại : v0.10.9-alpha-4 (Build 236)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-4] - (BUILD 236 - FIX VIP DAILY SPINS INFLATION & CROSS-DEVICE IDEMPOTENCY):
+  - Khắc phục triệt để lỗi người dùng VIP bị cộng dồn +8 lượt quay hằng ngày:
+    * Xóa bỏ hoàn toàn khối bồi hoàn di sản `curSpins += 4` từ bản gỡ lỗi cũ, triệt tiêu việc cộng dồn trên môi trường mới.
+    * Bổ sung khóa Mutex Lock (`isGrantingVipDailySpin`) và bảo vệ đa tầng (Multi-layer Guard): Kiểm tra cả máy cục bộ, thông báo Cloud và sổ nhật ký giao dịch.
+    * Đồng bộ trường `lastVipSpinDate` hai chiều ngay tại sự kiện `onAuthStateChanged` và `pullDatabaseFromCloud`.
+    * Chuẩn hóa hàm `getTodayString()` trả về định dạng `YYYY-MM-DD` theo giờ địa phương, loại bỏ hoàn toàn lệch múi giờ ban đêm của UTC.
+    * Tích hợp tính năng Tự động hiệu chỉnh (`autoHealExcessVipSpinsToday`): Khấu trừ 6 lượt quay thừa bị cộng nhầm hôm nay về đúng chuẩn (+2 lượt/ngày).
 
 🌟 [v0.10.9-alpha-3] - (BUILD 235 - BULLETPROOF VIP PROTECTION & MODULAR ARCHITECTURE "CHIA ĐỂ TRỊ"):
   - Xây dựng Động cơ Bảo vệ VIP Đa lớp (Bulletproof VIP Protection Engine) với khóa chốt đỉnh cao (`vocaflow_vip_high_water_exp`):

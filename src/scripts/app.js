@@ -1,4 +1,4 @@
-﻿    // =========================================================================
+    // =========================================================================
     // GLOBAL DATE & AI MENTOR CLOUD QUOTA ENGINE (v0.10.7g-8)
     // =========================================================================
     function getTodayDateString() {
@@ -3849,6 +3849,13 @@ function switchPublisherTab(tab) {
                   const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
                   localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
                 }
+                if (uData.economy.lastVipSpinDate) {
+                  const localLastVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : (new Date().toISOString().slice(0, 10));
+                  if (uData.economy.lastVipSpinDate === todayStr || !localLastVipDate) {
+                    localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
+                  }
+                }
               } else if (uData.points !== undefined) {
                 const pts = typeof uData.points === 'number' ? uData.points : parseInt(uData.points, 10);
                 if (!isNaN(pts)) {
@@ -7448,10 +7455,12 @@ function switchPublisherTab(tab) {
                   if (cloudData.economy.luckySpinsDate) {
                     localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
                   }
-                  const todayStr = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
+                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : new Date().toISOString().slice(0, 10));
                   const localVipSpinDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-                  if (cloudData.economy.lastVipSpinDate && localVipSpinDate !== todayStr) {
-                    localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                  if (cloudData.economy.lastVipSpinDate) {
+                    if (cloudData.economy.lastVipSpinDate === todayStr || !localVipSpinDate) {
+                      localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                    }
                   }
                   if (cloudData.economy.lastAdWatchTime) {
                     const remoteAdTime = parseInt(cloudData.economy.lastAdWatchTime, 10);
@@ -8961,50 +8970,46 @@ function switchPublisherTab(tab) {
     }
 
     function getTodayString() {
-      return new Date().toISOString().slice(0, 10);
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
+    let isGrantingVipDailySpin = false;
+
     function checkAndGrantVipDailySpinBonus() {
+      if (isGrantingVipDailySpin) return false;
       const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
       if (!isVip) return false;
 
-      const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
+      const today = getTodayString();
       const notifId = 'notif_vip_daily_spin_' + today;
 
-      // 1. One-time self-healing compensation for missing VIP spins over the past 2 days (v0.10.8-debug-0.8)
-      if (!localStorage.getItem('vocaflow_vip_spin_healed_v0108_debug08')) {
-        let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
-        if (isNaN(curSpins) || curSpins < 0) curSpins = 0;
-        curSpins += 4; // Bồi hoàn +4 lượt quay cho 2 ngày bị lỗi
-        localStorage.setItem('vocaflow_lucky_spins_left', curSpins.toString());
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
-        localStorage.setItem('vocaflow_vip_spin_healed_v0108_debug08', 'true');
-        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Bồi hoàn +4 Lượt Quay May Mắn VIP (Đặc quyền 2 ngày)');
-        if (typeof addNotification === 'function') {
-          addNotification('VIP_BONUS', '👑 Bồi Hoàn Lượt Quay VIP', 'Hệ thống đã tự động bồi hoàn +4 Lượt Quay May Mắn VIP (đặc quyền 2 ngày trước) vào tài khoản của bạn!', null, null, 'notif_vip_spin_compensation_v0108');
-        }
-        updateLuckyWheelUI();
-        updateShopBonusesUI();
-        saveDatabase(true);
-        if (typeof pushCurrentDatabaseToCloud === 'function') {
-          pushCurrentDatabaseToCloud();
-        }
-        showToast('👑 Đã bồi hoàn +4 Lượt Quay May Mắn VIP vào tài khoản của bạn!');
-        return true;
+      // 1. Multi-layer idempotency guard: Ensure exactly ONE grant per calendar day
+      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+      if (lastDailyDate === today) {
+        return false;
       }
 
-      // 2. Normal daily check & grant
-      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-      const alreadyNotified = userNotifications.some(n => n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)));
+      // Check if notification already exists for today across synced userNotifications
+      const alreadyNotified = Array.isArray(userNotifications) && userNotifications.some(n =>
+        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)))
+      );
+      if (alreadyNotified) {
+        // Already granted on another session/device: synchronize local marker and exit immediately
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        return false;
+      }
 
-      if (lastDailyDate !== today) {
+      // 2. Perform atomic grant of exactly +2 spins
+      isGrantingVipDailySpin = true;
+      try {
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
         let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
         if (isNaN(spins) || spins < 0) spins = 0;
         spins += 2;
         localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
 
-        if (!alreadyNotified && typeof addNotification === 'function') {
+        if (typeof addNotification === 'function') {
           addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!', null, null, notifId);
         }
 
@@ -9016,8 +9021,65 @@ function switchPublisherTab(tab) {
           pushCurrentDatabaseToCloud();
         }
         return true;
+      } finally {
+        isGrantingVipDailySpin = false;
       }
-      return false;
+    }
+
+    // =========================================================================
+    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-4)
+    // =========================================================================
+    function autoHealExcessVipSpinsToday() {
+      const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
+      if (!isVip) return;
+
+      const HEAL_KEY = 'vocaflow_spins_healed_v0109a4';
+      if (localStorage.getItem(HEAL_KEY)) return;
+
+      const today = getTodayString();
+      let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+      if (isNaN(curSpins)) curSpins = 0;
+
+      // Count VIP spin daily notifications or compensation notifications for today
+      const todayDailyNotifs = Array.isArray(userNotifications) ? userNotifications.filter(n =>
+        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP'))))
+      ) : [];
+
+      // If user received multiple spin grants today (inflated to +8 instead of +2)
+      if (todayDailyNotifs.length > 1 || curSpins >= 8) {
+        const excess = 6; // Deduct the 6 duplicate/excess spins added accidentally
+        const adjustedSpins = Math.max(2, curSpins - excess);
+        localStorage.setItem('vocaflow_lucky_spins_left', adjustedSpins.toString());
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        localStorage.setItem(HEAL_KEY, 'true');
+
+        // Deduplicate notifications: retain only one single valid notification for today
+        if (Array.isArray(userNotifications)) {
+          let keptOne = false;
+          userNotifications = userNotifications.filter(n => {
+            if (!n) return false;
+            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP')));
+            if (isDup) {
+              if (!keptOne) { keptOne = true; return true; }
+              return false;
+            }
+            return true;
+          });
+          localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+          if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+          if (typeof renderNotificationsList === 'function') renderNotificationsList();
+        }
+
+        updateLuckyWheelUI();
+        updateShopBonusesUI();
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
+        showToast('👑 Đã hiệu chỉnh lại lượt quay VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
+      } else {
+        localStorage.setItem(HEAL_KEY, 'true');
+      }
     }
 
     function getLuckySpinsCount() {
@@ -30256,6 +30318,7 @@ Quy tắc phản hồi quan trọng:
   // Horizontal mouse-wheel scroll for guide tabs nav on PC
   window.addEventListener('DOMContentLoaded', () => {
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
+    if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
     if (guideTabsNav) {
       guideTabsNav.addEventListener('wheel', (e) => {
