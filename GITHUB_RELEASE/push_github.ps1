@@ -65,8 +65,8 @@ Copy-Item "$root\vocaflow.html" "$root\GITHUB_RELEASE\vocaflow_web_single_file.h
 # 2. Cập nhật bản ZIP phát hành mới nhất
 Write-Host "[1/4] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
 $stage = Join-Path $root "VocaFlow_Windows_Portable"
-$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-alpha-5_Windows_Portable.zip"
-$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-alpha-5_Windows_Portable.zip"
+$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-alpha-6_Windows_Portable.zip"
+$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-alpha-6_Windows_Portable.zip"
 
 try {
     if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
@@ -78,7 +78,7 @@ try {
     Copy-Item $zipPath -Destination (Join-Path $PSScriptRoot "VocaFlow_v0.10.8_Windows_Portable.zip") -Force
     Copy-Item $zipPath -Destination (Join-Path $root "VocaFlow_v0.10.8_Windows_Portable.zip") -Force
     Remove-Item -Recurse -Force $stage
-    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-alpha-5_Windows_Portable.zip" -ForegroundColor Green
+    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-alpha-6_Windows_Portable.zip" -ForegroundColor Green
 } catch {
     Write-Host "  [!] Thông báo ZIP: $_" -ForegroundColor Yellow
 }
