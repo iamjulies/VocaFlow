@@ -29,8 +29,8 @@ if (Test-Path $tokenFile) {
 $vocaFlowRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/VocaFlow.git" } else { "https://github.com/iamjulies/VocaFlow.git" }
 $ioRemote = if ($token) { "https://iamjulies:$token@github.com/iamjulies/iamjulies.github.io.git" } else { "https://github.com/iamjulies/iamjulies.github.io.git" }
 
-# 0. Lắp ghép mã nguồn 'CHIA ĐỂ TRỊ' & Biên dịch VocaFlow.exe
-Write-Host "[0/4] Đang lắp ghép mã nguồn và biên dịch VocaFlow.exe mới nhất..." -ForegroundColor Cyan
+# 0. Lap ghep ma nguon CHIA DE TRI va Bien dich VocaFlow.exe
+Write-Host "[0/4] Dang lap ghep ma nguon va bien dich VocaFlow.exe moi nhat..." -ForegroundColor Cyan
 $buildScript = Join-Path $root "build_vocaflow.ps1"
 if (Test-Path $buildScript) {
     & powershell -ExecutionPolicy Bypass -File $buildScript
