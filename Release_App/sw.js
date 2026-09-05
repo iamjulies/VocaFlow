@@ -1,21 +1,7 @@
 // =========================================================================
-// MONETAG SERVICE WORKER INTEGRATION (Zone: 11729905)
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-11)
 // =========================================================================
-self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11729905
-};
-self.lary = "";
-try {
-    importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
-} catch (e) {
-    console.warn('Monetag SW script warning:', e);
-}
-
-// =========================================================================
-// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-10)
-// =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-10';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-11';
 const ASSETS = [
   './',
   './index.html',

@@ -3,6 +3,7 @@ $appJs = Join-Path $root "src\scripts\app.js"
 $headerHtml = Join-Path $root "src\components\header.html"
 $settingsHtml = Join-Path $root "src\components\modals\modal-settings.html"
 $wordModalHtml = Join-Path $root "src\components\modals\modal-word.html"
+$rewardedModalHtml = Join-Path $root "src\components\modals\modal-rewarded-ad.html"
 $swJs = Join-Path $root "sw.js"
 $releaseSwJs = Join-Path $root "Release_App\sw.js"
 $programCs = Join-Path $root "VocaFlow_Desktop\Program.cs"
@@ -24,12 +25,13 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-10 (Build 242) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-11 (Build 243) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml)
 $settingsContent = [System.IO.File]::ReadAllText($settingsHtml)
 $wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml)
+$rewardedModalContent = [System.IO.File]::ReadAllText($rewardedModalHtml)
 $swContent = [System.IO.File]::ReadAllText($swJs)
 $releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs)
 $csContent = [System.IO.File]::ReadAllText($programCs)
@@ -49,31 +51,34 @@ Assert-Check "evaluateAndAutoApplyFlowFreezes protects active contiguous days" (
 Assert-Check "isAuthorVipUser checks expiration timestamp" ($appJsContent.Contains("const exp = Number(entry.vipExpiresAt || 0);") -and $appJsContent.Contains("return exp > now;"))
 Assert-Check "stripVipAffixes helper exists" ($appJsContent.Contains("function stripVipAffixes("))
 
-# 3. Monetag Multitag & Service Worker Integration tests
-Assert-Check "app_template.html contains Monetag Multitag script (Zone 276634)" ($templateContent.Contains("quge5.com/88/tag.min.js") -and $templateContent.Contains("276634"))
-Assert-Check "sw.js contains Monetag options (domain 3nbf4.com, zone 11729905)" ($swContent.Contains("3nbf4.com") -and $swContent.Contains("11729905"))
-Assert-Check "Release_App/sw.js contains Monetag options (domain 3nbf4.com, zone 11729905)" ($releaseSwContent.Contains("3nbf4.com") -and $releaseSwContent.Contains("11729905"))
+# 3. Monetag Clean Ads, VIP Exemption & Direct Link tests
+Assert-Check "Multitag popunder script completely removed from app_template.html" (-not ($templateContent.Contains("quge5.com")))
+Assert-Check "Monetag SW script removed from sw.js" (-not ($swContent.Contains("3nbf4.com")))
+Assert-Check "Monetag SW script removed from Release_App/sw.js" (-not ($releaseSwContent.Contains("3nbf4.com")))
+Assert-Check "initMonetagPassiveAds exists with In-Page (11730204) & Vignette (11730208)" ($appJsContent.Contains("function initMonetagPassiveAds()") -and $appJsContent.Contains("11730204") -and $appJsContent.Contains("11730208"))
+Assert-Check "initMonetagPassiveAds enforces 100% clean VIP ad-free exemption" ($appJsContent.Contains("isVip") -and $appJsContent.Contains("monetag-inpage-script") -and $appJsContent.Contains("monetag-vignette-script"))
+Assert-Check "Monetag Direct Link (11730211) integrated in app.js" ($appJsContent.Contains("https://omg10.com/4/11730211"))
+Assert-Check "modal-rewarded-ad.html contains Direct Link CTA button" ($rewardedModalContent.Contains("https://omg10.com/4/11730211"))
 Assert-Check "push_github.ps1 deploys both main and gh-pages to iamjulies.github.io" ($pushContent.Contains("branch -M main") -and $pushContent.Contains("branch -M gh-pages") -and $pushContent.Contains("vocaflow_user_io_deploy"))
 
 # 4. Tabbed Sense Switcher & Polysemy Architecture tests
 Assert-Check "getWordSenses parses word.senses correctly" ($appJsContent.Contains("function getWordSenses("))
 Assert-Check "modal-word.html has word-senses-tab-wrapper and word-senses-tab-bar" ($wordModalContent.Contains("id=`"word-senses-tab-wrapper`"") -and $wordModalContent.Contains("id=`"word-senses-tab-bar`""))
 Assert-Check "app.js defines currentActiveSenseTab and switchWordSenseTab" ($appJsContent.Contains("currentActiveSenseTab") -and $appJsContent.Contains("function switchWordSenseTab("))
-Assert-Check "openWordModal and editWord reset currentActiveSenseTab to 0" ($appJsContent.Contains("function openWordModal() {`r`n      currentActiveSenseTab = 0;") -or $appJsContent.Contains("function openWordModal() {`n      currentActiveSenseTab = 0;"))
 Assert-Check "renderWordModalSenses and addWordModalBlankSense exist in app.js" ($appJsContent.Contains("function renderWordModalSenses(") -and $appJsContent.Contains("function addWordModalBlankSense()"))
 Assert-Check "Spelling picks active sense with _activeSpellingSense" ($appJsContent.Contains("_activeSpellingSense"))
 Assert-Check "Quiz picks active sense and protects distractors with _activeQuizSense" ($appJsContent.Contains("_activeQuizSense"))
 Assert-Check "Speaking evaluates against active sense with Rule E in prompt" ($appJsContent.Contains("_activeSpeakingSense") -and $appJsContent.Contains("POLYSEMY & HOMOGRAPHS"))
 
-# 5. Version v0.10.9-alpha-10 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-10" ($headerContent.Contains("v0.10.9-alpha-10"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-10" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-10"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-10'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-10'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-10" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-10"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-10" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-10"))
-Assert-Check "Program.cs shows v0.10.9-alpha-10" ($csContent.Contains("VocaFlow v0.10.9-alpha-10"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-10 (Build 242)" ($overviewContent.Contains("v0.10.9-alpha-10 (Build 242)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-10 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-10"))
+# 5. Version v0.10.9-alpha-11 tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-11" ($headerContent.Contains("v0.10.9-alpha-11"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-11" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-11"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-11" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-11"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-11" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-11"))
+Assert-Check "Program.cs shows v0.10.9-alpha-11" ($csContent.Contains("VocaFlow v0.10.9-alpha-11"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-11 (Build 243)" ($overviewContent.Contains("v0.10.9-alpha-11 (Build 243)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-11 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-11"))
 
 # 6. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))

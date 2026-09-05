@@ -1,18 +1,37 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-10 (Build 242) - Monetag Multitag Integration (Zone 276634 & SW 11729905)
+Phiên bản: v0.10.9-alpha-11 (Build 243) - Monetag Clean Ads (In-Page, Vignette, Direct Link) & VIP Ad-Free Exemption
 ================================================================================
-1. [Tích Hợp Monetag Multitag All-In-One] Nhúng mã Multitag chính thức của Monetag (`quge5.com/88/tag.min.js`, data-zone `276634`) vào thẻ `<head>` của `src/app_template.html`, tự động tối ưu hóa hiển thị quảng cáo sạch và an toàn cho người dùng.
-2. [Nâng Cấp Service Worker Monetag (Zone 11729905)] Cập nhật script Service Worker hỗ trợ Monetag Multitag với domain `3nbf4.com` và Zone ID `11729905`, đảm bảo tương thích đa nền tảng PWA và Web Live.
-3. [Quy Trình Kiểm Thử & Triển Khai Chuẩn Mực] Hoàn thành lắp ghép mã nguồn từ `src/`, vượt qua 100% các tiêu chí kiểm thử tự động, biên dịch VocaFlow Desktop .NET 8 và đẩy đồng bộ lên toàn bộ các nhánh GitHub.
+1. [Gỡ Bỏ Hoàn Toàn Multitag & Onclick/Popunder] Loại bỏ hoàn toàn mã Multitag (`quge5.com`) và script Service Worker Monetag (`3nbf4.com`), triệt tiêu triệt để tình trạng tự động bật tab mới (onclick/popunder) gây phiền toái.
+2. [Triển Khai Bộ Ba Quảng Cáo Sạch Monetag]
+   - In-Page Push Banner (Zone `11730204`, `nap5k.com/tag.min.js`): Biểu ngữ trượt nhẹ nhàng, không xâm lấn.
+   - Vignette Banner (Zone `11730208`, `n6wxm.com/vignette.min.js`): Biểu ngữ chuyển cảnh tự nhiên, chuyên nghiệp.
+   - Direct Link Ads (`https://omg10.com/4/11730211`): Mở liên kết tài trợ khi người dùng chủ động xem quảng cáo nhận thưởng (+1 Lượt quay may mắn).
+3. [Đặc Quyền VIP Miễn Nhiễm Quảng Cáo Tự Động (VIP Ad-Free Exemption)]
+   - Toàn bộ quảng cáo thụ động (In-Page Push & Vignette banner) được tự động gỡ bỏ/chặn đứng hoàn toàn đối với tài khoản VIP.
+   - Người dùng VIP chỉ tiếp cận Direct Link khi chủ động nhấn "Xem Quảng Cáo Nhận Thưởng" khi hết lượt quay để nhận thêm lượt quay may mắn.
+4. [Quy Trình Kiểm Thử & Triển Khai Chuẩn Mực] Hoàn tất 100% tiêu chí kiểm thử tự động, biên dịch VocaFlow Desktop .NET 8 và đẩy đồng bộ lên toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-10 (Build 242)
+Phiên bản hiện tại : v0.10.9-alpha-11 (Build 243)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-11] - (BUILD 243 - MONETAG CLEAN ADS & VIP AD-FREE EXEMPTION):
+  - 🚫 Gỡ bỏ triệt để Multitag & Popunder/Onclick:
+    * Loại bỏ thẻ script Multitag `quge5.com/88/tag.min.js` (Zone 276634) khỏi `src/app_template.html`.
+    * Loại bỏ khối mã Service Worker Monetag (`3nbf4.com`, Zone 11729905) khỏi `sw.js` và `Release_App/sw.js`, chấm dứt hoàn toàn hiện tượng tự ý mở tab mới ngoài ý muốn.
+  - 📢 Tích hợp định dạng quảng cáo sạch Monetag (In-Page Push & Vignette):
+    * Bổ sung hàm `initMonetagPassiveAds()` trong `src/scripts/app.js`, tự động nạp linh hoạt In-Page Push (Zone `11730204`, `nap5k.com/tag.min.js`) và Vignette Banner (Zone `11730208`, `n6wxm.com/vignette.min.js`).
+  - 👑 Cơ chế VIP Ad-Free Exemption (Tắt sạch quảng cáo thụ động cho VIP):
+    * Kiểm tra trạng thái `isUserVip()`. Nếu là VIP: Tự động gỡ sạch thẻ script `monetag-inpage-script` và `monetag-vignette-script`, ngăn chặn 100% quảng cáo thụ động hiển thị.
+    * Người dùng VIP có trải nghiệm học tập mượt mà, tĩnh lặng và sạch sẽ tuyệt đối.
+  - 🎬 Tích hợp Direct Link nhận thưởng (+1 Lượt quay may mắn):
+    * Đưa đường dẫn Direct Link `https://omg10.com/4/11730211` vào hàm `openRewardedAdModal()` và giao diện `modal-rewarded-ad.html`.
+    * Khi người dùng (kể cả VIP) hết lượt quay may mắn (`spins === 0`), giao diện vẫn hiển thị nút CTA xem quảng cáo tài trợ để người dùng có thể tự nguyện click mở Direct Link và nhận thưởng +1 lượt quay sau 30 giây.
 
 🌟 [v0.10.9-alpha-10] - (BUILD 242 - MONETAG MULTITAG INTEGRATION):
   - 🌐 Nhúng thẻ script Monetag Multitag vào `<head>`:

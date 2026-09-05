@@ -2547,7 +2547,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-8</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-11</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -3474,16 +3474,19 @@
           </div>
         </div>
 
-        <!-- SENSES CONTAINER (v0.10.9-alpha-8: Polysemy & Homographs) -->
-        <div id="word-senses-container" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px;">
-          <!-- Dynamically populated via renderWordModalSenses() -->
+        <!-- SENSES TAB BAR & SWITCHER (v0.10.9-alpha-9: 1, 2, 3... +) -->
+        <div id="word-senses-tab-wrapper" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;" id="word-senses-tab-bar">
+            <!-- Tabs 1, 2, 3... + rendered by renderWordModalSenses() -->
+          </div>
+          <div id="word-sense-delete-btn-container">
+            <!-- Delete button for active sense if senses > 1 -->
+          </div>
         </div>
 
-        <!-- ADD SENSE BUTTON (POLYSEMY / HOMOGRAPHS) -->
-        <div style="margin-bottom: 16px;">
-          <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" style="width: 100%; border-style: dashed; border-color: rgba(168, 85, 247, 0.5); color: #c084fc; background: rgba(168, 85, 247, 0.08); font-weight: 700; padding: 9px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-            <span style="font-size: 15px;">➕</span> <span>Thêm Nghĩa Khác (Polysemy / Homograph)</span>
-          </button>
+        <!-- SENSES CONTAINER (v0.10.9-alpha-9: Only active tab is visible) -->
+        <div id="word-senses-container" style="margin-bottom: 12px;">
+          <!-- Dynamically populated via renderWordModalSenses() -->
         </div>
 
         <!-- EMBEDDED IPA KEYBOARD PANEL (Shared across senses) -->
@@ -5886,6 +5889,14 @@
                data-full-width-responsive="true"></ins>
         </div>
 
+        <!-- Monetag Direct Link Sponsor Banner (v0.10.9-alpha-11) -->
+        <div style="margin-bottom: 14px;">
+          <a href="https://omg10.com/4/11730211" target="_blank" rel="noopener noreferrer" class="btn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #ffffff; border: none; font-weight: 800; font-size: 13px; padding: 11px 16px; border-radius: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            <span>🌐 Nhấn Vào Đây Để Mở Trang Tài Trợ (Monetag Direct Ads)</span>
+            <svg class="icon" style="width: 14px; height: 14px;"><use href="#i-external-link"/></svg>
+          </a>
+        </div>
+
         <!-- Simulated High-Reward Ad Screen Fallback -->
         <div id="ad-player-feature-card" style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.3); padding: 20px 16px; margin-bottom: 14px; position: relative; overflow: hidden;">
           <div style="font-size: 36px; margin-bottom: 6px; animation: crownFloatPulse 2s ease-in-out infinite;">🚀</div>
@@ -7211,7 +7222,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-8 (Build 240)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-11 (Build 243)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7832,10 +7843,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-8)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-11)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-8';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-8';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-11 (Build 243)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -7979,6 +7990,7 @@
       updateAuthUI();
       refreshAdminVipUI();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       return { userIsVip, userVipTier, userVipExpiresAt };
     }
 
@@ -11640,6 +11652,7 @@ function switchPublisherTab(tab) {
       // Auto-trigger sync on load if logged in
       updateNotificationsUI();
       updateAiChatQuotaUI();
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       if (currentUser && currentUser.uid) {
         handleManualSync();
         loadEconomyFromCloud();
@@ -13325,6 +13338,7 @@ function switchPublisherTab(tab) {
       if (lastSyncEl) {
         lastSyncEl.textContent = lastSync ? new Date(lastSync).toLocaleString('vi-VN') : 'Chưa đồng bộ';
       }
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
     }
 
     // Modal Switchers
@@ -17333,7 +17347,7 @@ function switchPublisherTab(tab) {
       if (spinsCountEl) spinsCountEl.textContent = spins.toString();
 
       if (adCta) {
-        adCta.style.display = (!isVip && spins === 0) ? 'block' : 'none';
+        adCta.style.display = (spins === 0) ? 'block' : 'none';
       }
     }
 
@@ -18500,7 +18514,58 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3)
+    // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-11)
+    // =========================================================================
+    const MONETAG_DIRECT_LINK_URL = 'https://omg10.com/4/11730211';
+    const MONETAG_INPAGE_ZONE = '11730204';
+    const MONETAG_VIGNETTE_ZONE = '11730208';
+    let monetagInPageScriptEl = null;
+    let monetagVignetteScriptEl = null;
+
+    function initMonetagPassiveAds() {
+      const isVip = (typeof isUserVip === 'function' && isUserVip());
+      
+      // VIP users: 100% clean ad-free experience - strip or suppress all passive ads!
+      if (isVip) {
+        const existingInPage = document.getElementById('monetag-inpage-script');
+        if (existingInPage) existingInPage.remove();
+        const existingVignette = document.getElementById('monetag-vignette-script');
+        if (existingVignette) existingVignette.remove();
+        monetagInPageScriptEl = null;
+        monetagVignetteScriptEl = null;
+        return;
+      }
+
+      // Non-VIP users: Dynamically inject In-Page Push & Vignette banner scripts
+      if (!document.getElementById('monetag-inpage-script')) {
+        try {
+          const s = document.createElement('script');
+          s.id = 'monetag-inpage-script';
+          s.dataset.zone = MONETAG_INPAGE_ZONE;
+          s.src = 'https://nap5k.com/tag.min.js';
+          (document.documentElement || document.body).appendChild(s);
+          monetagInPageScriptEl = s;
+        } catch (e) {
+          console.warn('Monetag In-Page Push init error:', e);
+        }
+      }
+
+      if (!document.getElementById('monetag-vignette-script')) {
+        try {
+          const s = document.createElement('script');
+          s.id = 'monetag-vignette-script';
+          s.dataset.zone = MONETAG_VIGNETTE_ZONE;
+          s.src = 'https://n6wxm.com/vignette.min.js';
+          (document.documentElement || document.body).appendChild(s);
+          monetagVignetteScriptEl = s;
+        } catch (e) {
+          console.warn('Monetag Vignette init error:', e);
+        }
+      }
+    }
+
+    // =========================================================================
+    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3 / v0.10.9-alpha-11)
     // =========================================================================
     const AD_FEATURE_SLIDES = [
       {
@@ -18531,6 +18596,13 @@ function switchPublisherTab(tab) {
         const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
         showToast(`⏱️ Vui lòng chờ ${Math.floor(remainingSec / 60)} phút ${remainingSec % 60} giây để xem video tiếp theo!`);
         return;
+      }
+
+      // Open Monetag Sponsored Direct Link in a new tab
+      try {
+        window.open(MONETAG_DIRECT_LINK_URL, '_blank');
+      } catch (e) {
+        console.warn('Direct link window.open error:', e);
       }
 
       // Pick a random ad slide
@@ -21058,6 +21130,57 @@ function switchPublisherTab(tab) {
     }
 
     let activeIpaSenseIndex = 0;
+    let currentActiveSenseTab = 0;
+
+    function switchWordSenseTab(targetIdx) {
+      const container = document.getElementById('word-senses-container');
+      if (!container) return;
+      const cards = container.querySelectorAll('.word-sense-card');
+      if (targetIdx < 0 || targetIdx >= cards.length) return;
+
+      currentActiveSenseTab = targetIdx;
+      activeIpaSenseIndex = targetIdx;
+
+      // Toggle display of cards: only targetIdx is block, others are none
+      cards.forEach((card, idx) => {
+        card.style.display = (idx === targetIdx) ? 'block' : 'none';
+      });
+
+      // Update Tab Bar buttons styles
+      const tabBar = document.getElementById('word-senses-tab-bar');
+      if (tabBar) {
+        const tabBtns = tabBar.querySelectorAll('.btn-sense-num-tab');
+        tabBtns.forEach((btn, idx) => {
+          if (idx === targetIdx) {
+            btn.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
+            btn.style.color = '#ffffff';
+            btn.style.borderColor = '#c084fc';
+            btn.style.boxShadow = '0 2px 8px rgba(168, 85, 247, 0.4)';
+            btn.style.fontWeight = '800';
+          } else {
+            btn.style.background = 'rgba(255, 255, 255, 0.05)';
+            btn.style.color = 'var(--text-muted)';
+            btn.style.borderColor = 'var(--border)';
+            btn.style.boxShadow = 'none';
+            btn.style.fontWeight = '600';
+          }
+        });
+      }
+
+      // Update Delete Button in Tab Bar
+      const delCont = document.getElementById('word-sense-delete-btn-container');
+      if (delCont) {
+        if (cards.length > 1) {
+          delCont.innerHTML = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${targetIdx})" title="Xóa nét nghĩa ${targetIdx + 1}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+              <span>🗑️</span> <span>Xóa nghĩa ${targetIdx + 1}</span>
+            </button>
+          `;
+        } else {
+          delCont.innerHTML = '';
+        }
+      }
+    }
 
     function toggleIpaKeyboardForSense(idx) {
       activeIpaSenseIndex = idx;
@@ -21104,12 +21227,57 @@ function switchPublisherTab(tab) {
 
     function renderWordModalSenses(sensesList) {
       const container = document.getElementById('word-senses-container');
+      const tabBar = document.getElementById('word-senses-tab-bar');
+      const delCont = document.getElementById('word-sense-delete-btn-container');
       if (!container) return;
+
       const list = (sensesList && sensesList.length > 0) ? sensesList : [{
         partOfSpeech: 'noun', cefrLevel: 'B1', phonetic: '', definitionVi: '',
         exampleSentence: '', synonyms: [], antonyms: [], collocations: [], note: ''
       }];
 
+      if (currentActiveSenseTab >= list.length) {
+        currentActiveSenseTab = Math.max(0, list.length - 1);
+      }
+      activeIpaSenseIndex = currentActiveSenseTab;
+
+      // 1. Render Tab Bar (1, 2, 3, 4... +)
+      if (tabBar) {
+        let tabsHtml = `<span style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 4px; margin-right: 4px;">📚 Nét nghĩa:</span>`;
+        list.forEach((s, idx) => {
+          const isActive = (idx === currentActiveSenseTab);
+          const activeStyle = isActive 
+            ? 'background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; border-color: #c084fc; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4); font-weight: 800;'
+            : 'background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border-color: var(--border); font-weight: 600;';
+          tabsHtml += `
+            <button type="button" class="btn btn-sm btn-sense-num-tab" onclick="switchWordSenseTab(${idx})" style="min-width: 32px; height: 30px; border-radius: 8px; padding: 0 10px; font-size: 12.5px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; ${activeStyle}">
+              ${idx + 1}
+            </button>
+          `;
+        });
+        // Plus (+) button to add new sense
+        tabsHtml += `
+          <button type="button" class="btn btn-sm" onclick="addWordModalBlankSense()" title="Thêm nét nghĩa mới (Polysemy / Homograph)" style="width: 30px; height: 30px; border-radius: 8px; padding: 0; font-size: 16px; font-weight: 700; border: 1px dashed rgba(168, 85, 247, 0.6); color: #c084fc; background: rgba(168, 85, 247, 0.1); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;">
+            +
+          </button>
+        `;
+        tabBar.innerHTML = tabsHtml;
+      }
+
+      // 2. Render Delete button in tab bar container
+      if (delCont) {
+        if (list.length > 1) {
+          delCont.innerHTML = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${currentActiveSenseTab})" title="Xóa nét nghĩa ${currentActiveSenseTab + 1}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+              <span>🗑️</span> <span>Xóa nghĩa ${currentActiveSenseTab + 1}</span>
+            </button>
+          `;
+        } else {
+          delCont.innerHTML = '';
+        }
+      }
+
+      // 3. Render Cards: Only currentActiveSenseTab is display: block, others are display: none
       const posOptions = [
         { val: 'noun', label: 'Danh từ (Noun)' },
         { val: 'verb', label: 'Động từ (Verb)' },
@@ -21132,7 +21300,7 @@ function switchPublisherTab(tab) {
         const synStr = Array.isArray(s.synonyms) ? s.synonyms.join(', ') : (s.synonyms || '');
         const antStr = Array.isArray(s.antonyms) ? s.antonyms.join(', ') : (s.antonyms || '');
         const collStr = Array.isArray(s.collocations) ? s.collocations.join(', ') : (s.collocations || '');
-        const isMulti = list.length > 1;
+        const isVisible = (idx === currentActiveSenseTab);
 
         let posOptHtml = '';
         posOptions.forEach(opt => {
@@ -21147,26 +21315,7 @@ function switchPublisherTab(tab) {
         });
 
         html += `
-          <div class="word-sense-card" id="word-sense-card-${idx}" style="background: var(--surface-elevated, rgba(255, 255, 255, 0.03)); border: 1px solid ${isMulti ? 'rgba(168, 85, 247, 0.35)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span class="badge" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); color: #c084fc; font-weight: 700; font-size: 11px; border: 1px solid rgba(168,85,247,0.3);">
-                  Nét nghĩa #${idx + 1}
-                </span>
-                ${isMulti ? '<span style="font-size: 11px; color: var(--text-muted);">(Polysemy / Homograph)</span>' : ''}
-              </div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" title="Thêm nét nghĩa mới (Polysemy / Homograph)" style="color: #c084fc; border-color: rgba(168, 85, 247, 0.4); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
-                  <span>➕</span> <span>Thêm nghĩa</span>
-                </button>
-                ${isMulti ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${idx})" title="Xóa nét nghĩa này" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
-                    <span>🗑️</span> <span>Xóa</span>
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-
+          <div class="word-sense-card" id="word-sense-card-${idx}" style="display: ${isVisible ? 'block' : 'none'}; background: var(--surface-elevated, rgba(255, 255, 255, 0.03)); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; position: relative;">
             <div class="form-row" style="display: grid; grid-template-columns: 1.4fr 0.9fr 1.7fr; gap: 8px; margin-bottom: 10px;">
               <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label" style="font-size: 11px;">Từ loại *</label>
@@ -21254,13 +21403,13 @@ function switchPublisherTab(tab) {
         collocations: [],
         note: ''
       });
+      currentActiveSenseTab = currentList.length - 1;
       renderWordModalSenses(currentList);
       setTimeout(() => {
-        const newIdx = currentList.length - 1;
-        const newDef = document.getElementById('word-def-' + newIdx);
+        const newDef = document.getElementById('word-def-' + currentActiveSenseTab);
         if (newDef) newDef.focus();
       }, 50);
-      showToast('➕ Đã thêm khung nhập nghĩa mới (Polysemy / Homograph)!');
+      showToast('➕ Đã thêm nét nghĩa #' + currentList.length + '!');
     }
 
     function removeWordModalSense(idx) {
@@ -21270,11 +21419,13 @@ function switchPublisherTab(tab) {
         return;
       }
       currentList.splice(idx, 1);
+      currentActiveSenseTab = Math.min(idx, currentList.length - 1);
       renderWordModalSenses(currentList);
       showToast('🗑️ Đã xóa nét nghĩa.');
     }
 
     function openWordModal() {
+      currentActiveSenseTab = 0;
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
       renderWordModalSenses([{
@@ -21322,6 +21473,7 @@ function switchPublisherTab(tab) {
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
       
+      currentActiveSenseTab = 0;
       const senses = getWordSenses(w);
       renderWordModalSenses(senses);
 

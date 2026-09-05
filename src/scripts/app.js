@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-10)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-11)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-10';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-10 (Build 242)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-11 (Build 243)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -146,6 +146,7 @@
       updateAuthUI();
       refreshAdminVipUI();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       return { userIsVip, userVipTier, userVipExpiresAt };
     }
 
@@ -3807,6 +3808,7 @@ function switchPublisherTab(tab) {
       // Auto-trigger sync on load if logged in
       updateNotificationsUI();
       updateAiChatQuotaUI();
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       if (currentUser && currentUser.uid) {
         handleManualSync();
         loadEconomyFromCloud();
@@ -5492,6 +5494,7 @@ function switchPublisherTab(tab) {
       if (lastSyncEl) {
         lastSyncEl.textContent = lastSync ? new Date(lastSync).toLocaleString('vi-VN') : 'Chưa đồng bộ';
       }
+      if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
     }
 
     // Modal Switchers
@@ -9500,7 +9503,7 @@ function switchPublisherTab(tab) {
       if (spinsCountEl) spinsCountEl.textContent = spins.toString();
 
       if (adCta) {
-        adCta.style.display = (!isVip && spins === 0) ? 'block' : 'none';
+        adCta.style.display = (spins === 0) ? 'block' : 'none';
       }
     }
 
@@ -10667,7 +10670,58 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3)
+    // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-11)
+    // =========================================================================
+    const MONETAG_DIRECT_LINK_URL = 'https://omg10.com/4/11730211';
+    const MONETAG_INPAGE_ZONE = '11730204';
+    const MONETAG_VIGNETTE_ZONE = '11730208';
+    let monetagInPageScriptEl = null;
+    let monetagVignetteScriptEl = null;
+
+    function initMonetagPassiveAds() {
+      const isVip = (typeof isUserVip === 'function' && isUserVip());
+      
+      // VIP users: 100% clean ad-free experience - strip or suppress all passive ads!
+      if (isVip) {
+        const existingInPage = document.getElementById('monetag-inpage-script');
+        if (existingInPage) existingInPage.remove();
+        const existingVignette = document.getElementById('monetag-vignette-script');
+        if (existingVignette) existingVignette.remove();
+        monetagInPageScriptEl = null;
+        monetagVignetteScriptEl = null;
+        return;
+      }
+
+      // Non-VIP users: Dynamically inject In-Page Push & Vignette banner scripts
+      if (!document.getElementById('monetag-inpage-script')) {
+        try {
+          const s = document.createElement('script');
+          s.id = 'monetag-inpage-script';
+          s.dataset.zone = MONETAG_INPAGE_ZONE;
+          s.src = 'https://nap5k.com/tag.min.js';
+          (document.documentElement || document.body).appendChild(s);
+          monetagInPageScriptEl = s;
+        } catch (e) {
+          console.warn('Monetag In-Page Push init error:', e);
+        }
+      }
+
+      if (!document.getElementById('monetag-vignette-script')) {
+        try {
+          const s = document.createElement('script');
+          s.id = 'monetag-vignette-script';
+          s.dataset.zone = MONETAG_VIGNETTE_ZONE;
+          s.src = 'https://n6wxm.com/vignette.min.js';
+          (document.documentElement || document.body).appendChild(s);
+          monetagVignetteScriptEl = s;
+        } catch (e) {
+          console.warn('Monetag Vignette init error:', e);
+        }
+      }
+    }
+
+    // =========================================================================
+    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3 / v0.10.9-alpha-11)
     // =========================================================================
     const AD_FEATURE_SLIDES = [
       {
@@ -10698,6 +10752,13 @@ function switchPublisherTab(tab) {
         const remainingSec = Math.ceil((AD_COOLDOWN_MS - elapsed) / 1000);
         showToast(`⏱️ Vui lòng chờ ${Math.floor(remainingSec / 60)} phút ${remainingSec % 60} giây để xem video tiếp theo!`);
         return;
+      }
+
+      // Open Monetag Sponsored Direct Link in a new tab
+      try {
+        window.open(MONETAG_DIRECT_LINK_URL, '_blank');
+      } catch (e) {
+        console.warn('Direct link window.open error:', e);
       }
 
       // Pick a random ad slide
