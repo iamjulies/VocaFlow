@@ -1,21 +1,21 @@
 // =========================================================================
-// MONETAG SERVICE WORKER INTEGRATION (Zone: 11729611)
+// MONETAG SERVICE WORKER INTEGRATION (Zone: 11729905)
 // =========================================================================
 self.options = {
-    "domain": "5gvci.com",
-    "zoneId": 11729611
+    "domain": "3nbf4.com",
+    "zoneId": 11729905
 };
 self.lary = "";
 try {
-    importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw');
+    importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
 } catch (e) {
     console.warn('Monetag SW script warning:', e);
 }
 
 // =========================================================================
-// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-9)
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-10)
 // =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-9';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-10';
 const ASSETS = [
   './',
   './index.html',

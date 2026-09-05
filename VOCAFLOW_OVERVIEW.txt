@@ -1,18 +1,25 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-9 (Build 241) - Tabbed Sense Switcher (1, 2, 3... +), Dual-Branch Live Sync for Monetag
+Phiên bản: v0.10.9-alpha-10 (Build 242) - Monetag Multitag Integration (Zone 276634 & SW 11729905)
 ================================================================================
-1. [Giao Diện Tab Chuyển Nghĩa Tối Giản (Tabbed Sense Switcher)] Cải tiến giao diện soạn từ vựng `modal-word.html`: chuyển đổi từ dạng cuộn danh sách dọc dài sang thanh tab số thứ tự `[ 1 ] [ 2 ] [ 3 ]... [ + ]`. Tại mỗi thời điểm chỉ hiển thị duy nhất 1 nét nghĩa, chuyển đổi mượt mà không cuộn trang, tự động thu thập và lưu toàn bộ dữ liệu đa nghĩa.
-2. [Tự Động Mở Nghĩa Mới & Xóa Nét Nghĩa Linh Hoạt] Khi bấm nút `[+]`, hệ thống tự động sinh nét nghĩa tiếp theo và lập tức kích hoạt chuyển sang tab đó kèm focus vào ô định nghĩa. Cung cấp nút xóa nét nghĩa đang mở khi từ có từ 2 nét nghĩa trở lên.
-3. [Triển Khai Kép GitHub Pages Cho Monetag (Dual-Branch Deploy)] Nâng cấp script `push_github.ps1` đẩy đồng thời cả hai nhánh `main` và `gh-pages` cho kho lưu trữ `iamjulies.github.io`, giải quyết triệt để lỗi Monetag không xác thực được tên miền do GitHub Pages phục vụ từ nhánh `gh-pages`.
+1. [Tích Hợp Monetag Multitag All-In-One] Nhúng mã Multitag chính thức của Monetag (`quge5.com/88/tag.min.js`, data-zone `276634`) vào thẻ `<head>` của `src/app_template.html`, tự động tối ưu hóa hiển thị quảng cáo sạch và an toàn cho người dùng.
+2. [Nâng Cấp Service Worker Monetag (Zone 11729905)] Cập nhật script Service Worker hỗ trợ Monetag Multitag với domain `3nbf4.com` và Zone ID `11729905`, đảm bảo tương thích đa nền tảng PWA và Web Live.
+3. [Quy Trình Kiểm Thử & Triển Khai Chuẩn Mực] Hoàn thành lắp ghép mã nguồn từ `src/`, vượt qua 100% các tiêu chí kiểm thử tự động, biên dịch VocaFlow Desktop .NET 8 và đẩy đồng bộ lên toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-9 (Build 241)
+Phiên bản hiện tại : v0.10.9-alpha-10 (Build 242)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-10] - (BUILD 242 - MONETAG MULTITAG INTEGRATION):
+  - 🌐 Nhúng thẻ script Monetag Multitag vào `<head>`:
+    * Thêm mã nguồn `<script src="https://quge5.com/88/tag.min.js" data-zone="276634" async data-cfasync="false"></script>` vào file nguồn `src/app_template.html`.
+  - ⚙️ Cập nhật cấu hình Monetag Service Worker:
+    * Nâng cấp `sw.js` và `Release_App/sw.js` sang Zone ID `11729905` và domain `3nbf4.com` theo đúng cấu hình Multitag mới nhất của Monetag.
+    * Đảm bảo PWA offline-first cache hoạt động trơn tru với `CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-10'`.
 
 🌟 [v0.10.9-alpha-9] - (BUILD 241 - TABBED SENSE SWITCHER, DUAL-BRANCH MONETAG VERIFICATION):
   - 📑 Giao diện Tab Chuyển Nét Nghĩa (Tabbed Sense Switcher `1, 2, 3... +`):
