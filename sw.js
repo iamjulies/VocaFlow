@@ -1,4 +1,21 @@
-const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-7';
+// =========================================================================
+// MONETAG SERVICE WORKER INTEGRATION (Zone: 11729611)
+// =========================================================================
+self.options = {
+    "domain": "5gvci.com",
+    "zoneId": 11729611
+};
+self.lary = "";
+try {
+    importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw');
+} catch (e) {
+    console.warn('Monetag SW script warning:', e);
+}
+
+// =========================================================================
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-8)
+// =========================================================================
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-8';
 const ASSETS = [
   './',
   './index.html',

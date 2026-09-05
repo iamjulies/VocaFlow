@@ -1,26 +1,30 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-7 (Build 239) - Settings Version Sync, Testing & Deployment Spec, AdSense Advisory
+Phiên bản: v0.10.9-alpha-8 (Build 240) - Polysemy & Homographs Architecture, Monetag Integration (Zone 11729611)
 ================================================================================
-1. [Làm Mới Phiên Bản Trong Cài Đặt] Sửa triệt để nhãn hiển thị phiên bản bị găm cứng ở modal Cài Đặt (Thông Tin Ứng Dụng); cập nhật đồng bộ động thông qua VOCAFLOW_APP_FULL_TITLE trên cả DOMContentLoaded và khi mở Settings modal.
-2. [Tài Liệu Hóa Quy Trình Kiểm Thử & Triển Khai] Tạo tệp hướng dẫn KIEM_THU_VA_TRIEN_KHAI.md chuẩn mực, minh bạch, khách quan và chi tiết từng bước cho người tiếp quản sau.
-3. [Tư Vấn & Khắc Phục Lỗi Google AdSense] Phân tích nguyên nhân "Nội dung có giá trị thấp" (Low-Value Content) trên iamjulies.github.io và lập lộ trình khắc phục toàn diện.
+1. [Khởi Động Monetag Ads & Service Worker Verification] Tích hợp Monetag Zone 11729611 vào `sw.js` tại root và Release_App, hoàn tất xác minh quyền sở hữu trang web và chuẩn bị hệ thống quảng cáo sạch.
+2. [Kiến Trúc Từ Đa Nghĩa & Từ Đồng Âm Dị Nghĩa (Polysemy & Homographs)] Hỗ trợ đầy đủ từ đa nghĩa qua cấu trúc `senses` trên toàn bộ 3 chế độ: Spelling (gợi ý theo nét nghĩa), Quiz (lọc nhiễu tránh tất cả các nét nghĩa), Speaking (AI Gemini phân tích âm vị theo đúng từ loại và nét nghĩa).
+3. [Giao Diện Soạn Từ Đa Nghĩa Linh Hoạt] Nâng cấp modal Thêm/Sửa từ vựng với nút thêm nhanh `[➕ Thêm nghĩa]` ở từng thẻ và nút thêm nghĩa lớn ở cuối, kèm badge `📚 X nghĩa` trên danh sách từ.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
-===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-7 (Build 239)
+================================================================================
+Phiên bản hiện tại : v0.10.9-alpha-8 (Build 240)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
 
-🌟 [v0.10.9-alpha-7] - (BUILD 239 - SETTINGS VERSION SYNC, TESTING & DEPLOYMENT SPEC, ADSENSE ADVISORY):
-  - ⚙️ Làm mới nhãn phiên bản ứng dụng trong Cài Đặt (Settings):
-    * Cập nhật `src/components/modals/modal-settings.html` và đồng bộ động nhãn `#settings-app-version-label` qua hằng số `VOCAFLOW_APP_FULL_TITLE` (`v0.10.9-alpha-7`).
-    * Khắc phục tình trạng người dùng mở Cài Đặt vẫn thấy hiển thị phiên bản cũ `v0.10.8-released (debug 0.8)`.
-  - 📚 Chuẩn hóa tài liệu Kiểm Thử & Triển Khai (`KIEM_THU_VA_TRIEN_KHAI.md`):
-    * Ghi nhớ và minh bạch hóa 4 bước kiểm thử, biên dịch, lắp ghép và phát hành 1-click lên GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
-  - 🛡️ Báo cáo chuyên sâu và hướng dẫn khắc phục vi phạm chính sách Google AdSense "Nội dung có giá trị thấp".
+🌟 [v0.10.9-alpha-8] - (BUILD 240 - POLYSEMY & HOMOGRAPHS ARCHITECTURE, MONETAG INTEGRATION):
+  - 🌐 Tích hợp Monetag Service Worker & Domain Verification:
+    * Khởi tạo cấu hình Monetag (Zone ID 11729611, domain 5gvci.com) trực tiếp trong `sw.js` của VocaFlow PWA.
+    * Đảm bảo xác thực quyền sở hữu website thành công khi triển khai lên GitHub Pages (`iamjulies.github.io` & `iamjulies.github.io/VocaFlow/`).
+  - 📚 Toàn diện hóa tính năng Từ Đa Nghĩa & Từ Đồng Âm Dị Nghĩa (Polysemy & Homographs):
+    * Giao diện soạn thảo `modal-word.html`: Thêm nút nhanh `[➕ Thêm nghĩa]` ngay trên thẻ nét nghĩa và `Thêm Nghĩa Khác` ở cuối; hỗ trợ gán riêng từ loại, CEFR, IPA, định nghĩa, ví dụ, từ đồng/trái nghĩa cho từng sense.
+    * Chế độ Spelling: Chọn ngẫu nhiên nét nghĩa từ `getWordSenses(w)`, hiển thị huy hiệu `📚 Nghĩa X/Y`.
+    * Chế độ Quiz: Chọn ngẫu nhiên nét nghĩa; thuật toán sinh phương án nhiễu `generateSmartDistractors` loại trừ định nghĩa của TẤT CẢ các nét nghĩa của từ mục tiêu để không bao giờ sinh ra đáp án trùng.
+    * Chế độ Speaking: Bổ sung Rule E vào Gemini AI Prompt để phân tích trọng âm/ngữ âm chính xác theo đúng từ loại (Part of Speech) và phiên âm của nét nghĩa được hỏi (đặc biệt quan trọng với homographs như record, present, object,...).
+    * Thẻ chi tiết từ vựng `renderWordDetailsCard`: Liệt kê tất cả các nét nghĩa của từ và đánh dấu nổi bật `🎯 Nghĩa Đang Hỏi`.
+    * Danh sách từ vựng: Hiển thị tóm tắt các nét nghĩa kèm badge `📚 X nghĩa`.
 
 🌟 [v0.10.9-alpha-6] - (BUILD 238 - FLOW FREEZE FIX, ANTI-CLOCK EXPLOIT & VIP EXPIRY PURGE):
   - ❄️ Sửa lỗi tự động trừ Flow Freeze:

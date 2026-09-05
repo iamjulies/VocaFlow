@@ -2547,7 +2547,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-7</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-8</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -3474,92 +3474,42 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Từ loại</label>
-            <select id="word-pos" class="form-select">
-              <option value="">(Tự động nhận diện / Không chọn)</option>
-              <option value="noun">noun (danh từ)</option>
-              <option value="verb">verb (động từ)</option>
-              <option value="adjective">adjective (tính từ)</option>
-              <option value="adverb">adverb (trạng từ)</option>
-              <option value="noun phrase">noun phrase (cụm danh từ)</option>
-              <option value="phrasal verb">phrasal verb (cụm động từ)</option>
-              <option value="phrase">phrase (cụm từ)</option>
-              <option value="idiom">idiom (thành ngữ)</option>
-              <option value="preposition">preposition (giới từ)</option>
-              <option value="conjunction">conjunction (liên từ)</option>
-              <option value="interjection">interjection (thán từ)</option>
-              <option value="other">other (khác)</option>
-            </select>
-          </div>
+        <!-- SENSES CONTAINER (v0.10.9-alpha-8: Polysemy & Homographs) -->
+        <div id="word-senses-container" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px;">
+          <!-- Dynamically populated via renderWordModalSenses() -->
+        </div>
 
-          <div class="form-group">
-            <label class="form-label">Cấp độ CEFR</label>
-            <select id="word-cefr" class="form-select">
-              <option value="">Không có</option>
-              <option value="A1">A1 - Beginner</option>
-              <option value="A2">A2 - Elementary</option>
-              <option value="B1">B1 - Intermediate</option>
-              <option value="B2">B2 - Upper Intermediate</option>
-              <option value="C1">C1 - Advanced</option>
-              <option value="C2">C2 - Mastery</option>
-            </select>
+        <!-- ADD SENSE BUTTON (POLYSEMY / HOMOGRAPHS) -->
+        <div style="margin-bottom: 16px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" style="width: 100%; border-style: dashed; border-color: rgba(168, 85, 247, 0.5); color: #c084fc; background: rgba(168, 85, 247, 0.08); font-weight: 700; padding: 9px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 15px;">➕</span> <span>Thêm Nghĩa Khác (Polysemy / Homograph)</span>
+          </button>
+        </div>
+
+        <!-- EMBEDDED IPA KEYBOARD PANEL (Shared across senses) -->
+        <div id="ipa-keyboard-panel" class="ipa-keyboard-panel" style="display: none; margin-bottom: 14px;">
+          <div class="ipa-tabs">
+            <div class="ipa-tab active" onclick="switchIpaTab('mono', this)">Nguyên âm đơn</div>
+            <div class="ipa-tab" onclick="switchIpaTab('dip', this)">Nguyên âm đôi</div>
+            <div class="ipa-tab" onclick="switchIpaTab('cons', this)">Phụ âm</div>
+            <div class="ipa-tab" onclick="switchIpaTab('spec', this)">Trọng âm & ký tự</div>
+          </div>
+          <div class="ipa-grid" id="ipa-keys-container">
+            <!-- Rendered via JS -->
           </div>
         </div>
 
-        <div class="form-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="margin-bottom: 0;">Phiên âm IPA</label>
-            <button type="button" class="btn btn-outline btn-sm" onclick="toggleIpaKeyboard()">
-              <svg class="icon icon-sm"><use href="#i-keyboard"/></svg> Bàn phím ảo IPA
-            </button>
-          </div>
-          <input type="text" id="word-phonetic" class="form-input" placeholder="/rɪˈzɪl.jənt/">
-          
-          <!-- EMBEDDED IPA KEYBOARD -->
-          <div id="ipa-keyboard-panel" class="ipa-keyboard-panel" style="display: none;">
-            <div class="ipa-tabs">
-              <div class="ipa-tab active" onclick="switchIpaTab('mono', this)">Nguyên âm đơn</div>
-              <div class="ipa-tab" onclick="switchIpaTab('dip', this)">Nguyên âm đôi</div>
-              <div class="ipa-tab" onclick="switchIpaTab('cons', this)">Phụ âm</div>
-              <div class="ipa-tab" onclick="switchIpaTab('spec', this)">Trọng âm & ký tự</div>
-            </div>
-            <div class="ipa-grid" id="ipa-keys-container">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Định nghĩa tiếng Việt *</label>
-          <textarea id="word-def" class="form-textarea" rows="2" placeholder="Nghĩa tiếng Việt của từ..." required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Câu ví dụ</label>
-          <textarea id="word-example" class="form-textarea" rows="2" placeholder="Ví dụ: She remained resilient in difficult times."></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Từ đồng nghĩa (Synonyms)</label>
-            <input type="text" id="word-synonyms" class="form-input" placeholder="tough, adaptable (phân tách dấu phẩy)">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Từ trái nghĩa (Antonyms)</label>
-            <input type="text" id="word-antonyms" class="form-input" placeholder="fragile, weak">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Cụm từ đi kèm (Collocations)</label>
-          <input type="text" id="word-collocations" class="form-input" placeholder="resilient economy, highly resilient">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Ghi chú thêm</label>
-          <input type="text" id="word-note" class="form-input" placeholder="Mẹo nhớ, ngữ cảnh...">
+        <!-- HIDDEN FALLBACK INPUTS FOR BACKWARD COMPATIBILITY -->
+        <div style="display: none;">
+          <input type="text" id="word-pos">
+          <input type="text" id="word-cefr">
+          <input type="text" id="word-phonetic">
+          <textarea id="word-def"></textarea>
+          <textarea id="word-example"></textarea>
+          <input type="text" id="word-synonyms">
+          <input type="text" id="word-antonyms">
+          <input type="text" id="word-collocations">
+          <input type="text" id="word-note">
         </div>
 
         <!-- MASTERY SLIDER: ONLY VISIBLE WHEN EDITING EXISTING WORD (v0.0.10.3h) -->
@@ -7261,7 +7211,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-7</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-8 (Build 240)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7882,10 +7832,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-7)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-8)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-7';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-7';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-8';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-8';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -16872,19 +16822,54 @@ function switchPublisherTab(tab) {
 
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
+        const senses = getWordSenses(w);
+        const isMultiSense = senses.length > 1;
 
+        const multiBadge = isMultiSense ? `<span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); font-size: 10px; font-weight: 700;">📚 ${senses.length} nghĩa</span>` : '';
         const cefrBadge = w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : '';
         const synText = w.synonyms && w.synonyms.length ? '<span class="tag-syn">≈ ' + escapeHtml(w.synonyms.slice(0, 3).join(', ')) + '</span>' : '';
         const antText = w.antonyms && w.antonyms.length ? '<span class="tag-ant">≠ ' + escapeHtml(w.antonyms.slice(0, 2).join(', ')) + '</span>' : '';
         const collText = w.collocations && w.collocations.length ? '<span class="tag-coll">• ' + escapeHtml(w.collocations.slice(0, 2).join(', ')) + '</span>' : '';
+
+        let bodyContentHtml = '';
+        if (isMultiSense) {
+          bodyContentHtml += '<div class="word-senses-summary" style="display: flex; flex-direction: column; gap: 6px; margin: 6px 0;">';
+          senses.forEach((s, sIdx) => {
+            const sSyn = s.synonyms && s.synonyms.length ? `<span class="tag-syn" style="font-size: 10px;">≈ ${escapeHtml(s.synonyms.slice(0, 2).join(', '))}</span>` : '';
+            const sAnt = s.antonyms && s.antonyms.length ? `<span class="tag-ant" style="font-size: 10px;">≠ ${escapeHtml(s.antonyms.slice(0, 2).join(', '))}</span>` : '';
+            const sColl = s.collocations && s.collocations.length ? `<span class="tag-coll" style="font-size: 10px;">• ${escapeHtml(s.collocations.slice(0, 2).join(', '))}</span>` : '';
+            bodyContentHtml += `
+              <div style="background: rgba(255, 255, 255, 0.03); border-left: 3px solid #a855f7; padding: 5px 8px; border-radius: 0 6px 6px 0; font-size: 12px;">
+                <div style="display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;">
+                  <strong style="color: #c084fc; font-size: 11px;">#${sIdx + 1}</strong>
+                  <span class="badge badge-pos" style="font-size: 9.5px; padding: 1px 4px;">${escapeHtml(s.partOfSpeech || 'noun')}</span>
+                  ${s.cefrLevel ? `<span class="badge badge-cefr" style="font-size: 9px; padding: 1px 4px;">${escapeHtml(s.cefrLevel)}</span>` : ''}
+                  ${s.phonetic ? `<span style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${escapeHtml(s.phonetic)}</span>` : ''}
+                  <span style="font-weight: 600; color: var(--text);">${escapeHtml(s.definitionVi || '')}</span>
+                </div>
+                ${s.exampleSentence ? `<div style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 2px;">“${escapeHtml(s.exampleSentence)}”</div>` : ''}
+                ${(sSyn || sAnt || sColl) ? `<div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px;">${sSyn} ${sAnt} ${sColl}</div>` : ''}
+              </div>
+            `;
+          });
+          bodyContentHtml += '</div>';
+        } else {
+          bodyContentHtml += `
+            ${w.phonetic ? '<div class="word-phonetic">' + escapeHtml(w.phonetic) + '</div>' : ''}
+            <div class="word-def">${escapeHtml(w.definitionVi || w.definition || '')}</div>
+            ${w.exampleSentence ? '<div class="word-example">“' + escapeHtml(w.exampleSentence) + '”</div>' : ''}
+            ${(synText || antText || collText) ? '<div class="word-tags">' + synText + ' ' + antText + ' ' + collText + '</div>' : ''}
+          `;
+        }
 
         item.innerHTML = `
           <div class="word-item-header">
             <div class="word-item-left">
               <input type="checkbox" class="word-select-checkbox" ${selectedWordIds.has(w.id) ? 'checked' : ''} onchange="toggleWordSelect('${w.id}', this.checked)" onclick="event.stopPropagation()" title="Chọn từ này để học">
               <span class="word-term">${escapeHtml(w.term)}</span>
+              ${multiBadge}
               ${cefrBadge}
-              ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
+              ${!isMultiSense && w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
               <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Phát âm">
                 <svg class="icon icon-sm"><use href="#i-volume"/></svg>
               </button>
@@ -16901,11 +16886,7 @@ function switchPublisherTab(tab) {
           </div>
 
           <div class="word-item-body">
-            ${w.phonetic ? '<div class="word-phonetic">' + escapeHtml(w.phonetic) + '</div>' : ''}
-            <div class="word-def">${escapeHtml(w.definitionVi || w.definition || '')}</div>
-            ${w.exampleSentence ? '<div class="word-example">“' + escapeHtml(w.exampleSentence) + '”</div>' : ''}
-            
-            ${(synText || antText || collText) ? '<div class="word-tags">' + synText + ' ' + antText + ' ' + collText + '</div>' : ''}
+            ${bodyContentHtml}
 
             <div class="word-mastery-row">
               <div class="word-mastery-track">
@@ -21045,18 +21026,268 @@ function switchPublisherTab(tab) {
       }
     }
 
+    // =========================================================================
+    // POLYSEMY & HOMOGRAPHS SENSES ENGINE (v0.10.9-alpha-8)
+    // =========================================================================
+    function getWordSenses(w) {
+      if (!w) return [];
+      if (Array.isArray(w.senses) && w.senses.length > 0) {
+        return w.senses.map(s => ({
+          partOfSpeech: s.partOfSpeech || 'noun',
+          cefrLevel: s.cefrLevel || s.level || 'B1',
+          phonetic: s.phonetic || s.ipa || '',
+          definitionVi: s.definitionVi || s.definition || '',
+          exampleSentence: s.exampleSentence || s.example || '',
+          synonyms: Array.isArray(s.synonyms) ? s.synonyms : parseList(s.synonyms || ''),
+          antonyms: Array.isArray(s.antonyms) ? s.antonyms : parseList(s.antonyms || ''),
+          collocations: Array.isArray(s.collocations) ? s.collocations : parseList(s.collocations || ''),
+          note: s.note || ''
+        }));
+      }
+      return [{
+        partOfSpeech: w.partOfSpeech || 'noun',
+        cefrLevel: w.cefrLevel || w.level || 'B1',
+        phonetic: w.phonetic || '',
+        definitionVi: w.definitionVi || w.definition || '',
+        exampleSentence: w.exampleSentence || w.example || '',
+        synonyms: Array.isArray(w.synonyms) ? w.synonyms : parseList(w.synonyms || ''),
+        antonyms: Array.isArray(w.antonyms) ? w.antonyms : parseList(w.antonyms || ''),
+        collocations: Array.isArray(w.collocations) ? w.collocations : parseList(w.collocations || ''),
+        note: w.note || ''
+      }];
+    }
+
+    let activeIpaSenseIndex = 0;
+
+    function toggleIpaKeyboardForSense(idx) {
+      activeIpaSenseIndex = idx;
+      const panel = document.getElementById('ipa-keyboard-panel');
+      if (!panel) return;
+      if (panel.style.display === 'none' || panel.dataset.activeSense !== String(idx)) {
+        panel.style.display = 'block';
+        panel.dataset.activeSense = String(idx);
+        renderIpaKeys();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function getModalSensesFromDOM() {
+      const container = document.getElementById('word-senses-container');
+      if (!container) return [];
+      const cards = container.querySelectorAll('.word-sense-card');
+      const list = [];
+      cards.forEach((card, idx) => {
+        const pos = document.getElementById('word-pos-' + idx)?.value || 'noun';
+        const cefr = document.getElementById('word-cefr-' + idx)?.value || 'B1';
+        const phonetic = (document.getElementById('word-phonetic-' + idx)?.value || '').trim();
+        const def = (document.getElementById('word-def-' + idx)?.value || '').trim();
+        const example = (document.getElementById('word-example-' + idx)?.value || '').trim();
+        const syn = parseList(document.getElementById('word-synonyms-' + idx)?.value || '');
+        const ant = parseList(document.getElementById('word-antonyms-' + idx)?.value || '');
+        const coll = parseList(document.getElementById('word-collocations-' + idx)?.value || '');
+        const note = (document.getElementById('word-note-' + idx)?.value || '').trim();
+        list.push({
+          partOfSpeech: pos,
+          cefrLevel: cefr,
+          phonetic: phonetic,
+          definitionVi: def,
+          exampleSentence: example,
+          synonyms: syn,
+          antonyms: ant,
+          collocations: coll,
+          note: note
+        });
+      });
+      return list;
+    }
+
+    function renderWordModalSenses(sensesList) {
+      const container = document.getElementById('word-senses-container');
+      if (!container) return;
+      const list = (sensesList && sensesList.length > 0) ? sensesList : [{
+        partOfSpeech: 'noun', cefrLevel: 'B1', phonetic: '', definitionVi: '',
+        exampleSentence: '', synonyms: [], antonyms: [], collocations: [], note: ''
+      }];
+
+      const posOptions = [
+        { val: 'noun', label: 'Danh từ (Noun)' },
+        { val: 'verb', label: 'Động từ (Verb)' },
+        { val: 'adjective', label: 'Tính từ (Adjective)' },
+        { val: 'adverb', label: 'Trạng từ (Adverb)' },
+        { val: 'noun phrase', label: 'Cụm danh từ (Noun Phrase)' },
+        { val: 'phrasal verb', label: 'Cụm động từ (Phrasal Verb)' },
+        { val: 'phrase', label: 'Cụm từ / Thành ngữ (Phrase)' },
+        { val: 'idiom', label: 'Thành ngữ (Idiom)' },
+        { val: 'preposition', label: 'Giới từ (Preposition)' },
+        { val: 'conjunction', label: 'Liên từ (Conjunction)' },
+        { val: 'interjection', label: 'Thán từ (Interjection)' },
+        { val: 'other', label: 'Khác (Other)' }
+      ];
+
+      const cefrOptions = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+
+      let html = '';
+      list.forEach((s, idx) => {
+        const synStr = Array.isArray(s.synonyms) ? s.synonyms.join(', ') : (s.synonyms || '');
+        const antStr = Array.isArray(s.antonyms) ? s.antonyms.join(', ') : (s.antonyms || '');
+        const collStr = Array.isArray(s.collocations) ? s.collocations.join(', ') : (s.collocations || '');
+        const isMulti = list.length > 1;
+
+        let posOptHtml = '';
+        posOptions.forEach(opt => {
+          const selected = (s.partOfSpeech || 'noun').toLowerCase() === opt.val.toLowerCase() ? 'selected' : '';
+          posOptHtml += `<option value="${opt.val}" ${selected}>${opt.label}</option>`;
+        });
+
+        let cefrOptHtml = '';
+        cefrOptions.forEach(c => {
+          const selected = (s.cefrLevel || 'B1').toUpperCase() === c ? 'selected' : '';
+          cefrOptHtml += `<option value="${c}" ${selected}>${c}</option>`;
+        });
+
+        html += `
+          <div class="word-sense-card" id="word-sense-card-${idx}" style="background: var(--surface-elevated, rgba(255, 255, 255, 0.03)); border: 1px solid ${isMulti ? 'rgba(168, 85, 247, 0.35)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="badge" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); color: #c084fc; font-weight: 700; font-size: 11px; border: 1px solid rgba(168,85,247,0.3);">
+                  Nét nghĩa #${idx + 1}
+                </span>
+                ${isMulti ? '<span style="font-size: 11px; color: var(--text-muted);">(Polysemy / Homograph)</span>' : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" title="Thêm nét nghĩa mới (Polysemy / Homograph)" style="color: #c084fc; border-color: rgba(168, 85, 247, 0.4); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
+                  <span>➕</span> <span>Thêm nghĩa</span>
+                </button>
+                ${isMulti ? `
+                  <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${idx})" title="Xóa nét nghĩa này" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
+                    <span>🗑️</span> <span>Xóa</span>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1.4fr 0.9fr 1.7fr; gap: 8px; margin-bottom: 10px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">Từ loại *</label>
+                <select id="word-pos-${idx}" class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                  ${posOptHtml}
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">CEFR</label>
+                <select id="word-cefr-${idx}" class="form-select" style="font-size: 12px; padding: 6px 8px;">
+                  ${cefrOptHtml}
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label class="form-label" style="font-size: 11px; margin-bottom: 2px;">Phiên âm IPA</label>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="toggleIpaKeyboardForSense(${idx})" style="font-size: 10px; padding: 1px 6px; height: 20px;">⌨️ IPA</button>
+                </div>
+                <input type="text" id="word-phonetic-${idx}" class="form-input" placeholder="/.../" value="${escapeHtml(s.phonetic || '')}" style="font-size: 12px; padding: 6px 8px;">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 11px;">Định nghĩa tiếng Việt *</label>
+              <textarea id="word-def-${idx}" class="form-textarea" placeholder="Nghĩa cốt lõi tiếng Việt cho nét nghĩa này..." required style="font-size: 12.5px; padding: 6px 8px; min-height: 52px;">${escapeHtml(s.definitionVi || '')}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 11px;">Câu ví dụ</label>
+              <textarea id="word-example-${idx}" class="form-textarea" placeholder="Câu ví dụ minh họa cách dùng nghĩa này..." style="font-size: 12px; padding: 6px 8px; min-height: 46px;">${escapeHtml(s.exampleSentence || '')}</textarea>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">Từ đồng nghĩa (Synonyms)</label>
+                <input type="text" id="word-synonyms-${idx}" class="form-input" placeholder="cách nhau bởi dấu phẩy" value="${escapeHtml(synStr)}" style="font-size: 12px; padding: 6px 8px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">Từ trái nghĩa (Antonyms)</label>
+                <input type="text" id="word-antonyms-${idx}" class="form-input" placeholder="cách nhau bởi dấu phẩy" value="${escapeHtml(antStr)}" style="font-size: 12px; padding: 6px 8px;">
+              </div>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">Cụm từ đi kèm (Collocations)</label>
+                <input type="text" id="word-collocations-${idx}" class="form-input" placeholder="cụm từ hay gặp..." value="${escapeHtml(collStr)}" style="font-size: 12px; padding: 6px 8px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">Ghi chú & Mẹo nhớ</label>
+                <input type="text" id="word-note-${idx}" class="form-input" placeholder="Mẹo nhớ, giới từ đi kèm..." value="${escapeHtml(s.note || '')}" style="font-size: 12px; padding: 6px 8px;">
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Keep fallback inputs in sync for backward compatibility
+      const first = list[0];
+      if (first) {
+        if (document.getElementById('word-pos')) document.getElementById('word-pos').value = first.partOfSpeech || 'noun';
+        if (document.getElementById('word-cefr')) document.getElementById('word-cefr').value = first.cefrLevel || 'B1';
+        if (document.getElementById('word-phonetic')) document.getElementById('word-phonetic').value = first.phonetic || '';
+        if (document.getElementById('word-def')) document.getElementById('word-def').value = first.definitionVi || '';
+        if (document.getElementById('word-example')) document.getElementById('word-example').value = first.exampleSentence || '';
+        if (document.getElementById('word-synonyms')) document.getElementById('word-synonyms').value = Array.isArray(first.synonyms) ? first.synonyms.join(', ') : (first.synonyms || '');
+        if (document.getElementById('word-antonyms')) document.getElementById('word-antonyms').value = Array.isArray(first.antonyms) ? first.antonyms.join(', ') : (first.antonyms || '');
+        if (document.getElementById('word-collocations')) document.getElementById('word-collocations').value = Array.isArray(first.collocations) ? first.collocations.join(', ') : (first.collocations || '');
+        if (document.getElementById('word-note')) document.getElementById('word-note').value = first.note || '';
+      }
+    }
+
+    function addWordModalBlankSense() {
+      const currentList = getModalSensesFromDOM();
+      currentList.push({
+        partOfSpeech: 'noun',
+        cefrLevel: 'B1',
+        phonetic: '',
+        definitionVi: '',
+        exampleSentence: '',
+        synonyms: [],
+        antonyms: [],
+        collocations: [],
+        note: ''
+      });
+      renderWordModalSenses(currentList);
+      setTimeout(() => {
+        const newIdx = currentList.length - 1;
+        const newDef = document.getElementById('word-def-' + newIdx);
+        if (newDef) newDef.focus();
+      }, 50);
+      showToast('➕ Đã thêm khung nhập nghĩa mới (Polysemy / Homograph)!');
+    }
+
+    function removeWordModalSense(idx) {
+      const currentList = getModalSensesFromDOM();
+      if (currentList.length <= 1) {
+        showToast('⚠️ Từ vựng phải có ít nhất 1 nét nghĩa!');
+        return;
+      }
+      currentList.splice(idx, 1);
+      renderWordModalSenses(currentList);
+      showToast('🗑️ Đã xóa nét nghĩa.');
+    }
+
     function openWordModal() {
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
-      document.getElementById('word-pos').value = '';
-      document.getElementById('word-cefr').value = '';
-      document.getElementById('word-phonetic').value = '';
-      document.getElementById('word-def').value = '';
-      document.getElementById('word-example').value = '';
-      document.getElementById('word-synonyms').value = '';
-      document.getElementById('word-antonyms').value = '';
-      document.getElementById('word-collocations').value = '';
-      document.getElementById('word-note').value = '';
+      renderWordModalSenses([{
+        partOfSpeech: 'noun',
+        cefrLevel: 'B1',
+        phonetic: '',
+        definitionVi: '',
+        exampleSentence: '',
+        synonyms: [],
+        antonyms: [],
+        collocations: [],
+        note: ''
+      }]);
       
       // Reset & hide mastery slider for brand new word creation (v0.0.10.3h)
       const masteryGroup = document.getElementById('form-word-mastery-group');
@@ -21090,33 +21321,11 @@ function switchPublisherTab(tab) {
 
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
-      const posSelect = document.getElementById('word-pos');
-      if (posSelect) {
-        const rawPos = (w.partOfSpeech || '').trim();
-        const rawPosLower = rawPos.toLowerCase();
-        let match = Array.from(posSelect.options).find(opt => opt.value.toLowerCase() === rawPosLower);
-        if (!match && rawPos) {
-          const customOpt = document.createElement('option');
-          customOpt.value = rawPos;
-          customOpt.textContent = rawPos + ' (tùy chỉnh)';
-          posSelect.appendChild(customOpt);
-          posSelect.value = rawPos;
-        } else if (match) {
-          posSelect.value = match.value;
-        } else {
-          posSelect.value = '';
-        }
-      }
-      document.getElementById('word-cefr').value = w.cefrLevel || '';
-      document.getElementById('word-phonetic').value = w.phonetic || '';
-      document.getElementById('word-def').value = w.definitionVi || w.definition || '';
-      document.getElementById('word-example').value = w.exampleSentence || w.example || '';
-      document.getElementById('word-synonyms').value = (w.synonyms || []).join(', ');
-      document.getElementById('word-antonyms').value = (w.antonyms || []).join(', ');
-      document.getElementById('word-collocations').value = (w.collocations || []).join(', ');
-      document.getElementById('word-note').value = w.note || '';
+      
+      const senses = getWordSenses(w);
+      renderWordModalSenses(senses);
 
-      // Show mastery slider when editing existing word (ONLY ALLOW DECREASING, CANNOT INCREASE BEYOND CURRENT SCORE)
+      // Show mastery slider when editing existing word
       const masteryGroup = document.getElementById('form-word-mastery-group');
       if (masteryGroup) masteryGroup.style.display = 'block';
       const slider = document.getElementById('word-mastery-slider');
@@ -21137,15 +21346,27 @@ function switchPublisherTab(tab) {
       e.preventDefault();
       const id = document.getElementById('word-id').value || 'w-' + Date.now();
       const term = document.getElementById('word-term').value.trim();
-      const pos = document.getElementById('word-pos').value;
-      const cefr = document.getElementById('word-cefr').value;
-      const phonetic = document.getElementById('word-phonetic').value.trim();
-      const def = document.getElementById('word-def').value.trim();
-      const example = document.getElementById('word-example').value.trim();
-      const syn = parseList(document.getElementById('word-synonyms').value);
-      const ant = parseList(document.getElementById('word-antonyms').value);
-      const coll = parseList(document.getElementById('word-collocations').value);
-      const note = document.getElementById('word-note').value.trim();
+      if (!term) {
+        alert('Vui lòng nhập từ vựng tiếng Anh!');
+        return;
+      }
+
+      const collectedSenses = getModalSensesFromDOM();
+      if (!collectedSenses || collectedSenses.length === 0 || !collectedSenses[0].definitionVi) {
+        alert('Vui lòng điền định nghĩa tiếng Việt cho nét nghĩa đầu tiên!');
+        return;
+      }
+
+      const primarySense = collectedSenses[0];
+      const pos = primarySense.partOfSpeech;
+      const cefr = primarySense.cefrLevel;
+      const phonetic = primarySense.phonetic;
+      const def = primarySense.definitionVi;
+      const example = primarySense.exampleSentence;
+      const syn = primarySense.synonyms;
+      const ant = primarySense.antonyms;
+      const coll = primarySense.collocations;
+      const note = primarySense.note;
       
       const slider = document.getElementById('word-mastery-slider');
       const score = slider ? parseInt(slider.value, 10) : 0;
@@ -21156,19 +21377,36 @@ function switchPublisherTab(tab) {
       if (existingIndex >= 0) {
         words[existingIndex] = {
           ...words[existingIndex],
-          term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
-          definitionVi: def, exampleSentence: example,
-          synonyms: syn, antonyms: ant, collocations: coll, note,
+          term,
+          senses: collectedSenses,
+          partOfSpeech: pos,
+          cefrLevel: cefr,
+          phonetic: phonetic,
+          definitionVi: def,
+          exampleSentence: example,
+          synonyms: syn,
+          antonyms: ant,
+          collocations: coll,
+          note: note,
           masteryScore: score,
           status: status,
           updatedAt: nowIso
         };
       } else {
         words.push({
-          id, deckId: currentDeckId,
-          term, partOfSpeech: pos, cefrLevel: cefr, phonetic,
-          definitionVi: def, exampleSentence: example,
-          synonyms: syn, antonyms: ant, collocations: coll, note,
+          id,
+          deckId: currentDeckId,
+          term,
+          senses: collectedSenses,
+          partOfSpeech: pos,
+          cefrLevel: cefr,
+          phonetic: phonetic,
+          definitionVi: def,
+          exampleSentence: example,
+          synonyms: syn,
+          antonyms: ant,
+          collocations: coll,
+          note: note,
           status: status,
           masteryScore: score,
           createdAt: nowIso,
@@ -21516,6 +21754,7 @@ function switchPublisherTab(tab) {
     }
 
     function openSpellingSetupModal(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       spellingSetupUseSelection = useSelectionOnly;
       spellingSetupCustomWordList = customWordList;
 
@@ -21719,6 +21958,7 @@ function switchPublisherTab(tab) {
     }
 
     function startSpellingMode(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
@@ -21775,6 +22015,12 @@ function switchPublisherTab(tab) {
       const questionWord = spellingList[spellingIndex];
       const total = spellingList.length;
 
+      // Polysemy / Homographs: Pick random sense
+      const senses = getWordSenses(questionWord);
+      const chosenSense = (senses && senses.length > 0) ? senses[Math.floor(Math.random() * senses.length)] : questionWord;
+      questionWord._activeSpellingSense = chosenSense;
+      const senseIdx = senses.indexOf(chosenSense);
+
       document.getElementById('spelling-counter').textContent = 'Từ ' + (spellingIndex + 1) + ' / ' + total;
       document.getElementById('spelling-score').textContent = 'Bài: ' + (spellingScore >= 0 ? '+' : '') + spellingScore + 'đ';
       updateSpellingWalletPointsDisplay();
@@ -21810,7 +22056,9 @@ function switchPublisherTab(tab) {
 
       if (defEl) {
         if (spellingCluesConfig.def) {
-          defEl.textContent = questionWord.definitionVi || questionWord.definition || '';
+          const senseDef = chosenSense.definitionVi || chosenSense.definition || questionWord.definitionVi || questionWord.definition || '';
+          const badgeHtml = (senses.length > 1) ? `<span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 10.5px; margin-right: 6px;">📚 Nghĩa ${senseIdx + 1}/${senses.length}</span>` : '';
+          defEl.innerHTML = badgeHtml + escapeHtml(senseDef);
           defEl.style.display = 'block';
         } else {
           defEl.style.display = 'none';
@@ -21818,8 +22066,9 @@ function switchPublisherTab(tab) {
       }
 
       if (ipaEl) {
-        if (spellingCluesConfig.ipa && questionWord.phonetic) {
-          ipaEl.textContent = questionWord.phonetic;
+        const phoneticText = chosenSense.phonetic || questionWord.phonetic;
+        if (spellingCluesConfig.ipa && phoneticText) {
+          ipaEl.textContent = phoneticText;
           ipaEl.style.display = 'block';
         } else {
           ipaEl.style.display = 'none';
@@ -22981,45 +23230,39 @@ function switchPublisherTab(tab) {
         }
 
         if (result) {
-          // Fill form fields
           if (result.term && termInput) termInput.value = result.term;
-          if (result.ipa) document.getElementById('word-phonetic').value = result.ipa;
-          if (result.pos) {
-            const posSelect = document.getElementById('word-pos');
-            if (posSelect) {
-              const cleanPos = result.pos.toLowerCase().trim();
-              let targetVal = cleanPos;
-              if (cleanPos.startsWith('n') && !cleanPos.includes('verb')) targetVal = 'noun';
-              else if (cleanPos.startsWith('v')) targetVal = 'verb';
-              else if (cleanPos.startsWith('adj')) targetVal = 'adjective';
-              else if (cleanPos.startsWith('adv')) targetVal = 'adverb';
-              else if (cleanPos.includes('idiom')) targetVal = 'idiom';
-              else if (cleanPos.includes('phrase')) targetVal = 'phrase';
 
-              const matchPos = Array.from(posSelect.options).find(opt => opt.value && (opt.value === targetVal || cleanPos === opt.value.toLowerCase() || cleanPos.includes(opt.value.toLowerCase()) || opt.value.toLowerCase().includes(cleanPos)));
-              if (matchPos) {
-                posSelect.value = matchPos.value;
-              }
-            }
-          }
-          if (result.cefrLevel) {
-            const cefrSelect = document.getElementById('word-cefr');
-            if (cefrSelect) {
-              const cleanCefr = result.cefrLevel.toUpperCase().trim();
-              const matchCefr = Array.from(cefrSelect.options).find(opt => opt.value === cleanCefr);
-              if (matchCefr) cefrSelect.value = matchCefr.value;
-            }
-          }
-          if (result.definition) document.getElementById('word-def').value = cleanVietnameseDefinition(result.definition);
-          if (result.example) document.getElementById('word-example').value = result.example;
-          if (result.synonyms) document.getElementById('word-synonyms').value = Array.isArray(result.synonyms) ? result.synonyms.join(', ') : result.synonyms;
-          if (result.antonyms) document.getElementById('word-antonyms').value = Array.isArray(result.antonyms) ? result.antonyms.join(', ') : result.antonyms;
-          if (result.collocations) document.getElementById('word-collocations').value = Array.isArray(result.collocations) ? result.collocations.join(', ') : result.collocations;
-          if (result.note && document.getElementById('word-note')) {
-            document.getElementById('word-note').value = result.note;
+          // Multi-sense Polysemy / Homograph mapping
+          let formattedSenses = [];
+          if (Array.isArray(result.senses) && result.senses.length > 0) {
+            formattedSenses = result.senses.map(s => ({
+              partOfSpeech: s.pos || s.partOfSpeech || 'noun',
+              cefrLevel: (s.cefrLevel || s.level || 'B1').toUpperCase(),
+              phonetic: s.ipa || s.phonetic || '',
+              definitionVi: cleanVietnameseDefinition(s.definition || s.definitionVi || ''),
+              exampleSentence: s.example || s.exampleSentence || '',
+              synonyms: Array.isArray(s.synonyms) ? s.synonyms : parseList(s.synonyms || ''),
+              antonyms: Array.isArray(s.antonyms) ? s.antonyms : parseList(s.antonyms || ''),
+              collocations: Array.isArray(s.collocations) ? s.collocations : parseList(s.collocations || ''),
+              note: s.note || ''
+            }));
+          } else {
+            formattedSenses = [{
+              partOfSpeech: result.pos || 'noun',
+              cefrLevel: (result.cefrLevel || 'B1').toUpperCase(),
+              phonetic: result.ipa || '',
+              definitionVi: cleanVietnameseDefinition(result.definition || ''),
+              exampleSentence: result.example || '',
+              synonyms: Array.isArray(result.synonyms) ? result.synonyms : parseList(result.synonyms || ''),
+              antonyms: Array.isArray(result.antonyms) ? result.antonyms : parseList(result.antonyms || ''),
+              collocations: Array.isArray(result.collocations) ? result.collocations : parseList(result.collocations || ''),
+              note: result.note || ''
+            }];
           }
 
-          showToast('✨ AI đã tư duy & hoàn thiện thông tin từ vựng!');
+          renderWordModalSenses(formattedSenses);
+          const sensesCount = formattedSenses.length;
+          showToast(`✨ AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
         } else {
           alert('Không thể kết nối AI hoặc Từ điển (mạng gián đoạn hoặc chưa có API Key). Bạn vui lòng kiểm tra Cài đặt API Key hoặc nhập thủ công nhé!');
         }
@@ -23049,29 +23292,37 @@ function switchPublisherTab(tab) {
       const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho người học Việt Nam.
 Hãy phân tích và hoàn thiện trọn vẹn 100% dữ liệu từ điển cho từ vựng tiếng Anh: "${term}".
 ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\n` : ''}
-YÊU CẦU BIÊN SOẠN CHUẨN XÁC VÀ BẮT BUỘC ĐẦY ĐỦ MỌI TRƯỜNG (KHÔNG ĐƯỢC ĐỂ TRỐNG):
-1. TỪ LOẠI ("pos"): Tự động nhận diện chính xác nhất: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-2. PHIÊN ÂM ("ipa"): Phiên âm chuẩn quốc tế IPA Anh-Mỹ kèm dấu gạch chéo /.../ (ví dụ: "/rɪˈzɪliənt/").
-3. CEFR ("cefrLevel"): Phân loại chuẩn xác: "A1", "A2", "B1", "B2", "C1", hoặc "C2".
-4. ĐỊNH NGHĨA ("definition"): Nghĩa tiếng Việt cốt lõi, cô đọng, tự nhiên (dưới 8 từ). Dùng dấu phẩy (,) nếu có nhiều nét nghĩa, KHÔNG có dấu chấm (.) ở cuối.
-5. GHI CHÚ & MẸO NHỚ ("note"): BẮT BUỘC. Mẹo ghi nhớ dễ thuộc, quy tắc giới từ đi kèm, hoặc sắc thái ngữ cảnh trong tiếng Việt (ví dụ: "Thường đi kèm giới từ 'to'; mẹo nhớ: sức bật phục hồi nhanh").
-6. VÍ DỤ ("example"): 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
-7. TỪ ĐỒNG NGHĨA ("synonyms"): BẮT BUỘC. Mảng chứa 2-4 từ đồng nghĩa tiếng Anh chính xác (ví dụ: ["tough", "adaptable", "robust"]).
-8. TỪ TRÁI NGHĨA ("antonyms"): BẮT BUỘC. Mảng chứa 2-3 từ trái nghĩa tiếng Anh (ví dụ: ["fragile", "weak", "vulnerable"]).
-9. COLLOCATIONS ("collocations"): BẮT BUỘC. Mảng chứa 2-4 cụm từ đi kèm tự nhiên thường gặp (ví dụ: ["resilient economy", "highly resilient", "remain resilient"]).
+ĐẶC BIỆT LƯU Ý VỀ TỪ ĐA NGHĨA (POLYSEMY) & TỪ ĐỒNG ÂM TRÙNG HÌNH (HOMOGRAPHS):
+- Nếu "${term}" là từ đa nghĩa hoặc đồng âm trùng hình có nhiều nét nghĩa, từ loại, hoặc phiên âm khác nhau (ví dụ: tear /tɪər/ (n) nước mắt vs tear /teər/ (v) xé rách, bank bờ sông vs ngân hàng, lead /liːd/ vs lead /led/, run, date, light, spring...), hãy trả về mảng "senses" chứa TẤT CẢ các nét nghĩa/phiên âm quan trọng đó (tối đa 3 nghĩa phổ biến nhất).
+- Nếu từ chỉ có 1 nghĩa đơn giản, mảng "senses" chỉ cần 1 phần tử.
 
-Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
+YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
+1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/tɪər/").
+3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
+4. "definition": Nghĩa tiếng Việt cô đọng, tự nhiên (dưới 8 từ), KHÔNG có dấu chấm (.) ở cuối.
+5. "example": 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
+6. "synonyms": Mảng 2-3 từ đồng nghĩa tiếng Anh.
+7. "antonyms": Mảng 1-2 từ trái nghĩa tiếng Anh (hoặc rỗng []).
+8. "collocations": Mảng 2-3 collocations thường gặp.
+9. "note": Mẹo nhớ hoặc ngữ cảnh ngữ pháp.
+
+Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 {
   "term": "${term}",
-  "pos": "noun/verb/adjective/adverb/noun phrase/phrasal verb/phrase/idiom",
-  "ipa": "/phiên âm IPA/",
-  "cefrLevel": "A1/A2/B1/B2/C1/C2",
-  "definition": "Nghĩa tiếng Việt ngắn gọn",
-  "note": "Mẹo nhớ và lưu ý ngữ pháp",
-  "example": "Natural English example sentence (Bản dịch tiếng Việt)",
-  "synonyms": ["synonym 1", "synonym 2", "synonym 3"],
-  "antonyms": ["antonym 1", "antonym 2"],
-  "collocations": ["collocation 1", "collocation 2"]
+  "senses": [
+    {
+      "pos": "noun",
+      "ipa": "/ipa/",
+      "cefrLevel": "B1",
+      "definition": "Nghĩa tiếng Việt ngắn gọn",
+      "example": "English example (Dịch nghĩa)",
+      "synonyms": ["syn1", "syn2"],
+      "antonyms": ["ant1"],
+      "collocations": ["coll1", "coll2"],
+      "note": "Mẹo nhớ"
+    }
+  ]
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
@@ -23092,7 +23343,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
               generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.2,
-                maxOutputTokens: 600
+                maxOutputTokens: 1200
               },
               safetySettings: [
                 { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -23211,7 +23462,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function insertIpaSymbol(sym) {
-      const input = document.getElementById('word-phonetic');
+      const input = document.getElementById('word-phonetic-' + activeIpaSenseIndex) || document.getElementById('word-phonetic');
+      if (!input) return;
       const start = input.selectionStart || input.value.length;
       const end = input.selectionEnd || input.value.length;
       const current = input.value;
@@ -23274,6 +23526,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function openQuizSetupModal(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       quizSetupUseSelection = useSelectionOnly;
       quizSetupCustomWordList = customWordList;
 
@@ -23633,6 +23886,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       const container = document.getElementById(prefix + '-word-details-box');
       if (!container || !word) return;
 
+      const senses = getWordSenses(word);
+      const activeSense = word._activeSpellingSense || word._activeQuizSense || senses[0] || word;
+
       const termEl = document.getElementById(prefix + '-detail-term');
       const posEl = document.getElementById(prefix + '-detail-pos');
       const cefrEl = document.getElementById(prefix + '-detail-cefr');
@@ -23643,7 +23899,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       if (termEl) termEl.textContent = word.term || '';
       
-      const pos = word.partOfSpeech || word.pos || '';
+      const pos = activeSense.partOfSpeech || word.partOfSpeech || word.pos || '';
       if (posEl) {
         if (pos) {
           posEl.textContent = String(pos).toUpperCase();
@@ -23653,7 +23909,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
-      const cefr = word.cefrLevel || word.level || 'B1';
+      const cefr = activeSense.cefrLevel || word.cefrLevel || word.level || 'B1';
       if (cefrEl) {
         if (cefr) {
           cefrEl.textContent = String(cefr).toUpperCase();
@@ -23663,32 +23919,59 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
-      if (phoneticEl) phoneticEl.textContent = word.phonetic || word.ipa || '';
-      if (defEl) defEl.textContent = word.definitionVi || word.definition || '';
+      if (phoneticEl) phoneticEl.textContent = activeSense.phonetic || word.phonetic || word.ipa || '';
 
-      const ex = word.exampleSentence || word.example || '';
-      if (exampleEl) {
-        if (ex) {
-          exampleEl.textContent = `“${ex}”`;
-          exampleEl.style.display = 'block';
-        } else {
-          exampleEl.style.display = 'none';
+      if (senses.length > 1) {
+        let sensesHtml = `<div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">`;
+        senses.forEach((s, idx) => {
+          const isCurrent = (s === activeSense) || (s.definitionVi === activeSense.definitionVi);
+          sensesHtml += `
+            <div style="background: ${isCurrent ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)'}; border: 1px solid ${isCurrent ? 'rgba(99,102,241,0.45)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 7px 10px;">
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
+                <span class="badge" style="background:#6366f1; color:#fff; font-size:10px; font-weight:700;">Nghĩa #${idx + 1}</span>
+                <span class="badge badge-pos" style="font-size:9.5px;">${escapeHtml(s.partOfSpeech || 'noun')}</span>
+                <span class="badge badge-level-${(s.cefrLevel || 'b1').toLowerCase()}" style="font-size:9.5px;">${escapeHtml(s.cefrLevel || 'B1')}</span>
+                ${s.phonetic ? `<span style="font-family:monospace; color:#38bdf8; font-size:11px;">${escapeHtml(s.phonetic)}</span>` : ''}
+                ${isCurrent ? '<span class="badge" style="background:#10b981; color:#fff; font-size:9px; padding:1px 5px;">🎯 Nghĩa Đang Hỏi</span>' : ''}
+              </div>
+              <div style="font-size:13.5px; font-weight:600; color:var(--text);">${escapeHtml(s.definitionVi || '')}</div>
+              ${s.exampleSentence ? `<div style="font-size:12px; font-style:italic; color:var(--text-muted); margin-top:2px;">“${escapeHtml(s.exampleSentence)}”</div>` : ''}
+            </div>
+          `;
+        });
+        sensesHtml += `</div>`;
+        if (defEl) defEl.innerHTML = sensesHtml;
+        if (exampleEl) exampleEl.style.display = 'none';
+      } else {
+        if (defEl) defEl.textContent = word.definitionVi || word.definition || '';
+        const ex = word.exampleSentence || word.example || '';
+        if (exampleEl) {
+          if (ex) {
+            exampleEl.textContent = `“${ex}”`;
+            exampleEl.style.display = 'block';
+          } else {
+            exampleEl.style.display = 'none';
+          }
         }
       }
 
       if (metaEl) {
         const metaParts = [];
-        if (word.synonyms && Array.isArray(word.synonyms) && word.synonyms.length > 0) {
-          metaParts.push(`<strong>Đồng nghĩa:</strong> ${escapeHtml(word.synonyms.join(', '))}`);
+        const synList = activeSense.synonyms || word.synonyms;
+        if (synList && Array.isArray(synList) && synList.length > 0) {
+          metaParts.push(`<strong>Đồng nghĩa:</strong> ${escapeHtml(synList.join(', '))}`);
         }
-        if (word.antonyms && Array.isArray(word.antonyms) && word.antonyms.length > 0) {
-          metaParts.push(`<strong>Trái nghĩa:</strong> ${escapeHtml(word.antonyms.join(', '))}`);
+        const antList = activeSense.antonyms || word.antonyms;
+        if (antList && Array.isArray(antList) && antList.length > 0) {
+          metaParts.push(`<strong>Trái nghĩa:</strong> ${escapeHtml(antList.join(', '))}`);
         }
-        if (word.collocations && Array.isArray(word.collocations) && word.collocations.length > 0) {
-          metaParts.push(`<strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}`);
+        const colList = activeSense.collocations || word.collocations;
+        if (colList && Array.isArray(colList) && colList.length > 0) {
+          metaParts.push(`<strong>Cụm từ:</strong> ${escapeHtml(colList.join(', '))}`);
         }
-        if (word.note && String(word.note).trim()) {
-          metaParts.push(`<strong>Ghi chú:</strong> ${escapeHtml(String(word.note).trim())}`);
+        const noteText = activeSense.note || word.note;
+        if (noteText && String(noteText).trim()) {
+          metaParts.push(`<strong>Ghi chú:</strong> ${escapeHtml(String(noteText).trim())}`);
         }
 
         if (metaParts.length > 0) {
@@ -23809,6 +24092,7 @@ Yêu cầu nghiêm ngặt:
 
 
     function startQuizMode(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
@@ -23865,16 +24149,34 @@ Yêu cầu nghiêm ngặt:
     }
 
     function generateSmartDistractors(questionWord, countNeeded = 3, existingDistractors = []) {
-      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
-      const currentPos = (questionWord.partOfSpeech || 'noun').toLowerCase().trim();
+      const activeSense = questionWord._activeQuizSense || getWordSenses(questionWord)[0] || questionWord;
+      const correctDef = (activeSense.definitionVi || activeSense.definition || questionWord.definitionVi || questionWord.definition || '').trim();
+      const currentPos = (activeSense.partOfSpeech || questionWord.partOfSpeech || 'noun').toLowerCase().trim();
       const currentDeckId = questionWord.deckId;
 
       const chosenDefs = new Set(existingDistractors.map(d => (d || '').trim().toLowerCase()));
       chosenDefs.add(correctDef.toLowerCase());
 
+      // Polysemy / Homographs: Add ALL senses of questionWord AND any word sharing same term to chosenDefs
+      // Distractors MUST NEVER include any definition of any sense of this same word!
+      const qTerm = (questionWord.term || '').trim().toLowerCase();
+      getWordSenses(questionWord).forEach(s => {
+        const d = (s.definitionVi || s.definition || '').trim().toLowerCase();
+        if (d) chosenDefs.add(d);
+      });
+      words.forEach(w => {
+        if ((w.term || '').trim().toLowerCase() === qTerm) {
+          getWordSenses(w).forEach(s => {
+            const d = (s.definitionVi || s.definition || '').trim().toLowerCase();
+            if (d) chosenDefs.add(d);
+          });
+        }
+      });
+
       const otherWords = words.filter(w => {
+        const sameTerm = (w.term || '').trim().toLowerCase() === qTerm;
         const d = (w.definitionVi || w.definition || '').trim().toLowerCase();
-        return w.id !== questionWord.id && d && !chosenDefs.has(d);
+        return w.id !== questionWord.id && !sameTerm && d && !chosenDefs.has(d);
       });
 
       const resultList = [];
@@ -24001,10 +24303,22 @@ Yêu cầu nghiêm ngặt:
       const questionWord = quizList[quizIndex];
       const total = quizList.length;
 
+      // Polysemy / Homographs: Pick random sense to quiz
+      const senses = getWordSenses(questionWord);
+      const chosenSense = (senses && senses.length > 0) ? senses[Math.floor(Math.random() * senses.length)] : questionWord;
+      questionWord._activeQuizSense = chosenSense;
+      const senseIdx = senses.indexOf(chosenSense);
+
       document.getElementById('quiz-counter').textContent = 'Câu ' + (quizIndex + 1) + ' / ' + total;
       document.getElementById('quiz-score').textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
       document.getElementById('quiz-question-term').textContent = questionWord.term;
-      document.getElementById('quiz-question-phonetic').textContent = questionWord.phonetic || '';
+      
+      const phoneticText = chosenSense.phonetic || questionWord.phonetic || '';
+      const phoneticEl = document.getElementById('quiz-question-phonetic');
+      if (phoneticEl) {
+        const badge = (senses.length > 1) ? ` <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 10px; vertical-align: middle;">📚 Nghĩa ${senseIdx + 1}/${senses.length}</span>` : '';
+        phoneticEl.innerHTML = (phoneticText ? escapeHtml(phoneticText) : '') + badge;
+      }
 
       updateQuizDifficultyUI();
 
@@ -24026,7 +24340,27 @@ Yêu cầu nghiêm ngặt:
         }
       }
 
-      const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
+      const correctDef = (chosenSense.definitionVi || chosenSense.definition || questionWord.definitionVi || questionWord.definition || '').trim();
+
+      // Collect all forbidden definitions for distractors (all senses of question word)
+      const forbiddenDefs = new Set();
+      senses.forEach(s => {
+        const d = (s.definitionVi || s.definition || '').trim().toLowerCase();
+        if (d) forbiddenDefs.add(d);
+      });
+      const qTerm = (questionWord.term || '').trim().toLowerCase();
+      words.forEach(w => {
+        if ((w.term || '').trim().toLowerCase() === qTerm) {
+          getWordSenses(w).forEach(s => {
+            const d = (s.definitionVi || s.definition || '').trim().toLowerCase();
+            if (d) forbiddenDefs.add(d);
+          });
+        }
+      });
+
+      // Strict filter: AI distractors MUST NOT match ANY sense of the target word
+      aiDistractors = aiDistractors.filter(d => d && !forbiddenDefs.has(d.trim().toLowerCase()));
+
       const regularNeeded = 3 - aiDistractors.length;
       const rawRegularDistractors = generateSmartDistractors(questionWord, regularNeeded, aiDistractors);
       const regularDistractors = rawRegularDistractors.map(d => chameleonStyleMatching(d, correctDef));
@@ -24953,6 +25287,12 @@ Yêu cầu nghiêm ngặt:
     let isAutoFcMiniMode = false;
     let lastScreenBeforeAutoFc = 'screen-decks';
 
+    function dismissMiniAutoFlashcardIfActive() {
+      if (isAutoFcMiniMode || (document.getElementById('autofc-mini-player') && document.getElementById('autofc-mini-player').style.display !== 'none')) {
+        closeAutoFcMiniPlayer();
+      }
+    }
+
     function minimizeAutoFlashcardToPip() {
       if (isGuest()) {
         alert('🔒 Chế độ cửa sổ thu nhỏ (Mini Floating Flashcard) chỉ dành cho tài khoản đã đăng ký/đăng nhập!');
@@ -25288,6 +25628,7 @@ Yêu cầu nghiêm ngặt:
     }
 
     function openSpeakingSetupModal(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       if (!hasAtLeastOneApiKey()) {
         alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
         openSettingsModal();
@@ -25358,6 +25699,7 @@ Yêu cầu nghiêm ngặt:
     }
 
     function startSpeakingMode(useSelectionOnly = false, customWordList = null) {
+      dismissMiniAutoFlashcardIfActive();
       if (!hasAtLeastOneApiKey()) {
         alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
         openSettingsModal();
@@ -25502,6 +25844,12 @@ Yêu cầu nghiêm ngặt:
       const word = speakingWordsList[currentSpeakingIndex];
       if (!word) return;
 
+      // Polysemy / Homographs: Pick random sense
+      const senses = getWordSenses(word);
+      const chosenSense = (senses && senses.length > 0) ? senses[Math.floor(Math.random() * senses.length)] : word;
+      word._activeSpeakingSense = chosenSense;
+      const senseIdx = senses.indexOf(chosenSense);
+
       const counterEl = document.getElementById('speaking-counter');
       if (counterEl) counterEl.textContent = 'Từ ' + (currentSpeakingIndex + 1) + ' / ' + speakingWordsList.length;
 
@@ -25532,7 +25880,8 @@ Yêu cầu nghiêm ngặt:
 
       if (ipaEl) {
         if (showIpa) {
-          ipaEl.textContent = word.phonetic || '/.../';
+          const phoneticVal = chosenSense.phonetic || word.phonetic || '/.../';
+          ipaEl.textContent = phoneticVal;
           ipaEl.style.display = 'inline';
         } else {
           ipaEl.textContent = '';
@@ -25553,7 +25902,8 @@ Yêu cầu nghiêm ngặt:
       // 4. Definition
       if (defEl) {
         if (showDef) {
-          defEl.textContent = word.definitionVi || word.definition || '';
+          const senseDef = chosenSense.definitionVi || chosenSense.definition || word.definitionVi || word.definition || '';
+          defEl.textContent = senseDef;
           defEl.style.display = 'block';
         } else {
           defEl.textContent = '';
@@ -25563,8 +25913,9 @@ Yêu cầu nghiêm ngặt:
 
       // 5. Example
       if (exEl) {
-        if ((showDef || showIpa) && (word.exampleSentence || word.example)) {
-          exEl.textContent = '"' + (word.exampleSentence || word.example) + '"';
+        const senseEx = chosenSense.exampleSentence || chosenSense.example || word.exampleSentence || word.example;
+        if ((showDef || showIpa) && senseEx) {
+          exEl.textContent = '"' + senseEx + '"';
           exEl.style.display = 'block';
         } else {
           exEl.textContent = '';
@@ -25572,10 +25923,15 @@ Yêu cầu nghiêm ngặt:
         }
       }
 
-      if (posEl) posEl.textContent = word.partOfSpeech || 'noun';
+      if (posEl) {
+        const posVal = chosenSense.partOfSpeech || word.partOfSpeech || 'noun';
+        const badgeHtml = (senses.length > 1) ? ` <span class="badge" style="background:rgba(99,102,241,0.2); color:#818cf8; font-size:9.5px; margin-left:4px;">📚 Nghĩa ${senseIdx + 1}/${senses.length}</span>` : '';
+        posEl.innerHTML = escapeHtml(posVal) + badgeHtml;
+      }
       if (cefrEl) {
-        cefrEl.textContent = word.cefrLevel || word.level || 'B1';
-        cefrEl.className = 'badge badge-level-' + (word.cefrLevel || word.level || 'b1').toLowerCase();
+        const cefrVal = chosenSense.cefrLevel || word.cefrLevel || word.level || 'B1';
+        cefrEl.textContent = cefrVal;
+        cefrEl.className = 'badge badge-level-' + cefrVal.toLowerCase();
       }
 
       const skipBtn = document.getElementById('btn-spk-skip');
@@ -26168,13 +26524,17 @@ Yêu cầu nghiêm ngặt:
         return;
       }
 
+      const activeSense = currentWord._activeSpeakingSense || (getWordSenses(currentWord)[0]) || currentWord;
+      const targetIpa = activeSense.phonetic || currentWord.phonetic || '';
+      const targetMeaning = activeSense.definitionVi || activeSense.definition || currentWord.definitionVi || currentWord.definition || '';
+      const targetPos = activeSense.partOfSpeech || currentWord.partOfSpeech || '';
       const needSyllable = !speakingSyllableCache[currentWord.id];
 
       const prompt = `You are a certified Oxford Phonetician and ELSA-grade AI Speech Assessment Engine for English learners.
 
 TARGET WORD/PHRASE: "${currentWord.term}"
-REFERENCE IPA: "${currentWord.phonetic || ''}"
-MEANING: "${currentWord.definitionVi || ''}"
+${targetPos ? `TARGET PART OF SPEECH: "${targetPos}"\n` : ''}REFERENCE IPA: "${targetIpa}"
+INTENDED MEANING: "${targetMeaning}"
 
 ═══════════════════════════════════════════════════════
 OBJECTIVE & FAIR PHONETIC CRITERIA:
@@ -26195,6 +26555,7 @@ OBJECTIVE & FAIR PHONETIC CRITERIA:
 - RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist in the standard IPA.
 - RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British variations (e.g. rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
 - RULE D (CONSTRUCTIVE FEEDBACK): If pronunciation is good, explain what sounded great. If not, give actionable mouth/tongue tips in Vietnamese.
+- RULE E (POLYSEMY & HOMOGRAPHS): If this word is a homograph or has stress shifting between grammatical forms (e.g. noun vs verb like 'record', 'present', 'object', 'contract', 'permit', 'lead', 'tear', etc.), strictly evaluate whether the user's stress and vowel reduction match the specified TARGET PART OF SPEECH (${targetPos || 'specified form'}) and REFERENCE IPA (${targetIpa}).
 
 3. MULTI-WORD & COMPOUND PHRASES:
 - For multi-word phrases (e.g. "aqueous solution", "point out"): evaluate each word individually in "wordsBreakdown".
@@ -26210,7 +26571,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
   "wordsBreakdown": [
     {
       "word": "${currentWord.term.split(' ')[0] || 'word'}",
-      "ipa": "${currentWord.phonetic || '/.../'}",
+      "ipa": "${targetIpa || '/.../'}",
       "status": "correct",
       "feedback": "Phát âm rõ ràng, đúng trọng âm và âm đuôi"
     }

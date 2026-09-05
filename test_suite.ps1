@@ -1,7 +1,8 @@
-﻿$root = "C:\Users\DELL\Documents\Modding\browser"
+$root = "C:\Users\DELL\Documents\Modding\browser"
 $appJs = Join-Path $root "src\scripts\app.js"
 $headerHtml = Join-Path $root "src\components\header.html"
 $settingsHtml = Join-Path $root "src\components\modals\modal-settings.html"
+$wordModalHtml = Join-Path $root "src\components\modals\modal-word.html"
 $swJs = Join-Path $root "sw.js"
 $releaseSwJs = Join-Path $root "Release_App\sw.js"
 $programCs = Join-Path $root "VocaFlow_Desktop\Program.cs"
@@ -23,11 +24,12 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-7 (Build 239) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-8 (Build 240) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml)
 $settingsContent = [System.IO.File]::ReadAllText($settingsHtml)
+$wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml)
 $swContent = [System.IO.File]::ReadAllText($swJs)
 $releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs)
 $csContent = [System.IO.File]::ReadAllText($programCs)
@@ -46,19 +48,30 @@ Assert-Check "evaluateAndAutoApplyFlowFreezes protects active contiguous days" (
 Assert-Check "isAuthorVipUser checks expiration timestamp" ($appJsContent.Contains("const exp = Number(entry.vipExpiresAt || 0);") -and $appJsContent.Contains("return exp > now;"))
 Assert-Check "stripVipAffixes helper exists" ($appJsContent.Contains("function stripVipAffixes("))
 
-# 3. Version v0.10.9-alpha-7 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-7" ($headerContent.Contains("v0.10.9-alpha-7"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-7" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-7"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-7'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-7'"))
-Assert-Check "src/scripts/app.js dynamically syncs settings-app-version-label" ($appJsContent.Contains("document.getElementById('settings-app-version-label')"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-7" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-7"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-7" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-7"))
-Assert-Check "Program.cs shows v0.10.9-alpha-7" ($csContent.Contains("VocaFlow v0.10.9-alpha-7"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-7 (Build 239)" ($overviewContent.Contains("v0.10.9-alpha-7 (Build 239)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-7 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-7"))
-Assert-Check "vocaflow.html contains v0.10.9-alpha-7 in header and settings" ($vocaContent.Contains("v0.10.9-alpha-7") -and $vocaContent.Contains("VocaFlow v0.10.9-alpha-7"))
+# 3. Monetag Service Worker Integration tests
+Assert-Check "sw.js contains Monetag options and Zone ID 11729611" ($swContent.Contains("5gvci.com") -and $swContent.Contains("11729611"))
+Assert-Check "Release_App/sw.js contains Monetag options and Zone ID 11729611" ($releaseSwContent.Contains("5gvci.com") -and $releaseSwContent.Contains("11729611"))
 
-# 4. Documentation test
+# 4. Polysemy & Homographs Architecture tests
+Assert-Check "getWordSenses parses word.senses correctly" ($appJsContent.Contains("function getWordSenses("))
+Assert-Check "modal-word.html has word-senses-container and addWordModalBlankSense" ($wordModalContent.Contains("id=`"word-senses-container`"") -and $wordModalContent.Contains("addWordModalBlankSense()"))
+Assert-Check "renderWordModalSenses and addWordModalBlankSense exist in app.js" ($appJsContent.Contains("function renderWordModalSenses(") -and $appJsContent.Contains("function addWordModalBlankSense()"))
+Assert-Check "Spelling picks active sense with _activeSpellingSense" ($appJsContent.Contains("_activeSpellingSense"))
+Assert-Check "Quiz picks active sense and protects distractors with _activeQuizSense" ($appJsContent.Contains("_activeQuizSense"))
+Assert-Check "Speaking evaluates against active sense with Rule E in prompt" ($appJsContent.Contains("_activeSpeakingSense") -and $appJsContent.Contains("POLYSEMY & HOMOGRAPHS"))
+
+# 5. Version v0.10.9-alpha-8 tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-8" ($headerContent.Contains("v0.10.9-alpha-8"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-8" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-8"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-8'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-8'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-8" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-8"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-8" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-8"))
+Assert-Check "Program.cs shows v0.10.9-alpha-8" ($csContent.Contains("VocaFlow v0.10.9-alpha-8"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-8 (Build 240)" ($overviewContent.Contains("v0.10.9-alpha-8 (Build 240)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-8 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-8"))
+Assert-Check "vocaflow.html contains v0.10.9-alpha-8 in header and settings" ($vocaContent.Contains("v0.10.9-alpha-8") -and $vocaContent.Contains("VocaFlow v0.10.9-alpha-8"))
+
+# 6. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))
 
 Write-Host ""
