@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-12)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-13)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-12 (Build 244)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-13 (Build 245)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -13531,7 +13531,7 @@ function switchPublisherTab(tab) {
       const cards = container.querySelectorAll('.word-sense-card');
       const list = [];
       cards.forEach((card, idx) => {
-        const pos = document.getElementById('word-pos-' + idx)?.value || 'noun';
+        const pos = document.getElementById('word-pos-' + idx)?.value ?? '';
         const cefr = document.getElementById('word-cefr-' + idx)?.value || 'B1';
         const phonetic = (document.getElementById('word-phonetic-' + idx)?.value || '').trim();
         const def = (document.getElementById('word-def-' + idx)?.value || '').trim();
@@ -13562,7 +13562,7 @@ function switchPublisherTab(tab) {
       if (!container) return;
 
       const list = (sensesList && sensesList.length > 0) ? sensesList : [{
-        partOfSpeech: 'noun', cefrLevel: 'B1', phonetic: '', definitionVi: '',
+        partOfSpeech: '', cefrLevel: 'B1', phonetic: '', definitionVi: '',
         exampleSentence: '', synonyms: [], antonyms: [], collocations: [], note: ''
       }];
 
@@ -13609,6 +13609,7 @@ function switchPublisherTab(tab) {
 
       // 3. Render Cards: Only currentActiveSenseTab is display: block, others are display: none
       const posOptions = [
+        { val: '', label: 'Không (Tự động / Auto)' },
         { val: 'noun', label: 'Danh từ (Noun)' },
         { val: 'verb', label: 'Động từ (Verb)' },
         { val: 'adjective', label: 'Tính từ (Adjective)' },
@@ -13634,7 +13635,9 @@ function switchPublisherTab(tab) {
 
         let posOptHtml = '';
         posOptions.forEach(opt => {
-          const selected = (s.partOfSpeech || 'noun').toLowerCase() === opt.val.toLowerCase() ? 'selected' : '';
+          const curPos = (s.partOfSpeech || '').toLowerCase().trim();
+          const optVal = opt.val.toLowerCase().trim();
+          const selected = (curPos === optVal) ? 'selected' : '';
           posOptHtml += `<option value="${opt.val}" ${selected}>${opt.label}</option>`;
         });
 
@@ -13723,7 +13726,7 @@ function switchPublisherTab(tab) {
     function addWordModalBlankSense() {
       const currentList = getModalSensesFromDOM();
       currentList.push({
-        partOfSpeech: 'noun',
+        partOfSpeech: '',
         cefrLevel: 'B1',
         phonetic: '',
         definitionVi: '',
@@ -13754,12 +13757,50 @@ function switchPublisherTab(tab) {
       showToast('🗑️ Đã xóa nét nghĩa.');
     }
 
+    function checkWordTermDuplicate(term) {
+      const warnEl = document.getElementById('word-term-duplicate-warning');
+      const warnTextEl = document.getElementById('word-term-duplicate-text');
+      const openBtn = document.getElementById('btn-open-existing-duplicate');
+      if (!warnEl) return;
+
+      const cleanTerm = (term || '').trim().toLowerCase();
+      const currentWordId = document.getElementById('word-id')?.value || '';
+
+      if (!cleanTerm) {
+        warnEl.style.display = 'none';
+        return;
+      }
+
+      const existingWord = words.find(w => 
+        w.deckId === currentDeckId && 
+        w.id !== currentWordId && 
+        w.term && 
+        w.term.trim().toLowerCase() === cleanTerm
+      );
+
+      if (existingWord) {
+        warnEl.style.display = 'flex';
+        if (warnTextEl) {
+          warnTextEl.textContent = `Từ "${existingWord.term}" đã có trong bộ này! Hãy mở từ cũ để thêm nét nghĩa thay vì tạo trùng.`;
+        }
+        if (openBtn) {
+          openBtn.onclick = () => {
+            editWord(existingWord.id);
+          };
+        }
+      } else {
+        warnEl.style.display = 'none';
+      }
+    }
+
     function openWordModal() {
       currentActiveSenseTab = 0;
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
+      const dupWarn = document.getElementById('word-term-duplicate-warning');
+      if (dupWarn) dupWarn.style.display = 'none';
       renderWordModalSenses([{
-        partOfSpeech: 'noun',
+        partOfSpeech: '',
         cefrLevel: 'B1',
         phonetic: '',
         definitionVi: '',
@@ -13802,6 +13843,8 @@ function switchPublisherTab(tab) {
 
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
+      const dupWarn = document.getElementById('word-term-duplicate-warning');
+      if (dupWarn) dupWarn.style.display = 'none';
       
       currentActiveSenseTab = 0;
       const senses = getWordSenses(w);
@@ -13833,22 +13876,45 @@ function switchPublisherTab(tab) {
         return;
       }
 
-      const collectedSenses = getModalSensesFromDOM();
-      if (!collectedSenses || collectedSenses.length === 0 || !collectedSenses[0].definitionVi) {
-        alert('Vui lòng điền định nghĩa tiếng Việt cho nét nghĩa đầu tiên!');
+      // Check duplicate word in current deck
+      const normalizedTerm = term.toLowerCase();
+      const duplicateWord = words.find(w => 
+        w.deckId === currentDeckId && 
+        w.id !== id && 
+        w.term && 
+        w.term.trim().toLowerCase() === normalizedTerm
+      );
+      if (duplicateWord) {
+        alert(`⚠️ Từ "${term}" đã tồn tại trong bộ từ này rồi!\n\nVì VocaFlow hiện đã hỗ trợ tính năng Đa nét nghĩa (Polysemy), bạn hãy mở từ "${duplicateWord.term}" đã có sẵn để thêm các nét nghĩa mới thay vì tạo nhiều từ trùng lặp nhé.`);
         return;
       }
 
-      const primarySense = collectedSenses[0];
+      const collectedSenses = getModalSensesFromDOM();
+      // Filter out senses with empty Vietnamese definition
+      const validSenses = (collectedSenses || []).filter(s => s && s.definitionVi && s.definitionVi.trim().length > 0);
+
+      if (validSenses.length === 0) {
+        alert('⚠️ Vui lòng nhập định nghĩa tiếng Việt cho ít nhất 1 nét nghĩa để lưu từ vựng!');
+        return;
+      }
+
+      // If user left POS as "Không" and typed manually, default to 'noun'
+      validSenses.forEach(s => {
+        if (!s.partOfSpeech || !s.partOfSpeech.trim()) {
+          s.partOfSpeech = 'noun';
+        }
+      });
+
+      const primarySense = validSenses[0];
       const pos = primarySense.partOfSpeech;
-      const cefr = primarySense.cefrLevel;
-      const phonetic = primarySense.phonetic;
+      const cefr = primarySense.cefrLevel || 'B1';
+      const phonetic = primarySense.phonetic || '';
       const def = primarySense.definitionVi;
-      const example = primarySense.exampleSentence;
-      const syn = primarySense.synonyms;
-      const ant = primarySense.antonyms;
-      const coll = primarySense.collocations;
-      const note = primarySense.note;
+      const example = primarySense.exampleSentence || '';
+      const syn = primarySense.synonyms || [];
+      const ant = primarySense.antonyms || [];
+      const coll = primarySense.collocations || [];
+      const note = primarySense.note || '';
       
       const slider = document.getElementById('word-mastery-slider');
       const score = slider ? parseInt(slider.value, 10) : 0;
@@ -13860,7 +13926,7 @@ function switchPublisherTab(tab) {
         words[existingIndex] = {
           ...words[existingIndex],
           term,
-          senses: collectedSenses,
+          senses: validSenses,
           partOfSpeech: pos,
           cefrLevel: cefr,
           phonetic: phonetic,
@@ -13879,7 +13945,7 @@ function switchPublisherTab(tab) {
           id,
           deckId: currentDeckId,
           term,
-          senses: collectedSenses,
+          senses: validSenses,
           partOfSpeech: pos,
           cefrLevel: cefr,
           phonetic: phonetic,
@@ -15668,17 +15734,37 @@ function switchPublisherTab(tab) {
         return;
       }
 
-      // Collect user pre-filled context
+      // Collect user pre-filled context from active tab
+      const activeIdx = (typeof currentActiveSenseTab !== 'undefined') ? currentActiveSenseTab : 0;
+      const activePosEl = document.getElementById('word-pos-' + activeIdx) || document.getElementById('word-pos');
+      const activePos = (activePosEl ? activePosEl.value : '').trim();
+      const activeCefrEl = document.getElementById('word-cefr-' + activeIdx) || document.getElementById('word-cefr');
+      const activeCefr = (activeCefrEl ? activeCefrEl.value : '').trim();
+      const activeIpaEl = document.getElementById('word-phonetic-' + activeIdx) || document.getElementById('word-phonetic');
+      const activeIpa = (activeIpaEl ? activeIpaEl.value : '').trim();
+      const activeDefEl = document.getElementById('word-def-' + activeIdx) || document.getElementById('word-def');
+      const activeDef = (activeDefEl ? activeDefEl.value : '').trim();
+      const activeExampleEl = document.getElementById('word-example-' + activeIdx) || document.getElementById('word-example');
+      const activeExample = (activeExampleEl ? activeExampleEl.value : '').trim();
+      const activeSynEl = document.getElementById('word-synonyms-' + activeIdx) || document.getElementById('word-synonyms');
+      const activeSyn = (activeSynEl ? activeSynEl.value : '').trim();
+      const activeAntEl = document.getElementById('word-antonyms-' + activeIdx) || document.getElementById('word-antonyms');
+      const activeAnt = (activeAntEl ? activeAntEl.value : '').trim();
+      const activeCollEl = document.getElementById('word-collocations-' + activeIdx) || document.getElementById('word-collocations');
+      const activeColl = (activeCollEl ? activeCollEl.value : '').trim();
+      const activeNoteEl = document.getElementById('word-note-' + activeIdx) || document.getElementById('word-note');
+      const activeNote = (activeNoteEl ? activeNoteEl.value : '').trim();
+
       const userContext = {
-        pos: document.getElementById('word-pos')?.value || '',
-        cefrLevel: document.getElementById('word-cefr')?.value || '',
-        ipa: document.getElementById('word-phonetic')?.value.trim() || '',
-        definitionVi: document.getElementById('word-def')?.value.trim() || '',
-        exampleSentence: document.getElementById('word-example')?.value.trim() || '',
-        synonyms: document.getElementById('word-synonyms')?.value.trim() || '',
-        antonyms: document.getElementById('word-antonyms')?.value.trim() || '',
-        collocations: document.getElementById('word-collocations')?.value.trim() || '',
-        note: document.getElementById('word-note')?.value.trim() || ''
+        pos: activePos,
+        cefrLevel: activeCefr,
+        ipa: activeIpa,
+        definitionVi: activeDef,
+        exampleSentence: activeExample,
+        synonyms: activeSyn,
+        antonyms: activeAnt,
+        collocations: activeColl,
+        note: activeNote
       };
 
       isAiGenerating = true;
@@ -15742,6 +15828,7 @@ function switchPublisherTab(tab) {
             }];
           }
 
+          currentActiveSenseTab = 0;
           renderWordModalSenses(formattedSenses);
           const sensesCount = formattedSenses.length;
           showToast(`✨ AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
@@ -15762,24 +15849,32 @@ function switchPublisherTab(tab) {
     async function fetchWordFromGemini(term, key, userContext = {}) {
       if (!key || !key.trim()) return null;
 
+      let posInstruction = '';
+      if (userContext.pos) {
+        posInstruction = `\n- NGƯỜI DÙNG ĐÃ CHỦ ĐỘNG CHỌN TỪ LOẠI: "${userContext.pos}". BẮT BUỘC: Tất cả các nét nghĩa bạn tạo ra phải tuân thủ đúng từ loại "${userContext.pos}" này (hoặc nét nghĩa chính phải là từ loại này)!`;
+      } else {
+        posInstruction = `\n- NGƯỜI DÙNG ĐỂ TỪ LOẠI LÀ "Không" (TỰ ĐỘNG): Bạn hãy tự do nhận diện và tự chọn các từ loại chính xác, tự nhiên nhất cho từng nét nghĩa của từ "${term}" (ví dụ nghĩa 1 là danh từ, nghĩa 2 là động từ, v.v.).`;
+      }
+
       let contextNote = '';
-      if (userContext.definitionVi) contextNote += `\n- Nghĩa người dùng đã viết: "${userContext.definitionVi}"`;
+      if (userContext.definitionVi) contextNote += `\n- Nghĩa người dùng đã gợi ý: "${userContext.definitionVi}"`;
       if (userContext.exampleSentence) contextNote += `\n- Câu ví dụ người dùng đã viết: "${userContext.exampleSentence}"`;
       if (userContext.synonyms) contextNote += `\n- Từ đồng nghĩa người dùng nhập: "${userContext.synonyms}"`;
       if (userContext.antonyms) contextNote += `\n- Từ trái nghĩa người dùng nhập: "${userContext.antonyms}"`;
       if (userContext.collocations) contextNote += `\n- Collocations người dùng nhập: "${userContext.collocations}"`;
-      if (userContext.pos) contextNote += `\n- Từ loại người dùng chọn: "${userContext.pos}"`;
       if (userContext.cefrLevel) contextNote += `\n- Cấp độ CEFR người dùng chọn: "${userContext.cefrLevel}"`;
 
       const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho người học Việt Nam.
 Hãy phân tích và hoàn thiện trọn vẹn 100% dữ liệu từ điển cho từ vựng tiếng Anh: "${term}".
+${posInstruction}
 ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\n` : ''}
-ĐẶC BIỆT LƯU Ý VỀ TỪ ĐA NGHĨA (POLYSEMY) & TỪ ĐỒNG ÂM TRÙNG HÌNH (HOMOGRAPHS):
-- Nếu "${term}" là từ đa nghĩa hoặc đồng âm trùng hình có nhiều nét nghĩa, từ loại, hoặc phiên âm khác nhau (ví dụ: tear /tɪər/ (n) nước mắt vs tear /teər/ (v) xé rách, bank bờ sông vs ngân hàng, lead /liːd/ vs lead /led/, run, date, light, spring...), hãy trả về mảng "senses" chứa TẤT CẢ các nét nghĩa/phiên âm quan trọng đó (tối đa 3 nghĩa phổ biến nhất).
-- Nếu từ chỉ có 1 nghĩa đơn giản, mảng "senses" chỉ cần 1 phần tử.
+ĐẶC BIỆT LƯU Ý VỀ TỰ ĐỘNG ĐIỀN ĐA NÉT NGHĨA (POLYSEMY & HOMOGRAPHS):
+- Tự động phân tích và trả về ĐẦY ĐỦ các nét nghĩa thông dụng và quan trọng nhất của từ "${term}" (thường từ 2 đến 4 nét nghĩa phong phú nếu từ có nhiều nghĩa hoặc nhiều từ loại khác nhau). Người học cần nạp đầy đủ tất cả các nét nghĩa này ngay lập tức vào các tab mà không cần bấm thêm thủ công.
+- Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
+- Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
 YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
-1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction". (Nếu người dùng đã chỉ định từ loại thì bắt buộc theo từ loại đó).
 2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/tɪər/").
 3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
 4. "definition": Nghĩa tiếng Việt cô đọng, tự nhiên (dưới 8 từ), KHÔNG có dấu chấm (.) ở cuối.
@@ -15825,7 +15920,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
               generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.2,
-                maxOutputTokens: 1200
+                maxOutputTokens: 1400
               },
               safetySettings: [
                 { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -15875,36 +15970,59 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
         if (pWithText) ipa = pWithText.text;
       }
 
-      let pos = 'noun';
-      let def = '';
-      let ex = '';
-      let syns = [];
-      let ants = [];
-
+      const senses = [];
       if (item.meanings && item.meanings.length > 0) {
-        const firstMeaning = item.meanings[0];
-        pos = firstMeaning.partOfSpeech || 'noun';
-        if (firstMeaning.synonyms) syns.push(...firstMeaning.synonyms);
-        if (firstMeaning.antonyms) ants.push(...firstMeaning.antonyms);
+        item.meanings.slice(0, 4).forEach(m => {
+          const mPos = m.partOfSpeech || 'noun';
+          let mDef = '';
+          let mEx = '';
+          let mSyns = (m.synonyms || []).slice(0, 3);
+          let mAnts = (m.antonyms || []).slice(0, 2);
+          if (m.definitions && m.definitions.length > 0) {
+            const fd = m.definitions[0];
+            mDef = fd.definition || '';
+            mEx = fd.example || '';
+            if (fd.synonyms) mSyns = [...mSyns, ...fd.synonyms].slice(0, 3);
+            if (fd.antonyms) mAnts = [...mAnts, ...fd.antonyms].slice(0, 2);
+          }
+          if (mDef) {
+            senses.push({
+              pos: mPos,
+              ipa: ipa,
+              cefrLevel: 'B1',
+              definition: `(EN) ${mDef}`,
+              example: mEx,
+              synonyms: mSyns,
+              antonyms: mAnts,
+              collocations: []
+            });
+          }
+        });
+      }
 
-        if (firstMeaning.definitions && firstMeaning.definitions.length > 0) {
-          const firstDef = firstMeaning.definitions[0];
-          def = firstDef.definition || '';
-          ex = firstDef.example || '';
-          if (firstDef.synonyms) syns.push(...firstDef.synonyms);
-          if (firstDef.antonyms) ants.push(...firstDef.antonyms);
-        }
+      if (senses.length === 0) {
+        senses.push({
+          pos: 'noun',
+          ipa: ipa,
+          cefrLevel: 'B1',
+          definition: '',
+          example: '',
+          synonyms: [],
+          antonyms: [],
+          collocations: []
+        });
       }
 
       return {
         term: item.word || term,
-        pos: pos,
+        senses: senses,
+        pos: senses[0].pos,
         ipa: ipa,
         cefrLevel: 'B1',
-        definition: def ? `(EN) ${def}` : '',
-        example: ex,
-        synonyms: syns.slice(0, 4),
-        antonyms: ants.slice(0, 3),
+        definition: senses[0].definition,
+        example: senses[0].example,
+        synonyms: senses[0].synonyms,
+        antonyms: senses[0].antonyms,
         collocations: []
       };
     }
@@ -17709,10 +17827,14 @@ Yêu cầu nghiêm ngặt:
         }
 
         const nowIso = new Date().toISOString();
-        words.push({
-          id: 'w-imp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-          deckId: currentDeckId,
-          term,
+        const normalizedTerm = term.toLowerCase();
+        const existingInDeck = words.find(w => 
+          w.deckId === currentDeckId && 
+          w.term && 
+          w.term.trim().toLowerCase() === normalizedTerm
+        );
+
+        const newSense = {
           partOfSpeech: pos,
           phonetic,
           definitionVi: def,
@@ -17721,12 +17843,51 @@ Yêu cầu nghiêm ngặt:
           synonyms: syn,
           antonyms: ant,
           collocations: coll,
-          note: note || undefined,
-          status,
-          masteryScore,
-          createdAt: nowIso,
-          updatedAt: nowIso
-        });
+          note: note || undefined
+        };
+
+        if (existingInDeck) {
+          // Initialize senses if missing
+          if (!existingInDeck.senses || !Array.isArray(existingInDeck.senses) || existingInDeck.senses.length === 0) {
+            existingInDeck.senses = [{
+              partOfSpeech: existingInDeck.partOfSpeech || 'noun',
+              phonetic: existingInDeck.phonetic || '',
+              definitionVi: existingInDeck.definitionVi || '',
+              cefrLevel: existingInDeck.cefrLevel,
+              exampleSentence: existingInDeck.exampleSentence,
+              synonyms: existingInDeck.synonyms || [],
+              antonyms: existingInDeck.antonyms || [],
+              collocations: existingInDeck.collocations || [],
+              note: existingInDeck.note
+            }];
+          }
+          // Avoid duplicate sense with identical definitionVi
+          const isSenseDuplicate = existingInDeck.senses.some(s => s.definitionVi && s.definitionVi.trim().toLowerCase() === def.toLowerCase());
+          if (!isSenseDuplicate) {
+            existingInDeck.senses.push(newSense);
+            existingInDeck.updatedAt = nowIso;
+          }
+        } else {
+          words.push({
+            id: 'w-imp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+            deckId: currentDeckId,
+            term,
+            senses: [newSense],
+            partOfSpeech: pos,
+            phonetic,
+            definitionVi: def,
+            cefrLevel: cefr || undefined,
+            exampleSentence: example || undefined,
+            synonyms: syn,
+            antonyms: ant,
+            collocations: coll,
+            note: note || undefined,
+            status,
+            masteryScore,
+            createdAt: nowIso,
+            updatedAt: nowIso
+          });
+        }
 
         importedCount++;
       }

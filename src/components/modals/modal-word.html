@@ -21,7 +21,16 @@
             </button>
           </div>
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;">
+            <input type="text" id="word-term" class="form-input" placeholder="Ví dụ: Resilient, Eloquent, Procrastinate..." required style="flex: 1;" oninput="checkWordTermDuplicate(this.value)">
+          </div>
+          <div id="word-term-duplicate-warning" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; padding: 6px 10px; margin-top: 6px; font-size: 11.5px; color: #f87171; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span>⚠️</span>
+              <span id="word-term-duplicate-text">Từ này đã có trong bộ từ! Hãy mở từ cũ để thêm nét nghĩa thay vì tạo trùng.</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-open-existing-duplicate" style="font-size: 10px; padding: 2px 7px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.1); flex-shrink: 0; cursor: pointer;">
+              Mở từ cũ ↗
+            </button>
           </div>
         </div>
 

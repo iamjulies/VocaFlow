@@ -1,20 +1,37 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-12 (Build 244) - In-App Rewarded Ads Cycling, Context-Aware Ad Suppression & Instant VIP Purge
+Phiên bản: v0.10.9-alpha-13 (Build 245) - POS Auto-Detection, Sense Filtering, Multi-Sense VocaFill AI & Duplicate Word Prevention
 ================================================================================
-1. [Gỡ Bỏ Hoàn Toàn Direct Link / Chuyển Tab Khi Xem Video Nhận Thưởng] Chấm dứt triệt để cơ chế mở tab mới sang link quảng cáo Direct Link (`omg10.com`). Thay vào đó, toàn bộ quy trình xem quảng cáo nhận thưởng 30s (+1 Lượt Quay May Mắn) diễn ra 100% nội bộ trong modal ứng dụng, giữ chân người dùng và đảm bảo trải nghiệm học tập tập trung.
-2. [Cơ Chế Luân Phiên Quảng Cáo Không Chồng Đè (In-App Ad Cycling)] Trong suốt thời gian 30s của phiên xem quảng cáo, hệ thống tự động luân phiên hiển thị In-Page Push và Vignette Banner. Nếu người dùng tắt quảng cáo đang hiện, quảng cáo kế tiếp sẽ được nạp lại sau 4s giãn cách mà tuyệt đối KHÔNG bao giờ bị chồng đè (anti-stacking). Khi hết 30s, hệ thống tự động ngừng kích hoạt thêm quảng cáo và dọn dẹp để hiện nút Nhận Thưởng.
-3. [Triệt Tiêu Vignette Banner Trong Chế Độ Học & VocaMentor AI] Nhằm bảo vệ tối đa sự tập trung và chống ức chế cho người học, các chế độ học tập (`screen-quiz`, `screen-spelling`, `screen-speaking`, `screen-autofc`) và Trợ lý AI (`modal-ai-mentor`, `modal-ai-deck-studio`) được cô lập: Hoàn toàn KHÔNG hiển thị biểu ngữ Vignette Banner, chỉ cho phép biểu ngữ In-Page Push trượt nhẹ ở góc màn hình.
-4. [Thanh Lọc Quảng Cáo Tức Thì Cho Tài Khoản VIP (Instant VIP Purge - No F5 Needed)] Khi người dùng nâng cấp hoặc đăng nhập tài khoản VIP, cơ chế `purgeAllAdArtifactsFromDOM()` ngay lập tức truy quét và loại bỏ 100% các script Monetag, iframe và các phần tử DOM quảng cáo đang nổi trên màn hình mà KHÔNG cần người dùng phải nhấn F5 / tải lại trang.
+1. [Mặc Định Từ Loại "Không" & Ràng Buộc Thông Minh Khi Dùng AI] Ô chọn Từ loại (POS) khi thêm/sửa từ mặc định là "Không (Tự động / Auto)". Khi bấm VocaFill AI ("AI Điền Tự Động"): Nếu từ loại đang là "Không", AI sẽ tự động phân tích và chọn từ loại chuẩn xác nhất cho từng nét nghĩa. Nếu người dùng chủ động chọn một từ loại cụ thể (Danh từ, Động từ, Tính từ...), AI sẽ bị ràng buộc nghiêm ngặt chỉ tạo các nét nghĩa thuộc đúng từ loại đó. Khi nhập thủ công và để "Không", hệ thống tự động gán mặc định thành 'noun' (Danh từ).
+2. [Chỉ Lưu Nét Nghĩa Có Định Nghĩa Tiếng Việt & Chặn Lưu Rỗng] Khi lưu form từ vựng, hệ thống tự động sàng lọc loại bỏ các tab nét nghĩa không có nội dung định nghĩa tiếng Việt (`definitionVi`). Đồng thời áp dụng luật xác thực nghiêm ngặt: Phải có ít nhất 1 nét nghĩa có định nghĩa tiếng Việt thì mới cho phép lưu từ, tránh tình trạng rác dữ liệu.
+3. [VocaFill AI Tự Điền Đa Nét Nghĩa Đầy Đủ (Multi-Sense Auto-Population)] Nâng cấp trí tuệ nhân tạo VocaFill AI tự động trích xuất 2-4 nét nghĩa phổ biến nhất của các từ đa nghĩa và điền sẵn vào các tab nghĩa mà người dùng không cần phải nhấn nút "+" thủ công. Bộ từ điển Free Dictionary API dự phòng cũng tự động phân tích toàn bộ mảng definitions thành các nét nghĩa độc lập.
+4. [Chống Trùng Lặp Từ Trong Cùng Bộ Từ & Hợp Nhất Nét Nghĩa Khi Nhập Excel]
+   - Trong form thêm từ: Kiểm tra trùng lặp từ vựng theo thời gian thực (real-time). Nếu từ đã có trong bộ từ hiện tại, hiển thị cảnh báo trực quan kèm nút "Mở từ cũ ↗" và chặn lưu trùng.
+   - Khi nhập file Excel/CSV: Nếu phát hiện từ tiếng Anh đã tồn tại trong bộ từ, hệ thống tự động hợp nhất các nét nghĩa mới vào mảng `senses` của từ đã có thay vì tạo thẻ từ trùng lặp.
 5. [Đồng Bộ Toàn Diện & Kiểm Thử Tự Động] Cập nhật đồng bộ 7 điểm phiên bản, vượt qua 100% test suite, biên dịch Desktop exe và triển khai lên toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-12 (Build 244)
+Phiên bản hiện tại : v0.10.9-alpha-13 (Build 245)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-13] - (BUILD 245 - POS AUTO-DETECTION, SENSE FILTERING, MULTI-SENSE VOCAFILL AI & DUPLICATE WORD PREVENTION):
+  - 🎯 Ô Từ Loại Mặc Định "Không" & AI Tự Động Nhận Diện Linh Hoạt:
+    * Ô chọn Từ Loại (Part of Speech) trong `modal-word` mặc định để giá trị "Không (Tự động / Auto)".
+    * Khi bấm "VocaFill AI": Nếu đang để "Không", AI tự do chọn từ loại chuẩn nhất cho từng nét nghĩa. Nếu người dùng chủ động chọn một từ loại nhất định (Verb, Noun, Adj...), AI sẽ tuân thủ nghiêm ngặt chỉ tạo nghĩa thuộc từ loại đó.
+    * Khi người dùng nhập thủ công mà để "Không", hệ thống tự động lưu mặc định là 'noun' (Danh từ).
+  - 🧹 Sàng Lọc Nét Nghĩa & Chặn Lưu Từ Rỗng:
+    * Tự động lọc bỏ các tab nét nghĩa không có định nghĩa tiếng Việt (`definitionVi`).
+    * Bắt buộc phải có ít nhất 1 nét nghĩa có định nghĩa tiếng Việt mới cho phép lưu, hiển thị thông báo hướng dẫn rõ ràng nếu để trống.
+  - 🤖 VocaFill AI Đa Nét Nghĩa Tự Động (Polysemy Generation):
+    * VocaFill AI tự động tạo 2-4 nét nghĩa phong phú cho các từ đa nghĩa và tự render đủ các tab nét nghĩa (Tab 1, Tab 2, Tab 3...) mà người dùng không cần phải bấm dấu "+" thủ công.
+    * Dictionary API fallback cũng tự động phân giải nhiều definitions thành danh sách `senses`.
+  - 🛡️ Cơ Chế Chống Trùng Từ Trong Cùng Bộ Từ & Hợp Nhất Excel/CSV:
+    * Kiểm tra trùng lặp từ vựng trong thời gian thực khi gõ phím, hiển thị badge cảnh báo kèm nút "Mở từ cũ ↗". Chặn lưu từ mới nếu từ tiếng Anh đã tồn tại trong cùng bộ từ.
+    * Khi nhập file Excel/CSV: Tự động phát hiện từ đã có trong bộ từ và hợp nhất các nghĩa mới vào mảng `senses` của từ đó, tránh phát sinh các thẻ từ trùng lặp.
 
 🌟 [v0.10.9-alpha-12] - (BUILD 244 - IN-APP REWARDED ADS CYCLING, CONTEXT-AWARE AD SUPPRESSION & INSTANT VIP PURGE):
   - 🚫 Gỡ bỏ Direct Link mở tab mới khi xem quảng cáo nhận thưởng:

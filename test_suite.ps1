@@ -1,3 +1,5 @@
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
 $root = "C:\Users\DELL\Documents\Modding\browser"
 $appJs = Join-Path $root "src\scripts\app.js"
 $headerHtml = Join-Path $root "src\components\header.html"
@@ -25,20 +27,20 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-12 (Build 244) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-13 (Build 245) ===" -ForegroundColor Cyan
 
-$appJsContent = [System.IO.File]::ReadAllText($appJs)
-$headerContent = [System.IO.File]::ReadAllText($headerHtml)
-$settingsContent = [System.IO.File]::ReadAllText($settingsHtml)
-$wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml)
-$rewardedModalContent = [System.IO.File]::ReadAllText($rewardedModalHtml)
-$swContent = [System.IO.File]::ReadAllText($swJs)
-$releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs)
-$csContent = [System.IO.File]::ReadAllText($programCs)
-$overviewContent = [System.IO.File]::ReadAllText($overviewTxt)
-$pushContent = [System.IO.File]::ReadAllText($pushPs1)
-$vocaContent = [System.IO.File]::ReadAllText($vocaHtml)
-$templateContent = [System.IO.File]::ReadAllText((Join-Path $root "src\app_template.html"))
+$appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
+$headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
+$settingsContent = [System.IO.File]::ReadAllText($settingsHtml, [System.Text.Encoding]::UTF8)
+$wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml, [System.Text.Encoding]::UTF8)
+$rewardedModalContent = [System.IO.File]::ReadAllText($rewardedModalHtml, [System.Text.Encoding]::UTF8)
+$swContent = [System.IO.File]::ReadAllText($swJs, [System.Text.Encoding]::UTF8)
+$releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs, [System.Text.Encoding]::UTF8)
+$csContent = [System.IO.File]::ReadAllText($programCs, [System.Text.Encoding]::UTF8)
+$overviewContent = [System.IO.File]::ReadAllText($overviewTxt, [System.Text.Encoding]::UTF8)
+$pushContent = [System.IO.File]::ReadAllText($pushPs1, [System.Text.Encoding]::UTF8)
+$vocaHtml = Join-Path $root "vocaflow.html"
+$templateContent = [System.IO.File]::ReadAllText((Join-Path $root "src\app_template.html"), [System.Text.Encoding]::UTF8)
 
 # 1. Flow Freeze logic tests
 Assert-Check "Legacy freeze deduction block removed" (-not ($appJsContent.Contains("vocaflow_freeze_deducted_v0108_debug06")))
@@ -72,15 +74,22 @@ Assert-Check "Spelling picks active sense with _activeSpellingSense" ($appJsCont
 Assert-Check "Quiz picks active sense and protects distractors with _activeQuizSense" ($appJsContent.Contains("_activeQuizSense"))
 Assert-Check "Speaking evaluates against active sense with Rule E in prompt" ($appJsContent.Contains("_activeSpeakingSense") -and $appJsContent.Contains("POLYSEMY & HOMOGRAPHS"))
 
-# 5. Version v0.10.9-alpha-12 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-12" ($headerContent.Contains("v0.10.9-alpha-12"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-12" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-12 (Build 244)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-12" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-12"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-12" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-12"))
-Assert-Check "Program.cs shows v0.10.9-alpha-12" ($csContent.Contains("VocaFlow v0.10.9-alpha-12"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-12 (Build 244)" ($overviewContent.Contains("v0.10.9-alpha-12 (Build 244)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-12 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-12"))
+# 5. v0.10.9-alpha-13 specific feature tests
+Assert-Check "POS dropdown includes 'Không (Tự động / Auto)' option" ($appJsContent.Contains("val: '', label:") -and $appJsContent.Contains("Auto"))
+Assert-Check "Sense filtering on save requires at least 1 definitionVi" ($appJsContent.Contains("validSenses.length === 0") -and $appJsContent.Contains("s.definitionVi.trim().length > 0"))
+Assert-Check "Duplicate word prevention checkWordTermDuplicate exists" ($appJsContent.Contains("function checkWordTermDuplicate("))
+Assert-Check "Duplicate word UI elements exist in modal-word.html" ($wordModalContent.Contains("word-term-duplicate-warning") -and $wordModalContent.Contains("btn-open-existing-duplicate"))
+Assert-Check "Import merges duplicate terms into existing word senses" ($appJsContent.Contains("existingInDeck.senses.push(newSense)"))
+
+# 6. Version v0.10.9-alpha-13 tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-13" ($headerContent.Contains("v0.10.9-alpha-13"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-13" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-13 (Build 245)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-13" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-13"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-13" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-13"))
+Assert-Check "Program.cs shows v0.10.9-alpha-13" ($csContent.Contains("VocaFlow v0.10.9-alpha-13"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-13 (Build 245)" ($overviewContent.Contains("v0.10.9-alpha-13 (Build 245)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-13 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-13"))
 
 # 6. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))
