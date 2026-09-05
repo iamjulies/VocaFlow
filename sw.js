@@ -13,9 +13,9 @@ try {
 }
 
 // =========================================================================
-// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-8)
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-9)
 // =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-8';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-9';
 const ASSETS = [
   './',
   './index.html',

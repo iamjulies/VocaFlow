@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-8)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-9)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-8';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-8';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-9';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-9 (Build 241)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -13225,6 +13225,57 @@ function switchPublisherTab(tab) {
     }
 
     let activeIpaSenseIndex = 0;
+    let currentActiveSenseTab = 0;
+
+    function switchWordSenseTab(targetIdx) {
+      const container = document.getElementById('word-senses-container');
+      if (!container) return;
+      const cards = container.querySelectorAll('.word-sense-card');
+      if (targetIdx < 0 || targetIdx >= cards.length) return;
+
+      currentActiveSenseTab = targetIdx;
+      activeIpaSenseIndex = targetIdx;
+
+      // Toggle display of cards: only targetIdx is block, others are none
+      cards.forEach((card, idx) => {
+        card.style.display = (idx === targetIdx) ? 'block' : 'none';
+      });
+
+      // Update Tab Bar buttons styles
+      const tabBar = document.getElementById('word-senses-tab-bar');
+      if (tabBar) {
+        const tabBtns = tabBar.querySelectorAll('.btn-sense-num-tab');
+        tabBtns.forEach((btn, idx) => {
+          if (idx === targetIdx) {
+            btn.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
+            btn.style.color = '#ffffff';
+            btn.style.borderColor = '#c084fc';
+            btn.style.boxShadow = '0 2px 8px rgba(168, 85, 247, 0.4)';
+            btn.style.fontWeight = '800';
+          } else {
+            btn.style.background = 'rgba(255, 255, 255, 0.05)';
+            btn.style.color = 'var(--text-muted)';
+            btn.style.borderColor = 'var(--border)';
+            btn.style.boxShadow = 'none';
+            btn.style.fontWeight = '600';
+          }
+        });
+      }
+
+      // Update Delete Button in Tab Bar
+      const delCont = document.getElementById('word-sense-delete-btn-container');
+      if (delCont) {
+        if (cards.length > 1) {
+          delCont.innerHTML = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${targetIdx})" title="Xóa nét nghĩa ${targetIdx + 1}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+              <span>🗑️</span> <span>Xóa nghĩa ${targetIdx + 1}</span>
+            </button>
+          `;
+        } else {
+          delCont.innerHTML = '';
+        }
+      }
+    }
 
     function toggleIpaKeyboardForSense(idx) {
       activeIpaSenseIndex = idx;
@@ -13271,12 +13322,57 @@ function switchPublisherTab(tab) {
 
     function renderWordModalSenses(sensesList) {
       const container = document.getElementById('word-senses-container');
+      const tabBar = document.getElementById('word-senses-tab-bar');
+      const delCont = document.getElementById('word-sense-delete-btn-container');
       if (!container) return;
+
       const list = (sensesList && sensesList.length > 0) ? sensesList : [{
         partOfSpeech: 'noun', cefrLevel: 'B1', phonetic: '', definitionVi: '',
         exampleSentence: '', synonyms: [], antonyms: [], collocations: [], note: ''
       }];
 
+      if (currentActiveSenseTab >= list.length) {
+        currentActiveSenseTab = Math.max(0, list.length - 1);
+      }
+      activeIpaSenseIndex = currentActiveSenseTab;
+
+      // 1. Render Tab Bar (1, 2, 3, 4... +)
+      if (tabBar) {
+        let tabsHtml = `<span style="font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 4px; margin-right: 4px;">📚 Nét nghĩa:</span>`;
+        list.forEach((s, idx) => {
+          const isActive = (idx === currentActiveSenseTab);
+          const activeStyle = isActive 
+            ? 'background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; border-color: #c084fc; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4); font-weight: 800;'
+            : 'background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border-color: var(--border); font-weight: 600;';
+          tabsHtml += `
+            <button type="button" class="btn btn-sm btn-sense-num-tab" onclick="switchWordSenseTab(${idx})" style="min-width: 32px; height: 30px; border-radius: 8px; padding: 0 10px; font-size: 12.5px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; ${activeStyle}">
+              ${idx + 1}
+            </button>
+          `;
+        });
+        // Plus (+) button to add new sense
+        tabsHtml += `
+          <button type="button" class="btn btn-sm" onclick="addWordModalBlankSense()" title="Thêm nét nghĩa mới (Polysemy / Homograph)" style="width: 30px; height: 30px; border-radius: 8px; padding: 0; font-size: 16px; font-weight: 700; border: 1px dashed rgba(168, 85, 247, 0.6); color: #c084fc; background: rgba(168, 85, 247, 0.1); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;">
+            +
+          </button>
+        `;
+        tabBar.innerHTML = tabsHtml;
+      }
+
+      // 2. Render Delete button in tab bar container
+      if (delCont) {
+        if (list.length > 1) {
+          delCont.innerHTML = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${currentActiveSenseTab})" title="Xóa nét nghĩa ${currentActiveSenseTab + 1}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+              <span>🗑️</span> <span>Xóa nghĩa ${currentActiveSenseTab + 1}</span>
+            </button>
+          `;
+        } else {
+          delCont.innerHTML = '';
+        }
+      }
+
+      // 3. Render Cards: Only currentActiveSenseTab is display: block, others are display: none
       const posOptions = [
         { val: 'noun', label: 'Danh từ (Noun)' },
         { val: 'verb', label: 'Động từ (Verb)' },
@@ -13299,7 +13395,7 @@ function switchPublisherTab(tab) {
         const synStr = Array.isArray(s.synonyms) ? s.synonyms.join(', ') : (s.synonyms || '');
         const antStr = Array.isArray(s.antonyms) ? s.antonyms.join(', ') : (s.antonyms || '');
         const collStr = Array.isArray(s.collocations) ? s.collocations.join(', ') : (s.collocations || '');
-        const isMulti = list.length > 1;
+        const isVisible = (idx === currentActiveSenseTab);
 
         let posOptHtml = '';
         posOptions.forEach(opt => {
@@ -13314,26 +13410,7 @@ function switchPublisherTab(tab) {
         });
 
         html += `
-          <div class="word-sense-card" id="word-sense-card-${idx}" style="background: var(--surface-elevated, rgba(255, 255, 255, 0.03)); border: 1px solid ${isMulti ? 'rgba(168, 85, 247, 0.35)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span class="badge" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); color: #c084fc; font-weight: 700; font-size: 11px; border: 1px solid rgba(168,85,247,0.3);">
-                  Nét nghĩa #${idx + 1}
-                </span>
-                ${isMulti ? '<span style="font-size: 11px; color: var(--text-muted);">(Polysemy / Homograph)</span>' : ''}
-              </div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" title="Thêm nét nghĩa mới (Polysemy / Homograph)" style="color: #c084fc; border-color: rgba(168, 85, 247, 0.4); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
-                  <span>➕</span> <span>Thêm nghĩa</span>
-                </button>
-                ${isMulti ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="removeWordModalSense(${idx})" title="Xóa nét nghĩa này" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 10.5px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
-                    <span>🗑️</span> <span>Xóa</span>
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-
+          <div class="word-sense-card" id="word-sense-card-${idx}" style="display: ${isVisible ? 'block' : 'none'}; background: var(--surface-elevated, rgba(255, 255, 255, 0.03)); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; position: relative;">
             <div class="form-row" style="display: grid; grid-template-columns: 1.4fr 0.9fr 1.7fr; gap: 8px; margin-bottom: 10px;">
               <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label" style="font-size: 11px;">Từ loại *</label>
@@ -13421,13 +13498,13 @@ function switchPublisherTab(tab) {
         collocations: [],
         note: ''
       });
+      currentActiveSenseTab = currentList.length - 1;
       renderWordModalSenses(currentList);
       setTimeout(() => {
-        const newIdx = currentList.length - 1;
-        const newDef = document.getElementById('word-def-' + newIdx);
+        const newDef = document.getElementById('word-def-' + currentActiveSenseTab);
         if (newDef) newDef.focus();
       }, 50);
-      showToast('➕ Đã thêm khung nhập nghĩa mới (Polysemy / Homograph)!');
+      showToast('➕ Đã thêm nét nghĩa #' + currentList.length + '!');
     }
 
     function removeWordModalSense(idx) {
@@ -13437,11 +13514,13 @@ function switchPublisherTab(tab) {
         return;
       }
       currentList.splice(idx, 1);
+      currentActiveSenseTab = Math.min(idx, currentList.length - 1);
       renderWordModalSenses(currentList);
       showToast('🗑️ Đã xóa nét nghĩa.');
     }
 
     function openWordModal() {
+      currentActiveSenseTab = 0;
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
       renderWordModalSenses([{
@@ -13489,6 +13568,7 @@ function switchPublisherTab(tab) {
       document.getElementById('word-id').value = w.id;
       document.getElementById('word-term').value = w.term;
       
+      currentActiveSenseTab = 0;
       const senses = getWordSenses(w);
       renderWordModalSenses(senses);
 

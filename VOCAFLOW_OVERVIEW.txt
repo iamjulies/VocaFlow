@@ -1,18 +1,32 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-8 (Build 240) - Polysemy & Homographs Architecture, Monetag Integration (Zone 11729611)
+Phiên bản: v0.10.9-alpha-9 (Build 241) - Tabbed Sense Switcher (1, 2, 3... +), Dual-Branch Live Sync for Monetag
 ================================================================================
-1. [Khởi Động Monetag Ads & Service Worker Verification] Tích hợp Monetag Zone 11729611 vào `sw.js` tại root và Release_App, hoàn tất xác minh quyền sở hữu trang web và chuẩn bị hệ thống quảng cáo sạch.
-2. [Kiến Trúc Từ Đa Nghĩa & Từ Đồng Âm Dị Nghĩa (Polysemy & Homographs)] Hỗ trợ đầy đủ từ đa nghĩa qua cấu trúc `senses` trên toàn bộ 3 chế độ: Spelling (gợi ý theo nét nghĩa), Quiz (lọc nhiễu tránh tất cả các nét nghĩa), Speaking (AI Gemini phân tích âm vị theo đúng từ loại và nét nghĩa).
-3. [Giao Diện Soạn Từ Đa Nghĩa Linh Hoạt] Nâng cấp modal Thêm/Sửa từ vựng với nút thêm nhanh `[➕ Thêm nghĩa]` ở từng thẻ và nút thêm nghĩa lớn ở cuối, kèm badge `📚 X nghĩa` trên danh sách từ.
+1. [Giao Diện Tab Chuyển Nghĩa Tối Giản (Tabbed Sense Switcher)] Cải tiến giao diện soạn từ vựng `modal-word.html`: chuyển đổi từ dạng cuộn danh sách dọc dài sang thanh tab số thứ tự `[ 1 ] [ 2 ] [ 3 ]... [ + ]`. Tại mỗi thời điểm chỉ hiển thị duy nhất 1 nét nghĩa, chuyển đổi mượt mà không cuộn trang, tự động thu thập và lưu toàn bộ dữ liệu đa nghĩa.
+2. [Tự Động Mở Nghĩa Mới & Xóa Nét Nghĩa Linh Hoạt] Khi bấm nút `[+]`, hệ thống tự động sinh nét nghĩa tiếp theo và lập tức kích hoạt chuyển sang tab đó kèm focus vào ô định nghĩa. Cung cấp nút xóa nét nghĩa đang mở khi từ có từ 2 nét nghĩa trở lên.
+3. [Triển Khai Kép GitHub Pages Cho Monetag (Dual-Branch Deploy)] Nâng cấp script `push_github.ps1` đẩy đồng thời cả hai nhánh `main` và `gh-pages` cho kho lưu trữ `iamjulies.github.io`, giải quyết triệt để lỗi Monetag không xác thực được tên miền do GitHub Pages phục vụ từ nhánh `gh-pages`.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-8 (Build 240)
+Phiên bản hiện tại : v0.10.9-alpha-9 (Build 241)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-9] - (BUILD 241 - TABBED SENSE SWITCHER, DUAL-BRANCH MONETAG VERIFICATION):
+  - 📑 Giao diện Tab Chuyển Nét Nghĩa (Tabbed Sense Switcher `1, 2, 3... +`):
+    * Thiết kế lại hoàn toàn khu vực nhập liệu nét nghĩa trong modal thêm/sửa từ vựng (`modal-word.html`).
+    * Thay thế dạng thẻ dọc cuộn dài bằng thanh tab số trực quan: `[1]`, `[2]`, `[3]`,... và nút thêm `[+]`.
+    * Mỗi lần chỉ hiển thị 1 nét nghĩa duy nhất (active sense card), các nét nghĩa còn lại được ẩn (`display: none`), giúp giao diện cực kỳ gọn gàng, vừa vặn trên màn hình mà không cần cuộn trang.
+    * Nhấn vào số tab bất kỳ để chuyển sang xem và sửa nét nghĩa đó; nhấn `[+]` để tạo thêm nét nghĩa mới và tự động nhảy đến tab mới.
+    * Nút xóa nét nghĩa `🗑️ Xóa nghĩa X` xuất hiện cạnh thanh tab khi từ vựng có từ 2 nét nghĩa trở lên.
+    * Hàm `getModalSensesFromDOM()` tiếp tục thu thập trọn vẹn toàn bộ các nét nghĩa trong DOM khi lưu từ vựng.
+    * Đảm bảo reset về tab 1 (`currentActiveSenseTab = 0`) mỗi khi mở modal thêm từ mới hoặc sửa từ vựng khác.
+  - 🌐 Sửa lỗi xác minh tên miền Monetag (`iamjulies.github.io`):
+    * Phát hiện nguyên nhân cốt lõi: GitHub Pages của `iamjulies.github.io` được cấu hình phát hành từ nhánh `gh-pages`, trong khi script triển khai trước đây chỉ đẩy vào nhánh `main` làm cho `https://iamjulies.github.io/sw.js` bị giữ ở phiên bản cũ chưa có cấu hình Monetag.
+    * Cập nhật `push_github.ps1` đẩy tự động cả 2 nhánh `main` và `gh-pages` cho kho `iamjulies.github.io`.
+    * Xác minh live trực tiếp tập tin `https://iamjulies.github.io/sw.js` chứa đầy đủ cấu hình Monetag Zone ID 11729611 và domain `5gvci.com`.
 
 🌟 [v0.10.9-alpha-8] - (BUILD 240 - POLYSEMY & HOMOGRAPHS ARCHITECTURE, MONETAG INTEGRATION):
   - 🌐 Tích hợp Monetag Service Worker & Domain Verification:

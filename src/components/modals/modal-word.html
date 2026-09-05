@@ -25,16 +25,19 @@
           </div>
         </div>
 
-        <!-- SENSES CONTAINER (v0.10.9-alpha-8: Polysemy & Homographs) -->
-        <div id="word-senses-container" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px;">
-          <!-- Dynamically populated via renderWordModalSenses() -->
+        <!-- SENSES TAB BAR & SWITCHER (v0.10.9-alpha-9: 1, 2, 3... +) -->
+        <div id="word-senses-tab-wrapper" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;" id="word-senses-tab-bar">
+            <!-- Tabs 1, 2, 3... + rendered by renderWordModalSenses() -->
+          </div>
+          <div id="word-sense-delete-btn-container">
+            <!-- Delete button for active sense if senses > 1 -->
+          </div>
         </div>
 
-        <!-- ADD SENSE BUTTON (POLYSEMY / HOMOGRAPHS) -->
-        <div style="margin-bottom: 16px;">
-          <button type="button" class="btn btn-outline btn-sm" onclick="addWordModalBlankSense()" style="width: 100%; border-style: dashed; border-color: rgba(168, 85, 247, 0.5); color: #c084fc; background: rgba(168, 85, 247, 0.08); font-weight: 700; padding: 9px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-            <span style="font-size: 15px;">➕</span> <span>Thêm Nghĩa Khác (Polysemy / Homograph)</span>
-          </button>
+        <!-- SENSES CONTAINER (v0.10.9-alpha-9: Only active tab is visible) -->
+        <div id="word-senses-container" style="margin-bottom: 12px;">
+          <!-- Dynamically populated via renderWordModalSenses() -->
         </div>
 
         <!-- EMBEDDED IPA KEYBOARD PANEL (Shared across senses) -->
