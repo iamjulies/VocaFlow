@@ -134,6 +134,21 @@ $indexOut = Join-Path $root "index.html"
 [System.IO.File]::WriteAllText($vocaOut, $out, [System.Text.Encoding]::UTF8)
 [System.IO.File]::WriteAllText($indexOut, $out, [System.Text.Encoding]::UTF8)
 
+# Đồng bộ tự động vào Release_App & GITHUB_RELEASE
+$releaseAppHtml = Join-Path $root "Release_App\vocaflow.html"
+if (Test-Path (Join-Path $root "Release_App")) {
+    [System.IO.File]::WriteAllText($releaseAppHtml, $out, [System.Text.Encoding]::UTF8)
+    Copy-Item (Join-Path $root "sw.js") (Join-Path $root "Release_App\sw.js") -Force
+}
+$ghReleaseHtml = Join-Path $root "GITHUB_RELEASE\vocaflow_web_single_file.html"
+if (Test-Path (Join-Path $root "GITHUB_RELEASE")) {
+    [System.IO.File]::WriteAllText($ghReleaseHtml, $out, [System.Text.Encoding]::UTF8)
+}
+$ghWinHtml = Join-Path $root "GITHUB_RELEASE\VocaFlow_Windows_App\vocaflow.html"
+if (Test-Path (Split-Path $ghWinHtml)) {
+    [System.IO.File]::WriteAllText($ghWinHtml, $out, [System.Text.Encoding]::UTF8)
+}
+
 $sw.Stop()
 $totalLines = [System.IO.File]::ReadAllLines($vocaOut).Length
 $sizeKB = [Math]::Round((Get-Item $vocaOut).Length / 1KB, 1)

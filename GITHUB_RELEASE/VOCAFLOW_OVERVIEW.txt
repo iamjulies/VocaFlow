@@ -1,14 +1,104 @@
 ================================================================================
-Phiên bản: v0.10.8-released (Build 230 - Debug 0.8) - VIP Daily Lucky Spins Delivery, Cloud Merge Fix & +4 Spins Compensation
+Phiên bản: v0.10.9-alpha-7 (Build 239) - Settings Version Sync, Testing & Deployment Spec, AdSense Advisory
 ================================================================================
-1. [Khắc Phục Lỗi Thông Báo Nhận Quà VIP Nhưng Không Được Cộng Lượt Quay] Sửa triệt để xung đột thứ tự khởi tạo và đồng bộ Cloud: loại bỏ việc Cloud Sync ghi đè lượt quay cục bộ về 0, thiết lập cơ chế kiểm tra đặc quyền VIP `checkAndGrantVipDailySpinBonus()` an toàn và cộng dồn thực tế vào `vocaflow_lucky_spins_left`.
-2. [Tự Động Bồi Hoàn +4 Lượt Quay May Mắn (Self-Healing Compensation)] Tự động phát hiện và bồi hoàn trực tiếp +4 Lượt Quay May Mắn VIP (tương đương 2 ngày đặc quyền VIP bị lỗi trước đó) vào tài khoản ngay khi khởi động ứng dụng.
-3. [Đồng Bộ Hai Chiều An Toàn Cao (Smart Spin Merge)] Trong cả Startup Sync và Manual Sync, số lượt quay luôn được đối soát `Math.max(local, remote)` và bảo toàn ngày tặng quà, ngăn ngừa hoàn toàn hiện tượng mất lượt quay khi đồng bộ.
+1. [Làm Mới Phiên Bản Trong Cài Đặt] Sửa triệt để nhãn hiển thị phiên bản bị găm cứng ở modal Cài Đặt (Thông Tin Ứng Dụng); cập nhật đồng bộ động thông qua VOCAFLOW_APP_FULL_TITLE trên cả DOMContentLoaded và khi mở Settings modal.
+2. [Tài Liệu Hóa Quy Trình Kiểm Thử & Triển Khai] Tạo tệp hướng dẫn KIEM_THU_VA_TRIEN_KHAI.md chuẩn mực, minh bạch, khách quan và chi tiết từng bước cho người tiếp quản sau.
+3. [Tư Vấn & Khắc Phục Lỗi Google AdSense] Phân tích nguyên nhân "Nội dung có giá trị thấp" (Low-Value Content) trên iamjulies.github.io và lập lộ trình khắc phục toàn diện.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
-           TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
-================================================================================
-Phiên bản hiện tại : v0.10.8-released (Build 230 - Debug 0.8)
+            TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
+===============================================================================
+Phiên bản hiện tại : v0.10.9-alpha-7 (Build 239)
+
+--------------------------------------------------------------------------------
+II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
+--------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-7] - (BUILD 239 - SETTINGS VERSION SYNC, TESTING & DEPLOYMENT SPEC, ADSENSE ADVISORY):
+  - ⚙️ Làm mới nhãn phiên bản ứng dụng trong Cài Đặt (Settings):
+    * Cập nhật `src/components/modals/modal-settings.html` và đồng bộ động nhãn `#settings-app-version-label` qua hằng số `VOCAFLOW_APP_FULL_TITLE` (`v0.10.9-alpha-7`).
+    * Khắc phục tình trạng người dùng mở Cài Đặt vẫn thấy hiển thị phiên bản cũ `v0.10.8-released (debug 0.8)`.
+  - 📚 Chuẩn hóa tài liệu Kiểm Thử & Triển Khai (`KIEM_THU_VA_TRIEN_KHAI.md`):
+    * Ghi nhớ và minh bạch hóa 4 bước kiểm thử, biên dịch, lắp ghép và phát hành 1-click lên GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
+  - 🛡️ Báo cáo chuyên sâu và hướng dẫn khắc phục vi phạm chính sách Google AdSense "Nội dung có giá trị thấp".
+
+🌟 [v0.10.9-alpha-6] - (BUILD 238 - FLOW FREEZE FIX, ANTI-CLOCK EXPLOIT & VIP EXPIRY PURGE):
+  - ❄️ Sửa lỗi tự động trừ Flow Freeze:
+    * Xóa khối mã debug cũ `vocaflow_freeze_deducted_v0108_debug06` từng tự động trừ 1 freeze khi có lịch sử freeze.
+    * Khắc phục lỗi trừ lặp đúp delta khi đồng bộ Cloud ở cả `onAuthStateChanged` và `pullDatabaseFromCloud`.
+    * Tái cấu trúc `evaluateAndAutoApplyFlowFreezes`: Chỉ bảo vệ chuỗi liên tục tiếp nối với ngày học gần nhất (tối đa bằng số Freeze hiện có), không bao giờ quét lùi vào các khoảng trống cũ đã gãy.
+    * Tự động hoàn trả 1 lần (`healErroneousFreezeDeduction`): Phục hồi +1 Flow Freeze (`1/7`) cho người dùng bị mất lượt freeze oan và ghi nhận nhật ký ví `RECOVER_FLOW_FREEZE`.
+  - 🛡️ Chống can thiệp ngày giờ (Anti-Time-Travel Engine):
+    * Đồng bộ thời gian thực chuẩn từ Cloud thông qua HTTP response header `Date` của Google Firebase RTDB.
+    * Lưu vết thời gian tịnh tiến cao nhất (`vocaflow_max_observed_timestamp` & `vocaflow_max_observed_date`).
+    * Ngăn chặn việc chỉnh lùi ngày giờ hệ thống để học gian lận Flow streak hoặc nhận quà/lượt quay hằng ngày lặp lại.
+  - 👑 Dọn dẹp sạch mác VIP khi hết hạn & Khóa chặt mọi đặc quyền:
+    * Cập nhật `initGlobalVipRegistry` và `isAuthorVipUser` luôn đối chiếu thời hạn `vipExpiresAt > now` (trừ khi là `lifetime`).
+    * Tự động xóa vương miện `👑` khỏi tên người dùng trong hồ sơ công khai, danh sách bộ từ, bảng xếp hạng khi VIP hết hạn.
+    * Chuyển huy hiệu hồ sơ từ `👑 VIP Hết hạn` về chuẩn thành viên thường `🌟 Tác Giả Đóng Góp` và gỡ bỏ viền phát sáng hoàng kim VIP.
+    * Khóa chặt toàn bộ tính năng VIP khi hết hạn: Bộ từ VIP, Khe Gemini API Key 2 & 3, thưởng quay VIP (+2 lượt), trần Flow Freeze trở về 3 lượt.
+
+🌟 [v0.10.9-alpha-5] - (BUILD 237 - AUTO-LOCK AI FEATURES WITHOUT GEMINI KEY):
+  - Tự động khóa 5 tính năng phụ thuộc AI Gemini đối với người dùng chưa nhập ít nhất 1 API key (kể cả khi đã đăng nhập tài khoản):
+    * 🎙️ Luyện nói (Speaking Lab): Khóa toàn bộ mọi cấp độ (Dễ, Trung Bình, Khó) vì toàn bộ quá trình phân tích âm thanh, âm vị, ngữ điệu đều do Gemini AI đảm nhiệm.
+    * 🎯 Trắc nghiệm Quiz: Khóa các cấp độ Trung Bình (Medium), Khó (Hard), Cực Khó (Extreme) do yêu cầu AI sinh các phương án bẫy trắc nghiệm thông minh. Giữ mở cấp độ Dễ (Easy) chạy offline từ kho từ vựng.
+    * 🤖 Gemini English Mentor: Bổ sung màn hình khóa `aimentor-apikey-lock-view` giải thích chi tiết và dẫn hướng vào Cài Đặt.
+    * ✨ AI Điền Tự Động (Auto-Fill): Khóa nút AI Điền trong modal thêm/sửa từ vựng khi chưa có key.
+    * 📚 VocaDeck AI Deck Studio: Bổ sung màn hình khóa `aideck-apikey-lock-view` bảo vệ studio tạo bộ từ tự động.
+    * ⚡ Mở khóa tức thì (Zero-Delay Unlock): Ngay khi người dùng thêm ít nhất 1 API key hợp lệ trong Cài Đặt, cả 5 tính năng lập tức mở khóa bình thường.
+
+🌟 [v0.10.9-alpha-4] - (BUILD 236 - FIX VIP DAILY SPINS INFLATION & CROSS-DEVICE IDEMPOTENCY):
+  - Khắc phục triệt để lỗi người dùng VIP bị cộng dồn +8 lượt quay hằng ngày:
+    * Xóa bỏ hoàn toàn khối bồi hoàn di sản `curSpins += 4` từ bản gỡ lỗi cũ, triệt tiêu việc cộng dồn trên môi trường mới.
+    * Bổ sung khóa Mutex Lock (`isGrantingVipDailySpin`) và bảo vệ đa tầng (Multi-layer Guard): Kiểm tra cả máy cục bộ, thông báo Cloud và sổ nhật ký giao dịch.
+    * Đồng bộ trường `lastVipSpinDate` hai chiều ngay tại sự kiện `onAuthStateChanged` và `pullDatabaseFromCloud`.
+    * Chuẩn hóa hàm `getTodayString()` trả về định dạng `YYYY-MM-DD` theo giờ địa phương, loại bỏ hoàn toàn lệch múi giờ ban đêm của UTC.
+    * Tích hợp tính năng Tự động hiệu chỉnh (`autoHealExcessVipSpinsToday`): Khấu trừ 6 lượt quay thừa bị cộng nhầm hôm nay về đúng chuẩn (+2 lượt/ngày).
+
+🌟 [v0.10.9-alpha-3] - (BUILD 235 - BULLETPROOF VIP PROTECTION & MODULAR ARCHITECTURE "CHIA ĐỂ TRỊ"):
+  - Xây dựng Động cơ Bảo vệ VIP Đa lớp (Bulletproof VIP Protection Engine) với khóa chốt đỉnh cao (`vocaflow_vip_high_water_exp`):
+    * Triệt tiêu hoàn toàn lỗi lùi ngày khi kéo dữ liệu Cloud (`pullDatabaseFromCloud`): Luôn so sánh `Math.max(localExp, remoteExp, highWaterExp)`.
+    * Khắc phục triệt để lỗi ghi đè hạn VIP khi đăng nhập tài khoản (`onAuthStateChanged` / `login`).
+    * Tích hợp tính năng Tự Chữa Lành (`autoHealVipRegression`): Nhận diện người dùng bị lùi ngày hạn VIP về 31/08/2027 và tự động phục hồi lên mốc chính xác 03/09/2027 (bảo toàn đủ số ngày trúng từ Vòng Quay May Mắn).
+    * Cơ chế Đồng bộ Ngược: Khi phát hiện hạn máy cục bộ tiến xa hơn Cloud, hệ thống tự động cập nhật bản ghi VIP mới nhất lên Firebase Cloud.
+    * Nâng cấp hàm nhận giải thưởng Vòng quay (`grantVipOneDayBonus`): Đảm bảo ngày thưởng được ghi nhận vào chốt đỉnh cao và đồng bộ Cloud an toàn.
+  - Tái cấu trúc mã nguồn toàn diện theo mô hình "CHIA ĐỂ TRỊ" (Source Modularization Architecture):
+    * Chuyển đổi mã nguồn đơn khối 38.000 dòng sang thư mục `src/`:
+      - `src/components/modals/`: 36 file HTML độc lập cho từng popup modal (~50-300 dòng/file).
+      - `src/components/screens/`: 6 file HTML độc lập cho các màn hình ứng dụng.
+      - `src/components/header.html`: Thanh điều hướng độc lập.
+      - `src/components/icons.svg`: Bộ SVG Icon Sprite riêng biệt.
+      - `src/styles/app.css`: Toàn bộ CSS giao diện và theme.
+      - `src/scripts/app.js`: Động cơ JavaScript lõi.
+      - `src/app_template.html`: Khung sườn bố cục tổng thể.
+    * Tạo công cụ lắp ghép tự động `build_vocaflow.ps1`: Tốc độ biên dịch siêu tốc (< 1 giây), kiểm tra tính toàn vẹn và xuất đồng thời ra `vocaflow.html` và `index.html`.
+    * Tích hợp trực tiếp `build_vocaflow.ps1` vào quy trình phát hành `push_github.ps1`.
+
+🌟 [v0.10.9-alpha-2] - (BUILD 234 - GUIDE UI FIX, VIP KEYS RETENTION & GUIDE RETURN STACK):
+  - Khắc phục lỗi vỡ layout tab cẩm nang trên máy tính để bàn (sửa thiếu ngoặc CSS media query và căn chỉnh nowrap cuộn ngang).
+  - Thay thế toàn bộ ký hiệu `$\rightarrow$` thành mũi tên unicode `➔` tại các bước cẩm nang tân thủ và hướng dẫn cài đặt PWA.
+  - Sửa dứt điểm lỗi mất API Key 2 và 3 đối với người dùng VIP:
+    * Chống cắt giảm mảng key (`slice`) trong lúc trạng thái VIP đang được xác thực bất đồng bộ.
+    * Thêm hàm `extractKeysList` hỗ trợ cả Array, Object tuần tự của Firebase Realtime Database và String đơn lẻ.
+    * Tích hợp cơ chế Smart Merge deduplication: không bao giờ ghi đè hoặc xóa mất key phụ cục bộ khi kéo dữ liệu Cloud.
+  - Xây dựng Ngăn xếp ghi nhớ cẩm nang (`guideReturnContext` & `navigateFromGuide`):
+    * Khi người dùng nhấn nút chuyển tiếp từ Cẩm nang đến các modal khác (Đăng ký tài khoản, Cài đặt API Gemini, Nhập Giftcode, Thư viện VocaLib, AI Deck Studio, Tạo bộ từ, Cửa hàng VocaShop, Creator Studio), hệ thống lưu lại chính xác danh mục, slide bước và độ cuộn (`scrollTop`).
+    * Khi đóng modal đích (bằng nút X, nút Đóng hoặc phím `Esc`), tự động mở lại Cẩm nang và khôi phục nguyên vẹn vị trí đang đọc dở.
+  - Bổ sung sự kiện lắng nghe lăn chuột ngang (`wheel scroll`) trên thanh tab cẩm nang cho chuột PC.
+
+🌟 [v0.10.9-alpha-1] - (BUILD 233 - STEP-BY-STEP USER GUIDE & KNOWLEDGE BASE MODAL):
+  - Ra mắt hệ thống Cẩm Nang Hướng Dẫn Toàn Diện (`modal-user-guide`) giải quyết triệt để rào cản làm quen ứng dụng cho người mới bắt đầu.
+  - Tích hợp nút kích hoạt `btn-header-guide` (`📖 Hướng Dẫn`) trên Header thanh công cụ và trong dropdown menu 3 chấm trên Mobile.
+  - Phân loại 6 chủ đề hướng dẫn rõ ràng với các tab cuộn ngang tiện lợi:
+    * 🚀 Người Mới (Từng Bước): Stepper 5 slide trực quan chuyển trang `<` và `>` kèm thanh tiến trình.
+    * 🌊 Chuỗi Học & SRS: Giới thiệu ngọn lửa Flow Streak và đường cong quên lãng Ebbinghaus.
+    * 🪙 Ví Xu & Shop: Cơ chế tích lũy Xu và danh mục vật phẩm VocaShop.
+    * 💼 Creator Studio: Hướng dẫn định giá bộ từ và nhận 100% doanh thu Xu.
+    * 👑 Đặc Quyền VIP: Tổng hợp ưu đãi x2 Xu, vòng quay miễn phí và VocaAI.
+    * ⌨️ Phím Tắt & Cài Đặt: Phím tắt thao tác nhanh và hướng dẫn cài đặt PWA Offline trên iOS/Android/PC.
+  - Thiết kế đồng bộ hoàn hảo với hệ thống CSS Variables (`--surface`, `--surface-elevated`, `--primary`, `--border`), tự động thích ứng mượt mà cả chế độ Sáng (Light) và Tối (Dark).
+  - Tích hợp các nút Deep-link chuyển hướng thông minh: Mở đăng ký ngay, mở AI Studio & dẫn tới ô điền API Key, tự động điền mã Giftcode `HELLOKHANG2011`, mở VocaLib, mở VocaDeck AI.
+
 
 I. TỔNG QUAN HỆ THỐNG
 --------------------------------------------------------------------------------
@@ -23,6 +113,17 @@ Curve) của Ebbinghaus và phương pháp lặp lại ngắt quãng (Spaced Rep
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 232 - DEBUG 1.0 VIP SPIN AUDITOR & TRANSPARENCY):
+  - Tích hợp thông báo persistent vào Trung Tâm Thông Báo khi bồi hoàn lượt quay VIP (+4 spins).
+  - Khẳng định tính đúng đắn của logic tính toán (0 + 2 quà ngày mới + 4 bồi hoàn = 6 lượt).
+  - Khóa vĩnh viễn cờ `vocaflow_vip_spin_healed_v0108_debug08` sau lần bồi hoàn duy nhất để các ngày tiếp theo cộng đúng chuẩn +2 lượt.
+
+🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 231 - DEBUG 0.9 VIP DURATION, QUIZ 0-DELAY & STUDY FLOW ENGINE):
+  - Chuẩn hóa hiển thị thời hạn VIP theo dạng X tuần / X ngày / X giờ (không còn hiển thị 1 tháng/năm cố định).
+  - Tối ưu tải bài Quiz: Pre-fetch ngầm bẫy AI và race timeout 1.2s giúp câu hỏi số 1 nạp tức thì.
+  - Sửa lỗi học Speaking và làm Quiz không lên Flow: tích hợp `recordStudyFlowAction` toàn diện.
+  - Hiệu chỉnh thang điểm Speaking AI đa bậc sắc thái (loại bỏ hiện tượng neo 95 điểm).
 
 🌟 [v0.10.8] - OFFICIAL RELEASE (BUILD 230 - DEBUG 0.8 VIP DAILY SPINS & COMPENSATION):
   - Khắc phục lỗi Quà tặng VIP hàng ngày hiển thị thông báo trong Trung Tâm Thông Báo nhưng không được cộng lượt quay trên Vòng Quay May Mắn.

@@ -1,5 +1,11 @@
     // =========================================================================
-    // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-6)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-7)
+    // =========================================================================
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-7';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-7';
+
+    // =========================================================================
+    // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
     // =========================================================================
     let serverTimeDeltaMs = 0;
     let hasServerTimeSync = false;
@@ -980,6 +986,9 @@
         const isVipActive = (userIsVip === true || userIsVip === 'true' || (typeof currentUser !== 'undefined' && currentUser && currentUser.isVip === true));
         memeGroup.style.display = isVipActive ? 'block' : 'none';
       }
+      // Dynamically sync app version in settings modal (v0.10.9-alpha-7)
+      const verLabel = document.getElementById('settings-app-version-label');
+      if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
       openModal('modal-settings');
     }
 
@@ -30640,6 +30649,8 @@ Quy tắc phản hồi quan trọng:
 
   // Horizontal mouse-wheel scroll for guide tabs nav on PC
   window.addEventListener('DOMContentLoaded', () => {
+    const verLabel = document.getElementById('settings-app-version-label');
+    if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();

@@ -1,4 +1,4 @@
-﻿# 📌 QUY TRÌNH BẮT BUỘC MỖI KHI CẬP NHẬT VOCAFLOW (MANDATORY UPDATE WORKFLOW)
+# 📌 QUY TRÌNH BẮT BUỘC MỖI KHI CẬP NHẬT VOCAFLOW (MANDATORY UPDATE WORKFLOW)
 
 > **LƯU Ý QUAN TRỌNG DÀNH CHO AI AGENT & DEVELOPER:**
 > Mỗi khi thực hiện cập nhật mã nguồn VocaFlow (sửa lỗi, thêm tính năng, nâng version), **BẮT BUỘC PHẢI THỰC HIỆN ĐỦ 4 BƯỚC VÀ TUÂN THỦ NGUYÊN TẮC BẢO TOÀN DỮ LIỆU SAU ĐÂY** mà không được bỏ sót bất kỳ điểm nào:
@@ -58,5 +58,6 @@
 
 ---
 
-## 🚀 LỆNH TỰ ĐỘNG ĐẨY CODE LÊN GITHUB
+## 🚀 LỆNH TỰ ĐỘNG ĐẨY CODE LÊN GITHUB & TÀI LIỆU KIỂM THỬ
 - Nhấp đúp vào `GITHUB_RELEASE\1_DAY_CODE_LEN_GITHUB.bat` hoặc chạy `GITHUB_RELEASE\push_github.ps1` để tự động đóng gói ZIP, commit và push lên repository `iamjulies/VocaFlow`.
+- 📘 **Xem tài liệu chi tiết quy trình 4 bước kiểm thử, biên dịch và triển khai tại**: [KIEM_THU_VA_TRIEN_KHAI.md](./KIEM_THU_VA_TRIEN_KHAI.md)

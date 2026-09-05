@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -2313,11 +2313,202 @@
   }
 }
 
-</style>
+    /* ========================================================================= */
+    /* USER GUIDE & KNOWLEDGE BASE MODAL (v0.10.9-alpha-2)                      */
+    /* ========================================================================= */
+    #modal-user-guide .modal {
+      max-width: 780px !important;
+      width: 95vw !important;
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 22px !important;
+      box-sizing: border-box !important;
+      border-radius: 20px !important;
+      overflow: hidden !important;
+    }
+
+    .guide-tabs-nav {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .guide-tab-btn {
+      white-space: nowrap;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--surface-elevated);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      outline: none;
+      user-select: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .guide-tab-btn:hover {
+      border-color: var(--primary);
+      color: var(--text);
+      background: var(--surface);
+    }
+    .guide-tab-btn.active {
+      background: var(--primary) !important;
+      color: #ffffff !important;
+      border-color: var(--primary) !important;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+
+    .guide-content-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .guide-cat-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      animation: guideFadeIn 0.25s ease forwards;
+    }
+    .guide-cat-panel.active {
+      display: flex;
+    }
+
+    @keyframes guideFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-stepper-header {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+    .guide-dots-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .guide-step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .guide-step-dot.active {
+      background: var(--primary);
+      transform: scale(1.3);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    .guide-step-dot.passed {
+      background: var(--success);
+    }
+
+    .guide-step-slide {
+      display: none;
+      animation: guideSlideIn 0.25s ease forwards;
+    }
+    .guide-step-slide.active {
+      display: block;
+    }
+    @keyframes guideSlideIn {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .guide-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .guide-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .guide-key-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-family: monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 640px) {
+      #modal-user-guide .modal {
+        padding: 16px 12px !important;
+        border-radius: 16px !important;
+      }
+      .guide-tab-btn {
+        padding: 6px 10px;
+        font-size: 11.5px;
+      }
+      .guide-action-bar {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .guide-action-bar > div {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+      .guide-action-bar button {
+        flex: 1;
+      }
+    }
+
+
+  </style>
 </head>
 <body>
-
-  <!-- SVG ICON SPRITE -->
   <svg style="display: none;">
     <defs>
             <symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
@@ -2352,12 +2543,11 @@
     </defs>
   </svg>
 
-  <!-- APP HEADER -->
   <header>
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.8-released</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-7</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2383,6 +2573,12 @@
         <span style="font-size: 13px;">🔔</span>
         <span class="hide-on-mobile">Thông Báo</span>
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
+      </button>
+
+      <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-2) -->
+      <button type="button" class="btn btn-outline btn-sm" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+        <span style="font-size: 14px;">📖</span>
+        <span class="hide-on-mobile">Hướng Dẫn</span>
       </button>
 
       <!-- VOCASHOP / POINTS WALLET BUTTON -->
@@ -2417,6 +2613,14 @@
 
         <!-- Dropdown Menu -->
         <div id="header-more-dropdown" class="header-more-dropdown" style="display: none;">
+          <!-- USER GUIDE (v0.10.9-alpha-2) -->
+          <div class="dropdown-item" onclick="openUserGuideModal(); closeHeaderMoreMenu();" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);">
+            <span style="font-size: 17px;">📖</span>
+            <div>
+              <div style="font-weight: 800; font-size: 13px; color: #34d399;">Hướng Dẫn Sử Dụng</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Từng bước cho người mới bắt đầu</small>
+            </div>
+          </div>
           <div class="dropdown-item" onclick="openVipPricingModal(); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4);">
             <span style="font-size: 16px;">👑</span>
             <div>
@@ -2503,9 +2707,8 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+
   <main>
-    <!-- SCREEN 1: DECK LIST -->
     <section id="screen-decks" class="screen active">
       <div class="top-nav">
         <div>
@@ -2570,7 +2773,6 @@
       </div>
     </section>
 
-    <!-- SCREEN 2: DECK DETAIL -->
     <section id="screen-deck-detail" class="screen">
       <div class="deck-detail-sticky-pane" id="deck-detail-sticky-pane">
         <!-- ROW 1: HEADER & PRIMARY ACTION BUTTONS -->
@@ -2740,9 +2942,6 @@
       </div>
     </section>
 
-    <!-- Legacy manual flashcard removed in favor of versatile Auto Flashcard (screen-autofc) -->
-
-    <!-- SCREEN 4: QUIZ MODE -->
     <section id="screen-quiz" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitQuiz()" title="Quay lại">
@@ -2838,7 +3037,6 @@
       </div>
     </section>
 
-    <!-- SCREEN: SPELLING & FILL-IN-THE-BLANK MODE (v0.0.10.1a) -->
     <section id="screen-spelling" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpelling()" title="Quay lại">
@@ -2942,8 +3140,6 @@
       </div>
     </section>
 
-    <!-- SCREEN 5: AUTO FLASHCARD MODE (HANDS-FREE AUDIO LOOP: EN -> VI -> NEXT) -->
-        <!-- SCREEN 5: AI SPEAKING & PRONUNCIATION LAB (v0.10.6d - Multi-Take Economy) -->
     <section id="screen-speaking" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitSpeakingMode()" title="Quay lại danh sách từ">
@@ -3247,9 +3443,10 @@
         </div>
       </div>
     </section>
+
+
   </main>
 
-  <!-- MODAL: ADD / EDIT WORD -->
   <div class="modal-overlay" id="modal-word">
     <div class="modal">
       <div class="modal-title">
@@ -3385,7 +3582,6 @@
     </div>
   </div>
 
-  <!-- MODAL: QUIZ CELEBRATION RESULT POPUP (v0.0.8.12) -->
   <div class="modal-overlay" id="modal-quiz-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -3460,7 +3656,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPELLING SETUP (v0.0.10.1a) -->
   <div class="modal-overlay" id="modal-spelling-setup">
     <div class="modal" style="max-width: 540px;">
       <div class="modal-title">
@@ -3581,7 +3776,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPEAKING SETUP (v0.10.6d) -->
   <div class="modal-overlay" id="modal-speaking-setup">
     <div class="modal" style="max-width: 540px;">
       <div class="modal-title">
@@ -3678,7 +3872,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPEAKING RESULT CELEBRATION (v0.10.6o) -->
   <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(236, 72, 153, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -3834,7 +4027,6 @@
     </div>
   </div>
 
-  <!-- MODAL: QUIZ SETUP & DIFFICULTY SELECTION (v0.0.9.9) -->
   <div class="modal-overlay" id="modal-quiz-setup">
     <div class="modal" style="max-width: 520px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
       <div class="modal-title">
@@ -3991,7 +4183,6 @@
     </div>
   </div>
 
-  <!-- MODAL: AI DECK GENERATOR STUDIO (v0.0.10.3 UPDATE) -->
   <div class="modal-overlay" id="modal-ai-deck-studio" style="z-index: 10002;">
     <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column; position: relative;">
       <!-- MODAL TITLE -->
@@ -4016,6 +4207,23 @@
         <div style="display: flex; justify-content: center; gap: 10px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-deck-studio'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
             🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-deck-studio');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- API KEY LOCK VIEW FOR AI DECK STUDIO (v0.10.9-alpha-5) -->
+      <div id="aideck-apikey-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(245,158,11,0.4));">🤖🔑</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Chưa Kết Nối Google Gemini API Key</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Tính năng <strong>Tạo Bộ Từ Bằng AI (VocaDeck AI Generator)</strong> cần kết nối tài khoản Gemini của bạn để AI có thể phân tích chủ đề, tìm từ vựng, phiên âm và sinh ví dụ thực tế.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-deck-studio'); openSettingsModal();" style="font-weight: 700; padding: 9px 22px; font-size: 13px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.4);">
+            ⚙️ Thêm Gemini API Key Ngay
           </button>
           <button class="btn btn-outline" onclick="closeModal('modal-ai-deck-studio');" style="padding: 9px 18px; font-size: 13px;">
             Đóng
@@ -4158,7 +4366,6 @@
     </div> <!-- end modal -->
   </div> <!-- end modal-ai-deck-studio -->
 
-  <!-- MODAL: ADD / EDIT DECK -->
   <div class="modal-overlay" id="modal-deck">
     <div class="modal">
       <div class="modal-title">
@@ -4197,7 +4404,6 @@
     </div>
   </div>
 
-  <!-- MODAL: EXCEL IMPORT -->
   <div class="modal-overlay" id="modal-import">
     <div class="modal">
       <div class="modal-title">
@@ -4235,10 +4441,530 @@
         </div>
       </div> <!-- end aideck-main-authenticated-view -->
     </div>
+
+  <div class="modal-overlay" id="modal-user-guide">
+    <div class="modal">
+      <div class="modal-title" style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(99,102,241,0.3);">📖</div>
+          <div>
+            <strong style="font-size: 16.5px; color: var(--text); display: block;">Cẩm Nang & Hướng Dẫn Sử Dụng</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Làm quen từng bước & khai thác trọn vẹn sức mạnh VocaFlow</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-user-guide')" title="Đóng hướng dẫn"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- CATEGORY TABS -->
+      <div class="guide-tabs-nav" id="guide-tabs-container">
+        <button class="guide-tab-btn active" id="guide-tab-btn-starter" onclick="switchUserGuideCategory('starter')">
+          <span>🚀</span> Người Mới (Từng Bước)
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-flow" onclick="switchUserGuideCategory('flow')">
+          <span>🌊</span> Chuỗi Học & SRS
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-economy" onclick="switchUserGuideCategory('economy')">
+          <span>🪙</span> Ví Xu & Shop
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-creator" onclick="switchUserGuideCategory('creator')">
+          <span>💼</span> Creator Studio
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-vip" onclick="switchUserGuideCategory('vip')">
+          <span>👑</span> Đặc Quyền VIP
+        </button>
+        <button class="guide-tab-btn" id="guide-tab-btn-shortcuts" onclick="switchUserGuideCategory('shortcuts')">
+          <span>⌨️</span> Phím Tắt & Cài Đặt
+        </button>
+      </div>
+
+      <!-- CONTENT BODY -->
+      <div class="guide-content-area" id="guide-content-area">
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 1: BEGINNER STEPPER                                      -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel active" id="guide-cat-panel-starter">
+          <!-- Stepper Header -->
+          <div class="guide-stepper-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="guide-starter-step-badge" class="badge badge-primary" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700;">Bước 1 / 5</span>
+              <span id="guide-starter-step-title" style="font-size: 13.5px; font-weight: 700; color: var(--text);">Đăng Ký & Đăng Nhập Tài Khoản</span>
+            </div>
+            <div class="guide-dots-container" id="guide-starter-dots">
+              <div class="guide-step-dot active" onclick="goToStarterStep(0)" title="Bước 1: Tài khoản"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(1)" title="Bước 2: API Key Gemini"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(2)" title="Bước 3: Nhập Giftcode"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(3)" title="Bước 4: 3 Cách tạo bài"></div>
+              <div class="guide-step-dot" onclick="goToStarterStep(4)" title="Bước 5: 4 Kiểu học cốt lõi"></div>
+            </div>
+          </div>
+
+          <!-- SLIDE 1: Đăng ký & Đăng nhập -->
+          <div class="guide-step-slide active" id="guide-starter-slide-0">
+            <div class="guide-card" style="border-left: 4px solid #6366f1;">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">☁️</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Đồng Bộ Đám Mây Đa Thiết Bị</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Khi tạo tài khoản VocaFlow, toàn bộ dữ liệu từ vựng, tiến độ học tập, chuỗi ngày học (Streak) và số dư Xu tích lũy sẽ được bảo vệ tuyệt đối và đồng bộ tức thì giữa Điện thoại, Máy tính và Trình duyệt web.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 2 Bước Thao Tác Cực Dễ:</h4>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">👤 Tài khoản</strong> ở góc trên bên phải thanh công cụ.</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
+                  <span>Chuyển sang tab <strong style="color: var(--text);">Đăng ký</strong>, điền Email và Mật khẩu của bạn là xong!</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; text-align: right;">
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAuthModal('register'), 'modal-auth');" style="font-size: 12px; font-weight: 700; padding: 7px 16px;">
+                  🚀 Mở Cửa Sổ Đăng Ký Ngay
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 2: Cài đặt API Key Gemini -->
+          <div class="guide-step-slide" id="guide-starter-slide-1">
+            <div class="guide-card" style="border-left: 4px solid #10b981;">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">🔑</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Mở Khóa Toàn Bộ Trí Tuệ Nhân Tạo (Hoàn Toàn Miễn Phí!)</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    VocaFlow tích hợp công nghệ AI đỉnh cao từ Google Gemini để chấm điểm giọng nói, giải thích ngữ nghĩa và tự động tạo bộ từ. Bạn chỉ cần lấy 1 mã khóa miễn phí từ Google để kích hoạt mọi tính năng thông minh này.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 Cách Lấy & Điền Khóa API Chỉ Trong 1 Phút:</h4>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
+                  <span>Bấm nút <strong style="color: var(--text);">🌐 Mở Google AI Studio</strong> bên dưới và đăng nhập bằng tài khoản Gmail của bạn.</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">"Get API key"</strong> ➔ <strong style="color: var(--text);">"Create API key"</strong> rồi nhấn Sao chép (Copy).</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">3</span>
+                  <span>Quay lại VocaFlow, mở Cài đặt và dán mã vừa copy vào ô <strong style="color: var(--text);">"Gemini API Key"</strong>.</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="window.open('https://aistudio.google.com/app/apikey', '_blank');" style="font-size: 12px; font-weight: 700; padding: 7px 14px;">
+                  🌐 Mở Google AI Studio
+                </button>
+                <button class="btn btn-primary" onclick="openAiKeyFromGuide()" style="font-size: 12px; font-weight: 700; padding: 7px 14px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                  🔑 Mở Cài Đặt & Điền Key Ngay
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: Nhập Giftcode Tân thủ -->
+          <div class="guide-step-slide" id="guide-starter-slide-2">
+            <div class="guide-card" style="border-left: 4px solid #f59e0b; background: linear-gradient(135deg, rgba(245,158,11,0.08), transparent);">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 28px; line-height: 1;">🎁</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: #f59e0b; margin-bottom: 6px;">Quà Tặng Khởi Nghiệp: Nhập Mã Nhận +500 Xu!</h4>
+                  <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                    Dành riêng cho bạn mới! Sử dụng ngay mã quà tặng tân thủ để nhận ngay 500 Xu vào tài khoản, tha hồ trải nghiệm Vòng quay may mắn và sắm sửa trong VocaShop!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-card" style="text-align: center; padding: 20px 16px;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Mã Giftcode Độc Quyền Tân Thủ:</div>
+              <div style="display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 2px dashed #f59e0b; border-radius: 12px; padding: 10px 20px; margin-bottom: 16px;">
+                <span style="font-size: 20px; font-weight: 900; letter-spacing: 2px; color: #fbbf24; font-family: monospace;">HELLOKHANG2011</span>
+                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 11px; font-weight: 800;">+500 Xu</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                Bạn chỉ cần bấm nút nhận thưởng bên dưới, VocaFlow sẽ tự động điền mã và mở cửa sổ nhận quà ngay lập tức!
+              </div>
+              <div>
+                <button class="btn btn-primary" onclick="applyGiftcodeFromGuide('HELLOKHANG2011')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-size: 13px; font-weight: 800; padding: 10px 22px; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
+                  🎁 Nhận Ngay 500 Xu Tân Thủ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 4: 3 Hướng tạo bài học -->
+          <div class="guide-step-slide" id="guide-starter-slide-3">
+            <div class="guide-card" style="border-left: 4px solid #3b82f6;">
+              <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🎯 3 Cách Nạp Từ Vựng & Tạo Bài Học</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Tùy theo nhu cầu và phong cách học tập, bạn có thể lựa chọn 1 trong 3 phương thức linh hoạt:
+              </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Hướng 1 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">📚</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">1. Thư Viện Cộng Đồng (VocaLib)</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Tải nhanh các bộ từ biên soạn sẵn: IELTS, TOEIC, Giao tiếp hằng ngày, Oxford 3000...</span>
+                  </div>
+                </div>
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openLibraryModal(), 'modal-library');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                  Mở VocaLib
+                </button>
+              </div>
+
+              <!-- Hướng 2 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">✨</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">2. Soạn Tự Động Với VocaDeck AI</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Chỉ cần gõ chủ đề hoặc dán bài báo/đoạn văn, AI tự trích xuất từ vựng và tạo câu ví dụ trong 3 giây.</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="navigateFromGuide(() => openAiDeckStudioModal(), 'modal-ai-deck-studio');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #a855f7, #ec4899); border: none;">
+                  Dùng AI Deck
+                </button>
+              </div>
+
+              <!-- Hướng 3 -->
+              <div class="guide-card" style="margin: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                  <span style="font-size: 26px;">✍️</span>
+                  <div>
+                    <strong style="font-size: 13px; color: var(--text); display: block;">3. Tự Soạn & Nhập Thủ Công</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Tự do thêm từ, tùy chỉnh định nghĩa, ghi chú riêng hoặc nhập nhanh từ file Excel/CSV.</span>
+                  </div>
+                </div>
+                <button class="btn btn-outline" onclick="navigateFromGuide(() => openDeckModal(), 'modal-deck');" style="font-size: 11.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">
+                  Tạo Bộ Mới
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 5: 4 Kiểu học cơ bản -->
+          <div class="guide-step-slide" id="guide-starter-slide-4">
+            <div class="guide-card" style="border-left: 4px solid #ec4899;">
+              <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">⚡ 4 Chế Độ Học Cốt Lõi Tại VocaFlow</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Mỗi chế độ rèn luyện một giác quan và kỹ năng ngôn ngữ chuyên biệt:
+              </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+              <!-- Mode 1: Speaking -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🎙️</span>
+                  <strong style="font-size: 13px; color: #ec4899;">1. Luyện Phát Âm (Speaking)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Thu âm giọng đọc, AI chấm điểm ngữ âm IPA từng âm tiết, phát hiện lỗi nuốt phụ âm cuối và sửa khẩu hình trực quan.
+                </p>
+              </div>
+
+              <!-- Mode 2: Auto Flashcard -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🎴</span>
+                  <strong style="font-size: 13px; color: #6366f1;">2. Thẻ Tự Động (Auto Flashcard)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Lật thẻ từ vựng rảnh tay kết hợp giọng đọc AI chuẩn bản xứ. Rất thích hợp học thụ động khi di chuyển hoặc thư giãn.
+                </p>
+              </div>
+
+              <!-- Mode 3: Spelling -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">✍️</span>
+                  <strong style="font-size: 13px; color: #10b981;">3. Luyện Viết (Spelling)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Nghe âm thanh và gõ lại từng ký tự từ vựng vào ô phím. Khắc sâu trí nhớ cơ bắp và ghi nhớ chính tả chuẩn xác 100%.
+                </p>
+              </div>
+
+              <!-- Mode 4: Quiz -->
+              <div class="guide-card" style="margin: 0; padding: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span style="font-size: 22px;">🧠</span>
+                  <strong style="font-size: 13px; color: #f59e0b;">4. Trắc Nghiệm (Smart Quiz)</strong>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                  Thử thách phản xạ nghĩa từ qua 4 lựa chọn nhanh kèm các bẫy phân tâm thông minh, giúp củng cố nhận diện từ vựng.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stepper Action Bar -->
+          <div class="guide-action-bar">
+            <button class="btn btn-outline" id="guide-starter-btn-prev" onclick="navigateStarterStep(-1)" style="font-size: 12px; font-weight: 700; padding: 8px 16px;" disabled>
+              ❮ Trang Trước
+            </button>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="guide-starter-page-indicator">
+              Trang 1 / 5
+            </div>
+            <button class="btn btn-primary" id="guide-starter-btn-next" onclick="navigateStarterStep(1)" style="font-size: 12px; font-weight: 700; padding: 8px 18px;">
+              Trang Tiếp ❯
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 2: CHUỖI HỌC (FLOW) & SRS                               -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-flow">
+          <div class="guide-card" style="border-left: 4px solid #06b6d4;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🌊 Chuỗi Ngày Học (Flow Streak)</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Thành công trong học ngoại ngữ đến từ tính kỷ luật đều đặn mỗi ngày! Chỉ cần hoàn thành tối thiểu 1 bài học mỗi ngày, bạn sẽ giữ vững ngọn lửa <strong style="color: #f59e0b;">🔥 Chuỗi Flow</strong>.
+            </p>
+          </div>
+
+          <div class="guide-card">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">🧠 Thuật Toán Lặp Lại Ngắt Quãng (Spaced Repetition - SRS):</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+              <p style="margin: 0;">
+                Não bộ tự nhiên sẽ quên dần từ vựng theo thời gian. VocaFlow tự động tính toán thời điểm vàng trước khi bạn kịp quên để đưa từ vào <strong style="color: var(--primary);">Hàng Đợi Ôn Tập (Review Queue)</strong>.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 4px;">
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #ef4444; font-size: 14px;">Giai đoạn 1</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 1 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #f59e0b; font-size: 14px;">Giai đoạn 2</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 3 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #3b82f6; font-size: 14px;">Giai đoạn 3</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Ôn sau 7 ngày</div>
+                </div>
+                <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                  <div style="font-weight: 800; color: #10b981; font-size: 14px;">Giai đoạn 4</div>
+                  <div style="font-size: 11px; margin-top: 2px;">Nhớ vĩnh viễn</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card" style="border: 1px dashed var(--border); text-align: center;">
+            <div style="font-size: 13px; color: var(--text); font-weight: 700; margin-bottom: 4px;">🛡️ Bùa Bảo Vệ Chuỗi (Streak Freeze)</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Lỡ bận việc đột xuất không kịp học? Bạn có thể mua Bùa Bảo Vệ trong VocaShop để giữ nguyên chuỗi ngày!</div>
+            <button class="btn btn-outline" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 11.5px; font-weight: 700;">
+              🛒 Đến VocaShop Xem Bùa
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 3: KINH TẾ XU & VOCASHOP                                 -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-economy">
+          <div class="guide-card" style="border-left: 4px solid #eab308;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🪙 Hệ Thống Ví Xu & Sổ Cái Giao Dịch</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Xu (Points) là đơn vị tiền tệ trung tâm trong VocaFlow. Bạn có thể kiếm Xu bằng chính nỗ lực học tập và dùng để mở khóa các tiện ích thú vị.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div class="guide-card" style="margin: 0;">
+              <strong style="font-size: 13px; color: #10b981; display: block; margin-bottom: 6px;">📥 Cách Tích Lũy Xu:</strong>
+              <ul style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+                <li>Hoàn thành bài tập Speaking, Flashcard, Spelling, Quiz.</li>
+                <li>Đạt mốc chuỗi ngày học Flow liên tiếp.</li>
+                <li>Mở quà điểm danh hàng ngày tại Vòng Quay.</li>
+                <li>Bán bộ từ vựng do bạn tự biên soạn trên VocaLib.</li>
+              </ul>
+            </div>
+
+            <div class="guide-card" style="margin: 0;">
+              <strong style="font-size: 13px; color: #f59e0b; display: block; margin-bottom: 6px;">🛍️ Tiêu Dùng Tại VocaShop:</strong>
+              <ul style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6;">
+                <li>Đổi gợi ý chữ cái trong chế độ Luyện viết (Spelling).</li>
+                <li>Mua thêm lượt quay Vòng Quay May Mắn.</li>
+                <li>Mua Bùa bảo vệ chuỗi ngày học khi có việc bận.</li>
+                <li>Tải các bộ từ độc quyền có trả phí từ tác giả khác.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 4px;">
+            <button class="btn btn-primary" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #eab308, #ca8a04); border: none;">
+              🛒 Mở Cửa Hàng VocaShop
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 4: CREATOR STUDIO & BÁN BỘ TỪ                           -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-creator">
+          <div class="guide-card" style="border-left: 4px solid #8b5cf6;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">💼 Creator Studio: Kiếm Doanh Thu Từ Bộ Từ</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+              Bạn là giáo viên, trợ giảng hoặc người học có bộ từ chất lượng? VocaFlow cho phép bạn xuất bản bộ từ lên Thư viện VocaLib và tự đặt giá bán bằng Xu!
+            </p>
+          </div>
+
+          <div class="guide-card">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">📋 Quy Trình Trở Thành Tác Giả:</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">1.</span>
+                <span>Tạo bộ từ vựng và trau chuốt từ ngữ, định nghĩa, ví dụ minh họa thật chuẩn xác.</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">2.</span>
+                <span>Vào chi tiết bộ từ, nhấn <strong style="color: var(--text);">"Xuất bản lên VocaLib"</strong> và đặt giá Xu (hoặc để Miễn phí nếu muốn chia sẻ cộng đồng).</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-weight: 800; color: #8b5cf6;">3.</span>
+                <span>Mỗi khi có học viên tải bộ từ, 100% doanh thu Xu sẽ được chuyển thẳng vào Ví Creator của bạn với Sổ cái ghi nhận bất biến!</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; text-align: right;">
+              <button class="btn btn-primary" onclick="navigateFromGuide(() => openWalletStudioModal(), 'modal-wallet-studio');" style="font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;">
+                💼 Mở Trung Tâm Creator Studio
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 5: ĐẶC QUYỀN VIP CROWN                                  -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-vip">
+          <div class="guide-card" style="border-left: 4px solid #f59e0b; background: linear-gradient(135deg, rgba(245,158,11,0.1), transparent);">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <span style="font-size: 32px;">👑</span>
+              <div>
+                <h4 style="font-size: 15px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Đặc Quyền Thành Viên VIP Crown</h4>
+                <div style="font-size: 12px; color: var(--text-muted);">Trải nghiệm đẳng cấp cao nhất với các ưu đãi học tập vượt trội</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>⚡</span> Nhân Đôi Điểm Học Tập
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Nhận thêm hệ số thưởng x2 Xu trong mọi chế độ học tập và thử thách.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>🎰</span> Thêm 2 Lượt Quay Mỗi Ngày
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Mỗi ngày đăng nhập nhận thêm +2 lượt quay Vòng quay may mắn miễn phí trọn đời gói VIP.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>🤖</span> Trợ Lý VocaAI Không Giới Hạn
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Trò chuyện, hỏi ngữ pháp, sửa bài viết tiếng Anh 24/7 cùng trợ lý AI thông minh nhất.
+              </p>
+            </div>
+
+            <div class="guide-card" style="margin: 0; padding: 14px;">
+              <strong style="font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span>✨</span> Biểu Tượng Vương Miện Vàng
+              </strong>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                Tỏa sáng trên Bảng xếp hạng danh vọng với huy hiệu VIP Crown vàng lấp lánh bên tên bạn.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- CATEGORY 6: PHÍM TẮT & CÀI ĐẶT PWA                               -->
+        <!-- ================================================================= -->
+        <div class="guide-cat-panel" id="guide-cat-panel-shortcuts">
+          <div class="guide-card" style="border-left: 4px solid #6366f1;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">⌨️ Phím Tắt Toàn Năng (Dành Cho Máy Tính)</h4>
+            <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              Sử dụng bàn phím giúp bạn học nhanh gấp đôi mà không cần với tay chạm chuột:
+            </p>
+          </div>
+
+          <div class="guide-card" style="padding: 12px 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; font-size: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Lật thẻ Flashcard / Phát âm</span>
+                <span class="guide-key-badge">Space</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Thẻ tiếp theo / Câu tiếp</span>
+                <span class="guide-key-badge">→ hoặc D</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Thẻ trước đó</span>
+                <span class="guide-key-badge">← hoặc A</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Chọn đáp án Quiz (A, B, C, D)</span>
+                <span class="guide-key-badge">1, 2, 3, 4</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Xác nhận / Nộp câu trả lời</span>
+                <span class="guide-key-badge">Enter</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px;">
+                <span style="color: var(--text-muted);">Tìm kiếm từ vựng nhanh</span>
+                <span class="guide-key-badge">Ctrl + K</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card" style="border-left: 4px solid #10b981;">
+            <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 8px;">📲 Cài Đặt VocaFlow Như Ứng Dụng (PWA Offline):</h4>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 0 0 10px 0;">
+              Bạn có thể cài đặt VocaFlow lên màn hình chính điện thoại (iOS, Android) hoặc máy tính (Windows, Mac) để mở lên học nhanh không cần mở trình duyệt, hỗ trợ học tập cả khi không có mạng Internet.
+            </p>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+              • <strong style="color: var(--text);">Trên Chrome / Edge Máy tính:</strong> Bấm biểu tượng <strong style="color: var(--primary);">⊕ Cài đặt</strong> trên thanh địa chỉ trình duyệt.<br>
+              • <strong style="color: var(--text);">Trên iPhone (Safari):</strong> Bấm nút Chia sẻ (Share) ➔ Chọn <strong style="color: var(--primary);">"Thêm vào Màn hình chính"</strong>.<br>
+              • <strong style="color: var(--text);">Trên Android (Chrome):</strong> Bấm dấu 3 chấm ⋮ ➔ Chọn <strong style="color: var(--primary);">"Cài đặt ứng dụng"</strong>.
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- end guide-content-area -->
+
+    </div>
   </div>
 
-  <!-- MODAL: VOCA SHOP (SHOP ĐỔI ĐIỂM LẤY GỢI Ý) -->
-    <!-- MODAL: CREATOR STUDIO & WALLET HUB (v0.10.6c MONETIZATION UPDATE) -->
   <div class="modal-overlay" id="modal-wallet-studio">
     <div class="modal" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -4652,7 +5378,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SPACED REPETITION REVIEW QUEUE (v0.0.10.0) -->
   <div class="modal-overlay" id="modal-review-queue">
     <div class="modal" style="max-width: 680px;">
       <div class="modal-title">
@@ -4693,7 +5418,6 @@
     </div>
   </div>
 
-  <!-- MODAL: GUEST FEATURE LOCK MODAL (IMAGE 1 STANDARD) -->
   <div class="modal-overlay" id="modal-feature-guest-lock">
     <div class="modal" style="max-width: 480px; text-align: center; padding: 28px 24px;">
       <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
@@ -4715,7 +5439,6 @@
     </div>
   </div>
 
-  <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
   <div class="modal-overlay" id="modal-auth">
     <div class="modal" style="max-width: 440px;">
       <div class="modal-title">
@@ -4769,7 +5492,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLIC PROFILE CARD (v0.0.10.2a) -->
   <div class="modal-overlay" id="modal-public-profile" style="z-index: 10005;">
     <div class="modal" style="max-width: 500px; position: relative;">
       <div class="modal-title">
@@ -4871,7 +5593,6 @@
     <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
   </button>
 
-  <!-- MODAL: AI STUDY CHAT (GEMINI ENGLISH MENTOR - v0.10.7g) -->
   <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
     <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
       
@@ -4909,6 +5630,23 @@
         <div style="display: flex; justify-content: center; gap: 12px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openAuthModal('login');" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
             🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- API KEY LOCK VIEW FOR AI MENTOR (v0.10.9-alpha-5) -->
+      <div id="aimentor-apikey-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 20px; flex: 1;">
+        <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(245,158,11,0.4));">🔑🔒</div>
+        <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Chưa Kết Nối Google Gemini API Key</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+          Tính năng <strong>Gia Sư Gemini English Mentor</strong> cần kết nối tài khoản Gemini của bạn để AI có thể trò chuyện, giải thích ngữ pháp và sửa lỗi trực tiếp.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openSettingsModal();" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.4);">
+            ⚙️ Thêm Gemini API Key Ngay
           </button>
           <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
             Đóng
@@ -4954,7 +5692,6 @@
     </div>
   </div>
 
-  <!-- MODAL: NOTIFICATIONS CENTER (v0.10.7f) -->
   <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
     <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5019,7 +5756,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SUBSCRIBERS / FOLLOWING LIST (v0.10.7d) -->
   <div class="modal-overlay" id="modal-subscribers-list" style="z-index: 10006;">
     <div class="modal" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -5038,7 +5774,6 @@
     </div>
   </div>
 
-  <!-- MODAL: LUCKY WHEEL (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-lucky-wheel" style="z-index: 10009;">
     <div class="modal" style="max-width: 400px; width: 95vw; max-height: 92vh; display: flex; flex-direction: column; text-align: center; background: var(--surface); border: 2px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 30px rgba(245, 158, 11, 0.25); overflow: hidden; padding: 16px 12px 14px 12px; box-sizing: border-box;">
       <div class="modal-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
@@ -5087,7 +5822,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REAL-MONEY SPIN PURCHASE PAYMENT (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-spin-purchase-payment" style="z-index: 10011;">
     <div class="modal" style="max-width: 520px; width: 95vw; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.5); box-shadow: 0 12px 48px rgba(0,0,0,0.7); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;">
       <div class="modal-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
@@ -5178,7 +5912,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REWARDED VIDEO AD PLAYER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-rewarded-ad" style="z-index: 10010;">
     <div class="modal" style="max-width: 480px; width: 95vw; background: #0b0b0d; border: 1.5px solid rgba(56, 189, 248, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.85); display: flex; flex-direction: column;">
       <div class="modal-title" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
@@ -5236,7 +5969,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VIP CROWN PRICING (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
     <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
@@ -5488,7 +6220,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REFERRAL & AFFILIATE PROGRAM (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-referral" style="z-index: 10009;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(236, 72, 153, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(236, 72, 153, 0.2);">
       <div class="modal-title" style="margin-bottom: 8px;">
@@ -5574,7 +6305,6 @@
     </div>
   </div>
 
-  <!-- MODAL: ACHIEVEMENTS & BADGES SYSTEM (v0.10.8-alpha-10.3 - 40 BADGES & MEMBER LOCKOUT) -->
   <div class="modal-overlay" id="modal-achievements" style="z-index: 10010;">
     <div class="modal" style="max-width: 760px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(245, 158, 11, 0.4); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 8px;">
@@ -5665,8 +6395,6 @@
     </div>
   </div>
 
-
-  <!-- MODAL: FLOW CALENDAR & STREAK TRACKER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-flow-calendar" style="z-index: 10010;">
     <div class="modal" style="max-width: 480px; width: 92vw; background: var(--surface); border: 1.5px solid rgba(6, 182, 212, 0.45); box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(6, 182, 212, 0.25);">
       <div class="modal-title" style="margin-bottom: 12px;">
@@ -5725,8 +6453,6 @@
     </div>
   </div>
 
-
-  <!-- MODAL: PROFILE & CLOUD SYNC -->
   <div class="modal-overlay" id="modal-profile">
     <div class="modal" style="max-width: 500px;">
       <div class="modal-title">
@@ -6046,7 +6772,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: BUG REPORT & USER FEEDBACK (v0.10.8-alpha-10.3) -->
+
   <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6161,7 +6887,6 @@
     </div>
   </div>
 
-  <!-- MODAL: BUG SCREENSHOT VIEWER LIGHTBOX (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-bug-screenshot-viewer" style="z-index: 10020; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
     <div class="modal" style="max-width: 900px; width: 95vw; max-height: 94vh; display: flex; flex-direction: column; padding: 14px; background: var(--surface); border: 1px solid var(--border);">
       <div class="modal-title" style="margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
@@ -6191,7 +6916,6 @@
     </div>
   </div>
 
-  <!-- MODAL: CUSTOM BUG BOUNTY REWARD PICKER (v0.10.8-alpha-10.3) -->
   <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
     <div class="modal" style="max-width: 520px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6273,7 +6997,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SETTINGS -->
   <div class="modal-overlay" id="modal-settings">
     <div class="modal">
       <div class="modal-title">
@@ -6538,7 +7261,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.8-released (debug 0.8)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-7</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -6550,7 +7273,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE) -->
   <div class="modal-overlay" id="modal-publisher">
     <div class="modal" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6884,7 +7606,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VOCAFLOW COMMUNITY & OFFICIAL LIBRARY -->
   <div class="modal-overlay" id="modal-library">
     <div class="modal" style="max-width: 780px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6943,7 +7664,6 @@
     </div>
   </div>
 
-  <!-- MODAL: LIBRARY DECK PREVIEW -->
   <div class="modal-overlay" id="modal-library-preview">
     <div class="modal" style="max-width: 620px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -6985,7 +7705,6 @@
     </div>
   </div>
 
-  <!-- MODAL: COMMUNITY DECK CONTRIBUTION (OPEN FOR EVERYONE) -->
   <div class="modal-overlay" id="modal-community-upload">
     <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
       <input type="hidden" id="pub-editing-deck-id" value="">
@@ -7159,15 +7878,81 @@
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast">Đã lưu thành công!</div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE -->
+
+
   <script>
     // =========================================================================
-    // GLOBAL DATE & AI MENTOR CLOUD QUOTA ENGINE (v0.10.7g-8)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-7)
     // =========================================================================
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-7';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-7';
+
+    // =========================================================================
+    // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
+    // =========================================================================
+    let serverTimeDeltaMs = 0;
+    let hasServerTimeSync = false;
+    const STORAGE_KEY_MAX_OBSERVED_TIME = 'vocaflow_max_observed_timestamp';
+    const STORAGE_KEY_MAX_OBSERVED_DATE = 'vocaflow_max_observed_date';
+
+    function getTrustedCurrentTimestamp() {
+      const localNow = Date.now();
+      if (hasServerTimeSync) {
+        return localNow + serverTimeDeltaMs;
+      }
+      return localNow;
+    }
+
+    function recordTrustedTimeObservation(timestamp) {
+      const ts = Number(timestamp) || Date.now();
+      const maxStored = parseInt(localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_TIME) || '0', 10);
+      if (ts > maxStored) {
+        localStorage.setItem(STORAGE_KEY_MAX_OBSERVED_TIME, ts.toString());
+        const d = new Date(ts);
+        const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const maxDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+        if (dStr > maxDate) {
+          localStorage.setItem(STORAGE_KEY_MAX_OBSERVED_DATE, dStr);
+        }
+      }
+    }
+
+    function isSystemClockManipulatedBackward() {
+      const maxStored = parseInt(localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_TIME) || '0', 10);
+      if (maxStored > 0) {
+        const current = getTrustedCurrentTimestamp();
+        // Allow up to 10 minutes tolerance for minor clock drift / NTP adjustment
+        if (current < maxStored - 600000) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function syncTrustedServerTimeFromHeader(dateHeaderString) {
+      if (!dateHeaderString) return;
+      try {
+        const sTime = new Date(dateHeaderString).getTime();
+        if (!isNaN(sTime) && sTime > 1700000000000) {
+          serverTimeDeltaMs = sTime - Date.now();
+          hasServerTimeSync = true;
+          recordTrustedTimeObservation(sTime);
+        }
+      } catch (e) {}
+    }
+
     function getTodayDateString() {
-      const d = new Date();
+      const ts = getTrustedCurrentTimestamp();
+      recordTrustedTimeObservation(ts);
+      const d = new Date(ts);
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
+
+    function stripVipAffixes(name) {
+      if (!name || typeof name !== 'string') return '';
+      return name.replace(/\s*👑\s*/g, ' ').replace(/\s*\(VIP\)\s*/gi, ' ').trim();
+    }
+    window.stripVipAffixes = stripVipAffixes;
 
     var aiChatDailyDate = localStorage.getItem('vocaflow_ai_chat_daily_date') || '';
     var aiChatDailyCount = parseInt(localStorage.getItem('vocaflow_ai_chat_daily_count') || '0', 10);
@@ -7183,12 +7968,96 @@
     }
 
     // =========================================================================
-    // VOCAFLOW VIP / PREMIUM MEMBERSHIP ENGINE (v0.10.8-alpha-10.3)
+    // VOCAFLOW VIP / BULLETPROOF PROTECTION ENGINE (v0.10.9-alpha-3)
     // =========================================================================
+    const STORAGE_KEY_VIP_HIGH_WATER = 'vocaflow_vip_high_water_exp';
     let userIsVip = localStorage.getItem('vocaflow_user_is_vip') === 'true';
     let userVipTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none'; // 'monthly' | 'yearly' | 'lifetime' | 'none'
     let userVipExpiresAt = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
     let adminVipOverride = localStorage.getItem('vocaflow_admin_vip_override') === 'true';
+
+    function getVipHighWaterExp() {
+      const storedHW = parseInt(localStorage.getItem(STORAGE_KEY_VIP_HIGH_WATER) || '0', 10);
+      const activeExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+      return Math.max(storedHW, activeExp, userVipExpiresAt || 0);
+    }
+
+    function applyVipState(enable, tier = 'monthly', expiresAt = 0, source = 'system', allowDowngrade = false) {
+      const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+      const currentTier = userVipTier || 'none';
+      const incomingTier = tier || 'none';
+
+      let finalTier = currentTier;
+      if (allowDowngrade) {
+        finalTier = incomingTier;
+      } else {
+        finalTier = (tierRanks[incomingTier] >= tierRanks[currentTier]) ? incomingTier : currentTier;
+      }
+
+      let finalExp = 0;
+      if (finalTier === 'lifetime') {
+        finalExp = 0;
+      } else {
+        const highWater = getVipHighWaterExp();
+        if (allowDowngrade) {
+          finalExp = expiresAt || 0;
+        } else {
+          // Monotonic Forward-Only Protection: Never allow VIP expiration to decrease
+          finalExp = Math.max(highWater, expiresAt || 0);
+        }
+      }
+
+      const active = (finalTier === 'lifetime') || (finalExp > Date.now());
+      userIsVip = active;
+      userVipTier = active ? finalTier : 'none';
+      userVipExpiresAt = active ? finalExp : 0;
+
+      localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
+      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
+      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+      if (userVipExpiresAt > 0) {
+        localStorage.setItem(STORAGE_KEY_VIP_HIGH_WATER, userVipExpiresAt.toString());
+      }
+
+      if (currentUser) {
+        currentUser.isVip = userIsVip;
+        currentUser.vipTier = userVipTier;
+        currentUser.vipExpiresAt = userVipExpiresAt;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+
+      updateAuthUI();
+      refreshAdminVipUI();
+      if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      return { userIsVip, userVipTier, userVipExpiresAt };
+    }
+
+    // Auto-heal regression: checks if user had VIP around 31/8/2027 that was reverted from 3/9/2027
+    function autoHealVipRegression() {
+      try {
+        const storedExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+        const storedTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+        
+        // Target: 2027-09-03 23:59:59 (1820015999000 ms)
+        const sept03_2027 = 1820015999000;
+        const aug25_2027  = 1819152000000;
+        const sept05_2027 = 1820188800000;
+
+        // If user is yearly VIP expiring between Aug 25, 2027 and Sept 05, 2027:
+        // Automatically restore their full extended date to at least Sept 03, 2027!
+        if (storedTier === 'yearly' && storedExp >= aug25_2027 && storedExp < sept03_2027) {
+          console.log('ðŸ‘‘ [VocaFlow VIP Engine] Auto-healing VIP expiration to 2027-09-03 (+3 days recovered from lucky wheel)');
+          applyVipState(true, 'yearly', sept03_2027, 'auto_heal_lucky_wheel', false);
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            if (typeof pushCurrentDatabaseToCloud === 'function') {
+              pushCurrentDatabaseToCloud();
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('VIP auto-heal check exception:', e);
+      }
+    }
 
     function isUserVip() {
       if (adminVipOverride) return true;
@@ -7197,15 +8066,23 @@
       }
       if (userIsVip) {
         if (userVipTier === 'lifetime') return true;
-        if (userVipExpiresAt && userVipExpiresAt > Date.now()) return true;
-        // Expired check
-        if (userVipExpiresAt && userVipExpiresAt <= Date.now()) {
-          userIsVip = false;
-          userVipTier = 'none';
-          localStorage.setItem('vocaflow_user_is_vip', 'false');
-          localStorage.setItem('vocaflow_user_vip_tier', 'none');
-          return false;
+        const effectiveExp = Math.max(userVipExpiresAt || 0, getVipHighWaterExp());
+        if (effectiveExp && effectiveExp > Date.now()) return true;
+        // Expired check: Purge and Lock all VIP state immediately
+        userIsVip = false;
+        userVipTier = 'none';
+        userVipExpiresAt = 0;
+        localStorage.setItem('vocaflow_user_is_vip', 'false');
+        localStorage.setItem('vocaflow_user_vip_tier', 'none');
+        localStorage.setItem('vocaflow_user_vip_expires_at', '0');
+        localStorage.removeItem(STORAGE_KEY_VIP_HIGH_WATER);
+        if (currentUser) {
+          currentUser.isVip = false;
+          currentUser.vipTier = 'none';
+          currentUser.vipExpiresAt = 0;
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
+        return false;
       }
       return false;
     }
@@ -7219,31 +8096,20 @@
 
     function setAdminVipStatus(enable, tier = 'lifetime', durationDays = 0) {
       adminVipOverride = enable;
-      userIsVip = enable;
-      userVipTier = enable ? tier : 'none';
-      userVipExpiresAt = (enable && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
-      
       localStorage.setItem('vocaflow_admin_vip_override', enable ? 'true' : 'false');
-      localStorage.setItem('vocaflow_user_is_vip', enable ? 'true' : 'false');
-      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+      
+      const exp = (enable && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
+      applyVipState(enable, enable ? tier : 'none', exp, 'admin_override', true);
 
-      if (currentUser) {
-        currentUser.isVip = enable;
-        currentUser.vipTier = userVipTier;
-        currentUser.vipExpiresAt = userVipExpiresAt;
-        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-        if (currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-          pushCurrentDatabaseToCloud();
-        }
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
       }
 
       updateAuthUI();
       refreshAdminVipUI();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
-      showToast(enable ? `👑 Đã kích hoạt chế độ VIP (${tier.toUpperCase()}) thành công!` : '❌ Đã tắt chế độ VIP (Tài khoản về trạng thái Thường)');
+      showToast(enable ? `ðŸ‘‘ ÄÃ£ kÃ­ch hoáº¡t cháº¿ Ä‘á»™ VIP (${tier.toUpperCase()}) thÃ nh cÃ´ng!` : 'âŒ ÄÃ£ táº¯t cháº¿ Ä‘á»™ VIP (TÃ i khoáº£n vá» tráº¡ng thÃ¡i ThÆ°á»ng)');
     }
-
     function toggleAdminVipStatus() {
       setAdminVipStatus(!adminVipOverride, 'lifetime');
     }
@@ -7623,7 +8489,7 @@
     }
     window.saveGeminiApiKey = saveGeminiApiKey;
 
-    function getStoredApiKeys() {
+    function getStoredApiKeys(forApiCall = false) {
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
       try {
         const raw = localStorage.getItem(STORAGE_KEY_GEMINI_KEYS);
@@ -7632,7 +8498,10 @@
           if (Array.isArray(arr)) {
             const cleaned = arr.map(k => String(k || '').trim()).filter(k => k);
             if (cleaned.length > 0) {
-              return isVip ? cleaned.slice(0, 3) : cleaned.slice(0, 1);
+              if (forApiCall && !isVip) {
+                return cleaned.slice(0, 1);
+              }
+              return cleaned.slice(0, 3);
             }
           }
         }
@@ -7642,12 +8511,15 @@
       return single ? [single] : [];
     }
 
+    function hasAtLeastOneApiKey() {
+      const keys = getStoredApiKeys(false);
+      return Array.isArray(keys) && keys.length > 0 && keys.some(k => typeof k === 'string' && k.trim().length > 5);
+    }
+    window.hasAtLeastOneApiKey = hasAtLeastOneApiKey;
+
     function saveApiKeysList(keysArray, pushCloud = true) {
-      const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
       let cleaned = (keysArray || []).map(k => String(k || '').trim()).filter(k => k);
-      if (!isVip && cleaned.length > 1) {
-        cleaned = cleaned.slice(0, 1);
-      } else if (cleaned.length > 3) {
+      if (cleaned.length > 3) {
         cleaned = cleaned.slice(0, 3);
       }
       geminiApiKeys = cleaned;
@@ -7661,7 +8533,7 @@
     }
 
     function getEffectiveGeminiApiKey() {
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(true);
       if (keys.length === 0) return '';
       const now = Date.now();
       for (const k of keys) {
@@ -7678,7 +8550,7 @@
     }
 
     async function callGeminiApiWithFailover(makeRequestFn) {
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(true);
       if (keys.length === 0) {
         throw new Error('NO_API_KEY');
       }
@@ -7757,16 +8629,20 @@
 
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
 
-      let cleaned = [v1, v2, v3].filter(k => k);
-      if (!isVip) {
-        cleaned = cleaned.slice(0, 1);
+      let cleaned = [];
+      if (isVip) {
+        cleaned = [v1, v2, v3].filter(k => k).slice(0, 3);
+        if (inp1) inp1.value = cleaned[0] || '';
+        if (inp2) inp2.value = cleaned[1] || '';
+        if (inp3) inp3.value = cleaned[2] || '';
       } else {
-        cleaned = cleaned.slice(0, 3);
+        // Non-VIP: update primary key, but preserve existing keys in slots 2 & 3 if they were previously entered!
+        const existing = getStoredApiKeys(false);
+        const k2 = v2 || existing[1] || '';
+        const k3 = v3 || existing[2] || '';
+        cleaned = [v1, k2, k3].filter(k => k).slice(0, 3);
+        if (inp1) inp1.value = cleaned[0] || '';
       }
-
-      if (inp1) inp1.value = cleaned[0] || '';
-      if (inp2) inp2.value = cleaned[1] || '';
-      if (inp3) inp3.value = cleaned[2] || '';
 
       saveApiKeysList(cleaned, true);
       updateSettingsApiKeysStatusText();
@@ -7775,13 +8651,19 @@
     function updateSettingsApiKeysStatusText() {
       const statusText = document.getElementById('gemini-status-text');
       if (!statusText) return;
-      const keys = getStoredApiKeys();
+      const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
+      const keys = getStoredApiKeys(false);
       if (keys.length === 0) {
         statusText.textContent = 'Chưa cài đặt API Key.';
         statusText.style.color = 'var(--text-muted)';
-      } else if (keys.length === 1) {
-        statusText.textContent = '✅ Đã lưu 1 Khóa API chính.';
-        statusText.style.color = '#34d399';
+      } else if (keys.length === 1 || !isVip) {
+        if (!isVip && keys.length > 1) {
+          statusText.textContent = `✅ Đã lưu Khóa chính. (${keys.length - 1} khóa phụ đang chờ kích hoạt VIP)`;
+          statusText.style.color = '#38bdf8';
+        } else {
+          statusText.textContent = '✅ Đã lưu 1 Khóa API chính.';
+          statusText.style.color = '#34d399';
+        }
       } else {
         statusText.textContent = `👑 Đã kích hoạt Bể Đa Khóa (${keys.length}/3 Key • x${keys.length} Hạn Ngạch)!`;
         statusText.style.color = '#fbbf24';
@@ -7790,7 +8672,7 @@
 
     function updateSettingsApiKeysUI() {
       const isVip = (typeof isUserVip === 'function' ? isUserVip() : false) || (typeof adminVipOverride !== 'undefined' && adminVipOverride) || (localStorage.getItem('vocaflow_user_is_vip') === 'true');
-      const keys = getStoredApiKeys();
+      const keys = getStoredApiKeys(false);
 
       const inp1 = document.getElementById('gemini-api-key-input-1');
       const inp2 = document.getElementById('gemini-api-key-input-2');
@@ -7819,7 +8701,7 @@
           item.wrap.onclick = null;
         } else {
           item.inp.disabled = true;
-          item.inp.placeholder = `🔒 Khóa ${item.num} (Dành riêng cho VIP - Nhân 3 hạn ngạch)`;
+          item.inp.placeholder = item.inp.value ? `🔒 Khóa ${item.num} đã lưu (Kích hoạt VIP để sử dụng)` : `🔒 Khóa ${item.num} (Dành riêng cho VIP - Nhân 3 hạn ngạch)`;
           item.wrap.style.opacity = '0.55';
           item.wrap.onclick = () => {
             alert('👑 Tính năng Bể Đa Khóa API (Tối đa 3 Key từ các Project khác nhau để nhân 3 hạn ngạch) chỉ dành riêng cho thành viên VIP!\n\nNâng cấp VIP ngay để mở khóa toàn diện.');
@@ -7987,6 +8869,9 @@
         const isVipActive = (userIsVip === true || userIsVip === 'true' || (typeof currentUser !== 'undefined' && currentUser && currentUser.isVip === true));
         memeGroup.style.display = isVipActive ? 'block' : 'none';
       }
+      // Dynamically sync app version in settings modal (v0.10.9-alpha-7)
+      const verLabel = document.getElementById('settings-app-version-label');
+      if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
       openModal('modal-settings');
     }
 
@@ -10865,18 +11750,27 @@ function switchPublisherTab(tab) {
                 currentUser.avatar = remoteAv;
                 changed = true;
               }
-              // Sync VIP status from Cloud on startup (v0.10.8-alpha-10.3)
+              // Sync VIP status from Cloud on startup (v0.10.8-alpha-10.3 / v0.10.9-alpha-6)
               if (prof.isVip !== undefined || uData.isVip !== undefined || uData.vip !== undefined) {
-                const remoteIsVip = (prof.isVip !== undefined) ? !!prof.isVip : (uData.isVip !== undefined ? !!uData.isVip : (uData.vip && !!uData.vip.isVip));
+                const rawRemoteIsVip = (prof.isVip !== undefined) ? !!prof.isVip : (uData.isVip !== undefined ? !!uData.isVip : (uData.vip && !!uData.vip.isVip));
                 const remoteTier = prof.vipTier || uData.vipTier || (uData.vip && uData.vip.tier) || 'none';
                 const remoteExpires = Number(prof.vipExpiresAt || uData.vipExpiresAt || (uData.vip && uData.vip.expiresAt) || 0);
-                if (remoteIsVip !== userIsVip || remoteTier !== userVipTier || remoteExpires !== userVipExpiresAt) {
-                  userIsVip = remoteIsVip;
-                  userVipTier = remoteTier;
-                  userVipExpiresAt = remoteExpires;
+                const isRemoteActive = rawRemoteIsVip && (remoteTier === 'lifetime' || remoteExpires > Date.now());
+
+                const finalIsVip = isRemoteActive;
+                const finalTier = isRemoteActive ? remoteTier : 'none';
+                const finalExpires = isRemoteActive ? remoteExpires : 0;
+
+                if (finalIsVip !== userIsVip || finalTier !== userVipTier || finalExpires !== userVipExpiresAt) {
+                  userIsVip = finalIsVip;
+                  userVipTier = finalTier;
+                  userVipExpiresAt = finalExpires;
                   localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
                   localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
                   localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+                  if (!userIsVip) {
+                    localStorage.removeItem(STORAGE_KEY_VIP_HIGH_WATER);
+                  }
                   if (currentUser) {
                     currentUser.isVip = userIsVip;
                     currentUser.vipTier = userVipTier;
@@ -10928,6 +11822,13 @@ function switchPublisherTab(tab) {
                   const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
                   localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
                 }
+                if (uData.economy.lastVipSpinDate) {
+                  const localLastVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : (new Date().toISOString().slice(0, 10));
+                  if (uData.economy.lastVipSpinDate === todayStr || !localLastVipDate) {
+                    localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
+                  }
+                }
               } else if (uData.points !== undefined) {
                 const pts = typeof uData.points === 'number' ? uData.points : parseInt(uData.points, 10);
                 if (!isNaN(pts)) {
@@ -10975,12 +11876,18 @@ function switchPublisherTab(tab) {
 
               if (!isNaN(remoteStartupFreezes)) {
                 const localFreezes = getUserFlowFreezes();
-                const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteStartupFreezeDates.length);
-                const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
-                const effectiveRemote = Math.max(0, remoteStartupFreezes - newlyConsumedByLocal);
-                const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
                 const maxCap = getMaxFlowFreezes();
-                const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+                let syncedFreezes = localFreezes;
+                const localUsed = localFreezeDates.length;
+                const remoteUsed = remoteStartupFreezeDates.length;
+                if (localUsed === remoteUsed) {
+                  syncedFreezes = Math.max(localFreezes, remoteStartupFreezes);
+                } else if (localUsed > remoteUsed) {
+                  syncedFreezes = Math.max(0, Math.min(localFreezes, remoteStartupFreezes - (localUsed - remoteUsed)));
+                } else {
+                  syncedFreezes = Math.max(0, Math.min(remoteStartupFreezes, localFreezes - (remoteUsed - localUsed)));
+                }
+                syncedFreezes = Math.min(maxCap, syncedFreezes);
 
                 localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                 localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -11068,23 +11975,38 @@ function switchPublisherTab(tab) {
     function initGlobalVipRegistry() {
       if (!firebaseConfig.databaseURL) return;
       fetch(`${firebaseConfig.databaseURL}/users.json`)
-        .then(res => res.ok ? res.json() : null)
+        .then(res => {
+          if (res.headers && res.headers.get('date')) {
+            syncTrustedServerTimeFromHeader(res.headers.get('date'));
+          }
+          return res.ok ? res.json() : null;
+        })
         .then(allUsers => {
           if (allUsers && typeof allUsers === 'object') {
+            const now = getTrustedCurrentTimestamp();
             Object.entries(allUsers).forEach(([uid, uData]) => {
               if (uData && typeof uData === 'object') {
                 const prof = uData.profile || {};
-                const isVip = prof.isVip === true || uData.isVip === true;
+                const rawIsVip = prof.isVip === true || uData.isVip === true;
                 const vipTier = prof.vipTier || uData.vipTier || 'none';
                 const name = prof.displayName || uData.displayName || '';
                 const username = prof.username || uData.username || '';
                 const avatar = prof.avatar || uData.avatar || '';
+                const vipExpiresAt = Number(prof.vipExpiresAt || uData.vipExpiresAt || 0);
 
-                if (isVip) {
-                  const entry = { uid, isVip: true, vipTier, displayName: name, username, avatar };
-                  globalVipRegistry[uid] = entry;
-                  if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
-                }
+                const isActiveVip = rawIsVip && (vipTier === 'lifetime' || (vipExpiresAt > now));
+
+                const entry = {
+                  uid,
+                  isVip: isActiveVip,
+                  vipTier: isActiveVip ? vipTier : 'none',
+                  displayName: name,
+                  username,
+                  avatar,
+                  vipExpiresAt: isActiveVip ? vipExpiresAt : 0
+                };
+                globalVipRegistry[uid] = entry;
+                if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
               }
             });
             // Re-render components with fresh VIP data
@@ -11095,28 +12017,72 @@ function switchPublisherTab(tab) {
         .catch(() => {});
     }
 
+    function formatVipDurationText(expiresAt, tier) {
+      if (tier === 'lifetime' || !expiresAt || expiresAt === 0 || expiresAt === Infinity) {
+        return 'Trọn Đời';
+      }
+      const now = getTrustedCurrentTimestamp();
+      const diffMs = Number(expiresAt) - now;
+      if (diffMs <= 0) return 'Hết hạn';
+
+      const totalDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(totalDays / 7);
+
+      if (weeks >= 1) {
+        return `${weeks} Tuần`;
+      } else {
+        return `${Math.max(1, totalDays)} Ngày`;
+      }
+    }
+
     function isAuthorVipUser(authorUid, authorName) {
       if (authorUid && currentUser && authorUid === currentUser.uid) return isUserVip();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return isUserVip();
       
-      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].isVip === true;
-      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].isVip === true;
+      const now = getTrustedCurrentTimestamp();
+      let entry = null;
+      if (authorUid && globalVipRegistry[authorUid]) entry = globalVipRegistry[authorUid];
+      else if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) entry = globalVipRegistryNameMap[authorName.trim().toLowerCase()];
+
+      if (entry) {
+        if (!entry.isVip) return false;
+        if (entry.vipTier === 'lifetime') return true;
+        const exp = Number(entry.vipExpiresAt || 0);
+        return exp > now;
+      }
 
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
-      if (student && student.isVip) return true;
+      if (student && student.isVip) {
+        if (student.vipTier === 'lifetime') return true;
+        const exp = Number(student.vipExpiresAt || 0);
+        return exp > now;
+      }
       return false;
     }
 
     function getAuthorVipTier(authorUid, authorName) {
+      if (!isAuthorVipUser(authorUid, authorName)) return 'none';
       if (authorUid && currentUser && authorUid === currentUser.uid) return getUserVipTier();
       if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return getUserVipTier();
       
-      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipTier || 'lifetime';
-      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipTier || 'lifetime';
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipTier || 'none';
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipTier || 'none';
 
       const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
       if (student && student.isVip && student.vipTier) return student.vipTier;
       return 'none';
+    }
+
+    function getAuthorVipExpiresAt(authorUid, authorName) {
+      if (authorUid && currentUser && authorUid === currentUser.uid) return currentUser.vipExpiresAt || userVipExpiresAt || 0;
+      if (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()) return currentUser.vipExpiresAt || userVipExpiresAt || 0;
+      
+      if (authorUid && globalVipRegistry[authorUid]) return globalVipRegistry[authorUid].vipExpiresAt || 0;
+      if (authorName && globalVipRegistryNameMap[authorName.trim().toLowerCase()]) return globalVipRegistryNameMap[authorName.trim().toLowerCase()].vipExpiresAt || 0;
+
+      const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (authorName && s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+      if (student && student.isVip && student.vipExpiresAt) return student.vipExpiresAt;
+      return 0;
     }
 
     let userNotifications = [];
@@ -12198,10 +13164,11 @@ function switchPublisherTab(tab) {
       const nameMobileEl = document.getElementById('user-display-name-mobile');
       if (currentUser && currentUser.email) {
         if (guestBanner) guestBanner.style.display = 'none';
-        const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-        const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        const rawDisplayName = currentUser.displayName || currentUser.email.split('@')[0];
         const userVipActive = isUserVip();
         const userVipTierName = getUserVipTier();
+        const displayName = userVipActive ? rawDisplayName : stripVipAffixes(rawDisplayName);
+        const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
         if (nameEl) {
           if (userVipActive) {
@@ -12231,14 +13198,22 @@ function switchPublisherTab(tab) {
 
         if (profileBadgeEl) {
           if (userVipActive) {
-            const tierNames = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
-            const tierLabel = tierNames[userVipTierName] || 'VIP';
-            profileBadgeEl.innerHTML = `👑 VIP ${tierLabel}`;
-            profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-            profileBadgeEl.style.color = '#ffffff';
-            profileBadgeEl.style.fontWeight = '800';
-            profileBadgeEl.style.border = '1px solid rgba(251, 191, 36, 0.6)';
-            profileBadgeEl.style.boxShadow = '0 2px 10px rgba(245, 158, 11, 0.4)';
+            const durationLabel = formatVipDurationText(userVipExpiresAt, userVipTierName);
+            if (durationLabel !== 'Hết hạn') {
+              profileBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+              profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+              profileBadgeEl.style.color = '#ffffff';
+              profileBadgeEl.style.fontWeight = '800';
+              profileBadgeEl.style.border = '1px solid rgba(251, 191, 36, 0.6)';
+              profileBadgeEl.style.boxShadow = '0 2px 10px rgba(245, 158, 11, 0.4)';
+            } else {
+              profileBadgeEl.textContent = 'Đã liên kết Cloud';
+              profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
+              profileBadgeEl.style.color = '#34d399';
+              profileBadgeEl.style.fontWeight = 'normal';
+              profileBadgeEl.style.border = 'none';
+              profileBadgeEl.style.boxShadow = 'none';
+            }
           } else {
             profileBadgeEl.textContent = 'Đã liên kết Cloud';
             profileBadgeEl.style.background = 'rgba(16,185,129,0.2)';
@@ -13651,12 +14626,14 @@ function switchPublisherTab(tab) {
 
       const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
       const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
+      const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
+      const cleanResolvedName = stripVipAffixes(resolvedName);
 
       if (nameEl) {
         if (isAuthorVip) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(resolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
         } else {
-          nameEl.textContent = resolvedName;
+          nameEl.textContent = cleanResolvedName;
         }
       }
       if (avEl) {
@@ -13672,13 +14649,22 @@ function switchPublisherTab(tab) {
       const pubBadgeEl = document.getElementById('pub-view-badge');
       if (pubBadgeEl) {
         if (isAuthorVip) {
-          const tierLabels = { lifetime: 'Trọn Đời', yearly: '1 Năm', monthly: '1 Tháng' };
-          pubBadgeEl.innerHTML = `👑 VIP ${tierLabels[authorVipTier] || authorVipTier.toUpperCase()}`;
-          pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-          pubBadgeEl.style.color = '#ffffff';
-          pubBadgeEl.style.fontWeight = '800';
-          pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
-          pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+          const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
+          if (durationLabel !== 'Hết hạn') {
+            pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+            pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            pubBadgeEl.style.color = '#ffffff';
+            pubBadgeEl.style.fontWeight = '800';
+            pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+            pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+          } else {
+            pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+            pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+            pubBadgeEl.style.color = '#a5b4fc';
+            pubBadgeEl.style.fontWeight = '700';
+            pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+            pubBadgeEl.style.boxShadow = 'none';
+          }
         } else {
           pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
           pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
@@ -13949,14 +14935,12 @@ function switchPublisherTab(tab) {
                     finalAvatar = av;
                     finalAvatarTime = parseInt(prof.avatarTime || uData.avatarTime || Date.now().toString(), 10);
                   }
-                  // Restore VIP on login
+                  // Restore VIP on login with Bulletproof Protection
                   if (prof.isVip !== undefined || uData.isVip !== undefined) {
-                    userIsVip = prof.isVip !== undefined ? !!prof.isVip : !!uData.isVip;
-                    userVipTier = prof.vipTier || uData.vipTier || 'none';
-                    userVipExpiresAt = prof.vipExpiresAt || uData.vipExpiresAt || 0;
-                    localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
-                    localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-                    localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
+                    const rIsVip = prof.isVip !== undefined ? !!prof.isVip : !!uData.isVip;
+                    const rTier = prof.vipTier || uData.vipTier || 'none';
+                    const rExp = prof.vipExpiresAt || uData.vipExpiresAt || 0;
+                    applyVipState(rIsVip, rTier, rExp, 'auth_login', false);
                   }
                 }
               }
@@ -14254,6 +15238,9 @@ function switchPublisherTab(tab) {
           // -----------------------------------------------------------
           try {
             const pullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`);
+            if (pullRes.headers && pullRes.headers.get('date')) {
+              syncTrustedServerTimeFromHeader(pullRes.headers.get('date'));
+            }
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
@@ -14269,18 +15256,30 @@ function switchPublisherTab(tab) {
                 }
 
                 if (remoteProf.isVip !== undefined || cloudData.isVip !== undefined) {
-                  userIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
-                  userVipTier = remoteProf.vipTier || cloudData.vipTier || 'none';
-                  userVipExpiresAt = remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0;
-                  localStorage.setItem('vocaflow_user_is_vip', userIsVip ? 'true' : 'false');
-                  localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-                  localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
-                  if (currentUser) {
-                    currentUser.isVip = userIsVip;
-                    currentUser.vipTier = userVipTier;
-                    currentUser.vipExpiresAt = userVipExpiresAt;
+                  const rIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
+                  const rTier = remoteProf.vipTier || cloudData.vipTier || 'none';
+                  const rExp = Number(remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0);
+                  const isRemoteActive = rIsVip && (rTier === 'lifetime' || rExp > getTrustedCurrentTimestamp());
+                  
+                  // Bulletproof Monotonic Sync: Local never loses higher expiration date
+                  const localExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+                  const localTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+                  const isLocalActive = userIsVip && (localTier === 'lifetime' || localExp > getTrustedCurrentTimestamp());
+                  
+                  if (isRemoteActive || isLocalActive) {
+                    let localIsAhead = false;
+                    if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
+                    const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+                    if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
+
+                    applyVipState(true, localIsAhead ? localTier : rTier, Math.max(localExp, rExp), 'cloud_pull', false);
+                    if (localIsAhead) {
+                      console.log('👑 [VocaFlow Sync] Local VIP credentials are newer than Cloud. Re-pushing to cloud...');
+                    }
+                  } else {
+                    // Both are expired or revoked
+                    applyVipState(false, 'none', 0, 'cloud_pull', true);
                   }
-                  updateAuthUI();
                 }
 
                 const remoteUsername = remoteProf.username || cloudData.username;
@@ -14317,24 +15316,42 @@ function switchPublisherTab(tab) {
                   }
                 }
 
-                // Sync API Keys (Array & Single) from Cloud
-                const remoteKeys = (Array.isArray(cloudData.geminiApiKeys) && cloudData.geminiApiKeys.length > 0)
-                  ? cloudData.geminiApiKeys
-                  : ((cloudData.settings && Array.isArray(cloudData.settings.geminiApiKeys) && cloudData.settings.geminiApiKeys.length > 0)
-                    ? cloudData.settings.geminiApiKeys
-                    : ((cloudData.profile && Array.isArray(cloudData.profile.geminiApiKeys) && cloudData.profile.geminiApiKeys.length > 0)
-                      ? cloudData.profile.geminiApiKeys
-                      : (cloudData.geminiApiKey ? [cloudData.geminiApiKey] : [])));
+                // Sync API Keys (Array, Object & Single) from Cloud with Smart Merge
+                function extractKeysList(raw) {
+                  if (!raw) return [];
+                  if (Array.isArray(raw)) return raw.map(k => String(k || '').trim()).filter(k => k);
+                  if (typeof raw === 'object') return Object.values(raw).map(k => String(k || '').trim()).filter(k => k);
+                  if (typeof raw === 'string' && raw.trim()) return [raw.trim()];
+                  return [];
+                }
 
-                if (remoteKeys && remoteKeys.length > 0) {
-                  const cleanedRemote = remoteKeys.map(k => String(k || '').trim()).filter(k => k);
-                  if (cleanedRemote.length > 0) {
-                    saveApiKeysList(cleanedRemote, false);
-                    updateSettingsApiKeysUI();
+                let remoteKeys = extractKeysList(cloudData.geminiApiKeys);
+                if (remoteKeys.length === 0 && cloudData.settings) {
+                  remoteKeys = extractKeysList(cloudData.settings.geminiApiKeys);
+                }
+                if (remoteKeys.length === 0 && cloudData.profile) {
+                  remoteKeys = extractKeysList(cloudData.profile.geminiApiKeys);
+                }
+                if (remoteKeys.length === 0 && cloudData.geminiApiKey) {
+                  remoteKeys = extractKeysList(cloudData.geminiApiKey);
+                }
+
+                const localKeys = getStoredApiKeys(false);
+                // Smart Merge: combine remoteKeys and localKeys, deduplicate while preserving order up to 3 keys
+                let mergedKeys = [];
+                const combinedKeys = [...remoteKeys, ...localKeys];
+                for (const k of combinedKeys) {
+                  if (k && !mergedKeys.includes(k) && mergedKeys.length < 3) {
+                    mergedKeys.push(k);
                   }
+                }
+
+                if (mergedKeys.length > 0) {
+                  saveApiKeysList(mergedKeys, false);
+                  updateSettingsApiKeysUI();
                 } else if (geminiApiKey) {
                   cloudData.geminiApiKey = geminiApiKey;
-                  cloudData.geminiApiKeys = getStoredApiKeys();
+                  cloudData.geminiApiKeys = getStoredApiKeys(false);
                 }
 
                 const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
@@ -14474,10 +15491,12 @@ function switchPublisherTab(tab) {
                   if (cloudData.economy.luckySpinsDate) {
                     localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
                   }
-                  const todayStr = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
+                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : new Date().toISOString().slice(0, 10));
                   const localVipSpinDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-                  if (cloudData.economy.lastVipSpinDate && localVipSpinDate !== todayStr) {
-                    localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                  if (cloudData.economy.lastVipSpinDate) {
+                    if (cloudData.economy.lastVipSpinDate === todayStr || !localVipSpinDate) {
+                      localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                    }
                   }
                   if (cloudData.economy.lastAdWatchTime) {
                     const remoteAdTime = parseInt(cloudData.economy.lastAdWatchTime, 10);
@@ -14690,12 +15709,18 @@ function switchPublisherTab(tab) {
 
                 if (!isNaN(remoteFreezes)) {
                   const localFreezes = getUserFlowFreezes();
-                  const newlyConsumedByLocal = Math.max(0, mergedFreezeDates.length - remoteFreezeDates.length);
-                  const newlyConsumedByRemote = Math.max(0, mergedFreezeDates.length - localFreezeDates.length);
-                  const effectiveRemote = Math.max(0, remoteFreezes - newlyConsumedByLocal);
-                  const effectiveLocal = Math.max(0, localFreezes - newlyConsumedByRemote);
                   const maxCap = getMaxFlowFreezes();
-                  const syncedFreezes = Math.min(maxCap, Math.max(effectiveLocal, effectiveRemote));
+                  let syncedFreezes = localFreezes;
+                  const localUsed = localFreezeDates.length;
+                  const remoteUsed = remoteFreezeDates.length;
+                  if (localUsed === remoteUsed) {
+                    syncedFreezes = Math.max(localFreezes, remoteFreezes);
+                  } else if (localUsed > remoteUsed) {
+                    syncedFreezes = Math.max(0, Math.min(localFreezes, remoteFreezes - (localUsed - remoteUsed)));
+                  } else {
+                    syncedFreezes = Math.max(0, Math.min(remoteFreezes, localFreezes - (remoteUsed - localUsed)));
+                  }
+                  syncedFreezes = Math.min(maxCap, syncedFreezes);
 
                   localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                   localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -15922,6 +16947,17 @@ function switchPublisherTab(tab) {
         parentModalBeforePreview = null;
         openModal(parentToRestore);
       }
+      if (id === 'modal-user-guide') {
+        guideReturnContext = null;
+      } else if (typeof guideReturnContext !== 'undefined' && guideReturnContext && guideReturnContext.targetModalId === id) {
+        const ctx = guideReturnContext;
+        guideReturnContext = null;
+        setTimeout(() => {
+          if (typeof openUserGuideModal === 'function') {
+            openUserGuideModal(ctx.category, ctx.starterStep, ctx.scrollTop);
+          }
+        }, 60);
+      }
     }
 
     // =========================================================================
@@ -15976,47 +17012,55 @@ function switchPublisherTab(tab) {
     }
 
     function getTodayString() {
-      return new Date().toISOString().slice(0, 10);
+      return getTodayDateString();
     }
 
+    let isGrantingVipDailySpin = false;
+
     function checkAndGrantVipDailySpinBonus() {
+      if (isGrantingVipDailySpin) return false;
       const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
       if (!isVip) return false;
 
-      const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
-      const notifId = 'notif_vip_daily_spin_' + today;
-
-      // 1. One-time self-healing compensation for missing VIP spins over the past 2 days (v0.10.8-debug-0.8)
-      if (!localStorage.getItem('vocaflow_vip_spin_healed_v0108_debug08')) {
-        let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
-        if (isNaN(curSpins) || curSpins < 0) curSpins = 0;
-        curSpins += 4; // Bồi hoàn +4 lượt quay cho 2 ngày bị lỗi
-        localStorage.setItem('vocaflow_lucky_spins_left', curSpins.toString());
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
-        localStorage.setItem('vocaflow_vip_spin_healed_v0108_debug08', 'true');
-        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Bồi hoàn +4 Lượt Quay May Mắn VIP (Đặc quyền 2 ngày)');
-        updateLuckyWheelUI();
-        updateShopBonusesUI();
-        saveDatabase(true);
-        if (typeof pushCurrentDatabaseToCloud === 'function') {
-          pushCurrentDatabaseToCloud();
-        }
-        showToast('👑 Đã bồi hoàn +4 Lượt Quay May Mắn VIP vào tài khoản của bạn!');
-        return true;
+      // Anti-clock manipulation guard
+      if (isSystemClockManipulatedBackward()) {
+        return false;
       }
 
-      // 2. Normal daily check & grant
-      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-      const alreadyNotified = userNotifications.some(n => n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)));
+      const today = getTodayString();
+      const maxObservedDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+      if (maxObservedDate && today < maxObservedDate) {
+        return false;
+      }
 
-      if (lastDailyDate !== today) {
+      const notifId = 'notif_vip_daily_spin_' + today;
+
+      // 1. Multi-layer idempotency guard: Ensure exactly ONE grant per calendar day
+      const lastDailyDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+      if (lastDailyDate && (lastDailyDate === today || today <= lastDailyDate)) {
+        return false;
+      }
+
+      // Check if notification already exists for today across synced userNotifications
+      const alreadyNotified = Array.isArray(userNotifications) && userNotifications.some(n =>
+        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)))
+      );
+      if (alreadyNotified) {
+        // Already granted on another session/device: synchronize local marker and exit immediately
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        return false;
+      }
+
+      // 2. Perform atomic grant of exactly +2 spins
+      isGrantingVipDailySpin = true;
+      try {
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
         let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
         if (isNaN(spins) || spins < 0) spins = 0;
         spins += 2;
         localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
 
-        if (!alreadyNotified && typeof addNotification === 'function') {
+        if (typeof addNotification === 'function') {
           addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!', null, null, notifId);
         }
 
@@ -16028,8 +17072,65 @@ function switchPublisherTab(tab) {
           pushCurrentDatabaseToCloud();
         }
         return true;
+      } finally {
+        isGrantingVipDailySpin = false;
       }
-      return false;
+    }
+
+    // =========================================================================
+    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-4)
+    // =========================================================================
+    function autoHealExcessVipSpinsToday() {
+      const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
+      if (!isVip) return;
+
+      const HEAL_KEY = 'vocaflow_spins_healed_v0109a4';
+      if (localStorage.getItem(HEAL_KEY)) return;
+
+      const today = getTodayString();
+      let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
+      if (isNaN(curSpins)) curSpins = 0;
+
+      // Count VIP spin daily notifications or compensation notifications for today
+      const todayDailyNotifs = Array.isArray(userNotifications) ? userNotifications.filter(n =>
+        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP'))))
+      ) : [];
+
+      // If user received multiple spin grants today (inflated to +8 instead of +2)
+      if (todayDailyNotifs.length > 1 || curSpins >= 8) {
+        const excess = 6; // Deduct the 6 duplicate/excess spins added accidentally
+        const adjustedSpins = Math.max(2, curSpins - excess);
+        localStorage.setItem('vocaflow_lucky_spins_left', adjustedSpins.toString());
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        localStorage.setItem(HEAL_KEY, 'true');
+
+        // Deduplicate notifications: retain only one single valid notification for today
+        if (Array.isArray(userNotifications)) {
+          let keptOne = false;
+          userNotifications = userNotifications.filter(n => {
+            if (!n) return false;
+            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP')));
+            if (isDup) {
+              if (!keptOne) { keptOne = true; return true; }
+              return false;
+            }
+            return true;
+          });
+          localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+          if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+          if (typeof renderNotificationsList === 'function') renderNotificationsList();
+        }
+
+        updateLuckyWheelUI();
+        updateShopBonusesUI();
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
+        showToast('👑 Đã hiệu chỉnh lại lượt quay VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
+      } else {
+        localStorage.setItem(HEAL_KEY, 'true');
+      }
     }
 
     function getLuckySpinsCount() {
@@ -16283,49 +17384,22 @@ function switchPublisherTab(tab) {
         return { isLifetime: true, message: '👑 Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
       }
 
-      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours
-      const currentExp = (userVipExpiresAt && userVipExpiresAt > Date.now()) ? userVipExpiresAt : Date.now();
+      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours with Bulletproof Protection
+      const highWater = getVipHighWaterExp();
+      const currentExp = (highWater && highWater > Date.now()) ? highWater : Date.now();
       const newExp = currentExp + ONE_DAY_MS;
+      const targetTier = (userVipTier && userVipTier !== 'none') ? userVipTier : 'monthly';
       
-      userIsVip = true;
-      userVipExpiresAt = newExp;
-      if (!userVipTier || userVipTier === 'none') {
-        userVipTier = 'monthly';
-      }
-
-      localStorage.setItem('vocaflow_user_is_vip', 'true');
-      localStorage.setItem('vocaflow_user_vip_active', 'true');
-      localStorage.setItem('vocaflow_user_vip_tier', userVipTier);
-      localStorage.setItem('vocaflow_user_vip_expires_at', userVipExpiresAt.toString());
-
-      if (currentUser) {
-        currentUser.isVip = true;
-        currentUser.vipTier = userVipTier;
-        currentUser.vipExpiresAt = userVipExpiresAt;
-      }
+      const vRes = applyVipState(true, targetTier, newExp, 'lucky_wheel', false);
+      userIsVip = vRes.userIsVip;
+      userVipTier = vRes.userVipTier;
+      userVipExpiresAt = vRes.userVipExpiresAt;
 
       const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
       addLedgerEntry('LUCKY_WHEEL', 0, `👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`);
 
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
-
-      // Cloud Sync for VIP
-      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-        fetch(`${rtdbUrl}/users/${currentUser.uid}/profile.json${authParam}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            isVip: true,
-            vipTier: userVipTier,
-            vipExpiresAt: userVipExpiresAt,
-            updatedAt: new Date().toISOString()
-          })
-        }).catch(() => {});
-      }
-
       updateAuthUI();
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
@@ -18124,7 +19198,7 @@ function switchPublisherTab(tab) {
 
     // Helper: Local Date Formatter YYYY-MM-DD
     function formatLocalDateString(d) {
-      if (!d) d = new Date();
+      if (!d) d = new Date(getTrustedCurrentTimestamp());
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
@@ -18352,23 +19426,40 @@ function switchPublisherTab(tab) {
       pushCurrentDatabaseToCloud();
     }
 
-    // Auto-consumption of Flow Freeze when missed days occur (v0.10.8-alpha-10.16)
+    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-6)
+    function healErroneousFreezeDeduction() {
+      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a6';
+      if (localStorage.getItem(HEAL_KEY)) return;
+      try {
+        const freezeDates = getFlowFreezeDates();
+        let currentFreezes = getUserFlowFreezes();
+        const maxCap = getMaxFlowFreezes();
+
+        // If user used only 1 freeze date, but had their remaining freeze wiped out to 0:
+        if (freezeDates.length === 1 && currentFreezes === 0) {
+          currentFreezes = 1;
+          setUserFlowFreezes(currentFreezes);
+          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ v0.10.9-alpha-6 (1/' + maxCap + ')');
+          if (typeof showToast === 'function') {
+            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bị trừ nhầm vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
+          }
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
+        }
+      } catch (e) {
+        console.warn('Freeze heal error:', e);
+      } finally {
+        localStorage.setItem(HEAL_KEY, 'true');
+      }
+    }
+
+    // Auto-consumption of Flow Freeze when missed days occur (v0.10.8-alpha-10.16 / v0.10.9-alpha-6)
     function evaluateAndAutoApplyFlowFreezes() {
       let flowDates = getFlowDates();
       let freezeDates = getFlowFreezeDates();
       let currentFreezes = getUserFlowFreezes();
 
-      // One-time self-healing reconciliation for previously un-deducted freeze dates (v0.10.8-debug-0.6)
-      if (!localStorage.getItem('vocaflow_freeze_deducted_v0108_debug06')) {
-        if (freezeDates.length > 0 && currentFreezes >= 2) {
-          currentFreezes = Math.max(0, currentFreezes - 1);
-          localStorage.setItem('vocaflow_flow_freezes', currentFreezes.toString());
-          localStorage.setItem('vocaflow_streak_freezes', currentFreezes.toString());
-          saveDatabase(true);
-          pushCurrentDatabaseToCloud();
-        }
-        localStorage.setItem('vocaflow_freeze_deducted_v0108_debug06', 'true');
-      }
+      if (currentFreezes <= 0) return false;
 
       const allActive = new Set([...flowDates, ...freezeDates]);
       if (allActive.size === 0) return false;
@@ -18376,42 +19467,50 @@ function switchPublisherTab(tab) {
       let sortedDates = Array.from(allActive).sort();
       let earliestDateStr = sortedDates[0];
 
-      const today = new Date();
-      let checkDate = new Date(today);
-      checkDate.setDate(checkDate.getDate() - 1); // Start checking backward from yesterday
+      let checkDate = new Date(getTrustedCurrentTimestamp());
+      checkDate.setDate(checkDate.getDate() - 1); // Yesterday
+      const yesterdayStr = formatLocalDateString(checkDate);
+
+      // If yesterday is already active (studied or frozen), current active streak is NOT broken!
+      if (allActive.has(yesterdayStr)) {
+        return false;
+      }
+
+      // Yesterday was missed! Scan backward consecutive missed days
+      let consecutiveMissedDays = [];
+      let tempDate = new Date(checkDate);
+      while (true) {
+        const dStr = formatLocalDateString(tempDate);
+        if (dStr < earliestDateStr) break;
+        if (allActive.has(dStr)) break;
+        consecutiveMissedDays.push(dStr);
+        tempDate.setDate(tempDate.getDate() - 1);
+        // Do not look back further than the number of freezes we currently hold
+        if (consecutiveMissedDays.length > currentFreezes) break;
+      }
 
       let appliedCount = 0;
       let appliedDatesList = [];
 
-      while (true) {
-        const dStr = formatLocalDateString(checkDate);
-        if (dStr < earliestDateStr) break;
-
-        if (allActive.has(dStr)) {
-          // Day was already active, step back
-          checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-          // Gap detected! Check if user had any study activity prior to this date
-          let hasPrior = false;
-          for (const act of allActive) {
-            if (act < dStr) {
-              hasPrior = true;
-              break;
-            }
+      // Only apply if the missed gap can be bridged by current freezes
+      // AND there was activity before the gap (genuine streak protection)
+      if (consecutiveMissedDays.length > 0 && consecutiveMissedDays.length <= currentFreezes) {
+        const earliestMissed = consecutiveMissedDays[consecutiveMissedDays.length - 1];
+        let hasPrior = false;
+        for (const act of allActive) {
+          if (act < earliestMissed) {
+            hasPrior = true;
+            break;
           }
+        }
 
-          if (!hasPrior) break;
-
-          if (currentFreezes > 0) {
+        if (hasPrior) {
+          for (const dStr of consecutiveMissedDays) {
             currentFreezes--;
             freezeDates.push(dStr);
             allActive.add(dStr);
             appliedCount++;
             appliedDatesList.push(dStr);
-            checkDate.setDate(checkDate.getDate() - 1);
-          } else {
-            // Out of freezes: chain is broken before this gap
-            break;
           }
         }
       }
@@ -18448,8 +19547,9 @@ function switchPublisherTab(tab) {
       const freezes = getFlowFreezeDates();
       if (dates.length === 0 && freezes.length === 0) return { currentFlow: 0, pureFlow: 0, maxFlow: 0 };
 
-      const todayStr = formatLocalDateString(new Date());
-      let checkDate = new Date();
+      const trustedNow = getTrustedCurrentTimestamp();
+      const todayStr = formatLocalDateString(new Date(trustedNow));
+      let checkDate = new Date(trustedNow);
       let currentFlow = 0;
       let pureFlow = 0;
 
@@ -18486,7 +19586,19 @@ function switchPublisherTab(tab) {
     }
 
     function recordStudyFlowAction(actionType = 'study') {
-      const todayStr = formatLocalDateString(new Date());
+      const todayStr = formatLocalDateString(new Date(getTrustedCurrentTimestamp()));
+
+      // Anti-cheat: check if clock was rolled back
+      const maxObservedDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
+      if (maxObservedDate && todayStr < maxObservedDate) {
+        showToast('⚠️ Đồng hồ thiết bị đang ở quá khứ so với lịch sử học (' + todayStr + ' < ' + maxObservedDate + ')! Vui lòng chỉnh đúng ngày giờ.');
+        return;
+      }
+      if (isSystemClockManipulatedBackward()) {
+        showToast('⚠️ Phát hiện đồng hồ hệ thống bị chỉnh lùi! Vui lòng chỉnh đúng ngày giờ chuẩn để tiếp tục tích lũy Flow.');
+        return;
+      }
+
       let dates = getFlowDates();
       let isNewDay = false;
 
@@ -19915,6 +21027,24 @@ function switchPublisherTab(tab) {
     }
 
     // WORD MODAL
+    function updateWordModalAiButtonState() {
+      const aiBtn = document.getElementById('btn-ai-generate');
+      const aiIcon = document.getElementById('ai-btn-icon');
+      const aiText = document.getElementById('ai-btn-text');
+      if (!aiBtn) return;
+      if (!hasAtLeastOneApiKey()) {
+        aiBtn.title = '🔒 Cần kết nối ít nhất 1 Gemini API Key trong Cài Đặt để dùng AI Điền Tự Động';
+        if (aiIcon) aiIcon.textContent = '🔒';
+        if (aiText) aiText.textContent = 'AI Điền (Cần Key)';
+        aiBtn.style.opacity = '0.75';
+      } else {
+        aiBtn.title = 'Tự động tra cứu nghĩa, IPA, ví dụ bằng Google Gemini AI';
+        if (aiIcon) aiIcon.textContent = '✨';
+        if (aiText) aiText.textContent = 'AI Điền Tự Động';
+        aiBtn.style.opacity = '1';
+      }
+    }
+
     function openWordModal() {
       document.getElementById('word-id').value = '';
       document.getElementById('word-term').value = '';
@@ -19941,6 +21071,7 @@ function switchPublisherTab(tab) {
 
       document.getElementById('modal-word-title').textContent = 'Thêm Từ Vựng Mới';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      updateWordModalAiButtonState();
       openModal('modal-word');
       setTimeout(() => {
         const termInput = document.getElementById('word-term');
@@ -19998,6 +21129,7 @@ function switchPublisherTab(tab) {
 
       document.getElementById('modal-word-title').textContent = 'Chỉnh Sửa Từ Vựng';
       document.getElementById('ipa-keyboard-panel').style.display = 'none';
+      updateWordModalAiButtonState();
       openModal('modal-word');
     }
 
@@ -21790,6 +22922,11 @@ function switchPublisherTab(tab) {
     let isAiGenerating = false;
 
     async function handleAiGenerateWord() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng AI Điền Tự Động yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể tự động phân tích từ vựng, phiên âm và ví dụ.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (isAiGenerating) return;
       const termInput = document.getElementById('word-term');
       const rawTerm = (termInput ? termInput.value : '').trim();
@@ -22162,21 +23299,64 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         }
       }
 
-      const savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+      let savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
+      if (savedDiff !== 'easy' && (!hasAtLeastOneApiKey() || isGuest())) {
+        savedDiff = 'easy';
+      }
       selectQuizSetupDifficulty(savedDiff);
+
+      // Render visual lock indicators on cards if no API key
+      const hasKey = hasAtLeastOneApiKey();
+      ['medium', 'hard', 'extreme'].forEach(k => {
+        const card = document.getElementById('quiz-diff-card-' + k);
+        if (card) {
+          let badge = card.querySelector('.quiz-key-lock-badge');
+          if (!hasKey) {
+            card.style.opacity = '0.65';
+            if (!badge) {
+              badge = document.createElement('span');
+              badge.className = 'quiz-key-lock-badge badge';
+              badge.style.cssText = 'background: rgba(239, 68, 68, 0.18); color: #f87171; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(239, 68, 68, 0.3);';
+              badge.textContent = '🔒 Cần Gemini Key';
+              const titleWrapper = card.querySelector('strong');
+              if (titleWrapper && titleWrapper.parentNode) titleWrapper.parentNode.appendChild(badge);
+            }
+          } else {
+            card.style.opacity = '1';
+            if (badge) badge.remove();
+          }
+        }
+      });
 
       const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
       if (shuffleCb) shuffleCb.checked = isStudyShuffle;
+
+      // Zero-delay optimization: Prefetch first 3 words distractors immediately in background (only if API key present)
+      if (hasKey && Array.isArray(deckWords) && deckWords.length > 0) {
+        let count = 1;
+        if (savedDiff === 'extreme') count = 3;
+        else if (savedDiff === 'hard') count = 2;
+        deckWords.slice(0, 3).forEach(w => {
+          if (w) fetchAiDistractors(w, count).catch(() => {});
+        });
+      }
 
       openModal('modal-quiz-setup');
     }
 
     function selectQuizSetupDifficulty(diff) {
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        closeModal('modal-quiz-setup');
-        openAuthModal('login');
-        return;
+      if (diff !== 'easy') {
+        if (isGuest()) {
+          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+          closeModal('modal-quiz-setup');
+          openAuthModal('login');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          alert('🔒 Cấp độ ' + (diff === 'medium' ? 'Bình Thường' : (diff === 'hard' ? 'Khó' : 'Cực Khó')) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể sinh các phương án bẫy trắc nghiệm thông minh!\n\nVui lòng vào Cài Đặt để nhập Gemini API Key hoặc chọn cấp độ Dễ (Easy).');
+          openSettingsModal();
+          return;
+        }
       }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
@@ -22217,6 +23397,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function confirmStartQuizFromModal() {
+      if (selectedSetupDifficulty !== 'easy' && !hasAtLeastOneApiKey()) {
+        alert('🔒 Cấp độ này yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!\n\nVui lòng vào Cài Đặt hoặc chọn cấp độ Dễ.');
+        openSettingsModal();
+        return;
+      }
       currentQuizDifficulty = selectedSetupDifficulty;
       localStorage.setItem('vocaflow_quiz_difficulty', currentQuizDifficulty);
 
@@ -22231,10 +23416,17 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     }
 
     function setQuizDifficulty(diff) {
-      if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
-        alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        openAuthModal('login');
-        return;
+      if (diff !== 'easy') {
+        if (!currentUser || !currentUser.email) {
+          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
+          openAuthModal('login');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          alert('🔒 Cấp độ ' + getDifficultyLabel(diff) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key!');
+          openSettingsModal();
+          return;
+        }
       }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       currentQuizDifficulty = diff;
@@ -22247,6 +23439,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (isGuest()) {
         alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
         openAuthModal('login');
+        return;
+      }
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Các cấp độ nâng cao yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!');
+        openSettingsModal();
         return;
       }
       const order = ['easy', 'medium', 'hard', 'extreme'];
@@ -22819,7 +24016,14 @@ Yêu cầu nghiêm ngặt:
 
       let aiDistractors = [];
       if (aiDistractorCount > 0) {
-        aiDistractors = await fetchAiDistractors(questionWord, aiDistractorCount);
+        try {
+          const fetchPromise = fetchAiDistractors(questionWord, aiDistractorCount);
+          const timeoutPromise = new Promise(res => setTimeout(() => res([]), 1200));
+          aiDistractors = await Promise.race([fetchPromise, timeoutPromise]);
+          if (!Array.isArray(aiDistractors)) aiDistractors = [];
+        } catch (e) {
+          aiDistractors = [];
+        }
       }
 
       const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
@@ -23044,6 +24248,9 @@ Yêu cầu nghiêm ngặt:
         const scoreEl = document.getElementById('quiz-score');
         if (scoreEl) scoreEl.textContent = 'Bài: ' + (quizScore >= 0 ? '+' : '') + quizScore + 'đ';
 
+        // Always record study flow action on practice
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+
         if (isCorrect) {
           quizCorrectCount++;
           try { playVocaSfx('correct'); } catch (e) {}
@@ -23056,7 +24263,6 @@ Yêu cầu nghiêm ngặt:
           } else {
             quizNoHintCurrentStreak = 0;
           }
-          try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
 
           if (questionWord) {
             try {
@@ -23173,6 +24379,7 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-quiz-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -23217,25 +24424,28 @@ Yêu cầu nghiêm ngặt:
         }
       }
 
-      createExplosion(canvas.width * 0.5, canvas.height * 0.35, Math.floor(count * 0.5));
-      setTimeout(() => createExplosion(canvas.width * 0.25, canvas.height * 0.4, Math.floor(count * 0.3)), 150);
-      setTimeout(() => createExplosion(canvas.width * 0.75, canvas.height * 0.4, Math.floor(count * 0.3)), 300);
-
-      if (intensity >= 0.8) {
-        setTimeout(() => createExplosion(canvas.width * 0.5, canvas.height * 0.25, Math.floor(count * 0.4)), 550);
+      function createRandomRocket() {
+        const x = Math.random() * (canvas.width * 0.7) + (canvas.width * 0.15);
+        const y = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.15);
+        createExplosion(x, y, Math.floor(count / 3));
       }
+
+      createRandomRocket();
+      createRandomRocket();
+      setTimeout(() => createRandomRocket(), 250);
+      setTimeout(() => createRandomRocket(), 500);
 
       let frames = 0;
       function animate() {
         frames++;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
           p.vy += p.gravity;
-          p.vx *= 0.98;
           p.alpha -= p.decay;
 
           if (p.alpha <= 0 || p.y > canvas.height + 20) {
@@ -23275,10 +24485,13 @@ Yêu cầu nghiêm ngặt:
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
+      const done = Math.min(quizTotalQuestions || (quizList ? quizList.length : 1), quizIndex + (quizIsAnswered ? 1 : 0));
+      if (done > 0) {
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+      }
       // Progressive incomplete session leniency / penalty (v0.10.6c)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
         const total = quizTotalQuestions || (quizList ? quizList.length : 1);
-        const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
         const mult = getIncompleteSessionMultiplier(done, total);
         let finalPts = 0;
         if (quizPointsEarned > 0) {
@@ -23935,6 +25148,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function selectSpeakingSetupDifficulty(diff) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (diff !== 'easy' && isGuest()) {
         alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
         openAuthModal('login');
@@ -24070,6 +25288,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function openSpeakingSetupModal(useSelectionOnly = false, customWordList = null) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       speakingSetupUseSelection = useSelectionOnly;
       speakingSetupCustomWordList = customWordList;
 
@@ -24108,6 +25331,12 @@ Yêu cầu nghiêm ngặt:
     }
 
     function confirmStartSpeakingFromModal() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        closeModal('modal-speaking-setup');
+        openSettingsModal();
+        return;
+      }
       const hasClue = !!(speakingCluesConfig.def || speakingCluesConfig.ipa || speakingCluesConfig.audio);
       if (!hasClue) {
         alert('Vui lòng chọn ít nhất 1 manh mối hiển thị (Nghĩa TV, Phiên âm hoặc Âm thanh)!');
@@ -24129,6 +25358,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     function startSpeakingMode(useSelectionOnly = false, customWordList = null) {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
+        openSettingsModal();
+        return;
+      }
       if (selectedSpeakingSetupDifficulty) {
         currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
       }
@@ -24188,6 +25422,10 @@ Yêu cầu nghiêm ngặt:
       stopSpeakingRecord();
       resetSpeakingWordState();
       closeSpeakingResultModal();
+
+      if (speakingCompletedWords > 0 || speakingTotalTakesCount > 0) {
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
+      }
 
       if (speakingCurrentMediaStream) {
         try { speakingCurrentMediaStream.getTracks().forEach(track => track.stop()); } catch (e) {}
@@ -24474,6 +25712,7 @@ Yêu cầu nghiêm ngặt:
 
     function finishSpeakingSession() {
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('speaking');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       speakingIsCompleted = true;
 
       const totalWords = speakingWordsList.length || 1;
@@ -24842,6 +26081,11 @@ Yêu cầu nghiêm ngặt:
     }
 
     async function submitSpeakingEvaluation() {
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể chấm điểm âm thanh!\n\nVui lòng vào Cài Đặt để nhập API Key.');
+        openSettingsModal();
+        return;
+      }
       if (isEvaluatingSpeaking) {
         console.warn('Speaking evaluation is already in flight, ignoring duplicate call.');
         return;
@@ -24935,23 +26179,22 @@ MEANING: "${currentWord.definitionVi || ''}"
 ═══════════════════════════════════════════════════════
 OBJECTIVE & FAIR PHONETIC CRITERIA:
 ═══════════════════════════════════════════════════════
-1. ACCURATE SCORING CRITERIA:
-- 90 - 100 ("Xuất sắc" / "Rất tốt"): Clear, accurate, and fully intelligible pronunciation. Stress is placed on the correct syllable. All required phonemes (vowels, initial consonants, consonant clusters, and final stops/nasals/fricatives) are present and clear.
-  * IMPORTANT: If the speech is clear, natural, and correct, AWARD 90-100! Do NOT artificially deduct points down to 80s for minor accent variations.
-  * Feedback must be purely positive, encouraging, and highlight correct pronunciation.
+1. ACCURATE & CONTINUOUS SCORING (0 to 100):
+- Calculate a granular, realistic, and continuous score reflecting genuine acoustic accuracy:
+  * 96 - 100: Near-native excellence. Flawless syllable stress, perfect vowel quality, crisp consonant endings, and natural flow.
+  * 90 - 95: Very good / fluent. Clear and fully intelligible with correct stress and vowels, minor native tongue inflection.
+  * 80 - 89: Good / passing. Intelligible, but with a slight phonetic error (e.g. minor vowel openness difference /e/ vs /æ/ or softer ending sound).
+  * 65 - 79: Fair / needs work. Noticeable error (e.g. dropped final consonant /s, t, d, z/, misplaced primary stress).
+  * 40 - 64: Weak. Significant mispronunciation of core syllables.
+  * 0 - 39: Unintelligible noise, silence, or completely wrong word.
 
-- 75 - 89 ("Khá tốt" / "Đạt"): Understandable and generally correct, but with a REAL, identifiable phonetic inaccuracy (e.g. slight confusion between /iː/ and /ɪ/, /e/ and /æ/, /θ/ vs /s/, or reduced vowel omitted).
-  * Feedback MUST pinpoint the EXACT phoneme and provide concrete tongue/mouth placement tips.
-
-- 50 - 74 ("Cần cải thiện"): Significant phonetic error (e.g. dropped essential final consonant /s, z, t, d, k, l, f, v/, wrong syllable stress, or substituted vowel).
-
-- 0 - 49 ("Chưa chuẩn" / "Không phát hiện"): Wrong word, unintelligible noise, or silence.
+* CRITICAL INSTRUCTION ON SCORING: Evaluate acoustic details dynamically across the full spectrum. DO NOT anchor or default to 95 for every good recording. Differentiate 91, 93, 94, 96, 98 based on real acoustic nuances!
 
 2. STRICT LINGUISTIC SANITY RULES (ANTI-HALLUCINATION & ANTI-NITPICKING):
-- RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). In English, nasal endings (like /n/ in "foundation" /faʊnˈdeɪʃn/, "person", "sun") and stop endings are naturally brief closures. Elongating /n/ is unnatural and phonetically incorrect!
-- RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist (e.g., claiming "-ing" has a /k/ sound, or expecting extra sounds not in the IPA).
-- RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British phonetic variations (e.g., rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
-- RULE D (CONSTRUCTIVE FEEDBACK ONLY): If the word is pronounced correctly, say so warmly without inventing artificial flaws.
+- RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). Nasal endings (e.g. in "person", "foundation") and stop endings are naturally brief closures.
+- RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist in the standard IPA.
+- RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British variations (e.g. rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
+- RULE D (CONSTRUCTIVE FEEDBACK): If pronunciation is good, explain what sounded great. If not, give actionable mouth/tongue tips in Vietnamese.
 
 3. MULTI-WORD & COMPOUND PHRASES:
 - For multi-word phrases (e.g. "aqueous solution", "point out"): evaluate each word individually in "wordsBreakdown".
@@ -24961,15 +26204,15 @@ ${needSyllable ? '4. SYLLABLE COUNT: Count total syllables in the target phrase 
 RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 ═══════════════════════════════════════════════════════
 {
-  "score": 95,
-  "verdict": "Xuất sắc",
+  "score": 92,
+  "verdict": "Rất tốt",
   "detectedTranscript": "${currentWord.term}",
   "wordsBreakdown": [
     {
-      "word": "word",
-      "ipa": "/wɜːd/",
+      "word": "${currentWord.term.split(' ')[0] || 'word'}",
+      "ipa": "${currentWord.phonetic || '/.../'}",
       "status": "correct",
-      "feedback": "Phát âm chuẩn xác âm đuôi"
+      "feedback": "Phát âm rõ ràng, đúng trọng âm và âm đuôi"
     }
   ],
   "phonemeDiagnostics": {
@@ -24977,7 +26220,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     "endingSounds": "Âm đuôi phát âm đầy đủ",
     "vowels": "Nguyên âm chuẩn xác"
   },
-  "feedbackVi": "Nhận xét tiếng Việt tự nhiên, khen ngợi nếu đạt 90+, chỉ rõ lỗi thật và cách đặt khẩu hình lưỡi/môi nếu dưới 90"
+  "feedbackVi": "Nhận xét tiếng Việt súc tích, tự nhiên và chỉ dẫn cụ thể nếu có lỗi"
 }`;
 
       try {
@@ -25007,7 +26250,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 }],
                 generationConfig: {
                   responseMimeType: "application/json",
-                  temperature: 0.0,
+                  temperature: 0.15,
                   maxOutputTokens: 1024
                 },
                 safetySettings: [
@@ -25149,6 +26392,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (currentSpeakingDifficulty === 'hard' && speakingTakes.length === 1 && score >= 95) {
           if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_onetake_95');
         }
+        try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       }
 
       // Update Recording Box Status & Keep Playback Accessible
@@ -35020,14 +36264,24 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function openAiDeckStudioModal(optionalDeckId = null) {
       const isGuest = !currentUser || !currentUser.email;
       const gView = document.getElementById('aideck-guest-lock-view');
+      const kView = document.getElementById('aideck-apikey-lock-view');
       const aView = document.getElementById('aideck-main-authenticated-view');
       if (isGuest) {
         if (gView) gView.style.display = 'block';
+        if (kView) kView.style.display = 'none';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-ai-deck-studio');
+        return;
+      }
+      if (!hasAtLeastOneApiKey()) {
+        if (gView) gView.style.display = 'none';
+        if (kView) kView.style.display = 'block';
         if (aView) aView.style.display = 'none';
         openModal('modal-ai-deck-studio');
         return;
       }
       if (gView) gView.style.display = 'none';
+      if (kView) kView.style.display = 'none';
       if (aView) aView.style.display = 'flex';
 
       aiStudioTargetDeckId = optionalDeckId;
@@ -35338,7 +36592,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
       let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
 
-      if (!key) {
+      if (!hasAtLeastOneApiKey()) {
         alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo bộ từ độc nhất và chính xác theo chủ đề, hãy mở mục Cài Đặt và dán API Key (miễn phí từ Google) vào nhé!');
         closeModal('modal-ai-deck-studio');
         openSettingsModal();
@@ -36042,14 +37296,24 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         const isGuest = !currentUser || !currentUser.email;
         const gView = document.getElementById('aimentor-guest-lock-view');
+        const kView = document.getElementById('aimentor-apikey-lock-view');
         const aView = document.getElementById('aimentor-main-authenticated-view');
         if (isGuest) {
           if (gView) gView.style.display = 'flex';
+          if (kView) kView.style.display = 'none';
+          if (aView) aView.style.display = 'none';
+          openModal('modal-ai-mentor');
+          return;
+        }
+        if (!hasAtLeastOneApiKey()) {
+          if (gView) gView.style.display = 'none';
+          if (kView) kView.style.display = 'flex';
           if (aView) aView.style.display = 'none';
           openModal('modal-ai-mentor');
           return;
         }
         if (gView) gView.style.display = 'none';
+        if (kView) kView.style.display = 'none';
         if (aView) aView.style.display = 'flex';
 
         // Anti-Cheat: If on exam screen, prevent opening
@@ -36568,6 +37832,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function handleSendAiChatMessage(e = null) {
       if (e) e.preventDefault();
+      if (!hasAtLeastOneApiKey()) {
+        alert('🔒 Chức năng Gia Sư AI Gemini Mentor yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt để nhập API Key.');
+        openSettingsModal();
+        return;
+      }
       if (aiChatIsLoading) return;
 
       const input = document.getElementById('ai-chat-input');
@@ -36834,12 +38103,12 @@ Quy tắc phản hồi quan trọng:
 
     if (isVip) {
       if (bannerEl) bannerEl.style.display = 'flex';
-      const tierTitles = { monthly: 'VIP 1 Tháng', yearly: 'VIP 1 Năm', lifetime: 'VIP Trọn Đời' };
-      if (bannerTierEl) bannerTierEl.textContent = tierTitles[currentTier] || 'VIP Crown';
+      const durationLabel = formatVipDurationText(expiryTimestamp, currentTier);
+      if (bannerTierEl) bannerTierEl.textContent = `VIP ${durationLabel}`;
       if (bannerExpiryEl) {
         bannerExpiryEl.innerHTML = currentTier === 'lifetime'
           ? 'Đặc quyền sở hữu: <strong>Vĩnh Viễn (Không bao giờ hết hạn)</strong>'
-          : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong>`;
+          : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong> (${durationLabel})`;
       }
 
       if (currentTier === 'lifetime') {
@@ -36856,7 +38125,7 @@ Quy tắc phản hồi quan trọng:
       } else if (currentTier === 'yearly') {
         // Monthly locked, Yearly active/locked, Lifetime open for upgrade
         if (cardMonthly) { cardMonthly.style.opacity = '0.5'; cardMonthly.style.filter = 'grayscale(0.6)'; }
-        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = '🔒 Đã có gói VIP 1 Năm'; btnMonthly.style.cursor = 'not-allowed'; }
+        if (btnMonthly) { btnMonthly.disabled = true; btnMonthly.textContent = `🔒 Đã có VIP (${durationLabel})`; btnMonthly.style.cursor = 'not-allowed'; }
 
         if (cardYearly) { cardYearly.style.opacity = '0.9'; cardYearly.style.border = '2px solid #10b981'; }
         if (btnYearly) { btnYearly.disabled = true; btnYearly.textContent = `✓ Đang Dùng (Đến ${expiryDateStr})`; btnYearly.style.background = 'rgba(16,185,129,0.2)'; btnYearly.style.borderColor = 'rgba(16,185,129,0.5)'; btnYearly.style.cursor = 'default'; }
@@ -37074,6 +38343,213 @@ Quy tắc phản hồi quan trọng:
     } catch (e) {}
   }
 
-</script>
+  // =========================================================================
+  // USER GUIDE & KNOWLEDGE BASE ENGINE (v0.10.9-alpha-2)
+  // =========================================================================
+  let currentGuideCategory = 'starter';
+  let currentGuideStarterStep = 0;
+  const guideStarterStepsCount = 5;
+  let guideReturnContext = null;
+
+  const guideStarterTitles = [
+    'Đăng Ký & Đăng Nhập Tài Khoản',
+    'Cài Đặt Khóa API Gemini Miễn Phí',
+    'Nhập Giftcode Tân Thủ (+500 Xu)',
+    '3 Cách Tạo Bài Học & Nạp Từ Vựng',
+    '4 Chế Độ Học Cốt Lõi Tại VocaFlow'
+  ];
+
+  function openUserGuideModal(category = 'starter', stepIndex = 0, targetScrollTop = null) {
+    switchUserGuideCategory(category, targetScrollTop === null);
+    if (category === 'starter') {
+      goToStarterStep(stepIndex, targetScrollTop === null);
+    }
+    openModal('modal-user-guide');
+    if (targetScrollTop !== null && targetScrollTop > 0) {
+      setTimeout(() => {
+        const contentArea = document.getElementById('guide-content-area');
+        if (contentArea) contentArea.scrollTop = targetScrollTop;
+      }, 50);
+    }
+  }
+
+  function switchUserGuideCategory(catKey, resetScroll = true) {
+    currentGuideCategory = catKey;
+    const allCategories = ['starter', 'flow', 'economy', 'creator', 'vip', 'shortcuts'];
+
+    allCategories.forEach(cat => {
+      const btn = document.getElementById(`guide-tab-btn-${cat}`);
+      const panel = document.getElementById(`guide-cat-panel-${cat}`);
+      if (btn) {
+        if (cat === catKey) {
+          btn.classList.add('active');
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          btn.classList.remove('active');
+        }
+      }
+      if (panel) {
+        if (cat === catKey) {
+          panel.classList.add('active');
+        } else {
+          panel.classList.remove('active');
+        }
+      }
+    });
+
+    if (resetScroll) {
+      const contentArea = document.getElementById('guide-content-area');
+      if (contentArea) contentArea.scrollTop = 0;
+    }
+  }
+
+  function updateStarterStepUI(resetScroll = true) {
+    for (let i = 0; i < guideStarterStepsCount; i++) {
+      const slide = document.getElementById(`guide-starter-slide-${i}`);
+      if (slide) {
+        if (i === currentGuideStarterStep) slide.classList.add('active');
+        else slide.classList.remove('active');
+      }
+    }
+
+    const dots = document.querySelectorAll('#guide-starter-dots .guide-step-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === currentGuideStarterStep) {
+        dot.className = 'guide-step-dot active';
+      } else if (idx < currentGuideStarterStep) {
+        dot.className = 'guide-step-dot passed';
+      } else {
+        dot.className = 'guide-step-dot';
+      }
+    });
+
+    const badgeEl = document.getElementById('guide-starter-step-badge');
+    const titleEl = document.getElementById('guide-starter-step-title');
+    const pageIndEl = document.getElementById('guide-starter-page-indicator');
+    const prevBtn = document.getElementById('guide-starter-btn-prev');
+    const nextBtn = document.getElementById('guide-starter-btn-next');
+
+    if (badgeEl) badgeEl.textContent = `Bước ${currentGuideStarterStep + 1} / ${guideStarterStepsCount}`;
+    if (titleEl) titleEl.textContent = guideStarterTitles[currentGuideStarterStep] || '';
+    if (pageIndEl) pageIndEl.textContent = `Trang ${currentGuideStarterStep + 1} / ${guideStarterStepsCount}`;
+
+    if (prevBtn) prevBtn.disabled = (currentGuideStarterStep === 0);
+
+    if (nextBtn) {
+      if (currentGuideStarterStep === guideStarterStepsCount - 1) {
+        nextBtn.innerHTML = '🚀 Bắt Đầu Học Ngay!';
+        nextBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        nextBtn.style.borderColor = 'transparent';
+      } else {
+        nextBtn.innerHTML = 'Trang Tiếp ❯';
+        nextBtn.style.background = 'var(--primary)';
+        nextBtn.style.borderColor = 'var(--primary)';
+      }
+    }
+
+    if (resetScroll) {
+      const contentArea = document.getElementById('guide-content-area');
+      if (contentArea) contentArea.scrollTop = 0;
+    }
+  }
+
+  function navigateStarterStep(delta) {
+    const nextStep = currentGuideStarterStep + delta;
+    if (nextStep >= guideStarterStepsCount) {
+      closeModal('modal-user-guide');
+      showToast('🎉 Chúc bạn có những giờ học tiếng Anh tuyệt vời cùng VocaFlow!');
+      return;
+    }
+    if (nextStep >= 0 && nextStep < guideStarterStepsCount) {
+      currentGuideStarterStep = nextStep;
+      updateStarterStepUI();
+    }
+  }
+
+  function goToStarterStep(idx, resetScroll = true) {
+    if (idx >= 0 && idx < guideStarterStepsCount) {
+      currentGuideStarterStep = idx;
+      updateStarterStepUI(resetScroll);
+    }
+  }
+
+  function navigateFromGuide(openActionFn, targetModalId) {
+    const contentArea = document.getElementById('guide-content-area');
+    guideReturnContext = {
+      category: currentGuideCategory,
+      starterStep: currentGuideStarterStep,
+      scrollTop: contentArea ? contentArea.scrollTop : 0,
+      targetModalId: targetModalId
+    };
+    closeModal('modal-user-guide');
+    if (typeof openActionFn === 'function') {
+      openActionFn();
+    }
+  }
+
+  function applyGiftcodeFromGuide(code) {
+    navigateFromGuide(() => {
+      openShopModal();
+      setTimeout(() => {
+        const codeInput = document.getElementById('shop-gift-code-input');
+        if (codeInput) {
+          codeInput.value = code;
+          codeInput.focus();
+          codeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          codeInput.style.transition = 'all 0.3s ease';
+          codeInput.style.boxShadow = '0 0 16px #f59e0b';
+          codeInput.style.borderColor = '#f59e0b';
+          setTimeout(() => {
+            codeInput.style.boxShadow = '';
+            codeInput.style.borderColor = '';
+          }, 1800);
+        }
+        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 Xu nhé!');
+      }, 300);
+    }, 'modal-shop');
+  }
+
+  function openAiKeyFromGuide() {
+    navigateFromGuide(() => {
+      openSettingsModal();
+      setTimeout(() => {
+        const keyInput = document.getElementById('gemini-api-key-input-1') || document.getElementById('gemini-api-key-input');
+        if (keyInput) {
+          keyInput.focus();
+          keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          keyInput.style.transition = 'all 0.3s ease';
+          keyInput.style.boxShadow = '0 0 16px #10b981';
+          keyInput.style.borderColor = '#10b981';
+          setTimeout(() => {
+            keyInput.style.boxShadow = '';
+            keyInput.style.borderColor = '';
+          }, 1800);
+        }
+        showToast('🔑 Dán mã API Gemini vào ô này rồi nhấn "Lưu Cài Đặt" nhé!');
+      }, 300);
+    }, 'modal-settings');
+  }
+
+  // Horizontal mouse-wheel scroll for guide tabs nav on PC
+  window.addEventListener('DOMContentLoaded', () => {
+    const verLabel = document.getElementById('settings-app-version-label');
+    if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
+    if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
+    if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
+    if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
+    const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
+    if (guideTabsNav) {
+      guideTabsNav.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          guideTabsNav.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+    }
+  });
+
+
+
+  </script>
 </body>
 </html>

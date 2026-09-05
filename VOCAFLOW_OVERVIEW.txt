@@ -1,18 +1,26 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-6 (Build 238) - Flow Freeze Fix, Anti-Clock Exploit & VIP Expiry Purge
+Phiên bản: v0.10.9-alpha-7 (Build 239) - Settings Version Sync, Testing & Deployment Spec, AdSense Advisory
 ================================================================================
-1. [Khắc Phục Lỗi Tự Trừ Oan Flow Freeze] Xóa triệt để mã debug cũ vô tình trừ oan Freeze; sửa lỗi trừ đúp delta khi đồng bộ Cloud; thu hẹp phạm vi bảo vệ Flow chỉ cho chuỗi đang học (không quét lùi vào các khoảng trống cũ); bổ sung cơ chế tự phục hồi hoàn lại +1 Flow Freeze (1/7) cho tài khoản bị trừ nhầm.
-2. [Hệ Thống Chống Can Thiệp Giờ Máy (Anti-Time-Travel)] Quản lý thời gian tin cậy qua HTTP header Date từ Firebase; theo dõi mốc thời gian tịnh tiến cao nhất (maxObservedTimestamp); chặn việc chỉnh lùi ngày để học gian lận Flow streak hay lạm dụng nhận quà/lượt quay hằng ngày; ngăn việc nhảy ngày làm ngốn oan Freeze.
-3. [Dọn Dẹp Mác VIP & Khóa Toàn Bộ Quyền VIP Khi Hết Hạn] Cập nhật kiểm tra thời hạn thực tế trong initGlobalVipRegistry và isAuthorVipUser; tự động xóa vương miện 👑 khỏi tên người dùng; chuyển huy hiệu hồ sơ về thành viên thường (🌟 Tác Giả Đóng Góp); khóa chặt mọi đặc quyền VIP khi hết hạn.
+1. [Làm Mới Phiên Bản Trong Cài Đặt] Sửa triệt để nhãn hiển thị phiên bản bị găm cứng ở modal Cài Đặt (Thông Tin Ứng Dụng); cập nhật đồng bộ động thông qua VOCAFLOW_APP_FULL_TITLE trên cả DOMContentLoaded và khi mở Settings modal.
+2. [Tài Liệu Hóa Quy Trình Kiểm Thử & Triển Khai] Tạo tệp hướng dẫn KIEM_THU_VA_TRIEN_KHAI.md chuẩn mực, minh bạch, khách quan và chi tiết từng bước cho người tiếp quản sau.
+3. [Tư Vấn & Khắc Phục Lỗi Google AdSense] Phân tích nguyên nhân "Nội dung có giá trị thấp" (Low-Value Content) trên iamjulies.github.io và lập lộ trình khắc phục toàn diện.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ===============================================================================
-Phiên bản hiện tại : v0.10.9-alpha-6 (Build 238)
+Phiên bản hiện tại : v0.10.9-alpha-7 (Build 239)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-7] - (BUILD 239 - SETTINGS VERSION SYNC, TESTING & DEPLOYMENT SPEC, ADSENSE ADVISORY):
+  - ⚙️ Làm mới nhãn phiên bản ứng dụng trong Cài Đặt (Settings):
+    * Cập nhật `src/components/modals/modal-settings.html` và đồng bộ động nhãn `#settings-app-version-label` qua hằng số `VOCAFLOW_APP_FULL_TITLE` (`v0.10.9-alpha-7`).
+    * Khắc phục tình trạng người dùng mở Cài Đặt vẫn thấy hiển thị phiên bản cũ `v0.10.8-released (debug 0.8)`.
+  - 📚 Chuẩn hóa tài liệu Kiểm Thử & Triển Khai (`KIEM_THU_VA_TRIEN_KHAI.md`):
+    * Ghi nhớ và minh bạch hóa 4 bước kiểm thử, biên dịch, lắp ghép và phát hành 1-click lên GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
+  - 🛡️ Báo cáo chuyên sâu và hướng dẫn khắc phục vi phạm chính sách Google AdSense "Nội dung có giá trị thấp".
 
 🌟 [v0.10.9-alpha-6] - (BUILD 238 - FLOW FREEZE FIX, ANTI-CLOCK EXPLOIT & VIP EXPIRY PURGE):
   - ❄️ Sửa lỗi tự động trừ Flow Freeze:
