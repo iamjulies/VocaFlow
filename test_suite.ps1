@@ -5,7 +5,9 @@ $appJs = Join-Path $root "src\scripts\app.js"
 $headerHtml = Join-Path $root "src\components\header.html"
 $settingsHtml = Join-Path $root "src\components\modals\modal-settings.html"
 $wordModalHtml = Join-Path $root "src\components\modals\modal-word.html"
+$reviewModalHtml = Join-Path $root "src\components\modals\modal-review-queue.html"
 $rewardedModalHtml = Join-Path $root "src\components\modals\modal-rewarded-ad.html"
+$cssFile = Join-Path $root "src\styles\app.css"
 $swJs = Join-Path $root "sw.js"
 $releaseSwJs = Join-Path $root "Release_App\sw.js"
 $programCs = Join-Path $root "VocaFlow_Desktop\Program.cs"
@@ -27,13 +29,15 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-13 (Build 245) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-14 (Build 246) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
 $settingsContent = [System.IO.File]::ReadAllText($settingsHtml, [System.Text.Encoding]::UTF8)
 $wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml, [System.Text.Encoding]::UTF8)
+$reviewModalContent = [System.IO.File]::ReadAllText($reviewModalHtml, [System.Text.Encoding]::UTF8)
 $rewardedModalContent = [System.IO.File]::ReadAllText($rewardedModalHtml, [System.Text.Encoding]::UTF8)
+$cssContent = [System.IO.File]::ReadAllText($cssFile, [System.Text.Encoding]::UTF8)
 $swContent = [System.IO.File]::ReadAllText($swJs, [System.Text.Encoding]::UTF8)
 $releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs, [System.Text.Encoding]::UTF8)
 $csContent = [System.IO.File]::ReadAllText($programCs, [System.Text.Encoding]::UTF8)
@@ -81,17 +85,24 @@ Assert-Check "Duplicate word prevention checkWordTermDuplicate exists" ($appJsCo
 Assert-Check "Duplicate word UI elements exist in modal-word.html" ($wordModalContent.Contains("word-term-duplicate-warning") -and $wordModalContent.Contains("btn-open-existing-duplicate"))
 Assert-Check "Import merges duplicate terms into existing word senses" ($appJsContent.Contains("existingInDeck.senses.push(newSense)"))
 
-# 6. Version v0.10.9-alpha-13 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-13" ($headerContent.Contains("v0.10.9-alpha-13"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-13" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-13 (Build 245)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-13" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-13"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-13" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-13"))
-Assert-Check "Program.cs shows v0.10.9-alpha-13" ($csContent.Contains("VocaFlow v0.10.9-alpha-13"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-13 (Build 245)" ($overviewContent.Contains("v0.10.9-alpha-13 (Build 245)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-13 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-13"))
+# 6. v0.10.9-alpha-14 SRS Subset Review, Archive Exclusion & Deck Card Delete tests
+Assert-Check "SRS getDueReviewWords excludes archived decks" ($appJsContent.Contains("archivedDeckIds.has(w.deckId)"))
+Assert-Check "SRS selectReviewQueuePreset and selected words state exist" ($appJsContent.Contains("function selectReviewQueuePreset(") -and $appJsContent.Contains("reviewQueueSelectedWordIds"))
+Assert-Check "modal-review-queue.html contains preset pills and filter controls" ($reviewModalContent.Contains("review-queue-preset-pills") -and $reviewModalContent.Contains("review-queue-deck-filter") -and $reviewModalContent.Contains("review-queue-sort"))
+Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
+Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 6. Documentation test
+# 7. Version v0.10.9-alpha-14 tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-14" ($headerContent.Contains("v0.10.9-alpha-14"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-14" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-14 (Build 246)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-14" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-14"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-14" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-14"))
+Assert-Check "Program.cs shows v0.10.9-alpha-14" ($csContent.Contains("VocaFlow v0.10.9-alpha-14"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-14 (Build 246)" ($overviewContent.Contains("v0.10.9-alpha-14 (Build 246)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-14 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-14"))
+
+# 8. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))
 
 Write-Host ""

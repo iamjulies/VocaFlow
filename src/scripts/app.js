@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-13)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-14)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-13 (Build 245)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-14 (Build 246)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -8857,6 +8857,9 @@ function switchPublisherTab(tab) {
             <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu'}">
               <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
             </button>
+            <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa bộ từ này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
+              <svg class="icon icon-sm"><use href="#i-delete"/></svg> <span class="hide-on-mobile">Xóa</span>
+            </button>
           </div>
         `;
         card.addEventListener('click', (e) => {
@@ -14031,10 +14034,25 @@ function switchPublisherTab(tab) {
       return 1; // 0 - 25%
     }
 
+    // =========================================================================
+    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-alpha-14)
+    // =========================================================================
+    let reviewQueueMasterList = [];
+    let reviewQueueFilteredList = [];
+    let reviewQueueSelectedWordIds = new Set();
+    let reviewQueueSortMode = 'overdue-desc';
+    let reviewQueueDeckFilter = 'all';
+    let reviewQueueSearchQuery = '';
+    let reviewQueueActivePreset = null;
+
     function getDueReviewWords() {
       const now = Date.now();
       const msPerDay = 24 * 60 * 60 * 1000;
+      // Exclude words belonging to archived decks
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+
       return words.filter(w => {
+        if (archivedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
         const intervalDays = getReviewIntervalDays(score);
         const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
@@ -14055,10 +14073,12 @@ function switchPublisherTab(tab) {
       }
       container.style.display = 'block';
 
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
       const dueWords = getDueReviewWords();
       reviewDueWordsList = dueWords;
 
-      if (words.length === 0) {
+      if (nonArchivedWords.length === 0) {
         container.innerHTML = '';
         return;
       }
@@ -14098,7 +14118,7 @@ function switchPublisherTab(tab) {
               </div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="openReviewQueueModal()" style="font-size: 11.5px; padding: 4px 10px;">
-              👁️ Xem lịch chu kỳ (${words.length} từ)
+              👁️ Xem lịch chu kỳ (${nonArchivedWords.length} từ)
             </button>
           </div>
         `;
@@ -14106,59 +14126,266 @@ function switchPublisherTab(tab) {
     }
 
     function openReviewQueueModal() {
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
       const dueWords = getDueReviewWords();
-      reviewDueWordsList = dueWords.length > 0 ? dueWords : [...words];
+      reviewQueueMasterList = dueWords.length > 0 ? dueWords : [...nonArchivedWords];
+      reviewDueWordsList = reviewQueueMasterList;
 
       const countBadge = document.getElementById('review-queue-modal-count-badge');
       if (countBadge) {
-        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${words.length} từ`;
+        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${nonArchivedWords.length} từ`;
         countBadge.style.background = dueWords.length > 0 ? '#ef4444' : '#10b981';
       }
 
-      const summaryText = document.getElementById('review-queue-summary-text');
-      if (summaryText) {
-        summaryText.textContent = dueWords.length > 0 ? `Đang ưu tiên ${dueWords.length} từ trễ hạn` : `Tất cả từ đã ôn tập đúng hạn`;
+      // Populate deck filter select
+      const deckFilterSelect = document.getElementById('review-queue-deck-filter');
+      if (deckFilterSelect) {
+        const deckCounts = {};
+        reviewQueueMasterList.forEach(w => {
+          deckCounts[w.deckId] = (deckCounts[w.deckId] || 0) + 1;
+        });
+
+        let opts = `<option value="all">📁 Tất cả bộ từ (${reviewQueueMasterList.length})</option>`;
+        decks.forEach(d => {
+          if (!d.isArchived && deckCounts[d.id]) {
+            opts += `<option value="${d.id}">📁 ${escapeHtml(d.title)} (${deckCounts[d.id]})</option>`;
+          }
+        });
+        deckFilterSelect.innerHTML = opts;
+        deckFilterSelect.value = 'all';
       }
 
-      renderReviewQueueModalList(reviewDueWordsList);
+      // Reset filters & search
+      reviewQueueDeckFilter = 'all';
+      reviewQueueSearchQuery = '';
+      const searchInput = document.getElementById('review-queue-search');
+      if (searchInput) searchInput.value = '';
+
+      reviewQueueSortMode = 'overdue-desc';
+      const sortSelect = document.getElementById('review-queue-sort');
+      if (sortSelect) sortSelect.value = 'overdue-desc';
+
+      // Default preset: If > 50 words, pre-select top 50; if <= 50, select all
+      reviewQueueSelectedWordIds.clear();
+      const defaultCount = reviewQueueMasterList.length > 50 ? 50 : reviewQueueMasterList.length;
+      if (defaultCount > 0) {
+        selectReviewQueuePreset(defaultCount, false);
+      } else {
+        filterAndRenderReviewQueue();
+      }
+
       openModal('modal-review-queue');
     }
 
-    function renderReviewQueueModalList(list) {
+    function selectReviewQueuePreset(preset, showToastMsg = true) {
+      reviewQueueActivePreset = preset;
+
+      // Update preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (preset === 'clear') {
+        reviewQueueSelectedWordIds.clear();
+        const clearBtn = document.getElementById('preset-btn-clear');
+        if (clearBtn) clearBtn.classList.add('active');
+        if (showToastMsg) showToast('❌ Đã bỏ chọn tất cả từ trong hàng đợi!');
+      } else if (preset === 'all') {
+        reviewQueueSelectedWordIds.clear();
+        (reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const allBtn = document.getElementById('preset-btn-all');
+        if (allBtn) allBtn.classList.add('active');
+        if (showToastMsg) showToast(`📋 Đã chọn tất cả ${reviewQueueSelectedWordIds.size} từ!`);
+      } else if (preset === 'random20' || preset === 'random50') {
+        reviewQueueSelectedWordIds.clear();
+        const count = preset === 'random20' ? 20 : 50;
+        const sourceList = reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList;
+        const shuffled = [...sourceList].sort(() => Math.random() - 0.5);
+        shuffled.slice(0, Math.min(count, shuffled.length)).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const randBtn = document.getElementById(preset === 'random20' ? 'preset-btn-rand20' : 'preset-btn-rand50');
+        if (randBtn) randBtn.classList.add('active');
+        if (showToastMsg) showToast(`🔀 Đã bốc ngẫu nhiên ${reviewQueueSelectedWordIds.size} từ!`);
+      } else if (typeof preset === 'number') {
+        reviewQueueSelectedWordIds.clear();
+        const sourceList = reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList;
+        const now = Date.now();
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const sortedByOverdue = [...sourceList].sort((a, b) => {
+          const scoreA = getWordScore(a);
+          const scoreB = getWordScore(b);
+          const intA = getReviewIntervalDays(scoreA);
+          const intB = getReviewIntervalDays(scoreB);
+          const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+          const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+          const overdueA = ((now - timeA) / msPerDay) - intA;
+          const overdueB = ((now - timeB) / msPerDay) - intB;
+          return overdueB - overdueA;
+        });
+
+        sortedByOverdue.slice(0, Math.min(preset, sortedByOverdue.length)).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const numBtn = document.getElementById('preset-btn-' + preset);
+        if (numBtn) numBtn.classList.add('active');
+        if (showToastMsg) showToast(`⚡ Đã chọn nhanh ${reviewQueueSelectedWordIds.size} từ trễ hạn nhất!`);
+      }
+
+      filterAndRenderReviewQueue();
+    }
+
+    function toggleReviewQueueSelectAll(checked) {
+      // Clear preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (checked) {
+        reviewQueueFilteredList.forEach(w => reviewQueueSelectedWordIds.add(w.id));
+      } else {
+        reviewQueueFilteredList.forEach(w => reviewQueueSelectedWordIds.delete(w.id));
+      }
+
+      filterAndRenderReviewQueue();
+    }
+
+    function toggleReviewQueueWordSelect(wordId, checked) {
+      if (checked) {
+        reviewQueueSelectedWordIds.add(wordId);
+      } else {
+        reviewQueueSelectedWordIds.delete(wordId);
+      }
+
+      // Clear preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      updateReviewQueueHeaderAndActions();
+    }
+
+    function onReviewQueueDeckFilterChange(val) {
+      reviewQueueDeckFilter = val;
+      filterAndRenderReviewQueue();
+    }
+
+    function onReviewQueueSortChange(val) {
+      reviewQueueSortMode = val;
+      filterAndRenderReviewQueue();
+    }
+
+    function onReviewQueueSearch(val) {
+      reviewQueueSearchQuery = (val || '').trim().toLowerCase();
+      filterAndRenderReviewQueue();
+    }
+
+    function updateReviewQueueHeaderAndActions() {
+      const selectedBadge = document.getElementById('review-queue-selected-badge');
+      if (selectedBadge) {
+        selectedBadge.textContent = `Đã chọn: ${reviewQueueSelectedWordIds.size} / ${reviewQueueFilteredList.length} từ`;
+      }
+
+      const selectAllCb = document.getElementById('review-queue-select-all-cb');
+      if (selectAllCb) {
+        selectAllCb.checked = reviewQueueFilteredList.length > 0 && reviewQueueFilteredList.every(w => reviewQueueSelectedWordIds.has(w.id));
+      }
+
+      const count = reviewQueueSelectedWordIds.size > 0 ? reviewQueueSelectedWordIds.size : reviewQueueFilteredList.length;
+      const spkLabel = document.getElementById('label-review-speaking');
+      const afcLabel = document.getElementById('label-review-autofc');
+      const splLabel = document.getElementById('label-review-spelling');
+      const qzLabel = document.getElementById('label-review-quiz');
+
+      if (spkLabel) spkLabel.textContent = `Luyện Nói AI (${count})`;
+      if (afcLabel) afcLabel.textContent = `Auto Flashcard (${count})`;
+      if (splLabel) splLabel.textContent = `Luyện Viết (${count})`;
+      if (qzLabel) qzLabel.textContent = `Quiz (${count})`;
+    }
+
+    function filterAndRenderReviewQueue() {
       const container = document.getElementById('review-queue-words-container');
       if (!container) return;
-
-      if (!list || list.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Chưa có từ vựng nào trong hệ thống.</div>';
-        return;
-      }
 
       const now = Date.now();
       const msPerDay = 24 * 60 * 60 * 1000;
 
+      // 1. Filter
+      let list = reviewQueueMasterList.filter(w => {
+        if (reviewQueueDeckFilter !== 'all' && w.deckId !== reviewQueueDeckFilter) return false;
+        if (reviewQueueSearchQuery) {
+          const term = (w.term || '').toLowerCase();
+          const def = (w.definitionVi || w.definition || '').toLowerCase();
+          if (!term.includes(reviewQueueSearchQuery) && !def.includes(reviewQueueSearchQuery)) return false;
+        }
+        return true;
+      });
+
+      // 2. Sort
+      list.sort((a, b) => {
+        const scoreA = getWordScore(a);
+        const scoreB = getWordScore(b);
+        const intA = getReviewIntervalDays(scoreA);
+        const intB = getReviewIntervalDays(scoreB);
+        const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+        const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+        const overdueA = ((now - timeA) / msPerDay) - intA;
+        const overdueB = ((now - timeB) / msPerDay) - intB;
+
+        if (reviewQueueSortMode === 'overdue-desc') return overdueB - overdueA;
+        if (reviewQueueSortMode === 'overdue-asc') return overdueA - overdueB;
+        if (reviewQueueSortMode === 'score-asc') return scoreA - scoreB;
+        if (reviewQueueSortMode === 'score-desc') return scoreB - scoreA;
+        if (reviewQueueSortMode === 'alpha-asc') return (a.term || '').localeCompare(b.term || '');
+        return 0;
+      });
+
+      reviewQueueFilteredList = list;
+
+      const summaryText = document.getElementById('review-queue-summary-text');
+      if (summaryText) {
+        summaryText.textContent = `Hiển thị ${reviewQueueFilteredList.length} / ${reviewQueueMasterList.length} từ`;
+      }
+
+      updateReviewQueueHeaderAndActions();
+
+      if (reviewQueueFilteredList.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Không tìm thấy từ vựng nào khớp với bộ lọc hiện tại.</div>';
+        return;
+      }
+
       let htmlRows = '';
-      list.forEach((w, idx) => {
+      reviewQueueFilteredList.forEach((w, idx) => {
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
         const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
         const diffDays = Math.floor((now - lastTime) / msPerDay);
         const interval = getReviewIntervalDays(score);
         const isOverdue = diffDays >= interval;
+        const isChecked = reviewQueueSelectedWordIds.has(w.id);
 
         const deckObj = decks.find(d => d.id === w.deckId);
         const deckName = deckObj ? deckObj.title : 'Bộ từ';
 
         htmlRows += `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 8px; min-width: 140px; flex: 1;">
-              <span style="font-size: 11px; color: var(--text-muted); width: 20px;">#${idx + 1}</span>
-              <div>
-                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: ${isChecked ? 'rgba(99, 102, 241, 0.08)' : 'var(--surface)'}; border: 1px solid ${isChecked ? 'rgba(99, 102, 241, 0.35)' : 'var(--border)'}; gap: 10px; transition: all 0.2s ease;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 140px; flex: 1;">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleReviewQueueWordSelect('${w.id}', this.checked)" style="width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; flex-shrink: 0;">
+              <span style="font-size: 11px; color: var(--text-muted); width: 22px; flex-shrink: 0;">#${idx + 1}</span>
+              <div style="min-width: 0;">
+                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   <span>${escapeHtml(w.term)}</span>
                   ${w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : ''}
                   ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
+                  <span class="badge" style="font-size: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted);" title="Bộ từ: ${escapeHtml(deckName)}">📁 ${escapeHtml(deckName)}</span>
                 </div>
-                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px;">
+                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                   ${escapeHtml(w.definitionVi || w.definition || '')}
                 </div>
               </div>
@@ -14183,13 +14410,22 @@ function switchPublisherTab(tab) {
     }
 
     function launchReviewDueWords(mode) {
-      closeModal('modal-review-queue');
-      const targetList = reviewDueWordsList && reviewDueWordsList.length > 0 ? reviewDueWordsList : words;
+      let targetList = [];
+      if (reviewQueueSelectedWordIds.size > 0) {
+        targetList = reviewQueueMasterList.filter(w => reviewQueueSelectedWordIds.has(w.id));
+      } else if (reviewQueueFilteredList.length > 0) {
+        targetList = reviewQueueFilteredList;
+      } else {
+        targetList = reviewQueueMasterList;
+      }
 
       if (!targetList || targetList.length === 0) {
-        alert('Không có từ vựng nào để ôn tập!');
+        alert('Không có từ vựng nào được chọn để ôn tập!');
         return;
       }
+
+      closeModal('modal-review-queue');
+      showToast(`🚀 Bắt đầu ôn tập ${targetList.length} từ đã chọn!`);
 
       if (mode === 'speaking') {
         openSpeakingSetupModal(false, targetList);

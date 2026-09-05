@@ -1,22 +1,38 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-13 (Build 245) - POS Auto-Detection, Sense Filtering, Multi-Sense VocaFill AI & Duplicate Word Prevention
+Phiên bản: v0.10.9-alpha-14 (Build 246) - SRS Subset Review, Quick Presets, Archive Exclusion & Deck Card Delete Button
 ================================================================================
-1. [Mặc Định Từ Loại "Không" & Ràng Buộc Thông Minh Khi Dùng AI] Ô chọn Từ loại (POS) khi thêm/sửa từ mặc định là "Không (Tự động / Auto)". Khi bấm VocaFill AI ("AI Điền Tự Động"): Nếu từ loại đang là "Không", AI sẽ tự động phân tích và chọn từ loại chuẩn xác nhất cho từng nét nghĩa. Nếu người dùng chủ động chọn một từ loại cụ thể (Danh từ, Động từ, Tính từ...), AI sẽ bị ràng buộc nghiêm ngặt chỉ tạo các nét nghĩa thuộc đúng từ loại đó. Khi nhập thủ công và để "Không", hệ thống tự động gán mặc định thành 'noun' (Danh từ).
-2. [Chỉ Lưu Nét Nghĩa Có Định Nghĩa Tiếng Việt & Chặn Lưu Rỗng] Khi lưu form từ vựng, hệ thống tự động sàng lọc loại bỏ các tab nét nghĩa không có nội dung định nghĩa tiếng Việt (`definitionVi`). Đồng thời áp dụng luật xác thực nghiêm ngặt: Phải có ít nhất 1 nét nghĩa có định nghĩa tiếng Việt thì mới cho phép lưu từ, tránh tình trạng rác dữ liệu.
-3. [VocaFill AI Tự Điền Đa Nét Nghĩa Đầy Đủ (Multi-Sense Auto-Population)] Nâng cấp trí tuệ nhân tạo VocaFill AI tự động trích xuất 2-4 nét nghĩa phổ biến nhất của các từ đa nghĩa và điền sẵn vào các tab nghĩa mà người dùng không cần phải nhấn nút "+" thủ công. Bộ từ điển Free Dictionary API dự phòng cũng tự động phân tích toàn bộ mảng definitions thành các nét nghĩa độc lập.
-4. [Chống Trùng Lặp Từ Trong Cùng Bộ Từ & Hợp Nhất Nét Nghĩa Khi Nhập Excel]
-   - Trong form thêm từ: Kiểm tra trùng lặp từ vựng theo thời gian thực (real-time). Nếu từ đã có trong bộ từ hiện tại, hiển thị cảnh báo trực quan kèm nút "Mở từ cũ ↗" và chặn lưu trùng.
-   - Khi nhập file Excel/CSV: Nếu phát hiện từ tiếng Anh đã tồn tại trong bộ từ, hệ thống tự động hợp nhất các nét nghĩa mới vào mảng `senses` của từ đã có thay vì tạo thẻ từ trùng lặp.
-5. [Đồng Bộ Toàn Diện & Kiểm Thử Tự Động] Cập nhật đồng bộ 7 điểm phiên bản, vượt qua 100% test suite, biên dịch Desktop exe và triển khai lên toàn bộ các nhánh GitHub.
+1. [Nâng Cấp Hàng Đợi Ôn Tập SRS: Chia Nhỏ Nhiệm Vụ & Học Nhanh Tiện Lợi]
+   - Cho phép người học tự do ôn tập một phần nhỏ (subset) trong hàng đợi SRS thay vì bắt buộc phải học hết toàn bộ hàng trăm từ một lúc, tránh tình trạng quá tải và áp lực học tập.
+   - Bổ sung thanh nút chọn nhanh (Quick Preset Pills): "⚡ 20 từ trễ nhất", "⚡ 50 từ trễ nhất", "⚡ 100 từ trễ nhất", "🔀 20 ngẫu nhiên", "🔀 50 ngẫu nhiên", "📋 Chọn tất cả", "❌ Bỏ chọn".
+   - Tích hợp thanh công cụ bộ lọc & sắp xếp đa năng: Lọc theo từng Bộ từ nguồn, tìm kiếm từ vựng, sắp xếp theo độ trễ hạn (nhiều nhất/ít nhất), mức độ thuộc (thấp/cao), hoặc bảng chữ cái A-Z.
+   - Hỗ trợ checkbox chọn từng từ riêng lẻ hoặc hàng loạt, kèm huy hiệu đếm "Đã chọn: X / Y từ" và hiển thị số lượng từ mục tiêu trực tiếp trên 4 nút học tập (Luyện Nói AI, Auto Flashcard, Luyện Viết, Quiz).
+2. [Loại Trừ Hoàn Toàn Bộ Từ Trong Kho Lưu Trữ Khỏi Hàng Đợi Ôn Tập]
+   - Các từ vựng thuộc những bộ từ đã cất vào Kho Lưu Trữ (`isArchived: true`) được tự động loại trừ 100% khỏi Hàng Đợi Ôn Tập SRS và Banner thông báo ôn tập hàng ngày trên màn hình chính, giữ không gian học tập luôn gọn gàng và tập trung vào các bộ từ đang hoạt động.
+3. [Tối Ưu Lưới Thao Tác Bìa Bộ Từ & Bổ Sung Nút Xóa Trực Tiếp]
+   - Thu hẹp lưới 3 nút ngoài bìa thẻ bộ từ thành lưới 4 cột cân đối (`repeat(4, 1fr)`).
+   - Bổ sung nút "🗑️ Xóa" trực tiếp trên bìa ngoài của thẻ bộ từ kèm hộp thoại xác nhận an toàn, giúp người dùng dọn dẹp bộ từ nhanh chóng mà không cần phải bấm vào màn hình chi tiết bộ từ.
+4. [Đồng Bộ Toàn Diện & Kiểm Thử Tự Động] Cập nhật đồng bộ 7 điểm phiên bản, vượt qua 100% test suite, biên dịch Desktop exe và triển khai lên toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-13 (Build 245)
+Phiên bản hiện tại : v0.10.9-alpha-14 (Build 246)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-14] - (BUILD 246 - SRS SUBSET REVIEW, QUICK PRESETS, ARCHIVE EXCLUSION & DECK CARD DELETE BUTTON):
+  - 🔁 Chia Nhỏ Hàng Đợi SRS & Bộ Nút Học Nhanh (Subset Review):
+    * Giải quyết dứt điểm tình trạng áp lực khi hàng đợi dồn ứ 600+ từ: Cho phép người dùng tùy ý chọn một số lượng từ phù hợp để ôn tập theo từng phiên học.
+    * Tích hợp các nút chọn nhanh thông minh: Top 20, Top 50, Top 100 từ trễ hạn lâu nhất; 20, 50 từ ngẫu nhiên; Chọn tất cả; Bỏ chọn.
+    * Tích hợp thanh lọc & sắp xếp: Lọc theo bộ từ nguồn, tìm kiếm từ khóa, sắp xếp theo độ trễ hạn, mức độ thuộc, hoặc tên A-Z.
+    * Bổ sung checkbox từng từ trong danh sách, cập nhật số lượng từ đã chọn theo thời gian thực trên 4 nút hành động (Luyện Nói AI, Auto Flashcard, Luyện Viết, Quiz).
+  - 📦 Tự Động Loại Trừ Kho Lưu Trữ Khỏi Hàng Đợi SRS:
+    * Thuật toán SRS `getDueReviewWords()` và Banner nhắc nhở tự động bỏ qua toàn bộ từ thuộc các bộ đã cất vào Kho Lưu Trữ (`isArchived: true`), bảo đảm mục tiêu cất đi không làm phiền việc ôn tập hàng ngày.
+  - 🗑️ Thẻ Bộ Từ 4 Nút Cân Đối & Bổ Sung Nút Xóa Trực Tiếp:
+    * Chuyển lưới `.deck-actions-grid` thành 4 cột, thu gọn kích thước các nút Sửa, Lưu trữ/Khôi phục, Ghim/Bỏ ghim.
+    * Bổ sung nút "Xóa" trực tiếp ngoài bìa thẻ bộ từ với biểu tượng thùng rác màu đỏ và xác nhận xác thực, tiết kiệm thời gian thao tác cho người học.
 
 🌟 [v0.10.9-alpha-13] - (BUILD 245 - POS AUTO-DETECTION, SENSE FILTERING, MULTI-SENSE VOCAFILL AI & DUPLICATE WORD PREVENTION):
   - 🎯 Ô Từ Loại Mặc Định "Không" & AI Tự Động Nhận Diện Linh Hoạt:

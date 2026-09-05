@@ -717,11 +717,62 @@
 
     .deck-actions-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
       margin-top: 14px;
       padding-top: 12px;
       border-top: 1px solid var(--border);
+    }
+    .deck-actions-grid .btn {
+      padding: 5px 4px;
+      font-size: 11px;
+      min-width: 0;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* SRS REVIEW QUEUE SUBSET CONTROLS & PRESET PILLS (v0.10.9-alpha-14) */
+    .review-queue-preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .review-queue-preset-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .review-queue-preset-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+    }
+    .review-queue-preset-btn.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(236, 72, 153, 0.2));
+      border-color: #6366f1;
+      color: #fff;
+      font-weight: 700;
+    }
+    .review-queue-controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
     }
 
     /* DECK CARD ACTIONS FOOTER */
@@ -2547,7 +2598,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-13</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-14</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -5341,7 +5392,7 @@
   </div>
 
   <div class="modal-overlay" id="modal-review-queue">
-    <div class="modal" style="max-width: 680px;">
+    <div class="modal" style="max-width: 780px;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span>🔔 Hàng Đợi Ôn Tập Hôm Nay</span>
@@ -5350,31 +5401,69 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-review-queue')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-
-
-      <!-- Quick Action Buttons for Due Words -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px;">
-        <button class="btn btn-primary" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
-          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span>
+      <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px;">
+        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói AI</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
-          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
+        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span>
+        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Luyện Viết</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span>
+        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Quiz</span>
         </button>
       </div>
 
-      <!-- Due Words Table / List Container -->
-      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 Danh sách từ đến hạn ôn tập:</span>
+      <!-- Quick Preset Batch Pills (Subset Review) -->
+      <div style="margin-bottom: 6px;">
+        <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+          ⚡ Chia Nhỏ Nhiệm Vụ (Học Nhanh):
+        </div>
+        <div class="review-queue-preset-pills" id="review-queue-preset-pills-bar">
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(20)" id="preset-btn-20" title="Chỉ ôn 20 từ bị trễ hạn lâu nhất">⚡ 20 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(50)" id="preset-btn-50" title="Chỉ ôn 50 từ bị trễ hạn lâu nhất">⚡ 50 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(100)" id="preset-btn-100" title="Chỉ ôn 100 từ bị trễ hạn lâu nhất">⚡ 100 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random20')" id="preset-btn-rand20" title="Bốc ngẫu nhiên 20 từ đến hạn">🔀 20 ngẫu nhiên</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random50')" id="preset-btn-rand50" title="Bốc ngẫu nhiên 50 từ đến hạn">🔀 50 ngẫu nhiên</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('all')" id="preset-btn-all" title="Chọn toàn bộ từ trong hàng đợi">📋 Chọn tất cả</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('clear')" id="preset-btn-clear" style="color: #f87171;" title="Bỏ chọn để lọc tự do">❌ Bỏ chọn</button>
+        </div>
+      </div>
+
+      <!-- Filter & Sort Bar -->
+      <div class="review-queue-controls-bar">
+        <input type="text" id="review-queue-search" class="form-input" placeholder="🔍 Tìm từ hoặc nghĩa..." oninput="onReviewQueueSearch(this.value)" style="flex: 1; min-width: 140px; height: 32px; font-size: 12px; padding: 4px 10px; border-radius: 8px;">
+        
+        <select id="review-queue-deck-filter" class="form-select" onchange="onReviewQueueDeckFilterChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Lọc theo bộ từ nguồn">
+          <option value="all">📁 Tất cả bộ từ</option>
+        </select>
+
+        <select id="review-queue-sort" class="form-select" onchange="onReviewQueueSortChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Kiểu sắp xếp từ vựng">
+          <option value="overdue-desc">⏳ Trễ hạn nhiều nhất</option>
+          <option value="overdue-asc">🕒 Gần đến hạn nhất</option>
+          <option value="score-asc">📉 Mức độ thuộc: Thấp ➜ Cao</option>
+          <option value="score-desc">📈 Mức độ thuộc: Cao ➜ Thấp</option>
+          <option value="alpha-asc">🔤 Tên từ: A ➜ Z</option>
+        </select>
+
+        <span id="review-queue-selected-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border: 1px solid rgba(99, 102, 241, 0.4); white-space: nowrap;">
+          Đã chọn: 0 từ
+        </span>
+      </div>
+
+      <!-- Header with Select-All & Summary Counter -->
+      <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="review-queue-select-all-cb" onchange="toggleReviewQueueSelectAll(this.checked)" style="width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer;">
+          <span>Chọn tất cả từ đang hiển thị</span>
+        </label>
         <span id="review-queue-summary-text" style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;"></span>
       </div>
 
-      <div id="review-queue-words-container" style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
+      <div id="review-queue-words-container" style="max-height: 330px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
         <!-- Rendered via JS -->
       </div>
     </div>
@@ -7231,7 +7320,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-13 (Build 245)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-14 (Build 246)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7852,10 +7941,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-13)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-14)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-13';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-13 (Build 245)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-14 (Build 246)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -16710,6 +16799,9 @@ function switchPublisherTab(tab) {
             <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu'}">
               <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
             </button>
+            <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa bộ từ này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
+              <svg class="icon icon-sm"><use href="#i-delete"/></svg> <span class="hide-on-mobile">Xóa</span>
+            </button>
           </div>
         `;
         card.addEventListener('click', (e) => {
@@ -21884,10 +21976,25 @@ function switchPublisherTab(tab) {
       return 1; // 0 - 25%
     }
 
+    // =========================================================================
+    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-alpha-14)
+    // =========================================================================
+    let reviewQueueMasterList = [];
+    let reviewQueueFilteredList = [];
+    let reviewQueueSelectedWordIds = new Set();
+    let reviewQueueSortMode = 'overdue-desc';
+    let reviewQueueDeckFilter = 'all';
+    let reviewQueueSearchQuery = '';
+    let reviewQueueActivePreset = null;
+
     function getDueReviewWords() {
       const now = Date.now();
       const msPerDay = 24 * 60 * 60 * 1000;
+      // Exclude words belonging to archived decks
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+
       return words.filter(w => {
+        if (archivedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
         const intervalDays = getReviewIntervalDays(score);
         const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
@@ -21908,10 +22015,12 @@ function switchPublisherTab(tab) {
       }
       container.style.display = 'block';
 
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
       const dueWords = getDueReviewWords();
       reviewDueWordsList = dueWords;
 
-      if (words.length === 0) {
+      if (nonArchivedWords.length === 0) {
         container.innerHTML = '';
         return;
       }
@@ -21951,7 +22060,7 @@ function switchPublisherTab(tab) {
               </div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="openReviewQueueModal()" style="font-size: 11.5px; padding: 4px 10px;">
-              👁️ Xem lịch chu kỳ (${words.length} từ)
+              👁️ Xem lịch chu kỳ (${nonArchivedWords.length} từ)
             </button>
           </div>
         `;
@@ -21959,59 +22068,266 @@ function switchPublisherTab(tab) {
     }
 
     function openReviewQueueModal() {
+      const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
       const dueWords = getDueReviewWords();
-      reviewDueWordsList = dueWords.length > 0 ? dueWords : [...words];
+      reviewQueueMasterList = dueWords.length > 0 ? dueWords : [...nonArchivedWords];
+      reviewDueWordsList = reviewQueueMasterList;
 
       const countBadge = document.getElementById('review-queue-modal-count-badge');
       if (countBadge) {
-        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${words.length} từ`;
+        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${nonArchivedWords.length} từ`;
         countBadge.style.background = dueWords.length > 0 ? '#ef4444' : '#10b981';
       }
 
-      const summaryText = document.getElementById('review-queue-summary-text');
-      if (summaryText) {
-        summaryText.textContent = dueWords.length > 0 ? `Đang ưu tiên ${dueWords.length} từ trễ hạn` : `Tất cả từ đã ôn tập đúng hạn`;
+      // Populate deck filter select
+      const deckFilterSelect = document.getElementById('review-queue-deck-filter');
+      if (deckFilterSelect) {
+        const deckCounts = {};
+        reviewQueueMasterList.forEach(w => {
+          deckCounts[w.deckId] = (deckCounts[w.deckId] || 0) + 1;
+        });
+
+        let opts = `<option value="all">📁 Tất cả bộ từ (${reviewQueueMasterList.length})</option>`;
+        decks.forEach(d => {
+          if (!d.isArchived && deckCounts[d.id]) {
+            opts += `<option value="${d.id}">📁 ${escapeHtml(d.title)} (${deckCounts[d.id]})</option>`;
+          }
+        });
+        deckFilterSelect.innerHTML = opts;
+        deckFilterSelect.value = 'all';
       }
 
-      renderReviewQueueModalList(reviewDueWordsList);
+      // Reset filters & search
+      reviewQueueDeckFilter = 'all';
+      reviewQueueSearchQuery = '';
+      const searchInput = document.getElementById('review-queue-search');
+      if (searchInput) searchInput.value = '';
+
+      reviewQueueSortMode = 'overdue-desc';
+      const sortSelect = document.getElementById('review-queue-sort');
+      if (sortSelect) sortSelect.value = 'overdue-desc';
+
+      // Default preset: If > 50 words, pre-select top 50; if <= 50, select all
+      reviewQueueSelectedWordIds.clear();
+      const defaultCount = reviewQueueMasterList.length > 50 ? 50 : reviewQueueMasterList.length;
+      if (defaultCount > 0) {
+        selectReviewQueuePreset(defaultCount, false);
+      } else {
+        filterAndRenderReviewQueue();
+      }
+
       openModal('modal-review-queue');
     }
 
-    function renderReviewQueueModalList(list) {
+    function selectReviewQueuePreset(preset, showToastMsg = true) {
+      reviewQueueActivePreset = preset;
+
+      // Update preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (preset === 'clear') {
+        reviewQueueSelectedWordIds.clear();
+        const clearBtn = document.getElementById('preset-btn-clear');
+        if (clearBtn) clearBtn.classList.add('active');
+        if (showToastMsg) showToast('❌ Đã bỏ chọn tất cả từ trong hàng đợi!');
+      } else if (preset === 'all') {
+        reviewQueueSelectedWordIds.clear();
+        (reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const allBtn = document.getElementById('preset-btn-all');
+        if (allBtn) allBtn.classList.add('active');
+        if (showToastMsg) showToast(`📋 Đã chọn tất cả ${reviewQueueSelectedWordIds.size} từ!`);
+      } else if (preset === 'random20' || preset === 'random50') {
+        reviewQueueSelectedWordIds.clear();
+        const count = preset === 'random20' ? 20 : 50;
+        const sourceList = reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList;
+        const shuffled = [...sourceList].sort(() => Math.random() - 0.5);
+        shuffled.slice(0, Math.min(count, shuffled.length)).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const randBtn = document.getElementById(preset === 'random20' ? 'preset-btn-rand20' : 'preset-btn-rand50');
+        if (randBtn) randBtn.classList.add('active');
+        if (showToastMsg) showToast(`🔀 Đã bốc ngẫu nhiên ${reviewQueueSelectedWordIds.size} từ!`);
+      } else if (typeof preset === 'number') {
+        reviewQueueSelectedWordIds.clear();
+        const sourceList = reviewQueueFilteredList.length > 0 ? reviewQueueFilteredList : reviewQueueMasterList;
+        const now = Date.now();
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const sortedByOverdue = [...sourceList].sort((a, b) => {
+          const scoreA = getWordScore(a);
+          const scoreB = getWordScore(b);
+          const intA = getReviewIntervalDays(scoreA);
+          const intB = getReviewIntervalDays(scoreB);
+          const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+          const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+          const overdueA = ((now - timeA) / msPerDay) - intA;
+          const overdueB = ((now - timeB) / msPerDay) - intB;
+          return overdueB - overdueA;
+        });
+
+        sortedByOverdue.slice(0, Math.min(preset, sortedByOverdue.length)).forEach(w => {
+          reviewQueueSelectedWordIds.add(w.id);
+        });
+        const numBtn = document.getElementById('preset-btn-' + preset);
+        if (numBtn) numBtn.classList.add('active');
+        if (showToastMsg) showToast(`⚡ Đã chọn nhanh ${reviewQueueSelectedWordIds.size} từ trễ hạn nhất!`);
+      }
+
+      filterAndRenderReviewQueue();
+    }
+
+    function toggleReviewQueueSelectAll(checked) {
+      // Clear preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (checked) {
+        reviewQueueFilteredList.forEach(w => reviewQueueSelectedWordIds.add(w.id));
+      } else {
+        reviewQueueFilteredList.forEach(w => reviewQueueSelectedWordIds.delete(w.id));
+      }
+
+      filterAndRenderReviewQueue();
+    }
+
+    function toggleReviewQueueWordSelect(wordId, checked) {
+      if (checked) {
+        reviewQueueSelectedWordIds.add(wordId);
+      } else {
+        reviewQueueSelectedWordIds.delete(wordId);
+      }
+
+      // Clear preset pills active state
+      ['20', '50', '100', 'rand20', 'rand50', 'all', 'clear'].forEach(key => {
+        const btn = document.getElementById('preset-btn-' + key);
+        if (btn) btn.classList.remove('active');
+      });
+
+      updateReviewQueueHeaderAndActions();
+    }
+
+    function onReviewQueueDeckFilterChange(val) {
+      reviewQueueDeckFilter = val;
+      filterAndRenderReviewQueue();
+    }
+
+    function onReviewQueueSortChange(val) {
+      reviewQueueSortMode = val;
+      filterAndRenderReviewQueue();
+    }
+
+    function onReviewQueueSearch(val) {
+      reviewQueueSearchQuery = (val || '').trim().toLowerCase();
+      filterAndRenderReviewQueue();
+    }
+
+    function updateReviewQueueHeaderAndActions() {
+      const selectedBadge = document.getElementById('review-queue-selected-badge');
+      if (selectedBadge) {
+        selectedBadge.textContent = `Đã chọn: ${reviewQueueSelectedWordIds.size} / ${reviewQueueFilteredList.length} từ`;
+      }
+
+      const selectAllCb = document.getElementById('review-queue-select-all-cb');
+      if (selectAllCb) {
+        selectAllCb.checked = reviewQueueFilteredList.length > 0 && reviewQueueFilteredList.every(w => reviewQueueSelectedWordIds.has(w.id));
+      }
+
+      const count = reviewQueueSelectedWordIds.size > 0 ? reviewQueueSelectedWordIds.size : reviewQueueFilteredList.length;
+      const spkLabel = document.getElementById('label-review-speaking');
+      const afcLabel = document.getElementById('label-review-autofc');
+      const splLabel = document.getElementById('label-review-spelling');
+      const qzLabel = document.getElementById('label-review-quiz');
+
+      if (spkLabel) spkLabel.textContent = `Luyện Nói AI (${count})`;
+      if (afcLabel) afcLabel.textContent = `Auto Flashcard (${count})`;
+      if (splLabel) splLabel.textContent = `Luyện Viết (${count})`;
+      if (qzLabel) qzLabel.textContent = `Quiz (${count})`;
+    }
+
+    function filterAndRenderReviewQueue() {
       const container = document.getElementById('review-queue-words-container');
       if (!container) return;
-
-      if (!list || list.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Chưa có từ vựng nào trong hệ thống.</div>';
-        return;
-      }
 
       const now = Date.now();
       const msPerDay = 24 * 60 * 60 * 1000;
 
+      // 1. Filter
+      let list = reviewQueueMasterList.filter(w => {
+        if (reviewQueueDeckFilter !== 'all' && w.deckId !== reviewQueueDeckFilter) return false;
+        if (reviewQueueSearchQuery) {
+          const term = (w.term || '').toLowerCase();
+          const def = (w.definitionVi || w.definition || '').toLowerCase();
+          if (!term.includes(reviewQueueSearchQuery) && !def.includes(reviewQueueSearchQuery)) return false;
+        }
+        return true;
+      });
+
+      // 2. Sort
+      list.sort((a, b) => {
+        const scoreA = getWordScore(a);
+        const scoreB = getWordScore(b);
+        const intA = getReviewIntervalDays(scoreA);
+        const intB = getReviewIntervalDays(scoreB);
+        const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+        const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+        const overdueA = ((now - timeA) / msPerDay) - intA;
+        const overdueB = ((now - timeB) / msPerDay) - intB;
+
+        if (reviewQueueSortMode === 'overdue-desc') return overdueB - overdueA;
+        if (reviewQueueSortMode === 'overdue-asc') return overdueA - overdueB;
+        if (reviewQueueSortMode === 'score-asc') return scoreA - scoreB;
+        if (reviewQueueSortMode === 'score-desc') return scoreB - scoreA;
+        if (reviewQueueSortMode === 'alpha-asc') return (a.term || '').localeCompare(b.term || '');
+        return 0;
+      });
+
+      reviewQueueFilteredList = list;
+
+      const summaryText = document.getElementById('review-queue-summary-text');
+      if (summaryText) {
+        summaryText.textContent = `Hiển thị ${reviewQueueFilteredList.length} / ${reviewQueueMasterList.length} từ`;
+      }
+
+      updateReviewQueueHeaderAndActions();
+
+      if (reviewQueueFilteredList.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Không tìm thấy từ vựng nào khớp với bộ lọc hiện tại.</div>';
+        return;
+      }
+
       let htmlRows = '';
-      list.forEach((w, idx) => {
+      reviewQueueFilteredList.forEach((w, idx) => {
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
         const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
         const diffDays = Math.floor((now - lastTime) / msPerDay);
         const interval = getReviewIntervalDays(score);
         const isOverdue = diffDays >= interval;
+        const isChecked = reviewQueueSelectedWordIds.has(w.id);
 
         const deckObj = decks.find(d => d.id === w.deckId);
         const deckName = deckObj ? deckObj.title : 'Bộ từ';
 
         htmlRows += `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 8px; min-width: 140px; flex: 1;">
-              <span style="font-size: 11px; color: var(--text-muted); width: 20px;">#${idx + 1}</span>
-              <div>
-                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: ${isChecked ? 'rgba(99, 102, 241, 0.08)' : 'var(--surface)'}; border: 1px solid ${isChecked ? 'rgba(99, 102, 241, 0.35)' : 'var(--border)'}; gap: 10px; transition: all 0.2s ease;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 140px; flex: 1;">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleReviewQueueWordSelect('${w.id}', this.checked)" style="width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; flex-shrink: 0;">
+              <span style="font-size: 11px; color: var(--text-muted); width: 22px; flex-shrink: 0;">#${idx + 1}</span>
+              <div style="min-width: 0;">
+                <div style="font-weight: 700; font-size: 13.5px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   <span>${escapeHtml(w.term)}</span>
                   ${w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : ''}
                   ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
+                  <span class="badge" style="font-size: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted);" title="Bộ từ: ${escapeHtml(deckName)}">📁 ${escapeHtml(deckName)}</span>
                 </div>
-                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px;">
+                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                   ${escapeHtml(w.definitionVi || w.definition || '')}
                 </div>
               </div>
@@ -22036,13 +22352,22 @@ function switchPublisherTab(tab) {
     }
 
     function launchReviewDueWords(mode) {
-      closeModal('modal-review-queue');
-      const targetList = reviewDueWordsList && reviewDueWordsList.length > 0 ? reviewDueWordsList : words;
+      let targetList = [];
+      if (reviewQueueSelectedWordIds.size > 0) {
+        targetList = reviewQueueMasterList.filter(w => reviewQueueSelectedWordIds.has(w.id));
+      } else if (reviewQueueFilteredList.length > 0) {
+        targetList = reviewQueueFilteredList;
+      } else {
+        targetList = reviewQueueMasterList;
+      }
 
       if (!targetList || targetList.length === 0) {
-        alert('Không có từ vựng nào để ôn tập!');
+        alert('Không có từ vựng nào được chọn để ôn tập!');
         return;
       }
+
+      closeModal('modal-review-queue');
+      showToast(`🚀 Bắt đầu ôn tập ${targetList.length} từ đã chọn!`);
 
       if (mode === 'speaking') {
         openSpeakingSetupModal(false, targetList);

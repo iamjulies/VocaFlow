@@ -1,5 +1,5 @@
-﻿  <div class="modal-overlay" id="modal-review-queue">
-    <div class="modal" style="max-width: 680px;">
+  <div class="modal-overlay" id="modal-review-queue">
+    <div class="modal" style="max-width: 780px;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span>🔔 Hàng Đợi Ôn Tập Hôm Nay</span>
@@ -8,31 +8,69 @@
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-review-queue')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
-
-
-      <!-- Quick Action Buttons for Due Words -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px;">
-        <button class="btn btn-primary" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
-          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span>
+      <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px;">
+        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói AI</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
-          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span>
+        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span>
+        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Luyện Viết</span>
         </button>
-        <button class="btn btn-primary" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Quiz</span>
+        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Quiz</span>
         </button>
       </div>
 
-      <!-- Due Words Table / List Container -->
-      <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 Danh sách từ đến hạn ôn tập:</span>
+      <!-- Quick Preset Batch Pills (Subset Review) -->
+      <div style="margin-bottom: 6px;">
+        <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+          ⚡ Chia Nhỏ Nhiệm Vụ (Học Nhanh):
+        </div>
+        <div class="review-queue-preset-pills" id="review-queue-preset-pills-bar">
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(20)" id="preset-btn-20" title="Chỉ ôn 20 từ bị trễ hạn lâu nhất">⚡ 20 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(50)" id="preset-btn-50" title="Chỉ ôn 50 từ bị trễ hạn lâu nhất">⚡ 50 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(100)" id="preset-btn-100" title="Chỉ ôn 100 từ bị trễ hạn lâu nhất">⚡ 100 từ trễ nhất</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random20')" id="preset-btn-rand20" title="Bốc ngẫu nhiên 20 từ đến hạn">🔀 20 ngẫu nhiên</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random50')" id="preset-btn-rand50" title="Bốc ngẫu nhiên 50 từ đến hạn">🔀 50 ngẫu nhiên</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('all')" id="preset-btn-all" title="Chọn toàn bộ từ trong hàng đợi">📋 Chọn tất cả</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('clear')" id="preset-btn-clear" style="color: #f87171;" title="Bỏ chọn để lọc tự do">❌ Bỏ chọn</button>
+        </div>
+      </div>
+
+      <!-- Filter & Sort Bar -->
+      <div class="review-queue-controls-bar">
+        <input type="text" id="review-queue-search" class="form-input" placeholder="🔍 Tìm từ hoặc nghĩa..." oninput="onReviewQueueSearch(this.value)" style="flex: 1; min-width: 140px; height: 32px; font-size: 12px; padding: 4px 10px; border-radius: 8px;">
+        
+        <select id="review-queue-deck-filter" class="form-select" onchange="onReviewQueueDeckFilterChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Lọc theo bộ từ nguồn">
+          <option value="all">📁 Tất cả bộ từ</option>
+        </select>
+
+        <select id="review-queue-sort" class="form-select" onchange="onReviewQueueSortChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Kiểu sắp xếp từ vựng">
+          <option value="overdue-desc">⏳ Trễ hạn nhiều nhất</option>
+          <option value="overdue-asc">🕒 Gần đến hạn nhất</option>
+          <option value="score-asc">📉 Mức độ thuộc: Thấp ➜ Cao</option>
+          <option value="score-desc">📈 Mức độ thuộc: Cao ➜ Thấp</option>
+          <option value="alpha-asc">🔤 Tên từ: A ➜ Z</option>
+        </select>
+
+        <span id="review-queue-selected-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border: 1px solid rgba(99, 102, 241, 0.4); white-space: nowrap;">
+          Đã chọn: 0 từ
+        </span>
+      </div>
+
+      <!-- Header with Select-All & Summary Counter -->
+      <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="review-queue-select-all-cb" onchange="toggleReviewQueueSelectAll(this.checked)" style="width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer;">
+          <span>Chọn tất cả từ đang hiển thị</span>
+        </label>
         <span id="review-queue-summary-text" style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;"></span>
       </div>
 
-      <div id="review-queue-words-container" style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
+      <div id="review-queue-words-container" style="max-height: 330px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); padding: 8px;">
         <!-- Rendered via JS -->
       </div>
     </div>
