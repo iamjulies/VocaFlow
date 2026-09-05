@@ -1,24 +1,31 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-11 (Build 243) - Monetag Clean Ads (In-Page, Vignette, Direct Link) & VIP Ad-Free Exemption
+Phiên bản: v0.10.9-alpha-12 (Build 244) - In-App Rewarded Ads Cycling, Context-Aware Ad Suppression & Instant VIP Purge
 ================================================================================
-1. [Gỡ Bỏ Hoàn Toàn Multitag & Onclick/Popunder] Loại bỏ hoàn toàn mã Multitag (`quge5.com`) và script Service Worker Monetag (`3nbf4.com`), triệt tiêu triệt để tình trạng tự động bật tab mới (onclick/popunder) gây phiền toái.
-2. [Triển Khai Bộ Ba Quảng Cáo Sạch Monetag]
-   - In-Page Push Banner (Zone `11730204`, `nap5k.com/tag.min.js`): Biểu ngữ trượt nhẹ nhàng, không xâm lấn.
-   - Vignette Banner (Zone `11730208`, `n6wxm.com/vignette.min.js`): Biểu ngữ chuyển cảnh tự nhiên, chuyên nghiệp.
-   - Direct Link Ads (`https://omg10.com/4/11730211`): Mở liên kết tài trợ khi người dùng chủ động xem quảng cáo nhận thưởng (+1 Lượt quay may mắn).
-3. [Đặc Quyền VIP Miễn Nhiễm Quảng Cáo Tự Động (VIP Ad-Free Exemption)]
-   - Toàn bộ quảng cáo thụ động (In-Page Push & Vignette banner) được tự động gỡ bỏ/chặn đứng hoàn toàn đối với tài khoản VIP.
-   - Người dùng VIP chỉ tiếp cận Direct Link khi chủ động nhấn "Xem Quảng Cáo Nhận Thưởng" khi hết lượt quay để nhận thêm lượt quay may mắn.
-4. [Quy Trình Kiểm Thử & Triển Khai Chuẩn Mực] Hoàn tất 100% tiêu chí kiểm thử tự động, biên dịch VocaFlow Desktop .NET 8 và đẩy đồng bộ lên toàn bộ các nhánh GitHub.
+1. [Gỡ Bỏ Hoàn Toàn Direct Link / Chuyển Tab Khi Xem Video Nhận Thưởng] Chấm dứt triệt để cơ chế mở tab mới sang link quảng cáo Direct Link (`omg10.com`). Thay vào đó, toàn bộ quy trình xem quảng cáo nhận thưởng 30s (+1 Lượt Quay May Mắn) diễn ra 100% nội bộ trong modal ứng dụng, giữ chân người dùng và đảm bảo trải nghiệm học tập tập trung.
+2. [Cơ Chế Luân Phiên Quảng Cáo Không Chồng Đè (In-App Ad Cycling)] Trong suốt thời gian 30s của phiên xem quảng cáo, hệ thống tự động luân phiên hiển thị In-Page Push và Vignette Banner. Nếu người dùng tắt quảng cáo đang hiện, quảng cáo kế tiếp sẽ được nạp lại sau 4s giãn cách mà tuyệt đối KHÔNG bao giờ bị chồng đè (anti-stacking). Khi hết 30s, hệ thống tự động ngừng kích hoạt thêm quảng cáo và dọn dẹp để hiện nút Nhận Thưởng.
+3. [Triệt Tiêu Vignette Banner Trong Chế Độ Học & VocaMentor AI] Nhằm bảo vệ tối đa sự tập trung và chống ức chế cho người học, các chế độ học tập (`screen-quiz`, `screen-spelling`, `screen-speaking`, `screen-autofc`) và Trợ lý AI (`modal-ai-mentor`, `modal-ai-deck-studio`) được cô lập: Hoàn toàn KHÔNG hiển thị biểu ngữ Vignette Banner, chỉ cho phép biểu ngữ In-Page Push trượt nhẹ ở góc màn hình.
+4. [Thanh Lọc Quảng Cáo Tức Thì Cho Tài Khoản VIP (Instant VIP Purge - No F5 Needed)] Khi người dùng nâng cấp hoặc đăng nhập tài khoản VIP, cơ chế `purgeAllAdArtifactsFromDOM()` ngay lập tức truy quét và loại bỏ 100% các script Monetag, iframe và các phần tử DOM quảng cáo đang nổi trên màn hình mà KHÔNG cần người dùng phải nhấn F5 / tải lại trang.
+5. [Đồng Bộ Toàn Diện & Kiểm Thử Tự Động] Cập nhật đồng bộ 7 điểm phiên bản, vượt qua 100% test suite, biên dịch Desktop exe và triển khai lên toàn bộ các nhánh GitHub.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-11 (Build 243)
+Phiên bản hiện tại : v0.10.9-alpha-12 (Build 244)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-12] - (BUILD 244 - IN-APP REWARDED ADS CYCLING, CONTEXT-AWARE AD SUPPRESSION & INSTANT VIP PURGE):
+  - 🚫 Gỡ bỏ Direct Link mở tab mới khi xem quảng cáo nhận thưởng:
+    * Chấm dứt `window.open(MONETAG_DIRECT_LINK_URL)`. Người dùng xem quảng cáo nhận thưởng (+1 Lượt Quay May Mắn) hoàn toàn ở lại giao diện modal của ứng dụng.
+  - 🔄 Động cơ luân phiên quảng cáo sạch trong ứng dụng (In-App Ad Cycling Engine):
+    * Khi bấm xem quảng cáo nhận thưởng, hệ thống tự động luân phiên kích hoạt In-Page Push và Vignette Banner trong suốt 30 giây.
+    * Tích hợp cơ chế chống xếp chồng (Anti-Stacking): Chỉ kích hoạt quảng cáo mới khi màn hình trống và có độ trễ an toàn (tối thiểu 4 giây). Nếu người dùng tắt quảng cáo khi còn hạn 30s, quảng cáo kế tiếp sẽ tự động hiện ra. Khi đếm ngược kết thúc, toàn bộ quảng cáo được dừng lại và dọn dẹp sạch sẽ để nhường chỗ cho nút "Nhận Thưởng".
+  - 🛡️ Chống ức chế học tập: Cô lập Vignette Banner khi Học & dùng VocaMentor AI:
+    * Tự động phát hiện khi người dùng đang ở các màn hình thi/học (`screen-quiz`, `screen-spelling`, `screen-speaking`, `screen-autofc`) hoặc mở modal VocaMentor AI / Deck Studio: Triệt tiêu 100% biểu ngữ Vignette Banner, chỉ hiển thị In-Page Push tinh tế ở góc dưới.
+  - 👑 Thanh lọc DOM quảng cáo tức thì cho tài khoản VIP (Không cần F5 / Reload):
+    * Bổ sung cơ chế `purgeAllAdArtifactsFromDOM()` quét và gỡ bỏ toàn bộ thẻ script Monetag, các iframe nạp từ `nap5k.com`, `n6wxm.com` và các container div nổi (`fixed`/`absolute`) ngay khoảnh khắc đăng nhập tài khoản VIP hoặc kích hoạt VIP, xóa sổ hoàn toàn quảng cáo mà không cần tải lại trang.
 
 🌟 [v0.10.9-alpha-11] - (BUILD 243 - MONETAG CLEAN ADS & VIP AD-FREE EXEMPTION):
   - 🚫 Gỡ bỏ triệt để Multitag & Popunder/Onclick:

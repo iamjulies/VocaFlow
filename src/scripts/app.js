@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-11)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-12)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-11 (Build 243)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-12 (Build 244)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -146,6 +146,7 @@
       updateAuthUI();
       refreshAdminVipUI();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      if (userIsVip && typeof purgeAllAdArtifactsFromDOM === 'function') purgeAllAdArtifactsFromDOM();
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       return { userIsVip, userVipTier, userVipExpiresAt };
     }
@@ -5495,6 +5496,9 @@ function switchPublisherTab(tab) {
         lastSyncEl.textContent = lastSync ? new Date(lastSync).toLocaleString('vi-VN') : 'Chưa đồng bộ';
       }
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
+      if (typeof isUserVip === 'function' && isUserVip() && typeof purgeAllAdArtifactsFromDOM === 'function') {
+        purgeAllAdArtifactsFromDOM();
+      }
     }
 
     // Modal Switchers
@@ -8183,6 +8187,11 @@ function switchPublisherTab(tab) {
         const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
         fab.style.display = isExamScreen ? 'none' : 'flex';
       }
+
+      // v0.10.9-alpha-12: Context-aware ads (suppress vignette during study screens)
+      if (typeof initMonetagPassiveAds === 'function') {
+        initMonetagPassiveAds();
+      }
     }
 
     // =========================================================================
@@ -9085,11 +9094,21 @@ function switchPublisherTab(tab) {
 
     // MODAL CONTROL
     function openModal(id) {
-      document.getElementById(id).classList.add('active');
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+      if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {
+        if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
+      }
     }
     function closeModal(id) {
       const el = document.getElementById(id);
       if (el) el.classList.remove('active');
+      if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {
+        if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
+      }
+      if (id === 'modal-rewarded-ad') {
+        if (typeof stopRewardedAdCycle === 'function') stopRewardedAdCycle();
+      }
       if (id === 'modal-quiz-result' || id === 'modal-spelling-result') {
         stopVocaSfx('fireworks');
       }
@@ -10670,29 +10689,102 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-11)
+    // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-12)
     // =========================================================================
-    const MONETAG_DIRECT_LINK_URL = 'https://omg10.com/4/11730211';
     const MONETAG_INPAGE_ZONE = '11730204';
     const MONETAG_VIGNETTE_ZONE = '11730208';
     let monetagInPageScriptEl = null;
     let monetagVignetteScriptEl = null;
+    let lastRewardedAdTriggerTime = 0;
+    let rewardedAdCurrentType = 'inpage';
 
-    function initMonetagPassiveAds() {
-      const isVip = (typeof isUserVip === 'function' && isUserVip());
-      
-      // VIP users: 100% clean ad-free experience - strip or suppress all passive ads!
-      if (isVip) {
-        const existingInPage = document.getElementById('monetag-inpage-script');
-        if (existingInPage) existingInPage.remove();
-        const existingVignette = document.getElementById('monetag-vignette-script');
-        if (existingVignette) existingVignette.remove();
-        monetagInPageScriptEl = null;
-        monetagVignetteScriptEl = null;
-        return;
+    // Instant & Thorough Ad Purge for VIP Accounts (No F5 Reload Needed!)
+    function purgeAllAdArtifactsFromDOM() {
+      // 1. Remove all ad network script tags
+      const scriptSelectors = [
+        '#monetag-inpage-script',
+        '#monetag-vignette-script',
+        'script[src*="nap5k.com"]',
+        'script[src*="n6wxm.com"]',
+        'script[src*="quge5.com"]',
+        'script[src*="3nbf4.com"]',
+        'script[data-zone="11730204"]',
+        'script[data-zone="11730208"]'
+      ];
+      scriptSelectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+          try { el.remove(); } catch (e) {}
+        });
+      });
+
+      // 2. Remove all ad iframes, banners, and wrappers injected into the DOM
+      const adSelectors = [
+        'iframe[src*="nap5k.com"]',
+        'iframe[src*="n6wxm.com"]',
+        'iframe[src*="monetag"]',
+        'div[id*="monetag"]',
+        'div[class*="monetag"]',
+        'div[class*="vignette"]',
+        'div[class*="inpage"]',
+        'div[id*="vignette"]',
+        'div[id*="inpage"]',
+        'div[data-zone="11730204"]',
+        'div[data-zone="11730208"]'
+      ];
+      adSelectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+          if (!el.classList.contains('modal-overlay') && !el.closest('.modal-overlay') && !el.closest('#toast-container')) {
+            try { el.remove(); } catch (e) {}
+          }
+        });
+      });
+
+      // 3. Scan body direct children for foreign fixed overlays/banners
+      Array.from(document.body.children).forEach(child => {
+        if (child.tagName === 'DIV' || child.tagName === 'IFRAME') {
+          const id = child.id || '';
+          const cls = child.className || '';
+          const style = child.getAttribute('style') || '';
+          const isVocaFlowElement = id.startsWith('screen-') || id.startsWith('modal-') || id.startsWith('toast-') || id === 'app' || id === 'app-container' || child.tagName === 'HEADER' || child.tagName === 'MAIN' || child.tagName === 'NAV';
+          if (!isVocaFlowElement && (style.includes('position: fixed') || style.includes('position: absolute')) && (style.includes('z-index') || cls.includes('ad') || id.includes('ad'))) {
+            if (!child.querySelector('#screen-decks') && !child.querySelector('.brand') && !child.classList.contains('modal-overlay')) {
+              try { child.remove(); } catch (e) {}
+            }
+          }
+        }
+      });
+
+      monetagInPageScriptEl = null;
+      monetagVignetteScriptEl = null;
+    }
+
+    // Context-Aware Detection: In Study Mode (Quiz, Spelling, Speaking, Flashcards) or AI Mentor
+    function isInStudyOrMentorMode() {
+      const studyScreens = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'];
+      for (const sid of studyScreens) {
+        const el = document.getElementById(sid);
+        if (el && el.classList.contains('active')) return true;
       }
+      if (typeof isFlashcardStudyActive !== 'undefined' && isFlashcardStudyActive) return true;
+      const mentorModal = document.getElementById('modal-ai-mentor');
+      if (mentorModal && mentorModal.classList.contains('active')) return true;
+      const deckStudioModal = document.getElementById('modal-ai-deck-studio');
+      if (deckStudioModal && deckStudioModal.classList.contains('active')) return true;
+      return false;
+    }
 
-      // Non-VIP users: Dynamically inject In-Page Push & Vignette banner scripts
+    function suppressVignetteAd() {
+      const vScript = document.getElementById('monetag-vignette-script');
+      if (vScript) {
+        try { vScript.remove(); } catch (e) {}
+        monetagVignetteScriptEl = null;
+      }
+      document.querySelectorAll('iframe[src*="n6wxm.com"], div[class*="vignette"], div[id*="vignette"]').forEach(el => {
+        try { el.remove(); } catch (e) {}
+      });
+    }
+
+    function injectInPagePushAd() {
       if (!document.getElementById('monetag-inpage-script')) {
         try {
           const s = document.createElement('script');
@@ -10705,7 +10797,9 @@ function switchPublisherTab(tab) {
           console.warn('Monetag In-Page Push init error:', e);
         }
       }
+    }
 
+    function injectVignetteAd() {
       if (!document.getElementById('monetag-vignette-script')) {
         try {
           const s = document.createElement('script');
@@ -10720,8 +10814,86 @@ function switchPublisherTab(tab) {
       }
     }
 
+    function initMonetagPassiveAds() {
+      const isVip = (typeof isUserVip === 'function' && isUserVip());
+      
+      // VIP users: 100% clean ad-free experience - purge immediately without page refresh!
+      if (isVip) {
+        purgeAllAdArtifactsFromDOM();
+        return;
+      }
+
+      // Non-VIP users:
+      // 1. In-Page Push: Allowed everywhere (banner nhỏ gọn trượt nhẹ)
+      injectInPagePushAd();
+
+      // 2. Vignette Banner: STRICTLY SUPPRESSED during study screens and AI Mentor!
+      if (isInStudyOrMentorMode()) {
+        suppressVignetteAd();
+      } else {
+        injectVignetteAd();
+      }
+    }
+
     // =========================================================================
-    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3 / v0.10.9-alpha-11)
+    // REWARDED ADS CYCLING ENGINE (v0.10.9-alpha-12 - IN-APP NO NEW TAB)
+    // =========================================================================
+    function startRewardedAdCycle() {
+      lastRewardedAdTriggerTime = Date.now();
+      rewardedAdCurrentType = 'inpage';
+      triggerRewardedAdBanner('inpage');
+    }
+
+    function isAnyAdCurrentlyOnScreen() {
+      const adNodes = document.querySelectorAll('iframe[src*="nap5k"], iframe[src*="n6wxm"], div[class*="inpage"], div[class*="vignette"], div[id*="inpage"], div[id*="vignette"]');
+      for (const node of adNodes) {
+        const rect = node.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0 && window.getComputedStyle(node).display !== 'none' && window.getComputedStyle(node).visibility !== 'hidden') {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function triggerRewardedAdBanner(type = 'inpage') {
+      const statusBadge = document.getElementById('rewarded-ad-status-badge');
+      if (type === 'inpage') {
+        if (statusBadge) statusBadge.innerHTML = '<span>📢 Biểu ngữ tài trợ In-Page Push đang hiển thị</span>';
+        injectInPagePushAd();
+      } else {
+        if (statusBadge) statusBadge.innerHTML = '<span>🎬 Biểu ngữ tài trợ Vignette Banner đang hiển thị</span>';
+        injectVignetteAd();
+      }
+      lastRewardedAdTriggerTime = Date.now();
+    }
+
+    function checkAndCycleRewardedAds() {
+      // Only cycle if in active countdown and remaining time > 3 seconds
+      if (adWatchSecondsLeft <= 3) return;
+
+      const elapsedSinceLastTrigger = Date.now() - lastRewardedAdTriggerTime;
+      // Minimum 4 seconds cooldown between ad popups to prevent stacking
+      if (elapsedSinceLastTrigger < 4000) return;
+
+      // Anti-stacking rule: if an ad is already on screen, DO NOT trigger another!
+      if (isAnyAdCurrentlyOnScreen()) return;
+
+      // Ad was closed/dismissed by user while session is still active: trigger next cleanly!
+      rewardedAdCurrentType = (rewardedAdCurrentType === 'inpage') ? 'vignette' : 'inpage';
+      triggerRewardedAdBanner(rewardedAdCurrentType);
+    }
+
+    function stopRewardedAdCycle() {
+      // Suppress any active vignette so it does not block the reward claim button
+      suppressVignetteAd();
+      const statusBadge = document.getElementById('rewarded-ad-status-badge');
+      if (statusBadge) {
+        statusBadge.innerHTML = '<span style="color: #34d399;">✅ Đã hoàn tất 30s xem quảng cáo! Bấm nút Nhận Thưởng bên dưới.</span>';
+      }
+    }
+
+    // =========================================================================
+    // REWARDED VIDEO ADS ENGINE (v0.10.8-alpha-10.3 / v0.10.9-alpha-12)
     // =========================================================================
     const AD_FEATURE_SLIDES = [
       {
@@ -10754,13 +10926,6 @@ function switchPublisherTab(tab) {
         return;
       }
 
-      // Open Monetag Sponsored Direct Link in a new tab
-      try {
-        window.open(MONETAG_DIRECT_LINK_URL, '_blank');
-      } catch (e) {
-        console.warn('Direct link window.open error:', e);
-      }
-
       // Pick a random ad slide
       currentAdActiveSlide = AD_FEATURE_SLIDES[Math.floor(Math.random() * AD_FEATURE_SLIDES.length)];
       const titleEl = document.getElementById('ad-player-feature-title');
@@ -10778,7 +10943,7 @@ function switchPublisherTab(tab) {
       if (countdownEl) countdownEl.textContent = `Còn ${adWatchSecondsLeft}s`;
       if (claimBtn) {
         claimBtn.disabled = true;
-        claimBtn.textContent = '⏳ Đang xem video (30s)...';
+        claimBtn.textContent = '⏳ Đang xem quảng cáo (30s)...';
         claimBtn.style.opacity = '0.5';
         claimBtn.style.cursor = 'not-allowed';
       }
@@ -10788,12 +10953,15 @@ function switchPublisherTab(tab) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch (e) {}
 
+      // Start in-app non-overlapping ad cycle for the 30s session (NO DIRECT LINK / NO TAB SWITCH)
+      startRewardedAdCycle();
+
       if (adWatchInterval) clearInterval(adWatchInterval);
       adWatchInterval = setInterval(() => {
         // ANTI-CHEAT: Check if window / tab is active and visible
         if (document.hidden || !document.hasFocus()) {
           isAdWatchPausedDueToTabSwitch = true;
-          if (titleEl) titleEl.textContent = '⏸️ Video Đã Tạm Dừng';
+          if (titleEl) titleEl.textContent = '⏸️ Quảng Cáo Đã Tạm Dừng';
           if (descEl) descEl.textContent = '⚠️ Bạn vừa chuyển tab/ứng dụng khác! Vui lòng giữ màn hình VocaFlow để tiếp tục xem.';
           if (countdownEl) countdownEl.textContent = `⏸️ Tạm dừng (Còn ${adWatchSecondsLeft}s)`;
           return; // Freeze timer
@@ -10811,9 +10979,13 @@ function switchPublisherTab(tab) {
         if (progressFill) progressFill.style.width = `${progressPct}%`;
         if (countdownEl) countdownEl.textContent = adWatchSecondsLeft > 0 ? `Còn ${adWatchSecondsLeft}s` : '✓ Hoàn tất!';
 
+        // Cycle ads: check if active ad was closed and trigger next cleanly (no stacking)
+        checkAndCycleRewardedAds();
+
         if (adWatchSecondsLeft <= 0) {
           clearInterval(adWatchInterval);
           adWatchInterval = null;
+          stopRewardedAdCycle();
           if (claimBtn) {
             claimBtn.disabled = false;
             claimBtn.textContent = '🎉 Nhận Thưởng (+1 Lượt Quay May Mắn)';
@@ -10829,6 +11001,7 @@ function switchPublisherTab(tab) {
         clearInterval(adWatchInterval);
         adWatchInterval = null;
       }
+      stopRewardedAdCycle();
       isAdWatchPausedDueToTabSwitch = false;
       
       // Cancel Penalty: count as spent attempt and start cooldown immediately
@@ -10839,11 +11012,12 @@ function switchPublisherTab(tab) {
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
 
       closeModal('modal-rewarded-ad');
-      showToast('⏱️ Đã hủy xem video. Thời gian chờ giãn cách 20 phút bắt đầu tính!');
+      showToast('⏱️ Đã hủy xem quảng cáo. Thời gian chờ giãn cách 20 phút bắt đầu tính!');
     }
 
     function claimRewardedAdReward() {
       if (adWatchSecondsLeft > 0) return;
+      stopRewardedAdCycle();
 
       // 1. Grant +1 Lucky Spin
       setLuckySpinsCount(getLuckySpinsCount() + 1);
@@ -10854,7 +11028,7 @@ function switchPublisherTab(tab) {
 
       // 3. Notification & sync (No 0 Xu ledger entry)
       if (typeof addNotification === 'function') {
-        addNotification('STUDY', '🎬 Thưởng Xem Video', 'Bạn đã xem xong video và nhận được +1 Lượt Quay May Mắn!');
+        addNotification('STUDY', '🎬 Thưởng Xem Quảng Cáo', 'Bạn đã xem xong quảng cáo và nhận được +1 Lượt Quay May Mắn!');
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
@@ -29995,6 +30169,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         updateAiChatQuotaUI();
         renderAiChatMessages();
         openModal('modal-ai-mentor');
+        if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
 
         // Realtime sync latest quota from Cloud RTDB
         if (typeof refreshAiChatQuotaFromCloud === 'function') {

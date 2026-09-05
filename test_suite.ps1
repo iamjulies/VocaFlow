@@ -25,7 +25,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-11 (Build 243) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-12 (Build 244) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml)
@@ -51,14 +51,16 @@ Assert-Check "evaluateAndAutoApplyFlowFreezes protects active contiguous days" (
 Assert-Check "isAuthorVipUser checks expiration timestamp" ($appJsContent.Contains("const exp = Number(entry.vipExpiresAt || 0);") -and $appJsContent.Contains("return exp > now;"))
 Assert-Check "stripVipAffixes helper exists" ($appJsContent.Contains("function stripVipAffixes("))
 
-# 3. Monetag Clean Ads, VIP Exemption & Direct Link tests
+# 3. Monetag Clean Ads, In-App Cycling, Study Mode Suppression & Instant VIP Purge
 Assert-Check "Multitag popunder script completely removed from app_template.html" (-not ($templateContent.Contains("quge5.com")))
 Assert-Check "Monetag SW script removed from sw.js" (-not ($swContent.Contains("3nbf4.com")))
 Assert-Check "Monetag SW script removed from Release_App/sw.js" (-not ($releaseSwContent.Contains("3nbf4.com")))
 Assert-Check "initMonetagPassiveAds exists with In-Page (11730204) & Vignette (11730208)" ($appJsContent.Contains("function initMonetagPassiveAds()") -and $appJsContent.Contains("11730204") -and $appJsContent.Contains("11730208"))
-Assert-Check "initMonetagPassiveAds enforces 100% clean VIP ad-free exemption" ($appJsContent.Contains("isVip") -and $appJsContent.Contains("monetag-inpage-script") -and $appJsContent.Contains("monetag-vignette-script"))
-Assert-Check "Monetag Direct Link (11730211) integrated in app.js" ($appJsContent.Contains("https://omg10.com/4/11730211"))
-Assert-Check "modal-rewarded-ad.html contains Direct Link CTA button" ($rewardedModalContent.Contains("https://omg10.com/4/11730211"))
+Assert-Check "Instant VIP purge DOM without F5 exists" ($appJsContent.Contains("function purgeAllAdArtifactsFromDOM()"))
+Assert-Check "Direct Link completely removed from rewarded ads (no tab opening)" (-not ($rewardedModalContent.Contains("11730211")))
+Assert-Check "modal-rewarded-ad.html contains in-app cycling container & status badge" ($rewardedModalContent.Contains("rewarded-ad-cycle-container") -and $rewardedModalContent.Contains("rewarded-ad-status-badge"))
+Assert-Check "In-App Rewarded Ad cycling engine exists in app.js" ($appJsContent.Contains("function startRewardedAdCycle()") -and $appJsContent.Contains("function checkAndCycleRewardedAds()") -and $appJsContent.Contains("isAnyAdCurrentlyOnScreen()"))
+Assert-Check "Vignette banner suppressed in study screens and VocaMentor AI" ($appJsContent.Contains("function isInStudyOrMentorMode()") -and $appJsContent.Contains("function suppressVignetteAd()"))
 Assert-Check "push_github.ps1 deploys both main and gh-pages to iamjulies.github.io" ($pushContent.Contains("branch -M main") -and $pushContent.Contains("branch -M gh-pages") -and $pushContent.Contains("vocaflow_user_io_deploy"))
 
 # 4. Tabbed Sense Switcher & Polysemy Architecture tests
@@ -70,15 +72,15 @@ Assert-Check "Spelling picks active sense with _activeSpellingSense" ($appJsCont
 Assert-Check "Quiz picks active sense and protects distractors with _activeQuizSense" ($appJsContent.Contains("_activeQuizSense"))
 Assert-Check "Speaking evaluates against active sense with Rule E in prompt" ($appJsContent.Contains("_activeSpeakingSense") -and $appJsContent.Contains("POLYSEMY & HOMOGRAPHS"))
 
-# 5. Version v0.10.9-alpha-11 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-11" ($headerContent.Contains("v0.10.9-alpha-11"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-11" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-11"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-11'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-11" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-11"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-11" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-11"))
-Assert-Check "Program.cs shows v0.10.9-alpha-11" ($csContent.Contains("VocaFlow v0.10.9-alpha-11"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-11 (Build 243)" ($overviewContent.Contains("v0.10.9-alpha-11 (Build 243)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-11 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-11"))
+# 5. Version v0.10.9-alpha-12 tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-12" ($headerContent.Contains("v0.10.9-alpha-12"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-12" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-12 (Build 244)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-12'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-12" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-12"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-12" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-12"))
+Assert-Check "Program.cs shows v0.10.9-alpha-12" ($csContent.Contains("VocaFlow v0.10.9-alpha-12"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-12 (Build 244)" ($overviewContent.Contains("v0.10.9-alpha-12 (Build 244)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-12 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-12"))
 
 # 6. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))
