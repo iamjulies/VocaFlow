@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-21)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-22)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-21 (Build 253)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-22';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-22 (Build 254)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -7680,6 +7680,9 @@ function switchPublisherTab(tab) {
                   }
                 }
 
+                // Reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
+                reconcileAllDuplicateDecks(false);
+
                 if (cloudData.economy && typeof cloudData.economy === 'object') {
                   const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
                   const remoteHints = typeof cloudData.economy.hints === 'number' ? cloudData.economy.hints : parseInt(cloudData.economy.hints, 10);
@@ -8203,6 +8206,187 @@ function switchPublisherTab(tab) {
       }
     }
 
+    // =========================================================================
+    // CROSS-DEVICE DECK RECONCILIATION & DEDUPLICATION ENGINE (v0.10.9-alpha-22)
+    // =========================================================================
+    function normalizeDeckTitleForDedupe(title) {
+      if (!title || typeof title !== 'string') return '';
+      return title.trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+    window.normalizeDeckTitleForDedupe = normalizeDeckTitleForDedupe;
+
+    function normalizeWordTermForDedupe(term) {
+      if (!term || typeof term !== 'string') return '';
+      return term.trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+    window.normalizeWordTermForDedupe = normalizeWordTermForDedupe;
+
+    function reconcileAllDuplicateDecks(triggerSave = true) {
+      if (!Array.isArray(decks) || decks.length <= 1) return false;
+
+      let hasModifications = false;
+      const groups = new Map(); // normalizedTitle -> array of decks
+
+      // 1. Group candidate decks by normalized title
+      for (const d of decks) {
+        if (!d || !d.id || deletedDeckIds.has(d.id)) continue;
+        const normTitle = normalizeDeckTitleForDedupe(d.title);
+        if (!normTitle) continue;
+        if (!groups.has(normTitle)) groups.set(normTitle, []);
+        groups.get(normTitle).push(d);
+      }
+
+      // 2. Process groups that have 2 or more decks
+      for (const [normTitle, group] of groups.entries()) {
+        if (group.length <= 1) continue;
+
+        // Verify that decks in this group are true duplicates:
+        // Either they share libSourceId, or same author/authorUid, or significant word terms overlap
+        const primaryCandidate = group[0];
+        const confirmedDuplicates = [primaryCandidate];
+
+        for (let i = 1; i < group.length; i++) {
+          const candidate = group[i];
+          let isDup = false;
+
+          // Condition A: Same libSourceId
+          if (primaryCandidate.libSourceId && candidate.libSourceId && primaryCandidate.libSourceId === candidate.libSourceId) {
+            isDup = true;
+          }
+          // Condition B: Both authored by same user or current user
+          else if (
+            (primaryCandidate.authorUid && candidate.authorUid && primaryCandidate.authorUid === candidate.authorUid) ||
+            (!primaryCandidate.authorUid && !candidate.authorUid && primaryCandidate.author === candidate.author) ||
+            (currentUser && currentUser.uid && (primaryCandidate.authorUid === currentUser.uid || candidate.authorUid === currentUser.uid))
+          ) {
+            isDup = true;
+          }
+          // Condition C: Word term overlap >= 40% or both have 0 words
+          else {
+            const pWords = words.filter(w => w.deckId === primaryCandidate.id).map(w => normalizeWordTermForDedupe(w.term));
+            const cWords = words.filter(w => w.deckId === candidate.id).map(w => normalizeWordTermForDedupe(w.term));
+            if (pWords.length === 0 && cWords.length === 0) {
+              isDup = true;
+            } else if (pWords.length > 0 && cWords.length > 0) {
+              const pSet = new Set(pWords);
+              const overlap = cWords.filter(t => pSet.has(t)).length;
+              const ratio = overlap / Math.min(pWords.length, cWords.length);
+              if (ratio >= 0.4) isDup = true;
+            }
+          }
+
+          if (isDup) {
+            confirmedDuplicates.push(candidate);
+          }
+        }
+
+        if (confirmedDuplicates.length <= 1) continue;
+
+        // Rank confirmed duplicates to pick the PRIMARY deck to keep
+        confirmedDuplicates.sort((a, b) => {
+          // 1. Deck with libSourceId gets priority
+          const aLib = a.libSourceId ? 1000 : 0;
+          const bLib = b.libSourceId ? 1000 : 0;
+          if (aLib !== bLib) return bLib - aLib;
+
+          // 2. Count words and mastered words
+          const aWords = words.filter(w => w.deckId === a.id);
+          const bWords = words.filter(w => w.deckId === b.id);
+          const aMastered = aWords.filter(w => w.status === 'mastered').length;
+          const bMastered = bWords.filter(w => w.status === 'mastered').length;
+          const aScore = aWords.length * 10 + aMastered * 25 + (a.isPinned ? 50 : 0);
+          const bScore = bWords.length * 10 + bMastered * 25 + (b.isPinned ? 50 : 0);
+          if (aScore !== bScore) return bScore - aScore;
+
+          // 3. Older deck / earlier createdAt gets priority for stability
+          const aTime = new Date(a.createdAt || 0).getTime();
+          const bTime = new Date(b.createdAt || 0).getTime();
+          return aTime - bTime;
+        });
+
+        const primaryDeck = confirmedDuplicates[0];
+        const secondaryDecks = confirmedDuplicates.slice(1);
+
+        // Fetch words belonging to primary deck
+        const primaryWordsMap = new Map();
+        words.filter(w => w.deckId === primaryDeck.id).forEach(w => {
+          const termKey = normalizeWordTermForDedupe(w.term);
+          if (termKey && !primaryWordsMap.has(termKey)) {
+            primaryWordsMap.set(termKey, w);
+          }
+        });
+
+        // Merge words from secondary decks into primary deck
+        for (const secDeck of secondaryDecks) {
+          const secWords = words.filter(w => w.deckId === secDeck.id);
+          for (const sw of secWords) {
+            const termKey = normalizeWordTermForDedupe(sw.term);
+            const pw = termKey ? primaryWordsMap.get(termKey) : null;
+
+            if (pw) {
+              // Word already exists in primary deck: reconcile progress & status
+              let pwChanged = false;
+              if (sw.status === 'mastered' && pw.status !== 'mastered') {
+                pw.status = 'mastered';
+                pwChanged = true;
+              } else if (sw.status === 'learning' && pw.status === 'newWord') {
+                pw.status = 'learning';
+                pwChanged = true;
+              }
+              if ((sw.masteryScore || 0) > (pw.masteryScore || 0)) {
+                pw.masteryScore = sw.masteryScore;
+                pwChanged = true;
+              }
+              // Preserve extra definition / note / example if primary was blank
+              if (!pw.definitionVi && sw.definitionVi) { pw.definitionVi = sw.definitionVi; pwChanged = true; }
+              if (!pw.phonetic && sw.phonetic) { pw.phonetic = sw.phonetic; pwChanged = true; }
+              if (!pw.exampleSentence && sw.exampleSentence) { pw.exampleSentence = sw.exampleSentence; pwChanged = true; }
+              if (!pw.note && sw.note) { pw.note = sw.note; pwChanged = true; }
+
+              if (pwChanged) {
+                pw.updatedAt = new Date().toISOString();
+              }
+
+              // Mark secondary word as deleted so it is tombstoned and removed
+              deletedWordIds.add(sw.id);
+              sw._isDedupeRemoved = true;
+            } else {
+              // Word is unique to secondary deck: migrate it into primary deck!
+              sw.deckId = primaryDeck.id;
+              sw.updatedAt = new Date().toISOString();
+              if (termKey) primaryWordsMap.set(termKey, sw);
+            }
+          }
+
+          // Tombstone secondary duplicate deck
+          deletedDeckIds.add(secDeck.id);
+          secDeck._isDedupeRemoved = true;
+          hasModifications = true;
+
+          // If currentDeckId was pointing to this secondary deck, point it to primary
+          if (currentDeckId === secDeck.id) {
+            currentDeckId = primaryDeck.id;
+          }
+
+          console.log(`🧹 [VocaFlow Dedupe] Reconciled duplicate deck "${secDeck.title}" (${secDeck.id}) into primary deck (${primaryDeck.id})`);
+        }
+      }
+
+      if (hasModifications) {
+        // Clean arrays
+        decks = decks.filter(d => !d._isDedupeRemoved && !deletedDeckIds.has(d.id));
+        words = words.filter(w => !w._isDedupeRemoved && !deletedWordIds.has(w.id));
+
+        saveDeletedTombstones();
+        if (triggerSave) {
+          saveDatabase(false);
+        }
+      }
+
+      return hasModifications;
+    }
+    window.reconcileAllDuplicateDecks = reconcileAllDuplicateDecks;
+
     async function autoRecoverLostDecks(showNotification = true) {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return 0;
       const uid = currentUser.uid;
@@ -8233,7 +8417,7 @@ function switchPublisherTab(tab) {
             });
 
             for (const pd of targetDecks) {
-              const exists = decks.some(d => d.title === pd.title || d.libSourceId === pd.id || d.id === pd.id);
+              const exists = decks.some(d => normalizeDeckTitleForDedupe(d.title) === normalizeDeckTitleForDedupe(pd.title) || d.libSourceId === pd.id || d.id === pd.id);
               if (!exists) {
                 const localDeckId = 'deck_' + (pd.publishedAt ? new Date(pd.publishedAt).getTime() : Date.now()) + '_' + Math.random().toString(36).substr(2, 4);
                 const newDeck = {
@@ -8350,6 +8534,9 @@ function switchPublisherTab(tab) {
             localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
           }
         }
+
+        // Auto-reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
+        reconcileAllDuplicateDecks(false);
       } catch (e) {
         console.error('Failed to parse database from localStorage:', e);
         decks = [];
@@ -9713,6 +9900,107 @@ function switchPublisherTab(tab) {
         existingSaleBanner.style.display = 'none';
       }
 
+      // Dynamic Discount Engine for Store Items (v0.10.9-alpha-22)
+      // 1. Spin packages
+      const spinPacks = [
+        { code: 'S5', basePrice: 10000, perSpin: 2000, spins: 5, defaultBtn: '💳 Mua (10k)', prefix: '💳 Mua' },
+        { code: 'S15', basePrice: 25000, perSpin: 1667, spins: 15, defaultBtn: '🚀 Mua (25k)', prefix: '🚀 Mua' },
+        { code: 'S40', basePrice: 50000, perSpin: 1250, spins: 40, defaultBtn: '👑 Mua (50k)', prefix: '👑 Mua' }
+      ];
+      spinPacks.forEach(sp => {
+        const priceEl = document.getElementById(`shop-spin-price-${sp.code}`);
+        const btnEl = document.getElementById(`shop-spin-btn-${sp.code}`);
+        const badgeEl = document.getElementById(`shop-spin-badge-${sp.code}`);
+        if (discount.isDiscountActive) {
+          const finalPrice = applyStoreDiscountToPrice(sp.basePrice);
+          const perUnit = Math.round(finalPrice / sp.spins);
+          const kStr = (finalPrice / 1000).toFixed(1).replace('.0', '') + 'k';
+          if (priceEl) {
+            priceEl.innerHTML = `<s>${sp.basePrice.toLocaleString('vi-VN')}đ</s> <strong style="color: #ffd700;">${finalPrice.toLocaleString('vi-VN')}đ</strong> <span style="color: var(--text-muted); font-weight: normal;">(Chỉ ${perUnit.toLocaleString('vi-VN')}đ/lượt)</span>`;
+          }
+          if (btnEl) btnEl.textContent = `${sp.prefix} (${kStr})`;
+          if (badgeEl) badgeEl.innerHTML = `<span class="badge" style="background: rgba(239,68,68,0.25); color: #f87171; font-size: 9.5px; margin-left: 4px;">-${discount.discountPct}%</span>`;
+        } else {
+          if (priceEl) {
+            const label = sp.code === 'S15' ? `(~${sp.perSpin.toLocaleString('vi-VN')}đ/lượt)` : `(Chỉ ${sp.perSpin.toLocaleString('vi-VN')}đ/lượt)`;
+            priceEl.innerHTML = `${sp.basePrice.toLocaleString('vi-VN')}đ <span style="color: var(--text-muted); font-weight: normal;">${label}</span>`;
+          }
+          if (btnEl) btnEl.textContent = sp.defaultBtn;
+          if (badgeEl) badgeEl.innerHTML = '';
+        }
+      });
+
+      // 2. Hint packages
+      const hintPacks = [
+        { count: 1, basePoints: 50, isDiscountPkg: false },
+        { count: 5, basePoints: 250, isDiscountPkg: false },
+        { count: 10, basePoints: 450, isDiscountPkg: true }
+      ];
+      hintPacks.forEach(hp => {
+        const priceEl = document.getElementById(`shop-hint-price-${hp.count}`);
+        const btnEl = document.getElementById(`shop-hint-btn-${hp.count}`);
+        const badgeEl = document.getElementById(`shop-hint-badge-${hp.count}`);
+        if (discount.isDiscountActive) {
+          const finalPoints = applyStoreDiscountToPrice(hp.basePoints);
+          if (priceEl) {
+            const prefix = hp.isDiscountPkg ? 'Giá ưu đãi: ' : 'Giá: ';
+            priceEl.innerHTML = `${prefix}<s>${hp.basePoints}</s> <strong style="color: #ffd700;">${finalPoints} VoCoin</strong>`;
+          }
+          if (btnEl) btnEl.textContent = `Đổi (${finalPoints} VoCoin)`;
+          if (badgeEl) badgeEl.innerHTML = `<span class="badge" style="background: rgba(239,68,68,0.25); color: #f87171; font-size: 9.5px; margin-left: 4px;">-${discount.discountPct}%</span>`;
+        } else {
+          if (priceEl) {
+            priceEl.innerHTML = hp.isDiscountPkg ? `Giá ưu đãi: ${hp.basePoints} VoCoin` : `Giá: ${hp.basePoints} VoCoin`;
+          }
+          if (btnEl) btnEl.textContent = `Đổi (${hp.basePoints} VoCoin)`;
+          if (badgeEl) badgeEl.innerHTML = '';
+        }
+      });
+
+      // 3. Skip packages
+      const skipPacks = [
+        { count: 1, basePoints: 100, isDiscountPkg: false },
+        { count: 5, basePoints: 500, isDiscountPkg: false },
+        { count: 10, basePoints: 900, isDiscountPkg: true }
+      ];
+      skipPacks.forEach(sk => {
+        const priceEl = document.getElementById(`shop-skip-price-${sk.count}`);
+        const btnEl = document.getElementById(`shop-skip-btn-${sk.count}`);
+        const badgeEl = document.getElementById(`shop-skip-badge-${sk.count}`);
+        if (discount.isDiscountActive) {
+          const finalPoints = applyStoreDiscountToPrice(sk.basePoints);
+          if (priceEl) {
+            const prefix = sk.isDiscountPkg ? 'Giá ưu đãi: ' : 'Giá: ';
+            priceEl.innerHTML = `${prefix}<s>${sk.basePoints}</s> <strong style="color: #ffd700;">${finalPoints} VoCoin</strong>`;
+          }
+          if (btnEl) btnEl.textContent = `Đổi (${finalPoints} VoCoin)`;
+          if (badgeEl) badgeEl.innerHTML = `<span class="badge" style="background: rgba(239,68,68,0.25); color: #f87171; font-size: 9.5px; margin-left: 4px;">-${discount.discountPct}%</span>`;
+        } else {
+          if (priceEl) {
+            priceEl.innerHTML = sk.isDiscountPkg ? `Giá ưu đãi: ${sk.basePoints} VoCoin` : `Giá: ${sk.basePoints} VoCoin`;
+          }
+          if (btnEl) btnEl.textContent = `Đổi (${sk.basePoints} VoCoin)`;
+          if (badgeEl) badgeEl.innerHTML = '';
+        }
+      });
+
+      // 4. FlowFreeze item
+      const freezeDescEl = document.getElementById('shop-freeze-desc');
+      const freezeBtnEl = document.getElementById('btn-shop-buy-freeze');
+      const freezeBadgeEl = document.getElementById('shop-freeze-badge');
+      if (discount.isDiscountActive) {
+        const finalFreezePoints = applyStoreDiscountToPrice(200);
+        if (freezeDescEl) {
+          freezeDescEl.innerHTML = `Tự động bảo vệ FlowStreak khi bạn nghỉ học (Giá: <s>200</s> <strong style="color: #ffd700;">${finalFreezePoints} VoCoin</strong>)`;
+        }
+        if (freezeBtnEl) freezeBtnEl.textContent = `Mua (${finalFreezePoints} VoCoin)`;
+        if (freezeBadgeEl) freezeBadgeEl.innerHTML = `<span class="badge" style="background: rgba(239,68,68,0.25); color: #f87171; font-size: 9.5px; margin-left: 4px;">-${discount.discountPct}%</span>`;
+      } else {
+        if (freezeDescEl) freezeDescEl.innerHTML = 'Tự động bảo vệ FlowStreak khi bạn nghỉ học (Giá: 200 VoCoin)';
+        if (freezeBtnEl) freezeBtnEl.textContent = 'Mua (200 VoCoin)';
+        if (freezeBadgeEl) freezeBadgeEl.innerHTML = '';
+      }
+
       // 1. Update Lucky Wheel banner in VocaShop
       const wheelTitle = document.getElementById('shop-wheel-title');
       const wheelBadge = document.getElementById('shop-wheel-badge');
@@ -10923,8 +11211,12 @@ function switchPublisherTab(tab) {
       const syntaxEl = document.getElementById('spin-pay-syntax-code');
       const qrImgEl = document.getElementById('spin-pay-qr-img');
 
-      if (nameEl) nameEl.textContent = `${name} (${amount.toLocaleString('vi-VN')}đ)`;
-      if (amountEl) amountEl.textContent = `${amount.toLocaleString('vi-VN')}đ`;
+      if (nameEl) {
+        nameEl.innerHTML = discount.isDiscountActive
+          ? `${name} (<s style="opacity:0.65;">${amount.toLocaleString('vi-VN')}đ</s> <strong style="color:#ffd700;">${finalAmount.toLocaleString('vi-VN')}đ</strong>)`
+          : `${name} (${amount.toLocaleString('vi-VN')}đ)`;
+      }
+      if (amountEl) amountEl.textContent = `${finalAmount.toLocaleString('vi-VN')}đ`;
 
       let rawUid = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
       const syntax = `VOCA ${getShortUidUpper(rawUid)} ${code}`;
@@ -10932,7 +11224,7 @@ function switchPublisherTab(tab) {
       if (syntaxEl) syntaxEl.textContent = syntax;
 
       const encodedDesc = encodeURIComponent(syntax);
-      const qrUrl = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${amount}&addInfo=${encodedDesc}&accountName=NONG%20DUC%20HAO`;
+      const qrUrl = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${finalAmount}&addInfo=${encodedDesc}&accountName=NONG%20DUC%20HAO`;
       if (qrImgEl) qrImgEl.src = qrUrl;
 
       openModal('modal-spin-purchase-payment');
@@ -12459,7 +12751,7 @@ function switchPublisherTab(tab) {
         return;
       }
 
-      const costPoints = 200;
+      const costPoints = applyStoreDiscountToPrice(200);
       const currentPoints = getUserPoints();
 
       if (currentPoints < costPoints) {
@@ -35236,6 +35528,39 @@ Quy tắc phản hồi quan trọng:
     const box = document.getElementById('vip-payment-info-box');
     if (box) box.style.display = 'none';
 
+    // Special Event Discount Banner & Pricing (v0.10.9-alpha-22)
+    const discount = getStoreActiveDiscount();
+    const vipSaleBanner = document.getElementById('vip-sale-event-banner');
+    if (vipSaleBanner) {
+      if (discount.isDiscountActive) {
+        vipSaleBanner.style.display = 'block';
+        vipSaleBanner.innerHTML = `<span>${discount.bannerText}</span>`;
+      } else {
+        vipSaleBanner.style.display = 'none';
+      }
+    }
+
+    const vipPriceMonthly = document.getElementById('vip-price-display-monthly');
+    const vipPriceYearly = document.getElementById('vip-price-display-yearly');
+    const vipPriceLifetime = document.getElementById('vip-price-display-lifetime');
+    const vipEquivYearly = document.getElementById('vip-monthly-equiv-yearly');
+
+    if (discount.isDiscountActive) {
+      const finalMonthly = applyStoreDiscountToPrice(39000);
+      const finalYearly = applyStoreDiscountToPrice(299000);
+      const finalLifetime = applyStoreDiscountToPrice(599000);
+      const equivMonthly = Math.round(finalYearly / 12);
+      if (vipPriceMonthly) vipPriceMonthly.innerHTML = `<s>39.000đ</s> <strong style="color: #ffd700;">${finalMonthly.toLocaleString('vi-VN')}đ</strong>`;
+      if (vipPriceYearly) vipPriceYearly.innerHTML = `<s>299.000đ</s> <strong style="color: #ffd700;">${finalYearly.toLocaleString('vi-VN')}đ</strong>`;
+      if (vipPriceLifetime) vipPriceLifetime.innerHTML = `<s>599.000đ</s> <strong style="color: #ffd700;">${finalLifetime.toLocaleString('vi-VN')}đ</strong>`;
+      if (vipEquivYearly) vipEquivYearly.textContent = `Chỉ ~${equivMonthly.toLocaleString('vi-VN')}đ / tháng (-${discount.discountPct}%)`;
+    } else {
+      if (vipPriceMonthly) vipPriceMonthly.textContent = '39.000đ';
+      if (vipPriceYearly) vipPriceYearly.textContent = '299.000đ';
+      if (vipPriceLifetime) vipPriceLifetime.textContent = '599.000đ';
+      if (vipEquivYearly) vipEquivYearly.textContent = 'Chỉ ~25.000đ / tháng';
+    }
+
     // Check user's current VIP status
     const isVip = isUserVip();
     const currentTier = getUserVipTier();
@@ -35371,7 +35696,7 @@ Quy tắc phản hồi quan trọng:
     const rolloverTextEl = document.getElementById('vip-rollover-text');
 
     if (planNameEl) planNameEl.textContent = name;
-    if (planPriceEl) planPriceEl.textContent = priceStr;
+    if (planPriceEl) planPriceEl.textContent = finalPriceStr;
     if (syntaxEl) syntaxEl.textContent = syntax;
 
     // Calculate rollover date if active
@@ -35397,10 +35722,10 @@ Quy tắc phản hồi quan trọng:
     }
 
     const payAmountDisplay = document.getElementById('vip-pay-amount-display');
-    if (payAmountDisplay) payAmountDisplay.textContent = priceStr;
+    if (payAmountDisplay) payAmountDisplay.textContent = `${finalAmount.toLocaleString('vi-VN')}đ`;
 
     if (qrImg) {
-      qrImg.src = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(syntax)}&accountName=NONG%20DUC%20HAO`;
+      qrImg.src = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${finalAmount}&addInfo=${encodeURIComponent(syntax)}&accountName=NONG%20DUC%20HAO`;
     }
 
     if (box) {

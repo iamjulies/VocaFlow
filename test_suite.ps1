@@ -34,7 +34,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-21 (Build 253) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-22 (Build 254) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
@@ -102,15 +102,15 @@ Assert-Check "modal-review-queue.html contains preset pills and filter controls"
 Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
 Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 7. Version v0.10.9-alpha-21 (Build 253) tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-21" ($headerContent.Contains("v0.10.9-alpha-21"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-21 (Build 253)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-21 (Build 253)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-21" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-21"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-21" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-21"))
-Assert-Check "Program.cs shows v0.10.9-alpha-21" ($csContent.Contains("VocaFlow v0.10.9-alpha-21"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-21 (Build 253)" ($overviewContent.Contains("v0.10.9-alpha-21 (Build 253)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-21 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-21"))
+# 7. Version v0.10.9-alpha-22 (Build 254) tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-22" ($headerContent.Contains("v0.10.9-alpha-22"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-22 (Build 254)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-22 (Build 254)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-22'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-22'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-22" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-22"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-22" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-22"))
+Assert-Check "Program.cs shows v0.10.9-alpha-22" ($csContent.Contains("VocaFlow v0.10.9-alpha-22"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-22 (Build 254)" ($overviewContent.Contains("v0.10.9-alpha-22 (Build 254)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-22 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-22"))
 
 # 8. Remaining-Words Slice Shuffle Tests (v0.10.9-alpha-16)
 Assert-Check "shuffleCurrentSpelling preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpelling()") -and $appJsContent.Contains("i > spellingIndex + 1") -and $appJsContent.Contains("spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex))"))
@@ -205,18 +205,40 @@ Assert-Check "lib_deck_ielts_45_60 includes author attribution to Bà Lê Ngọc
 $c14_5 = ($appJsContent.Contains("window.chrome.webview") -and $appJsContent.Contains("isDesktop"))
 Assert-Check "Desktop WebView2 environment bypasses third-party ad scripts" $c14_5
 
-$c14_6 = ($appJsContent.Contains("v0.10.9-alpha-21") -and $appJsContent.Contains("Build 253") -and $headerContent.Contains("v0.10.9-alpha-21") -and $settingsContent.Contains("v0.10.9-alpha-21 (Build 253)"))
-Assert-Check "Version Consistency matches v0.10.9-alpha-21 (Build 253) across files" $c14_6
+$c14_6 = ($appJsContent.Contains("v0.10.9-alpha-22") -and $appJsContent.Contains("Build 254") -and $headerContent.Contains("v0.10.9-alpha-22") -and $settingsContent.Contains("v0.10.9-alpha-22 (Build 254)"))
+Assert-Check "Version Consistency matches v0.10.9-alpha-22 (Build 254) across files" $c14_6
 
-# 15. Fatal SyntaxError Elimination & Zero-State Unfreezing Tests (v0.10.9-alpha-21)
+# 15. Fatal SyntaxError Elimination & Zero-State Unfreezing Tests
 $c15_1 = (-not ($appJsContent.Contains("decks.push(cleanRemote);`r`n                    }`r`n                  }`r`n                }")))
 Assert-Check "Orphaned closing brace at line 7654 completely eliminated" $c15_1
 
 $c15_2 = ($appJsContent.Contains("updateAuthUI();`r`n      }`r`n    }`r`n    // =========================================================================") -or $appJsContent.Contains("updateAuthUI();`n      }`n    }`n    // ========================================================================="))
 Assert-Check "handleManualSync function properly closed with balanced brace" $c15_2
 
-$c15_3 = ($swContent.Contains("v0.10.9-alpha-21") -and $releaseSwContent.Contains("v0.10.9-alpha-21") -and $csContent.Contains("v0.10.9-alpha-21") -and $pushContent.Contains("v0.10.9-alpha-21"))
-Assert-Check "All distribution files (sw.js, Program.cs, push_github.ps1) bumped to v0.10.9-alpha-21" $c15_3
+$c15_3 = ($swContent.Contains("v0.10.9-alpha-22") -and $releaseSwContent.Contains("v0.10.9-alpha-22") -and $csContent.Contains("v0.10.9-alpha-22") -and $pushContent.Contains("v0.10.9-alpha-22"))
+Assert-Check "All distribution files (sw.js, Program.cs, push_github.ps1) bumped to v0.10.9-alpha-22" $c15_3
+
+# 17. Dynamic Store Sale Engine & Cross-Device Deck Deduplication Tests (v0.10.9-alpha-22)
+# 17.1 Test 9/9 Double Day calculation: 15 + ((9*7 + 9*13) % 11) = 19%
+$seed99 = 15 + ((9 * 7 + 9 * 13) % 11)
+$c17_1 = ($seed99 -eq 19 -and $appJsContent.Contains("getStoreActiveDiscount") -and $appJsContent.Contains("discountPct: seedPct"))
+Assert-Check "Double Day 9/9 calculates exactly 19 percent discount" $c17_1
+
+# 17.2 Check updateShopBonusesUI has dynamic discount handling for Spin, Hint, Skip, FlowFreeze
+$c17_2 = ($appJsContent.Contains('shop-spin-price-${sp.code}') -and $appJsContent.Contains('shop-spin-btn-${sp.code}') -and $appJsContent.Contains('shop-hint-price-${hp.count}') -and $appJsContent.Contains('shop-skip-price-${sk.count}') -and $appJsContent.Contains("shop-freeze-desc"))
+Assert-Check "updateShopBonusesUI dynamically updates prices, badges and buttons for all items" $c17_2
+
+# 17.3 Check openSpinPurchasePaymentModal applies finalAmount to VietQR URL
+$c17_3 = ($appJsContent.Contains("openSpinPurchasePaymentModal") -and $appJsContent.Contains('amount=${finalAmount}&addInfo=${encodedDesc}'))
+Assert-Check "openSpinPurchasePaymentModal generates VietQR with discounted finalAmount" $c17_3
+
+# 17.4 Check openVipPricingModal and selectVipPlan apply store discount and VietQR
+$c17_4 = ($appJsContent.Contains("vip-sale-event-banner") -and $appJsContent.Contains("vip-price-display-monthly") -and $appJsContent.Contains('amount=${finalAmount}&addInfo=${encodeURIComponent(syntax)}'))
+Assert-Check "openVipPricingModal and selectVipPlan show event banner and discounted VietQR" $c17_4
+
+# 17.5 Check reconcileAllDuplicateDecks engine exists and is invoked in loadDatabase and handleManualSync
+$c17_5 = ($appJsContent.Contains("function reconcileAllDuplicateDecks(") -and $appJsContent.Contains("normalizeDeckTitleForDedupe") -and $appJsContent.Contains("normalizeWordTermForDedupe") -and $appJsContent.Contains("reconcileAllDuplicateDecks(false);"))
+Assert-Check "reconcileAllDuplicateDecks engine deduplicates decks and is invoked on load and sync" $c17_5
 
 # 16. Chromium Headless Real Browser Execution Test
 $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"

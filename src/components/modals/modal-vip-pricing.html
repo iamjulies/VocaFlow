@@ -44,13 +44,16 @@
           <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">Đang Hoạt Động</span>
         </div>
 
-        <!-- Segmented Tab Switcher for Plans (v0.10.8-alpha-10.3) -->
-        <div class="vip-plan-segmented-bar" id="vip-plan-tabs-bar">
+        <!-- EVENT DISCOUNT BANNER FOR VIP (v0.10.9-alpha-22) -->
+        <div id="vip-sale-event-banner" style="display: none; background: linear-gradient(135deg, #ef4444, #f59e0b); color: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(239,68,68,0.4); animation: pulse-ad 2s infinite;"></div>
+
+        <!-- Segmented Tab Bar for Mobile & Compact Views (v0.10.8-alpha-10.3) -->
+        <div class="vip-plan-segmented-switch" style="display: flex; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 16px;">
           <button type="button" class="vip-plan-segment-btn tab-monthly" id="vip-tab-btn-monthly" onclick="switchVipPlanTab('monthly')">
             <span>🥉</span> <span>THÁNG</span>
           </button>
           <button type="button" class="vip-plan-segment-btn tab-yearly active" id="vip-tab-btn-yearly" onclick="switchVipPlanTab('yearly')">
-            <span>🔥</span> <span>NĂM</span> <span class="badge" style="font-size: 9.5px; padding: 1px 5px; background: rgba(245, 158, 11, 0.3); color: #ffd700; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 800;">-36%</span>
+            <span>🔥</span> <span>NĂM</span> <span id="vip-tab-yearly-badge" class="badge" style="font-size: 9.5px; padding: 1px 5px; background: rgba(245, 158, 11, 0.3); color: #ffd700; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 800;">-36%</span>
           </button>
           <button type="button" class="vip-plan-segment-btn tab-lifetime" id="vip-tab-btn-lifetime" onclick="switchVipPlanTab('lifetime')">
             <span>👑</span> <span>TRỌN ĐỜI</span>
@@ -69,7 +72,7 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">VocaVIP 1 Tháng</h3>
               <div style="margin: 12px 0 16px 0;">
-                <span style="font-size: 28px; font-weight: 900; color: #fbbf24;">39.000đ</span>
+                <span id="vip-price-display-monthly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">39.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ tháng</span>
               </div>
               <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
@@ -97,10 +100,10 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #fbbf24; margin: 0 0 4px 0;">VocaVIP 1 Năm</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span style="font-size: 28px; font-weight: 900; color: #fbbf24;">299.000đ</span>
+                <span id="vip-price-display-yearly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">299.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ năm</span>
               </div>
-              <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 14px;">Chỉ ~25.000đ / tháng</div>
+              <div id="vip-monthly-equiv-yearly" style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 14px;">Chỉ ~25.000đ / tháng</div>
               <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
                 <li style="display: flex; align-items: center; gap: 6px;">⭐ <strong>Tất cả đặc quyền Gói Tháng</strong></li>
                 <li style="display: flex; align-items: center; gap: 6px;">🤖 <strong>Không giới hạn</strong> VocaDeck AI & Mentor</li>
@@ -126,7 +129,7 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #c084fc; margin: 0 0 4px 0;">VocaVIP Trọn Đời</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span style="font-size: 28px; font-weight: 900; color: #c084fc;">599.000đ</span>
+                <span id="vip-price-display-lifetime" style="font-size: 28px; font-weight: 900; color: #c084fc;">599.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
               </div>
               <div style="font-size: 11px; color: #a855f7; font-weight: 700; margin-bottom: 14px;">Thanh toán 1 lần duy nhất</div>

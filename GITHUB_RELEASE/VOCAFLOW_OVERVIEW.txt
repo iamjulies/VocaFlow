@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-22 (Build 254) - Dynamic Store Sale Engine & Cross-Device Deck Deduplication
+================================================================================
+1. [Khắc Phục Lỗi Hiển Thị & Thanh Toán Giảm Giá Sự Kiện Siêu Sale (Dynamic Store Sale Engine)]:
+   - Khắc phục triệt để lỗi sự kiện giảm giá 9/9 (và tất cả ngày đôi / sinh nhật creator): Banner sự kiện hiển thị nhưng các thẻ sản phẩm trong VocaShop (VocaSpin, VocaHint, VocaSkip, FlowFreeze) và Modal Nâng Cấp VocaVIP giữ nguyên giá gốc, không có huy hiệu giảm giá và mã VietQR quét ra số tiền chưa giảm.
+   - Triển khai động cơ cập nhật giá động toàn diện trong `updateShopBonusesUI()`:
+     * Gói VocaSpin (VietQR): Hiển thị giá gạch ngang gốc kèm giá khuyến mãi màu vàng ánh kim (S5: 10.000đ -> 8.100đ, S15: 25.000đ -> 20.250đ, S40: 50.000đ -> 40.500đ), gắn huy hiệu đỏ `-19%` và cập nhật nút mua tức thì (`💳 Mua (8.1k)`, `🚀 Mua (20.3k)`, `👑 Mua (40.5k)`).
+     * Gói VocaHint & VocaSkip (Xu): Tự động giảm giá đổi điểm tương ứng (-19%), hiển thị giá cũ gạch ngang và cập nhật nút đổi (`💡 1 Hint: 41 VoCoin`, `5 Hint: 203 VoCoin`, `10 Hint: 365 VoCoin`; `⏭️ 1 Skip: 81 VoCoin`, `5 Skip: 405 VoCoin`, `10 Skip: 729 VoCoin`).
+     * FlowFreeze (Xu): Tự động giảm giá đổi còn 162 VoCoin (gốc 200 VoCoin), có huy hiệu sự kiện.
+     * Modal VocaVIP: Bổ sung banner sự kiện rực rỡ `#vip-sale-event-banner`, giá các gói Tháng (39k -> 32.000đ), Năm (299k -> 242.000đ, ~20k/tháng), Trọn Đời (599k -> 485.000đ).
+     * Đồng bộ mã VietQR: Truyền chính xác `finalAmount` đã giảm giá vào URL ảnh `img.vietqr.io` cho cả VocaSpin và VocaVIP, đảm bảo người dùng quét mã VietQR tự động điền đúng số tiền được giảm.
+2. [Thuật Toán Hợp Nhất & Khử Trùng Lặp Bộ Từ Đa Thiết Bị (Cross-Device Deck Deduplication)]:
+   - Giải quyết triệt để lỗi tạo bản sao bộ từ trùng lặp khi đồng bộ giữa hai thiết bị (ví dụ 2 bộ "Từ vựng nghiệp vụ sư phạm" 50 từ): Xảy ra khi bộ từ được tạo hoặc khôi phục độc lập trên 2 thiết bị với ID ngẫu nhiên khác nhau, khiến cơ chế sync theo ID coi chúng là hai bộ từ riêng biệt.
+   - Thiết kế thuật toán `reconcileAllDuplicateDecks()` thông minh:
+     * Nhóm các bộ từ có cùng tiêu đề chuẩn hóa (`normalizeDeckTitleForDedupe`) và cùng tác giả/nguồn thư viện VocaLib hoặc có độ trùng lặp từ vựng cao (>= 40%).
+     * Chọn ra bộ từ chính (`primaryDeck`) giữ lại dựa trên độ ưu tiên: có `libSourceId`, nhiều từ hơn, số từ tinh thông (`mastered`) cao hơn, hoặc thời điểm tạo sớm hơn.
+     * Hợp nhất toàn bộ từ vựng từ bộ từ trùng lặp vào bộ từ chính: So khớp từ vựng (`normalizeWordTermForDedupe`), bảo toàn tuyệt đối trạng thái học tập cao nhất (`mastered` > `learning` > `newWord`), điểm tinh thông và dữ liệu ghi chú/ví dụ bổ sung.
+     * Tạo bia mộ (`deletedDeckIds` và `deletedWordIds`) cho các bản sao thừa để tự động xóa sạch dữ liệu trùng lặp trên Firebase Realtime Database Cloud và các thiết bị khác khi đồng bộ.
+     * Tích hợp tự động vào cuối `loadDatabase()` và Phase 1 của `handleManualSync()`.
+
+================================================================================
 Phiên bản: v0.10.9-alpha-21 (Build 253) - Fatal SyntaxError Elimination & Zero-State Unfreezing
 ================================================================================
 1. [Khắc Phục Triệt Để Lỗi Không Tương Tác / Màn Hình Trống Trơn (SyntaxError Elimination)]:
