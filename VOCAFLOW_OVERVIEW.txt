@@ -1,4 +1,14 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-21 (Build 253) - Fatal SyntaxError Elimination & Zero-State Unfreezing
+================================================================================
+1. [Khắc Phục Triệt Để Lỗi Không Tương Tác / Màn Hình Trống Trơn (SyntaxError Elimination)]:
+   - Điều tra và phát hiện nguyên nhân gốc rễ: Dấu ngoặc nhọn `}` mồ côi tại dòng 7654 bên trong `handleManualSync` trong `src/scripts/app.js` đã đóng sớm khối `if (cloudData && typeof cloudData === 'object')`, dẫn đến lỗi cú pháp nghiêm trọng `Uncaught SyntaxError: Missing catch or finally after try`.
+   - Lỗi cú pháp này khiến trình duyệt (Chrome/WebView2/Edge) ngừng thực thi toàn bộ thẻ `<script>` ngay khi tải trang, làm cho `DOMContentLoaded` không chạy, dữ liệu không được render lên `#deck-grid` (giao diện trống trơn), trạng thái đăng nhập giữ nguyên "👤 Khách", và tất cả các nút bấm ném lỗi `ReferenceError`.
+   - Loại bỏ triệt để dấu ngoặc thừa, đồng bộ cấu trúc đóng mở khối của `handleManualSync`, khôi phục 100% khả năng nạp và thực thi mã JavaScript ngay từ lần khởi động đầu tiên.
+2. [Tự Động Hóa Kiểm Thử Không Đầu Với Microsoft Edge (Headless Automated CI)]:
+   - Bổ sung quy trình kiểm thử headless thực tế trên Chromium/Edge engine trong `test_suite.ps1` để phát hiện và ngăn chặn mọi lỗi cú pháp (`SyntaxError`), lỗi phân tích ngữ pháp AST, hoặc ngoại lệ JS trước khi đóng gói và phát hành.
+
+================================================================================
 Phiên bản: v0.10.9-alpha-20 (Build 252) - UI Click-Trap Immunity & IELTS 4.5-6.0 VIP Deck
 ================================================================================
 1. [Khắc Phục Triệt Để Lỗi Không Tương Tác Được Nút (UI Click-Trap Immunity)]:

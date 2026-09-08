@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-20)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-21)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-20';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-20 (Build 252)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-21 (Build 253)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -7651,7 +7651,6 @@ function switchPublisherTab(tab) {
                       decks.push(cleanRemote);
                     }
                   }
-                }
 
                 if (remoteWords.length > 0) {
                   // Merge words by ID (Last-Write-Wins with learning progress protection)
@@ -8144,6 +8143,7 @@ function switchPublisherTab(tab) {
         isSyncing = false;
         updateAuthUI();
       }
+    }
     // =========================================================================
     // BULLETPROOF DECK AUTO-RECOVERY & ANTI-WIPEOUT ENGINE (v0.10.9-alpha-18)
     // =========================================================================

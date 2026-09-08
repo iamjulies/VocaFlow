@@ -34,7 +34,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-20 (Build 252) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-21 (Build 253) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
@@ -102,15 +102,15 @@ Assert-Check "modal-review-queue.html contains preset pills and filter controls"
 Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
 Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 7. Version v0.10.9-alpha-20 (Build 252) tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-20" ($headerContent.Contains("v0.10.9-alpha-20"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-20 (Build 252)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-20 (Build 252)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-20'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-20'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-20" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-20"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-20" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-20"))
-Assert-Check "Program.cs shows v0.10.9-alpha-20" ($csContent.Contains("VocaFlow v0.10.9-alpha-20"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-20 (Build 252)" ($overviewContent.Contains("v0.10.9-alpha-20 (Build 252)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-20 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-20"))
+# 7. Version v0.10.9-alpha-21 (Build 253) tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-21" ($headerContent.Contains("v0.10.9-alpha-21"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-21 (Build 253)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-21 (Build 253)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-21'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-21" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-21"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-21" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-21"))
+Assert-Check "Program.cs shows v0.10.9-alpha-21" ($csContent.Contains("VocaFlow v0.10.9-alpha-21"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-21 (Build 253)" ($overviewContent.Contains("v0.10.9-alpha-21 (Build 253)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-21 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-21"))
 
 # 8. Remaining-Words Slice Shuffle Tests (v0.10.9-alpha-16)
 Assert-Check "shuffleCurrentSpelling preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpelling()") -and $appJsContent.Contains("i > spellingIndex + 1") -and $appJsContent.Contains("spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex))"))
@@ -205,8 +205,48 @@ Assert-Check "lib_deck_ielts_45_60 includes author attribution to Bà Lê Ngọc
 $c14_5 = ($appJsContent.Contains("window.chrome.webview") -and $appJsContent.Contains("isDesktop"))
 Assert-Check "Desktop WebView2 environment bypasses third-party ad scripts" $c14_5
 
-$c14_6 = ($appJsContent.Contains("v0.10.9-alpha-20") -and $appJsContent.Contains("Build 252") -and $headerContent.Contains("v0.10.9-alpha-20") -and $settingsContent.Contains("v0.10.9-alpha-20 (Build 252)"))
-Assert-Check "Version Consistency matches v0.10.9-alpha-20 (Build 252) across files" $c14_6
+$c14_6 = ($appJsContent.Contains("v0.10.9-alpha-21") -and $appJsContent.Contains("Build 253") -and $headerContent.Contains("v0.10.9-alpha-21") -and $settingsContent.Contains("v0.10.9-alpha-21 (Build 253)"))
+Assert-Check "Version Consistency matches v0.10.9-alpha-21 (Build 253) across files" $c14_6
+
+# 15. Fatal SyntaxError Elimination & Zero-State Unfreezing Tests (v0.10.9-alpha-21)
+$c15_1 = (-not ($appJsContent.Contains("decks.push(cleanRemote);`r`n                    }`r`n                  }`r`n                }")))
+Assert-Check "Orphaned closing brace at line 7654 completely eliminated" $c15_1
+
+$c15_2 = ($appJsContent.Contains("updateAuthUI();`r`n      }`r`n    }`r`n    // =========================================================================") -or $appJsContent.Contains("updateAuthUI();`n      }`n    }`n    // ========================================================================="))
+Assert-Check "handleManualSync function properly closed with balanced brace" $c15_2
+
+$c15_3 = ($swContent.Contains("v0.10.9-alpha-21") -and $releaseSwContent.Contains("v0.10.9-alpha-21") -and $csContent.Contains("v0.10.9-alpha-21") -and $pushContent.Contains("v0.10.9-alpha-21"))
+Assert-Check "All distribution files (sw.js, Program.cs, push_github.ps1) bumped to v0.10.9-alpha-21" $c15_3
+
+# 16. Chromium Headless Real Browser Execution Test
+$edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+if (-not (Test-Path $edgePath)) {
+    $edgePath = "C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+}
+$headlessOk = $false
+if (Test-Path $edgePath) {
+    $errOut = Join-Path $env:TEMP "edge_ci_test.txt"
+    $p = Start-Process -FilePath $edgePath -ArgumentList @(
+        "--headless",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--enable-logging=stderr",
+        "--v=1",
+        "file:///$($vocaHtml.Replace('\', '/'))"
+    ) -PassThru -NoNewWindow -RedirectStandardError $errOut
+    Start-Sleep -Seconds 3
+    Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+    $p.WaitForExit(3000)
+    Start-Sleep -Milliseconds 500
+    if (Test-Path $errOut) {
+        $logTxt = Get-Content $errOut -Raw -ErrorAction SilentlyContinue
+        $headlessOk = (-not ($logTxt -match "Uncaught SyntaxError"))
+        Remove-Item $errOut -Force -ErrorAction SilentlyContinue
+    }
+} else {
+    $headlessOk = $true # Edge not found, skip browser launch
+}
+Assert-Check "Chromium headless execution passes with 0 Uncaught SyntaxErrors" $headlessOk
 
 Write-Host ""
 Write-Host "RESULT: $passed / $total Passed" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Red" })

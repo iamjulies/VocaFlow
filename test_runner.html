@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<iframe id="app" src="vocaflow.html" style="width: 1280px; height: 800px;"></iframe>
+<script>
+window.addEventListener('message', (e) => {});
+const iframe = document.getElementById('app');
+iframe.onload = () => {
+    setTimeout(() => {
+        try {
+            const win = iframe.contentWindow;
+            const doc = iframe.contentDocument;
+            console.log('TEST_EVAL: decks length = ' + (win.decks ? win.decks.length : 'null'));
+            console.log('TEST_EVAL: words length = ' + (win.words ? win.words.length : 'null'));
+            console.log('TEST_EVAL: currentUser = ' + (win.currentUser ? JSON.stringify(win.currentUser.email) : 'null'));
+            const deckGrid = doc.getElementById('deck-grid');
+            console.log('TEST_EVAL: deck-grid childCount = ' + (deckGrid ? deckGrid.children.length : 'null'));
+            console.log('TEST_EVAL: SUCCESS_EVAL_COMPLETE');
+        } catch(e) {
+            console.error('TEST_EVAL_ERROR: ' + e.message);
+        }
+    }, 1500);
+};
+</script>
+</body>
+</html>
