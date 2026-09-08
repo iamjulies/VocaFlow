@@ -34,7 +34,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-19 (Build 251) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-20 (Build 252) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
@@ -102,15 +102,15 @@ Assert-Check "modal-review-queue.html contains preset pills and filter controls"
 Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
 Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 7. Version v0.10.9-alpha-19 (Build 251) tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-19" ($headerContent.Contains("v0.10.9-alpha-19"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-19 (Build 251)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-19 (Build 251)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-19'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-19'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-19" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-19"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-19" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-19"))
-Assert-Check "Program.cs shows v0.10.9-alpha-19" ($csContent.Contains("VocaFlow v0.10.9-alpha-19"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-19 (Build 251)" ($overviewContent.Contains("v0.10.9-alpha-19 (Build 251)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-19 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-19"))
+# 7. Version v0.10.9-alpha-20 (Build 252) tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-20" ($headerContent.Contains("v0.10.9-alpha-20"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-20 (Build 252)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-20 (Build 252)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-20'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-20'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-20" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-20"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-20" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-20"))
+Assert-Check "Program.cs shows v0.10.9-alpha-20" ($csContent.Contains("VocaFlow v0.10.9-alpha-20"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-20 (Build 252)" ($overviewContent.Contains("v0.10.9-alpha-20 (Build 252)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-20 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-20"))
 
 # 8. Remaining-Words Slice Shuffle Tests (v0.10.9-alpha-16)
 Assert-Check "shuffleCurrentSpelling preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpelling()") -and $appJsContent.Contains("i > spellingIndex + 1") -and $appJsContent.Contains("spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex))"))
@@ -187,6 +187,26 @@ Assert-Check "syncEconomyToCloud and loadEconomyFromCloud refresh auth tokens" $
 
 $c13_5 = (-not ($appJsContent.Contains("function setLuckySpinsCount") -and $appJsContent.Substring($appJsContent.IndexOf("function setLuckySpinsCount"), 500).Contains("pushCurrentDatabaseToCloud()")))
 Assert-Check "setLuckySpinsCount eliminates pushCurrentDatabaseToCloud race condition" $c13_5
+
+# 14. UI Click-Trap Immunity & IELTS 4.5-6.0 VIP Deck Tests (v0.10.9-alpha-20)
+$c14_1 = (-not ($appJsContent.Contains("function initMonetagPassiveAds()") -and $appJsContent.Substring($appJsContent.IndexOf("function initMonetagPassiveAds()"), 400).Contains("injectVignetteAd()")))
+Assert-Check "initMonetagPassiveAds does NOT passively inject Vignette click interceptor ads" $c14_1
+
+$c14_2 = ($appJsContent.Contains("function cleanForeignClickBlockers()") -and $appJsContent.Contains("coversScreen"))
+Assert-Check "cleanForeignClickBlockers watchdog sweeps rogue fixed full-screen overlays" $c14_2
+
+$c14_3 = ($appJsContent.Contains('"id":  "lib_deck_ielts_45_60"') -and $appJsContent.Contains('"totalWords":  216') -and $appJsContent.Contains('"isVip":  true'))
+Assert-Check "lib_deck_ielts_45_60 exists in BUILTIN_LIBRARY_DECKS with 216 words and isVip: true" $c14_3
+
+$attributionStr = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("VHJpIMOibiBiw6AgTMOqIE5n4buNYyBMaW5o"))
+$c14_4 = ($appJsContent.Contains("lib_deck_ielts_45_60") -and $appJsContent.Contains($attributionStr))
+Assert-Check "lib_deck_ielts_45_60 includes author attribution to Bà Lê Ngọc Linh" $c14_4
+
+$c14_5 = ($appJsContent.Contains("window.chrome.webview") -and $appJsContent.Contains("isDesktop"))
+Assert-Check "Desktop WebView2 environment bypasses third-party ad scripts" $c14_5
+
+$c14_6 = ($appJsContent.Contains("v0.10.9-alpha-20") -and $appJsContent.Contains("Build 252") -and $headerContent.Contains("v0.10.9-alpha-20") -and $settingsContent.Contains("v0.10.9-alpha-20 (Build 252)"))
+Assert-Check "Version Consistency matches v0.10.9-alpha-20 (Build 252) across files" $c14_6
 
 Write-Host ""
 Write-Host "RESULT: $passed / $total Passed" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Red" })

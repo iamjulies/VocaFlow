@@ -1,4 +1,16 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-20 (Build 252) - UI Click-Trap Immunity & IELTS 4.5-6.0 VIP Deck
+================================================================================
+1. [Khắc Phục Triệt Để Lỗi Không Tương Tác Được Nút (UI Click-Trap Immunity)]:
+   - Loại bỏ hoàn toàn việc tiêm kịch bản Monetag Vignette (n6wxm.com/vignette.min.js) thụ động khi chuyển màn hình/khởi động: Kịch bản quảng cáo trung gian Vignette tạo lớp phủ trong suốt toàn màn hình (z-index: 2147483647) để bắt click; trong môi trường Desktop WebView2 hoặc khi popup bị chặn, lớp phủ này không tự gỡ bỏ và làm tê liệt 100% nút bấm trên giao diện.
+   - Bổ sung hàm quét dọn và bảo vệ click toàn cục `cleanForeignClickBlockers()`: Tự động phát hiện và triệt tiêu mọi phần tử phủ màn hình lạ (foreign fixed overlays/click-interceptors) ngay khi mở app, chuyển trang, đóng modal, hoặc khi cửa sổ nhận lại tiêu điểm (focus).
+   - Thiết lập lá chắn Desktop WebView2 (`window.chrome.webview`): Ngăn chặn việc nạp các thư viện quảng cáo bên thứ ba gây xung đột hoặc đơ giao diện trên bản Windows Desktop App.
+2. [Tích Hợp Bộ Từ VIP IELTS 4.5 - 6.0 Trọng Tâm Lên Thư Viện VocaLib]:
+   - Trích xuất toàn bộ 216 từ vựng học thuật chuẩn Cambridge & Oxford từ `Tu_Vung_IELTS_4.5_6.0_Trong_Tam.xlsx` qua 12 chủ đề học thuật nền tảng (Education, Environment, Tech, Business, Health, Society, Cities, Arts, Crime, Shopping, Science...).
+   - Tích hợp trực tiếp vào danh mục VocaStore `BUILTIN_LIBRARY_DECKS` với ID `lib_deck_ielts_45_60` và đồng bộ lên Firebase Realtime Database (`publicLibraryDecks/lib_deck_ielts_45_60.json`).
+   - Kích hoạt đặc quyền VocaVIP (`isVip: true`, `isVipOnly: true`), hiển thị đầy đủ thông tin tri ân tác giả: "Tri ân bà Lê Ngọc Linh".
+
+================================================================================
 Phiên bản: v0.10.9-alpha-19 (Build 251) - Bulletproof VocaSpin Real-Time Engine & Zombie Spin Elimination
 ================================================================================
 1. [Khắc Phục Triệt Để Hiện Tượng Cộng Dồn Quá Mức VocaSpin (+10 Thay Vì +2)]:
