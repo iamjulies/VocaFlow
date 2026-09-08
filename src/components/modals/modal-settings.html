@@ -37,7 +37,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0; display: flex; align-items: center; gap: 6px;">
             <span>✨</span> <span>Google Gemini AI</span>
-            <span id="gemini-vip-pool-badge" class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 Bể Đa Khóa VIP (x3 Hạn Ngạch)</span>
+            <span id="gemini-vip-pool-badge" class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 Bể Đa Khóa VocaVIP (x3 Hạn Ngạch)</span>
           </label>
           <div style="display: flex; align-items: center; gap: 6px;">
             <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeminiKeyGuide(event)" title="Xem hướng dẫn lấy API Key" style="font-size: 11px; padding: 2px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); font-weight: 700; cursor: pointer;">
@@ -57,7 +57,7 @@
           </div>
           
           <div style="margin-bottom: 8px; padding: 6px 10px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 3px solid #f59e0b; font-size: 11px; color: #fde68a;">
-            💡 <strong>Cơ chế tự động:</strong> Dùng hết hạn ngạch Khóa 1 mới sang Khóa 2 (rồi sang Khóa 3). Khóa 1 là bắt buộc, Khóa 2 & 3 dành riêng cho VIP giúp nhân 3 hạn ngạch gọi AI.
+            💡 <strong>Cơ chế tự động:</strong> Dùng hết hạn ngạch Khóa 1 mới sang Khóa 2 (rồi sang Khóa 3). Khóa 1 là bắt buộc, Khóa 2 & 3 dành riêng cho VocaVIP giúp nhân 3 hạn ngạch gọi AI.
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -89,7 +89,7 @@
             <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
               <span style="font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 4px;">
                 <span>🔑 Khóa API 2 (Dự phòng 1):</span>
-                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 9px; padding: 1px 4px;">👑 VIP</span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 9px; padding: 1px 4px;">👑 VocaVIP</span>
               </span>
               <span id="gemini-key-2-status-badge" style="font-size: 10px; color: #34d399;"></span>
             </div>
@@ -101,7 +101,7 @@
             <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
               <span style="font-weight: 700; color: #ec4899; display: flex; align-items: center; gap: 4px;">
                 <span>🔑 Khóa API 3 (Dự phòng 2):</span>
-                <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 9px; padding: 1px 4px;">👑 VIP</span>
+                <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 9px; padding: 1px 4px;">👑 VocaVIP</span>
               </span>
               <span id="gemini-key-3-status-badge" style="font-size: 10px; color: #34d399;"></span>
             </div>
@@ -183,7 +183,7 @@
             <input type="checkbox" id="settings-filter-pos-checkbox" checked onchange="toggleShowFilterPosSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
             <div>
               <div style="font-size: 13px; font-weight: 600; color: var(--text);">🏷️ Bộ lọc Từ Loại (Part of Speech)</div>
-              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo noun, verb, adjective... trong bộ từ</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Hiển thị dropdown lọc theo noun, verb, adjective... trong VocaDeck</div>
             </div>
           </label>
 
@@ -214,7 +214,7 @@
           <input type="checkbox" id="settings-timestamp-checkbox" checked onchange="toggleShowTimestampSetting(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
           <div>
             <div style="font-size: 13px; font-weight: 600; color: var(--text);">Hiện ngày tạo & chỉnh sửa</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng bộ từ và thẻ từ vựng</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Hiển thị ngày giờ trên từng VocaDeck và thẻ từ vựng</div>
           </div>
         </label>
       </div>
@@ -231,15 +231,15 @@
       <div class="form-group" id="setting-vip-cat-meme-group" style="margin-bottom: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
           <span style="display: flex; align-items: center; gap: 6px;">
-            <span>😸</span> <span>Hiệu Ứng Meme Mèo VIP</span>
-            <span class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 VIP</span>
+            <span>😸</span> <span>Hiệu Ứng Meme Mèo VocaVIP</span>
+            <span class="badge" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">👑 VocaVIP</span>
           </span>
         </label>
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px;">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
               <div style="font-size: 12px; font-weight: 600; color: var(--text);">Phản hồi Meme Mèo khi học</div>
-              <div style="font-size: 11px; color: var(--text-muted);">Tự động hiện meme hài hước khi Đúng/Sai ở Quiz, Spelling, Speaking</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Tự động hiện meme hài hước khi Đúng/Sai ở Trắc Nghiệm, Luyện Viết, Luyện Nói</div>
             </div>
             <input type="checkbox" id="setting-vip-cat-meme" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleVipCatMemeSetting(this.checked)">
           </div>
@@ -259,10 +259,36 @@
         </div>
       </div>
 
+      <!-- 7. AN TOÀN DỮ LIỆU & SAO LƯU VOCADECK (v0.10.9-alpha-18) -->
+      <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <span>🛡️</span> <span>An Toàn & Khôi Phục VocaDeck</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 9px; font-weight: 800; border: none; padding: 1px 6px;">Bảo Vệ Đa Tầng</span>
+          </span>
+        </label>
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+            Hệ thống tự động lưu bản sao lưu (snapshot) trước mỗi lần xóa hoặc đồng bộ. Bạn có thể tự sao lưu và khôi phục bất cứ lúc nào:
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="createManualDeckBackup()" style="display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.08); padding: 8px 10px;">
+              <span>💾</span> <span>Sao Lưu Ngay</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="restoreDecksFromBackup()" style="display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.08); padding: 8px 10px;">
+              <span>🔄</span> <span>Khôi Phục Bản Lưu</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="autoRecoverLostDecks(true)" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); padding: 8px 10px;">
+            <span>🔍</span> <span>Tự Động Quét & Khôi Phục VocaDeck Bị Mất Từ Cloud</span>
+          </button>
+        </div>
+      </div>
+
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-14 (Build 246)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-18 (Build 250)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>

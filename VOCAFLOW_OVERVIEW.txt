@@ -1,26 +1,88 @@
 ================================================================================
-Phiên bản: v0.10.9-alpha-14 (Build 246) - SRS Subset Review, Quick Presets, Archive Exclusion & Deck Card Delete Button
+Phiên bản: v0.10.9-alpha-18 (Build 250) - Bulletproof VocaDeck Auto-Recovery & Cloud Anti-Wipeout Guard
 ================================================================================
-1. [Nâng Cấp Hàng Đợi Ôn Tập SRS: Chia Nhỏ Nhiệm Vụ & Học Nhanh Tiện Lợi]
-   - Cho phép người học tự do ôn tập một phần nhỏ (subset) trong hàng đợi SRS thay vì bắt buộc phải học hết toàn bộ hàng trăm từ một lúc, tránh tình trạng quá tải và áp lực học tập.
-   - Bổ sung thanh nút chọn nhanh (Quick Preset Pills): "⚡ 20 từ trễ nhất", "⚡ 50 từ trễ nhất", "⚡ 100 từ trễ nhất", "🔀 20 ngẫu nhiên", "🔀 50 ngẫu nhiên", "📋 Chọn tất cả", "❌ Bỏ chọn".
-   - Tích hợp thanh công cụ bộ lọc & sắp xếp đa năng: Lọc theo từng Bộ từ nguồn, tìm kiếm từ vựng, sắp xếp theo độ trễ hạn (nhiều nhất/ít nhất), mức độ thuộc (thấp/cao), hoặc bảng chữ cái A-Z.
-   - Hỗ trợ checkbox chọn từng từ riêng lẻ hoặc hàng loạt, kèm huy hiệu đếm "Đã chọn: X / Y từ" và hiển thị số lượng từ mục tiêu trực tiếp trên 4 nút học tập (Luyện Nói AI, Auto Flashcard, Luyện Viết, Quiz).
-2. [Loại Trừ Hoàn Toàn Bộ Từ Trong Kho Lưu Trữ Khỏi Hàng Đợi Ôn Tập]
-   - Các từ vựng thuộc những bộ từ đã cất vào Kho Lưu Trữ (`isArchived: true`) được tự động loại trừ 100% khỏi Hàng Đợi Ôn Tập SRS và Banner thông báo ôn tập hàng ngày trên màn hình chính, giữ không gian học tập luôn gọn gàng và tập trung vào các bộ từ đang hoạt động.
-3. [Tối Ưu Lưới Thao Tác Bìa Bộ Từ & Bổ Sung Nút Xóa Trực Tiếp]
-   - Thu hẹp lưới 3 nút ngoài bìa thẻ bộ từ thành lưới 4 cột cân đối (`repeat(4, 1fr)`).
-   - Bổ sung nút "🗑️ Xóa" trực tiếp trên bìa ngoài của thẻ bộ từ kèm hộp thoại xác nhận an toàn, giúp người dùng dọn dẹp bộ từ nhanh chóng mà không cần phải bấm vào màn hình chi tiết bộ từ.
-4. [Đồng Bộ Toàn Diện & Kiểm Thử Tự Động] Cập nhật đồng bộ 7 điểm phiên bản, vượt qua 100% test suite, biên dịch Desktop exe và triển khai lên toàn bộ các nhánh GitHub.
+1. [Khôi Phục Toàn Diện VocaDeck Bị Mất & Động Cơ Tự Chữa Lành (VocaDeck Auto-Recovery)]:
+   - Khắc phục triệt để sự cố người dùng (đặc biệt là Flower huda) bị mất sạch toàn bộ VocaDeck và từ vựng sau khi đồng bộ Cloud.
+   - Cơ chế tự động quét & phục hồi thông minh (`autoRecoverLostDecks`):
+     * Khi phát hiện tài khoản người dùng có danh sách VocaDeck trống hoặc chỉ còn bộ mặc định:
+     * Tự động quét kho Thư viện Toàn cầu (`publicLibraryDecks`) trên Firebase RTDB để tìm lại toàn bộ các VocaDeck do chính tài khoản tạo ra (`authorUid === currentUser.uid`), phục hồi nguyên vẹn 100% các từ vựng, phiên âm, định nghĩa, ví dụ, cấp độ CEFR.
+     * Tự động nhận diện và cài đặt lại các VocaDeck người dùng đã sở hữu hoặc mua (`userPurchasedDeckIds` / lịch sử mua trong `userLedger`).
+     * Tự động giải phóng các tombstone bị kẹt oan (`deletedDeckIds` chứa `deck-oxford-starter`), ngăn chặn việc xóa nhầm VocaDeck khởi đầu.
+2. [Lá Chắn Chống Xóa Trắng Dữ Liệu Cloud (Cloud Anti-Wipeout Guard)]:
+   - Ngăn chặn hoàn toàn lỗ hổng Phase 2 của `handleManualSync`: Tuyệt đối không gửi PATCH mảng rỗng `decks: []` lên Cloud nếu Cloud trước đó đã có dữ liệu hoặc thiết bị vừa khởi động lại.
+   - Nếu dữ liệu cục bộ bị trống mà Cloud có VocaDeck, hệ thống tự động cưỡng chế kéo (pull) toàn bộ dữ liệu từ Cloud về máy, biến Cloud thành bến đỗ an toàn bảo vệ dữ liệu.
+   - Ngăn chặn tình trạng "runaway tombstone": Nếu toàn bộ danh sách VocaDeck trên Cloud bị tombstone chặn vô lý, hệ thống tự động xóa bỏ tombstone rác để hồi sinh VocaDeck cho người dùng.
+3. [Hệ Thống Snapshot & Bản Sao Lưu An Toàn (Deck Snapshot & Backup System)]:
+   - Cơ chế tự động sao lưu (`takeDeckSnapshot`): Tự động chụp lại bản snapshot `vocaflow_decks_backup` và `vocaflow_words_backup` trước mỗi lần xóa VocaDeck hoặc đồng bộ lên Cloud.
+   - Cung cấp tính năng trong Cài Đặt (modal-settings):
+     * "💾 Sao Lưu Ngay": Chủ động tạo bản sao lưu dữ liệu tức thì.
+     * "🔄 Khôi Phục Bản Lưu": Khôi phục nhanh toàn bộ VocaDeck từ bản sao lưu gần nhất khi gặp sự cố.
+     * "🔍 Tự Động Quét & Khôi Phục VocaDeck Bị Mất Từ Cloud": Kích hoạt thủ công tính năng quét sâu và kéo lại toàn bộ VocaDeck đã tạo/mua.
+4. [Đồng Bộ Toàn Diện 7 Điểm Nhất Quán & Biên Dịch Trọn Vẹn]:
+   - Chuẩn hóa phiên bản v0.10.9-alpha-18 (Build 250) trên 7 vị trí bắt buộc.
+   - Vượt qua 100% bộ kiểm thử tự động `test_suite.ps1`.
+================================================================================
+Phiên bản: v0.10.9-alpha-17 (Build 249) - Strictly +2 Daily VIP VocaSpin & Multi-Device Real-Time Sync
+================================================================================
+1. [Khắc Phục Tuyệt Đối Lỗi Cộng Dồn VocaSpin & Chuẩn Hóa +2 Lượt/Ngày Cho VocaVIP]:
+   - Khắc phục triệt để tình trạng thông báo +2 VocaSpin nhưng thực tế tài khoản lại bị cộng lên 8 lượt (hoặc bồi hoàn sai lệch).
+   - Thiết lập cơ chế kiểm soát đa tầng (Multi-layer Idempotency Guard):
+     * Kiểm tra `vocaflow_last_vip_spin_date` trùng khớp với ngày hiện tại (theo múi giờ địa phương chuẩn).
+     * Kiểm tra danh sách thông báo `userNotifications` đã ghi nhận quà tặng VIP hôm nay chưa.
+     * Kiểm tra sổ cái đồng bộ `userLedger` (loại `VIP_DAILY_SPIN` cho ngày hôm nay) để chặn đứng việc tặng trùng khi đổi thiết bị.
+   - Cơ chế tự chữa lành (`autoHealExcessVipSpinsToday` v0109a17): Tự động phát hiện các tài khoản bị thừa/lạm phát 6 lượt quay do lỗi phiên bản cũ mà không mua gói, khấu trừ 6 lượt thừa và đưa số lượt quay về đúng chuẩn +2 lượt/ngày, dọn dẹp các thông báo bồi hoàn trùng lặp.
+2. [Đồng Bộ Thời Gian Thực VocaSpin Đa Thiết Bị (Cross-Device Spin Synchronization)]:
+   - Loại bỏ hoàn toàn cơ chế `Math.max(local, remote)` gây hiện tượng "Zombie Spins" (lượt quay đã dùng ở máy A nhưng bị máy B ghi đè hồi sinh trở lại).
+   - Biến Cloud RTDB thành Single Source of Truth cho tài khoản kinh tế (`luckySpins`, `points`, `hints`, `skips`).
+   - Nâng cấp `syncEconomyToCloud()` sử dụng phương thức `PATCH` lên `/users/{uid}/economy.json` bao gồm đầy đủ `luckySpins`, `luckySpinsDate`, `lastVipSpinDate`, `flowFreezes`, `streakFreezes` thay vì phương thức `PUT` làm mất thuộc tính phụ.
+   - Khi quay bánh xe (`setLuckySpinsCount`), hệ thống ngay lập tức trừ lượt quay cục bộ, đồng bộ `PATCH` lên Cloud và phát tín hiệu qua `BroadcastChannel` cho tất cả các tab khác.
+   - Khi mở Vòng quay (`openLuckyWheelModal`), hệ thống tự động tải dữ liệu kinh tế mới nhất từ Cloud để đảm bảo số lượt quay luôn chính xác 100%.
+3. [Đồng Bộ Toàn Diện 7 Điểm Nhất Quán & Kiểm Thử Tự Động]:
+   - Cập nhật chuẩn hóa phiên bản `v0.10.9-alpha-17 (Build 249)` trên toàn bộ 7 vị trí bắt buộc theo MANDATORY_UPDATE_WORKFLOW.md.
+================================================================================
+1. [Nâng Cấp Thuật Toán Xáo Trộn - Remaining-Words Slice Shuffle Cho 4 Chế Độ Học]:
+   - Khi bấm nút "Trộn" (🔀) trong bất kỳ chế độ học chính nào (Trắc Nghiệm, Luyện Nói, Luyện Viết, Auto Flashcard), hệ thống bảo lưu 100% vị trí câu/từ hiện tại, điểm số tích lũy và các câu đã làm xong.
+   - Chỉ tiến hành xáo trộn ngẫu nhiên (Fisher-Yates) danh sách các câu hỏi/từ vựng còn lại phía sau (từ `currentIndex + 1` đến cuối danh sách).
+   - Ngăn chặn hoàn toàn tình trạng bị reset về câu số 1 hoặc xóa trắng điểm số đang làm dở.
+2. [Hoàn Tất Chuẩn Hóa Hệ Thống Thuật Ngữ Toàn Ứng Dụng (Terminology Standardization Matrix)]:
+   - Quy chuẩn hóa toàn diện trên toàn bộ giao diện, modal, toast thông báo và sổ cái:
+     * Bộ từ / Deck -> VocaDeck
+     * Xu / Điểm ví / Token -> VoCoin
+     * Gợi ý / Hint -> VocaHint
+     * Bỏ qua / Skip Pass -> VocaSkip
+     * VIP Crown -> VocaVIP
+     * Thư viện -> VocaLib
+     * Người dùng / Học viên -> Flower
+     * Trung tâm sáng tạo & ví -> VocaStudio
+     * Tạo bài bằng AI -> VocaDeck AI
+     * 4 Chế độ học cốt lõi: Flashcard, Auto Flashcard, Luyện Viết, Trắc Nghiệm, Luyện Nói.
+3. [Đồng Bộ Quy Chuẩn 7 Điểm Nhất Quán & Kiểm Thử Tự Động]:
+   - Đồng bộ version trên toàn bộ 7 điểm cốt lõi, chạy bộ kiểm thử đạt 100% PASS và lắp ghép qua build_vocaflow.ps1.
 ================================================================================
           📘 VOCAFLOW - SMART ENGLISH VOCABULARY MEMORIZATION SYSTEM
             TÀI LIỆU TỔNG QUAN TÍNH NĂNG & LỊCH SỬ PHÁT TRIỂN TOÀN DIỆN
 ================================================================================
-Phiên bản hiện tại : v0.10.9-alpha-14 (Build 246)
+Phiên bản hiện tại : v0.10.9-alpha-16 (Build 248)
 
 --------------------------------------------------------------------------------
 II. LỊCH SỬ PHÁT TRIỂN & CHI TIẾT CÁC BẢN CẬP NHẬT
 --------------------------------------------------------------------------------
+
+🌟 [v0.10.9-alpha-16] - (BUILD 248 - REMAINING-WORDS SLICE SHUFFLE IN 4 STUDY MODES & TERMINOLOGY COMPLETION):
+  - 🔀 Thuật Toán Xáo Trộn Slice Sau Cho 4 Chế Độ Học (Remaining-Words Slice Shuffle):
+    * Giải quyết triệt để lỗi khi bấm nút "Trộn" (🔀) bị reset về câu/từ đầu tiên (index = 0) và mất điểm số đang làm.
+    * Cơ chế mới chỉ xáo trộn ngẫu nhiên đoạn từ còn lại phía sau (`currentIndex + 1` đến `length - 1`), giữ nguyên vẹn câu đang làm và các câu đã hoàn thành.
+    * Áp dụng đồng bộ cho cả 4 chế độ học: Trắc Nghiệm (`shuffleCurrentQuiz`), Luyện Nói (`shuffleCurrentSpeaking`), Auto Flashcard (`shuffleCurrentAutoFlashcard`), Luyện Viết (`shuffleCurrentSpelling`).
+    * Tích hợp thông báo toast thông minh báo rõ số lượng câu còn lại phía sau được xáo trộn, hoặc báo nếu đang ở câu cuối.
+  - 🏷️ Hoàn Tất Chuẩn Hóa Thuật Ngữ Toàn Ứng Dụng:
+    * Quét sạch và chuẩn hóa toàn bộ 100% chuỗi "bộ từ", "VIP Crown", "skip pass" trên giao diện, modal profile, review queue, modal settings, modal speaking result và mã logic `app.js`.
+
+🌟 [v0.10.9-alpha-15] - (BUILD 247 - TERMINOLOGY STANDARDIZATION MATRIX & USER GUIDE OVERHAUL):
+  - 🌐 Ma Trận Thuật Ngữ Chuẩn Hóa Toàn Diện (Terminology Matrix):
+    * Thiết lập chuẩn nhận diện thương hiệu VocaFlow: VocaDeck, VoCoin, VocaHint, VocaSkip, VocaVIP, VocaLib, Flower, VocaStudio, Flow, FlowFreeze.
+    * 4 chế độ học: Flashcard, Auto Flashcard, Luyện Viết, Trắc Nghiệm, Luyện Nói.
+  - 📖 Đại Tu Toàn Diện Cẩm Nang Hướng Dẫn Sử Dụng (modal-user-guide):
+    * 6 Danh mục cẩm nang hiện đại: Flower Mới (Từng Bước), FlowStreak & SRS, Ví VoCoin & VocaShop, VocaStudio, Đặc Quyền VocaVIP, Phím Tắt & Cài Đặt.
 
 🌟 [v0.10.9-alpha-14] - (BUILD 246 - SRS SUBSET REVIEW, QUICK PRESETS, ARCHIVE EXCLUSION & DECK CARD DELETE BUTTON):
   - 🔁 Chia Nhỏ Hàng Đợi SRS & Bộ Nút Học Nhanh (Subset Review):

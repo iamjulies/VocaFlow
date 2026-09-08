@@ -5,8 +5,8 @@
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px; filter: drop-shadow(0 2px 8px rgba(168, 85, 247, 0.5));">🤖</span>
           <div>
-            <strong style="font-size: 16px; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI Deck Generator Studio</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Tạo & làm giàu bộ từ tự động bằng Google Gemini AI</div>
+            <strong style="font-size: 16px; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VocaDeck AI Studio</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Tạo & làm giàu VocaDeck tự động bằng Google Gemini AI</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-ai-deck-studio')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -17,7 +17,7 @@
         <div style="font-size: 52px; margin-bottom: 12px;">🤖🔒</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
         <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
-          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Tạo Bộ Từ Bằng AI Gemini, Tự Động Phân Tích CEFR & Lưu Trữ Cloud</strong>!
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Tạo VocaDeck Bằng VocaDeck AI, Tự Động Phân Tích CEFR & Lưu Trữ Cloud</strong>!
         </p>
         <div style="display: flex; justify-content: center; gap: 10px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-deck-studio'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
@@ -34,7 +34,7 @@
         <div style="font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(245,158,11,0.4));">🤖🔑</div>
         <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Chưa Kết Nối Google Gemini API Key</h3>
         <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
-          Tính năng <strong>Tạo Bộ Từ Bằng AI (VocaDeck AI Generator)</strong> cần kết nối tài khoản Gemini của bạn để AI có thể phân tích chủ đề, tìm từ vựng, phiên âm và sinh ví dụ thực tế.
+          Tính năng <strong>Tạo VocaDeck Bằng VocaDeck AI</strong> cần kết nối tài khoản Gemini của bạn để AI có thể phân tích chủ đề, tìm từ vựng, phiên âm và sinh ví dụ thực tế.
         </p>
         <div style="display: flex; justify-content: center; gap: 10px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-deck-studio'); openSettingsModal();" style="font-weight: 700; padding: 9px 22px; font-size: 13px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.4);">
@@ -55,7 +55,7 @@
           <span>💰</span> Ví của bạn: <strong id="ai-studio-wallet-pts" style="color: #fbbf24; font-size: 14px;">0đ</strong>
         </div>
         <div style="font-size: 11.5px; color: #a5b4fc; font-weight: 600;">
-          ⚡ Giá: <strong style="color: #34d399;">20 Xu / 1 từ</strong> (chỉ trừ khi tạo thành công)
+          ⚡ Giá: <strong style="color: #34d399;">20 VoCoin / 1 từ</strong> (chỉ trừ khi tạo thành công)
         </div>
       </div>
 
@@ -134,14 +134,14 @@
 
           <!-- TARGET NEW DECK TITLE -->
           <div class="form-group" style="margin-bottom: 12px;">
-            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px;">📁 Tên bộ từ mới sẽ tạo:</label>
-            <input type="text" id="ai-new-deck-title" class="form-input" placeholder="Tên bộ từ mới (để trống sẽ tự đặt theo chủ đề)..." style="font-size: 12.5px;">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px;">📁 Tên VocaDeck mới sẽ tạo:</label>
+            <input type="text" id="ai-new-deck-title" class="form-input" placeholder="Tên VocaDeck mới (để trống sẽ tự đặt theo chủ đề)..." style="font-size: 12.5px;">
           </div>
 
           <!-- COST & START BAR -->
           <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-elevated); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border); margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200 Xu</strong></div>
+              <div style="font-size: 12px; color: var(--text);">Dự tính chi phí: <strong id="ai-cost-display" style="color: #fbbf24; font-size: 14px;">200 VoCoin</strong></div>
               <div id="ai-cost-subtext" style="font-size: 10.5px; color: var(--text-muted);">Số dư sau khi tạo: <span id="ai-balance-after" style="color: #34d399;">...</span></div>
             </div>
             <button type="button" class="btn btn-primary" id="btn-do-generate-ai" onclick="startAiStudioGeneration()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 8px 18px; font-size: 13px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);">
@@ -172,7 +172,7 @@
           <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px;">
             <button type="button" class="btn btn-outline btn-sm" onclick="resetAiStudioView()">🔄 Tạo Lại</button>
             <button type="button" class="btn btn-primary" onclick="confirmSaveAiGeneratedWords()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 8px 18px;">
-              💾 Xác Nhận Lưu Vào Bộ Từ
+              💾 Xác Nhận Lưu Vào VocaDeck
             </button>
           </div>
         </div>

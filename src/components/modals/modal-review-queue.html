@@ -11,7 +11,7 @@
       <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px;">
         <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
-          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói AI</span>
+          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
         </button>
         <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
           <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
@@ -20,7 +20,7 @@
           <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Luyện Viết</span>
         </button>
         <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Quiz</span>
+          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
         </button>
       </div>
 
@@ -35,7 +35,7 @@
           <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset(100)" id="preset-btn-100" title="Chỉ ôn 100 từ bị trễ hạn lâu nhất">⚡ 100 từ trễ nhất</button>
           <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random20')" id="preset-btn-rand20" title="Bốc ngẫu nhiên 20 từ đến hạn">🔀 20 ngẫu nhiên</button>
           <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('random50')" id="preset-btn-rand50" title="Bốc ngẫu nhiên 50 từ đến hạn">🔀 50 ngẫu nhiên</button>
-          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('all')" id="preset-btn-all" title="Chọn toàn bộ từ trong hàng đợi">📋 Chọn tất cả</button>
+          <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('all')" id="preset-btn-all" title="Chọn tất cả các từ trong hàng đợi">📋 Chọn tất cả</button>
           <button type="button" class="review-queue-preset-btn" onclick="selectReviewQueuePreset('clear')" id="preset-btn-clear" style="color: #f87171;" title="Bỏ chọn để lọc tự do">❌ Bỏ chọn</button>
         </div>
       </div>
@@ -44,8 +44,8 @@
       <div class="review-queue-controls-bar">
         <input type="text" id="review-queue-search" class="form-input" placeholder="🔍 Tìm từ hoặc nghĩa..." oninput="onReviewQueueSearch(this.value)" style="flex: 1; min-width: 140px; height: 32px; font-size: 12px; padding: 4px 10px; border-radius: 8px;">
         
-        <select id="review-queue-deck-filter" class="form-select" onchange="onReviewQueueDeckFilterChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Lọc theo bộ từ nguồn">
-          <option value="all">📁 Tất cả bộ từ</option>
+        <select id="review-queue-deck-filter" class="form-select" onchange="onReviewQueueDeckFilterChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Lọc theo VocaDeck nguồn">
+          <option value="all">📁 Tất cả VocaDeck</option>
         </select>
 
         <select id="review-queue-sort" class="form-select" onchange="onReviewQueueSortChange(this.value)" style="width: auto; height: 32px; font-size: 11.5px; padding: 0 8px; border-radius: 8px;" title="Kiểu sắp xếp từ vựng">

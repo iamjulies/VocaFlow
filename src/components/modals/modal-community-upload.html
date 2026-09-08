@@ -1,12 +1,12 @@
-﻿  <div class="modal-overlay" id="modal-community-upload">
+  <div class="modal-overlay" id="modal-community-upload">
     <div class="modal" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
       <input type="hidden" id="pub-editing-deck-id" value="">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px;" id="pub-modal-icon">🚀</span>
           <div>
-            <strong style="font-size: 16px;" id="pub-modal-title">Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;" id="pub-modal-subtitle">Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow</div>
+            <strong style="font-size: 16px;" id="pub-modal-title">Đóng Góp VocaDeck Lên VocaLib</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;" id="pub-modal-subtitle">Chia sẻ VocaDeck cho toàn bộ Flower VocaFlow</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-upload')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -35,13 +35,13 @@
 
       <!-- SOURCE SELECTION TABS -->
       <div class="form-group" style="margin-bottom: 12px;">
-        <label class="form-label">Chọn nguồn dữ liệu bộ từ:</label>
+        <label class="form-label">Chọn nguồn dữ liệu VocaDeck:</label>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <button type="button" class="btn btn-sm btn-primary" id="btn-pub-source-file" onclick="setPublisherUploadSource('file')" style="font-size: 12px;">
             📁 Tải lên File Excel / JSON
           </button>
           <button type="button" class="btn btn-sm btn-outline" id="btn-pub-source-deck" onclick="setPublisherUploadSource('deck')" style="font-size: 12px;">
-            📚 Chọn từ Bộ từ của tôi
+            📚 Chọn từ VocaDeck của tôi
           </button>
         </div>
       </div>
@@ -57,38 +57,38 @@
 
       <!-- SOURCE 2: LOCAL DECK SELECTOR -->
       <div id="pub-source-deck-section" class="form-group" style="display: none; margin-bottom: 12px;">
-        <label class="form-label">Chọn 1 bộ từ đang có trong máy của bạn:</label>
+        <label class="form-label">Chọn 1 VocaDeck đang có trong máy của bạn:</label>
         <select id="pub-local-deck-select" class="form-input" onchange="handlePublisherLocalDeckSelected(this.value)">
           <!-- Populated dynamically -->
         </select>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Tên Bộ Từ Hiển Thị:</label>
+        <label class="form-label">Tên VocaDeck Hiển Thị:</label>
         <input type="text" id="pub-deck-title" class="form-input" placeholder="VD: Tiếng Anh 10 - Kết Nối Tri Thức, 500 Từ Vựng IELTS Thường Gặp...">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Mô Tả Bộ Từ:</label>
+        <label class="form-label">Mô Tả VocaDeck:</label>
         <textarea id="pub-deck-desc" class="form-textarea" rows="2" placeholder="Mô tả tóm tắt nội dung, đối tượng học, giáo trình..."></textarea>
       </div>
 
       <!-- Price Setting for Deck (v0.10.6c) -->
       <div class="form-group" style="margin-bottom: 12px; background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px 12px;">
         <label class="form-label" style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-          <span>💎 Thiết Lập Giá Bán Bộ Từ:</span>
+          <span>💎 Thiết Lập Giá Bán VocaDeck:</span>
           <span id="pub-price-label-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px;">🟢 Miễn Phí</span>
         </label>
         <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
           <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(0)" style="font-size: 11px; padding: 3px 8px; border-color: #10b981; color: #34d399;">0đ (Free)</button>
-          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(50)" style="font-size: 11px; padding: 3px 8px;">50 Xu</button>
-          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(100)" style="font-size: 11px; padding: 3px 8px;">100 Xu</button>
-          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(200)" style="font-size: 11px; padding: 3px 8px;">200 Xu</button>
-          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(500)" style="font-size: 11px; padding: 3px 8px;">500 Xu</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(50)" style="font-size: 11px; padding: 3px 8px;">50 VoCoin</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(100)" style="font-size: 11px; padding: 3px 8px;">100 VoCoin</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(200)" style="font-size: 11px; padding: 3px 8px;">200 VoCoin</button>
+          <button type="button" class="btn btn-outline btn-sm pub-price-preset" onclick="setPublishPricePreset(500)" style="font-size: 11px; padding: 3px 8px;">500 VoCoin</button>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <input type="number" id="pub-deck-price" class="form-input" min="0" max="10000" value="0" placeholder="0" style="font-size: 13px; font-weight: 700; color: #fbbf24; max-width: 130px; padding: 5px 8px;" oninput="updatePublishPriceUI(this.value)">
-          <span style="font-size: 11.5px; color: var(--text-muted);">Xu (Doanh thu chuyển thẳng về ví bạn khi có người mua)</span>
+          <span style="font-size: 11.5px; color: var(--text-muted);">VoCoin (Doanh thu chuyển thẳng về Ví VocaStudio khi có Flower mua)</span>
         </div>
       </div>
 
@@ -162,7 +162,7 @@
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
         <button class="btn btn-outline" onclick="closeModal('modal-community-upload')">Hủy</button>
         <button class="btn btn-primary" id="btn-pub-do-upload" onclick="doPublishDeckToCloud()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">
-          🚀 Đóng Góp Lên Thư Viện Ngay
+          🚀 Đóng Góp Lên VocaLib Ngay
         </button>
       </div>
     </div>

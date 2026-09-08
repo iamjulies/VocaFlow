@@ -1,14 +1,14 @@
-﻿  <div class="modal-overlay" id="modal-deck">
+  <div class="modal-overlay" id="modal-deck">
     <div class="modal">
       <div class="modal-title">
-        <span id="modal-deck-title">Tạo Bộ Từ Mới</span>
+        <span id="modal-deck-title">Tạo VocaDeck Mới</span>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-deck')"><svg class="icon"><use href="#i-close"/></svg></button>
       </div>
 
       <form id="deck-form" onsubmit="saveDeckForm(event)">
         <input type="hidden" id="deck-id">
         <div class="form-group">
-          <label class="form-label">Tên bộ từ *</label>
+          <label class="form-label">Tên VocaDeck *</label>
           <input type="text" id="deck-title" class="form-input" placeholder="Ví dụ: IELTS Band 7.0+, TOEIC 600..." required>
         </div>
         <div class="form-group">
@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="margin-bottom: 0; font-weight: 700;">🎨 Màu sắc chủ đề bộ từ</label>
+            <label class="form-label" style="margin-bottom: 0; font-weight: 700;">🎨 Màu sắc chủ đề VocaDeck</label>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 11px; color: var(--text-muted);">Tùy chỉnh:</span>
               <input type="color" id="deck-custom-color-input" value="#6366f1" oninput="selectDeckCustomColor(this.value)" style="width: 28px; height: 28px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: transparent; vertical-align: middle;">
@@ -30,7 +30,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
           <button type="button" class="btn btn-outline" onclick="closeModal('modal-deck')">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu bộ từ</button>
+          <button type="submit" class="btn btn-primary">Lưu VocaDeck</button>
         </div>
       </form>
     </div>

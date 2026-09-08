@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-14)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-18)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-14 (Build 246)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-18 (Build 250)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -264,10 +264,10 @@
 
       if (btnToggle) {
         if (active) {
-          btnToggle.textContent = '❌ Tắt Chế Độ VIP';
+          btnToggle.textContent = '❌ Tắt Chế Độ VocaVIP';
           btnToggle.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
         } else {
-          btnToggle.textContent = '👑 Bật Gói VIP Thử Nghiệm';
+          btnToggle.textContent = '👑 Bật VocaVIP Thử Nghiệm';
           btnToggle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
         }
       }
@@ -820,10 +820,10 @@
           item.wrap.onclick = null;
         } else {
           item.inp.disabled = true;
-          item.inp.placeholder = item.inp.value ? `🔒 Khóa ${item.num} đã lưu (Kích hoạt VIP để sử dụng)` : `🔒 Khóa ${item.num} (Dành riêng cho VIP - Nhân 3 hạn ngạch)`;
+          item.inp.placeholder = item.inp.value ? `🔒 Khóa ${item.num} đã lưu (Kích hoạt VocaVIP để sử dụng)` : `🔒 Khóa ${item.num} (Dành riêng cho VocaVIP - Nhân 3 hạn ngạch)`;
           item.wrap.style.opacity = '0.55';
           item.wrap.onclick = () => {
-            alert('👑 Tính năng Bể Đa Khóa API (Tối đa 3 Key từ các Project khác nhau để nhân 3 hạn ngạch) chỉ dành riêng cho thành viên VIP!\n\nNâng cấp VIP ngay để mở khóa toàn diện.');
+            alert('👑 Tính năng Bể Đa Khóa API (Tối đa 3 Key từ các Project khác nhau để nhân 3 hạn ngạch) chỉ dành riêng cho thành viên VocaVIP!\n\nNâng cấp VocaVIP ngay để mở khóa toàn diện.');
             openVipSubscriptionModal();
           };
         }
@@ -1212,6 +1212,8 @@
       vocaSyncChannel.onmessage = (event) => {
         if (event.data && (event.data.type === 'ECONOMY_UPDATED' || event.data.type === 'LEDGER_UPDATED')) {
           updateEconomyUI();
+          if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+          if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
           if (typeof renderLedgerList === 'function') renderLedgerList();
           if (typeof renderStudioDashboard === 'function') renderStudioDashboard();
         }
@@ -1283,9 +1285,9 @@
 
     function formatPointsCompact(pts) {
       if (pts >= 100000) {
-        return (pts / 1000).toFixed(0) + 'k Xu';
+        return (pts / 1000).toFixed(0) + 'k VoCoin';
       }
-      return pts + ' Xu';
+      return pts + ' VoCoin';
     }
 
         // =========================================================================
@@ -1329,10 +1331,10 @@
       if (headerPoints) headerPoints.textContent = formatPointsCompact(points);
 
       const studioBal = document.getElementById('studio-wallet-balance');
-      if (studioBal) studioBal.textContent = points + ' Xu';
+      if (studioBal) studioBal.textContent = points + ' VoCoin';
 
       const profPoints = document.getElementById('profile-user-points');
-      if (profPoints) profPoints.textContent = points + ' Xu';
+      if (profPoints) profPoints.textContent = points + ' VoCoin';
 
       const shopPoints = document.getElementById('shop-user-points');
       if (shopPoints) shopPoints.textContent = points;
@@ -1344,19 +1346,22 @@
       if (shopSkips) shopSkips.textContent = skips;
 
       const quizWalletPoints = document.getElementById('quiz-wallet-points');
-      if (quizWalletPoints) quizWalletPoints.textContent = `${points}đ`;
+      if (quizWalletPoints) quizWalletPoints.textContent = `${points} VoCoin`;
 
       const quizCardHintsCount = document.getElementById('quiz-card-hints-count');
-      if (quizCardHintsCount) quizCardHintsCount.textContent = hints > 0 ? hints : '50đ';
+      if (quizCardHintsCount) quizCardHintsCount.textContent = hints > 0 ? hints : '50';
 
       const quizCardSkipsCount = document.getElementById('quiz-card-skips-count');
-      if (quizCardSkipsCount) quizCardSkipsCount.textContent = skips > 0 ? skips : '100đ';
+      if (quizCardSkipsCount) quizCardSkipsCount.textContent = skips > 0 ? skips : '100';
+
+      const spellingWalletPoints = document.getElementById('spelling-wallet-points');
+      if (spellingWalletPoints) spellingWalletPoints.textContent = `${points} VoCoin`;
 
       const spellingHintsCount = document.getElementById('spelling-hints-count');
-      if (spellingHintsCount) spellingHintsCount.textContent = hints > 0 ? hints : '50đ';
+      if (spellingHintsCount) spellingHintsCount.textContent = hints > 0 ? hints : '50';
 
       const spellingSkipsCount = document.getElementById('spelling-skips-count');
-      if (spellingSkipsCount) spellingSkipsCount.textContent = skips > 0 ? skips : '100đ';
+      if (spellingSkipsCount) spellingSkipsCount.textContent = skips > 0 ? skips : '100';
     }
 
     async function syncEconomyToCloud() {
@@ -1366,19 +1371,34 @@
         const pts = getUserPoints();
         const hts = getUserHints();
         const sks = getUserSkips();
+        const rawSpins = localStorage.getItem('vocaflow_lucky_spins_left');
+        const sps = parseInt(rawSpins || '0', 10);
+        const cleanSpins = Math.max(0, isNaN(sps) ? 0 : sps);
+        const lastSpinDate = localStorage.getItem('vocaflow_last_spin_date') || getTodayString();
+        const lastVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
         const nowIso = new Date().toISOString();
         const payload = {
           points: pts,
           hints: hts,
           skips: sks,
+          luckySpins: cleanSpins,
+          luckySpinsDate: lastSpinDate,
+          lastVipSpinDate: lastVipDate,
+          flowFreezes: getUserFlowFreezes(),
+          streakFreezes: getUserFlowFreezes(),
           updatedAt: nowIso
         };
         const rtdbUrl = firebaseConfig.databaseURL;
         await Promise.allSettled([
           fetch(`${rtdbUrl}/users/${currentUser.uid}/economy.json${authParam}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/lucky_spins_left.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cleanSpins)
           }),
           fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/points.json${authParam}`, {
             method: 'PUT',
@@ -1412,10 +1432,22 @@
             const remotePoints = typeof data.points === 'number' ? data.points : parseInt(data.points, 10);
             const remoteHints = typeof data.hints === 'number' ? data.hints : parseInt(data.hints, 10);
             const remoteSkips = typeof data.skips === 'number' ? data.skips : parseInt(data.skips, 10);
+            const remoteSpins = typeof data.luckySpins === 'number' ? data.luckySpins : parseInt(data.luckySpins, 10);
             if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
             if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
             if (!isNaN(remoteSkips)) localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
+            if (!isNaN(remoteSpins)) {
+              localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteSpins).toString());
+            }
+            if (data.luckySpinsDate) {
+              localStorage.setItem('vocaflow_last_spin_date', data.luckySpinsDate);
+            }
+            if (data.lastVipSpinDate) {
+              localStorage.setItem('vocaflow_last_vip_spin_date', data.lastVipSpinDate);
+            }
             updateEconomyUI();
+            if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+            if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
           }
         }
       } catch (e) {
@@ -1439,7 +1471,7 @@
         function buySkipsPackage(skipCount, basePoints) {
       const costPoints = applyStoreDiscountToPrice(basePoints);
       if (!currentUser || !currentUser.email) {
-        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
+        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng VocaShop và lưu VoCoin thưởng!');
         closeModal('modal-shop');
         openAuthModal('login');
         return;
@@ -1447,16 +1479,16 @@
 
       const currentPoints = getUserPoints();
       if (currentPoints < costPoints) {
-        alert(`❌ Không đủ điểm!\nBạn đang có ${currentPoints} điểm, nhưng gói này cần ${costPoints} điểm.\nHãy làm thêm Quiz hoặc Luyện Viết để tích lũy thêm điểm nhé!`);
+        alert(`❌ Không đủ VoCoin!\nBạn đang có ${currentPoints} VoCoin, nhưng gói này cần ${costPoints} VoCoin.\nHãy hoàn thành các bài học để tích lũy thêm VoCoin nhé!`);
         return;
       }
 
-      if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${skipCount} Lượt Bỏ Qua (Skip Pass)?`)) {
+      if (confirm(`Xác nhận đổi ${costPoints} VoCoin để lấy +${skipCount} VocaSkip?`)) {
         playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserSkips(getUserSkips() + skipCount);
-        addLedgerEntry('BUY_SKIP', -costPoints, `Đổi +${skipCount} Lượt Bỏ Qua (Skip Pass) trong VocaShop`);
-        showToast(`🎉 Đã đổi thành công +${skipCount} lượt Bỏ Qua!`);
+        addLedgerEntry('BUY_SKIP', -costPoints, `Đổi +${skipCount} VocaSkip trong VocaShop`);
+        showToast(`🎉 Đã đổi thành công +${skipCount} VocaSkip!`);
         updateEconomyUI();
       }
     }
@@ -1464,7 +1496,7 @@
     function buyHintsPackage(hintCount, basePoints) {
       const costPoints = applyStoreDiscountToPrice(basePoints);
       if (!currentUser || !currentUser.email) {
-        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng Cửa hàng và lưu điểm thưởng!');
+        alert('🔒 Bạn cần đăng nhập/đăng ký tài khoản để sử dụng VocaShop và lưu VoCoin thưởng!');
         closeModal('modal-shop');
         openAuthModal('login');
         return;
@@ -1472,16 +1504,16 @@
 
       const currentPoints = getUserPoints();
       if (currentPoints < costPoints) {
-        alert(`❌ Không đủ điểm!\nBạn đang có ${currentPoints} điểm, nhưng gói này cần ${costPoints} điểm.\nHãy làm thêm Quiz để tích lũy thêm điểm nhé!`);
+        alert(`❌ Không đủ VoCoin!\nBạn đang có ${currentPoints} VoCoin, nhưng gói này cần ${costPoints} VoCoin.\nHãy hoàn thành các bài học để tích lũy thêm VoCoin nhé!`);
         return;
       }
 
-      if (confirm(`Xác nhận đổi ${costPoints} điểm để lấy +${hintCount} Lượt Gợi Ý AI?`)) {
+      if (confirm(`Xác nhận đổi ${costPoints} VoCoin để lấy +${hintCount} VocaHint?`)) {
         playVocaSfx('purchase');
         setUserPoints(currentPoints - costPoints);
         setUserHints(getUserHints() + hintCount);
-        addLedgerEntry('BUY_HINT', -costPoints, `Đổi +${hintCount} Lượt Gợi Ý AI trong VocaShop`);
-        showToast(`🎉 Đã đổi thành công +${hintCount} lượt gợi ý AI!`);
+        addLedgerEntry('BUY_HINT', -costPoints, `Đổi +${hintCount} VocaHint trong VocaShop`);
+        showToast(`🎉 Đã đổi thành công +${hintCount} VocaHint!`);
         updateEconomyUI();
       }
     }
@@ -1545,18 +1577,18 @@
             if (hts > 0) setUserHints(getUserHints() + hts);
             if (pts > 0) {
               setUserPoints(getUserPoints() + pts);
-              addLedgerEntry('GIFTCODE', pts, `Nhập mã quà tặng "${code}" (+${pts} Xu)`);
+              addLedgerEntry('GIFTCODE', pts, `Nhập mã quà tặng "${code}" (+${pts} VoCoin)`);
             }
             if (sks > 0) setUserSkips(getUserSkips() + sks);
 
             msg.style.display = 'block';
             msg.style.color = '#10b981';
-            let awardMsg = `🎉 Áp dụng thành công! Tặng ngay +${pts}đ Ví, +${hts} Gợi Ý`;
-            if (sks > 0) awardMsg += ` & +${sks} Lượt Bỏ Qua!`;
+            let awardMsg = `🎉 Áp dụng thành công! Tặng ngay +${pts} VoCoin, +${hts} VocaHint`;
+            if (sks > 0) awardMsg += ` & +${sks} VocaSkip!`;
             else awardMsg += `!`;
             msg.textContent = awardMsg;
             input.value = '';
-            showToast(`🎁 Quà tặng VocaFlow: +${pts}đ, +${hts} Gợi Ý` + (sks > 0 ? `, +${sks} Skip!` : `!`));
+            showToast(`🎁 Quà tặng VocaFlow: +${pts} VoCoin, +${hts} VocaHint` + (sks > 0 ? `, +${sks} VocaSkip!` : `!`));
             return;
           }
         }
@@ -1570,12 +1602,12 @@
         localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
         setUserHints(getUserHints() + 150);
         setUserPoints(getUserPoints() + 500);
-        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 Xu)`);
+        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 VoCoin)`);
         msg.style.display = 'block';
         msg.style.color = '#10b981';
-        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 Lượt Gợi Ý AI & +500đ Ví!';
+        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 VocaHint & +500 VoCoin!';
         input.value = '';
-        showToast('🎁 Chúc mừng! Đã nhận +150 Lượt gợi ý & +500đ ví!');
+        showToast('🎁 Chúc mừng! Đã nhận +150 VocaHint & +500 VoCoin!');
         return;
       }
 
@@ -1736,9 +1768,9 @@
       if (ptsInput) ptsInput.value = student.points;
       if (htsInput) htsInput.value = student.hints;
       if (sksInput) sksInput.value = student.skips || 0;
-      if (ptsBadge) ptsBadge.textContent = 'Hiện có: ' + student.points + 'đ';
-      if (htsBadge) htsBadge.textContent = 'Hiện có: ' + student.hints + ' gợi ý';
-      if (sksBadge) sksBadge.textContent = 'Hiện có: ' + (student.skips || 0) + ' skip';
+      if (ptsBadge) ptsBadge.textContent = 'Hiện có: ' + student.points + ' VoCoin';
+      if (htsBadge) htsBadge.textContent = 'Hiện có: ' + student.hints + ' VocaHint';
+      if (sksBadge) sksBadge.textContent = 'Hiện có: ' + (student.skips || 0) + ' VocaSkip';
       const spsInput = document.getElementById('adjust-wallet-spins-input');
       const spsBadge = document.getElementById('adjust-current-spins-badge');
       if (spsInput) spsInput.value = student.luckySpins || student.spins || 0;
@@ -1747,12 +1779,12 @@
       const frzInput = document.getElementById('adjust-wallet-freezes-input');
       const frzBadge = document.getElementById('adjust-current-freezes-badge');
       if (frzInput) frzInput.value = student.flowFreezes || 0;
-      if (frzBadge) frzBadge.textContent = 'Hiện có: ' + (student.flowFreezes || 0) + ' freeze';
+      if (frzBadge) frzBadge.textContent = 'Hiện có: ' + (student.flowFreezes || 0) + ' FlowFreeze';
 
       const vipSelect = document.getElementById('adjust-wallet-vip-select');
       const vipBadge = document.getElementById('adjust-current-vip-badge');
       if (vipSelect) vipSelect.value = (student.isVip && student.vipTier) ? student.vipTier : 'none';
-      if (vipBadge) vipBadge.textContent = student.isVip ? ('VIP ' + (student.vipTier || '').toUpperCase()) : 'Chưa có VIP';
+      if (vipBadge) vipBadge.textContent = student.isVip ? ('VocaVIP ' + (student.vipTier || '').toUpperCase()) : 'Chưa có VocaVIP';
 
       openModal('modal-admin-adjust-wallet');
     }
@@ -1925,7 +1957,7 @@
 
           renderAdminStudentsTable();
           closeModal('modal-admin-adjust-wallet');
-          showToast('🎉 Đã cập nhật ví, VIP và Flow Freeze cho học viên "' + student.displayName + '" thành công!');
+          showToast('🎉 Đã cập nhật ví, VocaVIP và FlowFreeze cho Flower "' + student.displayName + '" thành công!');
         } else {
           alert('Không thể lưu lên Cloud! Vui lòng thử lại.');
         }
@@ -2195,7 +2227,7 @@
         <div style="background: rgba(0,0,0,0.35); border: 1.5px solid #818cf8; border-radius: 12px; padding: 18px; text-align: center;">
           <div style="font-size: 24px; margin-bottom: 6px;">⏳</div>
           <div style="font-size: 14px; font-weight: 700; color: #818cf8;">Đang dùng AI Gemini Vision phân tích đồng loạt ${adminMultiBillImages.length} ảnh biên lai...</div>
-          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">Hệ thống đang bóc tách số tiền, mã 16 ký tự UID và đối soát với danh sách học viên.</div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">Hệ thống đang bóc tách số tiền, mã 16 ký tự UID và đối soát với danh sách Flower.</div>
         </div>
       `;
 
@@ -2211,12 +2243,12 @@
       const apiKey = localStorage.getItem('gemini_api_key') || (typeof defaultGeminiApiKey !== 'undefined' ? defaultGeminiApiKey : '');
 
       const packageNames = {
-        '1M': '👑 VIP Tháng (39k)',
-        '1Y': '🟡 VIP Năm (299k)',
-        'LT': '👑 VIP Trọn Đời (599k)',
-        'S5': '🎡 5 Lượt Quay (10k)',
-        'S15': '🎡 15 Lượt Quay (25k)',
-        'S40': '🎡 40 Lượt Quay (50k)'
+        '1M': '👑 VocaVIP Tháng (39k)',
+        '1Y': '🟡 VocaVIP Năm (299k)',
+        'LT': '👑 VocaVIP Trọn Đời (599k)',
+        'S5': '🎡 5 VocaSpin (10k)',
+        'S15': '🎡 15 VocaSpin (25k)',
+        'S40': '🎡 40 VocaSpin (50k)'
       };
 
       for (let i = 0; i < adminMultiBillImages.length; i++) {
@@ -2334,7 +2366,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
           </div>
           ${readyForActivation.length > 1 ? `
             <button type="button" class="btn btn-primary btn-sm" onclick="applyAllValidMultiBills()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 800; font-size: 12px; padding: 6px 16px; box-shadow: 0 4px 14px rgba(16,185,129,0.4);">
-              ⚡ Kích Hoạt Toàn Bộ (${readyForActivation.length} Học Viên Hợp Lệ)
+              ⚡ Kích Hoạt Toàn Bộ (${readyForActivation.length} Flower Hợp Lệ)
             </button>
           ` : ''}
         </div>
@@ -2409,7 +2441,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
                 </div>
               ` : `
                 <div style="color: #f87171; font-size: 12px;">
-                  ❌ ${res.shortUid ? `Tìm thấy mã <strong>${escapeHtml(res.shortUid)}</strong> nhưng chưa khớp học viên nào.` : 'Chưa nhận diện được 16 ký tự UID trên ảnh.'} Hãy kiểm tra lại ảnh hoặc tra cứu bằng ô tìm kiếm.
+                  ❌ ${res.shortUid ? `Tìm thấy mã <strong>${escapeHtml(res.shortUid)}</strong> nhưng chưa khớp Flower nào.` : 'Chưa nhận diện được 16 ký tự UID trên ảnh.'} Hãy kiểm tra lại ảnh hoặc tra cứu bằng ô tìm kiếm.
                 </div>
               `}
             </div>
@@ -2467,7 +2499,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
         return;
       }
 
-      if (!confirm(`Xác nhận kích hoạt hàng loạt cho ${validItems.length} học viên hợp lệ từ các ảnh đã quét?`)) {
+      if (!confirm(`Xác nhận kích hoạt hàng loạt cho ${validItems.length} Flower hợp lệ từ các ảnh đã quét?`)) {
         return;
       }
 
@@ -2478,7 +2510,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
         }
       }
 
-      showToast(`🎉 Đã kích hoạt toàn bộ ${validItems.length} học viên thành công!`);
+      showToast(`🎉 Đã kích hoạt toàn bộ ${validItems.length} Flower thành công!`);
     }
     window.applyAllValidMultiBills = applyAllValidMultiBills;
 
@@ -2511,7 +2543,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
 
       if (!adminStudentsData || adminStudentsData.length === 0) {
         resultBox.style.display = 'block';
-        resultBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ danh sách học viên...</div>';
+        resultBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ danh sách Flower...</div>';
         await fetchAdminStudentsList();
       }
 
@@ -2522,12 +2554,12 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
       const matchedStudent = parsed ? parsed.matchedStudent : null;
 
       const packageNames = {
-        '1M': '👑 VIP Tháng (39k)',
-        '1Y': '🟡 VIP Năm (299k)',
-        'LT': '👑 VIP Trọn Đời (599k)',
-        'S5': '🎡 5 Lượt Quay (10k)',
-        'S15': '🎡 15 Lượt Quay (25k)',
-        'S40': '🎡 40 Lượt Quay (50k)'
+        '1M': '👑 VocaVIP Tháng (39k)',
+        '1Y': '🟡 VocaVIP Năm (299k)',
+        'LT': '👑 VocaVIP Trọn Đời (599k)',
+        'S5': '🎡 5 VocaSpin (10k)',
+        'S15': '🎡 15 VocaSpin (25k)',
+        'S40': '🎡 40 VocaSpin (50k)'
       };
 
       const pkgTitle = packageNames[code] || (code ? `Gói ${code}` : 'Chưa nhận diện gói');
@@ -2563,7 +2595,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
               </div>
             ` : `
               <div style="color: #f87171; font-size: 12px;">
-                ❌ Chưa khớp học viên nào từ nội dung tin nhắn. Hãy kiểm tra 16 ký tự UID hoặc dùng ô tra cứu ở trên.
+                ❌ Chưa khớp Flower nào từ nội dung tin nhắn. Hãy kiểm tra 16 ký tự UID hoặc dùng ô tra cứu ở trên.
               </div>
             `}
           </div>
@@ -2697,22 +2729,22 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
 Dưới đây là tin nhắn biến động số dư ngân hàng thực tế từ app MB Bank:
 "${rawMsg}"
 
-Danh sách 50 học viên đăng ký trên hệ thống:
+Danh sách 50 Flower đăng ký trên hệ thống:
 ${JSON.stringify(studentsSummary)}
 
 Bảng mã gói dịch vụ của VocaFlow:
-- 1M: VIP 1 Tháng (39,000đ)
-- 1Y: VIP 1 Năm (299,000đ)
-- LT: VIP Trọn Đời (599,000đ)
-- S5: 5 Lượt quay may mắn (10,000đ)
-- S15: 15 Lượt quay may mắn (25,000đ)
-- S40: 40 Lượt quay may mắn (50,000đ)
+- 1M: VocaVIP 1 Tháng (39,000đ)
+- 1Y: VocaVIP 1 Năm (299,000đ)
+- LT: VocaVIP Trọn Đời (599,000đ)
+- S5: 5 VocaSpin (10,000đ)
+- S15: 15 VocaSpin (25,000đ)
+- S40: 40 VocaSpin (50,000đ)
 
-Nhiệm vụ: Hãy phân tích tin nhắn và tìm ra chính xác học viên nào đã chuyển khoản và mua gói nào.
+Nhiệm vụ: Hãy phân tích tin nhắn và tìm ra chính xác Flower nào đã chuyển khoản và mua gói nào.
 Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 {
   "matchedShortUid": "16_KY_TU_UID_VIET_HOA",
-  "matchedStudentName": "Ten hoc vien",
+  "matchedStudentName": "Ten Flower",
   "packageCode": "1M | 1Y | LT | S5 | S15 | S40",
   "amountVnd": 39000,
   "confidenceScore": 0.95,
@@ -2760,7 +2792,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           showToast(`🎯 AI đã phân tích xong: Khớp ${aiResult.matchedStudentName} (${pCode})!`);
           renderAdminBankTransactionsListUI();
         } else {
-          showToast('⚠️ AI không thể xác định chắc chắn học viên từ tin nhắn này.');
+          showToast('⚠️ AI không thể xác định chắc chắn Flower từ tin nhắn này.');
         }
       } catch (err) {
         console.error('AI Reconciler Error:', err);
@@ -2782,7 +2814,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       if (!adminStudentsData || adminStudentsData.length === 0) {
         resultBox.style.display = 'block';
-        resultBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ danh sách học viên từ Cloud...</div>';
+        resultBox.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ danh sách Flower từ Cloud...</div>';
         await fetchAdminStudentsList();
       }
 
@@ -2799,7 +2831,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         resultBox.style.display = 'block';
         resultBox.innerHTML = `
           <div style="background: rgba(239,68,68,0.08); border: 1px dashed rgba(239,68,68,0.35); border-radius: 10px; padding: 12px; text-align: center; color: #f87171; font-size: 12px;">
-            ❌ Không tìm thấy học viên nào khớp với mã tra cứu: <strong>${escapeHtml(q)}</strong>
+            ❌ Không tìm thấy Flower nào khớp với mã tra cứu: <strong>${escapeHtml(q)}</strong>
           </div>
         `;
         return;
@@ -2842,36 +2874,36 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
             <!-- Stats Bar -->
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; text-align: center; font-size: 11px;">
-              <div><span style="color:var(--text-muted);">🪙 Xu:</span> <strong style="color:#fbbf24;">${s.points}đ</strong></div>
+              <div><span style="color:var(--text-muted);">🪙 VoCoin:</span> <strong style="color:#fbbf24;">${s.points}</strong></div>
               <div><span style="color:var(--text-muted);">🎡 Quay:</span> <strong style="color:#38bdf8;">${spins} lượt</strong></div>
-              <div><span style="color:var(--text-muted);">💡 Gợi ý:</span> <strong style="color:#34d399;">${s.hints}</strong></div>
-              <div><span style="color:var(--text-muted);">📚 Bộ từ:</span> <strong style="color:#a855f7;">${s.deckCount}</strong></div>
+              <div><span style="color:var(--text-muted);">💡 VocaHint:</span> <strong style="color:#34d399;">${s.hints}</strong></div>
+              <div><span style="color:var(--text-muted);">📚 VocaDeck:</span> <strong style="color:#a855f7;">${s.deckCount}</strong></div>
             </div>
 
             <!-- 1-Click Fast Actions -->
             <div>
-              <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">⚡ Nạp Gói 1-Click Nhanh Cho Học Viên Này:</div>
+              <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">⚡ Nạp Gói 1-Click Nhanh Cho Flower Này:</div>
               <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', '1M')" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  🟢 + 1M (VIP Tháng)
+                  🟢 + 1M (VocaVIP Tháng)
                 </button>
                 <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', '1Y')" style="background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  🟡 + 1Y (VIP Năm)
+                  🟡 + 1Y (VocaVIP Năm)
                 </button>
                 <button type="button" class="btn btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'LT')" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  👑 + LT (Trọn Đời)
+                  👑 + LT (VocaVIP Trọn Đời)
                 </button>
                 <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S5')" style="border-color: rgba(245,158,11,0.5); color: #fbbf24; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  🎡 + S5 (5 Quay)
+                  🎡 + S5 (5 VocaSpin)
                 </button>
                 <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S15')" style="border-color: rgba(236,72,153,0.5); color: #f472b6; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  🎡 + S15 (15 Quay)
+                  🎡 + S15 (15 VocaSpin)
                 </button>
                 <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'S40')" style="border-color: rgba(168,85,247,0.5); color: #c084fc; font-weight: 700; font-size: 11px; padding: 5px 10px;">
-                  🎡 + S40 (40 Quay)
+                  🎡 + S40 (40 VocaSpin)
                 </button>
                 <button type="button" class="btn btn-outline btn-sm" onclick="quickApplyStudentVipOrSpin('${escapeHtml(s.uid)}', 'cancel_vip')" style="border-color: rgba(239,68,68,0.4); color: #f87171; font-weight: 600; font-size: 11px; padding: 5px 8px;">
-                  ❌ Hủy VIP
+                  ❌ Hủy VocaVIP
                 </button>
               </div>
             </div>
@@ -2910,24 +2942,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         isVip = true;
         vipTier = 'lifetime';
         vipExpiresAt = 0;
-        actionLabel = '👑 Kích hoạt VIP Trọn Đời (Lifetime)';
+        actionLabel = '👑 Kích hoạt VocaVIP Trọn Đời (Lifetime)';
       } else if (act === 'S5') {
         spins += 5;
-        actionLabel = '🎡 Cộng +5 Lượt Quay May Mắn';
+        actionLabel = '🎡 Cộng +5 VocaSpin';
       } else if (act === 'S15') {
         spins += 15;
-        actionLabel = '🎡 Cộng +15 Lượt Quay May Mắn';
+        actionLabel = '🎡 Cộng +15 VocaSpin';
       } else if (act === 'S40') {
         spins += 40;
-        actionLabel = '🎡 Cộng +40 Lượt Quay May Mắn';
+        actionLabel = '🎡 Cộng +40 VocaSpin';
       } else if (act === 'CANCEL_VIP') {
         isVip = false;
         vipTier = 'none';
         vipExpiresAt = 0;
-        actionLabel = '❌ Đã hủy kích hoạt VIP';
+        actionLabel = '❌ Đã hủy kích hoạt VocaVIP';
       }
 
-      if (!confirm(`Xác nhận thực hiện: "${actionLabel}" cho học viên ${student.displayName} (UID: ${student.shortUid || getShortUidUpper(uid)})?`)) {
+      if (!confirm(`Xác nhận thực hiện: "${actionLabel}" cho Flower ${student.displayName} (UID: ${student.shortUid || getShortUidUpper(uid)})?`)) {
         return;
       }
 
@@ -3069,12 +3101,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       const packageNames = {
-        '1M': '👑 VIP Tháng (39k)',
-        '1Y': '🟡 VIP Năm (299k)',
-        'LT': '👑 VIP Trọn Đời (599k)',
-        'S5': '🎡 5 Lượt Quay (10k)',
-        'S15': '🎡 15 Lượt Quay (25k)',
-        'S40': '🎡 40 Lượt Quay (50k)'
+        '1M': '👑 VocaVIP Tháng (39k)',
+        '1Y': '🟡 VocaVIP Năm (299k)',
+        'LT': '👑 VocaVIP Trọn Đời (599k)',
+        'S5': '🎡 5 VocaSpin (10k)',
+        'S15': '🎡 15 VocaSpin (25k)',
+        'S40': '🎡 40 VocaSpin (50k)'
       };
 
       let html = '';
@@ -3132,9 +3164,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             <!-- Row 3: Matching & Student Profile Bar -->
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
               <div>
-                ⏱️ ${timeStr} • Khớp học viên: 
+                ⏱️ ${timeStr} • Khớp Flower: 
                 ${matchedStudent ? `
-                  <strong style="color: #ffd700; text-decoration: underline; cursor: pointer;" onclick="lookupVipStudentByInput('${escapeHtml(matchedStudent.uid)}')" title="Bấm để tra cứu học viên này">
+                  <strong style="color: #ffd700; text-decoration: underline; cursor: pointer;" onclick="lookupVipStudentByInput('${escapeHtml(matchedStudent.uid)}')" title="Bấm để tra cứu Flower này">
                     ${escapeHtml(matchedStudent.displayName)} (${escapeHtml(matchedStudent.email)}) - [${shortUid}]
                   </strong>
                 ` : `<span style="color: #f87171;">${shortUid ? 'Mã 16 ký tự: ' + shortUid + ' (Chưa có trên hệ thống)' : 'Chưa nhận diện UID'}</span>`}
@@ -3246,7 +3278,7 @@ function switchPublisherTab(tab) {
     async function fetchAdminStudentsList() {
       const container = document.getElementById('admin-students-list-container');
       if (!container) return;
-      container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);"><span style=\"font-size: 24px; display: block; margin-bottom: 8px;\">⏳</span>Đang tải dữ liệu học viên từ Firebase Cloud...</div>';
+      container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);"><span style=\"font-size: 24px; display: block; margin-bottom: 8px;\">⏳</span>Đang tải dữ liệu Flower từ Firebase Cloud...</div>';
 
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       try {
@@ -3259,13 +3291,13 @@ function switchPublisherTab(tab) {
           res = await fetch(rtdbUrl + '/users.json');
         }
         if (!res.ok) {
-          container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">⚠️ Không thể tải danh sách học viên (Mã lỗi ' + res.status + '). Vui lòng kiểm tra quyền truy cập hoặc kết nối mạng.</div>';
+          container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">⚠️ Không thể tải danh sách Flower (Mã lỗi ' + res.status + '). Vui lòng kiểm tra quyền truy cập hoặc kết nối mạng.</div>';
           return;
         }
 
         const data = await res.json();
         if (!data || typeof data !== 'object') {
-          container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có học viên nào đăng ký trên hệ thống.</div>';
+          container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có Flower nào đăng ký trên hệ thống.</div>';
           return;
         }
 
@@ -3377,12 +3409,12 @@ function switchPublisherTab(tab) {
 
         if (sCountEl) sCountEl.textContent = totalStudents + ' người';
         if (dCountEl) dCountEl.textContent = totalDecks + ' bộ (' + totalWords + ' từ)';
-        if (pCountEl) pCountEl.textContent = totalPoints + ' Xu (' + totalHints + ' Lượt gợi ý, ' + totalSkips + ' Lượt bỏ qua)';
+        if (pCountEl) pCountEl.textContent = totalPoints + ' VoCoin (' + totalHints + ' VocaHint, ' + totalSkips + ' VocaSkip)';
 
         renderAdminStudentsTable();
       } catch (err) {
         console.error('Fetch students error:', err);
-        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Lỗi khi tải dữ liệu học viên: ' + escapeHtml(err.message || 'Lỗi không xác định') + '</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Lỗi khi tải dữ liệu Flower: ' + escapeHtml(err.message || 'Lỗi không xác định') + '</div>';
       }
     }
 
@@ -3403,7 +3435,7 @@ function switchPublisherTab(tab) {
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">Không tìm thấy học viên nào phù hợp với từ khóa "' + escapeHtml(q) + '".</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">Không tìm thấy Flower nào phù hợp với từ khóa "' + escapeHtml(q) + '".</div>';
         return;
       }
 
@@ -3417,19 +3449,19 @@ function switchPublisherTab(tab) {
             <!-- ROW 1: USER INFO -->
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
               <div style="display: flex; align-items: center; gap: 10px; min-width: 200px; flex: 1; cursor: pointer;" onclick="openPublicProfileByStudent('${escapeHtml(s.uid)}')">
-                <div style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15); overflow: hidden; ${s.isVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 10px rgba(251,191,36,0.6);' : ''}" title="Bấm để xem hồ sơ học viên">
+                <div style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15); overflow: hidden; ${s.isVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 10px rgba(251,191,36,0.6);' : ''}" title="Bấm để xem hồ sơ Flower">
                   ${renderAvatarHtml(s.avatar || s.displayName, 40, 16)}
                 </div>
                 <div>
                   <div style="font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                     ${s.isVip ? `
-                      <span class="vip-name-wrapper" style="gap: 4px;" title="Hội viên VIP">
+                      <span class="vip-name-wrapper" style="gap: 4px;" title="Hội viên VocaVIP">
                         <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
                         <span class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(s.displayName)}</span>
                       </span>
-                      <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 1px solid rgba(251,191,36,0.5); font-weight: 800; padding: 1px 6px;">VIP ${s.vipTier ? s.vipTier.toUpperCase() : ''}</span>
+                      <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 1px solid rgba(251,191,36,0.5); font-weight: 800; padding: 1px 6px;">VocaVIP ${s.vipTier ? s.vipTier.toUpperCase() : ''}</span>
                     ` : `
-                      <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ học viên">${escapeHtml(s.displayName)}</span>
+                      <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ Flower">${escapeHtml(s.displayName)}</span>
                     `}
                     <span class="badge" onclick="event.stopPropagation(); copyTextToClipboard('${escapeHtml(s.uid)}', 'Đã sao chép UID: ${escapeHtml(s.uid)}')" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.18); color: #a5b4fc; padding: 2px 8px; border-radius: 6px; font-family: monospace; cursor: pointer; border: 1px solid rgba(99, 102, 241, 0.35); user-select: all;" title="Bấm để sao chép toàn bộ UID">UID: ${escapeHtml(s.uid)} 📋</span>
                   </div>
@@ -3447,13 +3479,13 @@ function switchPublisherTab(tab) {
                   📚 ${s.deckCount} bộ (${s.wordCount} từ)
                 </span>
                 <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  💰 ${s.points} Xu
+                  💰 ${s.points} VoCoin
                 </span>
                 <span class="badge" style="background: rgba(236, 72, 153, 0.12); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  💡 ${s.hints} Lượt gợi ý
+                  💡 ${s.hints} VocaHint
                 </span>
                 <span class="badge" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); font-size: 11.5px; padding: 3px 8px;">
-                  ⏩ ${s.skips || 0} Lượt bỏ qua
+                  ⏩ ${s.skips || 0} VocaSkip
                 </span>
                 <span class="badge" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25); font-size: 11.5px; padding: 3px 8px;">
                   ❄️ ${s.flowFreezes || 0} Freezes
@@ -3464,13 +3496,13 @@ function switchPublisherTab(tab) {
               </div>
 
               <div style="display: flex; gap: 6px;">
-                <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 600;" title="Thưởng hoặc điều chỉnh điểm ví/gợi ý cho học viên">
+                <button class="btn btn-outline btn-sm" onclick="adjustStudentWalletOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 600;" title="Thưởng hoặc điều chỉnh VoCoin/VocaHint cho Flower">
                   🎁 Sửa Ví
                 </button>
-                <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); font-weight: 600;" title="Xem các bộ từ của học viên này">
-                  👁️ Bộ Từ (${s.deckCount})
+                <button class="btn btn-outline btn-sm" onclick="viewStudentDecksModal('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08); font-weight: 600;" title="Xem các VocaDeck của Flower này">
+                  👁️ VocaDeck (${s.deckCount})
                 </button>
-                <button class="btn btn-outline btn-sm" onclick="deleteStudentAccountOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 600;" title="Xóa tài khoản học viên / tài khoản rác này">
+                <button class="btn btn-outline btn-sm" onclick="deleteStudentAccountOnCloud('${escapeHtml(s.uid)}', '${escapeHtml(s.displayName)}')" style="font-size: 11.5px; padding: 4px 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 600;" title="Xóa tài khoản Flower / tài khoản rác này">
                   🗑️ Xóa
                 </button>
               </div>
@@ -3509,14 +3541,14 @@ function switchPublisherTab(tab) {
       const avEl = document.getElementById('student-modal-avatar');
       const container = document.getElementById('student-modal-decks-container');
 
-      if (titleEl) titleEl.textContent = 'Bộ Từ Của ' + displayName;
+      if (titleEl) titleEl.textContent = 'VocaDeck Của ' + displayName;
       if (subEl) subEl.textContent = '✉️ ' + student.email + ' • UID: ' + student.uid;
       if (avEl) avEl.innerHTML = renderAvatarHtml(student.avatar || (displayName ? displayName[0].toUpperCase() : 'U'), 40, 18);
 
       if (!container) return;
 
       if (!student.rawDecks || student.rawDecks.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;"><span style="font-size: 32px; display: block; margin-bottom: 8px;">📭</span>Học viên này chưa tạo bộ từ nào trên Cloud.</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 36px 20px; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: 12px;"><span style="font-size: 32px; display: block; margin-bottom: 8px;">📭</span>Flower này chưa tạo VocaDeck nào trên Cloud.</div>';
         openModal('modal-student-decks-detail');
         return;
       }
@@ -3593,7 +3625,7 @@ function switchPublisherTab(tab) {
       if (!isNaN(hts)) setUserHints(hts);
       if (!isNaN(sks)) setUserSkips(sks);
       if (!isNaN(sps)) setLuckySpinsCount(sps);
-      showToast(`⚡ Đã cập nhật ví: ${getUserPoints()}đ, ${getUserHints()} gợi ý, ${getUserSkips()} skip & ${getLuckySpinsCount()} lượt quay!`);
+      showToast(`⚡ Đã cập nhật ví: ${getUserPoints()} VoCoin, ${getUserHints()} VocaHint, ${getUserSkips()} VocaSkip & ${getLuckySpinsCount()} VocaSpin!`);
     }
 
     function quickAddAdminRewards(ptsToAdd, htsToAdd, sksToAdd = 50, spsToAdd = 10) {
@@ -3602,7 +3634,7 @@ function switchPublisherTab(tab) {
       setUserSkips(getUserSkips() + sksToAdd);
       setLuckySpinsCount(getLuckySpinsCount() + spsToAdd);
       refreshAdminPublisherWalletUI();
-      showToast(`⚡ Đã cộng nhanh +${ptsToAdd}đ, +${htsToAdd} Gợi Ý, +${sksToAdd} Skip & +${spsToAdd} Lượt Quay!`);
+      showToast(`⚡ Đã cộng nhanh +${ptsToAdd} VoCoin, +${htsToAdd} VocaHint, +${sksToAdd} VocaSkip & +${spsToAdd} VocaSpin!`);
     }
 
     async function createAdminGiftCode() {
@@ -3622,7 +3654,7 @@ function switchPublisherTab(tab) {
       const skips = parseInt(sksInput ? sksInput.value : '0', 10) || 0;
       const points = parseInt(ptsInput.value, 10) || 0;
       if (hints <= 0 && points <= 0 && skips <= 0) {
-        alert('Phải tặng ít nhất gợi ý, lượt bỏ qua hoặc điểm thưởng!');
+        alert('Phải tặng ít nhất VocaHint, VocaSkip hoặc VoCoin thưởng!');
         return;
       }
 
@@ -3696,9 +3728,9 @@ function switchPublisherTab(tab) {
               : '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">🟢 Hoạt động</span>';
 
             let rewards = [];
-            if (pts > 0) rewards.push(`+${pts}đ Ví`);
-            if (hts > 0) rewards.push(`+${hts} Gợi Ý`);
-            if (sks > 0) rewards.push(`+${sks} Skip`);
+            if (pts > 0) rewards.push(`+${pts} VoCoin`);
+            if (hts > 0) rewards.push(`+${hts} VocaHint`);
+            if (sks > 0) rewards.push(`+${sks} VocaSkip`);
             const rewardText = rewards.join(', ') || 'Không có quà';
 
             html += `
@@ -3740,7 +3772,7 @@ function switchPublisherTab(tab) {
     }
 
     async function deleteAdminGiftCode(codeKey) {
-      if (!confirm(`Bạn có chắc chắn muốn xóa mã "${codeKey}" khỏi Cloud? Người học sẽ không dùng được mã này nữa.`)) return;
+      if (!confirm(`Bạn có chắc chắn muốn xóa mã "${codeKey}" khỏi Cloud? Flower sẽ không dùng được mã này nữa.`)) return;
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
 
@@ -3811,6 +3843,9 @@ function switchPublisherTab(tab) {
       updateAiChatQuotaUI();
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       if (currentUser && currentUser.uid) {
+        if (!Array.isArray(decks) || decks.length === 0 || (decks.length === 1 && decks[0].id === 'deck-oxford-starter')) {
+          autoRecoverLostDecks(false).catch(() => {});
+        }
         handleManualSync();
         loadEconomyFromCloud();
         syncFollowStateWithCloud();
@@ -3937,24 +3972,34 @@ function switchPublisherTab(tab) {
                   updateEconomyUI();
                 }
                 const remoteLuckySpins = typeof uData.economy.luckySpins === 'number' ? uData.economy.luckySpins : parseInt(uData.economy.luckySpins, 10);
-                const localLuckySpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
                 if (!isNaN(remoteLuckySpins)) {
-                  const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
-                  localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
+                  localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                }
+                if (uData.economy.luckySpinsDate) {
+                  localStorage.setItem('vocaflow_last_spin_date', uData.economy.luckySpinsDate);
                 }
                 if (uData.economy.lastVipSpinDate) {
-                  const localLastVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : (new Date().toISOString().slice(0, 10));
-                  if (uData.economy.lastVipSpinDate === todayStr || !localLastVipDate) {
-                    localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
-                  }
+                  localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
                 }
+                if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+                if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
               } else if (uData.points !== undefined) {
                 const pts = typeof uData.points === 'number' ? uData.points : parseInt(uData.points, 10);
                 if (!isNaN(pts)) {
                   localStorage.setItem(STORAGE_KEY_USER_POINTS, pts.toString());
                   updateEconomyUI();
                 }
+              }
+              if (uData.lucky_spins_left !== undefined && (!uData.economy || uData.economy.luckySpins === undefined)) {
+                const sps = parseInt(uData.lucky_spins_left, 10);
+                if (!isNaN(sps)) {
+                  localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, sps).toString());
+                  if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+                  if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
+                }
+              }
+              if (typeof autoHealExcessVipSpinsToday === 'function') {
+                autoHealExcessVipSpinsToday();
               }
 
               // Sync Flow from Cloud on Startup (v0.10.8-alpha-10.15 - Bidirectional Union Merge)
@@ -4415,8 +4460,8 @@ function switchPublisherTab(tab) {
 
           const authorDisplay = deck.author || (deck.authorUsername ? ('@' + deck.authorUsername) : 'Tác giả');
           const authorHandle = deck.authorUsername ? ('@' + deck.authorUsername) : '';
-          const notifTitle = `📘 Bộ từ mới từ ${authorHandle || authorDisplay}`;
-          const notifMessage = `Tác giả ${authorDisplay} vừa xuất bản bộ từ mới: "${deck.title}". Nhấn để xem ngay!`;
+          const notifTitle = `📘 VocaDeck mới từ ${authorHandle || authorDisplay}`;
+          const notifMessage = `Tác giả ${authorDisplay} vừa xuất bản VocaDeck mới: "${deck.title}". Nhấn để xem ngay!`;
           
           addNotification('NEW_DECK', notifTitle, notifMessage, 'PREVIEW_DECK', {
             deckId: deck.id,
@@ -4544,7 +4589,7 @@ function switchPublisherTab(tab) {
               </div>
               ${(n.rewardType || (n.title && n.title.includes('Thưởng'))) ? `
                 <div style="margin: 4px 0; display: inline-flex; align-items: center; gap: 4px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #fbbf24;">
-                  <span>🎁 Quà tặng:</span> <span>${n.rewardAmount ? ('+' + n.rewardAmount + ' ' + (n.rewardType === 'vip' ? 'Ngày VIP' : (n.rewardType === 'hints' ? 'Gợi Ý AI' : (n.rewardType === 'skips' ? 'Thẻ Bỏ Qua' : (n.rewardType === 'spins' ? 'Lượt Quay' : 'Xu'))))) : 'Đã cộng vào tài khoản'}</span>
+                  <span>🎁 Quà tặng:</span> <span>${n.rewardAmount ? ('+' + n.rewardAmount + ' ' + (n.rewardType === 'vip' ? 'Ngày VocaVIP' : (n.rewardType === 'hints' ? 'VocaHint' : (n.rewardType === 'skips' ? 'VocaSkip' : (n.rewardType === 'spins' ? 'VocaSpin' : 'VoCoin'))))) : 'Đã cộng vào tài khoản'}</span>
                 </div>
               ` : ''}
               <div style="font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
@@ -4902,7 +4947,7 @@ function switchPublisherTab(tab) {
         bodyEl.innerHTML = `
           <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12.5px;">
             <div style="font-size: 28px; margin-bottom: 6px;">${isFollowing ? '👥' : '🌱'}</div>
-            ${isFollowing ? 'Bạn chưa theo dõi tác giả nào. Ghé Thư Viện để theo dõi các tác giả yêu thích!' : 'Chưa có người theo dõi nào. Hãy xuất bản bộ từ hữu ích để kết nối bạn bè!'}
+            ${isFollowing ? 'Bạn chưa theo dõi tác giả nào. Ghé Thư Viện để theo dõi các tác giả yêu thích!' : 'Chưa có người theo dõi nào. Hãy xuất bản VocaDeck hữu ích để kết nối bạn bè!'}
           </div>
         `;
         openModal('modal-subscribers-list');
@@ -5292,7 +5337,7 @@ function switchPublisherTab(tab) {
 
         if (nameEl) {
           if (userVipActive) {
-            nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name">${escapeHtml(displayName)}</span><span class="vip-crown-icon" title="Hội viên VIP (${userVipTierName.toUpperCase()})" style="font-size: 13px;">👑</span></span>`;
+            nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name">${escapeHtml(displayName)}</span><span class="vip-crown-icon" title="Hội viên VocaVIP (${userVipTierName.toUpperCase()})" style="font-size: 13px;">👑</span></span>`;
           } else {
             nameEl.textContent = displayName;
           }
@@ -5300,7 +5345,7 @@ function switchPublisherTab(tab) {
 
         if (nameMobileEl) {
           if (userVipActive) {
-            nameMobileEl.innerHTML = `Tài khoản: <strong style="display: inline-flex; align-items: center;"><span class="vip-crown-icon" style="margin-right: 4px; margin-left: 0;">👑</span><span class="vip-glowing-name">${escapeHtml(displayName)} (VIP)</span></strong>`;
+            nameMobileEl.innerHTML = `Tài khoản: <strong style="display: inline-flex; align-items: center;"><span class="vip-crown-icon" style="margin-right: 4px; margin-left: 0;">👑</span><span class="vip-glowing-name">${escapeHtml(displayName)} (VocaVIP)</span></strong>`;
           } else {
             nameMobileEl.textContent = `Tài khoản (${displayName})`;
           }
@@ -5308,7 +5353,7 @@ function switchPublisherTab(tab) {
 
         if (profileNameEl) {
           if (userVipActive) {
-            profileNameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(displayName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Hội viên VIP (${userVipTierName.toUpperCase()})">👑</span></span>`;
+            profileNameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(displayName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Hội viên VocaVIP (${userVipTierName.toUpperCase()})">👑</span></span>`;
           } else {
             profileNameEl.textContent = displayName;
           }
@@ -5320,7 +5365,7 @@ function switchPublisherTab(tab) {
           if (userVipActive) {
             const durationLabel = formatVipDurationText(userVipExpiresAt, userVipTierName);
             if (durationLabel !== 'Hết hạn') {
-              profileBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+              profileBadgeEl.innerHTML = `👑 VocaVIP ${durationLabel}`;
               profileBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
               profileBadgeEl.style.color = '#ffffff';
               profileBadgeEl.style.fontWeight = '800';
@@ -5350,10 +5395,10 @@ function switchPublisherTab(tab) {
             btnProfileUpgrade.style.display = 'none';
           } else if (userVipActive && (userVipTierName === 'monthly' || userVipTierName === 'yearly')) {
             btnProfileUpgrade.style.display = 'inline-flex';
-            btnProfileUpgrade.textContent = '👑 Nâng Cấp VIP';
+            btnProfileUpgrade.textContent = '👑 Nâng Cấp VocaVIP';
           } else {
             btnProfileUpgrade.style.display = 'inline-flex';
-            btnProfileUpgrade.textContent = '👑 Nâng Cấp VIP';
+            btnProfileUpgrade.textContent = '👑 Nâng Cấp VocaVIP';
           }
         }
 
@@ -5747,26 +5792,26 @@ function switchPublisherTab(tab) {
         if (currentDeckId) openDeckDetail(currentDeckId);
       }
 
-      showToast('✨ Đã lưu và cập nhật tác giả các bộ từ thành công!');
+      showToast('✨ Đã lưu và cập nhật tác giả các VocaDeck thành công!');
     }
 
         async function deletePublishedDeck(deckId) {
-      if (!requireLogin('Xóa Bộ Từ Đã Đăng')) return;
+      if (!requireLogin('Xóa VocaDeck Đã Đăng')) return;
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
 
       if (deck.id.startsWith('lib_deck_')) {
-        alert('❌ Không thể xóa bộ từ chuẩn của hệ thống VocaFlow!');
+        alert('❌ Không thể xóa VocaDeck chuẩn của hệ thống VocaFlow!');
         return;
       }
 
       if (!isDeckAuthor(deck)) {
-        alert('❌ Bạn không có quyền xóa bộ từ của tác giả khác!');
+        alert('❌ Bạn không có quyền xóa VocaDeck của tác giả khác!');
         return;
       }
 
-      if (!confirm(`⚠️ Bạn có chắc chắn muốn xóa vĩnh viễn bộ từ "${deck.title}" khỏi Thư Viện Toàn Cầu không?\n\n(Lưu ý: Bộ từ sẽ được gỡ bỏ ngay lập tức khỏi Thư Viện của tất cả người dùng).`)) {
+      if (!confirm(`⚠️ Bạn có chắc chắn muốn xóa vĩnh viễn VocaDeck "${deck.title}" khỏi Thư Viện Toàn Cầu không?\n\n(Lưu ý: VocaDeck sẽ được gỡ bỏ ngay lập tức khỏi VocaLib của tất cả người dùng).`)) {
         return;
       }
 
@@ -5782,7 +5827,7 @@ function switchPublisherTab(tab) {
           cloudLibraryDecks = cloudLibraryDecks.filter(d => d.id !== deckId);
           renderLibraryDecks();
           closeModal('modal-library-preview');
-          showToast(`🗑️ Đã xóa thành công bộ từ "${deck.title}" khỏi Thư Viện Toàn Cầu!`);
+          showToast(`🗑️ Đã xóa thành công VocaDeck "${deck.title}" khỏi Thư Viện Toàn Cầu!`);
         } else {
           alert('Không thể xóa trên Cloud! Vui lòng thử lại.');
         }
@@ -5846,7 +5891,7 @@ function switchPublisherTab(tab) {
 
       // Realtime UI updates for studio ledger
       const curBalEl = document.getElementById('studio-wallet-balance');
-      if (curBalEl) curBalEl.textContent = currentBalance + ' Xu';
+      if (curBalEl) curBalEl.textContent = currentBalance + ' VoCoin';
 
       let totalEarned = 0;
       let totalSpent = 0;
@@ -5855,9 +5900,9 @@ function switchPublisherTab(tab) {
         else totalSpent += Math.abs(t.amount);
       });
       const earnedEl = document.getElementById('studio-total-earned');
-      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' Xu';
+      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
       const spentEl = document.getElementById('studio-total-spent');
-      if (spentEl) spentEl.textContent = '-' + totalSpent + ' Xu';
+      if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
 
       renderLedgerList();
     }
@@ -5870,7 +5915,7 @@ function switchPublisherTab(tab) {
       }
       const presets = document.querySelectorAll('.pub-price-preset');
       presets.forEach(btn => {
-        if (btn.textContent.includes(price + ' Xu') || (price === 0 && btn.textContent.includes('0đ'))) {
+        if (btn.textContent.includes(price + ' VoCoin') || (price === 0 && btn.textContent.includes('0đ'))) {
           btn.style.borderColor = '#10b981';
           btn.style.color = '#34d399';
         } else {
@@ -5889,7 +5934,7 @@ function switchPublisherTab(tab) {
           badge.style.background = 'rgba(16, 185, 129, 0.2)';
           badge.style.color = '#34d399';
         } else {
-          badge.textContent = `💎 ${p} Xu`;
+          badge.textContent = `💎 ${p} VoCoin`;
           badge.style.background = 'rgba(245, 158, 11, 0.2)';
           badge.style.color = '#fbbf24';
         }
@@ -5980,7 +6025,7 @@ function switchPublisherTab(tab) {
     function renderStudioDashboard() {
       const curBalance = getUserPoints();
       const balEl = document.getElementById('studio-wallet-balance');
-      if (balEl) balEl.textContent = curBalance + ' Xu';
+      if (balEl) balEl.textContent = curBalance + ' VoCoin';
 
 // Clean ledger without dummy auto-seeding
 
@@ -5992,9 +6037,9 @@ function switchPublisherTab(tab) {
       });
 
       const earnedEl = document.getElementById('studio-total-earned');
-      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' Xu';
+      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
       const spentEl = document.getElementById('studio-total-spent');
-      if (spentEl) spentEl.textContent = '-' + totalSpent + ' Xu';
+      if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
 
       const myDecks = getAllLibraryDecks().filter(d => isDeckAuthor(d));
 
@@ -6033,7 +6078,7 @@ function switchPublisherTab(tab) {
         container.innerHTML = `
           <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
             <div style="font-size: 24px; margin-bottom: 4px;">📜</div>
-            Chưa có giao dịch nào được ghi nhận. Hãy bắt đầu học hoặc xuất bản bộ từ!
+            Chưa có giao dịch nào được ghi nhận. Hãy bắt đầu học hoặc xuất bản VocaDeck!
           </div>
         `;
         return;
@@ -6048,10 +6093,10 @@ function switchPublisherTab(tab) {
 
         let badgeIcon = '🪙';
         if (tx.type === 'STUDY') badgeIcon = '✍️ Học tập';
-        else if (tx.type === 'SELL_DECK') badgeIcon = '💎 Bán bộ từ';
-        else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua bộ từ';
-        else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi gợi ý';
-        else if (tx.type === 'BUY_SKIP') badgeIcon = '⏭️ Đổi bỏ qua';
+        else if (tx.type === 'SELL_DECK') badgeIcon = '💎 Bán VocaDeck';
+        else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua VocaDeck';
+        else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi VocaHint';
+        else if (tx.type === 'BUY_SKIP') badgeIcon = '⏭️ Đổi VocaSkip';
         else if (tx.type === 'CREATE_WORD') badgeIcon = '📝 Soạn từ mới';
         else if (tx.type === 'AI_GEN') badgeIcon = '🤖 Tạo AI';
         else if (tx.type === 'GIFTCODE') badgeIcon = '🎁 GiftCode';
@@ -6073,7 +6118,7 @@ function switchPublisherTab(tab) {
                   let authorUid = tx.authorUid || '';
 
                   if (!deckTitle || !authorName) {
-                    const match = (tx.description || '').match(/Mua bộ từ "(.*?)" từ tác giả (.*)/);
+                    const match = (tx.description || '').match(/(?:Mua bộ từ|Mua VocaDeck) "(.*?)" từ tác giả (.*)/);
                     if (match) {
                       deckTitle = match[1];
                       authorName = match[2];
@@ -6089,7 +6134,7 @@ function switchPublisherTab(tab) {
                   }
 
                   if (deckTitle && authorName) {
-                    descHtml = `Mua bộ từ "<strong>${escapeHtml(deckTitle)}</strong>" từ tác giả <span style="color: #818cf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}', '${escapeHtml(deckId)}')" title="Xem hồ sơ tác giả">${escapeHtml(authorName)}</span>`;
+                    descHtml = `Mua VocaDeck "<strong>${escapeHtml(deckTitle)}</strong>" từ tác giả <span style="color: #818cf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(authorUid)}', '${escapeHtml(deckId)}')" title="Xem hồ sơ tác giả">${escapeHtml(authorName)}</span>`;
                   }
                 } else if (tx.type === 'SELL_DECK') {
                   let deckTitle = tx.deckTitle;
@@ -6099,7 +6144,7 @@ function switchPublisherTab(tab) {
 
                   // Parse from tx.description if not directly stored (for legacy transactions)
                   if (!deckTitle || !buyerName) {
-                    const match = (tx.description || '').match(/Bán bộ từ "(.*?)" cho (.*?) \(/);
+                    const match = (tx.description || '').match(/Bán VocaDeck "(.*?)" cho (.*?) \(/);
                     if (match) {
                       if (!deckTitle) deckTitle = match[1];
                       if (!buyerName) buyerName = match[2];
@@ -6108,20 +6153,20 @@ function switchPublisherTab(tab) {
 
                   if (deckTitle) {
                     let buyerHtml = '';
-                    if (buyerName && buyerName !== 'Một người học') {
+                    if (buyerName && buyerName !== 'Một người học' && buyerName !== 'Một Flower') {
                       buyerHtml = `<span style="color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(buyerName)}', '${escapeHtml(buyerUid)}', '${escapeHtml(deckId)}')" title="Xem hồ sơ người mua">${escapeHtml(buyerName)}</span>`;
                     } else if (buyerName) {
                       buyerHtml = `<strong>${escapeHtml(buyerName)}</strong>`;
                     }
-                    descHtml = `Bán bộ từ "<strong>${escapeHtml(deckTitle)}</strong>"${buyerHtml ? ` cho ${buyerHtml}` : ''} (${tx.description?.includes('20%') ? '20% hoa hồng' : '100%'})`;
+                    descHtml = `Bán VocaDeck "<strong>${escapeHtml(deckTitle)}</strong>"${buyerHtml ? ` cho ${buyerHtml}` : ''} (${tx.description?.includes('20%') ? '20% VocaShare' : '100%'})`;
                   }
                 }
                 return `<div style="font-size: 12px; font-weight: 600; color: var(--text);">${descHtml}</div>`;
               })()}
             </div>
             <div style="text-align: right; flex-shrink: 0;">
-              <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} Xu</div>
-              ${(tx.balanceAfter !== undefined && tx.balanceAfter !== null && !isNaN(tx.balanceAfter)) ? `<div style="font-size: 10px; color: var(--text-muted);">Dư: ${tx.balanceAfter} Xu</div>` : ''}
+              <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} VoCoin</div>
+              ${(tx.balanceAfter !== undefined && tx.balanceAfter !== null && !isNaN(tx.balanceAfter)) ? `<div style="font-size: 10px; color: var(--text-muted);">Dư: ${tx.balanceAfter} VoCoin</div>` : ''}
             </div>
           </div>
         `;
@@ -6143,7 +6188,7 @@ function switchPublisherTab(tab) {
         container.innerHTML = `
           <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
             <div style="font-size: 24px; margin-bottom: 4px;">📦</div>
-            Bạn chưa đăng bộ từ nào lên Thư Viện. Hãy xuất bản bộ từ để bắt đầu kiếm Xu!
+            Bạn chưa đăng VocaDeck nào lên VocaLib. Hãy xuất bản VocaDeck để bắt đầu kiếm VoCoin!
           </div>
         `;
         return;
@@ -6164,9 +6209,9 @@ function switchPublisherTab(tab) {
                 <span class="badge" style="font-size: 10px; background: rgba(99,102,241,0.15); color: #a5b4fc;">${(deck.words || []).length} từ</span>
               </div>
               <div style="font-size: 11.5px; color: var(--text-muted); display: flex; gap: 10px; align-items: center;">
-                <span>Giá: <strong style="color: #fbbf24;">${price > 0 ? price + ' Xu' : 'Miễn phí'}</strong></span>
+                <span>Giá: <strong style="color: #fbbf24;">${price > 0 ? price + ' VoCoin' : 'Miễn phí'}</strong></span>
                 <span>• Đã bán/tải: <strong style="color: #38bdf8;">${sales} lượt</strong></span>
-                <span>• Doanh thu: <strong style="color: #34d399;">+${totalRev} Xu</strong></span>
+                <span>• Doanh thu: <strong style="color: #34d399;">+${totalRev} VoCoin</strong></span>
               </div>
             </div>
             <div style="display: flex; gap: 6px;">
@@ -6223,7 +6268,7 @@ function switchPublisherTab(tab) {
             purchased.push({
               id: pId,
               title: localMatch.title,
-              author: localMatch.author || 'Cộng đồng',
+              author: localMatch.author || 'VocaCommunity',
               authorUid: localMatch.authorUid || '',
               words: words.filter(w => w.deckId === localMatch.id),
               icon: '📘'
@@ -6236,7 +6281,7 @@ function switchPublisherTab(tab) {
         container.innerHTML = `
           <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
             <div style="font-size: 24px; margin-bottom: 4px;">🛍️</div>
-            Bạn chưa mua bộ từ có phí nào. Ghé Thư Viện để khám phá các bộ từ chất lượng cao!
+            Bạn chưa mua VocaDeck có phí nào. Ghé Thư Viện để khám phá các VocaDeck chất lượng cao!
           </div>
         `;
         return;
@@ -6253,7 +6298,7 @@ function switchPublisherTab(tab) {
                 <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
                 <span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.15); color: #34d399;">Đã sở hữu</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+              <div style="font-size: 11.5px; color: var(--text-muted); display: align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
                 <span>Tác giả:</span>
                 ${isAuthorVipUser(deck.authorUid, deck.author) ? `
                   <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">
@@ -6261,7 +6306,7 @@ function switchPublisherTab(tab) {
                     <strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(deck.author)}</strong>
                   </span>
                 ` : `
-                  <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(deck.author || 'Cộng đồng')}</strong>
+                  <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(deck.author || 'VocaCommunity')}</strong>
                 `}
                 <span>• ${(deck.words || []).length} từ</span>
               </div>
@@ -6277,7 +6322,7 @@ function switchPublisherTab(tab) {
     }
 
     async function buyCommunityDeck(deckId) {
-      if (!requireLogin('Mua Bộ Từ Vựng')) return;
+      if (!requireLogin('Mua VocaDeck')) return;
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
@@ -6292,12 +6337,12 @@ function switchPublisherTab(tab) {
 
       const curPoints = getUserPoints();
       if (curPoints < price) {
-        showToast(`🪙 Bạn không đủ Xu để mua bộ từ "${deck.title}" (Cần ${price} Xu, bạn có ${curPoints} Xu)!`);
+        showToast(`🪙 Bạn không đủ VoCoin để mua VocaDeck "${deck.title}" (Cần ${price} VoCoin, bạn có ${curPoints} VoCoin)!`);
         openShopModal();
         return;
       }
 
-      const confirmed = confirm(`💎 XÁC NHẬN MUA BỘ TỪ\n\nBạn có muốn dùng ${price} Xu để mua vĩnh viễn bộ từ "${deck.title}" của tác giả "${deck.author || 'Cộng đồng'}" không?`);
+      const confirmed = confirm(`💎 XÁC NHẬN MUA VOCADECK\n\nBạn có muốn dùng ${price} VoCoin để mua vĩnh viễn VocaDeck "${deck.title}" của tác giả "${deck.author || 'VocaCommunity'}" không?`);
       if (!confirmed) return;
 
       // 1. Deduct buyer Xu & persist
@@ -6306,7 +6351,7 @@ function switchPublisherTab(tab) {
       localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
 
       // 2. Add buyer transaction ledger FIRST
-      addLedgerEntry('BUY_DECK', -price, `Mua bộ từ "${deck.title}" từ tác giả ${deck.author || 'Cộng đồng'}`);
+      addLedgerEntry('BUY_DECK', -price, `Mua VocaDeck "${deck.title}" từ tác giả ${deck.author || 'VocaCommunity'}`);
       saveDatabase(true);
 
       // 3. Play purchase sound
@@ -6334,11 +6379,11 @@ function switchPublisherTab(tab) {
               type: 'SELL_DECK',
               amount: +authorCut,
               balanceAfter: newSellerPts,
-              buyerName: currentUser.displayName || 'Một người học',
+              buyerName: currentUser.displayName || 'Một Flower',
               buyerUid: currentUser.uid || '',
               deckTitle: deck.title,
               deckId: deck.id,
-              description: `Bán bộ từ "${deck.title}" cho ${currentUser.displayName || 'Một người học'} (${hasAffiliate ? '80% sau hoa hồng' : '100%'})`
+              description: `Bán VocaDeck "${deck.title}" cho ${currentUser.displayName || 'Một Flower'} (${hasAffiliate ? '80% sau VocaShare' : '100%'})`
             };
 
             fetch(`${rtdbUrl}/users/${deck.authorUid}/ledger/${sellerTx.id}.json`, {
@@ -6366,11 +6411,11 @@ function switchPublisherTab(tab) {
                 type: 'SELL_DECK',
                 amount: +affiliateCut,
                 balanceAfter: newAffPts,
-                buyerName: currentUser.displayName || 'Một người học',
+                buyerName: currentUser.displayName || 'Một Flower',
                 buyerUid: currentUser.uid || '',
                 deckTitle: deck.title,
                 deckId: deck.id,
-                description: `Hoa hồng giới thiệu bộ từ "${deck.title}" (20%)`
+                description: `VocaShare giới thiệu VocaDeck "${deck.title}" (20%)`
               };
 
               fetch(`${rtdbUrl}/users/${affRef}/ledger/${affTx.id}.json`, {
@@ -6399,8 +6444,8 @@ function switchPublisherTab(tab) {
 
       // 5. Install to local library
       installLibraryDeck(deck.id);
-      addNotification('FINANCIAL', '🛒 Mua bộ từ thành công', `Bạn đã mua bộ từ "${deck.title}" (-${price} Xu). Hãy bắt đầu học ngay!`, 'PREVIEW_DECK', { deckId: deck.id });
-      showToast(`🎉 Đã mua thành công bộ từ "${deck.title}" (-${price} Xu)!`);
+      addNotification('FINANCIAL', '🛒 Mua VocaDeck thành công', `Bạn đã mua VocaDeck "${deck.title}" (-${price} VoCoin). Hãy bắt đầu học ngay!`, 'PREVIEW_DECK', { deckId: deck.id });
+      showToast(`🎉 Đã mua thành công VocaDeck "${deck.title}" (-${price} VoCoin)!`);
       renderLibraryDecks();
       if (document.getElementById('modal-library-preview')?.classList.contains('active')) {
         previewLibraryDeck(deck.id);
@@ -6416,14 +6461,14 @@ function switchPublisherTab(tab) {
     }
 
     function openEditPublishedDeckModal(deckId) {
-      if (!requireLogin('Chỉnh Sửa Bộ Từ Đã Đăng')) return;
+      if (!requireLogin('Chỉnh Sửa VocaDeck Đã Đăng')) return;
       updatePublishModalAuthorUI();
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
 
       if (!isDeckAuthor(deck)) {
-        alert('❌ Bạn không có quyền chỉnh sửa bộ từ của tác giả khác!');
+        alert('❌ Bạn không có quyền chỉnh sửa VocaDeck của tác giả khác!');
         return;
       }
 
@@ -6478,7 +6523,7 @@ function switchPublisherTab(tab) {
       const modalTitle = document.getElementById('pub-modal-title');
       const modalSubtitle = document.getElementById('pub-modal-subtitle');
       if (modalIcon) modalIcon.textContent = '✏️';
-      if (modalTitle) modalTitle.textContent = 'Chỉnh Sửa Bộ Từ Đã Đăng';
+      if (modalTitle) modalTitle.textContent = 'Chỉnh Sửa VocaDeck Đã Đăng';
       if (modalSubtitle) modalSubtitle.textContent = 'Cập nhật tên, mô tả, danh mục hoặc dữ liệu từ vựng trên Thư Viện Toàn Cầu';
 
       const uploadBtn = document.getElementById('btn-pub-do-upload');
@@ -6487,7 +6532,7 @@ function switchPublisherTab(tab) {
       const previewStatus = document.getElementById('pub-upload-preview-status');
       if (previewStatus) {
         previewStatus.style.display = 'block';
-        previewStatus.textContent = `✅ Đang giữ nguyên ${deck.words ? deck.words.length : 0} từ vựng gốc (hoặc tải file/chọn bộ từ mới nếu muốn thay thế).`;
+        previewStatus.textContent = `✅ Đang giữ nguyên ${deck.words ? deck.words.length : 0} từ vựng gốc (hoặc tải file/chọn VocaDeck mới nếu muốn thay thế).`;
       }
 
       openModal('modal-community-upload');
@@ -6496,7 +6541,7 @@ function switchPublisherTab(tab) {
     function openPublicProfileByStudent(studentUid) {
       if (!studentUid) return;
       const student = adminStudentsData.find(s => s.uid === studentUid);
-      const name = student?.displayName || 'Học viên';
+      const name = student?.displayName || 'Flower';
       openPublicProfileModal(name, studentUid);
     }
     window.openPublicProfileByStudent = openPublicProfileByStudent;
@@ -6573,7 +6618,7 @@ function switchPublisherTab(tab) {
         resolvedName = 'VocaFlow Chuẩn';
         resolvedHandle = 'official';
         resolvedAvatar = 'icons/Icon-192.png';
-        resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.';
+        resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
         targetPoints = 999999;
         targetFlowDays = 365;
@@ -6582,7 +6627,7 @@ function switchPublisherTab(tab) {
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
-        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
         targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
         targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
@@ -6703,7 +6748,7 @@ function switchPublisherTab(tab) {
         if (matchedStudent) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
-          resolvedBio = matchedStudent.bio || resolvedBio || `Tác giả đóng góp các bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
+          resolvedBio = matchedStudent.bio || resolvedBio || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
           if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
           if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
         }
@@ -6798,16 +6843,16 @@ function switchPublisherTab(tab) {
           pubBadgeEl.style.boxShadow = 'none';
         }
       }
-      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} bộ từ vựng hữu ích cho cộng đồng VocaFlow.`;
-      if (statPointsEl) statPointsEl.textContent = `${targetPoints} Xu`;
+      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+      if (statPointsEl) statPointsEl.textContent = `${targetPoints} VoCoin`;
       if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
       if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
       if (statWordsEl) statWordsEl.textContent = `${totalWords} từ`;
 
-      if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' bộ từ';
+      if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' VocaDeck';
       if (decksListEl) {
         if (authorDecks.length === 0) {
-          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có bộ từ công khai nào.</div>';
+          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có VocaDeck công khai nào.</div>';
         } else {
           let h = '';
           authorDecks.forEach(d => {
@@ -7519,18 +7564,32 @@ function switchPublisherTab(tab) {
                 if (cloudData.deletedDeckIds && Array.isArray(cloudData.deletedDeckIds)) {
                   cloudData.deletedDeckIds.forEach(id => deletedDeckIds.add(id));
                 }
+
+                // Anti-Wipeout Tombstone Guard: Never allow starter deck to be tombstoned if decks would be empty
+                if (deletedDeckIds.has('deck-oxford-starter') && (decks.length <= 1 && remoteDecks.length === 0)) {
+                  deletedDeckIds.delete('deck-oxford-starter');
+                }
                 saveDeletedTombstones();
 
                 // Purge local deleted items
                 decks = decks.filter(d => !deletedDeckIds.has(d.id));
                 words = words.filter(w => !deletedWordIds.has(w.id) && !deletedDeckIds.has(w.deckId));
 
+                // Anti-Wipeout Tombstone Guard: If tombstones wiped out ALL decks, but remoteDecks has items, revive remoteDecks!
                 if (remoteDecks.length > 0) {
+                  const viableRemoteDecks = remoteDecks.filter(rd => rd && rd.id && !deletedDeckIds.has(rd.id));
+                  if (viableRemoteDecks.length === 0 && decks.length === 0) {
+                    console.warn('🛡️ [Anti-Wipeout Guard] Runaway tombstones wiped all decks. Reviving remote decks!');
+                    deletedDeckIds.clear();
+                    saveDeletedTombstones();
+                  }
+
                   // If local only has the initial starter deck and cloud has real decks, remove starter deck
-                  if (decks.length === 1 && decks[0].id === 'deck-oxford-starter') {
+                  if (decks.length === 1 && decks[0].id === 'deck-oxford-starter' && remoteDecks.some(rd => rd && rd.id && rd.id !== 'deck-oxford-starter')) {
                     decks = [];
                     words = words.filter(w => w.deckId !== 'deck-oxford-starter');
                   }
+                }
 
                   // Merge decks by ID (Last-Write-Wins with explicit isPinned & isArchived preservation)
                   for (const remoteDeck of remoteDecks) {
@@ -7607,21 +7666,17 @@ function switchPublisherTab(tab) {
                     localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
                   }
                   const remoteLuckySpins = typeof cloudData.economy.luckySpins === 'number' ? cloudData.economy.luckySpins : parseInt(cloudData.economy.luckySpins, 10);
-                  const localLuckySpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
                   if (!isNaN(remoteLuckySpins)) {
-                    const finalSpins = Math.max(isNaN(localLuckySpins) ? 0 : localLuckySpins, Math.max(0, remoteLuckySpins));
-                    localStorage.setItem('vocaflow_lucky_spins_left', finalSpins.toString());
+                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
                   }
                   if (cloudData.economy.luckySpinsDate) {
                     localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
                   }
-                  const todayStr = (typeof getTodayString === 'function') ? getTodayString() : ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : new Date().toISOString().slice(0, 10));
-                  const localVipSpinDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
                   if (cloudData.economy.lastVipSpinDate) {
-                    if (cloudData.economy.lastVipSpinDate === todayStr || !localVipSpinDate) {
-                      localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
-                    }
+                    localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
                   }
+                  if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+                  if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
                   if (cloudData.economy.lastAdWatchTime) {
                     const remoteAdTime = parseInt(cloudData.economy.lastAdWatchTime, 10);
                     const localAdTime = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
@@ -7907,6 +7962,21 @@ function switchPublisherTab(tab) {
           // -----------------------------------------------------------
           try {
             decks = sanitizeDecks(decks);
+
+            // ANTI-WIPEOUT GUARD (v0.10.9-alpha-18)
+            // If local decks is empty, NEVER blindly wipe Cloud decks!
+            if (decks.length === 0) {
+              if (remoteDecks && remoteDecks.length > 0) {
+                console.warn('🛡️ [Anti-Wipeout Guard] Local decks are empty but Cloud has', remoteDecks.length, 'decks! Restoring from Cloud instead of wiping.');
+                decks = [...remoteDecks];
+                if (remoteWords && remoteWords.length > 0) words = [...remoteWords];
+                saveDatabase(false);
+              } else if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+                await autoRecoverLostDecks(false);
+              }
+            }
+
+            takeDeckSnapshot();
             const currentAv = getUserAvatar();
             const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
             const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
@@ -8035,6 +8105,167 @@ function switchPublisherTab(tab) {
         isSyncing = false;
         updateAuthUI();
       }
+    // =========================================================================
+    // BULLETPROOF DECK AUTO-RECOVERY & ANTI-WIPEOUT ENGINE (v0.10.9-alpha-18)
+    // =========================================================================
+
+    function takeDeckSnapshot() {
+      try {
+        if (Array.isArray(decks) && decks.length > 0) {
+          localStorage.setItem('vocaflow_decks_backup', JSON.stringify(decks));
+          localStorage.setItem('vocaflow_words_backup', JSON.stringify(words));
+          localStorage.setItem('vocaflow_backup_timestamp', Date.now().toString());
+        }
+      } catch (e) {
+        console.warn('Snapshot error:', e);
+      }
+    }
+
+    function createManualDeckBackup() {
+      if (!Array.isArray(decks) || decks.length === 0) {
+        showToast('⚠️ Bạn chưa có VocaDeck nào để sao lưu!');
+        return;
+      }
+      takeDeckSnapshot();
+      const timeStr = new Date().toLocaleTimeString('vi-VN');
+      showToast(`💾 Đã tạo bản sao lưu an toàn cho ${decks.length} VocaDeck (${words.length} từ) lúc ${timeStr}!`);
+    }
+
+    function restoreDecksFromBackup() {
+      try {
+        const bDecks = localStorage.getItem('vocaflow_decks_backup');
+        const bWords = localStorage.getItem('vocaflow_words_backup');
+        const bTime = localStorage.getItem('vocaflow_backup_timestamp');
+        if (!bDecks) {
+          showToast('⚠️ Chưa có bản sao lưu VocaDeck nào trên thiết bị này!');
+          return false;
+        }
+        const parsedDecks = JSON.parse(bDecks);
+        const parsedWords = bWords ? JSON.parse(bWords) : [];
+        if (!Array.isArray(parsedDecks) || parsedDecks.length === 0) {
+          showToast('⚠️ Bản sao lưu không chứa VocaDeck hợp lệ!');
+          return false;
+        }
+        const dateStr = bTime ? new Date(parseInt(bTime, 10)).toLocaleString('vi-VN') : 'gần nhất';
+        if (!confirm(`🔄 KHÔI PHỤC VOCADECK TỪ BẢN SAO LƯU\n\nBạn có muốn khôi phục ${parsedDecks.length} VocaDeck (${parsedWords.length} từ) từ bản sao lưu ${dateStr} không?\n\nDữ liệu hiện tại sẽ được thay thế bằng bản sao lưu an toàn.`)) {
+          return false;
+        }
+        decks = parsedDecks;
+        words = parsedWords;
+        saveDatabase(true);
+        renderDecks();
+        showToast(`✅ Đã khôi phục thành công ${decks.length} VocaDeck từ bản sao lưu!`);
+        handleManualSync();
+        return true;
+      } catch (e) {
+        console.error('Failed to restore from backup:', e);
+        showToast('❌ Lỗi khi khôi phục bản sao lưu: ' + e.message);
+        return false;
+      }
+    }
+
+    async function autoRecoverLostDecks(showNotification = true) {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return 0;
+      const uid = currentUser.uid;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+
+      let recoveredCount = 0;
+      let recoveredWordsCount = 0;
+
+      try {
+        // 1. Check if user has authored decks or purchased decks in publicLibraryDecks
+        const res = await fetch(`${rtdbUrl}/publicLibraryDecks.json${authParam}`);
+        if (res.ok) {
+          const allPubDecks = await res.json();
+          if (allPubDecks && typeof allPubDecks === 'object') {
+            const pubList = Object.values(allPubDecks);
+            
+            // Authored by this user
+            const authoredDecks = pubList.filter(d => d && d.authorUid === uid);
+            
+            // Purchased by this user
+            const pDeckIds = new Set(userPurchasedDeckIds);
+            const purchasedPubDecks = pubList.filter(d => d && d.id && pDeckIds.has(d.id));
+
+            const targetDecks = [...authoredDecks];
+            purchasedPubDecks.forEach(pd => {
+              if (!targetDecks.some(td => td.id === pd.id)) targetDecks.push(pd);
+            });
+
+            for (const pd of targetDecks) {
+              const exists = decks.some(d => d.title === pd.title || d.libSourceId === pd.id || d.id === pd.id);
+              if (!exists) {
+                const localDeckId = 'deck_' + (pd.publishedAt ? new Date(pd.publishedAt).getTime() : Date.now()) + '_' + Math.random().toString(36).substr(2, 4);
+                const newDeck = {
+                  id: localDeckId,
+                  title: pd.title,
+                  description: pd.description || 'VocaDeck từ VocaLib',
+                  author: pd.author || currentUser.displayName || 'huda',
+                  authorUid: pd.authorUid || uid,
+                  color: pd.color || '#4f46e5',
+                  isPinned: false,
+                  isArchived: false,
+                  libSourceId: pd.id,
+                  createdAt: pd.publishedAt || new Date().toISOString(),
+                  updatedAt: pd.updatedAt || new Date().toISOString()
+                };
+                decks.push(newDeck);
+                recoveredCount++;
+
+                if (Array.isArray(pd.words)) {
+                  pd.words.forEach((w, idx) => {
+                    const wordId = 'w_' + localDeckId + '_' + idx;
+                    const newWord = {
+                      id: wordId,
+                      deckId: localDeckId,
+                      term: w.term,
+                      definitionVi: w.definitionVi || w.definition || '',
+                      definition: w.definitionVi || w.definition || '',
+                      phonetic: w.phonetic || '',
+                      partOfSpeech: w.partOfSpeech || 'noun',
+                      exampleSentence: w.exampleSentence || w.example || '',
+                      example: w.exampleSentence || w.example || '',
+                      cefrLevel: w.cefrLevel || w.level || 'B1',
+                      level: w.cefrLevel || w.level || 'B1',
+                      synonyms: Array.isArray(w.synonyms) ? w.synonyms : (w.synonyms ? w.synonyms.split(',').map(s => s.trim()) : []),
+                      antonyms: Array.isArray(w.antonyms) ? w.antonyms : (w.antonyms ? w.antonyms.split(',').map(s => s.trim()) : []),
+                      collocations: Array.isArray(w.collocations) ? w.collocations : (w.collocations ? w.collocations.split(',').map(s => s.trim()) : []),
+                      note: w.note || '',
+                      topic: w.topic || '',
+                      status: 'newWord',
+                      masteryScore: 0,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString()
+                    };
+                    words.push(newWord);
+                    recoveredWordsCount++;
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        // 2. Remove 'deck-oxford-starter' from tombstones if it was accidentally trapped
+        if (deletedDeckIds.has('deck-oxford-starter')) {
+          deletedDeckIds.delete('deck-oxford-starter');
+          saveDeletedTombstones();
+        }
+
+        if (recoveredCount > 0) {
+          saveDatabase(true);
+          takeDeckSnapshot();
+          renderDecks();
+          if (showNotification) {
+            showToast(`🛡️ VocaFlow đã tự động khôi phục an toàn ${recoveredCount} VocaDeck (+${recoveredWordsCount} từ) của bạn!`);
+          }
+        }
+      } catch (err) {
+        console.warn('Auto recovery note:', err);
+      }
+
+      return recoveredCount;
     }
 
     // Database Load
@@ -8044,6 +8275,24 @@ function switchPublisherTab(tab) {
         const storedWords = localStorage.getItem(STORAGE_KEY_WORDS);
         decks = storedDecks ? JSON.parse(storedDecks) : [];
         words = storedWords ? JSON.parse(storedWords) : [];
+
+        // Auto-heal from local backup snapshot if decks is empty (v0.10.9-alpha-18)
+        if (!Array.isArray(decks) || decks.length === 0) {
+          const bDecks = localStorage.getItem('vocaflow_decks_backup');
+          const bWords = localStorage.getItem('vocaflow_words_backup');
+          if (bDecks) {
+            try {
+              const parsedBackup = JSON.parse(bDecks);
+              if (Array.isArray(parsedBackup) && parsedBackup.length > 0) {
+                console.log('🛡️ [VocaFlow Safety] Auto-healed decks from local backup snapshot');
+                decks = parsedBackup;
+                words = bWords ? JSON.parse(bWords) : [];
+                localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(decks));
+                localStorage.setItem(STORAGE_KEY_WORDS, JSON.stringify(words));
+              }
+            } catch (bErr) { console.warn(bErr); }
+          }
+        }
 
         // Auto self-heal local decks with latest display name of current user
         if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && currentUser.displayName && Array.isArray(decks)) {
@@ -8070,11 +8319,16 @@ function switchPublisherTab(tab) {
     }
 
     function seedSampleData() {
+      // Never allow 'deck-oxford-starter' to be suppressed by tombstones when seeding sample data
+      if (deletedDeckIds && deletedDeckIds.has('deck-oxford-starter')) {
+        deletedDeckIds.delete('deck-oxford-starter');
+        saveDeletedTombstones();
+      }
       const sampleDeckId = 'deck-oxford-starter';
       decks = [{
         id: sampleDeckId,
         title: 'Oxford Essential Words',
-        description: 'Bộ từ vựng tiếng Anh học thuật & giao tiếp thông dụng',
+        description: 'VocaDeck tiếng Anh học thuật & giao tiếp thông dụng',
         color: '#4f46e5',
         createdAt: new Date().toISOString()
       }];
@@ -8631,7 +8885,7 @@ function switchPublisherTab(tab) {
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isPinned ? '📌 Đã ghim bộ từ "' + deck.title + '" lên đầu!' : 'Đã bỏ ghim bộ từ "' + deck.title + '"');
+      showToast(deck.isPinned ? '📌 Đã ghim VocaDeck "' + deck.title + '" lên đầu!' : 'Đã bỏ ghim VocaDeck "' + deck.title + '"');
     }
 
     function toggleArchiveDeck(deckId) {
@@ -8655,7 +8909,7 @@ function switchPublisherTab(tab) {
       }
 
       pushCurrentDatabaseToCloud();
-      showToast(deck.isArchived ? '📦 Đã cất bộ từ "' + deck.title + '" vào Kho Lưu Trữ!' : '🔄 Đã khôi phục bộ từ "' + deck.title + '" về danh sách đang học!');
+      showToast(deck.isArchived ? '📦 Đã cất VocaDeck "' + deck.title + '" vào Kho Lưu Trữ!' : '🔄 Đã khôi phục VocaDeck "' + deck.title + '" về danh sách đang học!');
     }
 
     function updateDeckDetailHeader() {
@@ -8665,13 +8919,13 @@ function switchPublisherTab(tab) {
       const pinBtn = document.getElementById('btn-detail-pin');
       if (pinBtn) {
         pinBtn.classList.toggle('active-pin-btn', !!deck.isPinned);
-        pinBtn.title = deck.isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu';
+        pinBtn.title = deck.isPinned ? 'Bỏ ghim VocaDeck' : 'Ghim VocaDeck lên đầu';
       }
 
       const archiveBtn = document.getElementById('btn-detail-archive');
       if (archiveBtn) {
         archiveBtn.innerHTML = '<svg class="icon icon-sm"><use href="#' + (deck.isArchived ? 'i-unarchive' : 'i-archive') + '"/></svg>';
-        archiveBtn.title = deck.isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất bộ từ này)';
+        archiveBtn.title = deck.isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất VocaDeck này)';
       }
     }
 
@@ -8776,16 +9030,16 @@ function switchPublisherTab(tab) {
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
               <div style="font-size: 40px; margin-bottom: 10px;">📚</div>
-              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Bạn Chưa Có Bộ Từ Vựng Nào</h3>
+              <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">Bạn Chưa Có VocaDeck Nào</h3>
               <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px; max-width: 460px; margin-inline: auto; line-height: 1.5;">
-                Khám phá ngay Kho từ vựng Tiếng Anh <strong>Lớp 10, 11, 12 Trọng tâm</strong> có sẵn trong Thư Viện để bắt đầu ôn luyện ngay chỉ với 1-Click!
+                Khám phá ngay VocaStore Tiếng Anh <strong>Lớp 10, 11, 12 Trọng tâm</strong> có sẵn trong Thư Viện để bắt đầu ôn luyện ngay chỉ với 1-Click!
               </p>
               <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="openLibraryModal()" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 18px;">
-                  📚 Khám Phá Thư Viện Từ Vựng (1-Click)
+                  📚 Khám Phá Thư Viện VocaLib (1-Click)
                 </button>
                 <button class="btn btn-outline" onclick="openDeckModal()">
-                  <svg class="icon"><use href="#i-add"/></svg> Tạo Bộ Từ Riêng
+                  <svg class="icon"><use href="#i-add"/></svg> Tạo VocaDeck Riêng
                 </button>
               </div>
             </div>
@@ -8795,7 +9049,7 @@ function switchPublisherTab(tab) {
             <div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
               <svg class="icon icon-xl" style="fill: var(--text-muted); margin-bottom: 12px;"><use href="#i-archive"/></svg>
               <h3 style="font-size: 18px; margin-bottom: 6px;">Kho lưu trữ đang trống</h3>
-              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi học xong một bộ từ hoặc muốn tạm ẩn đi cho gọn gàng, bạn hãy bấm nút <strong>"Lưu trữ"</strong> ở bộ từ đó nhé!</p>
+              <p style="color: var(--text-muted); font-size: 13px; margin: 0; max-width: 420px; margin-inline: auto;">Khi học xong một VocaDeck hoặc muốn tạm ẩn đi cho gọn gàng, bạn hãy bấm nút <strong>"Lưu trữ"</strong> ở VocaDeck đó nhé!</p>
             </div>
           `;
         }
@@ -8824,7 +9078,7 @@ function switchPublisherTab(tab) {
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
               ${(deck.isVipOnly || deck.isVipExclusive) ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
-              ${isPinned ? '<span class="badge badge-pinned" title="Bộ từ đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
+              ${isPinned ? '<span class="badge badge-pinned" title="VocaDeck đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
               ${isArchived ? '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>' : ''}
             </div>
             <span class="badge" style="background: rgba(255,255,255,0.06); flex-shrink: 0;">${total} từ</span>
@@ -8848,16 +9102,16 @@ function switchPublisherTab(tab) {
           })()}
 
           <div class="deck-actions-grid">
-            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sửa thông tin bộ từ">
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editDeck('${deck.id}')" title="Sửa thông tin VocaDeck">
               <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span class="hide-on-mobile">Sửa</span>
             </button>
-            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất bộ từ)'}">
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); toggleArchiveDeck('${deck.id}')" title="${isArchived ? 'Khôi phục về danh sách đang học' : 'Lưu trữ (Cất VocaDeck)'}">
               <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'Khôi phục' : 'Lưu trữ'}</span>
             </button>
-            <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim bộ từ' : 'Ghim bộ từ lên đầu'}">
+            <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim VocaDeck' : 'Ghim VocaDeck lên đầu'}">
               <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
             </button>
-            <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa bộ từ này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
+            <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa VocaDeck này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
               <svg class="icon icon-sm"><use href="#i-delete"/></svg> <span class="hide-on-mobile">Xóa</span>
             </button>
           </div>
@@ -8904,9 +9158,12 @@ function switchPublisherTab(tab) {
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      if (!confirm('Bạn có chắc chắn muốn xóa bộ từ "' + deck.title + '" và toàn bộ từ vựng bên trong?')) {
+      if (!confirm('Bạn có chắc chắn muốn xóa VocaDeck "' + deck.title + '" và tất cả từ vựng bên trong?')) {
         return;
       }
+
+      // Automatically take snapshot before deleting (v0.10.9-alpha-18)
+      takeDeckSnapshot();
 
       deletedDeckIds.add(deckId);
       const deckWords = words.filter(w => w.deckId === deckId);
@@ -8915,13 +9172,23 @@ function switchPublisherTab(tab) {
 
       decks = decks.filter(d => d.id !== deckId);
       words = words.filter(w => w.deckId !== deckId);
+
+      // Never leave user in an empty void: if all decks deleted, re-seed starter deck
+      if (decks.length === 0) {
+        if (deletedDeckIds.has('deck-oxford-starter')) {
+          deletedDeckIds.delete('deck-oxford-starter');
+          saveDeletedTombstones();
+        }
+        seedSampleData();
+      }
+
       saveDatabase(true);
       renderDecks();
 
       if (currentDeckId === deckId) {
         showScreen('screen-decks');
       }
-      showToast('Đã xóa bộ từ "' + deck.title + '"!');
+      showToast('Đã xóa VocaDeck "' + deck.title + '"! (Đã tự động lưu bản dự phòng)');
     }
 
     // OPEN DECK DETAIL
@@ -9151,14 +9418,14 @@ function switchPublisherTab(tab) {
         // VIP Wheel: 100% Always contains +1 Day VIP Jackpot
         currentWheelHasJackpot = true;
         const baseVipSlices = [
-          { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Hoàng Gia' },
-          { id: 'pts_300', label: '🪙 300 Xu', type: 'POINTS', val: 300, color: '#ff4d4d', text: '300 Xu' },
-          { id: 'hints_10', label: '💡 10 Gợi Ý', type: 'HINTS', val: 10, color: '#ffaf40', text: '10 Gợi Ý' },
-          { id: 'skips_5', label: '⏩ 5 Bỏ Qua', type: 'SKIPS', val: 5, color: '#32ff7e', text: '5 Lượt Bỏ Qua' },
-          { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#3db5ff', text: '150 Xu' },
-          { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#7d5fff', text: '5 Gợi Ý' },
-          { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4b95', text: '200 Xu' },
-          { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#cd84f1', text: '3 Lượt Bỏ Qua' }
+          { id: 'vip_1d', label: '👑 +1 Ngày VocaVIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VocaVIP Hoàng Gia' },
+          { id: 'pts_300', label: '🪙 300 VoCoin', type: 'POINTS', val: 300, color: '#ff4d4d', text: '300 VoCoin' },
+          { id: 'hints_10', label: '💡 10 VocaHint', type: 'HINTS', val: 10, color: '#ffaf40', text: '10 VocaHint' },
+          { id: 'skips_5', label: '⏩ 5 VocaSkip', type: 'SKIPS', val: 5, color: '#32ff7e', text: '5 VocaSkip' },
+          { id: 'pts_150', label: '🪙 150 VoCoin', type: 'POINTS', val: 150, color: '#3db5ff', text: '150 VoCoin' },
+          { id: 'hints_5', label: '💡 5 VocaHint', type: 'HINTS', val: 5, color: '#7d5fff', text: '5 VocaHint' },
+          { id: 'pts_200', label: '🪙 200 VoCoin', type: 'POINTS', val: 200, color: '#ff4b95', text: '200 VoCoin' },
+          { id: 'skips_3', label: '⏩ 3 VocaSkip', type: 'SKIPS', val: 3, color: '#cd84f1', text: '3 VocaSkip' }
         ];
         // Randomly shuffle all 8 slices
         currentActiveWheelSlices = [...baseVipSlices].sort(() => Math.random() - 0.5);
@@ -9166,18 +9433,18 @@ function switchPublisherTab(tab) {
         // Regular Wheel: 33.3% chance to contain +1 Day VIP Jackpot
         currentWheelHasJackpot = (Math.random() < 0.3333);
         const jackpotSlice = currentWheelHasJackpot
-          ? { id: 'vip_1d', label: '👑 +1 Ngày VIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VIP Trải Nghiệm' }
-          : { id: 'pts_150', label: '🪙 150 Xu', type: 'POINTS', val: 150, color: '#f59e0b', text: '150 Xu' };
+          ? { id: 'vip_1d', label: '👑 +1 Ngày VocaVIP', type: 'VIP', val: 1, color: '#f59e0b', text: '👑 +1 Ngày VocaVIP Trải Nghiệm' }
+          : { id: 'pts_150', label: '🪙 150 VoCoin', type: 'POINTS', val: 150, color: '#f59e0b', text: '150 VoCoin' };
 
         const baseRegularPool = [
           jackpotSlice,
-          { id: 'pts_200', label: '🪙 200 Xu', type: 'POINTS', val: 200, color: '#ff4d4d', text: '200 Xu' },
-          { id: 'hints_5', label: '💡 5 Gợi Ý', type: 'HINTS', val: 5, color: '#ffaf40', text: '5 Gợi Ý' },
-          { id: 'skips_3', label: '⏩ 3 Bỏ Qua', type: 'SKIPS', val: 3, color: '#32ff7e', text: '3 Lượt Bỏ Qua' },
-          { id: 'pts_50', label: '🪙 50 Xu', type: 'POINTS', val: 50, color: '#3db5ff', text: '50 Xu' },
-          { id: 'hints_2', label: '💡 2 Gợi Ý', type: 'HINTS', val: 2, color: '#7d5fff', text: '2 Gợi Ý' },
-          { id: 'pts_100', label: '🪙 100 Xu', type: 'POINTS', val: 100, color: '#ff4b95', text: '100 Xu' },
-          { id: 'skips_1', label: '⏩ 1 Bỏ Qua', type: 'SKIPS', val: 1, color: '#cd84f1', text: '1 Lượt Bỏ Qua' }
+          { id: 'pts_200', label: '🪙 200 VoCoin', type: 'POINTS', val: 200, color: '#ff4d4d', text: '200 VoCoin' },
+          { id: 'hints_5', label: '💡 5 VocaHint', type: 'HINTS', val: 5, color: '#ffaf40', text: '5 VocaHint' },
+          { id: 'skips_3', label: '⏩ 3 VocaSkip', type: 'SKIPS', val: 3, color: '#32ff7e', text: '3 VocaSkip' },
+          { id: 'pts_50', label: '🪙 50 VoCoin', type: 'POINTS', val: 50, color: '#3db5ff', text: '50 VoCoin' },
+          { id: 'hints_2', label: '💡 2 VocaHint', type: 'HINTS', val: 2, color: '#7d5fff', text: '2 VocaHint' },
+          { id: 'pts_100', label: '🪙 100 VoCoin', type: 'POINTS', val: 100, color: '#ff4b95', text: '100 VoCoin' },
+          { id: 'skips_1', label: '⏩ 1 VocaSkip', type: 'SKIPS', val: 1, color: '#cd84f1', text: '1 VocaSkip' }
         ];
         // Randomly shuffle all 8 slices
         currentActiveWheelSlices = [...baseRegularPool].sort(() => Math.random() - 0.5);
@@ -9216,10 +9483,19 @@ function switchPublisherTab(tab) {
 
       // Check if notification already exists for today across synced userNotifications
       const alreadyNotified = Array.isArray(userNotifications) && userNotifications.some(n =>
-        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày') && n.timestamp && n.timestamp.startsWith(today)))
+        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('VocaSpin')) && n.timestamp && n.timestamp.startsWith(today)))
       );
       if (alreadyNotified) {
         // Already granted on another session/device: synchronize local marker and exit immediately
+        localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        return false;
+      }
+
+      // Check if ledger already recorded today's spin grant across devices
+      const alreadyInLedger = Array.isArray(userLedger) && userLedger.some(tx =>
+        tx && tx.type === 'VIP_DAILY_SPIN' && tx.timestamp && tx.timestamp.startsWith(today)
+      );
+      if (alreadyInLedger) {
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
         return false;
       }
@@ -9228,19 +9504,26 @@ function switchPublisherTab(tab) {
       isGrantingVipDailySpin = true;
       try {
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
         let spins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
         if (isNaN(spins) || spins < 0) spins = 0;
         spins += 2;
         localStorage.setItem('vocaflow_lucky_spins_left', spins.toString());
 
         if (typeof addNotification === 'function') {
-          addNotification('VIP_BONUS', '👑 Quà Tặng VIP Hằng Ngày', 'Đặc quyền VIP: Bạn được cộng dồn thêm +2 Lượt Quay May Mắn hôm nay!', null, null, notifId);
+          addNotification('VIP_BONUS', '👑 Quà Tặng VocaVIP Hằng Ngày', 'Đặc quyền VocaVIP: Bạn được cộng dồn thêm +2 VocaSpin hôm nay!', null, null, notifId);
         }
 
-        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Nhận +2 Lượt Quay May Mắn VIP hằng ngày');
+        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Nhận +2 VocaSpin VocaVIP hằng ngày');
         updateLuckyWheelUI();
         updateShopBonusesUI();
         saveDatabase(true);
+        if (typeof syncEconomyToCloud === 'function') {
+          syncEconomyToCloud();
+        }
+        if (typeof broadcastEconomyUpdate === 'function') {
+          broadcastEconomyUpdate();
+        }
         if (typeof pushCurrentDatabaseToCloud === 'function') {
           pushCurrentDatabaseToCloud();
         }
@@ -9251,13 +9534,13 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-4)
+    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-17)
     // =========================================================================
     function autoHealExcessVipSpinsToday() {
       const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
       if (!isVip) return;
 
-      const HEAL_KEY = 'vocaflow_spins_healed_v0109a4';
+      const HEAL_KEY = 'vocaflow_spins_healed_v0109a17';
       if (localStorage.getItem(HEAL_KEY)) return;
 
       const today = getTodayString();
@@ -9266,15 +9549,20 @@ function switchPublisherTab(tab) {
 
       // Count VIP spin daily notifications or compensation notifications for today
       const todayDailyNotifs = Array.isArray(userNotifications) ? userNotifications.filter(n =>
-        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP'))))
+        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP'))))
       ) : [];
 
+      const hasPurchasedSpins = Array.isArray(userLedger) && userLedger.some(tx =>
+        tx && (tx.type === 'BUY_SPINS' || tx.type === 'PURCHASE_SPIN')
+      );
+
       // If user received multiple spin grants today (inflated to +8 instead of +2)
-      if (todayDailyNotifs.length > 1 || curSpins >= 8) {
+      if (!hasPurchasedSpins && (todayDailyNotifs.length > 1 || curSpins >= 8)) {
         const excess = 6; // Deduct the 6 duplicate/excess spins added accidentally
         const adjustedSpins = Math.max(2, curSpins - excess);
         localStorage.setItem('vocaflow_lucky_spins_left', adjustedSpins.toString());
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
+        localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
         localStorage.setItem(HEAL_KEY, 'true');
 
         // Deduplicate notifications: retain only one single valid notification for today
@@ -9282,7 +9570,7 @@ function switchPublisherTab(tab) {
           let keptOne = false;
           userNotifications = userNotifications.filter(n => {
             if (!n) return false;
-            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP')));
+            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')));
             if (isDup) {
               if (!keptOne) { keptOne = true; return true; }
               return false;
@@ -9297,10 +9585,16 @@ function switchPublisherTab(tab) {
         updateLuckyWheelUI();
         updateShopBonusesUI();
         saveDatabase(true);
+        if (typeof syncEconomyToCloud === 'function') {
+          syncEconomyToCloud();
+        }
+        if (typeof broadcastEconomyUpdate === 'function') {
+          broadcastEconomyUpdate();
+        }
         if (typeof pushCurrentDatabaseToCloud === 'function') {
           pushCurrentDatabaseToCloud();
         }
-        showToast('👑 Đã hiệu chỉnh lại lượt quay VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
+        showToast('👑 Đã hiệu chỉnh lại VocaSpin VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
       } else {
         localStorage.setItem(HEAL_KEY, 'true');
       }
@@ -9316,9 +9610,17 @@ function switchPublisherTab(tab) {
     }
 
     function setLuckySpinsCount(count) {
-      localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, count).toString());
+      const cleanCount = Math.max(0, count);
+      localStorage.setItem('vocaflow_lucky_spins_left', cleanCount.toString());
       localStorage.setItem('vocaflow_last_spin_date', getTodayString());
+      localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateLuckyWheelUI();
+      if (typeof syncEconomyToCloud === 'function') {
+        syncEconomyToCloud();
+      }
+      if (typeof broadcastEconomyUpdate === 'function') {
+        broadcastEconomyUpdate();
+      }
       if (typeof pushCurrentDatabaseToCloud === 'function') {
         pushCurrentDatabaseToCloud();
       }
@@ -9359,7 +9661,7 @@ function switchPublisherTab(tab) {
       const adBanner = document.getElementById('shop-rewarded-ad-banner');
 
       if (wheelTitle) {
-        wheelTitle.textContent = isVip ? '👑 Vòng Quay May Mắn VIP' : '🎡 Vòng Quay May Mắn';
+        wheelTitle.textContent = isVip ? '👑 Vòng Quay May Mắn VocaVIP' : '🎡 Vòng Quay May Mắn';
       }
       if (wheelBadge) {
         wheelBadge.textContent = `Còn ${spins} Lượt`;
@@ -9368,8 +9670,8 @@ function switchPublisherTab(tab) {
       }
       if (wheelDesc) {
         wheelDesc.textContent = isVip 
-          ? '👑 Đặc quyền VIP: Cơ cấu giải 300 Xu, 10 Gợi ý & Độc Đắc +1 Ngày VIP'
-          : 'Cơ hội trúng 200 Xu, Gợi ý, Bỏ qua & Giải Độc Đắc +1 Ngày VIP!';
+          ? '👑 Đặc quyền VocaVIP: Cơ cấu giải 300 VoCoin, 10 VocaHint & Độc Đắc +1 Ngày VocaVIP'
+          : 'Cơ hội trúng 200 VoCoin, VocaHint, VocaSkip & Giải Độc Đắc +1 Ngày VocaVIP!';
       }
 
       // 2. Hide Rewarded Ads completely for VIP users
@@ -9465,12 +9767,12 @@ function switchPublisherTab(tab) {
           btn.style.boxShadow = '0 3px 10px rgba(56,189,248,0.35)';
         }
         if (adBadge) {
-          adBadge.textContent = '+1 Lượt Quay';
+          adBadge.textContent = '+1 VocaSpin';
           adBadge.style.background = 'rgba(56,189,248,0.2)';
           adBadge.style.color = '#38bdf8';
         }
         if (wheelBtn) {
-          wheelBtn.textContent = '🎬 Xem Video 30s Nhận +1 Lượt Quay';
+          wheelBtn.textContent = '🎬 Xem Video 30s Nhận +1 VocaSpin';
           wheelBtn.disabled = false;
           wheelBtn.style.opacity = '1';
           wheelBtn.style.cursor = 'pointer';
@@ -9515,11 +9817,11 @@ function switchPublisherTab(tab) {
       if (titleEl) titleEl.textContent = isVip ? '👑 Vòng Quay May Mắn Hoàng Gia' : '🎡 Vòng Quay May Mắn';
       if (subEl) {
         if (isVip) {
-          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 700;">👑 Đặc quyền VIP: Luôn có ô Độc Đắc +1 Ngày VIP & 300 Xu!</span>';
+          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 700;">👑 Đặc quyền VocaVIP: Luôn có ô Độc Đắc +1 Ngày VocaVIP & 300 VoCoin!</span>';
         } else if (currentWheelHasJackpot) {
-          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 800; animation: vip-combo 2.5s infinite;">✨ HOT: Ô ĐỘC ĐẮC +1 NGÀY VIP ĐANG XUẤT HIỆN! ✨</span>';
+          subEl.innerHTML = '<span style="color: #ffd700; font-weight: 800; animation: vip-combo 2.5s infinite;">✨ HOT: Ô ĐỘC ĐẮC +1 NGÀY VOCAVIP ĐANG XUẤT HIỆN! ✨</span>';
         } else {
-          subEl.innerHTML = '<span style="color: var(--text-muted);">Quay trúng Xu, Gợi Ý, Lượt Bỏ Qua & Cơ hội săn VIP!</span>';
+          subEl.innerHTML = '<span style="color: var(--text-muted);">Quay trúng VoCoin, VocaHint, VocaSkip & Cơ hội săn VocaVIP!</span>';
         }
       }
       if (spinsCountEl) spinsCountEl.textContent = spins.toString();
@@ -9530,6 +9832,14 @@ function switchPublisherTab(tab) {
     }
 
     function openLuckyWheelModal() {
+      if (currentUser && currentUser.uid && typeof loadEconomyFromCloud === 'function') {
+        loadEconomyFromCloud().then(() => {
+          if (typeof isUserVip === 'function' && isUserVip()) {
+            checkAndGrantVipDailySpinBonus();
+          }
+          updateLuckyWheelUI();
+        }).catch(() => {});
+      }
       if (typeof isUserVip === 'function' && isUserVip()) {
         checkAndGrantVipDailySpinBonus();
       }
@@ -9551,10 +9861,10 @@ function switchPublisherTab(tab) {
       if (isCurrentlyVip && userVipTier === 'lifetime') {
         setUserPoints(getUserPoints() + 300);
         setUserHints(getUserHints() + 5);
-        addLedgerEntry('LUCKY_WHEEL', 300, '👑 Giải Độc Đắc: +1 Ngày VIP (Đã quy đổi 300 Xu + 5 Gợi Ý cho VIP Trọn Đời)');
+        addLedgerEntry('LUCKY_WHEEL', 300, '👑 Giải Độc Đắc: +1 Ngày VocaVIP (Đã quy đổi 300 VoCoin + 5 VocaHint cho VocaVIP Trọn Đời)');
         saveDatabase(true);
         pushCurrentDatabaseToCloud();
-        return { isLifetime: true, message: '👑 Bạn đã sở hữu VIP Trọn Đời! Đã tặng thêm 300 Xu & 5 Gợi Ý!' };
+        return { isLifetime: true, message: '👑 Bạn đã sở hữu VocaVIP Trọn Đời! Đã tặng thêm 300 VoCoin & 5 VocaHint!' };
       }
 
       // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours with Bulletproof Protection
@@ -9988,16 +10298,16 @@ function switchPublisherTab(tab) {
 
         const reporterHtml = isVip ? `
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ học viên VIP">
+            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower VocaVIP">
               <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
               <strong class="vip-glowing-name" style="font-size: 12px;">${escapeHtml(authorName)}</strong>
             </span>
-            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VIP</span>
+            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VocaVIP</span>
             <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
           </div>
         ` : `
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ học viên">
+            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower">
               👤 <strong>${escapeHtml(authorName)}</strong>
             </span>
             <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
@@ -10207,11 +10517,11 @@ function switchPublisherTab(tab) {
     let currentBountyType = 'coins';
 
     const BOUNTY_CONFIG = {
-      coins: { label: 'Tiền Xu', unit: 'Xu', icon: '🪙', presets: [20, 50, 100, 200, 500], defaultVal: 50 },
-      hints: { label: 'Gợi Ý AI', unit: 'Gợi Ý AI', icon: '💡', presets: [2, 5, 10, 20, 50], defaultVal: 5 },
-      skips: { label: 'Thẻ Bỏ Qua', unit: 'Thẻ Bỏ Qua', icon: '⏭️', presets: [1, 3, 5, 10, 20], defaultVal: 3 },
-      spins: { label: 'Lượt Quay', unit: 'Lượt Quay', icon: '🎡', presets: [1, 2, 5, 10, 20], defaultVal: 2 },
-      vip:   { label: 'Ngày VIP', unit: 'Ngày VIP', icon: '👑', presets: [1, 3, 7, 14, 30], defaultVal: 3 }
+      coins: { label: 'VoCoin', unit: 'VoCoin', icon: '🪙', presets: [20, 50, 100, 200, 500], defaultVal: 50 },
+      hints: { label: 'VocaHint', unit: 'VocaHint', icon: '💡', presets: [2, 5, 10, 20, 50], defaultVal: 5 },
+      skips: { label: 'VocaSkip', unit: 'VocaSkip', icon: '⏭️', presets: [1, 3, 5, 10, 20], defaultVal: 3 },
+      spins: { label: 'VocaSpin', unit: 'VocaSpin', icon: '🎡', presets: [1, 2, 5, 10, 20], defaultVal: 2 },
+      vip:   { label: 'Ngày VocaVIP', unit: 'Ngày VocaVIP', icon: '👑', presets: [1, 3, 7, 14, 30], defaultVal: 3 }
     };
 
     function openBugBountyPickerModal(reportId) {
@@ -10221,7 +10531,7 @@ function switchPublisherTab(tab) {
         return;
       }
       const userUid = report.user?.uid;
-      const displayName = report.user?.displayName || 'Học viên';
+      const displayName = report.user?.displayName || 'Flower';
       if (!userUid || userUid === 'GUEST') {
         alert('⚠️ Báo cáo này từ tài khoản Khách (Guest), không thể trao thưởng ví!');
         return;
@@ -10238,16 +10548,16 @@ function switchPublisherTab(tab) {
         const isVip = (report.user?.isVip === true) || (typeof isAuthorVipUser === 'function' && isAuthorVipUser(userUid, displayName));
         if (isVip) {
           reporterEl.innerHTML = `
-            <span class="vip-name-wrapper" onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3);" title="Bấm để xem Hồ sơ học viên VIP">
+            <span class="vip-name-wrapper" onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3);" title="Bấm để xem Hồ sơ Flower VocaVIP">
               <span class="vip-crown-icon" style="font-size: 16px;">👑</span>
               <span class="vip-glowing-name" style="font-weight: 800; font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px;">${escapeHtml(displayName)}</span>
-              <span class="badge" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 800; font-size: 10px; padding: 1px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,215,0,0.4);">👑 VIP</span>
+              <span class="badge" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 800; font-size: 10px; padding: 1px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,215,0,0.4);">👑 VocaVIP</span>
             </span>
             <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
           `;
         } else {
           reporterEl.innerHTML = `
-            <span onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; color: #38bdf8; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;" title="Bấm để xem Hồ sơ học viên">
+            <span onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; color: #38bdf8; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;" title="Bấm để xem Hồ sơ Flower">
               👤 ${escapeHtml(displayName)}
             </span>
             <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
@@ -10464,7 +10774,7 @@ function switchPublisherTab(tab) {
         updateAdminBugStatus(currentBountyReportId, 'resolved');
 
         closeModal('modal-bug-bounty-picker');
-        showToast(`🎉 Đã trao thưởng ${rewardSummary} thành công cho học viên!`);
+        showToast(`🎉 Đã trao thưởng ${rewardSummary} thành công cho Flower!`);
 
       } catch (err) {
         console.warn('Send bounty error:', err);
@@ -10530,7 +10840,7 @@ function switchPublisherTab(tab) {
     // =========================================================================
     // REAL-MONEY SPIN PURCHASE PAYMENT ENGINE (v0.10.8-alpha-10.3)
     // =========================================================================
-    let currentSpinPurchasePack = { code: 'SPIN15', name: '15 Lượt Quay May Mắn', amount: 25000, spins: 15 };
+    let currentSpinPurchasePack = { code: 'SPIN15', name: '15 VocaSpin', amount: 25000, spins: 15 };
 
     function openSpinPurchasePaymentModal(code, name, amount, spins) {
       const isGuest = !currentUser || !currentUser.email;
@@ -10588,9 +10898,9 @@ function switchPublisherTab(tab) {
 
     function confirmSpinTransferSent() {
       closeModal('modal-spin-purchase-payment');
-      showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Admin sẽ duyệt và cộng lượt quay cho bạn ngay!');
+      showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Admin sẽ duyệt và cộng VocaSpin cho bạn ngay!');
       if (typeof addNotification === 'function') {
-        addNotification('FINANCIAL', '💳 Yêu Cầu Mua Lượt Quay', `Đã ghi nhận thanh toán gói ${currentSpinPurchasePack.name}. Hệ thống đang kiểm tra giao dịch.`);
+        addNotification('FINANCIAL', '💳 Yêu Cầu Mua VocaSpin', `Đã ghi nhận thanh toán gói ${currentSpinPurchasePack.name}. Hệ thống đang kiểm tra giao dịch.`);
       }
     }
 
@@ -10600,11 +10910,11 @@ function switchPublisherTab(tab) {
       const spins = getLuckySpinsCount();
       if (spins <= 0) {
         if (!isUserVip()) {
-          showToast('🎬 Bạn đã hết lượt quay! Hãy xem video 30s để nhận thêm lượt quay ngay!');
+          showToast('🎬 Bạn đã hết VocaSpin! Hãy xem video 30s để nhận thêm VocaSpin ngay!');
           closeModal('modal-lucky-wheel');
           openRewardedAdModal();
         } else {
-          showToast('⏳ Bạn đã dùng hết lượt quay VIP hôm nay. Hẹn gặp lại bạn vào ngày mai!');
+          showToast('⏳ Bạn đã dùng hết VocaSpin VocaVIP hôm nay. Hẹn gặp lại bạn vào ngày mai!');
         }
         return;
       }
@@ -10644,30 +10954,30 @@ function switchPublisherTab(tab) {
         let prizeMsg = '';
         if (prize.type === 'VIP') {
           const vipRes = grantVipOneDayBonus();
-          prizeMsg = vipRes.isLifetime ? vipRes.message : `👑 GIẢI ĐỘC ĐẮC: +1 Ngày VIP Hoàng Gia! (Đến ${vipRes.formatted})`;
+          prizeMsg = vipRes.isLifetime ? vipRes.message : `👑 GIẢI ĐỘC ĐẮC: +1 Ngày VocaVIP Hoàng Gia! (Đến ${vipRes.formatted})`;
           if (typeof addNotification === 'function') {
-            addNotification('FINANCIAL', '👑 Trúng Giải Độc Đắc VIP', prizeMsg);
+            addNotification('FINANCIAL', '👑 Trúng Giải Độc Đắc VocaVIP', prizeMsg);
           }
         } else if (prize.type === 'POINTS') {
           setUserPoints(getUserPoints() + prize.val);
-          addLedgerEntry('LUCKY_WHEEL', prize.val, `🎁 Trúng ${prize.val} Xu từ Vòng Quay May Mắn`);
-          prizeMsg = `🎉 Chúc mừng bạn đã trúng ${prize.val} Xu!`;
+          addLedgerEntry('LUCKY_WHEEL', prize.val, `🎁 Trúng ${prize.val} VoCoin từ VocaWheel`);
+          prizeMsg = `🎉 Chúc mừng bạn đã trúng ${prize.val} VoCoin!`;
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         } else if (prize.type === 'HINTS') {
           setUserHints(getUserHints() + prize.val);
           if (typeof addNotification === 'function') {
-            addNotification('STUDY', '💡 Trúng Gợi Ý AI', `Chúc mừng bạn đã trúng +${prize.val} Lượt Gợi Ý AI từ Vòng Quay May Mắn!`);
+            addNotification('STUDY', '💡 Trúng VocaHint', `Chúc mừng bạn đã trúng +${prize.val} VocaHint từ VocaWheel!`);
           }
-          prizeMsg = `💡 Chúc mừng bạn đã trúng +${prize.val} Lượt Gợi Ý AI!`;
+          prizeMsg = `💡 Chúc mừng bạn đã trúng +${prize.val} VocaHint!`;
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         } else if (prize.type === 'SKIPS') {
           setUserSkips(getUserSkips() + prize.val);
           if (typeof addNotification === 'function') {
-            addNotification('STUDY', '⏭️ Trúng Lượt Bỏ Qua', `Chúc mừng bạn đã trúng +${prize.val} Lượt Bỏ Qua từ Vòng Quay May Mắn!`);
+            addNotification('STUDY', '⏭️ Trúng VocaSkip', `Chúc mừng bạn đã trúng +${prize.val} VocaSkip từ VocaWheel!`);
           }
-          prizeMsg = `⏭️ Chúc mừng bạn đã trúng +${prize.val} Lượt Bỏ Qua!`;
+          prizeMsg = `⏭️ Chúc mừng bạn đã trúng +${prize.val} VocaSkip!`;
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         }
@@ -10913,7 +11223,7 @@ function switchPublisherTab(tab) {
       },
       {
         title: 'Kho Thư Viện THPT & IELTS Khổng Lồ',
-        desc: 'Hơn 50+ bộ từ vựng tuyển chọn chuẩn SGK Global Success và đề thi THPT Quốc Gia.'
+        desc: 'Hơn 50+ VocaDeck tuyển chọn chuẩn SGK Global Success và đề thi THPT Quốc Gia.'
       }
     ];
 
@@ -10991,7 +11301,7 @@ function switchPublisherTab(tab) {
           stopRewardedAdCycle();
           if (claimBtn) {
             claimBtn.disabled = false;
-            claimBtn.textContent = '🎉 Nhận Thưởng (+1 Lượt Quay May Mắn)';
+            claimBtn.textContent = '🎉 Nhận Thưởng (+1 VocaSpin)';
             claimBtn.style.opacity = '1';
             claimBtn.style.cursor = 'pointer';
           }
@@ -11031,13 +11341,13 @@ function switchPublisherTab(tab) {
 
       // 3. Notification & sync (No 0 Xu ledger entry)
       if (typeof addNotification === 'function') {
-        addNotification('STUDY', '🎬 Thưởng Xem Quảng Cáo', 'Bạn đã xem xong quảng cáo và nhận được +1 Lượt Quay May Mắn!');
+        addNotification('STUDY', '🎬 Thưởng Xem Quảng Cáo', 'Bạn đã xem xong quảng cáo và nhận được +1 VocaSpin!');
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
 
       closeModal('modal-rewarded-ad');
-      showToast('🎉 Nhận thưởng thành công: +1 Lượt Quay May Mắn!');
+      showToast('🎉 Nhận thưởng thành công: +1 VocaSpin!');
       updateEconomyUI();
       updateShopBonusesUI();
       openLuckyWheelModal();
@@ -11101,7 +11411,7 @@ function switchPublisherTab(tab) {
         groupName: '🌱 Khởi Đầu & Khai Phá',
         icon: '🎙️',
         name: 'Tiếng Vang Đầu Đời',
-        desc: 'Hoàn thành phiên Luyện Nói AI (Speaking) đầu tiên.',
+        desc: 'Hoàn thành phiên Luyện Nói (Speaking) đầu tiên.',
         tier: 'bronze',
         maxProgress: 1,
         unit: 'phiên',
@@ -11237,7 +11547,7 @@ function switchPublisherTab(tab) {
         groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
         icon: '⚡',
         name: 'Bách Phát Bách Trúng',
-        desc: 'Trả lời đúng 30 câu Quiz liên tiếp không dùng bất kỳ Gợi Ý nào.',
+        desc: 'Trả lời đúng 30 câu Quiz liên tiếp không dùng bất kỳ VocaHint nào.',
         tier: 'gold',
         maxProgress: 30,
         unit: 'câu đúng',
@@ -11256,17 +11566,17 @@ function switchPublisherTab(tab) {
         pointsReward: 500
       },
 
-      // GROUP 4: Vận Mệnh & Nhân Phẩm (Vòng Quay & Ads)
+      // GROUP 4: Vận Mệnh & Nhân Phẩm (VocaWheel & Ads)
       'luck_spin_10': {
         id: 'luck_spin_10',
         group: 'luck',
         groupName: '🎡 Vận Mệnh & Nhân Phẩm',
         icon: '🎡',
         name: 'Bàn Tay Vận Mệnh',
-        desc: 'Thực hiện 10 lượt quay Vòng Quay May Mắn.',
+        desc: 'Thực hiện 10 VocaSpin trên VocaWheel.',
         tier: 'bronze',
         maxProgress: 10,
-        unit: 'lượt quay',
+        unit: 'VocaSpin',
         pointsReward: 50
       },
       'luck_ads_30': {
@@ -11275,7 +11585,7 @@ function switchPublisherTab(tab) {
         groupName: '🎡 Vận Mệnh & Nhân Phẩm',
         icon: '🎬',
         name: 'Nhà Tài Trợ Bền Bỉ',
-        desc: 'Xem 30 video quảng cáo tài trợ để nhận lượt quay.',
+        desc: 'Xem 30 video quảng cáo tài trợ để nhận VocaSpin.',
         tier: 'silver',
         maxProgress: 30,
         unit: 'lượt xem',
@@ -11287,10 +11597,10 @@ function switchPublisherTab(tab) {
         groupName: '🎡 Vận Mệnh & Nhân Phẩm',
         icon: '👑',
         name: 'Trúng Số Độc Đắc',
-        desc: 'Quay trúng ô giải độc đắc +1 Ngày VIP trên Vòng Quay 3 lần.',
+        desc: 'Quay trúng ô giải độc đắc +1 Ngày VocaVIP trên VocaWheel 3 lần.',
         tier: 'gold',
         maxProgress: 3,
-        unit: 'lần trúng VIP',
+        unit: 'lần trúng VocaVIP',
         pointsReward: 200
       },
       'luck_vip_jackpot_streak_3': {
@@ -11299,7 +11609,7 @@ function switchPublisherTab(tab) {
         groupName: '🎡 Vận Mệnh & Nhân Phẩm',
         icon: '🏆',
         name: 'Triệu Phú Nhân Phẩm',
-        desc: 'Quay trúng ô +1 Ngày VIP liên tiếp 3 lần.',
+        desc: 'Quay trúng ô +1 Ngày VocaVIP liên tiếp 3 lần.',
         tier: 'diamond',
         maxProgress: 3,
         unit: 'lần liên tiếp',
@@ -11325,10 +11635,10 @@ function switchPublisherTab(tab) {
         groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
         icon: '🧙‍♂️',
         name: 'Pháp Sư Tập Sự',
-        desc: 'Xuất bản bộ từ công khai đầu tiên lên Thư Viện Toàn Cầu.',
+        desc: 'Xuất bản VocaDeck công khai đầu tiên lên VocaLib Toàn Cầu.',
         tier: 'bronze',
         maxProgress: 1,
-        unit: 'bộ từ',
+        unit: 'VocaDeck',
         pointsReward: 50
       },
       'creator_sell_5_decks': {
@@ -11337,7 +11647,7 @@ function switchPublisherTab(tab) {
         groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
         icon: '🏪',
         name: 'Thương Gia Tri Thức',
-        desc: 'Bán được 5 bộ từ trên Creator Marketplace.',
+        desc: 'Bán được 5 VocaDeck trên VocaStudio Creator Marketplace.',
         tier: 'silver',
         maxProgress: 5,
         unit: 'lượt bán',
@@ -11349,7 +11659,7 @@ function switchPublisherTab(tab) {
         groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
         icon: '📚',
         name: 'Mọt Sách',
-        desc: 'Mua 5 bộ từ trên Creator Marketplace.',
+        desc: 'Mua 5 VocaDeck trên VocaStudio Creator Marketplace.',
         tier: 'silver',
         maxProgress: 5,
         unit: 'bộ đã mua',
@@ -11384,11 +11694,11 @@ function switchPublisherTab(tab) {
         group: 'creator',
         groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
         icon: '⭐',
-        name: 'Bộ Từ Mô Phạm',
-        desc: 'Sở hữu bộ từ đạt đánh giá trung bình 5.0⭐ (tối thiểu 10 lượt đánh giá).',
+        name: 'VocaDeck Mô Phạm',
+        desc: 'Sở hữu VocaDeck đạt đánh giá trung bình 5.0⭐ (tối thiểu 10 lượt đánh giá).',
         tier: 'diamond',
         maxProgress: 1,
-        unit: 'bộ từ',
+        unit: 'VocaDeck',
         pointsReward: 500
       },
       'referral_invited_3': {
@@ -11397,7 +11707,7 @@ function switchPublisherTab(tab) {
         groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
         icon: '🤝',
         name: 'Đại Sứ Vẫy Khách',
-        desc: 'Mời thành công 3 bạn bè tham gia qua Link/Mã Giới Thiệu.',
+        desc: 'Mời thành công 3 bạn bè tham gia qua VocaShare / Link Giới Thiệu.',
         tier: 'silver',
         maxProgress: 3,
         unit: 'bạn bè',
@@ -11411,10 +11721,10 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🪙',
         name: 'Khởi Nghiệp Vốn Âm Tì Địa Ngục',
-        desc: 'Tích lũy 1.000 Xu hoàn toàn từ việc học và tự tạo từ vựng.',
+        desc: 'Tích lũy 1.000 VoCoin hoàn toàn từ việc học và tự tạo từ vựng.',
         tier: 'silver',
         maxProgress: 1000,
-        unit: 'Xu học tập',
+        unit: 'VoCoin học tập',
         pointsReward: 100
       },
       'finance_wallet_balance_5000': {
@@ -11423,10 +11733,10 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🏦',
         name: 'Cá Mập VocaFlow',
-        desc: 'Số dư khả dụng trong ví chạm mốc 5.000 Xu.',
+        desc: 'Số dư khả dụng trong ví chạm mốc 5.000 VoCoin.',
         tier: 'gold',
         maxProgress: 5000,
-        unit: 'Xu ví',
+        unit: 'VoCoin ví',
         pointsReward: 200
       },
       'vip_membership_activated': {
@@ -11435,10 +11745,10 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '👑',
         name: 'Dòng Máu Hoàng Gia',
-        desc: 'Kích hoạt thành công gói Hội Viên VIP (Tháng / Năm / Trọn Đời).',
+        desc: 'Kích hoạt thành công gói Hội Viên VocaVIP (Tháng / Năm / Trọn Đời).',
         tier: 'diamond',
         maxProgress: 1,
-        unit: 'gói VIP',
+        unit: 'gói VocaVIP',
         pointsReward: 500
       },
       'bug_bounty_approved_1': {
@@ -11447,7 +11757,7 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🕵️',
         name: 'Thợ Săn Bọ Nghiệp Dư',
-        desc: 'Báo cáo >= 1 lỗi được Admin duyệt và trao thưởng Bug Bounty.',
+        desc: 'Báo cáo >= 1 lỗi được VocaAdmin duyệt và trao thưởng Bug Bounty.',
         tier: 'silver',
         maxProgress: 1,
         unit: 'báo cáo duyệt',
@@ -11459,7 +11769,7 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🕵️',
         name: 'Thợ Săn Bọ Thành Thạo',
-        desc: 'Báo cáo >= 5 lỗi được Admin duyệt và trao thưởng Bug Bounty.',
+        desc: 'Báo cáo >= 5 lỗi được VocaAdmin duyệt và trao thưởng Bug Bounty.',
         tier: 'silver',
         maxProgress: 5,
         unit: 'báo cáo duyệt',
@@ -11471,7 +11781,7 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🕵️',
         name: 'Thợ Săn Bọ Chuyên Nghiệp',
-        desc: 'Báo cáo >= 10 lỗi được Admin duyệt và trao thưởng Bug Bounty.',
+        desc: 'Báo cáo >= 10 lỗi được VocaAdmin duyệt và trao thưởng Bug Bounty.',
         tier: 'gold',
         maxProgress: 10,
         unit: 'báo cáo duyệt',
@@ -11483,7 +11793,7 @@ function switchPublisherTab(tab) {
         groupName: '🏦 Tài Chính & Thợ Săn Lỗi',
         icon: '🕵️',
         name: 'Thợ Săn Bọ Bậc Thầy',
-        desc: 'Báo cáo >= 20 lỗi được Admin duyệt và trao thưởng Bug Bounty.',
+        desc: 'Báo cáo >= 20 lỗi được VocaAdmin duyệt và trao thưởng Bug Bounty.',
         tier: 'diamond',
         maxProgress: 20,
         unit: 'báo cáo duyệt',
@@ -11680,7 +11990,7 @@ function switchPublisherTab(tab) {
         addNotification(
           'ACHIEVEMENT',
           notifTitle,
-          `Chúc mừng bạn đã xuất sắc khám phá và mở khóa danh hiệu "${badgeDef.name}" (${badgeDef.icon})! Hãy vào Bảng Thành Tựu để nhận thưởng +${badgeDef.pointsReward} Xu và ghim huy hiệu lên Hồ Sơ Cá Nhân nhé.`
+          `Chúc mừng bạn đã xuất sắc khám phá và mở khóa danh hiệu "${badgeDef.name}" (${badgeDef.icon})! Hãy vào Bảng Thành Tựu để nhận thưởng +${badgeDef.pointsReward} VoCoin và ghim huy hiệu lên Hồ Sơ Cá Nhân nhé.`
         );
       }
 
@@ -11763,7 +12073,7 @@ function switchPublisherTab(tab) {
       renderAchievementsList();
       updateEconomyUI();
       playVocaSfx('success');
-      showToast(`🎁 Đã nhận thành công +${rewardPts} Xu từ "${badgeDef.name}"!`);
+      showToast(`🎁 Đã nhận thành công +${rewardPts} VoCoin từ "${badgeDef.name}"!`);
 
       isClaimingAchievement[id] = false;
     }
@@ -12035,7 +12345,7 @@ function switchPublisherTab(tab) {
       const currentFreezes = getUserFlowFreezes();
 
       if (currentFreezes >= maxFreezes) {
-        alert(`⚠️ Bạn đã tích trữ tối đa ${maxFreezes}/${maxFreezes} Flow Freeze!\n\n${!isUserVip() ? '👑 Hãy nâng cấp VIP Crown để mở rộng sức chứa lên tối đa 7 Flow Freeze (bảo vệ chuỗi nghỉ liên tục 7 ngày)!' : 'Hãy sử dụng bớt khi cần thiết trước khi mua thêm nhé.'}`);
+        alert(`⚠️ Bạn đã tích trữ tối đa ${maxFreezes}/${maxFreezes} FlowFreeze!\n\n${!isUserVip() ? '👑 Hãy nâng cấp VocaVIP để mở rộng sức chứa lên tối đa 7 FlowFreeze (bảo vệ chuỗi nghỉ liên tục 7 ngày)!' : 'Hãy sử dụng bớt khi cần thiết trước khi mua thêm nhé.'}`);
         return;
       }
 
@@ -12043,7 +12353,7 @@ function switchPublisherTab(tab) {
       const currentPoints = getUserPoints();
 
       if (currentPoints < costPoints) {
-        alert(`⚠️ Số Xu trong ví của bạn (${currentPoints} Xu) không đủ để mua Flow Freeze (${costPoints} Xu)!\n\nHãy hoàn thành các bài học hoặc làm Quiz để tích lũy thêm Xu nhé.`);
+        alert(`⚠️ Số VoCoin trong ví của bạn (${currentPoints} VoCoin) không đủ để mua FlowFreeze (${costPoints} VoCoin)!\n\nHãy hoàn thành các bài học hoặc làm Quiz để tích lũy thêm VoCoin nhé.`);
         return;
       }
 
@@ -12583,7 +12893,7 @@ function switchPublisherTab(tab) {
       });
 
       if (statUnlocked) statUnlocked.textContent = `${unlockedList.length} / ${allIds.length}`;
-      if (statCoins) statCoins.textContent = `+${totalCoinsClaimed} Xu`;
+      if (statCoins) statCoins.textContent = `+${totalCoinsClaimed} VoCoin`;
       if (statPinned) statPinned.textContent = `${userPinnedBadges.length} / 3`;
 
       if (!container) return;
@@ -12651,7 +12961,7 @@ function switchPublisherTab(tab) {
                     ${def.isSecret ? (isUnlocked ? tier.name : '🥚 Bí Ẩn') : tier.name}
                   </span>
                 </div>
-                <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px; font-weight: 700;">+${def.pointsReward} Xu</span>
+                <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px; font-weight: 700;">+${def.pointsReward} VoCoin</span>
               </div>
 
               <div style="font-size: 11px; color: ${isSecretLocked ? '#a5b4fc' : 'var(--text-muted)'}; margin: 2px 0 4px 0; line-height: 1.3; font-style: ${isSecretLocked ? 'italic' : 'normal'};">${escapeHtml(displayDesc)}</div>
@@ -12668,7 +12978,7 @@ function switchPublisherTab(tab) {
 
               ${isUnlocked ? `
                 <div style="font-size: 9.5px; color: #34d399; margin-top: 2px; display: flex; align-items: center; gap: 4px;">
-                  <span>✅ Đã mở: ${unlockedTimeStr} ${isClaimed ? '• Đã nhận thưởng' : '• <strong>Chưa nhận Xu</strong>'}</span>
+                  <span>✅ Đã mở: ${unlockedTimeStr} ${isClaimed ? '• Đã nhận thưởng' : '• <strong>Chưa nhận VoCoin</strong>'}</span>
                 </div>
               ` : ''}
             </div>
@@ -12677,8 +12987,8 @@ function switchPublisherTab(tab) {
             <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end;">
               ${isUnlocked ? `
                 ${!isClaimed ? `
-                  <button type="button" class="btn btn-sm" onclick="claimAchievementReward('${id}')" style="font-size: 11px; padding: 5px 9px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; box-shadow: 0 2px 8px rgba(16,185,129,0.4); border-radius: 7px; white-space: nowrap; cursor: pointer;" title="Nhấn để nhận phần thưởng +${def.pointsReward} Xu">
-                    🎁 +${def.pointsReward} Xu
+                  <button type="button" class="btn btn-sm" onclick="claimAchievementReward('${id}')" style="font-size: 11px; padding: 5px 9px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; box-shadow: 0 2px 8px rgba(16,185,129,0.4); border-radius: 7px; white-space: nowrap; cursor: pointer;" title="Nhấn để nhận phần thưởng +${def.pointsReward} VoCoin">
+                    🎁 +${def.pointsReward} VoCoin
                   </button>
                 ` : `
                   ${isPinned ? `
@@ -12924,7 +13234,7 @@ function switchPublisherTab(tab) {
 
     function openReferralModal() {
       if (!currentUser || !currentUser.email) {
-        openGuestFeatureLockModal('Mời Bạn Bè', 'Chương Trình Giới Thiệu Bạn Bè, Nhận VIP & Hoa Hồng Xu Thụ Động', '🤝 🔒');
+        openGuestFeatureLockModal('Mời Bạn Bè', 'VocaShare: Giới Thiệu Bạn Bè, Nhận VocaVIP & Hoa Hồng VoCoin Thụ Động', '🤝 🔒');
         return;
       }
       if (!currentUser || !currentUser.uid) {
@@ -12982,7 +13292,7 @@ function switchPublisherTab(tab) {
       const friendsCount = parseInt(localStorage.getItem('vocaflow_referrals_count') || '0', 10);
       if (statFriends) statFriends.textContent = friendsCount.toString();
       if (statVip) statVip.textContent = `+${friendsCount} ngày`;
-      if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${friendsCount} Ngày VIP`;
+      if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${friendsCount} Ngày VocaVIP`;
 
       openModal('modal-referral');
 
@@ -13014,7 +13324,7 @@ function switchPublisherTab(tab) {
             const badgeEarned = document.getElementById('ref-my-vip-earned-badge');
             if (statFriends) statFriends.textContent = count.toString();
             if (statVip) statVip.textContent = `+${count} ngày`;
-            if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${count} Ngày VIP`;
+            if (badgeEarned) badgeEarned.textContent = `Đã nhận: +${count} Ngày VocaVIP`;
           }
         }
 
@@ -13159,7 +13469,7 @@ function switchPublisherTab(tab) {
       // 3. Ledger entry & notifications
       addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode}`);
       if (typeof addNotification === 'function') {
-        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +1 Ngày VIP', `Bạn đã nhận được +1 Ngày VIP Hoàng Gia, 100 Xu, +3 Gợi Ý AI và +1 Lượt Quay từ mã ${rawCode}!`);
+        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +1 Ngày VocaVIP', `Bạn đã nhận được +1 Ngày VocaVIP Hoàng Gia, 100 VoCoin, +3 VocaHint và +1 VocaSpin từ mã ${rawCode}!`);
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
@@ -13263,9 +13573,9 @@ function switchPublisherTab(tab) {
                 body: JSON.stringify({
                   id: notifId,
                   type: 'VIP_BONUS',
-                  title: '👑 Thưởng +1 Ngày VIP Mời Bạn Bè',
-                  content: `Bạn bè ${friendName} vừa nhập mã giới thiệu của bạn! Bạn được tặng ngay +1 Ngày VIP Hoàng Gia.`,
-                  message: `Bạn bè ${friendName} vừa nhập mã giới thiệu của bạn! Bạn được tặng ngay +1 Ngày VIP Hoàng Gia.`,
+                  title: '👑 Thưởng +1 Ngày VocaVIP từ VocaShare',
+                  content: `Bạn bè ${friendName} vừa nhập mã VocaShare của bạn! Bạn được tặng ngay +1 Ngày VocaVIP Hoàng Gia.`,
+                  message: `Bạn bè ${friendName} vừa nhập mã VocaShare của bạn! Bạn được tặng ngay +1 Ngày VocaVIP Hoàng Gia.`,
                   timestamp: new Date().toISOString(),
                   read: false
                 })
@@ -13306,7 +13616,7 @@ function switchPublisherTab(tab) {
       }
 
       playVocaSfx('success');
-      showToast('🎉 Chúc mừng bạn đã nhận +100 Xu, +3 Gợi Ý và +1 Lượt Quay May Mắn!');
+      showToast('🎉 Chúc mừng bạn đã nhận +100 VoCoin, +3 VocaHint và +1 VocaSpin!');
       updateEconomyUI();
       updateShopBonusesUI();
     }
@@ -13370,7 +13680,7 @@ function switchPublisherTab(tab) {
       document.getElementById('deck-title').value = '';
       document.getElementById('deck-desc').value = '';
       renderDeckColorPalette('#6366f1');
-      document.getElementById('modal-deck-title').textContent = 'Tạo Bộ Từ Mới';
+      document.getElementById('modal-deck-title').textContent = 'Tạo VocaDeck Mới';
       openModal('modal-deck');
     }
 
@@ -13383,7 +13693,7 @@ function switchPublisherTab(tab) {
       document.getElementById('deck-desc').value = deck.description || '';
       renderDeckColorPalette(deck.color || '#6366f1');
 
-      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa Bộ Từ';
+      document.getElementById('modal-deck-title').textContent = 'Chỉnh Sửa VocaDeck';
       openModal('modal-deck');
     }
 
@@ -13409,7 +13719,7 @@ function switchPublisherTab(tab) {
       saveDatabase(true);
       renderDecks();
       closeModal('modal-deck');
-      showToast('Đã lưu bộ từ vựng thành công!');
+      showToast('Đã lưu VocaDeck thành công!');
     }
 
     // WORD MODAL
@@ -13888,7 +14198,7 @@ function switchPublisherTab(tab) {
         w.term.trim().toLowerCase() === normalizedTerm
       );
       if (duplicateWord) {
-        alert(`⚠️ Từ "${term}" đã tồn tại trong bộ từ này rồi!\n\nVì VocaFlow hiện đã hỗ trợ tính năng Đa nét nghĩa (Polysemy), bạn hãy mở từ "${duplicateWord.term}" đã có sẵn để thêm các nét nghĩa mới thay vì tạo nhiều từ trùng lặp nhé.`);
+        alert(`⚠️ Từ "${term}" đã tồn tại trong VocaDeck này rồi!\n\nVì VocaFlow hiện đã hỗ trợ tính năng Đa nét nghĩa (Polysemy), bạn hãy mở từ "${duplicateWord.term}" đã có sẵn để thêm các nét nghĩa mới thay vì tạo nhiều từ trùng lặp nhé.`);
         return;
       }
 
@@ -13964,10 +14274,10 @@ function switchPublisherTab(tab) {
           updatedAt: nowIso
         });
         if (!isGuest()) {
-          addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 Xu)`);
+          addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 VoCoin)`);
           setUserPoints(getUserPoints() + 10);
         }
-        showToast(`📝 Đã thêm từ vựng mới "${term}" (+10 Xu)!`);
+        showToast(`📝 Đã thêm từ vựng mới "${term}" (+10 VoCoin)!`);
       }
 
       saveDatabase(true);
@@ -14146,7 +14456,7 @@ function switchPublisherTab(tab) {
           deckCounts[w.deckId] = (deckCounts[w.deckId] || 0) + 1;
         });
 
-        let opts = `<option value="all">📁 Tất cả bộ từ (${reviewQueueMasterList.length})</option>`;
+        let opts = `<option value="all">📁 Tất cả VocaDeck (${reviewQueueMasterList.length})</option>`;
         decks.forEach(d => {
           if (!d.isArchived && deckCounts[d.id]) {
             opts += `<option value="${d.id}">📁 ${escapeHtml(d.title)} (${deckCounts[d.id]})</option>`;
@@ -14303,7 +14613,7 @@ function switchPublisherTab(tab) {
       const splLabel = document.getElementById('label-review-spelling');
       const qzLabel = document.getElementById('label-review-quiz');
 
-      if (spkLabel) spkLabel.textContent = `Luyện Nói AI (${count})`;
+      if (spkLabel) spkLabel.textContent = `Luyện Nói (${count})`;
       if (afcLabel) afcLabel.textContent = `Auto Flashcard (${count})`;
       if (splLabel) splLabel.textContent = `Luyện Viết (${count})`;
       if (qzLabel) qzLabel.textContent = `Quiz (${count})`;
@@ -14371,7 +14681,7 @@ function switchPublisherTab(tab) {
         const isChecked = reviewQueueSelectedWordIds.has(w.id);
 
         const deckObj = decks.find(d => d.id === w.deckId);
-        const deckName = deckObj ? deckObj.title : 'Bộ từ';
+        const deckName = deckObj ? deckObj.title : 'VocaDeck';
 
         htmlRows += `
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: ${isChecked ? 'rgba(99, 102, 241, 0.08)' : 'var(--surface)'}; border: 1px solid ${isChecked ? 'rgba(99, 102, 241, 0.35)' : 'var(--border)'}; gap: 10px; transition: all 0.2s ease;">
@@ -14383,7 +14693,7 @@ function switchPublisherTab(tab) {
                   <span>${escapeHtml(w.term)}</span>
                   ${w.cefrLevel ? '<span class="badge badge-cefr">' + escapeHtml(w.cefrLevel) + '</span>' : ''}
                   ${w.partOfSpeech ? '<span class="badge badge-pos">' + escapeHtml(w.partOfSpeech) + '</span>' : ''}
-                  <span class="badge" style="font-size: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted);" title="Bộ từ: ${escapeHtml(deckName)}">📁 ${escapeHtml(deckName)}</span>
+                  <span class="badge" style="font-size: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted);" title="VocaDeck: ${escapeHtml(deckName)}">📁 ${escapeHtml(deckName)}</span>
                 </div>
                 <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                   ${escapeHtml(w.definitionVi || w.definition || '')}
@@ -14435,7 +14745,7 @@ function switchPublisherTab(tab) {
         openSpellingSetupModal(false, targetList);
       } else if (mode === 'quiz') {
         if (targetList.length < 2) {
-          alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
+          alert('Cần tối thiểu 2 từ vựng để tạo bài Trắc nghiệm!');
           return;
         }
         openQuizSetupModal(false, targetList);
@@ -14560,7 +14870,7 @@ function switchPublisherTab(tab) {
         if (customWordList) {
           subtitle.textContent = '🔔 Hàng đợi ôn tập hôm nay • Tổng số: ' + deckWords.length + ' từ';
         } else {
-          subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
+          subtitle.textContent = 'VocaDeck: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
         }
       }
 
@@ -14781,14 +15091,21 @@ function switchPublisherTab(tab) {
     }
 
     function shuffleCurrentSpelling() {
-      if (!spellingList || spellingList.length === 0) return;
-      spellingList = [...spellingList].sort(() => Math.random() - 0.5);
-      spellingIndex = 0;
-      spellingScore = 0;
-      spellingIsAnswered = false;
-
-      loadSpellingQuestion();
-      showToast('🔀 Đã xáo trộn ngẫu nhiên danh sách từ Luyện Viết!');
+      if (!spellingList || spellingList.length <= 1) return;
+      const remainingCount = spellingList.length - 1 - spellingIndex;
+      if (remainingCount <= 0) {
+        showToast('ℹ️ Bạn đang ở từ cuối cùng, không còn từ phía sau để xáo trộn!');
+        return;
+      }
+      if (remainingCount === 1) {
+        showToast('ℹ️ Chỉ còn 1 từ phía sau, không thể xáo trộn thêm!');
+        return;
+      }
+      for (let i = spellingList.length - 1; i > spellingIndex + 1; i--) {
+        const j = spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex));
+        [spellingList[i], spellingList[j]] = [spellingList[j], spellingList[i]];
+      }
+      showToast(`🔀 Đã xáo trộn ${remainingCount} từ còn lại phía sau!`);
     }
 
     function loadSpellingQuestion() {
@@ -14890,7 +15207,7 @@ function switchPublisherTab(tab) {
         input.type = 'text';
         input.id = 'spelling-extreme-input';
         input.className = 'spelling-extreme-input';
-        input.placeholder = 'Nhập toàn bộ từ vựng tại đây...';
+        input.placeholder = 'Nhập đầy đủ từ vựng tại đây...';
         input.autocomplete = 'off';
         input.autocorrect = 'off';
         input.autocapitalize = 'off';
@@ -15205,7 +15522,7 @@ function switchPublisherTab(tab) {
           }
 
           if (feedbackMsg) {
-            feedbackMsg.textContent = '❌ Chưa chính xác! Bị trừ -' + masteryPenalty + 'đ tinh thông & -' + walletPenalty + ' Xu (75% điểm câu). Hãy thử lại!';
+            feedbackMsg.textContent = '❌ Chưa chính xác! Bị trừ -' + masteryPenalty + 'đ tinh thông & -' + walletPenalty + ' VoCoin (75% điểm câu). Hãy thử lại!';
             feedbackMsg.style.color = '#f87171';
           }
 
@@ -15376,17 +15693,17 @@ function switchPublisherTab(tab) {
       const skipCost = 100;
 
       if (curSkips <= 0 && curPts < skipCost) {
-        showToast('🪙 Bạn không đủ điểm ví (cần 100đ để đổi 1 lượt Bỏ Qua)');
+        showToast('🪙 Bạn không đủ VoCoin (cần 100 VoCoin để đổi 1 VocaSkip)');
         openShopModal();
         return;
       }
 
       if (curSkips > 0) {
         setUserSkips(curSkips - 1);
-        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua miễn phí (còn ' + getUserSkips() + ' lượt).');
+        showToast('⏭️ Đã dùng 1 VocaSkip miễn phí (còn ' + getUserSkips() + ' lượt).');
       } else {
         setUserPoints(curPts - skipCost);
-        showToast('⏭️ Đã dùng 100đ ví để Bỏ Qua từ này.');
+        showToast('⏭️ Đã dùng 100 VoCoin để đổi 1 VocaSkip.');
       }
 
       spellingIsAnswered = true;
@@ -15517,7 +15834,7 @@ function switchPublisherTab(tab) {
         const curVal = ext.value || '';
         const expected = questionWord.term || '';
         if (curVal.toLowerCase() === expected.toLowerCase()) {
-          showToast('💡 Bạn đã nhập đúng toàn bộ từ!');
+          showToast('💡 Bạn đã nhập đúng toàn vẹn từ vựng!');
           return;
         }
 
@@ -15658,7 +15975,7 @@ function switchPublisherTab(tab) {
       }
 
       if (scoreRatioEl) scoreRatioEl.textContent = spellingCorrectCount + '/' + totalWords + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' Xu (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
       if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
@@ -15672,7 +15989,7 @@ function switchPublisherTab(tab) {
       } else if (accuracyPct >= 80) {
         if (badgeIconEl) badgeIconEl.textContent = '🌟';
         if (titleEl) titleEl.textContent = 'Quá Đỉnh! Luyện Viết Thành Thạo!';
-        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ cơ bắp của bạn về bộ từ này đang cực kỳ tốt!';
+        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ cơ bắp của bạn về VocaDeck này đang cực kỳ tốt!';
       } else if (accuracyPct >= 50) {
         if (badgeIconEl) badgeIconEl.textContent = '🌿';
         if (titleEl) titleEl.textContent = 'Làm Tốt Lắm!';
@@ -16100,12 +16417,12 @@ function switchPublisherTab(tab) {
       if (userContext.collocations) contextNote += `\n- Collocations người dùng nhập: "${userContext.collocations}"`;
       if (userContext.cefrLevel) contextNote += `\n- Cấp độ CEFR người dùng chọn: "${userContext.cefrLevel}"`;
 
-      const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho người học Việt Nam.
+      const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho Flower Việt Nam.
 Hãy phân tích và hoàn thiện trọn vẹn 100% dữ liệu từ điển cho từ vựng tiếng Anh: "${term}".
 ${posInstruction}
 ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\n` : ''}
 ĐẶC BIỆT LƯU Ý VỀ TỰ ĐỘNG ĐIỀN ĐA NÉT NGHĨA (POLYSEMY & HOMOGRAPHS):
-- Tự động phân tích và trả về ĐẦY ĐỦ các nét nghĩa thông dụng và quan trọng nhất của từ "${term}" (thường từ 2 đến 4 nét nghĩa phong phú nếu từ có nhiều nghĩa hoặc nhiều từ loại khác nhau). Người học cần nạp đầy đủ tất cả các nét nghĩa này ngay lập tức vào các tab mà không cần bấm thêm thủ công.
+- Tự động phân tích và trả về ĐẦY ĐỦ các nét nghĩa thông dụng và quan trọng nhất của từ "${term}" (thường từ 2 đến 4 nét nghĩa phong phú nếu từ có nhiều nghĩa hoặc nhiều từ loại khác nhau). Flower cần nạp đầy đủ tất cả các nét nghĩa này ngay lập tức vào các tab mà không cần bấm thêm thủ công.
 - Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
 - Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
@@ -16384,7 +16701,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
         if (customWordList) {
           subtitle.textContent = '🔔 Hàng đợi ôn tập hôm nay • Tổng số câu: ' + deckWords.length + ' câu hỏi';
         } else {
-          subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số câu: ' + deckWords.length + ' câu hỏi';
+          subtitle.textContent = 'VocaDeck: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số câu: ' + deckWords.length + ' câu hỏi';
         }
       }
 
@@ -16967,21 +17284,21 @@ Yêu cầu nghiêm ngặt:
     }
 
     function shuffleCurrentQuiz() {
-      if (!quizList || quizList.length === 0) return;
-      quizList = [...quizList].sort(() => Math.random() - 0.5);
-      quizIndex = 0;
-      quizScore = 0;
-      quizIsAnswered = false;
-
-      quizStartTime = Date.now();
-      quizCorrectCount = 0;
-      quizWrongCount = 0;
-      quizPointsEarned = 0;
-      quizHintsUsed = 0;
-      quizTotalQuestions = quizList.length;
-
-      loadQuizQuestion();
-      showToast('🔀 Đã xáo trộn ngẫu nhiên bộ câu hỏi Quiz!');
+      if (!quizList || quizList.length <= 1) return;
+      const remainingCount = quizList.length - 1 - quizIndex;
+      if (remainingCount <= 0) {
+        showToast('ℹ️ Bạn đang ở câu cuối cùng, không còn câu hỏi phía sau để xáo trộn!');
+        return;
+      }
+      if (remainingCount === 1) {
+        showToast('ℹ️ Chỉ còn 1 câu hỏi phía sau, không thể xáo trộn thêm!');
+        return;
+      }
+      for (let i = quizList.length - 1; i > quizIndex + 1; i--) {
+        const j = quizIndex + 1 + Math.floor(Math.random() * (i - quizIndex));
+        [quizList[i], quizList[j]] = [quizList[j], quizList[i]];
+      }
+      showToast(`🔀 Đã xáo trộn ${remainingCount} câu hỏi còn lại phía sau!`);
     }
 
     function generateSmartDistractors(questionWord, countNeeded = 3, existingDistractors = []) {
@@ -17270,7 +17587,7 @@ Yêu cầu nghiêm ngặt:
 
       // 1. RULE: Only logged in users can use Hints
       if (!currentUser || !currentUser.email) {
-        alert('🔒 Tính năng Gợi ý AI chỉ dành cho thành viên đã đăng nhập/đăng ký.\n\nVui lòng đăng nhập hoặc đăng ký tài khoản để nhận ngay 5 lượt gợi ý miễn phí!');
+        alert('🔒 Tính năng VocaHint chỉ dành cho thành viên đã đăng nhập/đăng ký.\n\nVui lòng đăng nhập hoặc đăng ký tài khoản để nhận ngay 5 VocaHint miễn phí!');
         openAuthModal('login');
         return;
       }
@@ -17287,18 +17604,18 @@ Yêu cầu nghiêm ngặt:
       // 3. RULE: Must have hints available
       const currentHints = getUserHints();
       if (currentHints <= 0) {
-        if (confirm('🛒 Bạn đã hết lượt gợi ý AI (0 lượt)!\nSố điểm ví hiện tại: ' + getUserPoints() + ' điểm.\n\nBạn có muốn mở Cửa hàng để đổi 50 điểm lấy 1 lượt gợi ý mới không?')) {
+        if (confirm('🛒 Bạn đã hết VocaHint (0 lượt)!\nSố VoCoin hiện tại: ' + getUserPoints() + ' VoCoin.\n\nBạn có muốn mở VocaStore để đổi 50 VoCoin lấy 1 VocaHint mới không?')) {
           openShopModal();
         }
         return;
       }
 
       hintBox.style.display = 'block';
-      hintText.innerHTML = '✨ <em>AI đang tạo gợi ý ngữ cảnh...</em>';
+      hintText.innerHTML = '✨ <em>VocaAI đang tạo VocaHint ngữ cảnh...</em>';
 
       try {
         const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
-        const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp người học đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
+        const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 4000);
@@ -17325,8 +17642,8 @@ Yêu cầu nghiêm ngặt:
           const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (rawHint) {
             setUserHints(currentHints - 1);
-            hintText.innerHTML = '✨ <strong>AI Gợi ý:</strong> ' + escapeHtml(rawHint);
-            showToast('💡 Đã dùng 1 gợi ý AI (còn ' + getUserHints() + ' lượt).');
+            hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
+            showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
             return;
           }
         }
@@ -17523,7 +17840,7 @@ Yêu cầu nghiêm ngặt:
         diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty) + ' (Hệ số x' + mult + ' Điểm)';
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' Xu (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
@@ -17535,7 +17852,7 @@ Yêu cầu nghiêm ngặt:
       } else if (accuracyPct >= 80) {
         if (badgeIconEl) badgeIconEl.textContent = '🌟';
         if (titleEl) titleEl.textContent = 'Quá Đỉnh! Rất Thành Thạo!';
-        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ của bạn về bộ từ này đang cực kỳ tốt!';
+        if (subtitleEl) subtitleEl.textContent = 'Trí nhớ của bạn về VocaDeck này đang cực kỳ tốt!';
       } else if (accuracyPct >= 50) {
         if (badgeIconEl) badgeIconEl.textContent = '🌿';
         if (titleEl) titleEl.textContent = 'Làm Tốt Lắm!';
@@ -17674,10 +17991,10 @@ Yêu cầu nghiêm ngặt:
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} Xu!`);
+            showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} VoCoin!`);
             addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${mult})`);
           } else {
-            showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} Xu (+${finalPts} Xu)!`);
+            showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} VoCoin (+${finalPts} VoCoin)!`);
             addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
           }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
@@ -17779,7 +18096,7 @@ Yêu cầu nghiêm ngặt:
       const deckWords = words.filter(w => w.deckId === currentDeckId);
 
       if (deckWords.length === 0) {
-        alert('Bộ từ này chưa có dữ liệu để xuất Excel!');
+        alert('VocaDeck này chưa có dữ liệu để xuất Excel!');
         return;
       }
 
@@ -18133,7 +18450,7 @@ Yêu cầu nghiêm ngặt:
       closeModal('modal-import');
 
       // 4. Report feedback to user
-      let msg = `✅ ĐÃ NHẬP THÀNH CÔNG: ${importedCount} từ vựng vào bộ từ!\n\n`;
+      let msg = `✅ ĐÃ NHẬP THÀNH CÔNG: ${importedCount} từ vựng vào VocaDeck!\n\n`;
       msg += `📌 Các cột đã nhận diện: ${recognizedCols.join(', ')}\n`;
       if (unrecognizedCols.length > 0) {
         msg += `\n⚠️ CHÚ Ý: Các cột sau không nhận diện được tên chuẩn (đã tự động bỏ qua):\n👉 ${unrecognizedCols.join(', ')}`;
@@ -18536,7 +18853,7 @@ Yêu cầu nghiêm ngặt:
         if (customWordList) {
           subtitle.textContent = '🎯 Hàng đợi ôn tập hôm nay • Tổng số: ' + deckWords.length + ' từ';
         } else {
-          subtitle.textContent = 'Bộ từ: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
+          subtitle.textContent = 'VocaDeck: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
         }
       }
 
@@ -18662,13 +18979,13 @@ Yêu cầu nghiêm ngặt:
 
         if (finalPts !== 0) {
           const curDeck = decks.find(d => d.id === currentDeckId);
-          const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
+          const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
-          const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' Xu)' : '';
+          const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
           addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')');
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
-          showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' Xu (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
+          showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
         }
         speakingSessionPointsEarned = 0;
       }
@@ -18683,15 +19000,21 @@ Yêu cầu nghiêm ngặt:
     }
 
     function shuffleCurrentSpeaking() {
-      if (speakingWordsList.length <= 1) return;
-      for (let i = speakingWordsList.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+      if (!speakingWordsList || speakingWordsList.length <= 1) return;
+      const remainingCount = speakingWordsList.length - 1 - currentSpeakingIndex;
+      if (remainingCount <= 0) {
+        showToast('ℹ️ Bạn đang ở từ cuối cùng, không còn từ phía sau để xáo trộn!');
+        return;
+      }
+      if (remainingCount === 1) {
+        showToast('ℹ️ Chỉ còn 1 từ phía sau, không thể xáo trộn thêm!');
+        return;
+      }
+      for (let i = speakingWordsList.length - 1; i > currentSpeakingIndex + 1; i--) {
+        const j = currentSpeakingIndex + 1 + Math.floor(Math.random() * (i - currentSpeakingIndex));
         [speakingWordsList[i], speakingWordsList[j]] = [speakingWordsList[j], speakingWordsList[i]];
       }
-      currentSpeakingIndex = 0;
-      resetSpeakingWordState();
-      renderSpeakingCurrentWord();
-      showToast('🔀 Đã xáo trộn danh sách từ phát âm!');
+      showToast(`🔀 Đã xáo trộn ${remainingCount} từ còn lại phía sau!`);
     }
 
     function updateSpeakingNextButtonState() {
@@ -18714,7 +19037,7 @@ Yêu cầu nghiêm ngặt:
         nextBtn.style.pointerEvents = 'none';
         nextBtn.style.background = 'var(--surface-elevated)';
         nextBtn.style.boxShadow = 'none';
-        nextBtn.title = '🔒 Cần đạt điểm sàn (' + speakingFloorScore + 'đ) hoặc dùng Bỏ qua (Skip) để tiếp tục';
+        nextBtn.title = '🔒 Cần đạt điểm sàn (' + speakingFloorScore + 'đ) hoặc dùng VocaSkip để tiếp tục';
       }
     }
 
@@ -18816,7 +19139,7 @@ Yêu cầu nghiêm ngặt:
       const skipBtn = document.getElementById('btn-spk-skip');
       if (skipBtn) {
         const curSkips = getUserSkips();
-        skipBtn.textContent = '⏭️ Bỏ qua (' + (curSkips > 0 ? curSkips : '100đ') + ')';
+        skipBtn.textContent = '⏭️ VocaSkip (' + (curSkips > 0 ? curSkips : '100 VoCoin') + ')';
       }
 
       // Fresh word state
@@ -18886,7 +19209,7 @@ Yêu cầu nghiêm ngặt:
 
       const canProceed = speakingFloorReached || (speakingCurrentTakeIndex >= speakingMaxTakes);
       if (!canProceed) {
-        showToast('🔒 Bạn cần đạt từ ' + speakingFloorScore + 'đ hoặc dùng quyền Bỏ qua (Skip) để tiếp tục!');
+        showToast('🔒 Bạn cần đạt từ ' + speakingFloorScore + 'đ hoặc dùng VocaSkip để tiếp tục!');
         return;
       }
 
@@ -18911,17 +19234,17 @@ Yêu cầu nghiêm ngặt:
       const skipCost = 100;
 
       if (curSkips <= 0 && curPts < skipCost) {
-        showToast('🪙 Bạn không đủ điểm ví (cần 100 Xu để đổi 1 lượt Bỏ Qua)');
+        showToast('🪙 Bạn không đủ điểm ví (cần 100 VoCoin để đổi 1 VocaSkip)');
         openShopModal();
         return;
       }
 
       if (curSkips > 0) {
         setUserSkips(curSkips - 1);
-        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua (còn ' + getUserSkips() + ' lượt).');
+        showToast('⏭️ Đã dùng 1 VocaSkip (còn ' + getUserSkips() + ' VocaSkip).');
       } else {
         setUserPoints(curPts - skipCost);
-        showToast('⏭️ Đã dùng 100 Xu ví để Bỏ Qua từ này.');
+        showToast('⏭️ Đã dùng 100 VoCoin ví để dùng VocaSkip từ này.');
       }
 
       saveDatabase(true);
@@ -18934,7 +19257,7 @@ Yêu cầu nghiêm ngặt:
       const skipBtn = document.getElementById('btn-spk-skip');
       if (skipBtn) {
         const remainingSkips = getUserSkips();
-        skipBtn.textContent = '⏭️ Bỏ qua (' + (remainingSkips > 0 ? remainingSkips : '100đ') + ')';
+        skipBtn.textContent = '⏭️ VocaSkip (' + (remainingSkips > 0 ? remainingSkips : '100 VoCoin') + ')';
       }
 
       if (currentSpeakingIndex < speakingWordsList.length - 1) {
@@ -18971,7 +19294,7 @@ Yêu cầu nghiêm ngặt:
       const bonusBoxEl = document.getElementById('spk-res-bonus-box');
 
       if (floorRatioEl) floorRatioEl.textContent = floorTakes + '/' + totalTakes + ' (' + floorRatePct + '%)';
-      if (pointsEl) pointsEl.textContent = (speakingSessionPointsEarned >= 0 ? '+' : '') + speakingSessionPointsEarned + ' Xu';
+      if (pointsEl) pointsEl.textContent = (speakingSessionPointsEarned >= 0 ? '+' : '') + speakingSessionPointsEarned + ' VoCoin';
       if (skipsUsedEl) skipsUsedEl.textContent = skipsUsed + ' lượt';
 
       const durationSec = Math.max(1, Math.round((Date.now() - speakingStartTime) / 1000));
@@ -18990,7 +19313,7 @@ Yêu cầu nghiêm ngặt:
 
       if (bonusBoxEl) {
         const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-        bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' Xu' : '');
+        bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
         bonusBoxEl.style.display = 'block';
       }
 
@@ -19796,7 +20119,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
               words[mainIdx].updatedAt = new Date().toISOString();
             }
 
-            rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">🪙 +' + wordReward + ' Xu • 📈 +' + masteryDelta + '% Thuộc từ (Sàn: ' + speakingFloorScore + ')</span>';
+            rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">🪙 +' + wordReward + ' VoCoin • 📈 +' + masteryDelta + '% Thuộc từ (Sàn: ' + speakingFloorScore + ')</span>';
             rewardCont.style.display = 'flex';
             playVocaSfx('correct');
           }
@@ -19825,9 +20148,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             }
 
             failBanner.style.display = 'block';
-            failBanner.innerHTML = '<div style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12px; color: #f87171; font-weight: 700;">❌ Hết ' + speakingMaxTakes + ' lượt thu! Trung bình: ' + Math.round(admissionScore) + 'đ < Sàn ' + speakingFloorScore + 'đ → ' + penalty + ' Xu, -5% Thuộc từ</div>';
+            failBanner.innerHTML = '<div style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12px; color: #f87171; font-weight: 700;">❌ Hết ' + speakingMaxTakes + ' lượt thu! Trung bình: ' + Math.round(admissionScore) + 'đ < Sàn ' + speakingFloorScore + 'đ → ' + penalty + ' VoCoin, -5% Thuộc từ</div>';
 
-            rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.4);">💸 ' + penalty + ' Xu • 📉 -5% Thuộc từ</span>';
+            rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.4);">💸 ' + penalty + ' VoCoin • 📉 -5% Thuộc từ</span>';
             rewardCont.style.display = 'flex';
           }
 
@@ -19840,7 +20163,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 🔄 Thử lại (còn ${remaining} lượt) — Phím Space
               </button>
               <span style="font-size: 11px; color: var(--text-muted);">
-                💡 Cần đạt từ <strong>${speakingFloorScore}/100 điểm</strong> để nhận Xu và mở khóa Từ Tiếp Theo!
+                💡 Cần đạt từ <strong>${speakingFloorScore}/100 điểm</strong> để nhận VoCoin và mở khóa Từ Tiếp Theo!
               </span>
             </div>
           `;
@@ -19937,14 +20260,21 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function shuffleCurrentAutoFlashcard() {
-      if (!autoFlashcardList || autoFlashcardList.length === 0) return;
-      autoFlashcardList = [...autoFlashcardList].sort(() => Math.random() - 0.5);
-      autoFlashcardIndex = 0;
-      showToast('🔀 Đã xáo trộn ngẫu nhiên thứ tự phát Auto FC!');
-      loadAutoCardData(autoFlashcardIndex);
-      if (isAutoPlaying) {
-        runAutoFlashcardLoop();
+      if (!autoFlashcardList || autoFlashcardList.length <= 1) return;
+      const remainingCount = autoFlashcardList.length - 1 - autoFlashcardIndex;
+      if (remainingCount <= 0) {
+        showToast('ℹ️ Bạn đang ở thẻ cuối cùng, không còn thẻ phía sau để xáo trộn!');
+        return;
       }
+      if (remainingCount === 1) {
+        showToast('ℹ️ Chỉ còn 1 thẻ phía sau, không thể xáo trộn thêm!');
+        return;
+      }
+      for (let i = autoFlashcardList.length - 1; i > autoFlashcardIndex + 1; i--) {
+        const j = autoFlashcardIndex + 1 + Math.floor(Math.random() * (i - autoFlashcardIndex));
+        [autoFlashcardList[i], autoFlashcardList[j]] = [autoFlashcardList[j], autoFlashcardList[i]];
+      }
+      showToast(`🔀 Đã xáo trộn ${remainingCount} thẻ còn lại phía sau!`);
     }
 
     function syncAutoFlashcardControlsUI() {
@@ -28217,7 +28547,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
     function openLibraryModal() {
       if (!currentUser || !currentUser.email) {
-        openGuestFeatureLockModal('Thư Viện Từ Vựng', 'Thư Viện Từ Vựng VocaLibrary, Tải Bộ Từ Cộng Đồng & Theo Dõi Tác Giả', '📚 🔒');
+        openGuestFeatureLockModal('VocaLib', 'VocaLib, Tải VocaDeck VocaCommunity & Theo Dõi Tác Giả', '📚 🔒');
         return;
       }
       if (!requireLogin('Thư Viện Từ Vựng')) {
@@ -28303,9 +28633,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           ...d,
           isVipOnly: isVipDeck,
           isVip: isVipDeck,
-          author: isVipDeck ? 'VocaFlow VIP Official' : 'VocaFlow Chuẩn',
+          author: isVipDeck ? 'VocaFlow VocaVIP Official' : 'VocaFlow Chuẩn',
           authorAvatar: 'icons/Icon-192.png',
-          authorBio: isVipDeck ? '👑 Kho từ vựng học thuật đỉnh cao biên soạn độc quyền cho thành viên VIP VocaFlow.' : 'Đội ngũ phát triển VocaFlow • Biên soạn kho từ vựng trọng tâm chuẩn GDPT & Quốc Tế.'
+          authorBio: isVipDeck ? '👑 VocaStore học thuật đỉnh cao biên soạn độc quyền cho thành viên VocaVIP VocaFlow.' : 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.'
         };
         map.set(d.id, builtInDeck);
       });
@@ -28389,15 +28719,15 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
               <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
-              <div style="font-size: 14.5px; font-weight: 700; color: var(--text);">Bạn chưa theo dõi tác giả nào hoặc tác giả chưa đăng bộ từ mới</div>
-              <div style="font-size: 12px; margin-top: 6px; color: var(--text-muted); line-height: 1.5;">Hãy theo dõi các pháp sư tạo bộ từ trong Thư Viện để cập nhật nội dung mới nhất!</div>
+              <div style="font-size: 14.5px; font-weight: 700; color: var(--text);">Bạn chưa theo dõi tác giả nào hoặc tác giả chưa đăng VocaDeck mới</div>
+              <div style="font-size: 12px; margin-top: 6px; color: var(--text-muted); line-height: 1.5;">Hãy theo dõi các pháp sư tạo VocaDeck trong VocaLib để cập nhật nội dung mới nhất!</div>
             </div>
           `;
         } else {
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
               <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-              <div style="font-size: 14px; font-weight: 600;">Không tìm thấy bộ từ nào phù hợp</div>
+              <div style="font-size: 14px; font-weight: 600;">Không tìm thấy VocaDeck nào phù hợp</div>
               <div style="font-size: 12px; margin-top: 4px;">Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút làm mới.</div>
             </div>
           `;
@@ -28413,7 +28743,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const icon = deck.icon || '📘';
         const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
         const isVipActive = isUserVip();
-        const authorName = deck.author || (isVipDeck ? 'VocaFlow VIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng'));
+        const authorName = deck.author || (isVipDeck ? 'VocaFlow VocaVIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'VocaCommunity'));
 
         // Check if current logged in user is the owner/author of this public deck
         const isAuthor = isDeckAuthor(deck);
@@ -28428,17 +28758,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700;">${wordCount} từ</span>
                 <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
                 ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
-                ${isVipDeck ? `<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 10px; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); box-shadow: 0 0 8px rgba(245,158,11,0.35);">👑 VIP Độc Quyền</span>` : ''}
-                ${(!isVipDeck && (deck.price || 0) > 0) ? `<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4);">💎 ${deck.price} Xu</span>` : ''}
+                ${isVipDeck ? `<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 10px; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); box-shadow: 0 0 8px rgba(245,158,11,0.35);">👑 VocaVIP Độc Quyền</span>` : ''}
+                ${(!isVipDeck && (deck.price || 0) > 0) ? `<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4);">💎 ${deck.price} VoCoin</span>` : ''}
                 ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
               </div>
               <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                ${escapeHtml(deck.description || 'Bộ từ vựng trọng tâm chuẩn GDPT & Quốc tế')}
+                ${escapeHtml(deck.description || 'VocaDeck trọng tâm chuẩn GDPT & Quốc tế')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : ((isVipDeck || isAuthorVipUser(deck.authorUid, authorName)) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
                 ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
-                  <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận bộ từ mới'}">
+                  <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận VocaDeck mới'}">
                     ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
                   </button>
                 ` : '' }
@@ -28450,10 +28780,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 👁️ Xem
               </button>
               ${isAuthor ? `
-                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin bộ từ đã đăng">
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin VocaDeck đã đăng">
                   ✏️ Sửa
                 </button>
-                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa bộ từ khỏi Thư Viện Toàn Cầu">
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa VocaDeck khỏi VocaLib Toàn Cầu">
                   🗑️ Xóa
                 </button>
               ` : ''}
@@ -28464,13 +28794,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                   </button>
                 ` : `
                   <button class="btn btn-primary btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #dc2626); border: 1px solid rgba(251,191,36,0.6); color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.35);" onclick="previewLibraryDeck('${deck.id}')">
-                    🔒 Mở Khóa VIP
+                    🔒 Mở Khóa VocaVIP
                   </button>
                 `
               ) : (
                 (!isImported && !isAuthor && (deck.price || 0) > 0 && !userPurchasedDeckIds.has(deck.id)) ? `
                   <button class="btn btn-primary btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.3);" onclick="buyCommunityDeck('${deck.id}')">
-                    🛒 Mua (${deck.price} Xu)
+                    🛒 Mua (${deck.price} VoCoin)
                   </button>
                 ` : `
                   <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
@@ -28544,7 +28874,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         container.innerHTML = `
           <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
             <div style="font-size: 24px; margin-bottom: 4px;">🏆</div>
-            Chưa có dữ liệu tác giả. Hãy xuất bản bộ từ đầu tiên để dẫn đầu bảng xếp hạng!
+            Chưa có dữ liệu tác giả. Hãy xuất bản VocaDeck đầu tiên để dẫn đầu VocaRank!
           </div>
         `;
         return;
@@ -28594,19 +28924,19 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                       <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
                       <strong class="vip-glowing-name" style="font-size: 14px; text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(c.name)}</strong>
                     </span>
-                    <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>
+                    <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VocaVIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>
                   ` : `
                     <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
                   `}
                   <span class="badge" style="font-size: 9.5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${creatorTitle}</span>
                 </div>
                 <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                  ${c.decksCount} bộ từ • ${c.totalWords} từ vựng • ${c.totalSales} lượt mua
+                  ${c.decksCount} VocaDeck • ${c.totalWords} từ vựng • ${c.totalSales} lượt mua
                 </div>
               </div>
             </div>
             <div style="text-align: right; flex-shrink: 0;">
-              <div style="font-size: 15px; font-weight: 800; color: #fbbf24;">+${c.totalRevenue} Xu</div>
+              <div style="font-size: 15px; font-weight: 800; color: #fbbf24;">+${c.totalRevenue} VoCoin</div>
               <div style="font-size: 10px; color: var(--text-muted);">Doanh thu tích lũy</div>
             </div>
           </div>
@@ -28626,14 +28956,14 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const affUrl = `${currentUrl}?deckId=${encodeURIComponent(deckId)}&ref=${encodeURIComponent(myUid)}`;
 
       navigator.clipboard.writeText(affUrl).then(() => {
-        showToast(`📋 Đã sao chép link giới thiệu bộ từ "${deck.title}"! Bạn bè mua qua link bạn nhận ngay 20% Xu hoa hồng!`);
+        showToast(`📋 Đã sao chép link giới thiệu VocaDeck "${deck.title}"! Bạn bè mua qua link bạn nhận ngay 20% VoCoin hoa hồng VocaShare!`);
       }).catch(() => {
-        prompt('Sao chép link chia sẻ nhận hoa hồng 20% Xu:', affUrl);
+        prompt('Sao chép link VocaShare nhận 20% VoCoin hoa hồng:', affUrl);
       });
     }
 
     async function submitDeckRating(deckId, stars, comment) {
-      if (!requireLogin('Đánh Giá Bộ Từ')) return;
+      if (!requireLogin('Đánh Giá VocaDeck')) return;
       const allDecks = getAllLibraryDecks();
       const deck = allDecks.find(d => d.id === deckId);
       if (!deck) return;
@@ -28643,7 +28973,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         uid: uid,
         stars: Math.max(1, Math.min(5, Number(stars) || 5)),
         comment: (comment || '').trim(),
-        authorName: currentUser.displayName || 'Học Viên VocaFlow',
+        authorName: currentUser.displayName || 'Flower VocaFlow',
         authorAvatar: currentUser.avatar || '',
         createdAt: new Date().toISOString()
       };
@@ -28678,7 +29008,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         body: JSON.stringify(deck.ratingCount)
       }).catch(() => {});
 
-      showToast(`⭐ Cảm ơn bạn đã đánh giá ${stars} sao cho bộ từ "${deck.title}"!`);
+      showToast(`⭐ Cảm ơn bạn đã đánh giá ${stars} sao cho VocaDeck "${deck.title}"!`);
       previewLibraryDeck(deckId);
       renderLibraryDecks();
     }
@@ -28699,7 +29029,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (btnEdit) btnEdit.style.display = isAuthor ? 'inline-flex' : 'none';
       if (btnDelete) btnDelete.style.display = isAuthor ? 'inline-flex' : 'none';
 
-      const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Official' : 'Cộng đồng');
+      const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Official' : 'VocaCommunity');
 
       document.getElementById('lib-preview-icon').textContent = deck.icon || '📘';
       document.getElementById('lib-preview-title').textContent = deck.title;
@@ -28754,10 +29084,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           html += `
             <div style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.1)); border: 1.5px dashed #fbbf24; border-radius: 12px; padding: 18px 14px; text-align: center; margin-top: 10px;">
               <div style="font-size: 32px; margin-bottom: 6px;">👑 🔒</div>
-              <strong style="color: #fbbf24; font-size: 15px;">Bộ Từ Vựng VIP Độc Quyền (${totalWords} Từ Vựng)</strong>
-              <p style="font-size: 12px; color: var(--text); margin: 6px 0 12px 0; line-height: 1.5;">Bộ từ này được biên soạn chuyên sâu theo chuẩn Cambridge & Oxford dành riêng cho Hội viên VIP VocaFlow.<br><span style="color:#34d399; font-weight:600;">✨ Tải về miễn phí 100% khi có VIP và sử dụng vĩnh viễn không bị giới hạn!</span></p>
+              <strong style="color: #fbbf24; font-size: 15px;">VocaDeck VocaVIP Độc Quyền (${totalWords} Từ Vựng)</strong>
+              <p style="font-size: 12px; color: var(--text); margin: 6px 0 12px 0; line-height: 1.5;">VocaDeck này được biên soạn chuyên sâu theo chuẩn Cambridge & Oxford dành riêng cho Hội viên VocaVIP VocaFlow.<br><span style="color:#34d399; font-weight:600;">✨ Tải về miễn phí 100% khi có VocaVIP và sử dụng vĩnh viễn không bị giới hạn!</span></p>
               <button class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 800; padding: 8px 20px; font-size: 13px; box-shadow: 0 4px 15px rgba(245,158,11,0.4);" onclick="closeModal('modal-library-preview'); openVipSubscriptionModal();">
-                👑 Nâng Cấp VIP Để Mở Khóa Ngay
+                👑 Nâng Cấp VocaVIP Để Mở Khóa Ngay
               </button>
             </div>
           `;
@@ -28768,7 +29098,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
               <strong style="color: #fbbf24; font-size: 13.5px;">Đã khóa ${totalWords - allowedPreviewCount} từ vựng còn lại (Xem trước 25%)</strong>
               <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 10px 0;">Mua trọn bộ để mở khóa 100% từ vựng, phiên âm & câu ví dụ!</p>
               <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; padding: 6px 16px; font-size: 12px;" onclick="buyCommunityDeck('${deck.id}')">
-                🛒 Mua Trọn Bộ (${price} Xu)
+                🛒 Mua Trọn Bộ (${price} VoCoin)
               </button>
             </div>
           `;
@@ -28785,7 +29115,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                 <span style="font-size: 11px; color: var(--text-muted);">(${rCount} đánh giá)</span>
               </div>
               <button class="btn btn-outline btn-sm" onclick="copyAffiliateLink('${deck.id}')" style="font-size: 11px; padding: 3px 8px; color: #c084fc; border-color: rgba(168,85,247,0.4);">
-                🔗 Chia Sẻ (Nhận 20% Hoa Hồng)
+                🔗 VocaShare (Nhận 20% Hoa Hồng VoCoin)
               </button>
             </div>
             ${(isImported || isPurchased || isAuthor || (isVipDeck && isVipActive)) ? `
@@ -28806,22 +29136,22 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const installBtn = document.getElementById('btn-lib-preview-install');
       if (installBtn) {
         if (isLockedVip) {
-          installBtn.innerHTML = '🔒 Mở Khóa Bằng Gói VIP';
+          installBtn.innerHTML = '🔒 Mở Khóa Bằng Gói VocaVIP';
           installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #dc2626)';
           installBtn.onclick = () => {
             closeModal('modal-library-preview');
             openVipSubscriptionModal();
           };
         } else if (isVipDeck && isVipActive) {
-          installBtn.innerHTML = `👑 ${isImported ? 'Tải Lại (VIP)' : 'Thêm Vào Máy (VIP Miễn Phí)'}`;
+          installBtn.innerHTML = `👑 ${isImported ? 'Tải Lại (VocaVIP)' : 'Thêm Vào Máy (VocaVIP Miễn Phí)'}`;
           installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
           installBtn.onclick = () => installPreviewedDeck();
         } else if (isLockedPremium) {
-          installBtn.innerHTML = `🛒 Mua Trọn Bộ (${price} Xu)`;
+          installBtn.innerHTML = `🛒 Mua Trọn Bộ (${price} VoCoin)`;
           installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
           installBtn.onclick = () => buyCommunityDeck(deck.id);
         } else {
-          installBtn.innerHTML = `📥 ${isImported ? 'Tải Lại' : 'Thêm Vào Bộ Từ Của Tôi'}`;
+          installBtn.innerHTML = `📥 ${isImported ? 'Tải Lại' : 'Thêm Vào VocaDeck Của Tôi'}`;
           installBtn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
           installBtn.onclick = () => installPreviewedDeck();
         }
@@ -28844,26 +29174,26 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
       if (isVipDeck && !isUserVip()) {
-        alert('👑 BỘ TỪ VỰNG VIP ĐỘC QUYỀN!\n\nBộ từ vựng IELTS chuyên sâu này chỉ dành riêng cho thành viên VIP VocaFlow.\nHãy nâng cấp gói VIP để tải về máy học tập miễn phí và sở hữu trọn đời nhé!');
+        alert('👑 VOCADECK VOCAVIP ĐỘC QUYỀN!\n\nVocaDeck IELTS chuyên sâu này chỉ dành riêng cho thành viên VocaVIP VocaFlow.\nHãy nâng cấp gói VocaVIP để tải về máy học tập miễn phí và sở hữu trọn đời nhé!');
         openVipSubscriptionModal();
         return;
       }
 
       const existing = decks.find(d => d.title === deck.title);
       if (existing) {
-        if (!confirm(`Bạn đã có bộ từ "${deck.title}" trong danh sách. Bạn có muốn tạo thêm một bản sao mới của bộ từ này không?`)) {
+        if (!confirm(`Bạn đã có VocaDeck "${deck.title}" trong danh sách. Bạn có muốn tạo thêm một bản sao mới của VocaDeck này không?`)) {
           return;
         }
       }
 
-      const authorName = deck.author || (isVipDeck ? 'VocaFlow VIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'Cộng đồng'));
+      const authorName = deck.author || (isVipDeck ? 'VocaFlow VocaVIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'VocaCommunity'));
       const authorUid = deck.authorUid || '';
 
       const newDeckId = 'deck_' + Date.now();
       const newDeck = {
         id: newDeckId,
         title: deck.title,
-        description: deck.description || (isVipDeck ? 'Bộ từ IELTS VIP Độc Quyền từ Thư Viện VocaFlow' : 'Bộ từ từ Thư Viện VocaFlow'),
+        description: deck.description || (isVipDeck ? 'VocaDeck IELTS VocaVIP Độc Quyền từ VocaLib' : 'VocaDeck từ VocaLib'),
         author: authorName,
         authorUid: authorUid,
         color: deck.color || '#4f46e5',
@@ -28906,8 +29236,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       closeModal('modal-library');
 
       showToast(isVipDeck
-        ? `👑🎉 Đã mở khóa & cài đặt thành công bộ từ VIP "${deck.title}" (+${newWords.length} từ vựng) vào máy! Bạn có thể sử dụng vĩnh viễn.`
-        : `🎉 Đã thêm thành công bộ từ "${deck.title}" (+${newWords.length} từ vựng) vào máy của bạn!`);
+        ? `👑🎉 Đã mở khóa & cài đặt thành công VocaDeck VIP "${deck.title}" (+${newWords.length} từ vựng) vào máy! Bạn có thể sử dụng vĩnh viễn.`
+        : `🎉 Đã thêm thành công VocaDeck "${deck.title}" (+${newWords.length} từ vựng) vào máy của bạn!`);
       openDeckDetail(newDeckId);
     }
 
@@ -28918,7 +29248,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
     function openCommunityDeckUploadModal(prefillDeckId = null) {
       if (!currentUser || !currentUser.email) {
-        openGuestFeatureLockModal('Chia Sẻ Thư Viện', 'Chia Sẻ & Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu', '🚀 🔒');
+        openGuestFeatureLockModal('Chia Sẻ VocaLib', 'Chia Sẻ & Đóng Góp VocaDeck Lên VocaLib Toàn Cầu', '🚀 🔒');
         return;
       }
       pendingPublisherDeck = null;
@@ -28944,15 +29274,15 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const modalTitle = document.getElementById('pub-modal-title');
       const modalSubtitle = document.getElementById('pub-modal-subtitle');
       if (modalIcon) modalIcon.textContent = '🚀';
-      if (modalTitle) modalTitle.textContent = 'Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu';
-      if (modalSubtitle) modalSubtitle.textContent = 'Chia sẻ bộ từ vựng cho toàn bộ cộng đồng người học VocaFlow';
+      if (modalTitle) modalTitle.textContent = 'Đóng Góp VocaDeck Lên VocaLib Toàn Cầu';
+      if (modalSubtitle) modalSubtitle.textContent = 'Chia sẻ VocaDeck cho toàn bộ VocaCommunity Flower VocaFlow';
 
       const uploadBtn = document.getElementById('btn-pub-do-upload');
       if (uploadBtn) uploadBtn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
 
       // Populate local decks select
       if (localDeckSelect) {
-        let optsHtml = '<option value="">-- Chọn 1 bộ từ của bạn --</option>';
+        let optsHtml = '<option value="">-- Chọn 1 VocaDeck của bạn --</option>';
         decks.forEach(d => {
           const count = words.filter(w => w.deckId === d.id).length;
           optsHtml += `<option value="${d.id}">${escapeHtml(d.title)} (${count} từ)</option>`;
@@ -28983,7 +29313,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
     function shareCurrentDeckToLibrary() {
       if (!currentUser || !currentUser.email) {
-        openGuestFeatureLockModal('Chia Sẻ Thư Viện', 'Chia Sẻ & Đóng Góp Bộ Từ Lên Thư Viện Toàn Cầu', '🚀 🔒');
+        openGuestFeatureLockModal('Chia Sẻ VocaLib', 'Chia Sẻ & Đóng Góp VocaDeck Lên VocaLib Toàn Cầu', '🚀 🔒');
         return;
       }
       if (currentDeckId) {
@@ -29029,7 +29359,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       const deckWords = words.filter(w => w.deckId === deckId);
       if (deckWords.length === 0) {
-        alert('Bộ từ này hiện chưa có từ vựng nào để chia sẻ!');
+        alert('VocaDeck này hiện chưa có từ vựng nào để VocaShare!');
         return;
       }
 
@@ -29038,7 +29368,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const statusEl = document.getElementById('pub-upload-preview-status');
 
       if (titleInput) titleInput.value = deck.title;
-      if (descInput) descInput.value = deck.description || `Bộ từ vựng chia sẻ bởi ${document.getElementById('pub-deck-author')?.value || 'Thành viên VocaFlow'}`;
+      if (descInput) descInput.value = deck.description || `VocaDeck VocaShare bởi ${document.getElementById('pub-deck-author')?.value || 'Thành viên VocaFlow'}`;
 
       pendingPublisherDeck = {
         title: deck.title,
@@ -29175,7 +29505,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
     async function doPublishDeckToCloud() {
       if (!pendingPublisherDeck || !pendingPublisherDeck.words || pendingPublisherDeck.words.length === 0) {
-        alert('Vui lòng chọn file Excel hoặc chọn 1 bộ từ hợp lệ trước!');
+        alert('Vui lòng chọn file Excel hoặc chọn 1 VocaDeck hợp lệ trước!');
         return;
       }
 
@@ -29188,7 +29518,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       const title = (titleInput?.value || '').trim();
       if (!title) {
-        alert('Vui lòng nhập tên bộ từ!');
+        alert('Vui lòng nhập tên VocaDeck!');
         return;
       }
 
@@ -29213,7 +29543,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const payload = {
         id: deckId,
         title: title,
-        description: (descInput?.value || '').trim() || (isAnon ? 'Bộ từ vựng chia sẻ bởi thành viên ẩn danh' : `Bộ từ vựng chia sẻ bởi ${author}`),
+        description: (descInput?.value || '').trim() || (isAnon ? 'VocaDeck VocaShare bởi thành viên ẩn danh' : `VocaDeck VocaShare bởi ${author}`),
         author: author,
         authorUid: authorUid || (existingDeck?.authorUid || ''),
         authorAvatar: authorAvatar || (existingDeck?.authorAvatar || ''),
@@ -29246,9 +29576,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
         if (res.ok) {
           if (isEditing) {
-            showToast(`✅ Đã cập nhật thành công bộ từ "${title}" (Giá: ${payload.price > 0 ? payload.price + ' Xu' : 'Miễn phí'})!`);
+            showToast(`✅ Đã cập nhật thành công VocaDeck "${title}" (Giá: ${payload.price > 0 ? payload.price + ' VoCoin' : 'Miễn phí'})!`);
           } else {
-            showToast(`🚀 Đã đóng góp thành công bộ từ "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện!`);
+            showToast(`🚀 Đã đóng góp thành công VocaDeck "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện!`);
           }
           closeModal('modal-community-upload');
           fetchCloudLibraryDecks();
@@ -29833,7 +30163,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       let key = (geminiApiKey || localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
 
       if (!hasAtLeastOneApiKey()) {
-        alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo bộ từ độc nhất và chính xác theo chủ đề, hãy mở mục Cài Đặt và dán API Key (miễn phí từ Google) vào nhé!');
+        alert('🔑 Bạn chưa cài đặt Gemini API Key!\n\nĐể AI tạo VocaDeck độc nhất và chính xác theo chủ đề, hãy mở mục Cài Đặt và dán API Key (miễn phí từ Google) vào nhé!');
         closeModal('modal-ai-deck-studio');
         openSettingsModal();
         return;
@@ -29870,7 +30200,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
         for (const m of modelsToTry) {
           try {
-            aiStudioGenStatus = `🧠 Đang sáng tạo bộ từ với mô hình ${m}...`;
+            aiStudioGenStatus = `🧠 Đang sáng tạo VocaDeck với mô hình ${m}...`;
             aiStudioGenProgress = 65;
             if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
             if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
@@ -30075,7 +30405,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     function confirmSaveAiGeneratedWords() {
       const selectedWords = aiGeneratedWordsCache.filter(w => w.selected);
       if (selectedWords.length === 0) {
-        alert('Vui lòng chọn ít nhất 1 từ vựng để lưu vào bộ từ!');
+        alert('Vui lòng chọn ít nhất 1 từ vựng để lưu vào VocaDeck!');
         return;
       }
 
@@ -30091,16 +30421,16 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       let deckTitle = titleInput ? titleInput.value.trim() : '';
       if (!deckTitle) {
         if (currentAiStudioMode === 'topic') {
-          deckTitle = document.getElementById('ai-topic-input')?.value.trim() || 'Bộ Từ Vựng AI Studio';
+          deckTitle = document.getElementById('ai-topic-input')?.value.trim() || 'VocaDeck AI';
         } else if (currentAiStudioMode === 'passage') {
           deckTitle = 'Từ Vựng Trích Xuất Báo / Đoạn Văn (' + formatDateOnly(new Date()) + ')';
         } else {
-          deckTitle = 'Bộ Từ Vựng Chuẩn Hóa AI (' + formatDateOnly(new Date()) + ')';
+          deckTitle = 'VocaDeck Chuẩn Hóa AI (' + formatDateOnly(new Date()) + ')';
         }
       }
 
       // Record transaction in ledger FIRST
-      addLedgerEntry('AI_GEN', -actualCost, `Tạo bộ từ "${deckTitle}" (${selectedWords.length} từ bằng AI Studio)`);
+      addLedgerEntry('AI_GEN', -actualCost, `Tạo VocaDeck "${deckTitle}" (${selectedWords.length} từ bằng AI Studio)`);
 
       // Deduct wallet points
       setUserPoints(currentPts - actualCost);
@@ -30109,7 +30439,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       const newDeck = {
         id: newDeckId,
         title: deckTitle,
-        description: `Bộ từ vựng ${selectedWords.length} từ được tạo tự động bởi Gemini AI Studio.`,
+        description: `VocaDeck ${selectedWords.length} từ được tạo tự động bởi VocaDeck AI.`,
         color: '#8b5cf6',
         isPinned: false,
         isArchived: false,
@@ -30146,7 +30476,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       playVocaSfx('purchase');
 
       closeModal('modal-ai-deck-studio');
-      showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost} Xu)`);
+      showToast(`🎉 Đã tạo thành công ${newWordObjects.length} từ vựng bằng AI! (-${actualCost} VoCoin)`);
       renderDecks();
       openDeckDetail(targetDeckId);
     }
@@ -30186,7 +30516,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         sourceDeckId: currentDeckId
       };
 
-      showToast(`✂️ Đã cắt ${targetWords.length} từ vựng (chuyển tới bộ từ khác và bấm "Dán")!`);
+      showToast(`✂️ Đã cắt ${targetWords.length} từ vựng (chuyển tới VocaDeck khác và bấm "Dán")!`);
       updateClipboardUI();
     }
 
@@ -30214,7 +30544,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         sourceDeckId: currentDeckId
       };
 
-      showToast(`✂️ Đã cắt từ "${w.term}" (hãy mở bộ từ khác và bấm "Dán")!`);
+      showToast(`✂️ Đã cắt từ "${w.term}" (hãy mở VocaDeck khác và bấm "Dán")!`);
       updateClipboardUI();
     }
 
@@ -30225,13 +30555,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
 
       if (!currentDeckId) {
-        alert('Vui lòng mở một bộ từ để dán từ vựng vào!');
+        alert('Vui lòng mở một VocaDeck để dán từ vựng vào!');
         return;
       }
 
       if (vocaClipboard.action === 'cut') {
         if (vocaClipboard.sourceDeckId === currentDeckId) {
-          alert('⚠️ Các từ này đang nằm sẵn trong bộ từ hiện tại!');
+          alert('⚠️ Các từ này đang nằm sẵn trong VocaDeck hiện tại!');
           return;
         }
 
@@ -30250,7 +30580,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         renderDecks();
         updateSelectionUI();
         updateClipboardUI();
-        showToast(`✂️ Đã di chuyển thành công ${count} từ vựng sang bộ từ này!`);
+        showToast(`✂️ Đã di chuyển thành công ${count} từ vựng sang VocaDeck này!`);
       } else {
         // Copy action: Clone words with new IDs while PRESERVING masteryScore & learning state (v0.10.6c)
         const newWordObjects = vocaClipboard.words.map((w, idx) => ({
@@ -30269,7 +30599,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         renderDecks();
         updateSelectionUI();
         updateClipboardUI();
-        showToast(`📋 Đã dán thành công ${newWordObjects.length} từ vựng vào bộ từ này!`);
+        showToast(`📋 Đã dán thành công ${newWordObjects.length} từ vựng vào VocaDeck này!`);
       }
     }
 
@@ -30336,7 +30666,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
       if (status.isVip) {
         if (badge) {
-          badge.innerHTML = '👑 VIP Vô Hạn';
+          badge.innerHTML = '👑 VocaVIP Vô Hạn';
           badge.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(236, 72, 153, 0.25))';
           badge.style.color = '#fbbf24';
           badge.style.border = '1px solid rgba(251, 191, 36, 0.5)';
@@ -30346,7 +30676,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
         }
         if (feeNotice) {
-          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VIP:</span> Trò chuyện không giới hạn lượt & 0 Xu!';
+          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Trò chuyện không giới hạn lượt & 0 VoCoin!';
         }
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
       } else if (status.isFree) {
@@ -30360,11 +30690,11 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.textContent = status.remainingFree;
           fabBadge.style.background = '#10b981';
         }
-        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt: 10 Xu/lượt`;
+        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt: 10 VoCoin/lượt`;
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
       } else {
         if (badge) {
-          badge.textContent = `10 Xu / tin`;
+          badge.textContent = `10 VoCoin / tin`;
           badge.style.background = 'rgba(245,158,11,0.15)';
           badge.style.color = '#fbbf24';
           badge.style.border = '1px solid rgba(245,158,11,0.3)';
@@ -30373,8 +30703,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.textContent = '🪙';
           fabBadge.style.background = '#f59e0b';
         }
-        if (feeNotice) feeNotice.textContent = `Đã dùng hết 5 lượt miễn phí hôm nay • Phí: 10 Xu / lượt gửi`;
-        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi (10 Xu)';
+        if (feeNotice) feeNotice.textContent = `Đã dùng hết 5 lượt miễn phí hôm nay • Phí: 10 VoCoin / lượt gửi`;
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi (10 VoCoin)';
       }
     }
 
@@ -30424,7 +30754,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         let chipsHtml = '';
 
         if (ctx.word) {
-          textEl.textContent = `Từ: "${ctx.word.term}" (${ctx.deck ? ctx.deck.title : 'Bộ từ'})`;
+          textEl.textContent = `Từ: "${ctx.word.term}" (${ctx.deck ? ctx.deck.title : 'VocaDeck'})`;
           if (badgeEl) {
             badgeEl.textContent = 'Thẻ từ vựng';
             badgeEl.style.background = 'rgba(99,102,241,0.2)';
@@ -30439,14 +30769,14 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_mnemonic')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧠 Mẹo nhớ từ</button>
           `;
         } else if (ctx.deck) {
-          textEl.textContent = `Bộ từ: "${ctx.deck.title}"`;
+          textEl.textContent = `VocaDeck: "${ctx.deck.title}"`;
           if (badgeEl) {
-            badgeEl.textContent = 'Bộ từ';
+            badgeEl.textContent = 'VocaDeck';
             badgeEl.style.background = 'rgba(16,185,129,0.15)';
             badgeEl.style.color = '#34d399';
           }
           chipsHtml = `
-            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_summary')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt bộ từ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_summary')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt VocaDeck</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_quiz')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz bộ này</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_roleplay')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay hội thoại</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('grammar')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
@@ -30485,13 +30815,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       } else if (chipKey === 'quiz_free') {
         promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm từ vựng IELTS B2 ngẫu nhiên';
       } else if (chipKey === 'deck_summary') {
-        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
-        promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong bộ từ "${title}"`;
+        const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
+        promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong VocaDeck "${title}"`;
       } else if (chipKey === 'deck_quiz') {
-        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
-        promptText = `🎯 Tạo 1 câu hỏi trắc nghiệm mini từ các từ vựng trong bộ từ "${title}"`;
+        const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
+        promptText = `🎯 Tạo 1 câu hỏi trắc nghiệm mini từ các từ vựng trong VocaDeck "${title}"`;
       } else if (chipKey === 'deck_roleplay') {
-        const title = ctx.deck ? ctx.deck.title : 'bộ từ này';
+        const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
         promptText = `🎭 Hãy bắt đầu một đoạn hội thoại Roleplay ngắn đóng vai tình huống thực tế áp dụng từ vựng trong bộ "${title}"`;
       } else if (chipKey === 'word_deep') {
         const term = ctx.word ? ctx.word.term : 'từ này';
@@ -30559,7 +30889,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         // Anti-Cheat: If on exam screen, prevent opening
         const activeExam = document.querySelector('.screen.active');
         if (activeExam && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeExam.id)) {
-          showToast('🔒 Trợ lý AI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
+          showToast('🔒 VocaAI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
           return;
         }
         updateAiMentorContextUI();
@@ -30955,7 +31285,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
         const isSentence = targetText.trim().includes(' ');
         const promptInstruction = isSentence
-          ? `Bạn là chuyên gia thẩm âm và luyện ngữ điệu tiếng Anh bản xứ hàng đầu. Người học vừa thu âm đọc CÂU: "${targetText}".
+          ? `Bạn là chuyên gia thẩm âm và luyện ngữ điệu tiếng Anh bản xứ hàng đầu. Flower vừa thu âm đọc CÂU: "${targetText}".
 Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-5 câu nhận xét bằng tiếng Việt) về:
 1. Độ rõ và chuẩn của các từ khóa quan trọng trong câu, âm đầu và âm đuôi (ending sounds).
 2. Trọng âm câu (sentence stress), hiện tượng nối âm (linking sounds) và ngữ điệu (intonation lên/xuống giọng).
@@ -30965,10 +31295,10 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
   "score": 85,
   "detected": "Câu hoặc các từ nghe được từ audio",
   "feedbackVi": "Đoạn phân tích chi tiết 3-5 câu bằng tiếng Việt về phát âm, ngữ điệu, nối âm và mẹo khẩu hình",
-  "strengths": "Điểm người học đã làm tốt (ví dụ: ngữ điệu tự nhiên, từ X đọc rất chuẩn)",
+  "strengths": "Điểm Flower đã làm tốt (ví dụ: ngữ điệu tự nhiên, từ X đọc rất chuẩn)",
   "improvements": "Điểm cần khắc phục cụ thể (ví dụ: cần bật rõ âm đuôi /s/ ở từ Y, nối âm giữa A và B)"
 }`
-          : `Bạn là chuyên gia thẩm âm và sửa phát âm tiếng Anh chuẩn quốc tế. Người học vừa thu âm phát âm TỪ: "${targetText}".
+          : `Bạn là chuyên gia thẩm âm và sửa phát âm tiếng Anh chuẩn quốc tế. Flower vừa thu âm phát âm TỪ: "${targetText}".
 Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-4 câu nhận xét bằng tiếng Việt) về:
 1. Độ chính xác của âm đầu (onset), nguyên âm chính (nucleus vowel) và đặc biệt là âm đuôi/âm cuối (coda/ending sound).
 2. Trọng âm từ và độ rung thanh quản/bật hơi.
@@ -31089,8 +31419,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       if (!quota.isVip && !quota.isFree) {
         const curPoints = getUserPoints();
         if (curPoints < quota.costXu) {
-          alert(`🪙 Bạn đã hết 5 lượt miễn phí hôm nay và không đủ Xu (cần ${quota.costXu} Xu, bạn đang có ${curPoints} Xu)!
-Hãy vào VocaShop hoặc làm Quiz để nhận thêm Xu nhé!`);
+          alert(`🪙 Bạn đã hết 5 lượt miễn phí hôm nay và không đủ VoCoin (cần ${quota.costXu} VoCoin, bạn đang có ${curPoints} VoCoin)!
+Hãy vào VocaShop hoặc làm Quiz để nhận thêm VoCoin nhé!`);
           openShopModal();
           return;
         }
@@ -31133,9 +31463,9 @@ Hãy vào VocaShop hoặc làm Quiz để nhận thêm Xu nhé!`);
       const ctx = getCurrentStudyContext();
       let contextInfo = 'Ngữ cảnh học: Tự do.';
       if (ctx.word) {
-        contextInfo = `Ngữ cảnh học: Người dùng đang mở từ vựng "${ctx.word.term}" (${ctx.word.partOfSpeech || 'noun'}, IPA: ${ctx.word.phonetic || ''}, Nghĩa: ${ctx.word.definitionVi || ctx.word.definition || ''}) thuộc bộ từ "${ctx.deck ? ctx.deck.title : 'Bộ từ'}".`;
+        contextInfo = `Ngữ cảnh học: Người dùng đang mở từ vựng "${ctx.word.term}" (${ctx.word.partOfSpeech || 'noun'}, IPA: ${ctx.word.phonetic || ''}, Nghĩa: ${ctx.word.definitionVi || ctx.word.definition || ''}) thuộc VocaDeck "${ctx.deck ? ctx.deck.title : 'VocaDeck'}".`;
       } else if (ctx.deck) {
-        contextInfo = `Ngữ cảnh học: Người dùng đang xem bộ từ "${ctx.deck.title}" (${ctx.deck.description || ''}).`;
+        contextInfo = `Ngữ cảnh học: Người dùng đang xem VocaDeck "${ctx.deck.title}" (${ctx.deck.description || ''}).`;
       }
 
       const systemInstruction = `Bạn là Gemini English Mentor - Gia sư tiếng Anh học thuật kiêm bạn đồng hành luyện tập phản xạ của ứng dụng VocaFlow.
@@ -31263,7 +31593,7 @@ Quy tắc phản hồi quan trọng:
           id: 'msg_' + Date.now(),
           role: 'model',
           isError: true,
-          text: `⚠️ Không thể kết nối tới Google Gemini AI (${lastErrorMsg || 'Mạng gián đoạn'}). Vui lòng kiểm tra lại API Key trong mục Cài đặt! (Hệ thống KHÔNG trừ Xu / lượt chat của bạn).`,
+          text: `⚠️ Không thể kết nối tới Google Gemini AI (${lastErrorMsg || 'Mạng gián đoạn'}). Vui lòng kiểm tra lại API Key trong mục Cài đặt! (Hệ thống KHÔNG trừ VoCoin / lượt chat của bạn).`,
           timestamp: new Date().toISOString()
         };
         aiChatHistory.push(errorMsg);
@@ -31476,7 +31806,7 @@ Quy tắc phản hồi quan trọng:
       if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'flex';
       if (rolloverTextEl) {
         const userEmail = (currentUser && currentUser.email) ? currentUser.email : 'của bạn';
-        rolloverTextEl.innerHTML = `👑 Gói VIP Trọn Đời sẽ kích hoạt <strong>vĩnh viễn</strong> ngay lập tức cho tài khoản ${escapeHtml(userEmail)}.`;
+        rolloverTextEl.innerHTML = `👑 Gói VocaVIP Trọn Đời sẽ kích hoạt <strong>vĩnh viễn</strong> ngay lập tức cho tài khoản ${escapeHtml(userEmail)}.`;
       }
     } else {
       if (rolloverNoticeEl) rolloverNoticeEl.style.display = 'none';
@@ -31566,7 +31896,7 @@ Quy tắc phản hồi quan trọng:
             addNotification(
               'FINANCIAL',
               `👑 Kích Hoạt ${pending.planName} Thành Công!`,
-              `Hệ thống đã xác nhận thanh toán thành công. Toàn bộ đặc quyền VIP Crown của bạn đã được kích hoạt!`
+              `Hệ thống đã xác nhận thanh toán thành công. Toàn bộ đặc quyền VocaVIP của bạn đã được kích hoạt!`
             );
           }
         } else {
@@ -31595,7 +31925,7 @@ Quy tắc phản hồi quan trọng:
   const guideStarterTitles = [
     'Đăng Ký & Đăng Nhập Tài Khoản',
     'Cài Đặt Khóa API Gemini Miễn Phí',
-    'Nhập Giftcode Tân Thủ (+500 Xu)',
+    'Nhập Giftcode Tân Thủ (+500 VoCoin)',
     '3 Cách Tạo Bài Học & Nạp Từ Vựng',
     '4 Chế Độ Học Cốt Lõi Tại VocaFlow'
   ];
@@ -31745,7 +32075,7 @@ Quy tắc phản hồi quan trọng:
             codeInput.style.borderColor = '';
           }, 1800);
         }
-        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 Xu nhé!');
+        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 VoCoin nhé!');
       }, 300);
     }, 'modal-shop');
   }

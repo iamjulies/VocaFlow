@@ -53,3 +53,5 @@ VocaFlow_Windows_Portable/
 .system_generated/
 .git_token
 *.token
+VocaFlow_Desktop/bin/
+VocaFlow_Desktop/obj/

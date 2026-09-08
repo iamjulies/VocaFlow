@@ -7,6 +7,11 @@ $settingsHtml = Join-Path $root "src\components\modals\modal-settings.html"
 $wordModalHtml = Join-Path $root "src\components\modals\modal-word.html"
 $reviewModalHtml = Join-Path $root "src\components\modals\modal-review-queue.html"
 $rewardedModalHtml = Join-Path $root "src\components\modals\modal-rewarded-ad.html"
+$profileModalHtml = Join-Path $root "src\components\modals\modal-profile.html"
+$quizScreenHtml = Join-Path $root "src\components\screens\screen-quiz.html"
+$spellingScreenHtml = Join-Path $root "src\components\screens\screen-spelling.html"
+$speakingScreenHtml = Join-Path $root "src\components\screens\screen-speaking.html"
+$autofcScreenHtml = Join-Path $root "src\components\screens\screen-autofc.html"
 $cssFile = Join-Path $root "src\styles\app.css"
 $swJs = Join-Path $root "sw.js"
 $releaseSwJs = Join-Path $root "Release_App\sw.js"
@@ -29,7 +34,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-14 (Build 246) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-18 (Build 250) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
@@ -37,6 +42,11 @@ $settingsContent = [System.IO.File]::ReadAllText($settingsHtml, [System.Text.Enc
 $wordModalContent = [System.IO.File]::ReadAllText($wordModalHtml, [System.Text.Encoding]::UTF8)
 $reviewModalContent = [System.IO.File]::ReadAllText($reviewModalHtml, [System.Text.Encoding]::UTF8)
 $rewardedModalContent = [System.IO.File]::ReadAllText($rewardedModalHtml, [System.Text.Encoding]::UTF8)
+$profileModalContent = [System.IO.File]::ReadAllText($profileModalHtml, [System.Text.Encoding]::UTF8)
+$quizScreenContent = [System.IO.File]::ReadAllText($quizScreenHtml, [System.Text.Encoding]::UTF8)
+$spellingScreenContent = [System.IO.File]::ReadAllText($spellingScreenHtml, [System.Text.Encoding]::UTF8)
+$speakingScreenContent = [System.IO.File]::ReadAllText($speakingScreenHtml, [System.Text.Encoding]::UTF8)
+$autofcScreenContent = [System.IO.File]::ReadAllText($autofcScreenHtml, [System.Text.Encoding]::UTF8)
 $cssContent = [System.IO.File]::ReadAllText($cssFile, [System.Text.Encoding]::UTF8)
 $swContent = [System.IO.File]::ReadAllText($swJs, [System.Text.Encoding]::UTF8)
 $releaseSwContent = [System.IO.File]::ReadAllText($releaseSwJs, [System.Text.Encoding]::UTF8)
@@ -92,18 +102,75 @@ Assert-Check "modal-review-queue.html contains preset pills and filter controls"
 Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
 Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 7. Version v0.10.9-alpha-14 tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-14" ($headerContent.Contains("v0.10.9-alpha-14"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-14" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-14 (Build 246)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-14'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-14" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-14"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-14" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-14"))
-Assert-Check "Program.cs shows v0.10.9-alpha-14" ($csContent.Contains("VocaFlow v0.10.9-alpha-14"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-14 (Build 246)" ($overviewContent.Contains("v0.10.9-alpha-14 (Build 246)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-14 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-14"))
+# 7. Version v0.10.9-alpha-18 (Build 250) tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-18" ($headerContent.Contains("v0.10.9-alpha-18"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-18 (Build 250)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-18 (Build 250)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-18" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-18"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-18" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-18"))
+Assert-Check "Program.cs shows v0.10.9-alpha-18" ($csContent.Contains("VocaFlow v0.10.9-alpha-18"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-18 (Build 250)" ($overviewContent.Contains("v0.10.9-alpha-18 (Build 250)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-18 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-18"))
 
-# 8. Documentation test
+# 8. Remaining-Words Slice Shuffle Tests (v0.10.9-alpha-16)
+Assert-Check "shuffleCurrentSpelling preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpelling()") -and $appJsContent.Contains("i > spellingIndex + 1") -and $appJsContent.Contains("spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex))"))
+Assert-Check "shuffleCurrentQuiz preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentQuiz()") -and $appJsContent.Contains("i > quizIndex + 1") -and $appJsContent.Contains("quizIndex + 1 + Math.floor(Math.random() * (i - quizIndex))"))
+Assert-Check "shuffleCurrentSpeaking preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpeaking()") -and $appJsContent.Contains("i > currentSpeakingIndex + 1") -and $appJsContent.Contains("currentSpeakingIndex + 1 + Math.floor(Math.random() * (i - currentSpeakingIndex))"))
+Assert-Check "shuffleCurrentAutoFlashcard preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentAutoFlashcard()") -and $appJsContent.Contains("i > autoFlashcardIndex + 1") -and $appJsContent.Contains("autoFlashcardIndex + 1 + Math.floor(Math.random() * (i - autoFlashcardIndex))"))
+Assert-Check "Study mode shuffle buttons exist in screens" ($quizScreenContent.Contains("shuffleCurrentQuiz") -and $spellingScreenContent.Contains("shuffleCurrentSpelling") -and $speakingScreenContent.Contains("shuffleCurrentSpeaking") -and $autofcScreenContent.Contains("shuffleCurrentAutoFlashcard"))
+
+# 9. Terminology Standardization Tests (VocaDeck, VocaVIP, VocaSkip, VocaLib)
+Assert-Check "modal-profile.html uses VocaDeck" ($profileModalContent.Contains("VocaDeck"))
+Assert-Check "modal-review-queue.html uses VocaDeck" ($reviewModalContent.Contains("VocaDeck"))
+Assert-Check "modal-review-queue.html contains preset-btn-all" ($reviewModalContent.Contains("preset-btn-all"))
+Assert-Check "modal-settings.html uses VocaDeck" ($settingsContent.Contains("VocaDeck"))
+Assert-Check "modal-speaking-result.html uses VocaSkip" ((Get-Content (Join-Path $root "src\components\modals\modal-speaking-result.html") -Raw -Encoding UTF8).Contains("VocaSkip"))
+$boTuMatches = [regex]::Matches($appJsContent, "bộ từ").Count
+Assert-Check "app.js does not contain legacy bo tu in user-facing strings" ($boTuMatches -le 1)
+
+# 10. Documentation test
 Assert-Check "KIEM_THU_VA_TRIEN_KHAI.md exists and contains 4-step guide" ((Test-Path $docFile) -and ((Get-Item $docFile).Length -gt 1000))
+
+# 11. VocaSpin Daily Bonus & Multi-Device Sync Tests (v0.10.9-alpha-17)
+$c11_1 = ($appJsContent.Contains("syncEconomyToCloud") -and $appJsContent.Contains("luckySpins: cleanSpins") -and $appJsContent.Contains("PATCH"))
+Assert-Check "syncEconomyToCloud uses PATCH method and includes luckySpins" $c11_1
+
+$c11_2 = $appJsContent.Contains("lucky_spins_left.json")
+Assert-Check "syncEconomyToCloud updates lucky_spins_left.json" $c11_2
+
+$c11_3 = ($appJsContent.Contains("vocaflow_lucky_spins_left") -and $appJsContent.Contains("Math.max(0, remoteSpins)"))
+Assert-Check "loadEconomyFromCloud synchronizes luckySpins without Math.max local revival" $c11_3
+
+$c11_4 = (-not ($appJsContent.Contains("finalSpins = Math.max(isNaN(localLuckySpins)")))
+Assert-Check "initApp and fetchCloudDatabase do not use Math.max to revive local spins" $c11_4
+
+$c11_5 = ($appJsContent.Contains("VIP_DAILY_SPIN") -and $appJsContent.Contains("tx.timestamp.startsWith(today)"))
+Assert-Check "checkAndGrantVipDailySpinBonus checks userLedger for today spin grant" $c11_5
+
+$c11_6 = $appJsContent.Contains("spins += 2;")
+Assert-Check "checkAndGrantVipDailySpinBonus strictly awards 2 spins" $c11_6
+
+$c11_7 = ($appJsContent.Contains("vocaflow_spins_healed_v0109a17") -and $appJsContent.Contains("hasPurchasedSpins"))
+Assert-Check "autoHealExcessVipSpinsToday uses v0109a17 key and protects purchased spins" $c11_7
+
+$c11_8 = ($appJsContent.Contains("setLuckySpinsCount") -and $appJsContent.Contains("syncEconomyToCloud()") -and $appJsContent.Contains("broadcastEconomyUpdate()"))
+Assert-Check "setLuckySpinsCount triggers syncEconomyToCloud and broadcastEconomyUpdate" $c11_8
+
+# 12. Bulletproof VocaDeck Auto-Recovery & Cloud Anti-Wipeout Guard Tests (v0.10.9-alpha-18)
+$c12_1 = ($appJsContent.Contains("function autoRecoverLostDecks(") -and $appJsContent.Contains("publicLibraryDecks.json"))
+Assert-Check "autoRecoverLostDecks scans publicLibraryDecks and recovers user authored & purchased decks" $c12_1
+
+$c12_2 = ($appJsContent.Contains("function takeDeckSnapshot()") -and $appJsContent.Contains("vocaflow_decks_backup") -and $appJsContent.Contains("function restoreDecksFromBackup()"))
+Assert-Check "takeDeckSnapshot and restoreDecksFromBackup provide instant recovery from local snapshot" $c12_2
+
+$c12_3 = ($appJsContent.Contains("Anti-Wipeout Guard") -and $appJsContent.Contains("decks = [...remoteDecks];"))
+Assert-Check "handleManualSync Phase 2 Anti-Wipeout Guard refuses to push empty array if Cloud has decks" $c12_3
+
+$c12_4 = ($appJsContent.Contains("deletedDeckIds.delete('deck-oxford-starter')"))
+Assert-Check "Anti-Wipeout Tombstone Guard prevents runaway starter deck deletion" $c12_4
+
+$c12_5 = ($settingsContent.Contains("createManualDeckBackup") -and $settingsContent.Contains("restoreDecksFromBackup") -and $settingsContent.Contains("autoRecoverLostDecks"))
+Assert-Check "modal-settings.html includes manual backup, restore and cloud recovery controls" $c12_5
 
 Write-Host ""
 Write-Host "RESULT: $passed / $total Passed" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Red" })

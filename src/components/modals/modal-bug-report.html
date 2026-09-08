@@ -1,11 +1,11 @@
-﻿  <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
+  <div class="modal-overlay" id="modal-bug-report" style="z-index: 10010;">
     <div class="modal" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 24px;">🐛</span>
           <div>
             <strong style="font-size: 16px; color: #f87171;">Báo Cáo Sự Cố & Đóng Góp Ý Kiến</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Đội ngũ phát triển sẽ kiểm tra và trao thưởng Xu/VIP cho báo cáo hữu ích</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Đội ngũ phát triển sẽ kiểm tra và trao thưởng VoCoin/VocaVIP cho báo cáo hữu ích</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-report')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -14,9 +14,9 @@
       <!-- GUEST LOCK VIEW FOR BUG REPORT (v0.10.8-alpha-10.3) -->
       <div id="bug-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
         <div style="font-size: 52px; margin-bottom: 12px;">🐛🔒</div>
-        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Thành Viên</h3>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Flower</h3>
         <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
-          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Gửi Báo Cáo Sự Cố, Đóng Góp Ý Kiến & Nhận Thưởng Bắt Lỗi (+50 Xu / +1 Ngày VIP)</strong> từ Admin!
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Gửi Báo Cáo Sự Cố, Đóng Góp Ý Kiến & Nhận Thưởng Bắt Lỗi (+50 VoCoin / +1 Ngày VocaVIP)</strong> từ Admin!
         </p>
         <div style="display: flex; justify-content: center; gap: 10px;">
           <button class="btn btn-primary" onclick="closeModal('modal-bug-report'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
@@ -37,10 +37,10 @@
           <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text);">1. Danh mục vấn đề:</label>
           <select id="bug-report-category" class="form-select" style="width: 100%; font-size: 13px; font-weight: 600;">
             <option value="ui_ux">🎨 Lỗi Giao Diện & Hiển Thị (UI/UX)</option>
-            <option value="speaking">🎙️ Lỗi Thu Âm / Luyện Nói AI Speaking Lab</option>
+            <option value="speaking">🎙️ Lỗi Thu Âm / Luyện Nói Speaking Lab</option>
             <option value="ai">🤖 Lỗi AI Sinh Từ / AI Chat Mentor</option>
             <option value="wheel_ad">🎡 Lỗi Vòng Quay / Xem Video Quảng Cáo</option>
-            <option value="wallet_vip">💳 Lỗi Ví Xu / Thanh Toán QR / Gói VIP</option>
+            <option value="wallet_vip">💳 Lỗi Ví VoCoin / Thanh Toán QR / Gói VocaVIP</option>
             <option value="cloud_sync">🔄 Lỗi Đồng Bộ Cloud / Mất Dữ Liệu</option>
             <option value="feature_request">💡 Đóng Góp Tính Năng Mới (Feature Request)</option>
             <option value="other" selected>❓ Vấn đề khác</option>

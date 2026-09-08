@@ -1,11 +1,11 @@
-﻿  <div class="modal-overlay" id="modal-library">
+  <div class="modal-overlay" id="modal-library">
     <div class="modal" style="max-width: 780px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px;">📚</span>
           <div>
-            <strong style="font-size: 17px; color: var(--text);">Thư Viện Từ Vựng (VocaLibrary)</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Kho từ vựng chuẩn THPT & Quốc Tế có sẵn - Tải về học ngay 1-Click</div>
+            <strong style="font-size: 17px; color: var(--text);">Thư Viện VocaLib</strong>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">VocaStore chuẩn THPT & Quốc Tế có sẵn - Tải về học ngay 1-Click</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-library')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -14,8 +14,8 @@
       <!-- SEARCH & FILTER TABS -->
       <div style="margin-bottom: 12px;">
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm bộ từ hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px; flex: 1;">
-          <button class="btn btn-outline btn-sm" id="lib-btn-my-decks" onclick="toggleLibraryMyDecksFilter()" title="Lọc các bộ từ do chính bạn đăng tải" style="white-space: nowrap; font-weight: 700; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); display: inline-flex; align-items: center; gap: 4px;">
+          <input type="text" id="library-search-input" class="form-input" placeholder="🔍 Tìm kiếm VocaDeck hoặc từ vựng..." oninput="renderLibraryDecks()" style="font-size: 13px; padding: 7px 12px; flex: 1;">
+          <button class="btn btn-outline btn-sm" id="lib-btn-my-decks" onclick="toggleLibraryMyDecksFilter()" title="Lọc các VocaDeck do chính bạn đăng tải" style="white-space: nowrap; font-weight: 700; color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); display: inline-flex; align-items: center; gap: 4px;">
             🌟 CỦA TÔI
           </button>
           <button class="btn btn-outline btn-sm" onclick="fetchCloudLibraryDecks()" title="Làm mới từ Cloud" style="white-space: nowrap; font-weight: 600;">
@@ -25,7 +25,7 @@
 
         <div style="display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; max-width: 100%;" id="lib-category-tabs">
           <button class="btn btn-sm btn-primary lib-filter-btn active" data-cat="all" onclick="setLibraryCategory('all')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🎓 Tất Cả (<span id="lib-count-all">0</span>)</button>
-          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="vip" onclick="setLibraryCategory('vip')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 6px 12px; border-color: rgba(245,158,11,0.6); color: #fbbf24; background: rgba(245,158,11,0.12); box-shadow: 0 0 10px rgba(245,158,11,0.2);">👑 Gói VIP (<span id="lib-count-vip">3</span>)</button>
+          <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="vip" onclick="setLibraryCategory('vip')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 6px 12px; border-color: rgba(245,158,11,0.6); color: #fbbf24; background: rgba(245,158,11,0.12); box-shadow: 0 0 10px rgba(245,158,11,0.2);">👑 Gói VocaVIP (<span id="lib-count-vip">3</span>)</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="following" onclick="setLibraryCategory('following')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px; border-color: rgba(56,189,248,0.4); color: #38bdf8; background: rgba(56,189,248,0.08);">👥 Đang Theo Dõi (<span id="lib-count-following">0</span>)</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="cert" onclick="setLibraryCategory('cert')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">📜 Chứng Chỉ (IELTS/TOEIC)</button>
           <button class="btn btn-sm btn-outline lib-filter-btn" data-cat="thcs" onclick="setLibraryCategory('thcs')" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 6px 12px;">🏫 Cấp 2</button>
@@ -43,7 +43,7 @@
       <!-- COMMUNITY DECK CONTRIBUTION BANNER (CHO TẤT CẢ MỌI NGƯỜI) -->
       <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)); border: 1px dashed rgba(168, 85, 247, 0.35); border-radius: 10px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
         <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-          <span>✨</span> <strong style="color: var(--text);">Đóng góp bộ từ:</strong> Tải Excel hoặc chia sẻ bộ từ của bạn
+          <span>✨</span> <strong style="color: var(--text);">Đóng góp VocaDeck:</strong> Tải Excel hoặc chia sẻ VocaDeck của bạn
         </div>
         <button class="btn btn-primary btn-sm" onclick="openCommunityDeckUploadModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; padding: 4px 10px; font-size: 11.5px; border-radius: 8px;">
           🚀 Đóng Góp Mới

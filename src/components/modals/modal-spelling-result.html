@@ -1,4 +1,4 @@
-﻿  <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
+  <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
       <canvas id="spelling-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
@@ -26,9 +26,9 @@
           <!-- 2. Điểm nhận được -->
           <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
             <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>💰</span> Điểm nhận được
+              <span>💰</span> VoCoin nhận được
             </div>
-            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 Xu</div>
+            <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 VoCoin</div>
           </div>
 
           <!-- 3. Tổng thời gian -->
@@ -51,10 +51,10 @@
         <!-- 5. Chi tiết gõ sai / gợi ý / bỏ qua (Full width tile) -->
         <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
           <div style="color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-            <span>💡</span> Gợi ý: <strong id="spelling-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
+            <span>💡</span> VocaHint: <strong id="spelling-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
           </div>
           <div style="color: #818cf8; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-            <span>⏭️</span> Bỏ qua: <strong id="spelling-res-skips" style="color: #6366f1; font-family: monospace;">0 từ</strong>
+            <span>⏭️</span> VocaSkip: <strong id="spelling-res-skips" style="color: #6366f1; font-family: monospace;">0 từ</strong>
           </div>
           <div style="color: #f87171; font-weight: 700; display: flex; align-items: center; gap: 4px;">
             <span>❌</span> Gõ sai: <strong id="spelling-res-wrongs" style="color: #ef4444; font-family: monospace;">0 lần</strong>
@@ -67,7 +67,7 @@
             <svg class="icon"><use href="#i-repeat"/></svg> Làm Lại Luyện Viết
           </button>
           <button class="btn btn-outline" onclick="exitSpellingToDeck()" style="padding: 9px 14px;" id="btn-spelling-result-deck">
-            <svg class="icon"><use href="#i-book"/></svg> Xem Bộ Từ
+            <svg class="icon"><use href="#i-book"/></svg> Xem VocaDeck
           </button>
           <button class="btn btn-outline" onclick="exitSpellingToHome()" style="padding: 9px 14px;">
             🏠 Tủ Sách

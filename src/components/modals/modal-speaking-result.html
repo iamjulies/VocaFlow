@@ -1,4 +1,4 @@
-﻿  <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
+  <div class="modal-overlay" id="modal-speaking-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(236, 72, 153, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
       <canvas id="speaking-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
@@ -6,7 +6,7 @@
       <div style="position: relative; z-index: 1;">
         <!-- Top Icon & Header -->
         <div id="spk-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(236, 72, 153, 0.4));">🏆</div>
-        <h2 id="spk-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Luyện Nói AI!</h2>
+        <h2 id="spk-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Luyện Nói!</h2>
         <p id="spk-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành phiên luyện phát âm chuẩn xác với Gemini AI.</p>
 
         <div style="margin-bottom: 16px;">
@@ -26,9 +26,9 @@
           <!-- 2. Điểm nhận được -->
           <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
             <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>💰</span> Điểm nhận được
+              <span>💰</span> VoCoin nhận được
             </div>
-            <div id="spk-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 Xu</div>
+            <div id="spk-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
           </div>
 
           <!-- 3. Điểm phát âm TB -->
@@ -39,10 +39,10 @@
             <div id="spk-res-avg-score" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 / 100</div>
           </div>
 
-          <!-- 4. Lượt Bỏ qua (Skip Pass) đã dùng -->
+          <!-- 4. VocaSkip đã dùng -->
           <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
             <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>⏭️</span> Bỏ qua (Skip)
+              <span>⏭️</span> VocaSkip đã dùng
             </div>
             <div id="spk-res-skips-used" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0 lượt</div>
           </div>
@@ -67,7 +67,7 @@
             🔁 Luyện Lại
           </button>
           <button class="btn btn-primary" onclick="closeSpeakingResultModal(); exitSpeakingMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);">
-            🚪 Về Bộ Từ
+            🚪 Về VocaDeck
           </button>
         </div>
       </div>

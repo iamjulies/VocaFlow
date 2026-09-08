@@ -1,18 +1,18 @@
-﻿    <section id="screen-decks" class="screen active">
+    <section id="screen-decks" class="screen active">
       <div class="top-nav">
         <div>
-          <h1 class="screen-title" style="margin-bottom: 2px;">Bộ Từ Vựng Của Bạn</h1>
-          <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Quản lý và ôn tập các bộ từ thông minh</p>
+          <h1 class="screen-title" style="margin-bottom: 2px;">VocaDeck Của Bạn</h1>
+          <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Quản lý và ôn tập các VocaDeck thông minh</p>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
           <button class="btn btn-outline" onclick="openLibraryModal()" style="border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.1); font-weight: 700;">
-            📚 Thư Viện Từ Vựng
+            📚 Thư Viện VocaLib
           </button>
           <button class="btn btn-primary" onclick="openAiDeckStudioModal()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);">
-            ✨ Tạo Bằng AI
+            ✨ VocaDeck AI
           </button>
           <button class="btn btn-primary" onclick="openDeckModal()">
-            <svg class="icon"><use href="#i-add"/></svg> Thêm Bộ Từ
+            <svg class="icon"><use href="#i-add"/></svg> Thêm VocaDeck
           </button>
         </div>
       </div>
@@ -38,8 +38,8 @@
           </label>
           <select id="deck-sort-select" class="form-select" onchange="setDeckSort(this.value)" style="padding: 6px 10px; font-size: 12px; height: 34px; border-radius: 8px; background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); cursor: pointer;">
             <option value="recent">🕒 Cập nhật gần nhất</option>
-            <option value="name_asc">🔤 Tên bộ từ (A ➔ Z)</option>
-            <option value="name_desc">🔤 Tên bộ từ (Z ➔ A)</option>
+            <option value="name_asc">🔤 Tên VocaDeck (A ➔ Z)</option>
+            <option value="name_desc">🔤 Tên VocaDeck (Z ➔ A)</option>
             <option value="count_desc">📚 Số lượng từ (Nhiều ➔ Ít)</option>
             <option value="mastery_desc">👑 Mức độ thuộc (Cao ➔ Thấp)</option>
             <option value="created_desc">📅 Ngày tạo mới nhất</option>

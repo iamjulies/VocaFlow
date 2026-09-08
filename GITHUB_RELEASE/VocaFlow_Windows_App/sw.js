@@ -1,4 +1,7 @@
-const CACHE_NAME = 'vocaflow-pwa-v0.10.8-released-debug-0.4';
+// =========================================================================
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-alpha-18)
+// =========================================================================
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-18';
 const ASSETS = [
   './',
   './index.html',

@@ -1,11 +1,11 @@
-﻿  <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
+  <div class="modal-overlay" id="modal-bug-bounty-picker" style="z-index: 10025;">
     <div class="modal" style="max-width: 520px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 24px;">🎁</span>
           <div>
             <strong style="font-size: 15.5px; color: var(--text);">Trao Thưởng Bắt Lỗi (Bug Bounty)</strong>
-            <div id="bounty-modal-subtitle" style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Tùy chỉnh phần thưởng trao tặng cho học viên</div>
+            <div id="bounty-modal-subtitle" style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Tùy chỉnh phần thưởng trao tặng cho Flower</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-bug-bounty-picker')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -14,7 +14,7 @@
       <div style="flex: 1; overflow-y: auto; padding-right: 2px;">
         <!-- REPORTER & BUG INFO CARD WITH CLICKABLE VIP PROFILE LINK -->
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Học viên nhận thưởng:</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Flower nhận thưởng:</div>
           <div id="bounty-reporter-info" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             👤 Loading...
           </div>
@@ -27,23 +27,23 @@
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px;" id="bounty-type-selector">
             <button type="button" class="btn btn-outline btn-sm bounty-type-btn" id="bounty-btn-coins" onclick="selectBountyType('coins')" style="flex-direction: column; padding: 8px 4px; gap: 3px; font-size: 11px; border-radius: 8px; border-color: #6366f1; background: rgba(99,102,241,0.2); color: #fff;">
               <span style="font-size: 18px;">🪙</span>
-              <span style="font-weight: 700;">Tiền Xu</span>
+              <span style="font-weight: 700;">VoCoin</span>
             </button>
             <button type="button" class="btn btn-outline btn-sm bounty-type-btn" id="bounty-btn-hints" onclick="selectBountyType('hints')" style="flex-direction: column; padding: 8px 4px; gap: 3px; font-size: 11px; border-radius: 8px;">
               <span style="font-size: 18px;">💡</span>
-              <span style="font-weight: 700;">Gợi Ý AI</span>
+              <span style="font-weight: 700;">VocaHint</span>
             </button>
             <button type="button" class="btn btn-outline btn-sm bounty-type-btn" id="bounty-btn-skips" onclick="selectBountyType('skips')" style="flex-direction: column; padding: 8px 4px; gap: 3px; font-size: 11px; border-radius: 8px;">
               <span style="font-size: 18px;">⏭️</span>
-              <span style="font-weight: 700;">Thẻ Bỏ Qua</span>
+              <span style="font-weight: 700;">VocaSkip</span>
             </button>
             <button type="button" class="btn btn-outline btn-sm bounty-type-btn" id="bounty-btn-spins" onclick="selectBountyType('spins')" style="flex-direction: column; padding: 8px 4px; gap: 3px; font-size: 11px; border-radius: 8px;">
               <span style="font-size: 18px;">🎡</span>
-              <span style="font-weight: 700;">Lượt Quay</span>
+              <span style="font-weight: 700;">VocaSpin</span>
             </button>
             <button type="button" class="btn btn-outline btn-sm bounty-type-btn" id="bounty-btn-vip" onclick="selectBountyType('vip')" style="flex-direction: column; padding: 8px 4px; gap: 3px; font-size: 11px; border-radius: 8px;">
               <span style="font-size: 18px;">👑</span>
-              <span style="font-weight: 700;">Ngày VIP</span>
+              <span style="font-weight: 700;">Ngày VocaVIP</span>
             </button>
           </div>
         </div>
@@ -54,7 +54,7 @@
           <div id="bounty-presets-container" style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;"></div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <input type="number" id="bounty-custom-amount" class="form-input" min="1" max="10000" value="50" style="font-size: 14px; font-weight: 700; color: #38bdf8;" oninput="updateBountyPreview()">
-            <span id="bounty-unit-label" style="font-size: 12px; color: var(--text-muted); font-weight: 600; min-width: 60px;">Xu</span>
+            <span id="bounty-unit-label" style="font-size: 12px; color: var(--text-muted); font-weight: 600; min-width: 60px;">VoCoin</span>
           </div>
         </div>
 
@@ -66,7 +66,7 @@
 
         <!-- PREVIEW SUMMARY BANNER -->
         <div id="bounty-summary-banner" style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 10px;">
-          🎁 Phần thưởng sẽ trao: <strong id="bounty-preview-text" style="color: #fbbf24;">+50 Xu</strong>
+          🎁 Phần thưởng sẽ trao: <strong id="bounty-preview-text" style="color: #fbbf24;">+50 VoCoin</strong>
         </div>
       </div>
 

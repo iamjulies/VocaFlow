@@ -1,9 +1,9 @@
-﻿    <section id="screen-deck-detail" class="screen">
+    <section id="screen-deck-detail" class="screen">
       <div class="deck-detail-sticky-pane" id="deck-detail-sticky-pane">
         <!-- ROW 1: HEADER & PRIMARY ACTION BUTTONS -->
         <div class="deck-detail-nav">
           <div class="deck-detail-left">
-            <button class="btn btn-outline btn-icon btn-sm" onclick="showScreen('screen-decks')" title="Quay lại danh sách bộ từ">
+            <button class="btn btn-outline btn-icon btn-sm" onclick="showScreen('screen-decks')" title="Quay lại danh sách VocaDeck">
               <svg class="icon icon-sm"><use href="#i-arrow-back"/></svg>
             </button>
             <div class="deck-title-group">
@@ -11,8 +11,8 @@
               <div class="deck-quick-actions">
                 <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-pin" onclick="togglePinDeck(currentDeckId)" title="Ghim / Bỏ ghim"><svg class="icon icon-sm"><use href="#i-pin"/></svg></button>
                 <button class="btn btn-outline btn-icon btn-sm" id="btn-detail-archive" onclick="toggleArchiveDeck(currentDeckId)" title="Lưu trữ / Khôi phục"><svg class="icon icon-sm"><use href="#i-archive"/></svg></button>
-                <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa bộ từ"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
-                <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa bộ từ" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="editDeck(currentDeckId)" title="Sửa VocaDeck"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+                <button class="btn btn-outline btn-icon btn-sm" onclick="deleteDeck(currentDeckId)" title="Xóa VocaDeck" style="color: var(--danger);"><svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg></button>
               </div>
             </div>
             <span id="deck-detail-desc" style="display: none;"></span>
@@ -26,11 +26,11 @@
             <button class="btn btn-outline btn-sm" onclick="importExcelModal()" title="Nhập danh sách từ vựng từ Excel">
               <svg class="icon icon-sm"><use href="#i-upload"/></svg> <span>Nhập Excel</span>
             </button>
-            <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()" title="Xuất bộ từ ra file Excel (.xlsx)">
+            <button class="btn btn-outline btn-sm" onclick="exportCurrentDeckExcel()" title="Xuất VocaDeck ra file Excel (.xlsx)">
               <svg class="icon icon-sm"><use href="#i-download"/></svg> <span>Xuất Excel</span>
             </button>
-            <button class="btn btn-outline btn-sm" onclick="shareCurrentDeckToLibrary()" title="Đóng góp bộ từ này lên Thư Viện Cộng Đồng" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
-              <span>🚀</span> <span>Chia sẻ Thư Viện</span>
+            <button class="btn btn-outline btn-sm" onclick="shareCurrentDeckToLibrary()" title="Đóng góp VocaDeck này lên Thư Viện VocaLib" style="color: #c084fc; border-color: rgba(192, 132, 252, 0.4);">
+              <span>🚀</span> <span>Chia sẻ VocaLib</span>
             </button>
           </div>
         </div>
@@ -63,7 +63,7 @@
           <div class="selection-study-actions">
 
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
-              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói AI</span><span id="speaking-count-label"></span>
+              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
@@ -72,7 +72,7 @@
               <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span><span id="spelling-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm Quiz</span><span id="quiz-count-label"></span>
+              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
             </button>
           </div>
         </div>
