@@ -1,4 +1,19 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-19 (Build 251) - Bulletproof VocaSpin Real-Time Engine & Zombie Spin Elimination
+================================================================================
+1. [Khắc Phục Triệt Để Hiện Tượng Cộng Dồn Quá Mức VocaSpin (+10 Thay Vì +2)]:
+   - Khắc phục lỗ hổng lệch múi giờ (Timezone Mismatch) trong Idempotency Guard: So sánh timestamp ISO UTC với ngày địa phương GMT+7 (Việt Nam) qua hàm chuẩn hóa `isDateMatchToday`, ngăn chặn việc tái cấp phát quà tặng VIP nhiều lần trong khoảng 00:00 - 06:59 GMT+7.
+   - Sửa lỗi lọc sổ cái ví (`userLedger.filter`): Bảo lưu tuyệt đối các giao dịch `VIP_DAILY_SPIN` (dù mang giá trị 0 VoCoin), ngăn chặn việc xóa bỏ lịch sử nhận lượt quay khiến kiểm tra `alreadyInLedger` luôn trả về false.
+   - Nâng cấp động cơ tự phục hồi (`autoHealExcessVipSpinsToday` v0109a19): Tự động phát hiện và hạ số lượt quay dư thừa về chuẩn (0 nếu đã quay hôm nay, 2 nếu chưa quay), khử trùng lặp thông báo VIP hằng ngày.
+2. [Triệt Tiêu Hoàn Toàn Zombie Spins (Vừa Quay Xong Lại Hiện Lại 10 Lượt)]:
+   - Thiết lập Lá chắn Dấu thời gian (Timestamp Guard) trong `loadEconomyFromCloud` và `pullDatabaseFromCloud`: So sánh `localEcoTime` và `remoteEcoTime`, bảo vệ dữ liệu lượt quay cục bộ vừa tiêu thụ không bị dữ liệu Cloud cũ ghi đè khi mở modal Vòng quay.
+   - Loại bỏ xung đột đồng bộ kép (Dual Push Race Condition): Loại bỏ lệnh đẩy toàn bộ cơ sở dữ liệu `pushCurrentDatabaseToCloud()` (500KB) khỏi `setLuckySpinsCount()`, chỉ kích hoạt `syncEconomyToCloud()` siêu nhẹ và chuẩn xác theo thời gian thực.
+   - Tự động làm mới Auth Token Firebase (`getFreshCloudAuthToken`): Khắc phục lỗi HTTP 401 Unauthorized do token hết hạn sau 60 phút, đảm bảo các thao tác trừ lượt quay đồng bộ thành công lên Firebase RTDB.
+   - Chuẩn hóa dữ liệu đám mây cho tài khoản `huda`: Đã đồng bộ trực tiếp lên Firebase RTDB về đúng 0 lượt quay theo đúng thực tế sử dụng.
+3. [Đồng Bộ Toàn Diện 7 Điểm Nhất Quán & Biên Dịch Trọn Vẹn]:
+   - Chuẩn hóa phiên bản v0.10.9-alpha-19 (Build 251) trên 7 vị trí bắt buộc.
+   - Vượt qua 100% bộ kiểm thử tự động `test_suite.ps1` (bổ sung Section 13).
+================================================================================
 Phiên bản: v0.10.9-alpha-18 (Build 250) - Bulletproof VocaDeck Auto-Recovery & Cloud Anti-Wipeout Guard
 ================================================================================
 1. [Khôi Phục Toàn Diện VocaDeck Bị Mất & Động Cơ Tự Chữa Lành (VocaDeck Auto-Recovery)]:

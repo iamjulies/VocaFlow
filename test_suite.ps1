@@ -34,7 +34,7 @@ function Assert-Check($desc, $cond) {
     }
 }
 
-Write-Host "=== TESTING v0.10.9-alpha-18 (Build 250) ===" -ForegroundColor Cyan
+Write-Host "=== TESTING v0.10.9-alpha-19 (Build 251) ===" -ForegroundColor Cyan
 
 $appJsContent = [System.IO.File]::ReadAllText($appJs, [System.Text.Encoding]::UTF8)
 $headerContent = [System.IO.File]::ReadAllText($headerHtml, [System.Text.Encoding]::UTF8)
@@ -102,15 +102,15 @@ Assert-Check "modal-review-queue.html contains preset pills and filter controls"
 Assert-Check "Deck card action grid includes direct delete button" ($appJsContent.Contains("btn-delete-deck") -and $appJsContent.Contains('deleteDeck('))
 Assert-Check "CSS defines 4-column deck actions grid" ($cssContent.Contains("repeat(4, 1fr)"))
 
-# 7. Version v0.10.9-alpha-18 (Build 250) tests across all components
-Assert-Check "src/components/header.html shows v0.10.9-alpha-18" ($headerContent.Contains("v0.10.9-alpha-18"))
-Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-18 (Build 250)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-18 (Build 250)"))
-Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18'"))
-Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-18" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-18"))
-Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-18" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-18"))
-Assert-Check "Program.cs shows v0.10.9-alpha-18" ($csContent.Contains("VocaFlow v0.10.9-alpha-18"))
-Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-18 (Build 250)" ($overviewContent.Contains("v0.10.9-alpha-18 (Build 250)"))
-Assert-Check "push_github.ps1 has v0.10.9-alpha-18 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-18"))
+# 7. Version v0.10.9-alpha-19 (Build 251) tests across all components
+Assert-Check "src/components/header.html shows v0.10.9-alpha-19" ($headerContent.Contains("v0.10.9-alpha-19"))
+Assert-Check "src/components/modals/modal-settings.html shows v0.10.9-alpha-19 (Build 251)" ($settingsContent.Contains("VocaFlow v0.10.9-alpha-19 (Build 251)"))
+Assert-Check "src/scripts/app.js defines VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-19'" ($appJsContent.Contains("const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-19'"))
+Assert-Check "sw.js cache name is vocaflow-pwa-v0.10.9-alpha-19" ($swContent.Contains("vocaflow-pwa-v0.10.9-alpha-19"))
+Assert-Check "Release_App/sw.js cache name is vocaflow-pwa-v0.10.9-alpha-19" ($releaseSwContent.Contains("vocaflow-pwa-v0.10.9-alpha-19"))
+Assert-Check "Program.cs shows v0.10.9-alpha-19" ($csContent.Contains("VocaFlow v0.10.9-alpha-19"))
+Assert-Check "VOCAFLOW_OVERVIEW.txt header is v0.10.9-alpha-19 (Build 251)" ($overviewContent.Contains("v0.10.9-alpha-19 (Build 251)"))
+Assert-Check "push_github.ps1 has v0.10.9-alpha-19 commit msg and zip" ($pushContent.Contains("v0.10.9-alpha-19"))
 
 # 8. Remaining-Words Slice Shuffle Tests (v0.10.9-alpha-16)
 Assert-Check "shuffleCurrentSpelling preserves index and shuffles remaining items only" ($appJsContent.Contains("function shuffleCurrentSpelling()") -and $appJsContent.Contains("i > spellingIndex + 1") -and $appJsContent.Contains("spellingIndex + 1 + Math.floor(Math.random() * (i - spellingIndex))"))
@@ -150,8 +150,8 @@ Assert-Check "checkAndGrantVipDailySpinBonus checks userLedger for today spin gr
 $c11_6 = $appJsContent.Contains("spins += 2;")
 Assert-Check "checkAndGrantVipDailySpinBonus strictly awards 2 spins" $c11_6
 
-$c11_7 = ($appJsContent.Contains("vocaflow_spins_healed_v0109a17") -and $appJsContent.Contains("hasPurchasedSpins"))
-Assert-Check "autoHealExcessVipSpinsToday uses v0109a17 key and protects purchased spins" $c11_7
+$c11_7 = (($appJsContent.Contains("vocaflow_spins_healed_v0109a17") -or $appJsContent.Contains("vocaflow_spins_healed_v0109a19")) -and $appJsContent.Contains("hasPurchasedSpins"))
+Assert-Check "autoHealExcessVipSpinsToday uses v0109a19 key and protects purchased spins" $c11_7
 
 $c11_8 = ($appJsContent.Contains("setLuckySpinsCount") -and $appJsContent.Contains("syncEconomyToCloud()") -and $appJsContent.Contains("broadcastEconomyUpdate()"))
 Assert-Check "setLuckySpinsCount triggers syncEconomyToCloud and broadcastEconomyUpdate" $c11_8
@@ -171,6 +171,22 @@ Assert-Check "Anti-Wipeout Tombstone Guard prevents runaway starter deck deletio
 
 $c12_5 = ($settingsContent.Contains("createManualDeckBackup") -and $settingsContent.Contains("restoreDecksFromBackup") -and $settingsContent.Contains("autoRecoverLostDecks"))
 Assert-Check "modal-settings.html includes manual backup, restore and cloud recovery controls" $c12_5
+
+# 13. Bulletproof VocaSpin Real-Time Engine & Zombie Spin Elimination Tests (v0.10.9-alpha-19)
+$c13_1 = ($appJsContent.Contains("vocaflow_spins_healed_v0109a19") -and $appJsContent.Contains("hasSpunToday ? 0 : 2"))
+Assert-Check "autoHealExcessVipSpinsToday v0109a19 clamps excess spins to 0 or 2" $c13_1
+
+$c13_2 = ($appJsContent.Contains("STORAGE_KEY_ECONOMY_TIME") -and $appJsContent.Contains("localEcoTime > remoteEcoTime"))
+Assert-Check "loadEconomyFromCloud and pullDatabaseFromCloud protect spins via timestamp guard" $c13_2
+
+$c13_3 = ($appJsContent.Contains("e.type === 'VIP_DAILY_SPIN'") -and $appJsContent.Contains("tx.type === 'VIP_DAILY_SPIN'"))
+Assert-Check "userLedger filter preserves VIP_DAILY_SPIN entries" $c13_3
+
+$c13_4 = ($appJsContent.Contains("token = typeof getFreshCloudAuthToken === 'function'") -and $appJsContent.Contains("getFreshCloudAuthToken()"))
+Assert-Check "syncEconomyToCloud and loadEconomyFromCloud refresh auth tokens" $c13_4
+
+$c13_5 = (-not ($appJsContent.Contains("function setLuckySpinsCount") -and $appJsContent.Substring($appJsContent.IndexOf("function setLuckySpinsCount"), 500).Contains("pushCurrentDatabaseToCloud()")))
+Assert-Check "setLuckySpinsCount eliminates pushCurrentDatabaseToCloud race condition" $c13_5
 
 Write-Host ""
 Write-Host "RESULT: $passed / $total Passed" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Red" })

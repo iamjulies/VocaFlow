@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-18)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-19)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-18';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-18 (Build 250)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-19';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-19 (Build 251)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -1366,7 +1366,8 @@
 
     async function syncEconomyToCloud() {
       if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
-      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+      const authParam = token ? `?auth=${token}` : '';
       try {
         const pts = getUserPoints();
         const hts = getUserHints();
@@ -1423,7 +1424,8 @@
 
     async function loadEconomyFromCloud() {
       if (!currentUser || !currentUser.uid || !firebaseConfig.databaseURL) return;
-      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+      const authParam = token ? `?auth=${token}` : '';
       try {
         const res = await fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`);
         if (res.ok) {
@@ -1436,14 +1438,25 @@
             if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
             if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
             if (!isNaN(remoteSkips)) localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
+
+            // TIMESTAMP GUARD: Protect local spins if updated recently or newer than remote
+            const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+            const remoteEcoTime = data.updatedAt ? new Date(data.updatedAt).getTime() : 0;
             if (!isNaN(remoteSpins)) {
-              localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteSpins).toString());
+              if (localEcoTime > remoteEcoTime && (Date.now() - localEcoTime < 300000)) {
+                // Local economy was updated recently (e.g. user spun), protect local spins
+              } else {
+                localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteSpins).toString());
+              }
             }
             if (data.luckySpinsDate) {
               localStorage.setItem('vocaflow_last_spin_date', data.luckySpinsDate);
             }
             if (data.lastVipSpinDate) {
-              localStorage.setItem('vocaflow_last_vip_spin_date', data.lastVipSpinDate);
+              const localVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+              if (!localVipDate || localVipDate < data.lastVipSpinDate) {
+                localStorage.setItem('vocaflow_last_vip_spin_date', data.lastVipSpinDate);
+              }
             }
             updateEconomyUI();
             if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
@@ -3973,13 +3986,22 @@ function switchPublisherTab(tab) {
                 }
                 const remoteLuckySpins = typeof uData.economy.luckySpins === 'number' ? uData.economy.luckySpins : parseInt(uData.economy.luckySpins, 10);
                 if (!isNaN(remoteLuckySpins)) {
-                  localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                  const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+                  const remoteEcoTime = uData.economy.updatedAt ? new Date(uData.economy.updatedAt).getTime() : 0;
+                  if (localEcoTime > remoteEcoTime && (Date.now() - localEcoTime < 300000)) {
+                    // Local economy was updated recently (e.g. user spun), protect local spins
+                  } else {
+                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                  }
                 }
                 if (uData.economy.luckySpinsDate) {
                   localStorage.setItem('vocaflow_last_spin_date', uData.economy.luckySpinsDate);
                 }
                 if (uData.economy.lastVipSpinDate) {
-                  localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
+                  const localVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+                  if (!localVipDate || localVipDate < uData.economy.lastVipSpinDate) {
+                    localStorage.setItem('vocaflow_last_vip_spin_date', uData.economy.lastVipSpinDate);
+                  }
                 }
                 if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
                 if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
@@ -3993,7 +4015,10 @@ function switchPublisherTab(tab) {
               if (uData.lucky_spins_left !== undefined && (!uData.economy || uData.economy.luckySpins === undefined)) {
                 const sps = parseInt(uData.lucky_spins_left, 10);
                 if (!isNaN(sps)) {
-                  localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, sps).toString());
+                  const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+                  if (localEcoTime === 0 || Date.now() - localEcoTime > 300000) {
+                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, sps).toString());
+                  }
                   if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
                   if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
                 }
@@ -5856,8 +5881,8 @@ function switchPublisherTab(tab) {
       if (isGuest()) return; // Never record guest transactions into user account ledger
       const numAmount = Number(amount) || 0;
       
-      // Do NOT record 0 Xu transactions into wallet balance ledger (v0.10.8-alpha-10.3)
-      if (numAmount === 0) {
+      // Do NOT record 0 Xu transactions into wallet balance ledger (v0.10.8-alpha-10.3), UNLESS it is VIP_DAILY_SPIN
+      if (numAmount === 0 && type !== 'VIP_DAILY_SPIN') {
         return;
       }
 
@@ -5872,8 +5897,8 @@ function switchPublisherTab(tab) {
       };
 
       userLedger.unshift(tx);
-      // Clean up any legacy 0-amount entries
-      userLedger = userLedger.filter(e => e && e.amount !== 0);
+      // Clean up any legacy 0-amount entries (preserve VIP_DAILY_SPIN)
+      userLedger = userLedger.filter(e => e && (e.amount !== 0 || e.type === 'VIP_DAILY_SPIN'));
       if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
       localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
 
@@ -6066,10 +6091,10 @@ function switchPublisherTab(tab) {
       const container = document.getElementById('studio-ledger-list');
       if (!container) return;
 
-      let validLedger = userLedger.filter(tx => tx && tx.amount !== 0);
+      let validLedger = userLedger.filter(tx => tx && (tx.amount !== 0 || tx.type === 'VIP_DAILY_SPIN'));
       let filtered = validLedger;
       if (currentLedgerFilter === 'income') {
-        filtered = validLedger.filter(tx => tx.amount > 0);
+        filtered = validLedger.filter(tx => tx.amount > 0 || tx.type === 'VIP_DAILY_SPIN');
       } else if (currentLedgerFilter === 'expense') {
         filtered = validLedger.filter(tx => tx.amount < 0);
       }
@@ -6086,13 +6111,14 @@ function switchPublisherTab(tab) {
 
       let html = '';
       filtered.forEach(tx => {
-        const isPlus = tx.amount > 0;
+        const isPlus = tx.amount > 0 || tx.type === 'VIP_DAILY_SPIN';
         const color = isPlus ? '#34d399' : '#f87171';
-        const sign = isPlus ? '+' : '';
+        const sign = tx.amount > 0 ? '+' : '';
         const dateStr = new Date(tx.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
 
         let badgeIcon = '🪙';
         if (tx.type === 'STUDY') badgeIcon = '✍️ Học tập';
+        else if (tx.type === 'VIP_DAILY_SPIN') badgeIcon = '👑 Quà VIP';
         else if (tx.type === 'SELL_DECK') badgeIcon = '💎 Bán VocaDeck';
         else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua VocaDeck';
         else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi VocaHint';
@@ -6165,7 +6191,7 @@ function switchPublisherTab(tab) {
               })()}
             </div>
             <div style="text-align: right; flex-shrink: 0;">
-              <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} VoCoin</div>
+              <div style="font-size: 14px; font-weight: 800; color: ${color};">${tx.type === 'VIP_DAILY_SPIN' ? '+2 VocaSpin' : `${sign}${tx.amount} VoCoin`}</div>
               ${(tx.balanceAfter !== undefined && tx.balanceAfter !== null && !isNaN(tx.balanceAfter)) ? `<div style="font-size: 10px; color: var(--text-muted);">Dư: ${tx.balanceAfter} VoCoin</div>` : ''}
             </div>
           </div>
@@ -7331,7 +7357,7 @@ function switchPublisherTab(tab) {
             hints: getUserHints(),
             skips: getUserSkips(),
             flowFreezes: getUserFlowFreezes(),
-            luckySpins: getLuckySpinsCount(),
+            luckySpins: Math.max(0, parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10)),
             luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
             lastVipSpinDate: localStorage.getItem('vocaflow_last_vip_spin_date') || ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString()),
             lastAdWatchTime: parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10),
@@ -7667,13 +7693,22 @@ function switchPublisherTab(tab) {
                   }
                   const remoteLuckySpins = typeof cloudData.economy.luckySpins === 'number' ? cloudData.economy.luckySpins : parseInt(cloudData.economy.luckySpins, 10);
                   if (!isNaN(remoteLuckySpins)) {
-                    localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                    const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
+                    const remoteEcoTime = cloudData.economy.updatedAt ? new Date(cloudData.economy.updatedAt).getTime() : 0;
+                    if (localEcoTime > remoteEcoTime && (Date.now() - localEcoTime < 300000)) {
+                      // Local economy was updated recently (e.g. user spun), protect local spins
+                    } else {
+                      localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
+                    }
                   }
                   if (cloudData.economy.luckySpinsDate) {
                     localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
                   }
                   if (cloudData.economy.lastVipSpinDate) {
-                    localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                    const localVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
+                    if (!localVipDate || localVipDate < cloudData.economy.lastVipSpinDate) {
+                      localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
+                    }
                   }
                   if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
                   if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
@@ -8040,7 +8075,7 @@ function switchPublisherTab(tab) {
                 points: getUserPoints(),
                 hints: getUserHints(),
                 skips: getUserSkips(),
-                luckySpins: getLuckySpinsCount(),
+                luckySpins: Math.max(0, parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10)),
                 luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
                 lastVipSpinDate: localStorage.getItem('vocaflow_last_vip_spin_date') || ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString()),
                 lastAdWatchTime: parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10),
@@ -9467,7 +9502,7 @@ function switchPublisherTab(tab) {
         return false;
       }
 
-      const today = getTodayString();
+      const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
       const maxObservedDate = localStorage.getItem(STORAGE_KEY_MAX_OBSERVED_DATE) || '';
       if (maxObservedDate && today < maxObservedDate) {
         return false;
@@ -9481,9 +9516,22 @@ function switchPublisherTab(tab) {
         return false;
       }
 
+      const isDateMatchToday = (dateStr) => {
+        if (!dateStr) return false;
+        if (dateStr === today || (typeof dateStr.startsWith === 'function' && dateStr.startsWith(today))) return true;
+        try {
+          const d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            const loc = (typeof formatLocalDateString === 'function') ? formatLocalDateString(d) : '';
+            if (loc === today) return true;
+          }
+        } catch (e) {}
+        return false;
+      };
+
       // Check if notification already exists for today across synced userNotifications
       const alreadyNotified = Array.isArray(userNotifications) && userNotifications.some(n =>
-        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('VocaSpin')) && n.timestamp && n.timestamp.startsWith(today)))
+        n && (n.id === notifId || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('VocaSpin')) && isDateMatchToday(n.timestamp)))
       );
       if (alreadyNotified) {
         // Already granted on another session/device: synchronize local marker and exit immediately
@@ -9493,7 +9541,7 @@ function switchPublisherTab(tab) {
 
       // Check if ledger already recorded today's spin grant across devices
       const alreadyInLedger = Array.isArray(userLedger) && userLedger.some(tx =>
-        tx && tx.type === 'VIP_DAILY_SPIN' && tx.timestamp && tx.timestamp.startsWith(today)
+        tx && tx.type === 'VIP_DAILY_SPIN' && tx.timestamp && (tx.timestamp.startsWith(today) || isDateMatchToday(tx.timestamp))
       );
       if (alreadyInLedger) {
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
@@ -9524,9 +9572,6 @@ function switchPublisherTab(tab) {
         if (typeof broadcastEconomyUpdate === 'function') {
           broadcastEconomyUpdate();
         }
-        if (typeof pushCurrentDatabaseToCloud === 'function') {
-          pushCurrentDatabaseToCloud();
-        }
         return true;
       } finally {
         isGrantingVipDailySpin = false;
@@ -9534,32 +9579,47 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
-    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-17)
+    // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-19)
     // =========================================================================
     function autoHealExcessVipSpinsToday() {
       const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
       if (!isVip) return;
 
-      const HEAL_KEY = 'vocaflow_spins_healed_v0109a17';
+      const HEAL_KEY = 'vocaflow_spins_healed_v0109a19';
       if (localStorage.getItem(HEAL_KEY)) return;
 
-      const today = getTodayString();
+      const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
       let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
       if (isNaN(curSpins)) curSpins = 0;
 
+      const isDateMatchToday = (dateStr) => {
+        if (!dateStr) return false;
+        if (dateStr === today || (typeof dateStr.startsWith === 'function' && dateStr.startsWith(today))) return true;
+        try {
+          const d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            const loc = (typeof formatLocalDateString === 'function') ? formatLocalDateString(d) : '';
+            if (loc === today) return true;
+          }
+        } catch (e) {}
+        return false;
+      };
+
       // Count VIP spin daily notifications or compensation notifications for today
       const todayDailyNotifs = Array.isArray(userNotifications) ? userNotifications.filter(n =>
-        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP'))))
+        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')) && isDateMatchToday(n.timestamp)))
       ) : [];
 
       const hasPurchasedSpins = Array.isArray(userLedger) && userLedger.some(tx =>
         tx && (tx.type === 'BUY_SPINS' || tx.type === 'PURCHASE_SPIN')
       );
 
-      // If user received multiple spin grants today (inflated to +8 instead of +2)
-      if (!hasPurchasedSpins && (todayDailyNotifs.length > 1 || curSpins >= 8)) {
-        const excess = 6; // Deduct the 6 duplicate/excess spins added accidentally
-        const adjustedSpins = Math.max(2, curSpins - excess);
+      const lastSpinDate = localStorage.getItem('vocaflow_last_spin_date') || '';
+      const hasSpunToday = lastSpinDate === today;
+
+      // If user received multiple spin grants today (inflated to > 2 without purchasing)
+      if (!hasPurchasedSpins && (todayDailyNotifs.length > 1 || curSpins > 2)) {
+        const adjustedSpins = hasSpunToday ? 0 : 2;
         localStorage.setItem('vocaflow_lucky_spins_left', adjustedSpins.toString());
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
         localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
@@ -9570,7 +9630,7 @@ function switchPublisherTab(tab) {
           let keptOne = false;
           userNotifications = userNotifications.filter(n => {
             if (!n) return false;
-            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')));
+            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')) && isDateMatchToday(n.timestamp));
             if (isDup) {
               if (!keptOne) { keptOne = true; return true; }
               return false;
@@ -9590,9 +9650,6 @@ function switchPublisherTab(tab) {
         }
         if (typeof broadcastEconomyUpdate === 'function') {
           broadcastEconomyUpdate();
-        }
-        if (typeof pushCurrentDatabaseToCloud === 'function') {
-          pushCurrentDatabaseToCloud();
         }
         showToast('👑 Đã hiệu chỉnh lại VocaSpin VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
       } else {
@@ -9620,9 +9677,6 @@ function switchPublisherTab(tab) {
       }
       if (typeof broadcastEconomyUpdate === 'function') {
         broadcastEconomyUpdate();
-      }
-      if (typeof pushCurrentDatabaseToCloud === 'function') {
-        pushCurrentDatabaseToCloud();
       }
     }
 
