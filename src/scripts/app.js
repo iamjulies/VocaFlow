@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-26)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-27)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-26';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-26 (Build 258)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-27';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-27 (Build 259)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -6055,7 +6055,11 @@ function switchPublisherTab(tab) {
 
     try {
       const savedLedger = localStorage.getItem('vocaflow_user_ledger');
-      if (savedLedger) userLedger = JSON.parse(savedLedger);
+      if (savedLedger) {
+        userLedger = JSON.parse(savedLedger);
+        // VocaStudio ledger is strictly for VoCoin transactions (v0.10.9-alpha-27: VocaSpin belongs to VocaNoti only)
+        userLedger = userLedger.filter(e => e && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
+      }
       const savedPurchased = localStorage.getItem('vocaflow_purchased_decks');
       if (savedPurchased) userPurchasedDeckIds = new Set(JSON.parse(savedPurchased));
     } catch (e) {
@@ -6066,8 +6070,8 @@ function switchPublisherTab(tab) {
       if (isGuest()) return; // Never record guest transactions into user account ledger
       const numAmount = Number(amount) || 0;
       
-      // Do NOT record 0 Xu transactions into wallet balance ledger (v0.10.8-alpha-10.3), UNLESS it is VIP_DAILY_SPIN
-      if (numAmount === 0 && type !== 'VIP_DAILY_SPIN') {
+      // Do NOT record 0 Xu transactions into wallet balance ledger (v0.10.9-alpha-27: VocaSpin belongs to VocaNoti only)
+      if (numAmount === 0 || type === 'VIP_DAILY_SPIN') {
         return;
       }
 
@@ -6082,8 +6086,8 @@ function switchPublisherTab(tab) {
       };
 
       userLedger.unshift(tx);
-      // Clean up any legacy 0-amount entries (preserve VIP_DAILY_SPIN)
-      userLedger = userLedger.filter(e => e && (e.amount !== 0 || e.type === 'VIP_DAILY_SPIN'));
+      // Clean up any legacy 0-amount or VIP_DAILY_SPIN entries
+      userLedger = userLedger.filter(e => e && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
       if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
       localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
 
@@ -6160,9 +6164,9 @@ function switchPublisherTab(tab) {
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === 'object' && !data.error) {
-            const cloudEntries = Object.values(data).filter(e => e && e.timestamp);
+            const cloudEntries = Object.values(data).filter(e => e && e.timestamp && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
             const map = new Map();
-            userLedger.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
+            userLedger.forEach(tx => { if (tx && tx.id && tx.amount !== 0 && tx.type !== 'VIP_DAILY_SPIN') map.set(tx.id, tx); });
             cloudEntries.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
             userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
@@ -6276,10 +6280,10 @@ function switchPublisherTab(tab) {
       const container = document.getElementById('studio-ledger-list');
       if (!container) return;
 
-      let validLedger = userLedger.filter(tx => tx && (tx.amount !== 0 || tx.type === 'VIP_DAILY_SPIN'));
+      let validLedger = userLedger.filter(tx => tx && tx.amount !== 0 && tx.type !== 'VIP_DAILY_SPIN');
       let filtered = validLedger;
       if (currentLedgerFilter === 'income') {
-        filtered = validLedger.filter(tx => tx.amount > 0 || tx.type === 'VIP_DAILY_SPIN');
+        filtered = validLedger.filter(tx => tx.amount > 0);
       } else if (currentLedgerFilter === 'expense') {
         filtered = validLedger.filter(tx => tx.amount < 0);
       }
@@ -6296,14 +6300,13 @@ function switchPublisherTab(tab) {
 
       let html = '';
       filtered.forEach(tx => {
-        const isPlus = tx.amount > 0 || tx.type === 'VIP_DAILY_SPIN';
+        const isPlus = tx.amount > 0;
         const color = isPlus ? '#34d399' : '#f87171';
         const sign = tx.amount > 0 ? '+' : '';
         const dateStr = new Date(tx.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
 
         let badgeIcon = '🪙';
         if (tx.type === 'STUDY') badgeIcon = '✍️ Học tập';
-        else if (tx.type === 'VIP_DAILY_SPIN') badgeIcon = '👑 Quà VIP';
         else if (tx.type === 'SELL_DECK') badgeIcon = '💎 Bán VocaDeck';
         else if (tx.type === 'BUY_DECK') badgeIcon = '🛍️ Mua VocaDeck';
         else if (tx.type === 'BUY_HINT') badgeIcon = '💡 Đổi VocaHint';
@@ -6376,7 +6379,7 @@ function switchPublisherTab(tab) {
               })()}
             </div>
             <div style="text-align: right; flex-shrink: 0;">
-              <div style="font-size: 14px; font-weight: 800; color: ${color};">${tx.type === 'VIP_DAILY_SPIN' ? '+2 VocaSpin' : `${sign}${tx.amount} VoCoin`}</div>
+              <div style="font-size: 14px; font-weight: 800; color: ${color};">${sign}${tx.amount} VoCoin</div>
               ${(tx.balanceAfter !== undefined && tx.balanceAfter !== null && !isNaN(tx.balanceAfter)) ? `<div style="font-size: 10px; color: var(--text-muted);">Dư: ${tx.balanceAfter} VoCoin</div>` : ''}
             </div>
           </div>
@@ -8060,9 +8063,9 @@ function switchPublisherTab(tab) {
 
                 // Sync ledger from cloud (Bidirectional Union Merge by ID)
                 if (cloudData.ledger && typeof cloudData.ledger === 'object') {
-                  const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp);
+                  const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
                   const map = new Map();
-                  userLedger.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
+                  userLedger.forEach(tx => { if (tx && tx.id && tx.amount !== 0 && tx.type !== 'VIP_DAILY_SPIN') map.set(tx.id, tx); });
                   cloudEntries.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
                   userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                   if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
@@ -9216,6 +9219,12 @@ function switchPublisherTab(tab) {
 
         // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
         reconcileDuplicateWordsInDecks(null, false);
+
+        // Clean out any legacy 0-amount or VIP_DAILY_SPIN entries from userLedger (v0.10.9-alpha-27)
+        if (Array.isArray(userLedger) && userLedger.some(e => e && (e.amount === 0 || e.type === 'VIP_DAILY_SPIN'))) {
+          userLedger = userLedger.filter(e => e && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
+          localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+        }
 
         // Restore saved deck tab and word filter preferences
         currentDeckTab = localStorage.getItem('vocaflow_deck_tab') || 'active';
@@ -10449,16 +10458,7 @@ function switchPublisherTab(tab) {
         return false;
       }
 
-      // Check if ledger already recorded today's spin grant across devices
-      const alreadyInLedger = Array.isArray(userLedger) && userLedger.some(tx =>
-        tx && tx.type === 'VIP_DAILY_SPIN' && tx.timestamp && (tx.timestamp.startsWith(today) || isDateMatchToday(tx.timestamp))
-      );
-      if (alreadyInLedger) {
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
-        return false;
-      }
-
-      // 2. Perform atomic grant of exactly +2 spins
+      // 2. Perform atomic grant of exactly +2 spins (VocaSpin notifications via VocaNoti only - v0.10.9-alpha-27)
       isGrantingVipDailySpin = true;
       try {
         localStorage.setItem('vocaflow_last_vip_spin_date', today);
@@ -10472,7 +10472,6 @@ function switchPublisherTab(tab) {
           addNotification('VIP_BONUS', '👑 Quà Tặng VocaVIP Hằng Ngày', 'Đặc quyền VocaVIP: Bạn được cộng dồn thêm +2 VocaSpin hôm nay!', null, null, notifId);
         }
 
-        addLedgerEntry('VIP_DAILY_SPIN', 0, '👑 Nhận +2 VocaSpin VocaVIP hằng ngày');
         updateLuckyWheelUI();
         updateShopBonusesUI();
         saveDatabase(true);
@@ -17234,33 +17233,43 @@ function switchPublisherTab(tab) {
 
     function doExecuteExitSpelling(done, total) {
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
-      if (!spellingIsCompleted && spellingPointsEarned !== 0) {
-        const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
-        const finalPts = res.finalPts;
+      try {
+        // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
+        if (!spellingIsCompleted && spellingPointsEarned !== 0) {
+          const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
+          const finalPts = res.finalPts;
 
-        if (finalPts !== 0) {
-          const curDeck = decks.find(d => d.id === currentDeckId);
-          const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
-          const pctText = Math.round((done / total) * 100);
-          if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
-            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`);
-          } else {
-            const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-            showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
-            addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
+          if (finalPts !== 0) {
+            const curDeck = decks.find(d => d.id === currentDeckId);
+            const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
+            const pctText = Math.round((done / total) * 100);
+            if (finalPts < 0) {
+              showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`);
+            } else {
+              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
+              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
+              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
+            }
+            setUserPoints(Math.max(0, getUserPoints() + finalPts));
+            saveDatabase(true);
           }
-          setUserPoints(Math.max(0, getUserPoints() + finalPts));
-          saveDatabase(true);
+          spellingPointsEarned = finalPts;
         }
-        spellingPointsEarned = finalPts;
+      } catch (errPoints) {
+        console.warn('Spelling points settlement error:', errPoints);
       }
-      if (studySourceContext === 'review-queue' || !currentDeckId) {
+
+      try {
+        if (studySourceContext === 'review-queue' || !currentDeckId) {
+          showScreen('screen-decks');
+          refreshActiveScreenData();
+        } else {
+          openDeckDetail(currentDeckId);
+        }
+      } catch (errNav) {
+        console.warn('Spelling navigation fallback:', errNav);
         showScreen('screen-decks');
-        refreshActiveScreenData();
-      } else {
-        showScreen('screen-deck-detail');
         refreshActiveScreenData();
       }
     }
@@ -17273,8 +17282,7 @@ function switchPublisherTab(tab) {
         showScreen('screen-decks');
         refreshActiveScreenData();
       } else {
-        showScreen('screen-deck-detail');
-        refreshActiveScreenData();
+        openDeckDetail(currentDeckId);
       }
     }
 
@@ -19132,33 +19140,43 @@ Yêu cầu nghiêm ngặt:
       if (done > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
-      // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
-      if (!quizIsCompleted && quizPointsEarned !== 0) {
-        const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
-        const finalPts = res.finalPts;
+      try {
+        // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
+        if (!quizIsCompleted && quizPointsEarned !== 0) {
+          const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
+          const finalPts = res.finalPts;
 
-        if (finalPts !== 0) {
-          const curDeck = decks.find(d => d.id === currentDeckId);
-          const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
-          const pctText = Math.round((done / total) * 100);
-          if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
-            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`);
-          } else {
-            const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
-            showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
-            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+          if (finalPts !== 0) {
+            const curDeck = decks.find(d => d.id === currentDeckId);
+            const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
+            const pctText = Math.round((done / total) * 100);
+            if (finalPts < 0) {
+              showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`);
+            } else {
+              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
+              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+            }
+            setUserPoints(Math.max(0, getUserPoints() + finalPts));
+            saveDatabase(true);
           }
-          setUserPoints(Math.max(0, getUserPoints() + finalPts));
-          saveDatabase(true);
+          quizPointsEarned = finalPts;
         }
-        quizPointsEarned = finalPts;
+      } catch (errPoints) {
+        console.warn('Quiz points settlement error:', errPoints);
       }
-      if (studySourceContext === 'review-queue' || !currentDeckId) {
+
+      try {
+        if (studySourceContext === 'review-queue' || !currentDeckId) {
+          showScreen('screen-decks');
+          refreshActiveScreenData();
+        } else {
+          openDeckDetail(currentDeckId);
+        }
+      } catch (errNav) {
+        console.warn('Quiz navigation fallback:', errNav);
         showScreen('screen-decks');
-        refreshActiveScreenData();
-      } else {
-        showScreen('screen-deck-detail');
         refreshActiveScreenData();
       }
     }
@@ -19171,8 +19189,7 @@ Yêu cầu nghiêm ngặt:
         showScreen('screen-decks');
         refreshActiveScreenData();
       } else {
-        showScreen('screen-deck-detail');
-        refreshActiveScreenData();
+        openDeckDetail(currentDeckId);
       }
     }
 
@@ -20142,29 +20159,38 @@ Yêu cầu nghiêm ngặt:
         speakingCurrentMediaStream = null;
       }
 
-      if (speakingSessionPointsEarned !== 0) {
-        const isComp = done >= total && total > 0;
-        const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
-        const finalPts = res.finalPts;
+      try {
+        if (speakingSessionPointsEarned !== 0) {
+          const isComp = done >= total && total > 0;
+          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
+          const finalPts = res.finalPts;
 
-        if (finalPts !== 0) {
-          const curDeck = decks.find(d => d.id === currentDeckId);
-          const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
-          setUserPoints(Math.max(0, getUserPoints() + finalPts));
-          const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
-          addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')');
-          saveDatabase(true);
-          pushCurrentDatabaseToCloud();
-          showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
+          if (finalPts !== 0) {
+            const curDeck = decks.find(d => d.id === currentDeckId);
+            const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
+            setUserPoints(Math.max(0, getUserPoints() + finalPts));
+            const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
+            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')');
+            saveDatabase(true);
+            pushCurrentDatabaseToCloud();
+            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
+          }
+          speakingSessionPointsEarned = 0;
         }
-        speakingSessionPointsEarned = 0;
+      } catch (errPoints) {
+        console.warn('Speaking points settlement error:', errPoints);
       }
 
-      if (studySourceContext === 'review-queue' || !currentDeckId) {
+      try {
+        if (studySourceContext === 'review-queue' || !currentDeckId) {
+          showScreen('screen-decks');
+          refreshActiveScreenData();
+        } else {
+          openDeckDetail(currentDeckId);
+        }
+      } catch (errNav) {
+        console.warn('Speaking navigation fallback:', errNav);
         showScreen('screen-decks');
-        refreshActiveScreenData();
-      } else {
-        showScreen('screen-deck-detail');
         refreshActiveScreenData();
       }
     }
@@ -21597,11 +21623,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       stopAllAudio();
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
-      if (studySourceContext === 'review-queue' || !currentDeckId) {
+      try {
+        if (studySourceContext === 'review-queue' || !currentDeckId) {
+          showScreen('screen-decks');
+          refreshActiveScreenData();
+        } else {
+          openDeckDetail(currentDeckId);
+        }
+      } catch (errNav) {
+        console.warn('AutoFC navigation fallback:', errNav);
         showScreen('screen-decks');
-        refreshActiveScreenData();
-      } else {
-        showScreen('screen-deck-detail');
         refreshActiveScreenData();
       }
     }
@@ -22074,10 +22105,20 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function showToast(msg) {
-      const t = document.getElementById('toast');
+      if (!msg) return;
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.className = 'toast';
+        document.body.appendChild(t);
+      }
       t.textContent = msg;
       t.style.display = 'block';
-      setTimeout(() => { t.style.display = 'none'; }, 3000);
+      if (window._vocaflowToastTimer) clearTimeout(window._vocaflowToastTimer);
+      window._vocaflowToastTimer = setTimeout(() => {
+        if (t) t.style.display = 'none';
+      }, 3000);
     }
 
     function escapeHtml(str) {

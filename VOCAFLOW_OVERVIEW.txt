@@ -1,4 +1,17 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-27 (Build 259) - Seamless Deck Navigation & VocaStudio VoCoin-Strict Economy
+================================================================================
+1. [Khắc Phục Điều Hướng Thoát Học Trở Về Chi Tiết Bộ Từ (Seamless Deck Navigation)]:
+   - Khắc phục triệt để lỗi khi người dùng bấm "Quay lại" hoặc thoát dở dang các phiên học (Spelling, Quiz, Speaking, Auto Flashcard) từ ngữ cảnh bộ từ (studySourceContext === 'deck'): Thay vì chuyển hướng về màn hình danh sách tất cả bộ từ (screen-decks), ứng dụng tự động mở lại đúng chi tiết bộ từ đang học (openDeckDetail(currentDeckId)).
+   - Đảm bảo tải và hiển thị tức thì toàn bộ danh sách từ vựng, thông tin tiêu đề, tác giả, bộ lọc và các nút điều khiển của bộ từ mà người dùng không phải bấm chọn lại bộ từ từ đầu.
+   - Chuẩn hóa điều hướng trong cả các hàm kết thúc modal hoàn thành bài học (exitSpellingToDeck, exitQuizToDeck, exitSpeakingMode) và các hàm thoát sớm (doExecuteExitSpelling, doExecuteExitQuiz, doExecuteExitSpeaking, doExecuteExitAutoFlashcard).
+2. [Chuẩn Hóa Sổ Cái VocaStudio & Tách Biệt Hoàn Toàn VocaSpin Sang VocaNoti (VoCoin-Strict Economy)]:
+   - Chuẩn hóa nguyên tắc kế toán của Sổ Cái Giao Dịch VocaStudio (userLedger): Sổ cái chỉ lưu trữ các giao dịch tài chính liên quan đến tiền tệ VoCoin; tuyệt đối không ghi nhận các đơn vị ngoại lai như lượt quay VocaSpin hay các giao dịch giá trị 0 VoCoin (amount === 0).
+   - Loại bỏ hoàn toàn mã giao dịch VIP_DAILY_SPIN khỏi userLedger và hàm grantDailyVipSpin().
+   - Cơ chế thưởng lượt quay VocaSpin hằng ngày (+2 Spin) cho VocaVIP được chuyển giao thông báo độc quyền qua Trung Tâm Thông Báo VocaNoti (addNotification('VIP_BONUS', '👑 Quà Tặng VocaVIP Hằng Ngày', ...)), hiển thị trực quan và trang trọng trong hòm thư.
+   - Triển khai cơ chế tự chữa lành (Self-Healing Cleanup) trên cả LocalStorage và Cloud: Tự động loại bỏ và lọc sạch mọi bản ghi VIP_DAILY_SPIN hoặc bản ghi 0đ cũ còn sót lại trong lịch sử giao dịch khi khởi động app (loadDatabase) hoặc khi đồng bộ dữ liệu Cloud (syncLedgerFromCloud, syncDatabaseFromCloud).
+
+================================================================================
 Phiên bản: v0.10.9-alpha-22 (Build 254) - Dynamic Store Sale Engine & Cross-Device Deck Deduplication
 ================================================================================
 1. [Khắc Phục Lỗi Hiển Thị & Thanh Toán Giảm Giá Sự Kiện Siêu Sale (Dynamic Store Sale Engine)]:

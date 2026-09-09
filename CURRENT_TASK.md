@@ -1,39 +1,43 @@
 ﻿# CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-alpha-26 (Build 258)`  
+> **Phiên bản mục tiêu:** `v0.10.9-alpha-27 (Build 259)`  
 > **Cập nhật lần cuối:** 2026-09-09  
 > **Trạng thái:** ✅ **ĐÃ HOÀN TẤT 100% - KIỂM THỬ THÀNH CÔNG**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-alpha-27)
 
-- [x] **Nhiệm vụ 1: Khắc phục lỗi nhân đôi / trùng lặp từ vựng trong VocaDeck**
-  - Xây dựng động cơ tự động gộp từ trùng lặp `reconcileDuplicateWordsInDecks(targetDeckId, triggerSave)`.
-  - Nhóm các từ vựng có cùng thuật ngữ (không phân biệt chữ hoa hay chữ thường, tự động chuẩn hóa dấu cách).
-  - Tự động lọc và gộp nét nghĩa: nếu định nghĩa giống nhau thì xóa nét nghĩa bị trùng, nếu định nghĩa mới bổ sung thêm thì gộp bằng dấu chấm phẩy.
-  - Bảo tồn điểm thuộc từ cao nhất (`masteryScore`) và trạng thái học (`mastered` > `learning` > `newWord`).
-  - Đưa các ID từ vựng trùng lặp bị loại bỏ vào `deletedWordIds` (tombstone) để Firebase Cloud RTDB cũng tự động xóa bỏ hoàn toàn, tránh việc tải ngược từ trùng từ Cloud.
-  - Sửa `autoHealOrphanWords` để không tạo từ trùng khi quét bản sao lưu hoặc từ mồ côi.
-  - Tự động kích hoạt khử trùng lặp khi khởi động ứng dụng (`loadDatabase()`), khi mở chi tiết bộ từ (`openDeckDetail(deckId)`), và sau khi đồng bộ Cloud (`handleManualSync()`).
-  - Bổ sung nút bấm thủ công `🔄 Dọn Từ Trùng` (`handleManualDeduplicateCurrentDeck()`) trong thanh công cụ `screen-deck-detail` để người dùng có thể kích hoạt dọn dẹp bất cứ lúc nào.
+- [x] **Nhiệm vụ 1: Khắc phục điều hướng thoát bài học trở về đúng Chi tiết Bộ từ (Seamless Deck Navigation)**
+  - Người dùng phản ánh khi bấm nút "Quay lại" trong quá trình học Flashcard / Luyện viết (`studySourceContext === 'deck'`), app lại nhảy sang tab Danh Sách Bộ Từ (`screen-decks`), bắt người dùng phải bấm tìm và mở lại bộ từ.
+  - Sửa đổi toàn bộ các hàm thoát dở bài học:
+    * `doExecuteExitSpelling(done, total)`: Gọi `openDeckDetail(currentDeckId)` thay vì `showScreen('screen-deck-detail')`.
+    * `doExecuteExitQuiz(done, total)`: Gọi `openDeckDetail(currentDeckId)` thay vì `showScreen('screen-deck-detail')`.
+    * `doExecuteExitSpeaking(done, total)`: Gọi `openDeckDetail(currentDeckId)` thay vì `showScreen('screen-deck-detail')`.
+    * `doExecuteExitAutoFlashcard()`: Gọi `openDeckDetail(currentDeckId)` thay vì `showScreen('screen-deck-detail')`.
+  - Sửa đổi các hàm điều hướng khi hoàn thành bài học:
+    * `exitSpellingToDeck()`: Gọi `openDeckDetail(currentDeckId)`.
+    * `exitQuizToDeck()`: Gọi `openDeckDetail(currentDeckId)`.
+  - Đảm bảo hiển thị đầy đủ tiêu đề, mô tả, danh sách từ vựng, bộ lọc và trạng thái thanh công cụ của bộ từ mà không yêu cầu người dùng phải thao tác lại từ đầu.
 
-- [x] **Nhiệm vụ 2: Xóa 2 nút Cổng Quản Trị & God Mode trong Cài Đặt**
-  - Xóa bỏ hoàn toàn 2 nút "Truy Cập Cổng Quản Trị" và "Chế Độ God Mode (Publisher Portal)" khỏi modal Cài Đặt (`src/components/modals/modal-settings.html`).
-  - Cổng Quản Trị & Publisher Portal được chuyển về đúng cơ chế ẩn bảo mật: chạm nhanh 5 lần vào huy hiệu phiên bản trên Header hoặc trong Cài đặt (`handleVersionBadgeMultiClick`).
+- [x] **Nhiệm vụ 2: Tách biệt VocaSpin sang VocaNoti và Chuẩn hóa Sổ Cái VocaStudio (VoCoin-Strict Economy)**
+  - Người dùng phản ánh lượt quay VocaSpin thưởng VIP hằng ngày (+2 VocaSpin) bị ghi vào Sổ cái giao dịch VocaStudio với số tiền 0 Xu / nhãn VocaSpin lạ lẫm, làm mất tính nhất quán của ví VoCoin.
+  - Sổ cái VocaStudio (`userLedger`) từ nay chỉ phục vụ duy nhất các giao dịch biến động tiền tệ VoCoin (`amount !== 0`).
+  - Xóa bỏ hoàn toàn việc ghi bản ghi `VIP_DAILY_SPIN` vào `userLedger` trong hàm `grantDailyVipSpin()`.
+  - Việc thưởng +2 VocaSpin VIP hằng ngày được thông báo độc quyền qua Trung Tâm Thông Báo VocaNoti (`addNotification('VIP_BONUS', '👑 Quà Tặng VocaVIP Hằng Ngày', ...)`).
+  - Bổ sung cơ chế tự làm sạch (Self-Healing Cleanup) trên cả LocalStorage và Cloud: Tự động lọc sạch mọi bản ghi `VIP_DAILY_SPIN` và bản ghi có `amount === 0` trong `loadDatabase()`, `syncLedgerFromCloud()`, `syncDatabaseFromCloud()` và `renderLedgerList()`.
 
-- [x] **Nhiệm vụ 3: Tối ưu giao diện Header & VocaDeck trên màn hình hẹp / di động (Hình 1)**
-  - Thu gọn thanh điều hướng: các nhãn chữ dài trên Header tự động ẩn, các nút phụ (`📖 Hướng Dẫn`, `🤖 VocaMentor`, `💼 VocaStudio`, `👑 VocaVIP`) tự động co và chuyển dần vào menu 3 chấm (`#btn-header-more`) khi màn hình hẹp dần (< 768px, < 640px).
-  - Đảm bảo nút 3 chấm (`#btn-header-more` / `.mobile-more-wrapper`) luôn được ghim cố định ở góc phải với `margin-left: auto; flex-shrink: 0;` và `display: inline-flex !important;`, không bao giờ bị tràn hay khuất khỏi màn hình.
-  - Thêm class tự động co `header.compact-header` hỗ trợ cả resize sự kiện lẫn CSS.
-  - Ẩn chữ trên các nút thao tác thẻ VocaDeck (`.deck-actions-grid .btn span`) trên màn hình < 768px để các icon hiển thị gọn gàng, tránh vỡ thẻ hoặc tràn nút.
+- [x] **Nhiệm vụ 3: Nâng cấp phiên bản toàn diện lên v0.10.9-alpha-27 (Build 259)**
+  - `src/scripts/app.js`: Cập nhật hằng số `VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-27'`, `VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-27 (Build 259)'`.
+  - `src/components/header.html`: Cập nhật nhãn phiên bản trên Header `v0.10.9-alpha-27`.
+  - `src/components/modals/modal-settings.html`: Cập nhật nhãn phiên bản trong Cài Đặt `v0.10.9-alpha-27 (Build 259)`.
+  - `sw.js`: Cập nhật `CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-27'`.
+  - `pubspec.yaml`: Cập nhật `version: 0.10.9+259`.
+  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE\VOCAFLOW_OVERVIEW.txt`: Bổ sung chi tiết bản cập nhật `v0.10.9-alpha-27 (Build 259)`.
+  - `GITHUB_RELEASE\push_github.ps1`: Cập nhật tên file zip và commit message lên `v0.10.9-alpha-27`.
 
-- [x] **Nhiệm vụ 4: Lưu trạng thái và đồng bộ Cloud cho Tabs & Ghim & Bộ lọc**
-  - **Tabs VocaDeck**: Lưu tab hiện tại ("Đang học" / "Kho Lưu Trữ") vào `localStorage` (`vocaflow_deck_tab`), lưu trữ lên Cloud (`deckTab`), và tự động khôi phục đúng tab khi mở app hoặc đồng bộ.
-  - **Trạng thái Ghim & Lưu trữ**: Sửa triệt để lỗi logic `(local.isPinned === true) || (remote.isPinned === true)` trong `handleManualSync`. Đổi sang so sánh timestamp và ưu tiên hành động cục bộ khi timestamp bằng nhau, cho phép bỏ ghim hoặc hủy lưu trữ vĩnh viễn.
-  - **Bộ lọc VocaWord**: Ghi nhớ bộ lọc đang chọn (Tất cả, 0%, 1-25%,...) vào `localStorage` (`vocaflow_word_filter`), đồng bộ lên Cloud (`wordFilter`), và tự động kích hoạt lại đúng chip lọc khi vào chi tiết bộ từ.
-
-- [x] **Nhiệm vụ 5: Quy trình Build & Triển khai GitHub tự động**
-  - Tự động lắp ghép qua `build_vocaflow.ps1`.
-  - Kiểm tra độ cân bằng ngoặc nhọn `{}` và kiểm thử Headless Edge.
-  - Tự động commit và đẩy lên nhánh `main` và nhánh triển khai `gh-pages` trên GitHub mà không cần hỏi lại.
+- [x] **Nhiệm vụ 4: Kiểm thử và Biên dịch tự động**
+  - Biên dịch toàn diện với `build_vocaflow.ps1` (45,039 dòng, 2664.4 KB).
+  - Kiểm tra độ cân bằng ngoặc nhọn `{}`: 7,266 mở / 7,266 đóng (Chênh lệch: 0).
+  - Kiểm thử Headless Edge trên `vocaflow.html`: Không có bất kỳ lỗi JavaScript / SyntaxError / ReferenceError nào.
+  - Kiểm thử điều hướng thoát học và cơ chế miễn nhiễm sổ cái: `ALL_VERIFICATIONS_PASSED`.

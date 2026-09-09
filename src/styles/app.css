@@ -1572,7 +1572,10 @@
       position: absolute;
       top: calc(100% + 8px);
       right: 0;
-      width: 230px;
+      width: 250px;
+      max-height: min(520px, calc(100vh - 75px));
+      overflow-y: auto;
+      overscroll-behavior: contain;
       background: var(--surface-elevated);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -1581,6 +1584,20 @@
       z-index: 1000;
       backdrop-filter: blur(12px);
       animation: fadeInDropdown 0.15s ease-out;
+    }
+    .header-more-dropdown::-webkit-scrollbar {
+      width: 5px;
+    }
+    .header-more-dropdown::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+    }
+    .header-more-dropdown::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+    }
+    .header-more-dropdown::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.45);
     }
     @keyframes fadeInDropdown {
       from { opacity: 0; transform: translateY(-6px); }
