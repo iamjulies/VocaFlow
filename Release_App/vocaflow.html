@@ -1565,26 +1565,108 @@
       color: white;
     }
 
-    /* TOAST */
+    /* TOAST (v0.10.9-alpha-28: MAX Z-INDEX OVERLAY) */
     .toast {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background-color: var(--surface-elevated);
-      color: var(--text);
+      background-color: var(--surface-elevated, #1e293b);
+      color: var(--text, #f8fafc);
       padding: 12px 20px;
       border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
-      z-index: 200;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.2);
+      z-index: 2147483647 !important;
       display: none;
       animation: slideUp 0.2s ease;
-      border-left: 4px solid var(--primary);
+      border-left: 4px solid var(--primary, #6366f1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: calc(100vw - 48px);
+      word-wrap: break-word;
+      pointer-events: auto;
     }
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ========================================================================= */
+    /* EQUIPPED / PINNED BADGE ROTATING LIGHT EFFECT (v0.10.9-alpha-28 / model1) */
+    /* ========================================================================= */
+    @keyframes rotateLight {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pinned-badge-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .pinned-badge-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pinned-badge-card::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 350%;
+      animation: rotateLight 3s linear infinite;
+      z-index: 0;
+    }
+
+    .pinned-badge-card.tier-bronze::before {
+      background: conic-gradient(transparent, #cd7f32, #d97706, transparent 40%);
+    }
+    .pinned-badge-card.tier-silver::before {
+      background: conic-gradient(transparent, #cbd5e1, #94a3b8, transparent 40%);
+    }
+    .pinned-badge-card.tier-gold::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
+    }
+    .pinned-badge-card.tier-diamond::before {
+      background: conic-gradient(transparent, #00d2ff, #0066ff, transparent 40%);
+    }
+    .pinned-badge-card.tier-mythic::before {
+      background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
+    }
+
+    .pinned-badge-card::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--surface-elevated, #17202a);
+      border-radius: 8.5px;
+      z-index: 1;
+    }
+
+    .pinned-badge-card .pinned-badge-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      text-align: center;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
 
@@ -2675,7 +2757,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-27</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-28</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -4648,7 +4730,7 @@
           <span>🚀</span> Flower Mới (Từng Bước)
         </button>
         <button class="guide-tab-btn" id="guide-tab-btn-flow" onclick="switchUserGuideCategory('flow')">
-          <span>🌊</span> FlowStreak & SRS
+          <span>🌊</span> Flow & Spaced Repetition (SRS)
         </button>
         <button class="guide-tab-btn" id="guide-tab-btn-economy" onclick="switchUserGuideCategory('economy')">
           <span>🪙</span> Ví VoCoin & VocaShop
@@ -4694,7 +4776,7 @@
                 <div style="flex: 1;">
                   <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Đồng Bộ Đám Mây Đa Thiết Bị</h4>
                   <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
-                    Khi tạo tài khoản VocaFlow, toàn bộ dữ liệu từ vựng, tiến độ học tập, FlowStreak và số dư VoCoin tích lũy sẽ được bảo vệ tuyệt đối và đồng bộ tức thì giữa Điện thoại, Máy tính và Trình duyệt web.
+                    Khi tạo tài khoản VocaFlow, toàn bộ dữ liệu từ vựng, tiến độ học tập, chuỗi Flow và số dư VoCoin tích lũy sẽ được bảo vệ tuyệt đối và đồng bộ tức thì giữa Điện thoại, Máy tính và Trình duyệt web.
                   </p>
                 </div>
               </div>
@@ -4705,7 +4787,7 @@
               <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
-                  <span>Nhấn vào nút <strong style="color: var(--text);">👤 Tài khoản</strong> ở góc trên bên phải thanh công cụ.</span>
+                  <span>Nhấn vào nút <strong style="color: var(--text);">👤 Khách</strong> ở góc trên bên phải thanh công cụ.</span>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
@@ -4769,9 +4851,9 @@
               <div style="display: flex; gap: 12px; align-items: flex-start;">
                 <div style="font-size: 28px; line-height: 1;">🎁</div>
                 <div style="flex: 1;">
-                  <h4 style="font-size: 14.5px; font-weight: 800; color: #f59e0b; margin-bottom: 6px;">Quà Tặng Khởi Nghiệp: Nhập Mã Nhận +500 VoCoin!</h4>
+                  <h4 style="font-size: 14.5px; font-weight: 800; color: #f59e0b; margin-bottom: 6px;">Quà Tặng Khởi Nghiệp: Nhập Mã Nhận +200 VoCoin & +20 VocaHint!</h4>
                   <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
-                    Dành riêng cho bạn mới! Sử dụng ngay mã quà tặng tân thủ để nhận ngay 500 VoCoin vào tài khoản, tha hồ trải nghiệm Vòng quay may mắn và sắm sửa trong VocaShop!
+                    Dành riêng cho bạn mới! Sử dụng ngay mã quà tặng tân thủ để nhận ngay +200 VoCoin và +20 VocaHint vào tài khoản, tha hồ trải nghiệm Vòng quay may mắn và sắm sửa trong VocaShop!
                   </p>
                 </div>
               </div>
@@ -4781,14 +4863,14 @@
               <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Mã Giftcode Độc Quyền Tân Thủ:</div>
               <div style="display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 2px dashed #f59e0b; border-radius: 12px; padding: 10px 20px; margin-bottom: 16px;">
                 <span style="font-size: 20px; font-weight: 900; letter-spacing: 2px; color: #fbbf24; font-family: monospace;">HELLOKHANG2011</span>
-                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 11px; font-weight: 800;">+500 VoCoin</span>
+                <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 11px; font-weight: 800;">+200 VoCoin, +20 VocaHint</span>
               </div>
               <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;">
                 Bạn chỉ cần bấm nút nhận thưởng bên dưới, VocaFlow sẽ tự động điền mã và mở cửa sổ nhận quà ngay lập tức!
               </div>
               <div>
                 <button class="btn btn-primary" onclick="applyGiftcodeFromGuide('HELLOKHANG2011')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-size: 13px; font-weight: 800; padding: 10px 22px; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
-                  🎁 Nhận Ngay 500 VoCoin Tân Thủ
+                  🎁 Nhận Ngay Quà Tân Thủ (+200 VoCoin, +20 VocaHint)
                 </button>
               </div>
             </div>
@@ -4919,13 +5001,13 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- CATEGORY 2: FLOWSTREAK & SRS                                      -->
+        <!-- CATEGORY 2: FLOW & SPACED REPETITION (SRS)                        -->
         <!-- ================================================================= -->
         <div class="guide-cat-panel" id="guide-cat-panel-flow">
           <div class="guide-card" style="border-left: 4px solid #06b6d4;">
-            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🌊 FlowStreak</h4>
+            <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text); margin-bottom: 6px;">🌊 Chuỗi Học Tập (Flow)</h4>
             <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;">
-              Thành công trong học ngoại ngữ đến từ tính kỷ luật đều đặn mỗi ngày! Chỉ cần hoàn thành tối thiểu 1 bài học mỗi ngày, bạn sẽ giữ vững ngọn lửa <strong style="color: #f59e0b;">🔥 FlowStreak</strong>.
+              Thành công trong học ngoại ngữ đến từ tính kỷ luật đều đặn mỗi ngày! Chỉ cần hoàn thành tối thiểu 1 bài học mỗi ngày, bạn sẽ giữ vững ngọn lửa <strong style="color: #f59e0b;">🔥 Flow</strong>.
             </p>
           </div>
 
@@ -4933,7 +5015,7 @@
             <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 10px;">🧠 Thuật Toán Lặp Lại Ngắt Quãng (Spaced Repetition - SRS):</h4>
             <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
               <p style="margin: 0;">
-                Não bộ tự nhiên sẽ quên dần từ vựng theo thời gian. VocaFlow tự động tính toán thời điểm vàng trước khi bạn kịp quên để đưa từ vào <strong style="color: var(--primary);">Hàng Đợi Ôn Tập (Review Queue)</strong>.
+                Não bộ tự nhiên sẽ quên dần từ vựng theo thời gian. VocaFlow tự động tính toán thời điểm vàng trước khi bạn kịp quên để đưa từ vào <strong style="color: var(--primary);">Hàng Đợi Ôn Tập (Review Queue)</strong> theo nguyên lý Spaced Repetition (SRS).
               </p>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 4px;">
                 <div style="background: var(--surface); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
@@ -4958,7 +5040,7 @@
 
           <div class="guide-card" style="border: 1px dashed var(--border); text-align: center;">
             <div style="font-size: 13px; color: var(--text); font-weight: 700; margin-bottom: 4px;">🛡️ Bùa Bảo Vệ FlowFreeze</div>
-            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Lỡ bận việc đột xuất không kịp học? Bạn có thể mua FlowFreeze trong VocaShop để bảo vệ FlowStreak!</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">Lỡ bận việc đột xuất không kịp học? Bạn có thể mua FlowFreeze trong VocaShop để bảo vệ chuỗi Flow!</div>
             <button class="btn btn-outline" onclick="navigateFromGuide(() => openShopModal(), 'modal-shop');" style="font-size: 11.5px; font-weight: 700;">
               🛒 Đến VocaShop Mua FlowFreeze
             </button>
@@ -7537,7 +7619,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-27 (Build 259)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-28 (Build 260)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8158,10 +8240,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-27)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-28)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-27';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-27 (Build 259)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-28';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-28 (Build 260)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -9822,6 +9904,64 @@
       }
     }
 
+    function getClaimedGiftCodesForCurrentAccount() {
+      const list = new Set();
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      if (uid) {
+        const uidList = JSON.parse(localStorage.getItem('vocaflow_claimed_giftcodes_' + uid) || '[]');
+        if (Array.isArray(uidList)) uidList.forEach(c => { if (c) list.add(String(c).toUpperCase()); });
+      }
+      const legacyList = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
+      if (Array.isArray(legacyList)) legacyList.forEach(c => { if (c) list.add(String(c).toUpperCase()); });
+      if (Array.isArray(userLedger)) {
+        userLedger.forEach(entry => {
+          if (entry && entry.type === 'GIFTCODE' && entry.description) {
+            const m = entry.description.match(/"([^"]+)"/);
+            if (m && m[1]) list.add(m[1].toUpperCase());
+            if (entry.description.includes('HELLOKHANG2011')) list.add('HELLOKHANG2011');
+            if (entry.description.includes('JULIESVIP')) list.add('JULIESVIP');
+            if (entry.description.includes('RESTORE150')) list.add('RESTORE150');
+            if (entry.description.includes('VOCAFLOW100')) list.add('VOCAFLOW100');
+            if (entry.description.includes('JULIES')) list.add('JULIES');
+          }
+        });
+      }
+      return list;
+    }
+
+    async function recordClaimedGiftCodeForCurrentAccount(code, pts = 0, hts = 0, sks = 0) {
+      const cleanCode = String(code).toUpperCase().trim();
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      if (uid) {
+        const key = 'vocaflow_claimed_giftcodes_' + uid;
+        const current = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!current.includes(cleanCode)) {
+          current.push(cleanCode);
+          localStorage.setItem(key, JSON.stringify(current));
+        }
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        try {
+          await fetch(`${rtdbUrl}/users/${uid}/claimedGiftCodes/${encodeURIComponent(cleanCode)}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              claimedAt: getTrustedCurrentTimestamp(),
+              points: pts,
+              hints: hts,
+              skips: sks
+            })
+          });
+        } catch (e) {
+          console.warn('Could not record gift code claim to cloud RTDB:', e);
+        }
+      }
+      const legacyList = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
+      if (!legacyList.includes(cleanCode)) {
+        legacyList.push(cleanCode);
+        localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(legacyList));
+      }
+    }
+
     async function redeemShopGiftCode() {
       if (!requireLogin('tính năng Nhập Mã Quà Tặng')) {
         return;
@@ -9858,21 +9998,72 @@
       }
 
       const code = rawText.toUpperCase();
-
-      const usedCodes = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
-      if (usedCodes.includes(code)) {
+      const claimedCodes = getClaimedGiftCodesForCurrentAccount();
+      if (claimedCodes.has(code)) {
         msg.style.display = 'block';
         msg.style.color = '#ef4444';
-        msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi!';
+        msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi! (Mỗi tài khoản chỉ được nhập 1 lần)';
         return;
+      }
+
+      // Check cloud RTDB claim record for UID
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      if (uid) {
+        try {
+          const checkClaimRes = await fetch(`${rtdbUrl}/users/${uid}/claimedGiftCodes/${encodeURIComponent(code)}.json`);
+          if (checkClaimRes.ok) {
+            const checkData = await checkClaimRes.json();
+            if (checkData) {
+              msg.style.display = 'block';
+              msg.style.color = '#ef4444';
+              msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi! (Mỗi tài khoản chỉ được nhập 1 lần)';
+              await recordClaimedGiftCodeForCurrentAccount(code);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Cloud gift check claim error:', e);
+        }
       }
 
       msg.style.display = 'block';
       msg.style.color = '#38bdf8';
       msg.textContent = '⏳ Đang kiểm tra mã quà tặng...';
 
-      // 1. Try checking Cloud Firebase Gift Codes
-      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      // 1. Starter Giftcode: HELLOKHANG2011 (+200 VoCoin, +20 VocaHint)
+      if (code === 'HELLOKHANG2011') {
+        await recordClaimedGiftCodeForCurrentAccount('HELLOKHANG2011', 200, 20, 0);
+        setUserHints(getUserHints() + 20);
+        setUserPoints(getUserPoints() + 200);
+        addLedgerEntry('GIFTCODE', 200, 'Nhập mã tân thủ "HELLOKHANG2011" (+200 VoCoin, +20 VocaHint)');
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = '🎉 Áp dụng thành công! Tặng ngay +200 VoCoin & +20 VocaHint!';
+        input.value = '';
+        showToast('🎁 Chúc mừng! Đã nhận +200 VoCoin & +20 VocaHint tân thủ!');
+        return;
+      }
+
+      // 2. Built-in Master Publisher Codes (+500 VoCoin, +150 VocaHint)
+      if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
+        await recordClaimedGiftCodeForCurrentAccount(code, 500, 150, 0);
+        setUserHints(getUserHints() + 150);
+        setUserPoints(getUserPoints() + 500);
+        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 VoCoin)`);
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 VocaHint & +500 VoCoin!';
+        input.value = '';
+        showToast('🎁 Chúc mừng! Đã nhận +150 VocaHint & +500 VoCoin!');
+        return;
+      }
+
+      // 3. Try checking Cloud Firebase Gift Codes
       try {
         const res = await fetch(`${rtdbUrl}/giftCodes/${encodeURIComponent(code)}.json`);
         if (res.ok) {
@@ -9889,14 +10080,15 @@
             const pts = parseInt(data.points, 10) || 0;
             const sks = parseInt(data.skips, 10) || 0;
             
-            usedCodes.push(code);
-            localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
+            await recordClaimedGiftCodeForCurrentAccount(code, pts, hts, sks);
             if (hts > 0) setUserHints(getUserHints() + hts);
             if (pts > 0) {
               setUserPoints(getUserPoints() + pts);
               addLedgerEntry('GIFTCODE', pts, `Nhập mã quà tặng "${code}" (+${pts} VoCoin)`);
             }
             if (sks > 0) setUserSkips(getUserSkips() + sks);
+            saveDatabase(true);
+            pushCurrentDatabaseToCloud();
 
             msg.style.display = 'block';
             msg.style.color = '#10b981';
@@ -9911,21 +10103,6 @@
         }
       } catch (cloudErr) {
         console.warn('Cloud gift check error:', cloudErr);
-      }
-
-      // 2. Built-in Master Publisher Codes
-      if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
-        usedCodes.push(code);
-        localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
-        setUserHints(getUserHints() + 150);
-        setUserPoints(getUserPoints() + 500);
-        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 VoCoin)`);
-        msg.style.display = 'block';
-        msg.style.color = '#10b981';
-        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 VocaHint & +500 VoCoin!';
-        input.value = '';
-        showToast('🎁 Chúc mừng! Đã nhận +150 VocaHint & +500 VoCoin!');
-        return;
       }
 
       msg.style.display = 'block';
@@ -14611,13 +14788,13 @@ function switchPublisherTab(tab) {
         fetchCloudLibraryDecks();
       }
 
-      // Auto-recover any purchased decks from userLedger BUY_DECK or decks libSourceId
+      // Auto-recover any purchased decks from userLedger BUY_DECK
       if (Array.isArray(userLedger)) {
         userLedger.forEach(entry => {
           if (entry && entry.type === 'BUY_DECK' && entry.description) {
             const allD = getAllLibraryDecks();
             allD.forEach(ld => {
-              if (ld && ld.id && entry.description.includes(ld.title)) {
+              if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
                 userPurchasedDeckIds.add(ld.id);
               }
             });
@@ -14626,18 +14803,31 @@ function switchPublisherTab(tab) {
       }
       if (Array.isArray(decks)) {
         decks.forEach(d => {
-          if (d && d.libSourceId) userPurchasedDeckIds.add(d.libSourceId);
+          if (d && d.libSourceId && !isDeckAuthor(d)) {
+            const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
+            if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
+              userPurchasedDeckIds.add(d.libSourceId);
+            }
+          }
         });
       }
 
       const allDecks = getAllLibraryDecks();
-      const purchased = allDecks.filter(d => userPurchasedDeckIds.has(d.id));
 
-      // Also check if any purchased ID is not in allDecks but exists in local decks
+      // Purge any own deck IDs that might have been accidentally saved in userPurchasedDeckIds
+      allDecks.forEach(d => {
+        if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
+          userPurchasedDeckIds.delete(d.id);
+        }
+      });
+
+      const purchased = allDecks.filter(d => userPurchasedDeckIds.has(d.id) && !isDeckAuthor(d) && ((d.price || 0) > 0 || d.isVip || d.isVipOnly || d.id === 'lib_deck_ielts_45_60'));
+
+      // Also check if any purchased ID is not in allDecks but exists in local decks (and is not authored by user)
       userPurchasedDeckIds.forEach(pId => {
         if (!purchased.some(d => d.id === pId)) {
-          const localMatch = decks.find(d => d.libSourceId === pId || d.id === pId);
-          if (localMatch) {
+          const localMatch = decks.find(d => (d.libSourceId === pId || d.id === pId) && !isDeckAuthor(d));
+          if (localMatch && ((localMatch.price || 0) > 0 || localMatch.isVip || localMatch.isVipOnly || localMatch.id === 'lib_deck_ielts_45_60' || pId === 'lib_deck_ielts_45_60')) {
             purchased.push({
               id: pId,
               title: localMatch.title,
@@ -14671,7 +14861,7 @@ function switchPublisherTab(tab) {
                 <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
                 <span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.15); color: #34d399;">Đã sở hữu</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--text-muted); display: align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+              <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
                 <span>Tác giả:</span>
                 ${isAuthorVipUser(deck.authorUid, deck.author) ? `
                   <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">
@@ -15257,10 +15447,12 @@ function switchPublisherTab(tab) {
             if (bDef) {
               const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
               bHtml += `
-                <div style="background: ${t.bg}; border: 1.5px solid ${t.border}; border-radius: 10px; padding: 6px 4px; text-align: center;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div style="font-size: 20px; line-height: 1;">${bDef.icon}</div>
-                  <div style="font-size: 10.5px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">${escapeHtml(bDef.name)}</div>
-                  <div style="font-size: 8.5px; color: var(--text-muted); text-transform: uppercase;">${t.name}</div>
+                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                  <div class="pinned-badge-content" style="padding: 6px 4px;">
+                    <div style="font-size: 20px; line-height: 1;">${bDef.icon}</div>
+                    <div style="font-size: 10.5px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
+                    <div style="font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${t.name}</div>
+                  </div>
                 </div>
               `;
             }
@@ -16278,7 +16470,7 @@ function switchPublisherTab(tab) {
                     if (entry && entry.type === 'BUY_DECK' && entry.description) {
                       const allD = getAllLibraryDecks();
                       allD.forEach(ld => {
-                        if (ld && ld.id && entry.description.includes(ld.title)) {
+                        if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
                           userPurchasedDeckIds.add(ld.id);
                         }
                       });
@@ -16287,12 +16479,36 @@ function switchPublisherTab(tab) {
                 }
                 if (Array.isArray(decks)) {
                   decks.forEach(d => {
-                    if (d && d.libSourceId) userPurchasedDeckIds.add(d.libSourceId);
+                    if (d && d.libSourceId && !isDeckAuthor(d)) {
+                      const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
+                      if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
+                        userPurchasedDeckIds.add(d.libSourceId);
+                      }
+                    }
                   });
                 }
+
+                // Purge any own deck IDs that might have been saved in userPurchasedDeckIds
+                const allDecksRef = getAllLibraryDecks();
+                allDecksRef.forEach(d => {
+                  if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
+                    userPurchasedDeckIds.delete(d.id);
+                  }
+                });
+
                 localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
                 localStorage.setItem('vocaflow_purchased_decks_count', userPurchasedDeckIds.size.toString());
                 if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+
+                // Sync Claimed Gift Codes from Cloud for current UID
+                if (currentUser && currentUser.uid && cloudData.claimedGiftCodes && typeof cloudData.claimedGiftCodes === 'object') {
+                  const key = 'vocaflow_claimed_giftcodes_' + currentUser.uid;
+                  const localClaimed = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+                  Object.keys(cloudData.claimedGiftCodes).forEach(code => {
+                    if (code) localClaimed.add(code.toUpperCase());
+                  });
+                  localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
+                }
 
                 // Sync Following & Followers from Cloud (Cloud Source of Truth + Bidirectional Union Merge)
                 if (cloudData.following && typeof cloudData.following === 'object') {
@@ -22323,10 +22539,12 @@ function switchPublisherTab(tab) {
         if (badgeDef) {
           const t = BADGE_TIER_CONFIG[badgeDef.tier] || BADGE_TIER_CONFIG.bronze;
           html += `
-            <div onclick="openAchievementsModal()" style="background: ${t.bg}; border: 1.5px solid ${t.border}; border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; transition: transform 0.15s; min-width: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
-              <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
-              <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
-              <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 58px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
+              <div class="pinned-badge-content" style="padding: 6px 3px;">
+                <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
+                <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
+                <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+              </div>
             </div>
           `;
         } else {
@@ -30273,6 +30491,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         document.body.appendChild(t);
       }
       t.textContent = msg;
+      t.style.zIndex = '2147483647';
       t.style.display = 'block';
       if (window._vocaflowToastTimer) clearTimeout(window._vocaflowToastTimer);
       window._vocaflowToastTimer = setTimeout(() => {
@@ -44838,7 +45057,7 @@ Quy tắc phản hồi quan trọng:
   const guideStarterTitles = [
     'Đăng Ký & Đăng Nhập Tài Khoản',
     'Cài Đặt Khóa API Gemini Miễn Phí',
-    'Nhập Giftcode Tân Thủ (+500 VoCoin)',
+    'Nhập Giftcode Tân Thủ (+200 VoCoin, +20 VocaHint)',
     '3 Cách Tạo Bài Học & Nạp Từ Vựng',
     '4 Chế Độ Học Cốt Lõi Tại VocaFlow'
   ];
@@ -44988,7 +45207,7 @@ Quy tắc phản hồi quan trọng:
             codeInput.style.borderColor = '';
           }, 1800);
         }
-        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 VoCoin nhé!');
+        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận +200 VoCoin và +20 VocaHint nhé!');
       }, 300);
     }, 'modal-shop');
   }

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Chuỗi Sóng Nước Chạy Xuyên Suốt</title>
+  <style>
+    /* Căn giữa màn hình để dễ test */
+    body {
+      margin: 0;
+      background-color: #0f131a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* KHUNG LỊCH (Chứa dải sóng dài và các ô ngày) */
+    .calendar-container {
+      position: relative; /* Để làm gốc tọa độ cho thanh sóng nước */
+      display: flex;
+      gap: 30px; /* Khoảng cách giữa các ô ngày */
+      background-color: #1a222d;
+      padding: 30px;
+      border-radius: 12px;
+    }
+
+    /* --- THANH SÓNG NƯỚC CHẠY XUYÊN SUỐT PHÍA SAU --- */
+    .continuous-wave {
+      position: absolute;
+      left: 45px;   /* Bắt đầu từ tâm ô đầu tiên */
+      right: 45px;  /* Kết thúc ở tâm ô cuối cùng */
+      top: 50%;     /* Căn giữa theo chiều dọc */
+      transform: translateY(-50%);
+      height: 6px;  /* Độ dày dòng nước */
+      z-index: 1;   /* Nằm dưới các ô ngày */
+      overflow: hidden;
+
+      /* Dải màu mô phỏng các gợn sóng đậm nhạt xen kẽ */
+      background: linear-gradient(
+        90deg, 
+        #00a8ff 0%, 
+        #00d2ff 25%, 
+        #00a8ff 50%, 
+        #00f5ff 75%, 
+        #00a8ff 100%
+      );
+      background-size: 50px 100%; /* Khoảng cách lặp lại của gợn sóng */
+      
+      /* Hiệu ứng: waterFlow (cuộn chảy) + waterGlow (dập dềnh phát sáng) */
+      animation: waterFlow 1s linear infinite, waterGlow 2s ease-in-out infinite alternate;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+    }
+
+    /* Thêm một lớp gợn lăn tăn nhỏ chạy ngược chiều bên trong để nhìn sinh động hơn */
+    .continuous-wave::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      background-size: 25px 100%;
+      animation: innerWave 0.7s linear infinite reverse;
+    }
+
+    /* CÁC Ô NGÀY TRÊN LỊCH */
+    .day-box {
+      position: relative;
+      z-index: 2; /* Ép nổi lên trên thanh sóng nước */
+      width: 50px;
+      height: 50px;
+      background-color: #131a22;
+      border: 2px solid #00d2ff;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+    }
+
+    /* Riêng ô bị đóng băng thì đổi màu viền sang xanh băng */
+    .day-box.freeze {
+      border-color: #a5f3fc;
+      box-shadow: 0 0 8px rgba(165, 243, 252, 0.3);
+    }
+
+    /* --- CÁC ANIMATION CHUYỂN ĐỘNG --- */
+
+    /* 1. Sóng cuộn chảy tiến lên liên tục */
+    @keyframes waterFlow {
+      0% { background-position-x: 0px; }
+      100% { background-position-x: 50px; } /* Khớp với background-size để mượt mà */
+    }
+
+    /* 2. Nhịp thở dập dềnh nhấp nháy phát sáng */
+    @keyframes waterGlow {
+      0% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 2px #00d2ff) saturate(1);
+      }
+      100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px #00f5ff) saturate(1.4);
+      }
+    }
+
+    /* 3. Gợn nước phụ chạy lăn tăn ngược chiều bên trong */
+    @keyframes innerWave {
+      0% { background-position-x: 0px; }
+      100% { background-position-x: 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calendar-container">
+    
+    <!-- Thanh sóng nước chạy dài xuyên suốt nằm ở lớp nền dưới -->
+    <div class="continuous-wave"></div>
+
+    <!-- Các ô ngày xếp đè lên trên -->
+    <div class="day-box">🌊</div>
+    <div class="day-box">🌊</div>
+    <div class="day-box">🌊</div>
+    <div class="day-box">🌊</div>
+    <div class="day-box freeze">🧊</div> <!-- Ô đóng băng -->
+    <div class="day-box">🌊</div>
+
+  </div>
+
+</body>
+</html>

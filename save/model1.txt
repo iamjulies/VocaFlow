@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Hiệu Ứng Viền Sáng Chạy</title>
+  <style>
+    /* Reset cơ bản và căn giữa màn hình để dễ test */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0d1117;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Khung chứa các danh hiệu (giống giao diện game trong ảnh) */
+    .badge-container {
+      display: flex;
+      gap: 15px;
+      background-color: #121822; 
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+    }
+
+    /* Khung ngoài của mỗi thẻ danh hiệu */
+    .card {
+      position: relative;
+      width: 240px;
+      height: 110px;
+      border-radius: 12px;
+      overflow: hidden; /* Ẩn các phần thừa của dải màu khi xoay */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* --- TẠO HIỆU ỨNG ÁNH SÁNG XOAY TRÒN VÒNG QUANH --- */
+    .card::before {
+      content: '';
+      position: absolute;
+      width: 150%;
+      height: 350%; /* Chiều cao lớn để khi xoay không bị hụt góc */
+      animation: rotateLight 3s linear infinite; /* 3s là tốc độ chạy */
+    }
+
+    /* Ánh sáng màu xanh cho thẻ Kim Cương */
+    .card.diamond::before {
+      background: conic-gradient(transparent, #00d2ff, #0066ff, transparent 40%);
+    }
+
+    /* Ánh sáng màu vàng cam cho thẻ Vàng */
+    .card.gold::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
+    }
+
+    /* --- LỚP CHE BÊN TRONG (Tạo độ dày cho viền) --- */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 2px; /* ĐỘ DÀY VIỀN SÁNG = 2px. Muốn dày hơn thì tăng lên 3px */
+      background: #17202a; /* Màu nền ruột bên trong thẻ */
+      border-radius: 10px; /* Nhỏ hơn border-radius ngoài 2px để khớp góc */
+      z-index: 1;
+    }
+
+    /* Nội dung chữ hiển thị phía trên cùng */
+    .card-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Biểu tượng (vương miện, cúp) */
+    .icon {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Tên danh hiệu chính */
+    .title {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .diamond-text { color: #38bdf8; }
+    .gold-text { color: #fbbf24; }
+
+    /* Cấp bậc phía dưới (Kim Cương / Vàng) */
+    .subtitle {
+      margin: 0;
+      font-size: 11px;
+      color: #718096;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Định nghĩa hiệu ứng chuyển động xoay tròn */
+    @keyframes rotateLight {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="badge-container">
+    
+    <!-- Thẻ 1: Kim Cương -->
+    <div class="card diamond">
+      <div class="card-content">
+        <span class="icon">👑</span>
+        <h3 class="title diamond-text">Dòng Máu Hoàng Gia</h3>
+        <p class="subtitle">KIM CƯƠNG 🔹</p>
+      </div>
+    </div>
+
+    <!-- Thẻ 2: Kim Cương -->
+    <div class="card diamond">
+      <div class="card-content">
+        <span class="icon">🏆</span>
+        <h3 class="title diamond-text">Triệu Phú Nhân Phẩm</h3>
+        <p class="subtitle">KIM CƯƠNG 🔹</p>
+      </div>
+    </div>
+
+    <!-- Thẻ 3: Vàng -->
+    <div class="card gold">
+      <div class="card-content">
+        <span class="icon">👑</span>
+        <h3 class="title gold-text">Trúng Số Độc Đắc</h3>
+        <p class="subtitle">VÀNG 🔸</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

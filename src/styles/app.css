@@ -1539,26 +1539,108 @@
       color: white;
     }
 
-    /* TOAST */
+    /* TOAST (v0.10.9-alpha-28: MAX Z-INDEX OVERLAY) */
     .toast {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background-color: var(--surface-elevated);
-      color: var(--text);
+      background-color: var(--surface-elevated, #1e293b);
+      color: var(--text, #f8fafc);
       padding: 12px 20px;
       border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
-      z-index: 200;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.2);
+      z-index: 2147483647 !important;
       display: none;
       animation: slideUp 0.2s ease;
-      border-left: 4px solid var(--primary);
+      border-left: 4px solid var(--primary, #6366f1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: calc(100vw - 48px);
+      word-wrap: break-word;
+      pointer-events: auto;
     }
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ========================================================================= */
+    /* EQUIPPED / PINNED BADGE ROTATING LIGHT EFFECT (v0.10.9-alpha-28 / model1) */
+    /* ========================================================================= */
+    @keyframes rotateLight {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pinned-badge-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .pinned-badge-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pinned-badge-card::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 350%;
+      animation: rotateLight 3s linear infinite;
+      z-index: 0;
+    }
+
+    .pinned-badge-card.tier-bronze::before {
+      background: conic-gradient(transparent, #cd7f32, #d97706, transparent 40%);
+    }
+    .pinned-badge-card.tier-silver::before {
+      background: conic-gradient(transparent, #cbd5e1, #94a3b8, transparent 40%);
+    }
+    .pinned-badge-card.tier-gold::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
+    }
+    .pinned-badge-card.tier-diamond::before {
+      background: conic-gradient(transparent, #00d2ff, #0066ff, transparent 40%);
+    }
+    .pinned-badge-card.tier-mythic::before {
+      background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
+    }
+
+    .pinned-badge-card::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--surface-elevated, #17202a);
+      border-radius: 8.5px;
+      z-index: 1;
+    }
+
+    .pinned-badge-card .pinned-badge-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      text-align: center;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
 

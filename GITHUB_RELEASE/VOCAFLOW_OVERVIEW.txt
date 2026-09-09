@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-28 (Build 260) - Rotating Light Badges, Purchased Decks Filter & Single-Claim Giftcode
+================================================================================
+1. [Lọc Chuẩn Xác Tab "VocaDeck Đã Mua" (Purchased Decks Filtering)]:
+   - Khắc phục triệt để lỗi hiển thị sai trong tab "VocaDeck Đã Mua" tại VocaStudio: Chỉ hiển thị các VocaDeck có phí (price > 0) hoặc VocaDeck VIP được mua/mở khóa từ các tác giả khác.
+   - Tuyệt đối không hiển thị các bộ từ do chính người dùng tự biên soạn (isDeckAuthor === true) trong tab Đã Mua.
+   - Tự động thanh lọc và loại bỏ các ID bộ từ của chính mình khỏi danh sách userPurchasedDeckIds cả trong bộ nhớ, LocalStorage và khi đồng bộ Cloud.
+2. [Hiệu Ứng Viền Sáng Xoay Tròn (Rotating Light Effect) Cho Danh Hiệu Được Đeo]:
+   - Hiện thực hóa trọn vẹn hiệu ứng viền ánh sáng xoay tròn mượt mà theo chuẩn thiết kế model1.txt cho các huy hiệu/danh hiệu được ghim (pinned badges) trên Hồ Sơ Cá Nhân và Hồ Sơ Công Khai Tác Giả.
+   - Dải màu conic-gradient xoay 360 độ tự động thích ứng chính xác theo màu viền của từng cấp bậc (Đồng, Bạc, Vàng, Kim Cương, Thần Thoại).
+3. [Tối Ưu Lớp Hiển Thị Thông Báo Toast (Max Z-Index Overlay)]:
+   - Thiết lập z-index tối đa (2147483647 !important) cho phần tử thông báo Toast góc dưới bên phải màn hình.
+   - Đảm bảo thông báo luôn nổi bật trên lớp cao nhất, không bị che khuất dù người dùng đang mở bất kỳ cửa sổ modal, menu popup hay lớp phủ toàn màn hình nào.
+4. [Chuẩn Hóa Ngữ Liệu Sổ Tay Người Dùng (User Guide Terminology)]:
+   - Chuẩn hóa thuật ngữ trong Hướng dẫn tân thủ: Thay thế "FlowStreak" thành "Flow", đổi "👤 Tài khoản" thành "👤 Khách" cho người dùng chưa đăng nhập.
+   - Viết đầy đủ nguyên bản "Spaced Repetition - SRS" cho thuật ngữ thuật toán Lặp Lại Ngắt Quãng.
+5. [Cập Nhật Phần Thưởng & Bảo Mật Mã Quà Tặng Tân Thủ HELLOKHANG2011 (Single-Redemption Security)]:
+   - Chuẩn hóa phần thưởng chính xác cho mã tân thủ HELLOKHANG2011: Nhận ngay +200 VoCoin và +20 VocaHint (thay vì 500 VoCoin).
+   - Khắc phục triệt để lỗ hổng cho phép nhập lại mã sau các bản cập nhật hoặc xóa cache: Mỗi UID tài khoản chỉ được nhập mỗi mã đúng 1 lần duy nhất trong toàn bộ vòng đời tài khoản.
+   - Kiểm tra và ghi nhận đồng thời qua mã định danh UID, Sổ Cái Bất Biến (userLedger), LocalStorage per-UID và Firebase Realtime Database Cloud (/users/{uid}/claimedGiftCodes).
+
+================================================================================
 Phiên bản: v0.10.9-alpha-27 (Build 259) - Seamless Deck Navigation & VocaStudio VoCoin-Strict Economy
 ================================================================================
 1. [Khắc Phục Điều Hướng Thoát Học Trở Về Chi Tiết Bộ Từ (Seamless Deck Navigation)]:

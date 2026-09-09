@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-27)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-28)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-27';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-27 (Build 259)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-28';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-28 (Build 260)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -1663,6 +1663,64 @@
       }
     }
 
+    function getClaimedGiftCodesForCurrentAccount() {
+      const list = new Set();
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      if (uid) {
+        const uidList = JSON.parse(localStorage.getItem('vocaflow_claimed_giftcodes_' + uid) || '[]');
+        if (Array.isArray(uidList)) uidList.forEach(c => { if (c) list.add(String(c).toUpperCase()); });
+      }
+      const legacyList = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
+      if (Array.isArray(legacyList)) legacyList.forEach(c => { if (c) list.add(String(c).toUpperCase()); });
+      if (Array.isArray(userLedger)) {
+        userLedger.forEach(entry => {
+          if (entry && entry.type === 'GIFTCODE' && entry.description) {
+            const m = entry.description.match(/"([^"]+)"/);
+            if (m && m[1]) list.add(m[1].toUpperCase());
+            if (entry.description.includes('HELLOKHANG2011')) list.add('HELLOKHANG2011');
+            if (entry.description.includes('JULIESVIP')) list.add('JULIESVIP');
+            if (entry.description.includes('RESTORE150')) list.add('RESTORE150');
+            if (entry.description.includes('VOCAFLOW100')) list.add('VOCAFLOW100');
+            if (entry.description.includes('JULIES')) list.add('JULIES');
+          }
+        });
+      }
+      return list;
+    }
+
+    async function recordClaimedGiftCodeForCurrentAccount(code, pts = 0, hts = 0, sks = 0) {
+      const cleanCode = String(code).toUpperCase().trim();
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      if (uid) {
+        const key = 'vocaflow_claimed_giftcodes_' + uid;
+        const current = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!current.includes(cleanCode)) {
+          current.push(cleanCode);
+          localStorage.setItem(key, JSON.stringify(current));
+        }
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        try {
+          await fetch(`${rtdbUrl}/users/${uid}/claimedGiftCodes/${encodeURIComponent(cleanCode)}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              claimedAt: getTrustedCurrentTimestamp(),
+              points: pts,
+              hints: hts,
+              skips: sks
+            })
+          });
+        } catch (e) {
+          console.warn('Could not record gift code claim to cloud RTDB:', e);
+        }
+      }
+      const legacyList = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
+      if (!legacyList.includes(cleanCode)) {
+        legacyList.push(cleanCode);
+        localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(legacyList));
+      }
+    }
+
     async function redeemShopGiftCode() {
       if (!requireLogin('tính năng Nhập Mã Quà Tặng')) {
         return;
@@ -1699,21 +1757,72 @@
       }
 
       const code = rawText.toUpperCase();
-
-      const usedCodes = JSON.parse(localStorage.getItem('vocaflow_used_gift_codes') || '[]');
-      if (usedCodes.includes(code)) {
+      const claimedCodes = getClaimedGiftCodesForCurrentAccount();
+      if (claimedCodes.has(code)) {
         msg.style.display = 'block';
         msg.style.color = '#ef4444';
-        msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi!';
+        msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi! (Mỗi tài khoản chỉ được nhập 1 lần)';
         return;
+      }
+
+      // Check cloud RTDB claim record for UID
+      const uid = (currentUser && currentUser.uid) ? currentUser.uid : null;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      if (uid) {
+        try {
+          const checkClaimRes = await fetch(`${rtdbUrl}/users/${uid}/claimedGiftCodes/${encodeURIComponent(code)}.json`);
+          if (checkClaimRes.ok) {
+            const checkData = await checkClaimRes.json();
+            if (checkData) {
+              msg.style.display = 'block';
+              msg.style.color = '#ef4444';
+              msg.textContent = '❌ Mã này bạn đã sử dụng trước đó rồi! (Mỗi tài khoản chỉ được nhập 1 lần)';
+              await recordClaimedGiftCodeForCurrentAccount(code);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Cloud gift check claim error:', e);
+        }
       }
 
       msg.style.display = 'block';
       msg.style.color = '#38bdf8';
       msg.textContent = '⏳ Đang kiểm tra mã quà tặng...';
 
-      // 1. Try checking Cloud Firebase Gift Codes
-      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      // 1. Starter Giftcode: HELLOKHANG2011 (+200 VoCoin, +20 VocaHint)
+      if (code === 'HELLOKHANG2011') {
+        await recordClaimedGiftCodeForCurrentAccount('HELLOKHANG2011', 200, 20, 0);
+        setUserHints(getUserHints() + 20);
+        setUserPoints(getUserPoints() + 200);
+        addLedgerEntry('GIFTCODE', 200, 'Nhập mã tân thủ "HELLOKHANG2011" (+200 VoCoin, +20 VocaHint)');
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = '🎉 Áp dụng thành công! Tặng ngay +200 VoCoin & +20 VocaHint!';
+        input.value = '';
+        showToast('🎁 Chúc mừng! Đã nhận +200 VoCoin & +20 VocaHint tân thủ!');
+        return;
+      }
+
+      // 2. Built-in Master Publisher Codes (+500 VoCoin, +150 VocaHint)
+      if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
+        await recordClaimedGiftCodeForCurrentAccount(code, 500, 150, 0);
+        setUserHints(getUserHints() + 150);
+        setUserPoints(getUserPoints() + 500);
+        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 VoCoin)`);
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 VocaHint & +500 VoCoin!';
+        input.value = '';
+        showToast('🎁 Chúc mừng! Đã nhận +150 VocaHint & +500 VoCoin!');
+        return;
+      }
+
+      // 3. Try checking Cloud Firebase Gift Codes
       try {
         const res = await fetch(`${rtdbUrl}/giftCodes/${encodeURIComponent(code)}.json`);
         if (res.ok) {
@@ -1730,14 +1839,15 @@
             const pts = parseInt(data.points, 10) || 0;
             const sks = parseInt(data.skips, 10) || 0;
             
-            usedCodes.push(code);
-            localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
+            await recordClaimedGiftCodeForCurrentAccount(code, pts, hts, sks);
             if (hts > 0) setUserHints(getUserHints() + hts);
             if (pts > 0) {
               setUserPoints(getUserPoints() + pts);
               addLedgerEntry('GIFTCODE', pts, `Nhập mã quà tặng "${code}" (+${pts} VoCoin)`);
             }
             if (sks > 0) setUserSkips(getUserSkips() + sks);
+            saveDatabase(true);
+            pushCurrentDatabaseToCloud();
 
             msg.style.display = 'block';
             msg.style.color = '#10b981';
@@ -1752,21 +1862,6 @@
         }
       } catch (cloudErr) {
         console.warn('Cloud gift check error:', cloudErr);
-      }
-
-      // 2. Built-in Master Publisher Codes
-      if (code === 'JULIESVIP' || code === 'RESTORE150' || code === 'VOCAFLOW100' || code === 'JULIES') {
-        usedCodes.push(code);
-        localStorage.setItem('vocaflow_used_gift_codes', JSON.stringify(usedCodes));
-        setUserHints(getUserHints() + 150);
-        setUserPoints(getUserPoints() + 500);
-        addLedgerEntry('GIFTCODE', 500, `Nhập mã quà tặng VIP "${code}" (+500 VoCoin)`);
-        msg.style.display = 'block';
-        msg.style.color = '#10b981';
-        msg.textContent = '🎉 Áp dụng thành công! Đã tặng bạn +150 VocaHint & +500 VoCoin!';
-        input.value = '';
-        showToast('🎁 Chúc mừng! Đã nhận +150 VocaHint & +500 VoCoin!');
-        return;
       }
 
       msg.style.display = 'block';
@@ -6452,13 +6547,13 @@ function switchPublisherTab(tab) {
         fetchCloudLibraryDecks();
       }
 
-      // Auto-recover any purchased decks from userLedger BUY_DECK or decks libSourceId
+      // Auto-recover any purchased decks from userLedger BUY_DECK
       if (Array.isArray(userLedger)) {
         userLedger.forEach(entry => {
           if (entry && entry.type === 'BUY_DECK' && entry.description) {
             const allD = getAllLibraryDecks();
             allD.forEach(ld => {
-              if (ld && ld.id && entry.description.includes(ld.title)) {
+              if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
                 userPurchasedDeckIds.add(ld.id);
               }
             });
@@ -6467,18 +6562,31 @@ function switchPublisherTab(tab) {
       }
       if (Array.isArray(decks)) {
         decks.forEach(d => {
-          if (d && d.libSourceId) userPurchasedDeckIds.add(d.libSourceId);
+          if (d && d.libSourceId && !isDeckAuthor(d)) {
+            const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
+            if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
+              userPurchasedDeckIds.add(d.libSourceId);
+            }
+          }
         });
       }
 
       const allDecks = getAllLibraryDecks();
-      const purchased = allDecks.filter(d => userPurchasedDeckIds.has(d.id));
 
-      // Also check if any purchased ID is not in allDecks but exists in local decks
+      // Purge any own deck IDs that might have been accidentally saved in userPurchasedDeckIds
+      allDecks.forEach(d => {
+        if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
+          userPurchasedDeckIds.delete(d.id);
+        }
+      });
+
+      const purchased = allDecks.filter(d => userPurchasedDeckIds.has(d.id) && !isDeckAuthor(d) && ((d.price || 0) > 0 || d.isVip || d.isVipOnly || d.id === 'lib_deck_ielts_45_60'));
+
+      // Also check if any purchased ID is not in allDecks but exists in local decks (and is not authored by user)
       userPurchasedDeckIds.forEach(pId => {
         if (!purchased.some(d => d.id === pId)) {
-          const localMatch = decks.find(d => d.libSourceId === pId || d.id === pId);
-          if (localMatch) {
+          const localMatch = decks.find(d => (d.libSourceId === pId || d.id === pId) && !isDeckAuthor(d));
+          if (localMatch && ((localMatch.price || 0) > 0 || localMatch.isVip || localMatch.isVipOnly || localMatch.id === 'lib_deck_ielts_45_60' || pId === 'lib_deck_ielts_45_60')) {
             purchased.push({
               id: pId,
               title: localMatch.title,
@@ -6512,7 +6620,7 @@ function switchPublisherTab(tab) {
                 <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(deck.title)}</strong>
                 <span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.15); color: #34d399;">Đã sở hữu</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--text-muted); display: align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+              <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
                 <span>Tác giả:</span>
                 ${isAuthorVipUser(deck.authorUid, deck.author) ? `
                   <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">
@@ -7098,10 +7206,12 @@ function switchPublisherTab(tab) {
             if (bDef) {
               const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
               bHtml += `
-                <div style="background: ${t.bg}; border: 1.5px solid ${t.border}; border-radius: 10px; padding: 6px 4px; text-align: center;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div style="font-size: 20px; line-height: 1;">${bDef.icon}</div>
-                  <div style="font-size: 10.5px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">${escapeHtml(bDef.name)}</div>
-                  <div style="font-size: 8.5px; color: var(--text-muted); text-transform: uppercase;">${t.name}</div>
+                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                  <div class="pinned-badge-content" style="padding: 6px 4px;">
+                    <div style="font-size: 20px; line-height: 1;">${bDef.icon}</div>
+                    <div style="font-size: 10.5px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
+                    <div style="font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${t.name}</div>
+                  </div>
                 </div>
               `;
             }
@@ -8119,7 +8229,7 @@ function switchPublisherTab(tab) {
                     if (entry && entry.type === 'BUY_DECK' && entry.description) {
                       const allD = getAllLibraryDecks();
                       allD.forEach(ld => {
-                        if (ld && ld.id && entry.description.includes(ld.title)) {
+                        if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
                           userPurchasedDeckIds.add(ld.id);
                         }
                       });
@@ -8128,12 +8238,36 @@ function switchPublisherTab(tab) {
                 }
                 if (Array.isArray(decks)) {
                   decks.forEach(d => {
-                    if (d && d.libSourceId) userPurchasedDeckIds.add(d.libSourceId);
+                    if (d && d.libSourceId && !isDeckAuthor(d)) {
+                      const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
+                      if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
+                        userPurchasedDeckIds.add(d.libSourceId);
+                      }
+                    }
                   });
                 }
+
+                // Purge any own deck IDs that might have been saved in userPurchasedDeckIds
+                const allDecksRef = getAllLibraryDecks();
+                allDecksRef.forEach(d => {
+                  if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
+                    userPurchasedDeckIds.delete(d.id);
+                  }
+                });
+
                 localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
                 localStorage.setItem('vocaflow_purchased_decks_count', userPurchasedDeckIds.size.toString());
                 if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+
+                // Sync Claimed Gift Codes from Cloud for current UID
+                if (currentUser && currentUser.uid && cloudData.claimedGiftCodes && typeof cloudData.claimedGiftCodes === 'object') {
+                  const key = 'vocaflow_claimed_giftcodes_' + currentUser.uid;
+                  const localClaimed = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+                  Object.keys(cloudData.claimedGiftCodes).forEach(code => {
+                    if (code) localClaimed.add(code.toUpperCase());
+                  });
+                  localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
+                }
 
                 // Sync Following & Followers from Cloud (Cloud Source of Truth + Bidirectional Union Merge)
                 if (cloudData.following && typeof cloudData.following === 'object') {
@@ -14164,10 +14298,12 @@ function switchPublisherTab(tab) {
         if (badgeDef) {
           const t = BADGE_TIER_CONFIG[badgeDef.tier] || BADGE_TIER_CONFIG.bronze;
           html += `
-            <div onclick="openAchievementsModal()" style="background: ${t.bg}; border: 1.5px solid ${t.border}; border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; transition: transform 0.15s; min-width: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
-              <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
-              <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
-              <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 58px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
+              <div class="pinned-badge-content" style="padding: 6px 3px;">
+                <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
+                <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
+                <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+              </div>
             </div>
           `;
         } else {
@@ -22114,6 +22250,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         document.body.appendChild(t);
       }
       t.textContent = msg;
+      t.style.zIndex = '2147483647';
       t.style.display = 'block';
       if (window._vocaflowToastTimer) clearTimeout(window._vocaflowToastTimer);
       window._vocaflowToastTimer = setTimeout(() => {
@@ -36679,7 +36816,7 @@ Quy tắc phản hồi quan trọng:
   const guideStarterTitles = [
     'Đăng Ký & Đăng Nhập Tài Khoản',
     'Cài Đặt Khóa API Gemini Miễn Phí',
-    'Nhập Giftcode Tân Thủ (+500 VoCoin)',
+    'Nhập Giftcode Tân Thủ (+200 VoCoin, +20 VocaHint)',
     '3 Cách Tạo Bài Học & Nạp Từ Vựng',
     '4 Chế Độ Học Cốt Lõi Tại VocaFlow'
   ];
@@ -36829,7 +36966,7 @@ Quy tắc phản hồi quan trọng:
             codeInput.style.borderColor = '';
           }, 1800);
         }
-        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận 500 VoCoin nhé!');
+        showToast('🎁 Đã điền mã HELLOKHANG2011! Nhấn "Đổi Quà" để nhận +200 VoCoin và +20 VocaHint nhé!');
       }, 300);
     }, 'modal-shop');
   }
