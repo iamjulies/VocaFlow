@@ -219,12 +219,17 @@
         </label>
       </div>
 
-      <!-- 6. BÁO CÁO SỰ CỐ & ĐÓNG GÓP Ý KIẾN (v0.10.8-alpha-10.3) -->
+      <!-- 6. BÁO CÁO SỰ CỐ & HỘP THƯ VOCAMAIL (v0.10.9-33) -->
       <div class="form-group" style="margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 14px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">🐛 Báo Cáo Lỗi & Đóng Góp Ý Kiến</label>
-        <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="width: 100%; justify-content: center; gap: 8px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 14px; border-radius: 10px;">
-          🐛 Gửi Báo Cáo Sự Cố / Góp Ý Tính Năng Cho Admin
-        </button>
+        <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">✉️ Hỗ Trợ Kỹ Thuật & VocaMail</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openVocaMailModal();" style="justify-content: center; gap: 6px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.08); font-weight: 700; padding: 10px 12px; border-radius: 10px; font-size: 12px;">
+            ✉️ Hộp Thư VocaMail Admin
+          </button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-settings'); openBugReportModal();" style="justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 12px; border-radius: 10px; font-size: 12px;">
+            🐛 Báo Cáo Lỗi Nhận Thưởng
+          </button>
+        </div>
       </div>
 
       <!-- VIP MEME REACTION TOGGLE & DURATION (v0.10.8-alpha-10.3) -->
@@ -288,7 +293,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-32 (Build 264)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-33 (Build 265)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>

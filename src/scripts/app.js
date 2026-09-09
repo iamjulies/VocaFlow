@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-32)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-32';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-32 (Build 264)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-33';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-33 (Build 265)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -5137,6 +5137,33 @@ function switchPublisherTab(tab) {
       });
     }
 
+    function markAllNotificationsReadSilently() {
+      let changed = false;
+      userNotifications.forEach(n => {
+        if (!n.isRead) {
+          n.isRead = true;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+        updateNotificationsUI();
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          const patch = {};
+          userNotifications.forEach(n => {
+            patch[`users/${currentUser.uid}/notifications/${n.id}/isRead`] = true;
+          });
+          fetch(`${rtdbUrl}/.json${authParam}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch)
+          }).catch(() => {});
+        }
+      }
+    }
+
     function openNotificationsModal() {
       const isGuest = !currentUser || !currentUser.email;
       const gView = document.getElementById('notif-guest-lock-view');
@@ -5149,6 +5176,9 @@ function switchPublisherTab(tab) {
       }
       if (gView) gView.style.display = 'none';
       if (aView) aView.style.display = 'flex';
+
+      // v0.10.9-33: Automatically clear badges & mark all as read upon opening without requiring manual button click
+      markAllNotificationsReadSilently();
       updateNotificationsUI();
       renderNotificationsList();
       openModal('modal-notifications');
@@ -5234,6 +5264,11 @@ function switchPublisherTab(tab) {
           typeColor = '#fbbf24';
           typeBg = 'rgba(245,158,11,0.12)';
           typeBorder = 'rgba(245,158,11,0.3)';
+        } else if (n.type === 'VOCAMAIL') {
+          typeIcon = '✉️';
+          typeColor = '#c084fc';
+          typeBg = 'rgba(168,85,247,0.12)';
+          typeBorder = 'rgba(168,85,247,0.3)';
         }
 
         const timeStr = formatRelativeTime(n.timestamp);
@@ -5257,9 +5292,8 @@ function switchPublisherTab(tab) {
                 </div>
               ` : ''}
               <div style="font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-
                 <span>🕒</span> <span>${timeStr}</span>
-                ${n.actionType ? '<span style="color: #38bdf8; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>' : ''}
+                <span style="color: #38bdf8; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>
               </div>
             </div>
             <button type="button" class="btn btn-outline btn-icon" onclick="deleteSingleNotification('${n.id}', event)" title="Xóa thông báo này" style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; border: none; background: transparent; color: var(--text-muted); font-size: 13px; opacity: 0.6;" onmouseenter="this.style.opacity='1'; this.style.color='#f87171'" onmouseleave="this.style.opacity='0.6'; this.style.color='var(--text-muted)'">
@@ -5307,13 +5341,77 @@ function switchPublisherTab(tab) {
 
       closeModal('modal-notifications');
 
-      if (notif.actionType === 'PREVIEW_DECK' && notif.actionData && notif.actionData.deckId) {
+      const aType = notif.actionType || '';
+      const nType = notif.type || '';
+      const title = (notif.title || '').toLowerCase();
+      const message = (notif.message || notif.content || '').toLowerCase();
+
+      // 1. Deck preview / Deck details
+      if ((aType === 'PREVIEW_DECK' || nType === 'NEW_DECK' || title.includes('vocadeck') || title.includes('bộ từ')) && notif.actionData && notif.actionData.deckId) {
         previewLibraryDeck(notif.actionData.deckId, 'modal-notifications');
-      } else if (notif.actionType === 'VIEW_PROFILE' && notif.actionData && notif.actionData.targetUid) {
-        openPublicProfileModal(notif.actionData.targetName || 'Thành viên', notif.actionData.targetUid, '', 'modal-notifications');
-      } else if (notif.actionType === 'OPEN_WALLET') {
-        openWalletStudioModal();
+        return;
       }
+
+      // 2. Profile / Follower
+      if ((aType === 'VIEW_PROFILE' || nType === 'NEW_FOLLOWER' || title.includes('theo dõi')) && notif.actionData && notif.actionData.targetUid) {
+        openPublicProfileModal(notif.actionData.targetName || 'Thành viên', notif.actionData.targetUid, '', 'modal-notifications');
+        return;
+      }
+
+      // 3. VIP / Premium
+      if (aType === 'OPEN_VIP' || nType === 'VIP_BONUS' || title.includes('vocavip') || title.includes('vip') || title.includes('hoàng gia')) {
+        openVipPricingModal();
+        return;
+      }
+
+      // 4. Lucky Wheel / VocaSpin / Ads
+      if (aType === 'OPEN_WHEEL' || title.includes('spin') || title.includes('quảng cáo') || title.includes('vocaspin') || title.includes('vòng quay') || title.includes('trúng')) {
+        openLuckyWheelModal();
+        return;
+      }
+
+      // 5. Wallet Studio / Economy / Shop
+      if (aType === 'OPEN_WALLET' || nType === 'FINANCIAL' || title.includes('ví') || title.includes('vocoin') || title.includes('nạp tiền') || title.includes('mua') || title.includes('xu')) {
+        if (title.includes('mua vocaspin') || title.includes('vocashop') || title.includes('cửa hàng')) {
+          openShopModal();
+        } else {
+          openWalletStudioModal();
+        }
+        return;
+      }
+
+      // 6. Bug report / Bounty
+      if (aType === 'OPEN_BUG' || nType === 'BUG_REPORT' || title.includes('sự cố') || title.includes('báo cáo') || title.includes('lỗi')) {
+        openBugReportModal();
+        return;
+      }
+
+      // 7. VocaMail / Admin
+      if (aType === 'OPEN_VOCAMAIL' || nType === 'VOCAMAIL' || title.includes('vocamail') || title.includes('thư')) {
+        openVocaMailModal('history');
+        return;
+      }
+
+      // 8. Achievements
+      if (aType === 'OPEN_ACHIEVEMENTS' || title.includes('danh hiệu') || title.includes('thành tựu') || title.includes('huy hiệu')) {
+        openAchievementsModal();
+        return;
+      }
+
+      // 9. Flow / Streak
+      if (aType === 'OPEN_FLOW' || title.includes('flow') || title.includes('streak') || title.includes('chuỗi')) {
+        openFlowCalendarModal();
+        return;
+      }
+
+      // 10. Study mode / Default deck screen
+      if (nType === 'STUDY' || title.includes('học') || title.includes('luyện')) {
+        showScreen('screen-decks');
+        return;
+      }
+
+      // Fallback
+      showScreen('screen-decks');
     }
 
     function markAllNotificationsRead() {
@@ -8134,7 +8232,7 @@ function switchPublisherTab(tab) {
         if (path === '/' || path === '') {
           mergeCloudDataIntoLocal(data, false);
         } else if (path === '/economy' || path.startsWith('/economy')) {
-          applyCloudEconomyPatch(data);
+          applyCloudEconomyPatch(data, path);
         } else if (path.startsWith('/flow') || path.startsWith('/flowDates') || path.startsWith('/flowFreezeDates')) {
           applyCloudFlowPatch(path, data);
         } else if (path.startsWith('/profile') || path === '/vip') {
@@ -8151,8 +8249,37 @@ function switchPublisherTab(tab) {
       }
     }
 
-    function applyCloudEconomyPatch(ecoData) {
-      if (!ecoData || typeof ecoData !== 'object') return;
+    // Zero-latency instant patch for ad cooldown across devices (v0.10.9-33)
+    function patchInstantAdCooldownToCloud(timestamp) {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
+      const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+      const nowTs = Number(timestamp) || Date.now();
+      try {
+        fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/economy.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lastAdWatchTime: nowTs, updatedAt: new Date().toISOString() })
+        }).catch(() => {});
+      } catch (e) {}
+    }
+    window.patchInstantAdCooldownToCloud = patchInstantAdCooldownToCloud;
+
+    function applyCloudEconomyPatch(ecoData, path = '') {
+      if (ecoData === null || typeof ecoData === 'undefined') return;
+
+      // Handle direct sub-path patch: /economy/lastAdWatchTime
+      if (path.includes('lastAdWatchTime') || (typeof ecoData === 'number' && path.includes('lastAdWatchTime'))) {
+        const rAd = typeof ecoData === 'number' ? ecoData : parseInt(ecoData, 10);
+        const lAd = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
+        if (!isNaN(rAd) && rAd > lAd) {
+          localStorage.setItem('vocaflow_last_ad_watch_time', rAd.toString());
+          if (typeof updateAdButtonCooldownState === 'function') updateAdButtonCooldownState();
+          if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
+        }
+        return;
+      }
+
+      if (typeof ecoData !== 'object') return;
       const remotePoints = typeof ecoData.points === 'number' ? ecoData.points : parseInt(ecoData.points, 10);
       const remoteHints = typeof ecoData.hints === 'number' ? ecoData.hints : parseInt(ecoData.hints, 10);
       const remoteSkips = typeof ecoData.skips === 'number' ? ecoData.skips : parseInt(ecoData.skips, 10);
@@ -12412,6 +12539,376 @@ function switchPublisherTab(tab) {
     }
 
     // =========================================================================
+    // VOCAMAIL ENGINE - TRUNG TÂM NHẮN TIN & HỎI ĐÁP ADMIN (v0.10.9-33)
+    // =========================================================================
+    let vocaMailAttachments = [];
+    let selectedVocaMailCategory = 'qa';
+
+    function getVocaMailCategoryLabel(catKey) {
+      const labels = {
+        qa: '❓ Hỏi đáp học tập',
+        vip_payment: '👑 VocaVIP & Nạp tiền',
+        feedback: '💡 Đóng góp ý kiến',
+        bug: '🐛 Báo cáo sự cố',
+        other: '🤝 Khác'
+      };
+      return labels[catKey] || '❓ Hỏi đáp';
+    }
+
+    function openVocaMailModal(initialTab = 'compose') {
+      const isGuest = !currentUser || !currentUser.email;
+      const gView = document.getElementById('vocamail-guest-lock-view');
+      const aView = document.getElementById('vocamail-main-authenticated-view');
+
+      if (isGuest) {
+        if (gView) gView.style.display = 'block';
+        if (aView) aView.style.display = 'none';
+        openModal('modal-vocamail');
+        return;
+      }
+
+      if (gView) gView.style.display = 'none';
+      if (aView) aView.style.display = 'flex';
+
+      const nameEl = document.getElementById('vocamail-sender-name');
+      const emailEl = document.getElementById('vocamail-sender-email');
+      if (nameEl) nameEl.textContent = currentUser.displayName || currentUser.username || 'Học viên VocaFlow';
+      if (emailEl) emailEl.textContent = `(${currentUser.email || 'guest@vocaflow.app'})`;
+
+      updateVocaMailSentBadge();
+      switchVocaMailTab(initialTab);
+      openModal('modal-vocamail');
+    }
+    window.openVocaMailModal = openVocaMailModal;
+
+    function switchVocaMailTab(tab = 'compose') {
+      const composeBtn = document.getElementById('vocamail-tab-btn-compose');
+      const historyBtn = document.getElementById('vocamail-tab-btn-history');
+      const composeView = document.getElementById('vocamail-view-compose');
+      const historyView = document.getElementById('vocamail-view-history');
+
+      if (tab === 'compose') {
+        if (composeBtn) {
+          composeBtn.classList.add('active');
+          composeBtn.style.background = 'var(--primary)';
+          composeBtn.style.color = '#fff';
+        }
+        if (historyBtn) {
+          historyBtn.classList.remove('active');
+          historyBtn.style.background = 'transparent';
+          historyBtn.style.color = 'var(--text-muted)';
+        }
+        if (composeView) composeView.style.display = 'flex';
+        if (historyView) historyView.style.display = 'none';
+      } else {
+        if (historyBtn) {
+          historyBtn.classList.add('active');
+          historyBtn.style.background = 'var(--primary)';
+          historyBtn.style.color = '#fff';
+        }
+        if (composeBtn) {
+          composeBtn.classList.remove('active');
+          composeBtn.style.background = 'transparent';
+          composeBtn.style.color = 'var(--text-muted)';
+        }
+        if (composeView) composeView.style.display = 'none';
+        if (historyView) historyView.style.display = 'flex';
+        renderVocaMailHistory();
+      }
+    }
+    window.switchVocaMailTab = switchVocaMailTab;
+
+    function selectVocaMailCategory(catKey, btnEl) {
+      selectedVocaMailCategory = catKey;
+      document.querySelectorAll('#vocamail-category-grid .vocamail-cat-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text)';
+      });
+      if (btnEl) {
+        btnEl.classList.add('active');
+        btnEl.style.borderColor = '#818cf8';
+        btnEl.style.background = 'rgba(99, 102, 241, 0.15)';
+        btnEl.style.color = '#818cf8';
+      }
+    }
+    window.selectVocaMailCategory = selectVocaMailCategory;
+
+    function handleVocaMailImageSelect(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const remainingSlots = 3 - vocaMailAttachments.length;
+      if (remainingSlots <= 0) {
+        showToast('⚠️ Bạn chỉ có thể đính kèm tối đa 3 ảnh!');
+        return;
+      }
+
+      const filesToProcess = Array.from(files).slice(0, remainingSlots);
+      filesToProcess.forEach(file => {
+        if (!file.type.startsWith('image/')) {
+          showToast('⚠️ Vui lòng chỉ chọn định dạng hình ảnh!');
+          return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+          showToast('⚠️ Dung lượng ảnh tối đa là 3MB!');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          vocaMailAttachments.push({
+            name: file.name,
+            size: file.size,
+            dataUrl: e.target.result
+          });
+          renderVocaMailAttachmentsPreview();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      event.target.value = '';
+    }
+    window.handleVocaMailImageSelect = handleVocaMailImageSelect;
+
+    function removeVocaMailAttachment(index) {
+      vocaMailAttachments.splice(index, 1);
+      renderVocaMailAttachmentsPreview();
+    }
+    window.removeVocaMailAttachment = removeVocaMailAttachment;
+
+    function renderVocaMailAttachmentsPreview() {
+      const container = document.getElementById('vocamail-attachments-preview');
+      if (!container) return;
+
+      if (vocaMailAttachments.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = vocaMailAttachments.map((att, idx) => `
+        <div style="position: relative; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); background: #000;">
+          <img src="${att.dataUrl}" alt="Attachment ${idx+1}" style="width: 100%; height: 100%; object-fit: cover;">
+          <button type="button" onclick="removeVocaMailAttachment(${idx})" style="position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%; background: rgba(239,68,68,0.9); color: white; border: none; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function getVocaMailHistoryFromStorage() {
+      if (!currentUser || !currentUser.uid) return [];
+      try {
+        const stored = localStorage.getItem(`vocaflow_sent_vocamails_${currentUser.uid}`);
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveVocaMailHistoryToStorage(historyList) {
+      if (!currentUser || !currentUser.uid) return;
+      localStorage.setItem(`vocaflow_sent_vocamails_${currentUser.uid}`, JSON.stringify(historyList));
+      updateVocaMailSentBadge();
+    }
+
+    function updateVocaMailSentBadge() {
+      const badge = document.getElementById('vocamail-sent-count-badge');
+      if (!badge) return;
+      const history = getVocaMailHistoryFromStorage();
+      badge.textContent = history.length;
+    }
+
+    async function submitVocaMail() {
+      if (!currentUser || !currentUser.email) {
+        showToast('🔒 Vui lòng đăng nhập để gửi VocaMail!');
+        openAuthModal('login');
+        return;
+      }
+
+      const subjectInput = document.getElementById('vocamail-input-subject');
+      const bodyInput = document.getElementById('vocamail-input-body');
+      const sendBtn = document.getElementById('btn-vocamail-send');
+
+      const subjectVal = subjectInput ? subjectInput.value.trim() : '';
+      const bodyVal = bodyInput ? bodyInput.value.trim() : '';
+
+      if (!subjectVal) {
+        showToast('⚠️ Vui lòng nhập tiêu đề thư!');
+        if (subjectInput) subjectInput.focus();
+        return;
+      }
+      if (!bodyVal) {
+        showToast('⚠️ Vui lòng nhập nội dung thư chi tiết!');
+        if (bodyInput) bodyInput.focus();
+        return;
+      }
+
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '⏳ Đang gửi mail...';
+      }
+
+      const mailId = 'vm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const isVip = (typeof isUserVip === 'function' && isUserVip());
+      const categoryLabel = getVocaMailCategoryLabel(selectedVocaMailCategory);
+
+      const mailRecord = {
+        id: mailId,
+        timestamp: new Date().toISOString(),
+        category: selectedVocaMailCategory,
+        categoryLabel: categoryLabel,
+        subject: subjectVal,
+        body: bodyVal,
+        senderName: currentUser.displayName || currentUser.username || 'Học viên VocaFlow',
+        senderEmail: currentUser.email || 'guest@vocaflow.app',
+        senderUid: currentUser.uid,
+        isVip: isVip,
+        attachmentsCount: vocaMailAttachments.length,
+        status: 'sent'
+      };
+
+      // 1. Save locally
+      const history = getVocaMailHistoryFromStorage();
+      history.unshift(mailRecord);
+      saveVocaMailHistoryToStorage(history);
+
+      // 2. Push to Firebase Realtime Database
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        fetch(`${rtdbUrl}/vocamails_inbox/${mailId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(mailRecord)
+        }).catch(() => {});
+
+        fetch(`${rtdbUrl}/users/${currentUser.uid}/vocamails/${mailId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(mailRecord)
+        }).catch(() => {});
+      } catch (e) {}
+
+      // 3. Send real email to duwchao@gmail.com & nongduchaolop6c@gmail.com
+      try {
+        fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            _subject: `[VocaMail] [${categoryLabel}] ${subjectVal}`,
+            _cc: 'nongduchaolop6c@gmail.com',
+            _template: 'table',
+            'Mã Thư': mailId,
+            'Người Gửi': `${mailRecord.senderName} (${mailRecord.senderEmail})`,
+            'UID': mailRecord.senderUid,
+            'Tài Khoản': isVip ? '👑 VocaVIP' : 'Thường',
+            'Phân Loại': categoryLabel,
+            'Tiêu Đề': subjectVal,
+            'Nội Dung': bodyVal,
+            'Ảnh Đính Kèm': vocaMailAttachments.length > 0 ? `${vocaMailAttachments.length} ảnh` : 'Không có',
+            'Thời Gian': new Date().toLocaleString('vi-VN')
+          })
+        }).catch(err => console.warn('FormSubmit email note:', err));
+      } catch (err) {}
+
+      // 4. In-App Notification & Sound
+      if (typeof addNotification === 'function') {
+        addNotification(
+          'VOCAMAIL',
+          '✉️ Đã Gửi VocaMail Thành Công',
+          `Thư "${subjectVal}" đã được chuyển tiếp trực tiếp vào hộp thư Admin (duwchao@gmail.com & nongduchaolop6c@gmail.com).`,
+          'OPEN_VOCAMAIL',
+          { mailId }
+        );
+      }
+      playVocaSfx('correct');
+
+      // Reset form
+      if (subjectInput) subjectInput.value = '';
+      if (bodyInput) bodyInput.value = '';
+      vocaMailAttachments = [];
+      renderVocaMailAttachmentsPreview();
+
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '🚀 Gửi VocaMail Ngay';
+      }
+
+      showToast('🎉 Đã gửi VocaMail thành công tới Admin!');
+      switchVocaMailTab('history');
+    }
+    window.submitVocaMail = submitVocaMail;
+
+    function openDirectGmailFallback() {
+      const subjectInput = document.getElementById('vocamail-input-subject');
+      const bodyInput = document.getElementById('vocamail-input-body');
+      const subjectVal = subjectInput ? subjectInput.value.trim() : 'Hỏi đáp VocaFlow';
+      const bodyVal = bodyInput ? bodyInput.value.trim() : '';
+
+      const senderName = currentUser ? (currentUser.displayName || currentUser.username || 'Học viên') : 'Học viên';
+      const senderUid = currentUser ? currentUser.uid : 'guest';
+
+      const fullBody = `${bodyVal}\n\n---\nThông tin người gửi:\nTên: ${senderName}\nUID: ${senderUid}\nPhiên bản: ${VOCAFLOW_APP_VERSION}`;
+      const mailtoUrl = `mailto:duwchao@gmail.com,nongduchaolop6c@gmail.com?subject=${encodeURIComponent('[VocaMail] ' + subjectVal)}&body=${encodeURIComponent(fullBody)}`;
+      window.open(mailtoUrl, '_blank');
+    }
+    window.openDirectGmailFallback = openDirectGmailFallback;
+
+    function renderVocaMailHistory() {
+      const container = document.getElementById('vocamail-history-list');
+      if (!container) return;
+
+      const history = getVocaMailHistoryFromStorage();
+      if (history.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 32px 10px; color: var(--text-muted);">
+            <span style="font-size: 32px; display: block; margin-bottom: 6px;">📭</span>
+            <strong style="font-size: 13.5px; color: var(--text);">Hộp thư đã gửi đang trống</strong>
+            <div style="font-size: 11.5px; margin-top: 4px;">Các bức thư bạn gửi cho Admin sẽ được lưu trữ tại đây để bạn tiện theo dõi.</div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="switchVocaMailTab('compose')" style="margin-top: 12px; font-size: 11.5px; font-weight: 700;">
+              ✍️ Soạn Thư Mới Ngay
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = history.map(item => {
+        const timeStr = formatRelativeTime(item.timestamp);
+        return `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(99,102,241,0.3);">${escapeHtml(item.categoryLabel || '❓ Hỏi đáp')}</span>
+                <strong style="font-size: 13px; color: var(--text);">${escapeHtml(item.subject)}</strong>
+              </div>
+              <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3); white-space: nowrap;">✓ Đã gửi</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.45; white-space: pre-wrap; background: rgba(0,0,0,0.15); padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.04);">
+              ${escapeHtml(item.body)}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--text-muted); margin-top: 2px;">
+              <span>🕒 ${timeStr} • Gửi tới: <strong>duwchao@gmail.com & nongduchaolop6c@gmail.com</strong></span>
+              <span style="color: #818cf8;">#${item.id.slice(0, 10)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    window.renderVocaMailHistory = renderVocaMailHistory;
+
+    function clearVocaMailHistory() {
+      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử thư VocaMail đã gửi trên thiết bị này không?')) return;
+      if (!currentUser || !currentUser.uid) return;
+      localStorage.removeItem(`vocaflow_sent_vocamails_${currentUser.uid}`);
+      updateVocaMailSentBadge();
+      renderVocaMailHistory();
+      showToast('🗑️ Đã xóa sạch lịch sử VocaMail trên máy này!');
+    }
+    window.clearVocaMailHistory = clearVocaMailHistory;
+
+    // =========================================================================
     // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.8-alpha-10.3)
     // =========================================================================
     function getStoreActiveDiscount() {
@@ -12772,8 +13269,6 @@ function switchPublisherTab(tab) {
     }
 
     function injectInPagePushAd() {
-      const isDesktop = !!(window.chrome && window.chrome.webview);
-      if (isDesktop) return;
       if (!document.getElementById('monetag-inpage-script')) {
         try {
           const s = document.createElement('script');
@@ -12789,8 +13284,6 @@ function switchPublisherTab(tab) {
     }
 
     function injectVignetteAd() {
-      const isDesktop = !!(window.chrome && window.chrome.webview);
-      if (isDesktop) return;
       if (!document.getElementById('monetag-vignette-script')) {
         try {
           const s = document.createElement('script');
@@ -12848,8 +13341,6 @@ function switchPublisherTab(tab) {
     }
 
     function triggerRewardedAdBanner(type = 'inpage') {
-      const isDesktop = !!(window.chrome && window.chrome.webview);
-      if (isDesktop) return;
       const statusBadge = document.getElementById('rewarded-ad-status-badge');
       if (type === 'inpage') {
         if (statusBadge) statusBadge.innerHTML = '<span>📢 Biểu ngữ tài trợ In-Page Push đang hiển thị</span>';
@@ -12999,7 +13490,9 @@ function switchPublisherTab(tab) {
       isAdWatchPausedDueToTabSwitch = false;
       
       // Cancel Penalty: count as spent attempt and start cooldown immediately
-      localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
+      const nowTs = Date.now();
+      localStorage.setItem('vocaflow_last_ad_watch_time', nowTs.toString());
+      if (typeof patchInstantAdCooldownToCloud === 'function') patchInstantAdCooldownToCloud(nowTs);
       updateAdButtonCooldownState();
       updateShopBonusesUI();
       saveDatabase(true);
@@ -13018,7 +13511,9 @@ function switchPublisherTab(tab) {
       if (typeof recordAdWatched === 'function') recordAdWatched();
 
       // 2. Set ad cooldown
-      localStorage.setItem('vocaflow_last_ad_watch_time', Date.now().toString());
+      const nowTs = Date.now();
+      localStorage.setItem('vocaflow_last_ad_watch_time', nowTs.toString());
+      if (typeof patchInstantAdCooldownToCloud === 'function') patchInstantAdCooldownToCloud(nowTs);
 
       // 3. Notification & sync (No 0 Xu ledger entry)
       if (typeof addNotification === 'function') {
@@ -21456,6 +21951,35 @@ Yêu cầu nghiêm ngặt:
       evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
     }
 
+    // String similarity (Levenshtein distance) for anti-hallucination / anti-nonsense guard (v0.10.9-33)
+    function calculateStringSimilarity(s1, s2) {
+      if (!s1 || !s2) return 0;
+      const a = s1.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+      const b = s2.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+      if (a === b) return 1.0;
+      if (a.length === 0 || b.length === 0) return 0;
+      const matrix = [];
+      for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          if (b.charAt(i - 1) === a.charAt(j - 1)) {
+            matrix[i][j] = matrix[i - 1][j - 1];
+          } else {
+            matrix[i][j] = Math.min(
+              matrix[i - 1][j - 1] + 1,
+              matrix[i][j - 1] + 1,
+              matrix[i - 1][j] + 1
+            );
+          }
+        }
+      }
+      const distance = matrix[b.length][a.length];
+      const maxLen = Math.max(a.length, b.length);
+      return 1 - (distance / maxLen);
+    }
+    window.calculateStringSimilarity = calculateStringSimilarity;
+
     async function evaluateSpeakingAudioWithGemini(mimeType = 'audio/webm') {
       const resultPanel = document.getElementById('speaking-result-panel');
       const aiLoading = document.getElementById('speaking-ai-loading');
@@ -21497,30 +22021,37 @@ ${targetPos ? `TARGET PART OF SPEECH: "${targetPos}"\n` : ''}REFERENCE IPA: "${t
 INTENDED MEANING: "${targetMeaning}"
 
 ═══════════════════════════════════════════════════════
-OBJECTIVE & FAIR PHONETIC CRITERIA:
+OBJECTIVE & FAIR PHONETIC CRITERIA (ANTI-AM-BOI & STRICT ACCURACY):
 ═══════════════════════════════════════════════════════
-1. ACCURATE & CONTINUOUS SCORING (0 to 100):
-- Calculate a granular, realistic, and continuous score reflecting genuine acoustic accuracy:
-  * 96 - 100: Near-native excellence. Flawless syllable stress, perfect vowel quality, crisp consonant endings, and natural flow.
-  * 90 - 95: Very good / fluent. Clear and fully intelligible with correct stress and vowels, minor native tongue inflection.
-  * 80 - 89: Good / passing. Intelligible, but with a slight phonetic error (e.g. minor vowel openness difference /e/ vs /æ/ or softer ending sound).
-  * 65 - 79: Fair / needs work. Noticeable error (e.g. dropped final consonant /s, t, d, z/, misplaced primary stress).
-  * 40 - 64: Weak. Significant mispronunciation of core syllables.
-  * 0 - 39: Unintelligible noise, silence, or completely wrong word.
+1. EXACT ACOUSTIC TRANSCRIPTION (MANDATORY):
+- Listen to the audio and transcribe in "detectedTranscript" EXACTLY what the user literally spoke.
+- If the user spoke a corrupted word, nonsense word, or wrong word (e.g. saying "acadepussy", "acadepus", "akaboom" instead of "academic"):
+  * Write that exact word in "detectedTranscript" (e.g. "acadepussy").
+  * Assign score between 0 and 30 ONLY.
+  * Set verdict to "Chưa đúng từ / Sai từ".
+- If the user reads in Vietnamese "âm bồi" (reading English word like separate flat Vietnamese words/syllables, e.g. "a-ca-đe-mích" with flat Vietnamese tones, no English stress, no vowel reduction to /ə/, no proper English consonants):
+  * Write the exact âm bồi transcription in "detectedTranscript" (e.g. "a ca đe mích").
+  * HARD-CAP score at 45 to 60. NEVER give >= 70 for âm bồi reading.
+  * In "feedbackVi", explicitly explain why reading as Vietnamese syllables ("âm bồi") is incorrect and guide them to use English primary stress and schwa /ə/.
 
-* CRITICAL INSTRUCTION ON SCORING: Evaluate acoustic details dynamically across the full spectrum. DO NOT anchor or default to 95 for every good recording. Differentiate 91, 93, 94, 96, 98 based on real acoustic nuances!
+2. ACCURATE CONTINUOUS SCORING (0 to 100):
+- 95 - 100: Flawless native/near-native pronunciation, crisp consonants, natural stress and vowel reductions.
+- 85 - 94: Very good standard English pronunciation with clear stress, good vowels, natural cadence.
+- 70 - 84: Understandable passing grade with minor non-native accent or slightly softer ending consonants.
+- 45 - 69: Noticeable pronunciation errors, wrong stress, or Vietnamese "âm bồi" flat reading.
+- 0 - 39: Wrong word, nonsense word, unintelligible, or silence.
 
-2. STRICT LINGUISTIC SANITY RULES (ANTI-HALLUCINATION & ANTI-NITPICKING):
+3. STRICT LINGUISTIC SANITY RULES:
 - RULE A (NO FAKE ELONGATION): NEVER ask or suggest elongating ("ngân dài", "kéo dài") stop consonants (/p, t, k, b, d, g/) or nasal codas (/m, n, ŋ/). Nasal endings (e.g. in "person", "foundation") and stop endings are naturally brief closures.
 - RULE B (NO PHANTOM SOUNDS): Do NOT hallucinate sounds that don't exist in the standard IPA.
 - RULE C (ACCENT TOLERANCE): Do NOT penalize natural American vs British variations (e.g. rhotic /r/, flap [ɾ] in "water", or /ɑː/ vs /æ/ in "dance").
 - RULE D (CONSTRUCTIVE FEEDBACK): If pronunciation is good, explain what sounded great. If not, give actionable mouth/tongue tips in Vietnamese.
 - RULE E (POLYSEMY & HOMOGRAPHS): If this word is a homograph or has stress shifting between grammatical forms (e.g. noun vs verb like 'record', 'present', 'object', 'contract', 'permit', 'lead', 'tear', etc.), strictly evaluate whether the user's stress and vowel reduction match the specified TARGET PART OF SPEECH (${targetPos || 'specified form'}) and REFERENCE IPA (${targetIpa}).
 
-3. MULTI-WORD & COMPOUND PHRASES:
+4. MULTI-WORD & COMPOUND PHRASES:
 - For multi-word phrases (e.g. "aqueous solution", "point out"): evaluate each word individually in "wordsBreakdown".
 
-${needSyllable ? '4. SYLLABLE COUNT: Count total syllables in the target phrase and return as "syllableCount".\n' : ''}
+${needSyllable ? '5. SYLLABLE COUNT: Count total syllables in the target phrase and return as "syllableCount".\n' : ''}
 ═══════════════════════════════════════════════════════
 RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 ═══════════════════════════════════════════════════════
@@ -21605,6 +22136,32 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (aiContent) aiContent.style.display = 'block';
 
         if (evalSuccess && evalData) {
+          // Post-processing guard against hallucinated high scores on nonsense or âm bồi (v0.10.9-33)
+          if (evalData.detectedTranscript && typeof evalData.detectedTranscript === 'string') {
+            const targetClean = currentWord.term.toLowerCase().trim();
+            const transcriptClean = evalData.detectedTranscript.toLowerCase().trim();
+            const sim = calculateStringSimilarity(targetClean, transcriptClean);
+
+            if (sim < 0.70) {
+              evalData.score = Math.min(Number(evalData.score) || 0, 30);
+              evalData.verdict = 'Chưa đúng từ';
+              if (!evalData.feedbackVi || !evalData.feedbackVi.includes(evalData.detectedTranscript)) {
+                evalData.feedbackVi = `⚠️ AI ghi nhận bạn đọc thành "${evalData.detectedTranscript}" (khác với từ mục tiêu "${currentWord.term}"). Vui lòng phát âm lại đúng từ nhé!`;
+              }
+            } else if (sim < 0.85) {
+              evalData.score = Math.min(Number(evalData.score) || 0, 65);
+              if (evalData.score < 70) evalData.verdict = 'Cần luyện thêm';
+            }
+
+            // Detect Âm Bồi in transcript or feedback
+            if (/[\u00C0-\u1EF9]|a-ca|đe-mích|âm bồi/i.test(evalData.detectedTranscript + ' ' + (evalData.feedbackVi || ''))) {
+              if (evalData.feedbackVi && (evalData.feedbackVi.toLowerCase().includes('âm bồi') || evalData.feedbackVi.toLowerCase().includes('tiếng việt') || evalData.detectedTranscript.includes(' '))) {
+                evalData.score = Math.min(Number(evalData.score) || 0, 58);
+                evalData.verdict = 'Đọc kiểu âm bồi';
+              }
+            }
+          }
+
           // v0.10.6t: Preserve speakingAudioBlob & speakingAudioBlobUrl for user playback
           speakingCurrentAudioBase64 = null;
           pendingAudioBlob = null;

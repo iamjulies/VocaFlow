@@ -1,4 +1,26 @@
 ================================================================================
+Phiên bản: v0.10.9-33 (Build 265) - VocaMail Admin Support, Realtime Ad Cooldown Sync, Anti-Âm-Bồi AI Scoring & Smart Notifications
+================================================================================
+1. [Hộp Thư VocaMail - Trung Tâm Nhắn Tin & Hỏi Đáp Admin Trực Tuyến]:
+   - Ra mắt tính năng VocaMail cho phép học viên gửi thắc mắc, phản hồi, tư vấn học tập hoặc yêu cầu hỗ trợ trực tiếp đến đội ngũ Admin.
+   - Hỗ trợ phân loại danh mục (Hỏi đáp, Báo lỗi, Góp ý, Hỗ trợ VIP, Khác), đính kèm tối đa 3 hình ảnh chụp màn hình.
+   - Tự động đồng bộ gửi email đến các địa chỉ quản trị cố định (duwchao@gmail.com, nongduchaolop6c@gmail.com) và lưu trữ trên Firebase RTDB `/vocamails_inbox`.
+   - Tích hợp tab Lịch Sử VocaMail giúp học viên dễ dàng xem lại toàn bộ các thư đã gửi, kèm chi tiết nội dung, ảnh đính kèm và trạng thái.
+2. [Khắc Phục Lỗi Hiển Thị Quảng Cáo Nhận Thưởng Trên Bản Windows Desktop App (EXE WebView2)]:
+   - Gỡ bỏ rào cản chặn quảng cáo trên môi trường WebView2 cho luồng xem quảng cáo nhận thưởng có chủ đích.
+   - Cho phép người dùng bản cài đặt máy tính (EXE) xem video tài trợ để nhận +1 lượt quay VocaSpin và nhận thưởng mượt mà như bản Web PWA.
+3. [Nâng Cấp Đột Phá Động Cơ Chấm Điểm AI Speaking - Chống Âm Bồi & Khử Lỗi Từ Vựng Vô Nghĩa]:
+   - Tái cấu trúc bộ tiêu chí chuẩn ngữ âm Oxford và ELSA cho Gemini: bắt buộc chép chính tả chính xác âm thanh thu được (detectedTranscript).
+   - Thiết lập lá chắn thuật toán Levenshtein Distance Guard (calculateStringSimilarity): Nếu từ thu được là từ vô nghĩa, từ bị biến tấu bậy bạ hoặc khác biệt >30% so với từ mục tiêu (ví dụ "acadepussy" thay vì "academic"), điểm số bị khóa cứng dưới 35 điểm (< 35/100).
+   - Khắc phục triệt để nghịch lý "Âm Bồi": Phạt nặng việc đọc từ tiếng Anh theo từng âm tiết tiếng Việt không trọng âm (ví dụ "a-ca-đe-mích"), giới hạn trần điểm tối đa ở mức 45-60 điểm, hướng dẫn học viên cách đặt trọng âm và giảm nguyên âm /ə/ chuẩn bản xứ.
+4. [Đồng Bộ Thời Gian Chờ (Cooldown) Xem Quảng Cáo 2 Chiều Thời Gian Thực Siêu Tốc]:
+   - Bổ sung cơ chế phát gói PATCH tức thì `patchInstantAdCooldownToCloud` cập nhật `lastAdWatchTime` lên Firebase ngay khoảnh khắc xem xong hoặc hủy xem quảng cáo.
+   - Tích hợp bộ lắng nghe vi mô SSE Stream (`applyCloudEconomyPatch`) tự động nhận diện và cập nhật thời gian hồi trên tất cả các thiết bị đang mở ngay lập tức ở thời gian thực (0ms trễ, không cần chờ 30s hay refresh ứng dụng).
+5. [Nâng Cấp Trải Nghiệm Trung Tâm Thông Báo (Smart Notifications)]:
+   - Tự động đánh dấu đã đọc khi mở Trung Tâm Thông Báo, tự xóa chấm đỏ thông báo mà không bắt buộc người dùng phải bấm nút "Đã đọc tất cả" thủ công.
+   - Định tuyến thông minh: Nhấn vào từng thông báo sẽ tự động mở đúng màn hình/modal liên quan (VocaDeck, Profile, VIP, Vòng quay may mắn, Ví/Shop, Báo lỗi, VocaMail, Chuỗi Flow, v.v.).
+
+================================================================================
 Phiên bản: v0.10.9-32 (Build 264) - 30s Periodic Sync, VocaVIP Gateway & Balance VIP Perfection
 ================================================================================
 1. [Chu Kỳ Tự Động Đồng Bộ 2 Chiều Định Kỳ 30 Giây (30s Periodic Bidirectional Sync Engine)]:
