@@ -2878,7 +2878,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-30</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-31</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -7757,7 +7757,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-30 (Build 262)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-31 (Build 263)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8378,10 +8378,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-30)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-31)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-30';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-30 (Build 262)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-31';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-31 (Build 263)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -9006,7 +9006,7 @@
       localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
       localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
-      if (currentUser && typeof isSyncing !== 'undefined' && !isSyncing && typeof syncData === 'function') syncData();
+      if (typeof syncSettingsToCloud === 'function') syncSettingsToCloud();
     }
 
     function toggleShowFilterPosSetting(val) {
@@ -9014,7 +9014,7 @@
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
       localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
-      if (currentUser && typeof isSyncing !== 'undefined' && !isSyncing && typeof syncData === 'function') syncData();
+      if (typeof syncSettingsToCloud === 'function') syncSettingsToCloud();
     }
 
     function toggleShowFilterCefrSetting(val) {
@@ -9022,7 +9022,7 @@
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
       localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
-      if (currentUser && typeof isSyncing !== 'undefined' && !isSyncing && typeof syncData === 'function') syncData();
+      if (typeof syncSettingsToCloud === 'function') syncSettingsToCloud();
     }
 
     function toggleShowFilterScoreSetting(val) {
@@ -9030,7 +9030,7 @@
       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
       localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyUiFilterSettings();
-      if (currentUser && typeof isSyncing !== 'undefined' && !isSyncing && typeof syncData === 'function') syncData();
+      if (typeof syncSettingsToCloud === 'function') syncSettingsToCloud();
     }
 
     function applyUiFilterSettings() {
@@ -9530,8 +9530,8 @@
       localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
       localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyTimestampDisplay();
-      if (currentUser && currentUser.uid) {
-        pushCurrentDatabaseToCloud();
+      if (typeof syncSettingsToCloud === 'function') {
+        syncSettingsToCloud();
       }
     }
 
@@ -9941,6 +9941,89 @@
       } catch (e) {
         console.warn('Sync economy to cloud note:', e);
       }
+    }
+
+    // =========================================================================
+    // GRANULAR CLOUD SYNC & AI PAYLOAD SANITIZER (v0.10.9-alpha-31)
+    // =========================================================================
+    function sanitizeAiChatHistoryForCloud(history) {
+      if (!Array.isArray(history)) return [];
+      return history.slice(-30).map(msg => {
+        if (!msg) return msg;
+        const cleanMsg = { ...msg };
+        if (Array.isArray(cleanMsg.images)) {
+          cleanMsg.images = cleanMsg.images.map(img => {
+            if (!img) return img;
+            return {
+              id: img.id || ('img_' + Date.now()),
+              name: img.name || 'image.png',
+              mimeType: img.mimeType || 'image/png',
+              hasImage: true,
+              previewUrl: img.previewUrl || null,
+              base64: null // Strip heavy Base64 image payload from Cloud RTDB
+            };
+          });
+        }
+        return cleanMsg;
+      });
+    }
+
+    async function syncSettingsToCloud() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+      const nowTs = Date.now();
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, nowTs.toString());
+      const payload = {
+        showReviewQueue: showReviewQueueSetting,
+        showFilterPos: showFilterPosSetting,
+        showFilterCefr: showFilterCefrSetting,
+        showFilterScore: showFilterScoreSetting,
+        showTimestamp: showTimestampSetting,
+        vipCatMemesEnabled: localStorage.getItem('vocaflow_vip_cat_memes_enabled') !== 'false',
+        vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5'),
+        updatedAt: nowTs
+      };
+      try {
+        fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/settings.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      } catch (e) {}
+    }
+
+    async function syncFlowToCloud() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+      const flowInfo = calculateCurrentFlow();
+      const payload = {
+        days: flowInfo.currentFlow,
+        pureDays: flowInfo.pureFlow,
+        max: flowInfo.maxFlow,
+        freezes: getUserFlowFreezes(),
+        updatedAt: new Date().toISOString()
+      };
+      try {
+        await Promise.allSettled([
+          fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/flow.json${authParam}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }),
+          fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/flowDates.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getFlowDates())
+          }),
+          fetch(`${firebaseConfig.databaseURL}/users/${currentUser.uid}/flowFreezeDates.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getFlowFreezeDates())
+          })
+        ]);
+      } catch (e) {}
     }
 
     async function loadEconomyFromCloud() {
@@ -15666,6 +15749,7 @@ function switchPublisherTab(tab) {
       } catch (e) {
         console.warn('Sync before logout warning:', e);
       }
+      closeFirebaseRealtimeSync();
 
       // 1. Clear all user account data from LocalStorage & Memory ("CHẾT LÀ HẾT")
       currentUser = null;
@@ -15984,10 +16068,11 @@ function switchPublisherTab(tab) {
     }
 
     async function pushCurrentDatabaseToCloud() {
-      if (!currentUser || !currentUser.uid) return;
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
       const userId = currentUser.uid;
-      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+      const rtdbUrl = firebaseConfig.databaseURL;
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+      const authParam = token ? `?auth=${token}` : '';
 
       try {
         decks = sanitizeDecks(decks);
@@ -16009,7 +16094,7 @@ function switchPublisherTab(tab) {
             pinnedBadges: userPinnedBadges,
             achievementsCount: Object.values(userAchievements).filter(a => a && a.unlocked).length,
             geminiApiKey: geminiApiKey || '',
-              geminiApiKeys: getStoredApiKeys(),
+            geminiApiKeys: getStoredApiKeys(),
             followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
             followingCount: Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length),
             isVip: isUserVip(),
@@ -16029,7 +16114,7 @@ function switchPublisherTab(tab) {
           avatar: avToSave,
           avatarTime: avTimeToSave,
           geminiApiKey: geminiApiKey || '',
-              geminiApiKeys: getStoredApiKeys(),
+          geminiApiKeys: getStoredApiKeys(),
           referredBy: refToSave,
           achievements: userAchievements,
           pinnedBadges: userPinnedBadges,
@@ -16041,6 +16126,7 @@ function switchPublisherTab(tab) {
           words: words,
           deletedWordIds: Array.from(deletedWordIds),
           deletedDeckIds: Array.from(deletedDeckIds),
+          aiChatHistory: sanitizeAiChatHistoryForCloud(aiChatHistory),
           economy: {
             points: getUserPoints(),
             hints: getUserHints(),
@@ -16084,6 +16170,226 @@ function switchPublisherTab(tab) {
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
       } catch (err) {
         console.warn('Auto background push note:', err);
+      }
+    }
+
+    // =========================================================================
+    // FIREBASE REALTIME WEBSOCKET & SSE EVENTSTREAM ENGINE (v0.10.9-alpha-31)
+    // =========================================================================
+    let rtdbEventSource = null;
+    let rtdbEventSourceRetryTimer = null;
+    let rtdbActiveSyncUid = null;
+
+    function initFirebaseRealtimeSync(uid, idToken) {
+      if (!uid || uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
+      if (rtdbEventSource && rtdbActiveSyncUid === uid) return; // already active for current user
+
+      closeFirebaseRealtimeSync();
+      rtdbActiveSyncUid = uid;
+
+      const authParam = idToken ? `?auth=${idToken}` : '';
+      const streamUrl = `${firebaseConfig.databaseURL}/users/${uid}.json${authParam}`;
+
+      try {
+        if (typeof EventSource !== 'undefined') {
+          rtdbEventSource = new EventSource(streamUrl);
+
+          rtdbEventSource.addEventListener('put', (e) => {
+            handleRealtimeCloudEvent('put', e.data);
+          });
+
+          rtdbEventSource.addEventListener('patch', (e) => {
+            handleRealtimeCloudEvent('patch', e.data);
+          });
+
+          rtdbEventSource.onerror = () => {
+            if (rtdbEventSource) {
+              try { rtdbEventSource.close(); } catch (e) {}
+              rtdbEventSource = null;
+            }
+            if (rtdbEventSourceRetryTimer) clearTimeout(rtdbEventSourceRetryTimer);
+            rtdbEventSourceRetryTimer = setTimeout(async () => {
+              if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+                const freshToken = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser.idToken || '');
+                initFirebaseRealtimeSync(currentUser.uid, freshToken);
+              }
+            }, 15000);
+          };
+        }
+      } catch (err) {
+        console.warn('Realtime Stream Init note:', err);
+      }
+    }
+
+    function closeFirebaseRealtimeSync() {
+      if (rtdbEventSourceRetryTimer) {
+        clearTimeout(rtdbEventSourceRetryTimer);
+        rtdbEventSourceRetryTimer = null;
+      }
+      if (rtdbEventSource) {
+        try { rtdbEventSource.close(); } catch (e) {}
+        rtdbEventSource = null;
+      }
+      rtdbActiveSyncUid = null;
+    }
+
+    function handleRealtimeCloudEvent(eventType, rawData) {
+      if (!rawData || !currentUser || !currentUser.uid) return;
+      try {
+        const parsed = JSON.parse(rawData);
+        if (!parsed || typeof parsed !== 'object') return;
+        const { path, data } = parsed;
+        if (data === null || typeof data === 'undefined') return;
+
+        if (path === '/' || path === '') {
+          mergeCloudDataIntoLocal(data, false);
+        } else if (path === '/economy' || path.startsWith('/economy')) {
+          applyCloudEconomyPatch(data);
+        } else if (path.startsWith('/flow') || path.startsWith('/flowDates') || path.startsWith('/flowFreezeDates')) {
+          applyCloudFlowPatch(path, data);
+        } else if (path.startsWith('/profile') || path === '/vip') {
+          applyCloudProfilePatch(path, data);
+        } else if (path.startsWith('/settings') || path === '/settings') {
+          applyCloudSettingsPatch(data);
+        } else if (path.startsWith('/notifications') || path === '/notifications') {
+          applyCloudNotificationsPatch(data);
+        } else if (path.startsWith('/following') || path.startsWith('/followers')) {
+          applyCloudSocialPatch(path, data);
+        }
+      } catch (e) {
+        console.warn('Realtime event parse note:', e);
+      }
+    }
+
+    function applyCloudEconomyPatch(ecoData) {
+      if (!ecoData || typeof ecoData !== 'object') return;
+      const remotePoints = typeof ecoData.points === 'number' ? ecoData.points : parseInt(ecoData.points, 10);
+      const remoteHints = typeof ecoData.hints === 'number' ? ecoData.hints : parseInt(ecoData.hints, 10);
+      const remoteSkips = typeof ecoData.skips === 'number' ? ecoData.skips : parseInt(ecoData.skips, 10);
+      if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
+      if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
+      if (!isNaN(remoteSkips)) localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
+
+      const remoteSpins = typeof ecoData.luckySpins === 'number' ? ecoData.luckySpins : parseInt(ecoData.luckySpins, 10);
+      if (!isNaN(remoteSpins)) {
+        localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteSpins).toString());
+      }
+      if (ecoData.luckySpinsDate) localStorage.setItem('vocaflow_last_spin_date', ecoData.luckySpinsDate);
+      if (ecoData.lastVipSpinDate) localStorage.setItem('vocaflow_last_vip_spin_date', ecoData.lastVipSpinDate);
+      if (ecoData.lastAdWatchTime) {
+        const rAd = parseInt(ecoData.lastAdWatchTime, 10);
+        const lAd = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
+        if (!isNaN(rAd) && rAd > lAd) localStorage.setItem('vocaflow_last_ad_watch_time', rAd.toString());
+      }
+      updateEconomyUI();
+      if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
+      if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
+      if (typeof updateAdButtonCooldownState === 'function') updateAdButtonCooldownState();
+    }
+
+    function applyCloudFlowPatch(path, data) {
+      if (path === '/flowDates' && Array.isArray(data)) {
+        const localFlow = getFlowDates();
+        const merged = Array.from(new Set([...localFlow, ...data])).sort();
+        localStorage.setItem('vocaflow_flow_dates', JSON.stringify(merged));
+        localStorage.setItem('vocaflow_study_dates', JSON.stringify(merged));
+      } else if (path === '/flowFreezeDates' && Array.isArray(data)) {
+        const localFreeze = getFlowFreezeDates();
+        const merged = Array.from(new Set([...localFreeze, ...data])).sort();
+        localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(merged));
+        localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(merged));
+      } else if (data && typeof data === 'object') {
+        if (Array.isArray(data.dates)) {
+          const merged = Array.from(new Set([...getFlowDates(), ...data.dates])).sort();
+          localStorage.setItem('vocaflow_flow_dates', JSON.stringify(merged));
+        }
+        if (data.freezes !== undefined) {
+          localStorage.setItem('vocaflow_flow_freezes', String(data.freezes));
+        }
+      }
+      updateFlowUI();
+      if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
+    }
+
+    function applyCloudProfilePatch(path, data) {
+      if (!data || typeof data !== 'object' || !currentUser) return;
+      let changed = false;
+      if (data.displayName && data.displayName !== currentUser.displayName) {
+        currentUser.displayName = data.displayName;
+        changed = true;
+      }
+      if (data.username && data.username !== currentUser.username) {
+        currentUser.username = data.username;
+        changed = true;
+      }
+      if (data.bio !== undefined && data.bio !== currentUser.bio) {
+        currentUser.bio = data.bio;
+        localStorage.setItem('vocaflow_user_bio', data.bio);
+        changed = true;
+      }
+      if (data.isVip !== undefined) {
+        applyVipState(!!data.isVip, data.vipTier || 'monthly', Number(data.vipExpiresAt || 0), 'realtime_patch', false);
+      }
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
+      }
+    }
+
+    function applyCloudSettingsPatch(settingsData) {
+      if (!settingsData || typeof settingsData !== 'object') return;
+      if (typeof settingsData.showReviewQueue === 'boolean') {
+        showReviewQueueSetting = settingsData.showReviewQueue;
+        localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
+      }
+      if (typeof settingsData.showFilterPos === 'boolean') {
+        showFilterPosSetting = settingsData.showFilterPos;
+        localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
+      }
+      if (typeof settingsData.showFilterCefr === 'boolean') {
+        showFilterCefrSetting = settingsData.showFilterCefr;
+        localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
+      }
+      if (typeof settingsData.showFilterScore === 'boolean') {
+        showFilterScoreSetting = settingsData.showFilterScore;
+        localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
+      }
+      if (typeof settingsData.showTimestamp === 'boolean') {
+        showTimestampSetting = settingsData.showTimestamp;
+        localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
+        applyTimestampDisplay();
+      }
+      applyUiFilterSettings();
+    }
+
+    function applyCloudNotificationsPatch(notifsData) {
+      if (!notifsData || typeof notifsData !== 'object') return;
+      const list = Object.values(notifsData).filter(n => n && n.id && !deletedNotificationIds.has(n.id));
+      const map = new Map();
+      userNotifications.forEach(n => { if (n && n.id) map.set(n.id, n); });
+      list.forEach(n => { map.set(n.id, n); });
+      userNotifications = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
+      localStorage.setItem('vocaflow_user_notifications', JSON.stringify(userNotifications));
+      updateNotificationsUI();
+      if (typeof renderNotificationsList === 'function') renderNotificationsList();
+    }
+
+    function applyCloudSocialPatch(path, data) {
+      if (!data || typeof data !== 'object') return;
+      if (path.startsWith('/following')) {
+        myFollowingMap = { ...myFollowingMap, ...data };
+        if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+        localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+      } else if (path.startsWith('/followers')) {
+        myFollowersMap = { ...myFollowersMap, ...data };
+        if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
+        localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+      }
+      if (currentUser) {
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
       }
     }
 
@@ -16174,27 +16480,587 @@ function switchPublisherTab(tab) {
       showToast('⚠️ Mất kết nối Internet (Ngoại tuyến)');
     });
 
+    // =========================================================================
+    // BIDIRECTIONAL MERGE & GRANULAR SYNC ENGINE (v0.10.9-alpha-31)
+    // =========================================================================
+    function mergeCloudDataIntoLocal(cloudData, triggerCloudPush = false) {
+      if (!cloudData || typeof cloudData !== 'object') return;
+
+      // 1. Profile DisplayName, Username, Bio & ReferredBy
+      const remoteProf = cloudData.profile || {};
+      const remoteName = remoteProf.displayName || cloudData.displayName;
+      const remoteRef = (remoteProf && remoteProf.referredBy) || cloudData.referredBy;
+      if (remoteRef && typeof remoteRef === 'string') {
+        localStorage.setItem('vocaflow_referred_by', remoteRef);
+        if (currentUser) currentUser.referredBy = remoteRef;
+      }
+
+      // 2. VIP State with Bulletproof Monotonic Sync
+      if (remoteProf.isVip !== undefined || cloudData.isVip !== undefined) {
+        const rIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
+        const rTier = remoteProf.vipTier || cloudData.vipTier || 'none';
+        const rExp = Number(remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0);
+        const isRemoteActive = rIsVip && (rTier === 'lifetime' || rExp > getTrustedCurrentTimestamp());
+        
+        const localExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
+        const localTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
+        const isLocalActive = userIsVip && (localTier === 'lifetime' || localExp > getTrustedCurrentTimestamp());
+        
+        if (isRemoteActive || isLocalActive) {
+          let localIsAhead = false;
+          if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
+          const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+          if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
+
+          applyVipState(true, localIsAhead ? localTier : rTier, Math.max(localExp, rExp), 'cloud_pull', false);
+        } else {
+          applyVipState(false, 'none', 0, 'cloud_pull', true);
+        }
+      }
+
+      const remoteUsername = remoteProf.username || cloudData.username;
+      const remoteLastChange = (remoteProf.lastUsernameChangeTimestamp !== undefined) ? remoteProf.lastUsernameChangeTimestamp : cloudData.lastUsernameChangeTimestamp;
+      const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
+      if (remoteBio !== undefined && remoteBio !== null) {
+        localStorage.setItem('vocaflow_user_bio', remoteBio);
+        const bioDisplay = document.getElementById('profile-bio-display');
+        if (bioDisplay) bioDisplay.textContent = (typeof remoteBio === 'string' && remoteBio.trim()) ? remoteBio : 'Chưa thiết lập mục tiêu cá nhân.';
+        const bioInput = document.getElementById('profile-bio-input');
+        if (bioInput) bioInput.value = (typeof remoteBio === 'string') ? remoteBio : '';
+      }
+      if (currentUser) {
+        let profChanged = false;
+        if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
+          currentUser.displayName = remoteName.trim();
+          profChanged = true;
+        }
+        if (remoteUsername && remoteUsername.trim().length >= 3 && remoteUsername !== currentUser.username) {
+          currentUser.username = remoteUsername.trim().toLowerCase();
+          profChanged = true;
+        }
+        if (remoteLastChange !== undefined && Number(remoteLastChange) !== currentUser.lastUsernameChangeTimestamp) {
+          currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
+          profChanged = true;
+        }
+        if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
+          currentUser.bio = remoteBio;
+          profChanged = true;
+        }
+        if (profChanged) {
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+          updateAuthUI();
+        }
+      }
+
+      // 3. Gemini API Keys Smart Merge
+      function extractKeysList(raw) {
+        if (!raw) return [];
+        if (Array.isArray(raw)) return raw.map(k => String(k || '').trim()).filter(k => k);
+        if (typeof raw === 'object') return Object.values(raw).map(k => String(k || '').trim()).filter(k => k);
+        if (typeof raw === 'string' && raw.trim()) return [raw.trim()];
+        return [];
+      }
+
+      let remoteKeys = extractKeysList(cloudData.geminiApiKeys);
+      if (remoteKeys.length === 0 && cloudData.settings) remoteKeys = extractKeysList(cloudData.settings.geminiApiKeys);
+      if (remoteKeys.length === 0 && cloudData.profile) remoteKeys = extractKeysList(cloudData.profile.geminiApiKeys);
+      if (remoteKeys.length === 0 && cloudData.geminiApiKey) remoteKeys = extractKeysList(cloudData.geminiApiKey);
+
+      const localKeys = getStoredApiKeys(false);
+      let mergedKeys = [];
+      const combinedKeys = [...remoteKeys, ...localKeys];
+      for (const k of combinedKeys) {
+        if (k && !mergedKeys.includes(k) && mergedKeys.length < 3) {
+          mergedKeys.push(k);
+        }
+      }
+
+      if (mergedKeys.length > 0) {
+        saveApiKeysList(mergedKeys, false);
+        updateSettingsApiKeysUI();
+      } else if (geminiApiKey) {
+        cloudData.geminiApiKey = geminiApiKey;
+        cloudData.geminiApiKeys = getStoredApiKeys(false);
+      }
+
+      // 4. Decks & Words with Tombstone Guard & Deduplication
+      const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
+      const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
+
+      const remoteAvatar = (cloudData.profile && cloudData.profile.avatar) || cloudData.avatar;
+      const remoteAvatarTime = parseInt((cloudData.profile && cloudData.profile.avatarTime) || cloudData.avatarTime || '0', 10);
+      const localAvatar = localStorage.getItem('vocaflow_user_avatar');
+      const localAvatarTime = parseInt(localStorage.getItem('vocaflow_avatar_time') || '0', 10);
+
+      if (remoteAvatar && typeof remoteAvatar === 'string' && (remoteAvatar.startsWith('data:image') || remoteAvatar.startsWith('http'))) {
+        if (remoteAvatarTime >= localAvatarTime || localAvatarTime === 0 || !localAvatar) {
+          localStorage.setItem('vocaflow_user_avatar', remoteAvatar);
+          localStorage.setItem('vocaflow_avatar_time', remoteAvatarTime.toString());
+          if (currentUser) {
+            currentUser.avatar = remoteAvatar;
+            currentUser.avatarTime = remoteAvatarTime;
+            localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+          }
+          updateAuthUI();
+        }
+      } else if (localAvatar && (localAvatar.startsWith('data:image') || localAvatar.startsWith('http'))) {
+        if (currentUser) {
+          currentUser.avatar = localAvatar;
+          currentUser.avatarTime = localAvatarTime || Date.now();
+          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        }
+      }
+
+      if (cloudData.deckSort) {
+        currentDeckSort = cloudData.deckSort;
+        localStorage.setItem('vocaflow_deck_sort', currentDeckSort);
+        const sortSelect = document.getElementById('deck-sort-select');
+        if (sortSelect) sortSelect.value = currentDeckSort;
+      }
+      if (cloudData.deckTab && (cloudData.deckTab === 'active' || cloudData.deckTab === 'archived')) {
+        currentDeckTab = cloudData.deckTab;
+        localStorage.setItem('vocaflow_deck_tab', currentDeckTab);
+      }
+      if (cloudData.wordFilter) {
+        currentWordFilter = cloudData.wordFilter;
+        localStorage.setItem('vocaflow_word_filter', currentWordFilter);
+      }
+
+      // Merge deleted tombstones from cloud
+      if (cloudData.deletedWordIds && Array.isArray(cloudData.deletedWordIds)) {
+        cloudData.deletedWordIds.forEach(id => deletedWordIds.add(id));
+      }
+      if (cloudData.deletedDeckIds && Array.isArray(cloudData.deletedDeckIds)) {
+        cloudData.deletedDeckIds.forEach(id => deletedDeckIds.add(id));
+      }
+
+      if (deletedDeckIds.has('deck-oxford-starter') && (decks.length <= 1 && remoteDecks.length === 0)) {
+        deletedDeckIds.delete('deck-oxford-starter');
+      }
+      saveDeletedTombstones();
+
+      const survivingDecksByNormTitle = new Map();
+      decks.forEach(d => {
+        if (d && d.id && !deletedDeckIds.has(d.id)) {
+          const nt = normalizeDeckTitleForDedupe(d.title);
+          if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, d);
+        }
+      });
+      remoteDecks.forEach(rd => {
+        if (rd && rd.id && !deletedDeckIds.has(rd.id)) {
+          const nt = normalizeDeckTitleForDedupe(rd.title);
+          if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, rd);
+        }
+      });
+
+      const allKnownDecksById = new Map();
+      decks.forEach(d => { if (d && d.id) allKnownDecksById.set(d.id, d); });
+      remoteDecks.forEach(rd => { if (rd && rd.id) allKnownDecksById.set(rd.id, rd); });
+
+      words.forEach(w => {
+        if (w && w.deckId && deletedDeckIds.has(w.deckId)) {
+          const oldDeck = allKnownDecksById.get(w.deckId);
+          if (oldDeck) {
+            const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+            const surviving = survivingDecksByNormTitle.get(nt);
+            if (surviving) {
+              w.deckId = surviving.id;
+              deletedWordIds.delete(w.id);
+            }
+          }
+        }
+      });
+
+      decks = decks.filter(d => !deletedDeckIds.has(d.id));
+      words = words.filter(w => !deletedWordIds.has(w.id) && !deletedDeckIds.has(w.deckId));
+
+      if (remoteDecks.length > 0) {
+        const viableRemoteDecks = remoteDecks.filter(rd => rd && rd.id && !deletedDeckIds.has(rd.id));
+        if (viableRemoteDecks.length === 0 && decks.length === 0) {
+          deletedDeckIds.clear();
+          saveDeletedTombstones();
+        }
+
+        if (decks.length === 1 && decks[0].id === 'deck-oxford-starter' && remoteDecks.some(rd => rd && rd.id && rd.id !== 'deck-oxford-starter')) {
+          decks = [];
+          words = words.filter(w => w.deckId !== 'deck-oxford-starter');
+        }
+      }
+
+      for (const remoteDeck of remoteDecks) {
+        if (!remoteDeck || !remoteDeck.id || deletedDeckIds.has(remoteDeck.id)) continue;
+        const cleanRemote = {
+          ...remoteDeck,
+          isPinned: remoteDeck.isPinned === true,
+          isArchived: remoteDeck.isArchived === true
+        };
+        const localIdx = decks.findIndex(d => d.id === remoteDeck.id);
+        if (localIdx >= 0) {
+          const localDeck = decks[localIdx];
+          const localTime = new Date(localDeck.updatedAt || localDeck.createdAt || 0).getTime();
+          const remoteTime = new Date(remoteDeck.updatedAt || remoteDeck.createdAt || 0).getTime();
+          if (remoteTime > localTime) {
+            decks[localIdx] = { ...localDeck, ...cleanRemote };
+          } else if (localTime > remoteTime) {
+            // keep local
+          } else {
+            decks[localIdx] = {
+              ...cleanRemote,
+              ...localDeck,
+              isPinned: localDeck.isPinned === true,
+              isArchived: localDeck.isArchived === true
+            };
+          }
+        } else {
+          decks.push(cleanRemote);
+        }
+      }
+
+      if (remoteWords.length > 0) {
+        for (const remoteWord of remoteWords) {
+          if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id)) continue;
+          if (deletedDeckIds.has(remoteWord.deckId)) {
+            const oldDeck = allKnownDecksById.get(remoteWord.deckId);
+            if (oldDeck) {
+              const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+              const surviving = survivingDecksByNormTitle.get(nt);
+              if (surviving) {
+                remoteWord.deckId = surviving.id;
+              } else {
+                continue;
+              }
+            } else {
+              continue;
+            }
+          }
+
+          const localIdx = words.findIndex(w => w.id === remoteWord.id);
+          if (localIdx >= 0) {
+            const localWord = words[localIdx];
+            const localTime = new Date(localWord.updatedAt || localWord.createdAt || 0).getTime();
+            const remoteTime = new Date(remoteWord.updatedAt || remoteWord.createdAt || 0).getTime();
+
+            if (remoteTime > localTime) {
+              words[localIdx] = { ...localWord, ...remoteWord };
+            } else if (localTime > remoteTime) {
+              // keep local
+            } else {
+              if (localWord.status === 'mastered' || (localWord.status === 'learning' && remoteWord.status === 'newWord')) {
+                // keep local
+              } else {
+                words[localIdx] = { ...localWord, ...remoteWord };
+              }
+            }
+          } else {
+            words.push(remoteWord);
+          }
+        }
+      }
+
+      reconcileAllDuplicateDecks(false);
+      autoHealOrphanWords(false);
+      if (typeof reconcileDuplicateWordsInDecks === 'function') {
+        reconcileDuplicateWordsInDecks(null, false);
+      }
+
+      // 5. Economy & Ledger
+      if (cloudData.economy && typeof cloudData.economy === 'object') {
+        applyCloudEconomyPatch(cloudData.economy);
+      }
+
+      if (cloudData.ledger && typeof cloudData.ledger === 'object') {
+        const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
+        const map = new Map();
+        userLedger.forEach(tx => { if (tx && tx.id && tx.amount !== 0 && tx.type !== 'VIP_DAILY_SPIN') map.set(tx.id, tx); });
+        cloudEntries.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
+        userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
+        localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
+        if (typeof renderLedgerList === 'function') renderLedgerList();
+        if (typeof renderStudioDashboard === 'function') renderStudioDashboard();
+      }
+
+      // 6. Settings
+      if (cloudData.settings && typeof cloudData.settings === 'object') {
+        applyCloudSettingsPatch(cloudData.settings);
+      }
+
+      // 7. Purchased Decks
+      if (cloudData.purchasedDeckIds && Array.isArray(cloudData.purchasedDeckIds)) {
+        cloudData.purchasedDeckIds.forEach(id => { if (id) userPurchasedDeckIds.add(id); });
+      } else if (cloudData.purchasedDeckIds && typeof cloudData.purchasedDeckIds === 'object') {
+        Object.keys(cloudData.purchasedDeckIds).forEach(id => { if (id) userPurchasedDeckIds.add(id); });
+      }
+
+      if (Array.isArray(userLedger)) {
+        userLedger.forEach(entry => {
+          if (entry && entry.type === 'BUY_DECK' && entry.description) {
+            const allD = getAllLibraryDecks();
+            allD.forEach(ld => {
+              if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
+                userPurchasedDeckIds.add(ld.id);
+              }
+            });
+          }
+        });
+      }
+      if (Array.isArray(decks)) {
+        decks.forEach(d => {
+          if (d && d.libSourceId && !isDeckAuthor(d)) {
+            const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
+            if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
+              userPurchasedDeckIds.add(d.libSourceId);
+            }
+          }
+        });
+      }
+
+      const allDecksRef = getAllLibraryDecks();
+      allDecksRef.forEach(d => {
+        if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
+          userPurchasedDeckIds.delete(d.id);
+        }
+      });
+
+      localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
+      localStorage.setItem('vocaflow_purchased_decks_count', userPurchasedDeckIds.size.toString());
+      if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+
+      // 8. Claimed Gift Codes
+      if (currentUser && currentUser.uid && cloudData.claimedGiftCodes && typeof cloudData.claimedGiftCodes === 'object') {
+        const key = 'vocaflow_claimed_giftcodes_' + currentUser.uid;
+        const localClaimed = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
+        Object.keys(cloudData.claimedGiftCodes).forEach(code => {
+          if (code) localClaimed.add(code.toUpperCase());
+        });
+        localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
+      }
+
+      // 9. Following & Followers
+      if (cloudData.following && typeof cloudData.following === 'object') {
+        myFollowingMap = { ...myFollowingMap, ...cloudData.following };
+        if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+        localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
+      }
+      if (cloudData.followers && typeof cloudData.followers === 'object') {
+        myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
+        if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
+        localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
+      }
+      if (currentUser) {
+        const cloudFollowerCount = (cloudData.profile && typeof cloudData.profile.followerCount === 'number')
+          ? cloudData.profile.followerCount
+          : (typeof cloudData.followerCount === 'number' ? cloudData.followerCount : 0);
+        const cloudFollowingCount = (cloudData.profile && typeof cloudData.profile.followingCount === 'number')
+          ? cloudData.profile.followingCount
+          : (typeof cloudData.followingCount === 'number' ? cloudData.followingCount : 0);
+
+        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
+        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+        updateAuthUI();
+      }
+
+      // 10. AI Chat History: Smart merge preserving local base64 images
+      if (Array.isArray(cloudData.aiChatHistory) && cloudData.aiChatHistory.length > 0) {
+        const localMap = new Map();
+        aiChatHistory.forEach(m => { if (m && m.timestamp) localMap.set(m.timestamp, m); });
+        aiChatHistory = cloudData.aiChatHistory.slice(-30).map(cm => {
+          const lm = localMap.get(cm.timestamp);
+          if (lm && Array.isArray(lm.images) && lm.images.some(i => i.base64)) {
+            return { ...cm, images: lm.images };
+          }
+          return cm;
+        });
+        saveAiChatHistoryToStorage();
+        if (typeof renderAiChatMessages === 'function') renderAiChatMessages();
+      }
+
+      // 11. AI Chat Quota
+      if (cloudData.aiChatQuota && typeof cloudData.aiChatQuota === 'object') {
+        const cloudDate = cloudData.aiChatQuota.dailyDate;
+        const cloudCount = Number(cloudData.aiChatQuota.dailyCount) || 0;
+        const today = getTodayDateString();
+
+        if (cloudDate === today) {
+          if (aiChatDailyDate === today) {
+            aiChatDailyCount = Math.max(aiChatDailyCount, cloudCount);
+          } else {
+            aiChatDailyDate = today;
+            aiChatDailyCount = cloudCount;
+          }
+        } else if (cloudDate && cloudDate > (aiChatDailyDate || '')) {
+          aiChatDailyDate = cloudDate;
+          aiChatDailyCount = (cloudDate === today) ? cloudCount : 0;
+        }
+
+        localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
+        localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+        if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
+      }
+
+      // 12. Achievements & Pinned Badges
+      if (cloudData.achievements && typeof cloudData.achievements === 'object') {
+        Object.keys(cloudData.achievements).forEach(k => {
+          const r = cloudData.achievements[k];
+          if (r) {
+            if (!userAchievements[k]) {
+              userAchievements[k] = { ...r };
+            } else {
+              userAchievements[k].unlocked = userAchievements[k].unlocked || !!r.unlocked;
+              userAchievements[k].claimedReward = userAchievements[k].claimedReward || !!r.claimedReward;
+              userAchievements[k].progress = Math.max(userAchievements[k].progress || 0, r.progress || 0);
+              if (r.unlockedAt && !userAchievements[k].unlockedAt) userAchievements[k].unlockedAt = r.unlockedAt;
+              if (r.claimedAt && !userAchievements[k].claimedAt) userAchievements[k].claimedAt = r.claimedAt;
+            }
+          }
+        });
+        localStorage.setItem('vocaflow_user_achievements', JSON.stringify(userAchievements));
+        renderAchievementsList();
+      }
+
+      if (Array.isArray(cloudData.pinnedBadges)) {
+        userPinnedBadges = [...cloudData.pinnedBadges].slice(0, 3);
+        localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
+        renderProfilePinnedBadges();
+      } else if (remoteProf && Array.isArray(remoteProf.pinnedBadges)) {
+        userPinnedBadges = [...remoteProf.pinnedBadges].slice(0, 3);
+        localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
+        renderProfilePinnedBadges();
+      }
+
+      // 13. Flow Streak & Freezes
+      const remoteFlowDates = Array.isArray(cloudData.flowDates) 
+        ? cloudData.flowDates 
+        : ((cloudData.flow && Array.isArray(cloudData.flow.dates)) 
+          ? cloudData.flow.dates 
+          : (Array.isArray(cloudData.studyDates) ? cloudData.studyDates : []));
+
+      if (remoteFlowDates && remoteFlowDates.length > 0) {
+        let localFlowDates = getFlowDates();
+        const unionSet = new Set([...localFlowDates, ...remoteFlowDates]);
+        const mergedFlowDates = Array.from(unionSet).sort();
+        localStorage.setItem('vocaflow_flow_dates', JSON.stringify(mergedFlowDates));
+        localStorage.setItem('vocaflow_study_dates', JSON.stringify(mergedFlowDates));
+      }
+
+      const remoteFreezeDates = Array.isArray(cloudData.flowFreezeDates)
+        ? cloudData.flowFreezeDates
+        : ((cloudData.flow && Array.isArray(cloudData.flow.freezeDates))
+          ? cloudData.flow.freezeDates
+          : (Array.isArray(cloudData.streakFreezeHistory) ? cloudData.streakFreezeHistory : []));
+
+      const localFreezeDates = getFlowFreezeDates();
+      const unionFreezeSet = new Set([...localFreezeDates, ...remoteFreezeDates]);
+      const mergedFreezeDates = Array.from(unionFreezeSet).sort();
+      if (mergedFreezeDates.length > 0) {
+        localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
+        localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
+      }
+
+      const remoteFreezes = (cloudData.flowFreezes !== undefined)
+        ? parseInt(cloudData.flowFreezes, 10)
+        : ((cloudData.flow && cloudData.flow.freezes !== undefined)
+          ? parseInt(cloudData.flow.freezes, 10)
+          : ((cloudData.economy && cloudData.economy.flowFreezes !== undefined)
+            ? parseInt(cloudData.economy.flowFreezes, 10)
+            : (cloudData.streakFreezes !== undefined ? parseInt(cloudData.streakFreezes, 10) : NaN)));
+
+      if (!isNaN(remoteFreezes)) {
+        const localFreezes = getUserFlowFreezes();
+        const maxCap = getMaxFlowFreezes();
+        let syncedFreezes = localFreezes;
+        const localSet = new Set(localFreezeDates);
+        const remoteSet = new Set(remoteFreezeDates);
+        const newFromRemote = remoteFreezeDates.filter(d => !localSet.has(d)).length;
+        const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
+
+        if (remoteFreezeDates.length === 0 && localFreezeDates.length > 0) {
+          syncedFreezes = Math.max(localFreezes, remoteFreezes);
+        } else {
+          const adjustedRemote = Math.max(0, remoteFreezes - newFromLocal);
+          const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
+          syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
+        }
+        syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
+
+        localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
+        localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
+      }
+
+      updateFlowUI();
+      if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
+
+      // 14. Notifications
+      const cloudNotifs = (cloudData.notifications && typeof cloudData.notifications === 'object') ? Object.values(cloudData.notifications).filter(n => n && n.id) : [];
+      if (cloudData.deletedNotificationIds && typeof cloudData.deletedNotificationIds === 'object') {
+        Object.keys(cloudData.deletedNotificationIds).forEach(id => deletedNotificationIds.add(id));
+        saveDeletedNotificationIds();
+      }
+      const cloudClearedTime = Number(cloudData.notificationsClearedTimestamp) || 0;
+      const localClearedTime = parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10);
+      const effectiveClearedTime = Math.max(cloudClearedTime, localClearedTime);
+      if (cloudClearedTime > localClearedTime) {
+        localStorage.setItem('vocaflow_notifications_cleared_time', cloudClearedTime.toString());
+      }
+
+      const nMergedMap = new Map();
+      userNotifications.forEach(n => {
+        if (n && n.id && !deletedNotificationIds.has(n.id)) {
+          if (effectiveClearedTime === 0 || new Date(n.timestamp).getTime() > effectiveClearedTime) {
+            nMergedMap.set(n.id, { ...n });
+          }
+        }
+      });
+
+      cloudNotifs.forEach(cloudN => {
+        if (cloudN && cloudN.id && !deletedNotificationIds.has(cloudN.id)) {
+          if (effectiveClearedTime === 0 || new Date(cloudN.timestamp).getTime() > effectiveClearedTime) {
+            if (!nMergedMap.has(cloudN.id)) {
+              nMergedMap.set(cloudN.id, { ...cloudN });
+            } else {
+              const localN = nMergedMap.get(cloudN.id);
+              localN.isRead = (localN.isRead === true) || (cloudN.isRead === true);
+              if (cloudN.timestamp) localN.timestamp = cloudN.timestamp;
+            }
+          }
+        }
+      });
+
+      userNotifications = deduplicateUserNotifications(Array.from(nMergedMap.values())).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
+      localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+      updateNotificationsUI();
+      renderNotificationsList();
+
+      saveDatabase(triggerCloudPush);
+      refreshActiveScreenData();
+    }
+
     // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
-    async function handleManualSync() {
+    async function handleManualSync(isSilent = false) {
       if (!currentUser || !currentUser.email) {
-        showToast('🔒 Bạn cần đăng nhập tài khoản để đồng bộ dữ liệu lên Firebase Cloud!');
-        openAuthModal('login');
+        if (!isSilent) {
+          showToast('🔒 Bạn cần đăng nhập tài khoản để đồng bộ dữ liệu lên Firebase Cloud!');
+          openAuthModal('login');
+        }
         return;
       }
       if (isSyncing) return;
       isSyncing = true;
 
       updateSyncStatusUI('syncing');
+      if (!isSilent) {
+        showToast('⚡ Đang đồng bộ Cloud siêu tốc...');
+      }
 
       try {
         const userId = currentUser ? currentUser.uid : null;
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? `?auth=${token}` : '';
 
         if (userId && rtdbUrl) {
-          // -----------------------------------------------------------
-          // PHASE 1: PULL FROM CLOUD (Kéo dữ liệu từ Cloud về trước)
-          // -----------------------------------------------------------
+          // PHASE 1: PULL FROM CLOUD (Lightweight without bulky base64 images)
           try {
             const pullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`);
             if (pullRes.headers && pullRes.headers.get('date')) {
@@ -16203,792 +17069,37 @@ function switchPublisherTab(tab) {
             if (pullRes.ok) {
               const cloudData = await pullRes.json();
               if (cloudData && typeof cloudData === 'object') {
-                // Sync Profile DisplayName, Username & Bio from Cloud (v0.10.7a)
-                const remoteProf = cloudData.profile || {};
-                const remoteName = remoteProf.displayName || cloudData.displayName;
-                // Sync VIP State from Cloud (v0.10.8-alpha-10.3)
-                // Sync ReferredBy State from Cloud (v0.10.8-alpha-10.3)
-                const remoteRef = (remoteProf && remoteProf.referredBy) || cloudData.referredBy;
-                if (remoteRef && typeof remoteRef === 'string') {
-                  localStorage.setItem('vocaflow_referred_by', remoteRef);
-                  if (currentUser) currentUser.referredBy = remoteRef;
-                }
-
-                if (remoteProf.isVip !== undefined || cloudData.isVip !== undefined) {
-                  const rIsVip = (remoteProf.isVip !== undefined) ? !!remoteProf.isVip : !!cloudData.isVip;
-                  const rTier = remoteProf.vipTier || cloudData.vipTier || 'none';
-                  const rExp = Number(remoteProf.vipExpiresAt || cloudData.vipExpiresAt || 0);
-                  const isRemoteActive = rIsVip && (rTier === 'lifetime' || rExp > getTrustedCurrentTimestamp());
-                  
-                  // Bulletproof Monotonic Sync: Local never loses higher expiration date
-                  const localExp = parseInt(localStorage.getItem('vocaflow_user_vip_expires_at') || '0', 10);
-                  const localTier = localStorage.getItem('vocaflow_user_vip_tier') || 'none';
-                  const isLocalActive = userIsVip && (localTier === 'lifetime' || localExp > getTrustedCurrentTimestamp());
-                  
-                  if (isRemoteActive || isLocalActive) {
-                    let localIsAhead = false;
-                    if (localExp > rExp && localTier !== 'none' && localTier !== 'lifetime') localIsAhead = true;
-                    const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
-                    if (tierRanks[localTier] > tierRanks[rTier]) localIsAhead = true;
-
-                    applyVipState(true, localIsAhead ? localTier : rTier, Math.max(localExp, rExp), 'cloud_pull', false);
-                    if (localIsAhead) {
-                      console.log('👑 [VocaFlow Sync] Local VIP credentials are newer than Cloud. Re-pushing to cloud...');
-                    }
-                  } else {
-                    // Both are expired or revoked
-                    applyVipState(false, 'none', 0, 'cloud_pull', true);
-                  }
-                }
-
-                const remoteUsername = remoteProf.username || cloudData.username;
-                const remoteLastChange = (remoteProf.lastUsernameChangeTimestamp !== undefined) ? remoteProf.lastUsernameChangeTimestamp : cloudData.lastUsernameChangeTimestamp;
-                const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
-                if (remoteBio !== undefined && remoteBio !== null) {
-                  localStorage.setItem('vocaflow_user_bio', remoteBio);
-                  const bioDisplay = document.getElementById('profile-bio-display');
-                  if (bioDisplay) bioDisplay.textContent = (typeof remoteBio === 'string' && remoteBio.trim()) ? remoteBio : 'Chưa thiết lập mục tiêu cá nhân.';
-                  const bioInput = document.getElementById('profile-bio-input');
-                  if (bioInput) bioInput.value = (typeof remoteBio === 'string') ? remoteBio : '';
-                }
-                if (currentUser) {
-                  let profChanged = false;
-                  if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
-                    currentUser.displayName = remoteName.trim();
-                    profChanged = true;
-                  }
-                  if (remoteUsername && remoteUsername.trim().length >= 3 && remoteUsername !== currentUser.username) {
-                    currentUser.username = remoteUsername.trim().toLowerCase();
-                    profChanged = true;
-                  }
-                  if (remoteLastChange !== undefined && Number(remoteLastChange) !== currentUser.lastUsernameChangeTimestamp) {
-                    currentUser.lastUsernameChangeTimestamp = Number(remoteLastChange);
-                    profChanged = true;
-                  }
-                  if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
-                    currentUser.bio = remoteBio;
-                    profChanged = true;
-                  }
-                  if (profChanged) {
-                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-                    updateAuthUI();
-                  }
-                }
-
-                // Sync API Keys (Array, Object & Single) from Cloud with Smart Merge
-                function extractKeysList(raw) {
-                  if (!raw) return [];
-                  if (Array.isArray(raw)) return raw.map(k => String(k || '').trim()).filter(k => k);
-                  if (typeof raw === 'object') return Object.values(raw).map(k => String(k || '').trim()).filter(k => k);
-                  if (typeof raw === 'string' && raw.trim()) return [raw.trim()];
-                  return [];
-                }
-
-                let remoteKeys = extractKeysList(cloudData.geminiApiKeys);
-                if (remoteKeys.length === 0 && cloudData.settings) {
-                  remoteKeys = extractKeysList(cloudData.settings.geminiApiKeys);
-                }
-                if (remoteKeys.length === 0 && cloudData.profile) {
-                  remoteKeys = extractKeysList(cloudData.profile.geminiApiKeys);
-                }
-                if (remoteKeys.length === 0 && cloudData.geminiApiKey) {
-                  remoteKeys = extractKeysList(cloudData.geminiApiKey);
-                }
-
-                const localKeys = getStoredApiKeys(false);
-                // Smart Merge: combine remoteKeys and localKeys, deduplicate while preserving order up to 3 keys
-                let mergedKeys = [];
-                const combinedKeys = [...remoteKeys, ...localKeys];
-                for (const k of combinedKeys) {
-                  if (k && !mergedKeys.includes(k) && mergedKeys.length < 3) {
-                    mergedKeys.push(k);
-                  }
-                }
-
-                if (mergedKeys.length > 0) {
-                  saveApiKeysList(mergedKeys, false);
-                  updateSettingsApiKeysUI();
-                } else if (geminiApiKey) {
-                  cloudData.geminiApiKey = geminiApiKey;
-                  cloudData.geminiApiKeys = getStoredApiKeys(false);
-                }
-
-                const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);
-                const remoteWords = Array.isArray(cloudData.words) ? cloudData.words : (cloudData.words ? Object.values(cloudData.words) : []);
-
-                const remoteAvatar = (cloudData.profile && cloudData.profile.avatar) || cloudData.avatar;
-                const remoteAvatarTime = parseInt((cloudData.profile && cloudData.profile.avatarTime) || cloudData.avatarTime || '0', 10);
-                const localAvatar = localStorage.getItem('vocaflow_user_avatar');
-                const localAvatarTime = parseInt(localStorage.getItem('vocaflow_avatar_time') || '0', 10);
-
-                if (remoteAvatar && typeof remoteAvatar === 'string' && (remoteAvatar.startsWith('data:image') || remoteAvatar.startsWith('http'))) {
-                  if (remoteAvatarTime >= localAvatarTime || localAvatarTime === 0 || !localAvatar) {
-                    localStorage.setItem('vocaflow_user_avatar', remoteAvatar);
-                    localStorage.setItem('vocaflow_avatar_time', remoteAvatarTime.toString());
-                    if (currentUser) {
-                      currentUser.avatar = remoteAvatar;
-                      currentUser.avatarTime = remoteAvatarTime;
-                      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-                    }
-                    updateAuthUI();
-                  }
-                } else if (localAvatar && (localAvatar.startsWith('data:image') || localAvatar.startsWith('http'))) {
-                  if (currentUser) {
-                    currentUser.avatar = localAvatar;
-                    currentUser.avatarTime = localAvatarTime || Date.now();
-                    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-                  }
-                }
-
-                if (cloudData.deckSort) {
-                  currentDeckSort = cloudData.deckSort;
-                  localStorage.setItem('vocaflow_deck_sort', currentDeckSort);
-                  const sortSelect = document.getElementById('deck-sort-select');
-                  if (sortSelect) sortSelect.value = currentDeckSort;
-                }
-                if (cloudData.deckTab && (cloudData.deckTab === 'active' || cloudData.deckTab === 'archived')) {
-                  currentDeckTab = cloudData.deckTab;
-                  localStorage.setItem('vocaflow_deck_tab', currentDeckTab);
-                }
-                if (cloudData.wordFilter) {
-                  currentWordFilter = cloudData.wordFilter;
-                  localStorage.setItem('vocaflow_word_filter', currentWordFilter);
-                }
-
-                // Merge deleted tombstones from cloud
-                if (cloudData.deletedWordIds && Array.isArray(cloudData.deletedWordIds)) {
-                  cloudData.deletedWordIds.forEach(id => deletedWordIds.add(id));
-                }
-                if (cloudData.deletedDeckIds && Array.isArray(cloudData.deletedDeckIds)) {
-                  cloudData.deletedDeckIds.forEach(id => deletedDeckIds.add(id));
-                }
-
-                // Anti-Wipeout Tombstone Guard: Never allow starter deck to be tombstoned if decks would be empty
-                if (deletedDeckIds.has('deck-oxford-starter') && (decks.length <= 1 && remoteDecks.length === 0)) {
-                  deletedDeckIds.delete('deck-oxford-starter');
-                }
-                saveDeletedTombstones();
-
-                // Build lookup of viable decks by normalized title (v0.10.8-alpha-24)
-                const survivingDecksByNormTitle = new Map();
-                decks.forEach(d => {
-                  if (d && d.id && !deletedDeckIds.has(d.id)) {
-                    const nt = normalizeDeckTitleForDedupe(d.title);
-                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, d);
-                  }
-                });
-                remoteDecks.forEach(rd => {
-                  if (rd && rd.id && !deletedDeckIds.has(rd.id)) {
-                    const nt = normalizeDeckTitleForDedupe(rd.title);
-                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, rd);
-                  }
-                });
-
-                const allKnownDecksById = new Map();
-                decks.forEach(d => { if (d && d.id) allKnownDecksById.set(d.id, d); });
-                remoteDecks.forEach(rd => { if (rd && rd.id) allKnownDecksById.set(rd.id, rd); });
-
-                // Before purging local words, rescue any words whose deck was tombstoned if a deck with the same title survives
-                words.forEach(w => {
-                  if (w && w.deckId && deletedDeckIds.has(w.deckId)) {
-                    const oldDeck = allKnownDecksById.get(w.deckId);
-                    if (oldDeck) {
-                      const nt = normalizeDeckTitleForDedupe(oldDeck.title);
-                      const surviving = survivingDecksByNormTitle.get(nt);
-                      if (surviving) {
-                        console.log(`🛡️ [Sync Word Shield] Rescuing local word "${w.term}" (${w.id}) from tombstoned deck ${w.deckId} to surviving deck "${surviving.title}" (${surviving.id})`);
-                        w.deckId = surviving.id;
-                        deletedWordIds.delete(w.id);
-                      }
-                    }
-                  }
-                });
-
-                // Purge local deleted items
-                decks = decks.filter(d => !deletedDeckIds.has(d.id));
-                words = words.filter(w => !deletedWordIds.has(w.id) && !deletedDeckIds.has(w.deckId));
-
-                // Anti-Wipeout Tombstone Guard: If tombstones wiped out ALL decks, but remoteDecks has items, revive remoteDecks!
-                if (remoteDecks.length > 0) {
-                  const viableRemoteDecks = remoteDecks.filter(rd => rd && rd.id && !deletedDeckIds.has(rd.id));
-                  if (viableRemoteDecks.length === 0 && decks.length === 0) {
-                    console.warn('🛡️ [Anti-Wipeout Guard] Runaway tombstones wiped all decks. Reviving remote decks!');
-                    deletedDeckIds.clear();
-                    saveDeletedTombstones();
-                  }
-
-                  // If local only has the initial starter deck and cloud has real decks, remove starter deck
-                  if (decks.length === 1 && decks[0].id === 'deck-oxford-starter' && remoteDecks.some(rd => rd && rd.id && rd.id !== 'deck-oxford-starter')) {
-                    decks = [];
-                    words = words.filter(w => w.deckId !== 'deck-oxford-starter');
-                  }
-                }
-
-                  // Merge decks by ID (Last-Write-Wins with explicit isPinned & isArchived preservation)
-                  for (const remoteDeck of remoteDecks) {
-                    if (!remoteDeck || !remoteDeck.id || deletedDeckIds.has(remoteDeck.id)) continue;
-                    const cleanRemote = {
-                      ...remoteDeck,
-                      isPinned: remoteDeck.isPinned === true,
-                      isArchived: remoteDeck.isArchived === true
-                    };
-                    const localIdx = decks.findIndex(d => d.id === remoteDeck.id);
-                    if (localIdx >= 0) {
-                      const localDeck = decks[localIdx];
-                      const localTime = new Date(localDeck.updatedAt || localDeck.createdAt || 0).getTime();
-                      const remoteTime = new Date(remoteDeck.updatedAt || remoteDeck.createdAt || 0).getTime();
-                      if (remoteTime > localTime) {
-                        decks[localIdx] = { ...localDeck, ...cleanRemote };
-                      } else if (localTime > remoteTime) {
-                        // Local is newer: keep local deck
-                      } else {
-                        // Equal timestamp: local user actions take priority!
-                        decks[localIdx] = {
-                          ...cleanRemote,
-                          ...localDeck,
-                          isPinned: localDeck.isPinned === true,
-                          isArchived: localDeck.isArchived === true
-                        };
-                      }
-                    } else {
-                      decks.push(cleanRemote);
-                    }
-                  }
-
-                if (remoteWords.length > 0) {
-                  // Merge words by ID (Last-Write-Wins with learning progress protection)
-                  for (const remoteWord of remoteWords) {
-                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id)) continue;
-
-                    // Rescue remote word if its deck was tombstoned
-                    if (deletedDeckIds.has(remoteWord.deckId)) {
-                      const oldDeck = allKnownDecksById.get(remoteWord.deckId);
-                      if (oldDeck) {
-                        const nt = normalizeDeckTitleForDedupe(oldDeck.title);
-                        const surviving = survivingDecksByNormTitle.get(nt);
-                        if (surviving) {
-                          remoteWord.deckId = surviving.id;
-                        } else {
-                          continue; // truly deleted deck with no surviving duplicate
-                        }
-                      } else {
-                        continue;
-                      }
-                    }
-
-                    const localIdx = words.findIndex(w => w.id === remoteWord.id);
-                    if (localIdx >= 0) {
-                      const localWord = words[localIdx];
-                      const localTime = new Date(localWord.updatedAt || localWord.createdAt || 0).getTime();
-                      const remoteTime = new Date(remoteWord.updatedAt || remoteWord.createdAt || 0).getTime();
-
-                      if (remoteTime > localTime) {
-                        words[localIdx] = { ...localWord, ...remoteWord };
-                      } else if (localTime > remoteTime) {
-                        // Local is newer! Keep local word
-                      } else {
-                        // Timestamps equal: protect higher learning status
-                        if (localWord.status === 'mastered' || (localWord.status === 'learning' && remoteWord.status === 'newWord')) {
-                          // Keep local progress
-                        } else {
-                          words[localIdx] = { ...localWord, ...remoteWord };
-                        }
-                      }
-                    } else {
-                      words.push(remoteWord);
-                    }
-                  }
-                }
-
-                // Reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
-                reconcileAllDuplicateDecks(false);
-
-                // Auto-heal any remaining orphan words (v0.10.8-alpha-24)
-                autoHealOrphanWords(false);
-
-                // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
-                if (typeof reconcileDuplicateWordsInDecks === 'function') {
-                  reconcileDuplicateWordsInDecks(null, false);
-                }
-
-                if (cloudData.economy && typeof cloudData.economy === 'object') {
-                  const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
-                  const remoteHints = typeof cloudData.economy.hints === 'number' ? cloudData.economy.hints : parseInt(cloudData.economy.hints, 10);
-                  const remoteSkips = typeof cloudData.economy.skips === 'number' ? cloudData.economy.skips : parseInt(cloudData.economy.skips, 10);
-
-                  if (!isNaN(remotePoints)) {
-                    localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
-                  }
-                  if (!isNaN(remoteHints)) {
-                    localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
-                  }
-                  if (!isNaN(remoteSkips)) {
-                    localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
-                  }
-                  const remoteLuckySpins = typeof cloudData.economy.luckySpins === 'number' ? cloudData.economy.luckySpins : parseInt(cloudData.economy.luckySpins, 10);
-                  if (!isNaN(remoteLuckySpins)) {
-                    const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);
-                    const remoteEcoTime = cloudData.economy.updatedAt ? new Date(cloudData.economy.updatedAt).getTime() : 0;
-                    if (localEcoTime > remoteEcoTime && (Date.now() - localEcoTime < 300000)) {
-                      // Local economy was updated recently (e.g. user spun), protect local spins
-                    } else {
-                      localStorage.setItem('vocaflow_lucky_spins_left', Math.max(0, remoteLuckySpins).toString());
-                    }
-                  }
-                  if (cloudData.economy.luckySpinsDate) {
-                    localStorage.setItem('vocaflow_last_spin_date', cloudData.economy.luckySpinsDate);
-                  }
-                  if (cloudData.economy.lastVipSpinDate) {
-                    const localVipDate = localStorage.getItem('vocaflow_last_vip_spin_date') || '';
-                    if (!localVipDate || localVipDate < cloudData.economy.lastVipSpinDate) {
-                      localStorage.setItem('vocaflow_last_vip_spin_date', cloudData.economy.lastVipSpinDate);
-                    }
-                  }
-                  if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
-                  if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
-                  if (cloudData.economy.lastAdWatchTime) {
-                    const remoteAdTime = parseInt(cloudData.economy.lastAdWatchTime, 10);
-                    const localAdTime = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
-                    if (!isNaN(remoteAdTime) && remoteAdTime > localAdTime) {
-                      localStorage.setItem('vocaflow_last_ad_watch_time', remoteAdTime.toString());
-                    }
-                  }
-                  updateAdButtonCooldownState();
-                  localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
-                  updateEconomyUI();
-                  updateLuckyWheelUI();
-                  updateShopBonusesUI();
-                }
-
-                // Sync ledger from cloud (Bidirectional Union Merge by ID)
-                if (cloudData.ledger && typeof cloudData.ledger === 'object') {
-                  const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');
-                  const map = new Map();
-                  userLedger.forEach(tx => { if (tx && tx.id && tx.amount !== 0 && tx.type !== 'VIP_DAILY_SPIN') map.set(tx.id, tx); });
-                  cloudEntries.forEach(tx => { if (tx && tx.id) map.set(tx.id, tx); });
-                  userLedger = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                  if (userLedger.length > 250) userLedger = userLedger.slice(0, 250);
-                  localStorage.setItem('vocaflow_user_ledger', JSON.stringify(userLedger));
-                  if (typeof renderLedgerList === 'function') renderLedgerList();
-                  if (typeof renderStudioDashboard === 'function') renderStudioDashboard();
-                }
-
-                if (cloudData.settings && typeof cloudData.settings === 'object') {
-                  const remoteSettingsTime = parseInt(cloudData.settings.updatedAt || '0', 10);
-                  const localSettingsTime = parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || '0', 10);
-
-                  if (remoteSettingsTime > localSettingsTime || localSettingsTime === 0) {
-                    if (typeof cloudData.settings.showReviewQueue === 'boolean') {
-                      showReviewQueueSetting = cloudData.settings.showReviewQueue;
-                      localStorage.setItem(STORAGE_KEY_SHOW_REVIEW_QUEUE, showReviewQueueSetting.toString());
-                    }
-                    if (typeof cloudData.settings.showFilterPos === 'boolean') {
-                      showFilterPosSetting = cloudData.settings.showFilterPos;
-                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_POS, showFilterPosSetting.toString());
-                    }
-                    if (typeof cloudData.settings.showFilterCefr === 'boolean') {
-                      showFilterCefrSetting = cloudData.settings.showFilterCefr;
-                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_CEFR, showFilterCefrSetting.toString());
-                    }
-                    if (typeof cloudData.settings.showFilterScore === 'boolean') {
-                      showFilterScoreSetting = cloudData.settings.showFilterScore;
-                      localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
-                    }
-                    if (typeof cloudData.settings.showTimestamp === 'boolean') {
-                      showTimestampSetting = cloudData.settings.showTimestamp;
-                      localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
-                      applyTimestampDisplay();
-                    }
-                    if (typeof cloudData.settings.vipCatMemesEnabled === 'boolean') {
-                      localStorage.setItem('vocaflow_vip_cat_memes_enabled', cloudData.settings.vipCatMemesEnabled ? 'true' : 'false');
-                    }
-                    if (typeof cloudData.settings.vipCatMemesDuration === 'number') {
-                      localStorage.setItem('vocaflow_vip_cat_memes_duration', cloudData.settings.vipCatMemesDuration.toFixed(1));
-                    }
-                    localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, remoteSettingsTime.toString());
-                    applyUiFilterSettings();
-                  }
-                }
-
-                // Sync Purchased Decks from Cloud (Bidirectional Union Merge & Auto-Recovery)
-                if (cloudData.purchasedDeckIds && Array.isArray(cloudData.purchasedDeckIds)) {
-                  cloudData.purchasedDeckIds.forEach(id => { if (id) userPurchasedDeckIds.add(id); });
-                } else if (cloudData.purchasedDeckIds && typeof cloudData.purchasedDeckIds === 'object') {
-                  Object.keys(cloudData.purchasedDeckIds).forEach(id => { if (id) userPurchasedDeckIds.add(id); });
-                }
-
-                // Auto-recover purchased decks from ledger BUY_DECK transactions and installed decks
-                if (Array.isArray(userLedger)) {
-                  userLedger.forEach(entry => {
-                    if (entry && entry.type === 'BUY_DECK' && entry.description) {
-                      const allD = getAllLibraryDecks();
-                      allD.forEach(ld => {
-                        if (ld && ld.id && !isDeckAuthor(ld) && (ld.price > 0 || ld.isVip || ld.isVipOnly || ld.id === 'lib_deck_ielts_45_60') && entry.description.includes(ld.title)) {
-                          userPurchasedDeckIds.add(ld.id);
-                        }
-                      });
-                    }
-                  });
-                }
-                if (Array.isArray(decks)) {
-                  decks.forEach(d => {
-                    if (d && d.libSourceId && !isDeckAuthor(d)) {
-                      const matchedLib = getAllLibraryDecks().find(ld => ld.id === d.libSourceId);
-                      if (matchedLib && (matchedLib.price > 0 || matchedLib.isVip || matchedLib.isVipOnly || matchedLib.id === 'lib_deck_ielts_45_60') && !isDeckAuthor(matchedLib)) {
-                        userPurchasedDeckIds.add(d.libSourceId);
-                      }
-                    }
-                  });
-                }
-
-                // Purge any own deck IDs that might have been saved in userPurchasedDeckIds
-                const allDecksRef = getAllLibraryDecks();
-                allDecksRef.forEach(d => {
-                  if (isDeckAuthor(d) && userPurchasedDeckIds.has(d.id)) {
-                    userPurchasedDeckIds.delete(d.id);
-                  }
-                });
-
-                localStorage.setItem('vocaflow_purchased_decks', JSON.stringify(Array.from(userPurchasedDeckIds)));
-                localStorage.setItem('vocaflow_purchased_decks_count', userPurchasedDeckIds.size.toString());
-                if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
-
-                // Sync Claimed Gift Codes from Cloud for current UID
-                if (currentUser && currentUser.uid && cloudData.claimedGiftCodes && typeof cloudData.claimedGiftCodes === 'object') {
-                  const key = 'vocaflow_claimed_giftcodes_' + currentUser.uid;
-                  const localClaimed = new Set(JSON.parse(localStorage.getItem(key) || '[]'));
-                  Object.keys(cloudData.claimedGiftCodes).forEach(code => {
-                    if (code) localClaimed.add(code.toUpperCase());
-                  });
-                  localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
-                }
-
-                // Sync Following & Followers from Cloud (Cloud Source of Truth + Bidirectional Union Merge)
-                if (cloudData.following && typeof cloudData.following === 'object') {
-                  myFollowingMap = { ...myFollowingMap, ...cloudData.following };
-                  if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
-                  localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
-                }
-                if (cloudData.followers && typeof cloudData.followers === 'object') {
-                  myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
-                  if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
-                  localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
-                }
-                if (currentUser) {
-                  const cloudFollowerCount = (cloudData.profile && typeof cloudData.profile.followerCount === 'number')
-                    ? cloudData.profile.followerCount
-                    : (typeof cloudData.followerCount === 'number' ? cloudData.followerCount : 0);
-                  const cloudFollowingCount = (cloudData.profile && typeof cloudData.profile.followingCount === 'number')
-                    ? cloudData.profile.followingCount
-                    : (typeof cloudData.followingCount === 'number' ? cloudData.followingCount : 0);
-
-                  currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
-                  currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
-                  localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
-                  updateAuthUI();
-                }
-
-                // Sync AI Chat History from Cloud (v0.10.7g)
-                if (Array.isArray(cloudData.aiChatHistory) && cloudData.aiChatHistory.length > 0) {
-                  aiChatHistory = cloudData.aiChatHistory.slice(-30);
-                  localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
-                }
-
-                // Sync AI Chat Daily Quota from Cloud (v0.10.7g-6)
-                if (cloudData.aiChatQuota && typeof cloudData.aiChatQuota === 'object') {
-                  const cloudDate = cloudData.aiChatQuota.dailyDate;
-                  const cloudCount = Number(cloudData.aiChatQuota.dailyCount) || 0;
-                  const today = getTodayDateString();
-
-                  if (cloudDate === today) {
-                    if (aiChatDailyDate === today) {
-                      aiChatDailyCount = Math.max(aiChatDailyCount, cloudCount);
-                    } else {
-                      aiChatDailyDate = today;
-                      aiChatDailyCount = cloudCount;
-                    }
-                  } else if (cloudDate && cloudDate > (aiChatDailyDate || '')) {
-                    aiChatDailyDate = cloudDate;
-                    aiChatDailyCount = (cloudDate === today) ? cloudCount : 0;
-                  }
-
-                  localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
-                  localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
-                  if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
-                }
-
-                // Sync Achievements & Pinned Badges from Cloud (v0.10.8-alpha-10.3)
-                if (cloudData.achievements && typeof cloudData.achievements === 'object') {
-                  Object.keys(cloudData.achievements).forEach(k => {
-                    const r = cloudData.achievements[k];
-                    if (r) {
-                      if (!userAchievements[k]) {
-                        userAchievements[k] = { ...r };
-                      } else {
-                        userAchievements[k].unlocked = userAchievements[k].unlocked || !!r.unlocked;
-                        userAchievements[k].claimedReward = userAchievements[k].claimedReward || !!r.claimedReward;
-                        userAchievements[k].progress = Math.max(userAchievements[k].progress || 0, r.progress || 0);
-                        if (r.unlockedAt && !userAchievements[k].unlockedAt) userAchievements[k].unlockedAt = r.unlockedAt;
-                        if (r.claimedAt && !userAchievements[k].claimedAt) userAchievements[k].claimedAt = r.claimedAt;
-                      }
-                    }
-                  });
-                  localStorage.setItem('vocaflow_user_achievements', JSON.stringify(userAchievements));
-                  renderAchievementsList();
-                }
-
-                if (Array.isArray(cloudData.pinnedBadges)) {
-                  userPinnedBadges = [...cloudData.pinnedBadges].slice(0, 3);
-                  localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
-                  renderProfilePinnedBadges();
-                } else if (remoteProf && Array.isArray(remoteProf.pinnedBadges)) {
-                  userPinnedBadges = [...remoteProf.pinnedBadges].slice(0, 3);
-                  localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
-                  renderProfilePinnedBadges();
-                }
-
-                // Sync Flow from Cloud (v0.10.8-alpha-10.15 - Bidirectional Union Merge)
-                const remoteFlowDates = Array.isArray(cloudData.flowDates) 
-                  ? cloudData.flowDates 
-                  : ((cloudData.flow && Array.isArray(cloudData.flow.dates)) 
-                    ? cloudData.flow.dates 
-                    : (Array.isArray(cloudData.studyDates) ? cloudData.studyDates : []));
-
-                if (remoteFlowDates && remoteFlowDates.length > 0) {
-                  let localFlowDates = getFlowDates();
-                  const unionSet = new Set([...localFlowDates, ...remoteFlowDates]);
-                  const mergedFlowDates = Array.from(unionSet).sort();
-                  localStorage.setItem('vocaflow_flow_dates', JSON.stringify(mergedFlowDates));
-                  localStorage.setItem('vocaflow_study_dates', JSON.stringify(mergedFlowDates));
-                }
-
-                const remoteFreezeDates = Array.isArray(cloudData.flowFreezeDates)
-                  ? cloudData.flowFreezeDates
-                  : ((cloudData.flow && Array.isArray(cloudData.flow.freezeDates))
-                    ? cloudData.flow.freezeDates
-                    : (Array.isArray(cloudData.streakFreezeHistory) ? cloudData.streakFreezeHistory : []));
-
-                const localFreezeDates = getFlowFreezeDates();
-                const unionFreezeSet = new Set([...localFreezeDates, ...remoteFreezeDates]);
-                const mergedFreezeDates = Array.from(unionFreezeSet).sort();
-                if (mergedFreezeDates.length > 0) {
-                  localStorage.setItem('vocaflow_flow_freeze_dates', JSON.stringify(mergedFreezeDates));
-                  localStorage.setItem('vocaflow_streak_freeze_history', JSON.stringify(mergedFreezeDates));
-                }
-
-                const remoteFreezes = (cloudData.flowFreezes !== undefined)
-                  ? parseInt(cloudData.flowFreezes, 10)
-                  : ((cloudData.flow && cloudData.flow.freezes !== undefined)
-                    ? parseInt(cloudData.flow.freezes, 10)
-                    : ((cloudData.economy && cloudData.economy.flowFreezes !== undefined)
-                      ? parseInt(cloudData.economy.flowFreezes, 10)
-                      : (cloudData.streakFreezes !== undefined ? parseInt(cloudData.streakFreezes, 10) : NaN)));
-
-                if (!isNaN(remoteFreezes)) {
-                  const localFreezes = getUserFlowFreezes();
-                  const maxCap = getMaxFlowFreezes();
-                  let syncedFreezes = localFreezes;
-                  const localSet = new Set(localFreezeDates);
-                  const remoteSet = new Set(remoteFreezeDates);
-                  const newFromRemote = remoteFreezeDates.filter(d => !localSet.has(d)).length;
-                  const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
-
-                  if (remoteFreezeDates.length === 0 && localFreezeDates.length > 0) {
-                    syncedFreezes = Math.max(localFreezes, remoteFreezes);
-                  } else {
-                    const adjustedRemote = Math.max(0, remoteFreezes - newFromLocal);
-                    const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
-                    syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
-                  }
-                  syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
-
-                  localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
-                  localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
-                }
-
-                updateFlowUI();
-                if (typeof renderFlowCalendar === 'function') renderFlowCalendar();
-
-                // Sync Notifications from Cloud (with Tombstones & Read State Sync)
-                const cloudNotifs = (cloudData.notifications && typeof cloudData.notifications === 'object') ? Object.values(cloudData.notifications).filter(n => n && n.id) : [];
-                if (cloudData.deletedNotificationIds && typeof cloudData.deletedNotificationIds === 'object') {
-                  Object.keys(cloudData.deletedNotificationIds).forEach(id => deletedNotificationIds.add(id));
-                  saveDeletedNotificationIds();
-                }
-                const cloudClearedTime = Number(cloudData.notificationsClearedTimestamp) || 0;
-                const localClearedTime = parseInt(localStorage.getItem('vocaflow_notifications_cleared_time') || '0', 10);
-                const effectiveClearedTime = Math.max(cloudClearedTime, localClearedTime);
-                if (cloudClearedTime > localClearedTime) {
-                  localStorage.setItem('vocaflow_notifications_cleared_time', cloudClearedTime.toString());
-                }
-
-                const nMergedMap = new Map();
-                userNotifications.forEach(n => {
-                  if (n && n.id && !deletedNotificationIds.has(n.id)) {
-                    if (effectiveClearedTime === 0 || new Date(n.timestamp).getTime() > effectiveClearedTime) {
-                      nMergedMap.set(n.id, { ...n });
-                    }
-                  }
-                });
-
-                cloudNotifs.forEach(cloudN => {
-                  if (cloudN && cloudN.id && !deletedNotificationIds.has(cloudN.id)) {
-                    if (effectiveClearedTime === 0 || new Date(cloudN.timestamp).getTime() > effectiveClearedTime) {
-                      if (!nMergedMap.has(cloudN.id)) {
-                        nMergedMap.set(cloudN.id, { ...cloudN });
-                      } else {
-                        const localN = nMergedMap.get(cloudN.id);
-                        localN.isRead = (localN.isRead === true) || (cloudN.isRead === true);
-                        if (cloudN.timestamp) localN.timestamp = cloudN.timestamp;
-                      }
-                    }
-                  }
-                });
-
-                userNotifications = deduplicateUserNotifications(Array.from(nMergedMap.values())).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 100);
-                localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-                updateNotificationsUI();
-                renderNotificationsList();
-
-                saveDatabase(false);
-                refreshActiveScreenData();
+                mergeCloudDataIntoLocal(cloudData, false);
               }
             }
           } catch (pullErr) {
             console.warn('Pull from cloud note:', pullErr);
           }
 
-          // -----------------------------------------------------------
-          // PHASE 2: PUSH TO CLOUD (Đẩy toàn bộ trạng thái đã merge lên Cloud)
-          // -----------------------------------------------------------
+          // PHASE 2: PUSH SANITIZED STATE TO CLOUD
           try {
-            decks = sanitizeDecks(decks);
-
-            // ANTI-WIPEOUT GUARD (v0.10.9-alpha-18)
-            // If local decks is empty, NEVER blindly wipe Cloud decks!
-            if (decks.length === 0) {
-              if (remoteDecks && remoteDecks.length > 0) {
-                console.warn('🛡️ [Anti-Wipeout Guard] Local decks are empty but Cloud has', remoteDecks.length, 'decks! Restoring from Cloud instead of wiping.');
-                decks = [...remoteDecks];
-                if (remoteWords && remoteWords.length > 0) words = [...remoteWords];
-                saveDatabase(false);
-              } else if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-                await autoRecoverLostDecks(false);
-              }
-            }
-
-            takeDeckSnapshot();
-            const currentAv = getUserAvatar();
-            const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
-            const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
-        const refToSave = localStorage.getItem('vocaflow_referred_by') || (currentUser && currentUser.referredBy) || '';
-
-            const currentBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
-            const payload = {
-              profile: {
-                displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
-                username: currentUser.username || '',
-                lastUsernameChangeTimestamp: currentUser.lastUsernameChangeTimestamp || 0,
-                email: currentUser.email || '',
-                avatar: avToSave,
-                avatarTime: avTimeToSave,
-                bio: currentBio,
-                referredBy: refToSave,
-                pinnedBadges: userPinnedBadges,
-                achievementsCount: Object.values(userAchievements).filter(a => a && a.unlocked).length,
-                isVip: isUserVip(),
-                vipTier: getUserVipTier(),
-                vipExpiresAt: userVipExpiresAt,
-                geminiApiKey: geminiApiKey || '',
-              geminiApiKeys: getStoredApiKeys(),
-                followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
-                followingCount: Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length),
-                lastSync: new Date().toISOString()
-              },
-              vip: {
-                isVip: isUserVip(),
-                tier: getUserVipTier(),
-                expiresAt: userVipExpiresAt
-              },
-              achievements: userAchievements,
-              pinnedBadges: userPinnedBadges,
-              flow: {
-                days: calculateCurrentFlow().currentFlow,
-                max: calculateCurrentFlow().maxFlow,
-                freezes: getUserFlowFreezes()
-              },
-              flowDates: getFlowDates(),
-              flowFreezeDates: getFlowFreezeDates(),
-              flowFreezes: getUserFlowFreezes(),
-              following: myFollowingMap,
-              ...(Object.keys(myFollowersMap || {}).length > 0 ? { followers: myFollowersMap } : {}),
-              notifications: (() => {
-                const nMap = {};
-                userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });
-                return nMap;
-              })(),
-              avatar: avToSave,
-              avatarTime: avTimeToSave,
-              bio: currentBio,
-              geminiApiKey: geminiApiKey || '',
-              geminiApiKeys: getStoredApiKeys(),
-              deckSort: currentDeckSort,
-              decks: decks,
-              words: words,
-              deletedWordIds: Array.from(deletedWordIds),
-              deletedDeckIds: Array.from(deletedDeckIds),
-              economy: {
-                points: getUserPoints(),
-                hints: getUserHints(),
-                skips: getUserSkips(),
-                luckySpins: Math.max(0, parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10)),
-                luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
-                lastVipSpinDate: localStorage.getItem('vocaflow_last_vip_spin_date') || ((typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString()),
-                lastAdWatchTime: parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10),
-                flowFreezes: getUserFlowFreezes(),
-                streakFreezes: getUserFlowFreezes(),
-                updatedAt: new Date().toISOString()
-              },
-              ledger: (() => {
-                const lMap = {};
-                userLedger.forEach(tx => {
-                  if (tx && tx.id) lMap[tx.id] = tx;
-                });
-                return lMap;
-              })(),
-              settings: {
-                showReviewQueue: showReviewQueueSetting,
-                showFilterPos: showFilterPosSetting,
-                showFilterCefr: showFilterCefrSetting,
-                showFilterScore: showFilterScoreSetting,
-                showTimestamp: showTimestampSetting,
-                vipCatMemesEnabled: localStorage.getItem('vocaflow_vip_cat_memes_enabled') !== 'false',
-                vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5'),
-                updatedAt: parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || Date.now().toString(), 10)
-              },
-              lastSync: new Date().toISOString()
-            };
-
-            // Safe PATCH method protects sibling nodes (following, followers, notifications)
-            await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
+            await pushCurrentDatabaseToCloud();
           } catch (pushErr) {
             console.warn('Push error:', pushErr);
           }
+
+          // Ensure Live Realtime EventStream is connected
+          initFirebaseRealtimeSync(userId, token);
         }
 
         const nowIso = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, nowIso);
 
         updateSyncStatusUI('online');
-        showToast('Đồng bộ Cloud thành công!');
+        if (!isSilent) {
+          showToast('✅ Đồng bộ Cloud thành công!');
+        }
       } catch (e) {
         console.error('Sync general error:', e);
         updateSyncStatusUI(navigator.onLine ? 'online' : 'offline');
-        showToast(navigator.onLine ? 'Đã lưu dữ liệu cục bộ an toàn.' : '⚠️ Mất kết nối Internet (Ngoại tuyến).');
+        if (!isSilent) {
+          showToast(navigator.onLine ? 'Đã lưu dữ liệu cục bộ an toàn.' : '⚠️ Mất kết nối Internet (Ngoại tuyến).');
+        }
       } finally {
         isSyncing = false;
         updateAuthUI();
@@ -44977,7 +45088,7 @@ Quy tắc phản hồi quan trọng:
           fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatHistory.json${authParam}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(aiChatHistory)
+            body: JSON.stringify(sanitizeAiChatHistoryForCloud(aiChatHistory))
           }).catch(() => {});
         }
       } else {

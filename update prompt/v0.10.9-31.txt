@@ -1,0 +1,6 @@
+v0.10.9-31
+1. cứ 30 giây thì app tự động kích hoạt tính năng đồng bộ 2 chiều
+2. hình 1: chỉnh lại mấy cái mô tả vip này cho khớp mới tình hình hiện tại và với các thuật ngữ hiện hành đi
+3. bỏ "alpha" ở tên phiên bản đi
+4. hình 2: các chức năng trong tab này (cổng vocavip & đối soát) dường như kh hoạt động đâu, sửa đi.
+5. tạo cơ chế balance_vip cho vip user. gợi ý: điểm thông thạo +125%, xu +150%, phạt xu -125% (tức là trừ ít hơn)

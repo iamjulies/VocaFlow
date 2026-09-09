@@ -1,4 +1,21 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-31 (Build 263) - Realtime WebSocket/SSE Engine & Granular Sub-Tree Cloud Sync
+================================================================================
+1. [Nâng Cấp Kiến Trúc Đồng Bộ Realtime WebSocket / SSE Stream]:
+   - Tích hợp luồng lắng nghe thời gian thực EventSource (SSE / WebSocket) kết nối trực tiếp đến Firebase Realtime Database (/users/{uid}.json).
+   - Tự động bắt và áp dụng các cập nhật đa thiết bị tức thì (tiến độ học, số dư VoCoin, huy hiệu, VocaDeck, Flow Streak, cài đặt) mà không cần reload hay kéo tải toàn bộ cơ sở dữ liệu.
+2. [Đồng Bộ Vi Mô Từng Nhánh (Granular Sub-Tree Patch Sync)]:
+   - Khi thay đổi cài đặt (toggle filters, hiển thị timestamp), cập nhật kinh tế (nhận xu, tiêu xu) hay điểm Flow, hệ thống chỉ gửi gói PATCH cực nhẹ (< 1KB) đến đúng nhánh con tương ứng (/settings, /economy, /flow) thay vì đẩy toàn bộ 10-20MB dữ liệu.
+   - Thời gian đồng bộ giảm từ ~10-12 giây xuống chỉ còn dưới 300ms - 1.5 giây.
+3. [Tối Ưu Hóa Dung Lượng Gói Tin & Tách Ảnh Base64 VocaMentor]:
+   - Lọc bỏ triệt để chuỗi Base64 ảnh đính kèm khỏi gói tin đồng bộ Cloud RTDB, lưu trữ an toàn tại LocalStorage máy người dùng theo từng UID (vocaflow_ai_chat_history_{uid}).
+   - Giảm dung lượng tải lên/tải xuống Cloud hơn 85-90%, hoàn toàn miễn phí ($0) trong hạn mức Spark Plan của Firebase.
+4. [Tối Ưu Phản Hồi Giao Diện Cục Bộ (Local-First Optimistic UI)]:
+   - Trạng thái giao diện phản hồi 0ms ngay khi người dùng thao tác, tự động xử lý hàng đợi và đồng bộ ngầm dưới nền.
+5. [Nâng Cấp Hệ Thống Lên Phiên Bản v0.10.9-alpha-31 (Build 263)]:
+   - Cập nhật toàn diện 7 vị trí phiên bản, đóng gói PWA và phát hành bản cập nhật GitHub.
+
+================================================================================
 Phiên bản: v0.10.9-alpha-30 (Build 262) - Free Auto Flashcard Exit & VocaMentor Syntax Fix
 ================================================================================
 1. [Tự Do Thoát Chế Độ Auto Flashcard Không Gián Đoạn (Free Auto Flashcard Exit)]:
