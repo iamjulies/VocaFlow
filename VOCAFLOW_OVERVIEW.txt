@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-32 (Build 264) - 30s Periodic Sync, VocaVIP Gateway & Balance VIP Perfection
+================================================================================
+1. [Chu Kỳ Tự Động Đồng Bộ 2 Chiều Định Kỳ 30 Giây (30s Periodic Bidirectional Sync Engine)]:
+   - Tự động kích hoạt đồng bộ 2 chiều (Bidirectional Sync) định kỳ mỗi 30 giây khi ứng dụng đang chạy và người dùng đã đăng nhập.
+   - Giúp dữ liệu học tập, tiến độ, số dư VoCoin và VocaDeck luôn được đồng bộ mượt mà, hạn chế xung đột dữ liệu giữa nhiều thiết bị.
+2. [Hiện Đại Hóa & Khắc Phục Lỗi Giao Diện Bảng Giá VocaVIP]:
+   - Tinh chỉnh và cập nhật toàn diện mô tả các gói VIP sang thuật ngữ hiện hành: VocaMentor AI, kho từ vựng VocaLib, đặc quyền Balance VIP, và đồng bộ Cloud Realtime 2 chiều.
+   - Sửa triệt để lỗi dàn trang flex vỡ chữ trên các gói đăng ký VIP, đảm bảo icon và nội dung hiển thị cân đối, sắc nét.
+3. [Chuẩn Hóa Phiên Bản & Loại Bỏ Tiền Tố "alpha"]:
+   - Chính thức chuyển đổi định dạng phiên bản từ dạng alpha sang phiên bản chuẩn: v0.10.9-32 (Build 264).
+4. [Tối Ưu Hóa Toàn Diện Cổng Quản Trị VocaVIP & Đối Soát Giao Dịch MB Bank (Admin Tab 5)]:
+   - Nâng cấp bộ phân tích đối soát chuyển khoản `parseBankTransactionMultiLayer` hỗ trợ linh hoạt các cú pháp MB Bank (`05CH7KCEB4QH-VOCA <UID_16> <CODE>`), mã giảm giá (`31590`, `242190`, `485190`) và đối chiếu danh sách Flower.
+   - Sửa lỗi quét hóa đơn bằng AI đa hóa đơn `processAdminMultiBillImagesAi` sử dụng API Key cấu hình hiệu lực và định dạng payload chuẩn Gemini Vision API.
+   - Hoàn thiện công cụ tra cứu học viên `lookupVipStudentByInput` theo UID 16 ký tự, email, tên và hỗ trợ truy vấn trực tiếp Firebase.
+5. [Hoàn Thiện Cơ Chế Balance VIP (Đặc Quyền Hội Viên Cao Cấp)]:
+   - Điểm thông thạo từ vựng (Word Mastery Score): Tăng +125% (nhân 1.25) khi ghi nhận tiến bộ trong các chế độ ôn tập và luyện phát âm.
+   - Phần thưởng VoCoin phiên học: Thưởng +150% (nhân 1.5) số dư kiếm được.
+   - Giảm nhẹ phạt thoát sớm: Giảm phạt 125% (chia 1.25) bảo toàn số dư VoCoin cho hội viên VIP.
+
+================================================================================
 Phiên bản: v0.10.9-alpha-31 (Build 263) - Realtime WebSocket/SSE Engine & Granular Sub-Tree Cloud Sync
 ================================================================================
 1. [Nâng Cấp Kiến Trúc Đồng Bộ Realtime WebSocket / SSE Stream]:

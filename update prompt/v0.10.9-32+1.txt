@@ -1,0 +1,6 @@
+v0.10.9-33
+1. VocaMail: thêm chức năng nhắn tin hỏi đáp cho admin. khi nhấn vào sẽ có 1 cái kiểu viết mail, khi nhấn gửi thì hệ thống tự đồng bộ sang bên gmail thật và gửi mail vào duwchao@gmail.com, nongduchaolop6c@gmail.com (2 email cố định). có tính năng xem lại vocamail mình đã gửi.
+2. hiện tại khi xem quảng cáo trên app exe cục bộ thì kh hiện quảng cáo
+3. khả năng chấm điểm speaking vẫn đang chưa tốt. ví dụ: t đọc academic (theo t là tốt hơn) thì đc 85, còn để bạn t đọc a-ca-đe-mích (đọc kiểu âm bồi) thì lại đc 93, t đọc lại lần nữa là acadepussy thì được 85. thế là t biết cái này có vấn đề cần sửa rồi. t tưởng dùng gemini 3.8 flash là ok rồi? thế mà lại kh phải, t nghĩ phải tìm 1 cái gì đó để khắc phục cái này thôi.
+4. thời gian hồi xem qcao nhận thưởng chưa được đồng bộ 2 chiều. kh những cần được đồng bộ 2 chiều mà t còn muốn nó theo thời gian thực luôn, kh cần refresh lại app hoặc nhấn thủ công hoạc chờ 30 giây tự động. t muốn nó được đồng bộ 0.000001 picosecond, ok? à chỉ cần cái này thôi, còn mấy cái khác cứ để đồng bộ thông thường.
+5. khi nhấn vào từng loại thông báo thì nó sẽ mở đúng trang liên quan đến thông báo ấy + mình chỉ cần mở lên xem thông báo thôi, kh nhất thiết phải nhấn đã đọc để tắt thông báo 

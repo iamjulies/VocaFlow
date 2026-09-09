@@ -1,4 +1,4 @@
-v0.10.9-31
+v0.10.9-32
 1. cứ 30 giây thì app tự động kích hoạt tính năng đồng bộ 2 chiều
 2. hình 1: chỉnh lại mấy cái mô tả vip này cho khớp mới tình hình hiện tại và với các thuật ngữ hiện hành đi
 3. bỏ "alpha" ở tên phiên bản đi

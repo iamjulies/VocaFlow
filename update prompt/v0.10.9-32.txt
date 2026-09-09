@@ -1,2 +1,0 @@
-v0.10.9-32
-1. VocaMail: thêm chức năng nhắn tin hỏi đáp cho admin. khi nhấn vào sẽ có 1 cái kiểu viết mail, khi nhấn gửi thì hệ thống tự đồng bộ sang bên gmail thật và gửi mail vào duwchao@gmail.com, nongduchaolop6c@gmail.com (2 email cố định). có tính năng xem lại vocamail mình đã gửi.
