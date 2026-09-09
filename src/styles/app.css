@@ -460,6 +460,18 @@
       gap: 8px;
     }
 
+    .btn-header-label {
+      display: inline;
+    }
+    @media (max-width: 1024px) {
+      .btn-header-label {
+        display: none !important;
+      }
+      .header-collapsible-guide {
+        display: none !important;
+      }
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -1624,12 +1636,17 @@
       }
       .header-actions {
         gap: 4px;
-        flex-shrink: 0;
+        flex-shrink: 1;
         display: flex;
         align-items: center;
+        min-width: 0;
       }
       .desktop-only-action {
         display: none !important;
+      }
+      .mobile-more-wrapper {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
       }
       .mobile-more-btn {
         display: inline-flex !important;
@@ -1637,29 +1654,26 @@
         height: 32px !important;
         box-sizing: border-box;
       }
-      #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop {
+      #btn-header-vip, #btn-wallet-studio, #btn-header-mentor, #btn-header-flow, #btn-header-notifications, #btn-header-guide, #btn-shop {
         padding: 4px 6px !important;
         height: 32px !important;
         font-size: 11.5px !important;
         flex-shrink: 0;
       }
-      @media (max-width: 460px) {
-        .header-actions {
-          gap: 3px !important;
-        }
-        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
-          padding: 4px 5px !important;
-          font-size: 11px !important;
-        }
+      .btn-header-label {
+        display: none !important;
       }
-      @media (max-width: 420px) {
-        .header-actions {
-          gap: 3px !important;
-        }
-        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
-          padding: 4px 5px !important;
-          font-size: 11px !important;
-        }
+      .header-collapsible-guide {
+        display: none !important;
+      }
+      .header-collapsible-mentor {
+        display: none !important;
+      }
+      .deck-actions-grid .btn span {
+        display: none !important;
+      }
+      .deck-actions-grid .btn {
+        padding: 6px !important;
       }
       .hide-on-mobile {
         display: none !important;
@@ -1929,6 +1943,52 @@
         justify-content: center;
       }
     }
+
+    /* RESPONSIVE HEADER PROGRESSIVE COLLAPSE (v0.10.9-alpha-26) */
+    @media (max-width: 640px) {
+      .header-collapsible-studio {
+        display: none !important;
+      }
+      .header-collapsible-vip {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-actions {
+        gap: 3px !important;
+      }
+      .header-collapsible-notif {
+        display: none !important;
+      }
+      #btn-header-flow, #btn-shop, .mobile-more-btn {
+        padding: 4px 5px !important;
+        font-size: 11px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .header-collapsible-flow {
+        display: none !important;
+      }
+    }
+
+    /* COMPACT AUTO-COLLAPSE CLASS FOR CONSTRAINED HEADER */
+    header.compact-header .btn-header-label,
+    header.compact-header .header-collapsible-guide,
+    header.compact-header .header-collapsible-mentor,
+    header.compact-header .header-collapsible-studio,
+    header.compact-header .header-collapsible-vip {
+      display: none !important;
+    }
+    header.compact-header .mobile-more-btn {
+      display: inline-flex !important;
+    }
+    header.compact-header .mobile-more-wrapper {
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+    }
+
     /* KEYBOARD SHORTCUT BADGES (v0.0.9.18) */
     .key-shortcut-badge {
       display: inline-flex;

@@ -1,0 +1,76 @@
+﻿<!-- MODAL: STUDY SESSION EARLY EXIT CONFIRMATION (v0.10.9-alpha-23) -->
+<div class="modal-overlay" id="modal-study-exit-confirm" style="z-index: 99999;">
+  <div class="modal" style="max-width: 520px; border-radius: 20px; border: 1.5px solid rgba(245, 158, 11, 0.4); box-shadow: 0 16px 40px rgba(0,0,0,0.45);">
+    
+    <!-- MODAL HEADER -->
+    <div class="modal-title" style="margin-bottom: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 26px; filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.4));">⚠️</span>
+        <div>
+          <strong id="study-exit-modal-title" style="font-size: 16.5px; color: #fbbf24;">Bạn Đang Làm Dở Bài Học!</strong>
+          <div id="study-exit-modal-subtitle" style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Thoát giữa chừng sẽ kết toán điểm theo tỷ lệ tiến độ thực học</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-icon" onclick="cancelStudyEarlyExit()" title="Đóng & Tiếp tục học"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+
+    <!-- PROGRESS & CURRENT BASE SCORE -->
+    <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Tiến Độ Hiện Tại</div>
+        <div id="study-exit-progress-text" style="font-size: 16px; font-weight: 800; color: var(--text); margin-top: 2px;">0 / 0 từ (0%)</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Điểm Tích Lũy Gốc</div>
+        <div id="study-exit-base-points-text" style="font-size: 16px; font-weight: 800; color: #34d399; margin-top: 2px;">+0 VoCoin</div>
+      </div>
+    </div>
+
+    <!-- ECONOMY CALCULATION CARDS: BALANCE V2 VS BALANCE V1 -->
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+      
+      <!-- CARD 1: BALANCE V2 (OFFICIAL APPLIED ENGINE) -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1)); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 14px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 15px;">🌟</span>
+            <strong style="font-size: 13px; color: #34d399;">Thực Nhận Theo Balance v2 (Chính thức):</strong>
+          </div>
+          <span id="study-exit-v2-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 800; font-size: 12.5px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.35);">+0 VoCoin</span>
+        </div>
+        <div id="study-exit-v2-details" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+          • Hệ số hoàn thành dở dang: <strong style="color: var(--text);" id="study-exit-v2-mult">x0.25</strong><br>
+          • Hệ số quy mô bài học: <strong style="color: var(--text);" id="study-exit-v2-deck-mult">x1.0</strong><br>
+          • Thưởng mốc vượt trội: <strong style="color: var(--text);" id="study-exit-v2-milestone">+0 VoCoin</strong>
+        </div>
+      </div>
+
+      <!-- CARD 2: BALANCE V1 COMPARISON -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <span>📊</span> So sánh nếu tính theo <strong>Balance v1</strong> (Gốc):
+          </div>
+          <span id="study-exit-v1-result" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">+0 VoCoin (x0.25)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ENCOURAGEMENT CALLOUT -->
+    <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+      💡 <em>Lời khuyên:</em> Nếu bạn làm hết 100% bài học, bạn sẽ nhận trọn vẹn <strong>100% VoCoin</strong> kèm đầy đủ các cột mốc thưởng chuyên cần!
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="modal-actions" style="display: flex; gap: 10px;">
+      <button type="button" class="btn btn-primary" onclick="cancelStudyEarlyExit()" style="flex: 1.2; justify-content: center; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 800; padding: 10px 14px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+        📖 Tiếp Tục Học
+      </button>
+      <button type="button" class="btn btn-outline" id="btn-study-confirm-exit" onclick="executeStudyEarlyExit()" style="flex: 1; justify-content: center; border-color: rgba(239, 68, 68, 0.5); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 12px;">
+        🚪 Vẫn Muốn Thoát
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -486,6 +486,18 @@
       gap: 8px;
     }
 
+    .btn-header-label {
+      display: inline;
+    }
+    @media (max-width: 1024px) {
+      .btn-header-label {
+        display: none !important;
+      }
+      .header-collapsible-guide {
+        display: none !important;
+      }
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -1650,12 +1662,17 @@
       }
       .header-actions {
         gap: 4px;
-        flex-shrink: 0;
+        flex-shrink: 1;
         display: flex;
         align-items: center;
+        min-width: 0;
       }
       .desktop-only-action {
         display: none !important;
+      }
+      .mobile-more-wrapper {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
       }
       .mobile-more-btn {
         display: inline-flex !important;
@@ -1663,29 +1680,26 @@
         height: 32px !important;
         box-sizing: border-box;
       }
-      #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop {
+      #btn-header-vip, #btn-wallet-studio, #btn-header-mentor, #btn-header-flow, #btn-header-notifications, #btn-header-guide, #btn-shop {
         padding: 4px 6px !important;
         height: 32px !important;
         font-size: 11.5px !important;
         flex-shrink: 0;
       }
-      @media (max-width: 460px) {
-        .header-actions {
-          gap: 3px !important;
-        }
-        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
-          padding: 4px 5px !important;
-          font-size: 11px !important;
-        }
+      .btn-header-label {
+        display: none !important;
       }
-      @media (max-width: 420px) {
-        .header-actions {
-          gap: 3px !important;
-        }
-        #btn-header-vip, #btn-wallet-studio, #btn-header-flow, #btn-header-notifications, #btn-shop, .mobile-more-btn {
-          padding: 4px 5px !important;
-          font-size: 11px !important;
-        }
+      .header-collapsible-guide {
+        display: none !important;
+      }
+      .header-collapsible-mentor {
+        display: none !important;
+      }
+      .deck-actions-grid .btn span {
+        display: none !important;
+      }
+      .deck-actions-grid .btn {
+        padding: 6px !important;
       }
       .hide-on-mobile {
         display: none !important;
@@ -1955,6 +1969,52 @@
         justify-content: center;
       }
     }
+
+    /* RESPONSIVE HEADER PROGRESSIVE COLLAPSE (v0.10.9-alpha-26) */
+    @media (max-width: 640px) {
+      .header-collapsible-studio {
+        display: none !important;
+      }
+      .header-collapsible-vip {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-actions {
+        gap: 3px !important;
+      }
+      .header-collapsible-notif {
+        display: none !important;
+      }
+      #btn-header-flow, #btn-shop, .mobile-more-btn {
+        padding: 4px 5px !important;
+        font-size: 11px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .header-collapsible-flow {
+        display: none !important;
+      }
+    }
+
+    /* COMPACT AUTO-COLLAPSE CLASS FOR CONSTRAINED HEADER */
+    header.compact-header .btn-header-label,
+    header.compact-header .header-collapsible-guide,
+    header.compact-header .header-collapsible-mentor,
+    header.compact-header .header-collapsible-studio,
+    header.compact-header .header-collapsible-vip {
+      display: none !important;
+    }
+    header.compact-header .mobile-more-btn {
+      display: inline-flex !important;
+    }
+    header.compact-header .mobile-more-wrapper {
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+    }
+
     /* KEYBOARD SHORTCUT BADGES (v0.0.9.18) */
     .key-shortcut-badge {
       display: inline-flex;
@@ -2594,54 +2654,60 @@
     </defs>
   </svg>
 
-  <header>
+<header>
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);">v0.10.9-alpha-22</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-26</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
-      <button type="button" class="btn btn-sm" id="btn-header-vip" onclick="openVipPricingModal()" title="Gói VocaVIP - Mở khóa toàn quyền tính năng" style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(236, 72, 153, 0.18)); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); cursor: pointer;">
+      <button type="button" class="btn btn-sm header-collapsible-vip" id="btn-header-vip" onclick="openVipPricingModal()" title="Gói VocaVIP - Mở khóa toàn quyền tính năng" style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(236, 72, 153, 0.18)); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); cursor: pointer;">
         <span style="font-size: 14px;">👑</span>
-        <span style="font-size: 11.5px; font-weight: 800;">VocaVIP</span>
+        <span class="btn-header-label" style="font-size: 11.5px; font-weight: 800;">VocaVIP</span>
       </button>
 
       <!-- STUDIO & WALLET BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
-      <button type="button" class="btn btn-outline btn-sm" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="VocaStudio - Trung tâm Sáng tạo & Ví VoCoin" style="display: flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer;">
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-studio" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="VocaStudio - Trung tâm Sáng tạo & Ví VoCoin" style="display: flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer;">
         <span style="font-size: 13px;">💼</span>
-        <span style="font-size: 11.5px; font-weight: 700;">VocaStudio</span>
+        <span class="btn-header-label" style="font-size: 11.5px; font-weight: 700;">VocaStudio</span>
+      </button>
+
+      <!-- VOCAMENTOR AI BUTTON (v0.10.8-alpha-24: Visible on Desktop & Mobile) -->
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-mentor" id="btn-header-mentor" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (VocaMentor)" style="display: flex; align-items: center; gap: 4px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.12); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);">
+        <span style="font-size: 14px;">🤖</span>
+        <span class="btn-header-label" style="font-size: 11.5px; font-weight: 700;">VocaMentor</span>
       </button>
 
       <!-- FLOW STREAK BUTTON (v0.10.8-alpha-10.3) -->
-      <button type="button" class="btn btn-outline btn-sm" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Chuỗi Flow Học Tập - Bấm để xem lịch">
-        <img src="data:image/png;base64,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" alt="Flow" style="width: 16px; height: 16px; object-fit: contain;" onerror="this.outerHTML='🌊';">
-        <span id="header-flow-count">0</span>
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-flow" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Chuỗi Flow Học Tập - Bấm để xem lịch">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAADGrSURBVHhe7d0FeFtXgvD97Lvv7s7ucDExM4cZGmigTZoyplMMNWm4SRuOg3biOLbDcdhB22Eyc8zMzCTLIItZ+n+PlHa24/12tjPvTDszq9/znEfS1fUF3XPPOfeQBw2ysLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsYW/5D+P6GEefIE9HBrAAAAAElFTkSuQmCC" alt="Flow" style="width: 16px; height: 16px; object-fit: contain;" onerror="this.outerHTML='🌊';">
+        <span id="header-flow-count" class="btn-header-label">0</span>
       </button>
 
       <!-- NOTIFICATIONS BUTTON -->
-      <button class="btn btn-outline btn-sm" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="display: flex; align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); height: 32px; padding: 4px 7px; border-radius: 8px; flex-shrink: 0;">
+      <button class="btn btn-outline btn-sm header-collapsible-notif" id="btn-header-notifications" onclick="openNotificationsModal()" title="Trung tâm Thông báo" style="display: flex; align-items: center; gap: 4px; position: relative; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; background: rgba(56, 189, 248, 0.08); height: 32px; padding: 4px 7px; border-radius: 8px; flex-shrink: 0;">
         <span style="font-size: 13px;">🔔</span>
-        <span class="hide-on-mobile">Thông Báo</span>
+        <span class="hide-on-mobile btn-header-label">Thông Báo</span>
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
 
       <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-2) -->
-      <button type="button" class="btn btn-outline btn-sm" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-guide" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
         <span style="font-size: 14px;">📖</span>
-        <span class="hide-on-mobile">Hướng Dẫn</span>
+        <span class="hide-on-mobile btn-header-label">Hướng Dẫn</span>
       </button>
 
       <!-- VOCASHOP / POINTS WALLET BUTTON -->
-      <button class="btn btn-outline btn-sm" id="btn-shop" onclick="openShopModal()" title="Cửa hàng VocaShop" style="position: relative; display: flex; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">
+      <button class="btn btn-outline btn-sm header-collapsible-shop" id="btn-shop" onclick="openShopModal()" title="Cửa hàng VocaShop" style="position: relative; display: flex; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">
         <span style="font-size: 13px;">🏪</span>
         <span id="header-points-display">0đ</span>
         <span id="header-ad-ready-dot" style="display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: 2px solid var(--surface, #1e293b); border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: white; box-shadow: 0 0 8px #38bdf8; animation: pulse-ad 1.5s infinite; cursor: pointer;" title="🎬 Có video nhận +1 VocaSpin!">🎬</span>
       </button>
 
       <!-- Desktop Action Buttons (Hidden on mobile) -->
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px;" onclick="handleManualSync()" title="Đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text">Đồng bộ</span>
+      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399;" onclick="handleManualSync()" title="Trực tuyến • Bấm để đồng bộ Cloud">
+        <span id="sync-icon">☁️</span> <span id="sync-text">Trực tuyến</span>
       </button>
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
         <span id="user-avatar-icon" style="font-size: 16px;">👤</span> <span id="user-display-name" class="user-display-truncate">Khách</span>
@@ -2684,6 +2750,14 @@
             <div>
               <div style="font-weight: 700; font-size: 13px; color: #c084fc;">VocaStudio</div>
               <small style="color: var(--text-muted); font-size: 10.5px;">Quản lý doanh thu & rút tiền</small>
+            </div>
+          </div>
+          <!-- VOCAMENTOR AI IN DROPDOWN (v0.10.8-alpha-24) -->
+          <div class="dropdown-item" onclick="openAiMentorModal(); closeHeaderMoreMenu();" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3);">
+            <span style="font-size: 16px;">🤖</span>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: #818cf8;">Gia Sư VocaMentor AI</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Hỏi đáp, luyện ngữ pháp & từ vựng</small>
             </div>
           </div>
           <div class="dropdown-item" onclick="openAchievementsModal(); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.12)); border: 1px solid rgba(245, 158, 11, 0.35);">
@@ -2846,6 +2920,9 @@
           </div>
 
           <div class="deck-detail-right">
+            <button class="btn btn-outline btn-sm" onclick="handleManualDeduplicateCurrentDeck()" title="Quét và tự động gộp các từ vựng trùng lặp trong bộ này" style="color: #34d399; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08);">
+              <span>🔄</span> <span>Dọn Từ Trùng</span>
+            </button>
             <button class="btn btn-primary btn-sm" onclick="openWordModal()" title="Thêm từ vựng mới vào bộ này">
               <svg class="icon icon-sm"><use href="#i-add"/></svg> <span>Thêm Từ</span>
             </button>
@@ -3498,6 +3575,12 @@
 
   </main>
 
+  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g-1 / v0.10.8-alpha-24) -->
+  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; left: 18px; z-index: 10000; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+    🤖
+    <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
+  </button>
+
   <div class="modal-overlay" id="modal-word">
     <div class="modal">
       <div class="modal-title">
@@ -4039,6 +4122,83 @@
       </div>
     </div>
   </div>
+
+<!-- MODAL: STUDY SESSION EARLY EXIT CONFIRMATION (v0.10.9-alpha-23) -->
+<div class="modal-overlay" id="modal-study-exit-confirm" style="z-index: 99999;">
+  <div class="modal" style="max-width: 520px; border-radius: 20px; border: 1.5px solid rgba(245, 158, 11, 0.4); box-shadow: 0 16px 40px rgba(0,0,0,0.45);">
+    
+    <!-- MODAL HEADER -->
+    <div class="modal-title" style="margin-bottom: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 26px; filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.4));">⚠️</span>
+        <div>
+          <strong id="study-exit-modal-title" style="font-size: 16.5px; color: #fbbf24;">Bạn Đang Làm Dở Bài Học!</strong>
+          <div id="study-exit-modal-subtitle" style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Thoát giữa chừng sẽ kết toán điểm theo tỷ lệ tiến độ thực học</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-icon" onclick="cancelStudyEarlyExit()" title="Đóng & Tiếp tục học"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+
+    <!-- PROGRESS & CURRENT BASE SCORE -->
+    <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Tiến Độ Hiện Tại</div>
+        <div id="study-exit-progress-text" style="font-size: 16px; font-weight: 800; color: var(--text); margin-top: 2px;">0 / 0 từ (0%)</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Điểm Tích Lũy Gốc</div>
+        <div id="study-exit-base-points-text" style="font-size: 16px; font-weight: 800; color: #34d399; margin-top: 2px;">+0 VoCoin</div>
+      </div>
+    </div>
+
+    <!-- ECONOMY CALCULATION CARDS: BALANCE V2 VS BALANCE V1 -->
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+      
+      <!-- CARD 1: BALANCE V2 (OFFICIAL APPLIED ENGINE) -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1)); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 14px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 15px;">🌟</span>
+            <strong style="font-size: 13px; color: #34d399;">Thực Nhận Theo Balance v2 (Chính thức):</strong>
+          </div>
+          <span id="study-exit-v2-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 800; font-size: 12.5px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.35);">+0 VoCoin</span>
+        </div>
+        <div id="study-exit-v2-details" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+          • Hệ số hoàn thành dở dang: <strong style="color: var(--text);" id="study-exit-v2-mult">x0.25</strong><br>
+          • Hệ số quy mô bài học: <strong style="color: var(--text);" id="study-exit-v2-deck-mult">x1.0</strong><br>
+          • Thưởng mốc vượt trội: <strong style="color: var(--text);" id="study-exit-v2-milestone">+0 VoCoin</strong>
+        </div>
+      </div>
+
+      <!-- CARD 2: BALANCE V1 COMPARISON -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 12px; color: var(--text-muted);">
+            <span>📊</span> So sánh nếu tính theo <strong>Balance v1</strong> (Gốc):
+          </div>
+          <span id="study-exit-v1-result" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">+0 VoCoin (x0.25)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ENCOURAGEMENT CALLOUT -->
+    <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 18px; font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+      💡 <em>Lời khuyên:</em> Nếu bạn làm hết 100% bài học, bạn sẽ nhận trọn vẹn <strong>100% VoCoin</strong> kèm đầy đủ các cột mốc thưởng chuyên cần!
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="modal-actions" style="display: flex; gap: 10px;">
+      <button type="button" class="btn btn-primary" onclick="cancelStudyEarlyExit()" style="flex: 1.2; justify-content: center; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 800; padding: 10px 14px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+        📖 Tiếp Tục Học
+      </button>
+      <button type="button" class="btn btn-outline" id="btn-study-confirm-exit" onclick="executeStudyEarlyExit()" style="flex: 1; justify-content: center; border-color: rgba(239, 68, 68, 0.5); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700; padding: 10px 12px;">
+        🚪 Vẫn Muốn Thoát
+      </button>
+    </div>
+
+  </div>
+</div>
 
   <div class="modal-overlay" id="modal-quiz-setup">
     <div class="modal" style="max-width: 520px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
@@ -5657,12 +5817,6 @@
       </div>
     </div>
   </div>
-
-  <!-- FLOATING AI MENTOR BUTTON (v0.10.7g-1) -->
-  <button id="btn-ai-mentor-fab" class="btn btn-primary" onclick="openAiMentorModal()" title="Gia Sư Tiếng Anh AI (Gemini Mentor)" style="position: fixed; bottom: 22px; left: 18px; z-index: 999; width: 48px; height: 48px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #6366f1, #8b5cf6); border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
-    🤖
-    <span id="ai-mentor-fab-badge" style="position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; border-radius: 8px; background: #10b981; color: white; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--surface);">5</span>
-  </button>
 
   <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
     <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
@@ -7369,7 +7523,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text);" id="settings-app-version-label">VocaFlow v0.10.9-alpha-22 (Build 254)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-26 (Build 258)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7990,10 +8144,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-22)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-26)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-22';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-22 (Build 254)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-26';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-26 (Build 258)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -8460,6 +8614,119 @@
         total
       };
     }
+
+    // =========================================================================
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.9-alpha-23)
+    // =========================================================================
+    let pendingStudyEarlyExitCallback = null;
+
+    function promptStudyEarlyExit({ mode, done, total, basePoints, onConfirmExit }) {
+      // If user hasn't made any progress (done === 0 and 0 points), exit immediately without warning
+      if ((done <= 0 && basePoints === 0) || !total) {
+        if (typeof onConfirmExit === 'function') onConfirmExit();
+        return;
+      }
+
+      // Calculate Balance v2 (Official)
+      const resV2 = calculateSessionFinalPoints(basePoints, done, total, false);
+
+      // Calculate Balance v1 (Legacy comparison)
+      const v1Mult = getIncompleteSessionMultiplier(done, total);
+      let v1Pts = 0;
+      if (basePoints > 0) {
+        v1Pts = Math.round(basePoints * v1Mult);
+      } else if (basePoints < 0) {
+        v1Pts = Math.min(basePoints, Math.round(basePoints / Math.max(0.2, v1Mult)));
+      }
+
+      // Store callback
+      pendingStudyEarlyExitCallback = onConfirmExit;
+
+      // Update Modal UI
+      const modal = document.getElementById('modal-study-exit-confirm');
+      if (!modal) {
+        // Fallback: If modal element not found, use friendly native confirm
+        const signV2 = resV2.finalPts >= 0 ? '+' : '';
+        const signV1 = v1Pts >= 0 ? '+' : '';
+        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} từ)!\n\n` +
+          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})\n` +
+          `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
+          `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
+        if (window.confirm(msg)) {
+          if (typeof onConfirmExit === 'function') onConfirmExit();
+        }
+        return;
+      }
+
+      const modeTitles = {
+        quiz: 'bài Trắc Nghiệm (Quiz)',
+        spelling: 'bài Luyện Viết (Spelling)',
+        speaking: 'bài Luyện Nói (Speaking)',
+        autofc: 'phiên Auto Flashcard'
+      };
+      const titleEl = document.getElementById('study-exit-modal-title');
+      if (titleEl) titleEl.textContent = `Bạn Đang Làm Dở ${modeTitles[mode] || 'Bài Học'}!`;
+
+      const pct = Math.round((done / total) * 100);
+      const progEl = document.getElementById('study-exit-progress-text');
+      if (progEl) progEl.textContent = `${done} / ${total} ${mode === 'quiz' ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
+
+      const basePtsEl = document.getElementById('study-exit-base-points-text');
+      if (basePtsEl) {
+        basePtsEl.textContent = `${basePoints >= 0 ? '+' : ''}${basePoints} VoCoin`;
+        basePtsEl.style.color = basePoints >= 0 ? '#34d399' : '#f87171';
+      }
+
+      const v2Badge = document.getElementById('study-exit-v2-badge');
+      if (v2Badge) {
+        v2Badge.textContent = `${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} VoCoin`;
+        v2Badge.style.background = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+        v2Badge.style.color = resV2.finalPts >= 0 ? '#34d399' : '#f87171';
+        v2Badge.style.borderColor = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+      }
+
+      const multEl = document.getElementById('study-exit-v2-mult');
+      if (multEl) multEl.textContent = `x${resV2.completionMult}`;
+
+      const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
+      if (deckMultEl) deckMultEl.textContent = `x${resV2.deckLengthMult}`;
+
+      const milestoneEl = document.getElementById('study-exit-v2-milestone');
+      if (milestoneEl) milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin`;
+
+      const v1ResEl = document.getElementById('study-exit-v1-result');
+      if (v1ResEl) {
+        v1ResEl.textContent = `${v1Pts >= 0 ? '+' : ''}${v1Pts} VoCoin (x${v1Mult})`;
+      }
+
+      const confirmBtn = document.getElementById('btn-study-confirm-exit');
+      if (confirmBtn) {
+        if (resV2.finalPts !== 0) {
+          confirmBtn.textContent = `🚪 Thoát (Nhận ${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} Xu)`;
+        } else {
+          confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
+        }
+      }
+
+      openModal('modal-study-exit-confirm');
+    }
+    window.promptStudyEarlyExit = promptStudyEarlyExit;
+
+    function cancelStudyEarlyExit() {
+      closeModal('modal-study-exit-confirm');
+      pendingStudyEarlyExitCallback = null;
+    }
+    window.cancelStudyEarlyExit = cancelStudyEarlyExit;
+
+    function executeStudyEarlyExit() {
+      closeModal('modal-study-exit-confirm');
+      if (typeof pendingStudyEarlyExitCallback === 'function') {
+        const cb = pendingStudyEarlyExitCallback;
+        pendingStudyEarlyExitCallback = null;
+        cb();
+      }
+    }
+    window.executeStudyEarlyExit = executeStudyEarlyExit;
 
     // =========================================================================
     // CORE STORAGE KEYS & SETTINGS STATE (v0.10.8-alpha-10.3)
@@ -9057,6 +9324,19 @@
       }
     });
 
+    // Dynamic responsive header compacting (v0.10.9-alpha-26)
+    function adjustHeaderResponsiveLayout() {
+      const headerEl = document.querySelector('header');
+      if (!headerEl) return;
+      if (window.innerWidth <= 768) {
+        headerEl.classList.add('compact-header');
+      } else {
+        headerEl.classList.remove('compact-header');
+      }
+    }
+    window.addEventListener('resize', adjustHeaderResponsiveLayout);
+    window.addEventListener('DOMContentLoaded', adjustHeaderResponsiveLayout);
+
     // In-memory Database State & Tombstone Tracking (v0.0.8.15)
     let decks = [];
     let words = [];
@@ -9378,6 +9658,7 @@
           lastVipSpinDate: lastVipDate,
           flowFreezes: getUserFlowFreezes(),
           streakFreezes: getUserFlowFreezes(),
+          flowFreezeDates: getFlowFreezeDates(),
           updatedAt: nowIso
         };
         const rtdbUrl = firebaseConfig.databaseURL;
@@ -9386,6 +9667,11 @@
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/flowFreezeDates.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getFlowFreezeDates())
           }),
           fetch(`${rtdbUrl}/users/${currentUser.uid}/lucky_spins_left.json${authParam}`, {
             method: 'PUT',
@@ -9533,14 +9819,27 @@
       const rawText = (input.value || '').trim();
       if (!rawText) return;
 
-      // Secret Minecraft Cheat Command to enter God Mode / Publisher Portal
-      const cleanLower = rawText.toLowerCase().replace(/\s+/g, ' ');
-      if (cleanLower === '/gamemode creative' || cleanLower === '/gamemode 1' || cleanLower === '/gamemode c') {
+      // Secret Cheat Command to enter God Mode / Publisher Portal
+      const cleanLower = rawText.toLowerCase().trim().replace(/\s+/g, ' ');
+      const godTriggers = [
+        '/gamemode creative', 'gamemode creative',
+        '/gamemode 1', 'gamemode 1',
+        '/gamemode c', 'gamemode c',
+        '/godmode', 'godmode',
+        '/god mode', 'god mode',
+        '/god', 'god',
+        '/creative', 'creative',
+        '/admin', 'admin',
+        '/publisher', 'publisher',
+        'congguantri', '/congguantri',
+        'cổng quản trị'
+      ];
+      if (godTriggers.includes(cleanLower)) {
         input.value = '';
         msg.style.display = 'none';
         closeModal('modal-shop');
-        showToast('🕹️ Set game mode to Creative Mode! (Chào mừng Nhà Phát Hành!)');
-        openPublisherModal();
+        showToast('🕹️ Đã mở Cổng Quản Trị & God Mode! (Chào mừng Nhà Phát Hành!)');
+        openPublisherModal(cleanLower.includes('god') ? 'wallet' : 'students');
         return;
       }
 
@@ -9981,6 +10280,38 @@
         fetchAdminStudentsList();
       }
     }
+    window.openPublisherModal = openPublisherModal;
+
+    function openGodMode() {
+      openPublisherModal('wallet');
+    }
+    window.openGodMode = openGodMode;
+
+    function openPublisherPortal(defaultTab = 'students') {
+      openPublisherModal(defaultTab);
+    }
+    window.openPublisherPortal = openPublisherPortal;
+
+    let versionBadgeClickCount = 0;
+    let versionBadgeClickTimer = null;
+    function handleVersionBadgeMultiClick(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      versionBadgeClickCount++;
+      if (versionBadgeClickTimer) clearTimeout(versionBadgeClickTimer);
+      versionBadgeClickTimer = setTimeout(() => {
+        versionBadgeClickCount = 0;
+      }, 3000);
+
+      if (versionBadgeClickCount >= 5) {
+        versionBadgeClickCount = 0;
+        clearTimeout(versionBadgeClickTimer);
+        showToast('👑 Chế độ Nhà Phát Hành: Đang mở Cổng Quản Trị & God Mode...');
+        openPublisherModal('students');
+      } else if (versionBadgeClickCount >= 3) {
+        showToast(`👑 Chạm thêm ${5 - versionBadgeClickCount} lần để mở Cổng Quản Trị!`);
+      }
+    }
+    window.handleVersionBadgeMultiClick = handleVersionBadgeMultiClick;
 
     // =========================================================================
     // VIP GATEWAY & MACRO RECONCILIATION ENGINE (v0.10.8-alpha-10.6 - AI RECONCILER)
@@ -11835,6 +12166,7 @@ function switchPublisherTab(tab) {
       initTheme();
       updateEconomyUI();
       updateStudyShuffleUI();
+      updateSyncStatusUI(navigator.onLine ? 'online' : 'offline');
       if (decks.length === 0) {
         seedSampleData();
       }
@@ -11851,7 +12183,7 @@ function switchPublisherTab(tab) {
       updateAiChatQuotaUI();
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       if (currentUser && currentUser.uid) {
-        if (!Array.isArray(decks) || decks.length === 0 || (decks.length === 1 && decks[0].id === 'deck-oxford-starter')) {
+        if (!Array.isArray(decks) || decks.length === 0 || (decks.length === 1 && decks[0].id === 'deck-oxford-starter') || decks.some(d => words.filter(w => w && w.deckId === d.id).length === 0)) {
           autoRecoverLostDecks(false).catch(() => {});
         }
         handleManualSync();
@@ -12063,16 +12395,19 @@ function switchPublisherTab(tab) {
                 const localFreezes = getUserFlowFreezes();
                 const maxCap = getMaxFlowFreezes();
                 let syncedFreezes = localFreezes;
-                const localUsed = localFreezeDates.length;
-                const remoteUsed = remoteStartupFreezeDates.length;
-                if (localUsed === remoteUsed) {
+                const localSet = new Set(localFreezeDates);
+                const remoteSet = new Set(remoteStartupFreezeDates);
+                const newFromRemote = remoteStartupFreezeDates.filter(d => !localSet.has(d)).length;
+                const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
+
+                if (remoteStartupFreezeDates.length === 0 && localFreezeDates.length > 0) {
                   syncedFreezes = Math.max(localFreezes, remoteStartupFreezes);
-                } else if (localUsed > remoteUsed) {
-                  syncedFreezes = Math.max(0, Math.min(localFreezes, remoteStartupFreezes - (localUsed - remoteUsed)));
                 } else {
-                  syncedFreezes = Math.max(0, Math.min(remoteStartupFreezes, localFreezes - (remoteUsed - localUsed)));
+                  const adjustedRemote = Math.max(0, remoteStartupFreezes - newFromLocal);
+                  const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
+                  syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
                 }
-                syncedFreezes = Math.min(maxCap, syncedFreezes);
+                syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
 
                 localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                 localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -15343,6 +15678,8 @@ function switchPublisherTab(tab) {
           pinnedBadges: userPinnedBadges,
           purchasedDeckIds: Array.from(userPurchasedDeckIds),
           deckSort: currentDeckSort,
+          deckTab: currentDeckTab,
+          wordFilter: currentWordFilter,
           decks: decks,
           words: words,
           deletedWordIds: Array.from(deletedWordIds),
@@ -15393,6 +15730,93 @@ function switchPublisherTab(tab) {
       }
     }
 
+    // =========================================================================
+    // REALTIME SYNC & NETWORK STATUS UI ENGINE (v0.10.8-alpha-24)
+    // =========================================================================
+    function updateSyncStatusUI(status = 'online') {
+      const syncIcon = document.getElementById('sync-icon');
+      const syncText = document.getElementById('sync-text');
+      const syncIconMob = document.getElementById('sync-icon-mobile');
+      const syncTextMob = document.getElementById('sync-text-mobile');
+      const syncBadge = document.getElementById('sync-status-badge');
+      const btnCloudSync = document.getElementById('btn-cloud-sync');
+
+      const isOnline = navigator.onLine;
+
+      if (status === 'syncing') {
+        if (syncIcon) syncIcon.textContent = '🔄';
+        if (syncText) syncText.textContent = 'Đang đồng bộ...';
+        if (syncIconMob) syncIconMob.textContent = '🔄';
+        if (syncTextMob) syncTextMob.textContent = 'Đang đồng bộ...';
+        if (syncBadge) {
+          syncBadge.textContent = 'Đang kết nối Cloud...';
+          syncBadge.style.color = '#38bdf8';
+        }
+        if (btnCloudSync) {
+          btnCloudSync.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+          btnCloudSync.style.color = '#38bdf8';
+        }
+        return;
+      }
+
+      if (!isOnline || status === 'offline') {
+        if (syncIcon) syncIcon.textContent = '☁️';
+        if (syncText) syncText.textContent = 'Ngoại tuyến';
+        if (syncIconMob) syncIconMob.textContent = '☁️';
+        if (syncTextMob) syncTextMob.textContent = 'Ngoại tuyến';
+        if (syncBadge) {
+          syncBadge.textContent = 'Mất kết nối Internet (Ngoại tuyến)';
+          syncBadge.style.color = '#ef4444';
+        }
+        if (btnCloudSync) {
+          btnCloudSync.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+          btnCloudSync.style.color = '#fbbf24';
+          btnCloudSync.title = 'Mất kết nối Internet - Đang lưu dữ liệu ngoại tuyến';
+        }
+        return;
+      }
+
+      // Online status
+      const lastSyncTime = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+      let syncTooltip = 'Trực tuyến • Bấm để đồng bộ Cloud';
+      if (lastSyncTime) {
+        try {
+          const syncDate = new Date(lastSyncTime);
+          syncTooltip = `Trực tuyến • Đồng bộ lần cuối: ${syncDate.toLocaleTimeString('vi-VN')}`;
+        } catch (e) {}
+      }
+
+      if (syncIcon) syncIcon.textContent = '☁️';
+      if (syncText) syncText.textContent = 'Trực tuyến';
+      if (syncIconMob) syncIconMob.textContent = '☁️';
+      if (syncTextMob) syncTextMob.textContent = 'Trực tuyến';
+      if (syncBadge) {
+        syncBadge.textContent = 'Trực tuyến (Đã kết nối Cloud)';
+        syncBadge.style.color = '#10b981';
+      }
+      if (btnCloudSync) {
+        btnCloudSync.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        btnCloudSync.style.color = '#34d399';
+        btnCloudSync.title = syncTooltip;
+      }
+    }
+    window.updateSyncStatusUI = updateSyncStatusUI;
+
+    window.addEventListener('online', () => {
+      console.log('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
+      updateSyncStatusUI('online');
+      showToast('🌐 Đã kết nối mạng trở lại (Trực tuyến)');
+      if (currentUser && currentUser.email && !isSyncing) {
+        handleManualSync();
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
+      updateSyncStatusUI('offline');
+      showToast('⚠️ Mất kết nối Internet (Ngoại tuyến)');
+    });
+
     // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
     async function handleManualSync() {
       if (!currentUser || !currentUser.email) {
@@ -15403,19 +15827,7 @@ function switchPublisherTab(tab) {
       if (isSyncing) return;
       isSyncing = true;
 
-      const syncIcon = document.getElementById('sync-icon');
-      const syncText = document.getElementById('sync-text');
-      const syncIconMob = document.getElementById('sync-icon-mobile');
-      const syncTextMob = document.getElementById('sync-text-mobile');
-      const syncBadge = document.getElementById('sync-status-badge');
-      if (syncIcon) syncIcon.textContent = '🔄';
-      if (syncText) syncText.textContent = 'Đang đồng bộ...';
-      if (syncIconMob) syncIconMob.textContent = '🔄';
-      if (syncTextMob) syncTextMob.textContent = 'Đang đồng bộ...';
-      if (syncBadge) {
-        syncBadge.textContent = 'Đang kết nối Cloud...';
-        syncBadge.style.color = '#38bdf8';
-      }
+      updateSyncStatusUI('syncing');
 
       try {
         const userId = currentUser ? currentUser.uid : null;
@@ -15577,6 +15989,14 @@ function switchPublisherTab(tab) {
                   const sortSelect = document.getElementById('deck-sort-select');
                   if (sortSelect) sortSelect.value = currentDeckSort;
                 }
+                if (cloudData.deckTab && (cloudData.deckTab === 'active' || cloudData.deckTab === 'archived')) {
+                  currentDeckTab = cloudData.deckTab;
+                  localStorage.setItem('vocaflow_deck_tab', currentDeckTab);
+                }
+                if (cloudData.wordFilter) {
+                  currentWordFilter = cloudData.wordFilter;
+                  localStorage.setItem('vocaflow_word_filter', currentWordFilter);
+                }
 
                 // Merge deleted tombstones from cloud
                 if (cloudData.deletedWordIds && Array.isArray(cloudData.deletedWordIds)) {
@@ -15591,6 +16011,41 @@ function switchPublisherTab(tab) {
                   deletedDeckIds.delete('deck-oxford-starter');
                 }
                 saveDeletedTombstones();
+
+                // Build lookup of viable decks by normalized title (v0.10.8-alpha-24)
+                const survivingDecksByNormTitle = new Map();
+                decks.forEach(d => {
+                  if (d && d.id && !deletedDeckIds.has(d.id)) {
+                    const nt = normalizeDeckTitleForDedupe(d.title);
+                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, d);
+                  }
+                });
+                remoteDecks.forEach(rd => {
+                  if (rd && rd.id && !deletedDeckIds.has(rd.id)) {
+                    const nt = normalizeDeckTitleForDedupe(rd.title);
+                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, rd);
+                  }
+                });
+
+                const allKnownDecksById = new Map();
+                decks.forEach(d => { if (d && d.id) allKnownDecksById.set(d.id, d); });
+                remoteDecks.forEach(rd => { if (rd && rd.id) allKnownDecksById.set(rd.id, rd); });
+
+                // Before purging local words, rescue any words whose deck was tombstoned if a deck with the same title survives
+                words.forEach(w => {
+                  if (w && w.deckId && deletedDeckIds.has(w.deckId)) {
+                    const oldDeck = allKnownDecksById.get(w.deckId);
+                    if (oldDeck) {
+                      const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+                      const surviving = survivingDecksByNormTitle.get(nt);
+                      if (surviving) {
+                        console.log(`🛡️ [Sync Word Shield] Rescuing local word "${w.term}" (${w.id}) from tombstoned deck ${w.deckId} to surviving deck "${surviving.title}" (${surviving.id})`);
+                        w.deckId = surviving.id;
+                        deletedWordIds.delete(w.id);
+                      }
+                    }
+                  }
+                });
 
                 // Purge local deleted items
                 decks = decks.filter(d => !deletedDeckIds.has(d.id));
@@ -15630,12 +16085,12 @@ function switchPublisherTab(tab) {
                       } else if (localTime > remoteTime) {
                         // Local is newer: keep local deck
                       } else {
-                        // Equal timestamp: merge with boolean preservation
+                        // Equal timestamp: local user actions take priority!
                         decks[localIdx] = {
-                          ...localDeck,
                           ...cleanRemote,
-                          isPinned: (localDeck.isPinned === true) || (cleanRemote.isPinned === true),
-                          isArchived: (localDeck.isArchived === true) || (cleanRemote.isArchived === true)
+                          ...localDeck,
+                          isPinned: localDeck.isPinned === true,
+                          isArchived: localDeck.isArchived === true
                         };
                       }
                     } else {
@@ -15646,7 +16101,24 @@ function switchPublisherTab(tab) {
                 if (remoteWords.length > 0) {
                   // Merge words by ID (Last-Write-Wins with learning progress protection)
                   for (const remoteWord of remoteWords) {
-                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id) || deletedDeckIds.has(remoteWord.deckId)) continue;
+                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id)) continue;
+
+                    // Rescue remote word if its deck was tombstoned
+                    if (deletedDeckIds.has(remoteWord.deckId)) {
+                      const oldDeck = allKnownDecksById.get(remoteWord.deckId);
+                      if (oldDeck) {
+                        const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+                        const surviving = survivingDecksByNormTitle.get(nt);
+                        if (surviving) {
+                          remoteWord.deckId = surviving.id;
+                        } else {
+                          continue; // truly deleted deck with no surviving duplicate
+                        }
+                      } else {
+                        continue;
+                      }
+                    }
+
                     const localIdx = words.findIndex(w => w.id === remoteWord.id);
                     if (localIdx >= 0) {
                       const localWord = words[localIdx];
@@ -15673,6 +16145,14 @@ function switchPublisherTab(tab) {
 
                 // Reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
                 reconcileAllDuplicateDecks(false);
+
+                // Auto-heal any remaining orphan words (v0.10.8-alpha-24)
+                autoHealOrphanWords(false);
+
+                // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
+                if (typeof reconcileDuplicateWordsInDecks === 'function') {
+                  reconcileDuplicateWordsInDecks(null, false);
+                }
 
                 if (cloudData.economy && typeof cloudData.economy === 'object') {
                   const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
@@ -15922,16 +16402,19 @@ function switchPublisherTab(tab) {
                   const localFreezes = getUserFlowFreezes();
                   const maxCap = getMaxFlowFreezes();
                   let syncedFreezes = localFreezes;
-                  const localUsed = localFreezeDates.length;
-                  const remoteUsed = remoteFreezeDates.length;
-                  if (localUsed === remoteUsed) {
+                  const localSet = new Set(localFreezeDates);
+                  const remoteSet = new Set(remoteFreezeDates);
+                  const newFromRemote = remoteFreezeDates.filter(d => !localSet.has(d)).length;
+                  const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
+
+                  if (remoteFreezeDates.length === 0 && localFreezeDates.length > 0) {
                     syncedFreezes = Math.max(localFreezes, remoteFreezes);
-                  } else if (localUsed > remoteUsed) {
-                    syncedFreezes = Math.max(0, Math.min(localFreezes, remoteFreezes - (localUsed - remoteUsed)));
                   } else {
-                    syncedFreezes = Math.max(0, Math.min(remoteFreezes, localFreezes - (remoteUsed - localUsed)));
+                    const adjustedRemote = Math.max(0, remoteFreezes - newFromLocal);
+                    const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
+                    syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
                   }
-                  syncedFreezes = Math.min(maxCap, syncedFreezes);
+                  syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
 
                   localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                   localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -16113,26 +16596,12 @@ function switchPublisherTab(tab) {
         const nowIso = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, nowIso);
 
-        if (syncIcon) syncIcon.textContent = '☁️';
-        if (syncText) syncText.textContent = 'Đã đồng bộ';
-        if (syncIconMob) syncIconMob.textContent = '☁️';
-        if (syncTextMob) syncTextMob.textContent = 'Đã đồng bộ tức thì';
-        if (syncBadge) {
-          syncBadge.textContent = 'Đã đồng bộ Cloud';
-          syncBadge.style.color = '#10b981';
-        }
+        updateSyncStatusUI('online');
         showToast('Đồng bộ Cloud thành công!');
       } catch (e) {
         console.error('Sync general error:', e);
-        if (syncIcon) syncIcon.textContent = '☁️';
-        if (syncText) syncText.textContent = 'Ngoại tuyến';
-        if (syncIconMob) syncIconMob.textContent = '☁️';
-        if (syncTextMob) syncTextMob.textContent = 'Dữ liệu cục bộ';
-        if (syncBadge) {
-          syncBadge.textContent = 'Đang dùng bộ nhớ cục bộ';
-          syncBadge.style.color = '#fbbf24';
-        }
-        showToast('Đã lưu dữ liệu ngoại tuyến.');
+        updateSyncStatusUI(navigator.onLine ? 'online' : 'offline');
+        showToast(navigator.onLine ? 'Đã lưu dữ liệu cục bộ an toàn.' : '⚠️ Mất kết nối Internet (Ngoại tuyến).');
       } finally {
         isSyncing = false;
         updateAuthUI();
@@ -16196,6 +16665,327 @@ function switchPublisherTab(tab) {
         return false;
       }
     }
+
+    // =========================================================================
+    // ORPHAN WORDS RECOVERY & DATA PROTECTION ENGINE (v0.10.8-alpha-24)
+    // =========================================================================
+    function autoHealOrphanWords(triggerSave = true) {
+      if (!Array.isArray(decks) || decks.length === 0) return 0;
+      if (!Array.isArray(words)) words = [];
+
+      let healedCount = 0;
+      const activeDeckIds = new Set(decks.map(d => d.id));
+      const deckTitleMap = new Map(); // normalizedTitle -> deck
+
+      decks.forEach(d => {
+        if (!d || !d.id) return;
+        const norm = normalizeDeckTitleForDedupe(d.title);
+        if (norm && !deckTitleMap.has(norm)) {
+          deckTitleMap.set(norm, d);
+        }
+      });
+
+      // Step 1: Scan local words backup snapshot if any active deck currently has 0 words
+      const bWordsStr = localStorage.getItem('vocaflow_words_backup');
+      const bDecksStr = localStorage.getItem('vocaflow_decks_backup');
+      if (bWordsStr) {
+        try {
+          const bWords = JSON.parse(bWordsStr);
+          const bDecks = bDecksStr ? JSON.parse(bDecksStr) : [];
+          if (Array.isArray(bWords) && bWords.length > 0) {
+            decks.forEach(deck => {
+              const currentWordsForDeck = words.filter(w => w && w.deckId === deck.id);
+              if (currentWordsForDeck.length === 0) {
+                // Deck is completely empty! Try to restore from backup
+                let candidateWords = bWords.filter(bw => bw && bw.deckId === deck.id);
+
+                // If not found by deckId, search by backup deck title matching this deck's title
+                if (candidateWords.length === 0 && Array.isArray(bDecks)) {
+                  const targetNorm = normalizeDeckTitleForDedupe(deck.title);
+                  const matchingBDeck = bDecks.find(bd => bd && normalizeDeckTitleForDedupe(bd.title) === targetNorm);
+                  if (matchingBDeck && matchingBDeck.id) {
+                    candidateWords = bWords.filter(bw => bw && bw.deckId === matchingBDeck.id);
+                  }
+                }
+
+                if (candidateWords.length > 0) {
+                  console.log(`🛡️ [AutoHeal] Restoring ${candidateWords.length} words from backup snapshot for empty deck "${deck.title}" (${deck.id})`);
+                  candidateWords.forEach(cw => {
+                    const cloned = { ...cw, deckId: deck.id };
+                    const existingIdx = words.findIndex(w => w && w.id === cloned.id);
+                    if (existingIdx >= 0) {
+                      words[existingIdx].deckId = deck.id;
+                    } else {
+                      // Check if a word with the exact same normalized term already exists in this deck
+                      const existingTermIdx = words.findIndex(w => w && w.deckId === deck.id && normalizeWordTermForDedupe(w.term) === normalizeWordTermForDedupe(cloned.term));
+                      if (existingTermIdx >= 0) {
+                        // Word with same term already exists, reconcile progress instead of duplicating!
+                        const existW = words[existingTermIdx];
+                        if ((cloned.masteryScore || 0) > (existW.masteryScore || 0)) {
+                          existW.masteryScore = cloned.masteryScore;
+                          if (cloned.status) existW.status = cloned.status;
+                        }
+                      } else {
+                        words.push(cloned);
+                      }
+                    }
+                    if (deletedWordIds && deletedWordIds.has(cloned.id)) {
+                      deletedWordIds.delete(cloned.id);
+                    }
+                    healedCount++;
+                  });
+                }
+              }
+            });
+          }
+        } catch (eB) {
+          console.warn('AutoHeal backup scan error:', eB);
+        }
+      }
+
+      // Step 2: Scan words array for orphan words (deckId not in activeDeckIds or in deletedDeckIds)
+      const emptyActiveDecks = decks.filter(d => words.filter(w => w && w.deckId === d.id).length === 0);
+
+      words.forEach(w => {
+        if (!w || !w.id) return;
+        const isOrphan = !activeDeckIds.has(w.deckId) || (deletedDeckIds && deletedDeckIds.has(w.deckId));
+        if (isOrphan) {
+          let targetDeck = null;
+
+          // Check if backup decks can identify what title this orphan word's old deckId had
+          if (bDecksStr) {
+            try {
+              const bDecks = JSON.parse(bDecksStr);
+              if (Array.isArray(bDecks)) {
+                const oldDeck = bDecks.find(bd => bd && bd.id === w.deckId);
+                if (oldDeck) {
+                  const norm = normalizeDeckTitleForDedupe(oldDeck.title);
+                  if (deckTitleMap.has(norm)) {
+                    targetDeck = deckTitleMap.get(norm);
+                  }
+                }
+              }
+            } catch (eOld) {}
+          }
+
+          // If still no target deck, and there is exactly one empty active deck, reattach to it
+          if (!targetDeck && emptyActiveDecks.length === 1) {
+            targetDeck = emptyActiveDecks[0];
+          }
+
+          if (targetDeck) {
+            // Check if this term already exists in targetDeck
+            const existingTermIdx = words.findIndex(otherW => otherW && otherW.id !== w.id && otherW.deckId === targetDeck.id && normalizeWordTermForDedupe(otherW.term) === normalizeWordTermForDedupe(w.term));
+            if (existingTermIdx >= 0) {
+              // Duplicate term exists in target deck: tombstone the orphan word to avoid doubling!
+              deletedWordIds.add(w.id);
+              w._isDedupeRemoved = true;
+            } else {
+              console.log(`🛡️ [AutoHeal] Reconnecting orphan word "${w.term}" (${w.id}) to deck "${targetDeck.title}" (${targetDeck.id})`);
+              w.deckId = targetDeck.id;
+              if (deletedWordIds && deletedWordIds.has(w.id)) {
+                deletedWordIds.delete(w.id);
+              }
+              if (deletedDeckIds && deletedDeckIds.has(targetDeck.id)) {
+                deletedDeckIds.delete(targetDeck.id);
+              }
+              healedCount++;
+            }
+          }
+        }
+      });
+
+      if (healedCount > 0) {
+        saveDeletedTombstones();
+        takeDeckSnapshot();
+        if (triggerSave) {
+          saveDatabase(false);
+        }
+        console.log(`🛡️ [AutoHeal] Successfully healed ${healedCount} words!`);
+      }
+
+      // Always run deduplication across all decks
+      reconcileDuplicateWordsInDecks(null, false);
+
+      return healedCount;
+    }
+    window.autoHealOrphanWords = autoHealOrphanWords;
+
+    // =========================================================================
+    // INTRA-DECK WORD DEDUPLICATION & MERGE ENGINE (v0.10.9-alpha-26)
+    // Automatically groups case-insensitive identical words within each deck,
+    // merges definitions (drops exact or duplicate meanings), preserves best progress,
+    // and tombstones removed IDs so Cloud RTDB deletes them too.
+    // =========================================================================
+    function reconcileDuplicateWordsInDecks(targetDeckId = null, triggerSave = true) {
+      if (!Array.isArray(words) || words.length === 0) return 0;
+      if (!Array.isArray(decks) || decks.length === 0) return 0;
+
+      const targetDecks = targetDeckId ? decks.filter(d => d && d.id === targetDeckId) : decks;
+      let totalMergedWords = 0;
+
+      for (const deck of targetDecks) {
+        if (!deck || !deck.id) continue;
+        const deckWords = words.filter(w => w && w.deckId === deck.id && !w._isDedupeRemoved);
+        if (deckWords.length <= 1) continue;
+
+        // Group words by normalized term
+        const groups = new Map();
+        for (const w of deckWords) {
+          const normTerm = normalizeWordTermForDedupe(w.term);
+          if (!normTerm) continue;
+          if (!groups.has(normTerm)) groups.set(normTerm, []);
+          groups.get(normTerm).push(w);
+        }
+
+        // Process groups with duplicate terms
+        for (const [normTerm, dupList] of groups.entries()) {
+          if (dupList.length <= 1) continue;
+
+          // Rank duplicates: keep the one with best mastery/status, or oldest creation
+          dupList.sort((a, b) => {
+            const statusScore = (s) => (s === 'mastered' ? 3 : s === 'learning' ? 2 : 1);
+            const aStatus = statusScore(a.status);
+            const bStatus = statusScore(b.status);
+            if (aStatus !== bStatus) return bStatus - aStatus;
+
+            const aMastery = a.masteryScore || 0;
+            const bMastery = b.masteryScore || 0;
+            if (aMastery !== bMastery) return bMastery - aMastery;
+
+            // Prioritize item with more complete content (definition, example, phonetic)
+            const aContent = (a.definitionVi ? 10 : 0) + (a.phonetic ? 5 : 0) + (a.exampleSentence ? 5 : 0);
+            const bContent = (b.definitionVi ? 10 : 0) + (b.phonetic ? 5 : 0) + (b.exampleSentence ? 5 : 0);
+            if (aContent !== bContent) return bContent - aContent;
+
+            const aTime = new Date(a.createdAt || 0).getTime();
+            const bTime = new Date(b.createdAt || 0).getTime();
+            return aTime - bTime;
+          });
+
+          const primaryWord = dupList[0];
+          const secondaryWords = dupList.slice(1);
+
+          for (const secWord of secondaryWords) {
+            let primaryUpdated = false;
+
+            // 1. Mastery Score & Status
+            if ((secWord.masteryScore || 0) > (primaryWord.masteryScore || 0)) {
+              primaryWord.masteryScore = secWord.masteryScore;
+              primaryUpdated = true;
+            }
+            if (secWord.status === 'mastered' && primaryWord.status !== 'mastered') {
+              primaryWord.status = 'mastered';
+              primaryUpdated = true;
+            } else if (secWord.status === 'learning' && primaryWord.status === 'newWord') {
+              primaryWord.status = 'learning';
+              primaryUpdated = true;
+            }
+
+            // 2. Definition deduplication and merge:
+            // "nếu nghĩa giống thì bỏ qua (tức là xóa luôn nét nghĩa bị trùng)"
+            const primDef = (primaryWord.definitionVi || primaryWord.definition || '').trim();
+            const secDef = (secWord.definitionVi || secWord.definition || '').trim();
+            if (!primDef && secDef) {
+              primaryWord.definitionVi = secDef;
+              primaryUpdated = true;
+            } else if (primDef && secDef) {
+              const normPrimDef = primDef.toLowerCase().replace(/\s+/g, ' ');
+              const normSecDef = secDef.toLowerCase().replace(/\s+/g, ' ');
+              // If secondary definition is identical or already contained in primary definition, skip!
+              if (normPrimDef !== normSecDef && !normPrimDef.includes(normSecDef)) {
+                // Different meaning! Check if primary is contained in secondary
+                if (normSecDef.includes(normPrimDef)) {
+                  // Secondary is more comprehensive, replace primary
+                  primaryWord.definitionVi = secDef;
+                  primaryUpdated = true;
+                } else {
+                  // Split multiple meanings separated by semicolons or commas and deduplicate each sense
+                  const primSenses = primDef.split(/[,;\n•]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+                  const secSenses = secDef.split(/[,;\n•]+/).map(s => s.trim()).filter(Boolean);
+                  const newSenses = secSenses.filter(s => !primSenses.includes(s.toLowerCase()));
+                  if (newSenses.length > 0) {
+                    primaryWord.definitionVi = `${primDef}; ${newSenses.join('; ')}`;
+                    primaryUpdated = true;
+                  }
+                }
+              }
+            }
+
+            // 3. Phonetic, POS, Example, Note
+            if (!primaryWord.phonetic && secWord.phonetic) {
+              primaryWord.phonetic = secWord.phonetic;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.partOfSpeech && secWord.partOfSpeech) {
+              primaryWord.partOfSpeech = secWord.partOfSpeech;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.exampleSentence && secWord.exampleSentence) {
+              primaryWord.exampleSentence = secWord.exampleSentence;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.note && secWord.note) {
+              primaryWord.note = secWord.note;
+              primaryUpdated = true;
+            }
+            if ((!primaryWord.synonyms || primaryWord.synonyms.length === 0) && Array.isArray(secWord.synonyms) && secWord.synonyms.length > 0) {
+              primaryWord.synonyms = secWord.synonyms;
+              primaryUpdated = true;
+            }
+            if ((!primaryWord.antonyms || primaryWord.antonyms.length === 0) && Array.isArray(secWord.antonyms) && secWord.antonyms.length > 0) {
+              primaryWord.antonyms = secWord.antonyms;
+              primaryUpdated = true;
+            }
+
+            if (primaryUpdated) {
+              primaryWord.updatedAt = new Date().toISOString();
+            }
+
+            // Tombstone secondary word so Cloud RTDB & local storage delete it completely
+            if (secWord.id) {
+              deletedWordIds.add(secWord.id);
+            }
+            secWord._isDedupeRemoved = true;
+            totalMergedWords++;
+          }
+        }
+      }
+
+      if (totalMergedWords > 0) {
+        words = words.filter(w => !w._isDedupeRemoved && !deletedWordIds.has(w.id));
+        saveDeletedTombstones();
+        takeDeckSnapshot();
+        if (triggerSave) {
+          saveDatabase(false);
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            pushCurrentDatabaseToCloud();
+          }
+        }
+        console.log(`🧹 [VocaFlow Dedupe] Successfully merged and removed ${totalMergedWords} duplicate words!`);
+      }
+
+      return totalMergedWords;
+    }
+    window.reconcileDuplicateWordsInDecks = reconcileDuplicateWordsInDecks;
+
+    function handleManualDeduplicateCurrentDeck() {
+      if (!currentDeckId) {
+        showToast('⚠️ Không tìm thấy VocaDeck hiện tại!');
+        return;
+      }
+      const deck = decks.find(d => d.id === currentDeckId);
+      const deckTitle = deck ? deck.title : 'VocaDeck';
+      const mergedCount = reconcileDuplicateWordsInDecks(currentDeckId, true);
+      if (mergedCount > 0) {
+        renderWordList();
+        updateDeckDetailHeader();
+        showToast(`🎉 Đã tự động dọn sạch và gộp ${mergedCount} từ vựng trùng lặp trong "${deckTitle}"!`);
+      } else {
+        showToast(`✨ VocaDeck "${deckTitle}" không có từ nào bị trùng lặp!`);
+      }
+    }
+    window.handleManualDeduplicateCurrentDeck = handleManualDeduplicateCurrentDeck;
 
     // =========================================================================
     // CROSS-DEVICE DECK RECONCILIATION & DEDUPLICATION ENGINE (v0.10.9-alpha-22)
@@ -16408,8 +17198,45 @@ function switchPublisherTab(tab) {
             });
 
             for (const pd of targetDecks) {
-              const exists = decks.some(d => normalizeDeckTitleForDedupe(d.title) === normalizeDeckTitleForDedupe(pd.title) || d.libSourceId === pd.id || d.id === pd.id);
-              if (!exists) {
+              const existingDeck = decks.find(d => normalizeDeckTitleForDedupe(d.title) === normalizeDeckTitleForDedupe(pd.title) || d.libSourceId === pd.id || d.id === pd.id);
+              if (existingDeck) {
+                // If existing deck has 0 words, but public deck has words: RESTORE THEM!
+                const existingWordsCount = words.filter(w => w && w.deckId === existingDeck.id).length;
+                if (existingWordsCount === 0 && Array.isArray(pd.words) && pd.words.length > 0) {
+                  console.log(`🛡️ [AutoRecover] Re-populating ${pd.words.length} words into 0-word existing deck "${existingDeck.title}" (${existingDeck.id})`);
+                  pd.words.forEach((w, idx) => {
+                    const wordId = 'w_' + existingDeck.id + '_' + idx;
+                    const newWord = {
+                      id: wordId,
+                      deckId: existingDeck.id,
+                      term: w.term,
+                      definitionVi: w.definitionVi || w.definition || '',
+                      definition: w.definitionVi || w.definition || '',
+                      phonetic: w.phonetic || '',
+                      partOfSpeech: w.partOfSpeech || 'noun',
+                      exampleSentence: w.exampleSentence || w.example || '',
+                      example: w.exampleSentence || w.example || '',
+                      cefrLevel: w.cefrLevel || w.level || 'B1',
+                      level: w.cefrLevel || w.level || 'B1',
+                      synonyms: Array.isArray(w.synonyms) ? w.synonyms : (w.synonyms ? w.synonyms.split(',').map(s => s.trim()) : []),
+                      antonyms: Array.isArray(w.antonyms) ? w.antonyms : (w.antonyms ? w.antonyms.split(',').map(s => s.trim()) : []),
+                      collocations: Array.isArray(w.collocations) ? w.collocations : (w.collocations ? w.collocations.split(',').map(s => s.trim()) : []),
+                      note: w.note || '',
+                      topic: w.topic || '',
+                      status: 'newWord',
+                      masteryScore: 0,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString()
+                    };
+                    words.push(newWord);
+                    if (deletedWordIds && deletedWordIds.has(wordId)) {
+                      deletedWordIds.delete(wordId);
+                    }
+                    recoveredWordsCount++;
+                  });
+                  recoveredCount++;
+                }
+              } else {
                 const localDeckId = 'deck_' + (pd.publishedAt ? new Date(pd.publishedAt).getTime() : Date.now()) + '_' + Math.random().toString(36).substr(2, 4);
                 const newDeck = {
                   id: localDeckId,
@@ -16528,6 +17355,16 @@ function switchPublisherTab(tab) {
 
         // Auto-reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
         reconcileAllDuplicateDecks(false);
+
+        // Auto-heal orphan words (v0.10.8-alpha-24)
+        autoHealOrphanWords(false);
+
+        // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
+        reconcileDuplicateWordsInDecks(null, false);
+
+        // Restore saved deck tab and word filter preferences
+        currentDeckTab = localStorage.getItem('vocaflow_deck_tab') || 'active';
+        currentWordFilter = localStorage.getItem('vocaflow_word_filter') || 'all';
       } catch (e) {
         console.error('Failed to parse database from localStorage:', e);
         decks = [];
@@ -16915,9 +17752,15 @@ function switchPublisherTab(tab) {
 
     function setWordFilter(filter, el) {
       currentWordFilter = filter;
+      try {
+        localStorage.setItem('vocaflow_word_filter', filter);
+      } catch (e) {}
       document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
       if (el) el.classList.add('active');
       renderWordList();
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function updateWordModalMasteryPreview(val) {
@@ -17071,10 +17914,13 @@ function switchPublisherTab(tab) {
     // =========================================================================
     // DECK TABS, PINNING & ARCHIVE STORAGE ENGINE
     // =========================================================================
-    let currentDeckTab = 'active'; // 'active' | 'archived'
+    let currentDeckTab = localStorage.getItem('vocaflow_deck_tab') || 'active'; // 'active' | 'archived'
 
-    function setDeckTab(tab) {
+    function setDeckTab(tab, triggerSync = true) {
       currentDeckTab = tab;
+      try {
+        localStorage.setItem('vocaflow_deck_tab', tab);
+      } catch (e) {}
       const tabActiveEl = document.getElementById('tab-active-decks');
       const tabArchivedEl = document.getElementById('tab-archived-decks');
       if (tabActiveEl) {
@@ -17086,6 +17932,9 @@ function switchPublisherTab(tab) {
         else tabArchivedEl.classList.remove('active');
       }
       renderDecks();
+      if (triggerSync && currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function togglePinDeck(deckId) {
@@ -17172,6 +18021,8 @@ function switchPublisherTab(tab) {
     }
 
     function renderDecks() {
+      // Auto-heal orphan words before rendering (v0.10.8-alpha-24)
+      autoHealOrphanWords(false);
       renderDailyReviewBanner();
       const container = document.getElementById('deck-grid');
       if (!container) return;
@@ -17326,7 +18177,7 @@ function switchPublisherTab(tab) {
               <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'Khôi phục' : 'Lưu trữ'}</span>
             </button>
             <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim VocaDeck' : 'Ghim VocaDeck lên đầu'}">
-              <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
+              <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span class="hide-on-mobile">${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
             </button>
             <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa VocaDeck này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
               <svg class="icon icon-sm"><use href="#i-delete"/></svg> <span class="hide-on-mobile">Xóa</span>
@@ -17415,6 +18266,9 @@ function switchPublisherTab(tab) {
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
+      // Automatically reconcile and clean any duplicate words inside this deck
+      reconcileDuplicateWordsInDecks(deckId, false);
+
       document.getElementById('deck-detail-title').textContent = deck.title;
       document.getElementById('deck-detail-desc').textContent = deck.description || '';
       const timeEl = document.getElementById('deck-detail-timestamp');
@@ -17432,7 +18286,25 @@ function switchPublisherTab(tab) {
         }
       }
       document.getElementById('word-search-input').value = '';
-      currentWordFilter = 'all';
+      
+      // Restore saved word filter preference
+      currentWordFilter = localStorage.getItem('vocaflow_word_filter') || 'all';
+      let matchedChip = false;
+      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => {
+        const attr = c.getAttribute('onclick') || '';
+        if (attr.includes(`'${currentWordFilter}'`)) {
+          c.classList.add('active');
+          matchedChip = true;
+        } else {
+          c.classList.remove('active');
+        }
+      });
+      if (!matchedChip) {
+        currentWordFilter = 'all';
+        const firstChip = document.querySelector('#deck-word-filter-chips .chip');
+        if (firstChip) firstChip.classList.add('active');
+      }
+
       currentPosFilter = 'all';
       currentCefrFilter = 'all';
       const posFilterSelect = document.getElementById('filter-word-pos-select');
@@ -19442,6 +20314,8 @@ function switchPublisherTab(tab) {
             const isVocaFlow = id.startsWith('screen-') || 
                                id.startsWith('modal-') || 
                                id.startsWith('toast-') || 
+                               id.startsWith('btn-ai-mentor') ||
+                               id === 'btn-ai-mentor-fab' ||
                                id === 'app' || 
                                id === 'app-container' || 
                                id === 'toast-container' || 
@@ -20515,22 +21389,22 @@ function switchPublisherTab(tab) {
       pushCurrentDatabaseToCloud();
     }
 
-    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-6)
+    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-23)
     function healErroneousFreezeDeduction() {
-      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a6';
+      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a23';
       if (localStorage.getItem(HEAL_KEY)) return;
       try {
         const freezeDates = getFlowFreezeDates();
         let currentFreezes = getUserFlowFreezes();
         const maxCap = getMaxFlowFreezes();
 
-        // If user used only 1 freeze date, but had their remaining freeze wiped out to 0:
-        if (freezeDates.length === 1 && currentFreezes === 0) {
+        // If user's flow freezes were wiped out to 0 due to cross-device sync bug:
+        if (currentFreezes === 0 && (freezeDates.length > 0 || isUserVip() || (currentUser && currentUser.email))) {
           currentFreezes = 1;
           setUserFlowFreezes(currentFreezes);
-          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ v0.10.9-alpha-6 (1/' + maxCap + ')');
+          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ (1/' + maxCap + ')');
           if (typeof showToast === 'function') {
-            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bị trừ nhầm vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
+            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bảo vệ chuỗi vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
           }
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
@@ -24487,22 +25361,39 @@ function switchPublisherTab(tab) {
     function exitSpelling() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty combined (v0.10.6c)
+      const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
+      const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
+
+      if (!spellingIsCompleted && (done > 0 || spellingPointsEarned !== 0)) {
+        promptStudyEarlyExit({
+          mode: 'spelling',
+          done,
+          total,
+          basePoints: spellingPointsEarned,
+          onConfirmExit: () => doExecuteExitSpelling(done, total)
+        });
+        return;
+      }
+      doExecuteExitSpelling(done, total);
+    }
+
+    function doExecuteExitSpelling(done, total) {
+      stopAllAudio();
+      // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
       if (!spellingIsCompleted && spellingPointsEarned !== 0) {
-        const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
-        const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
         const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
         const finalPts = res.finalPts;
 
         if (finalPts !== 0) {
-          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          const curDeck = decks.find(d => d.id === currentDeckId);
+          const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Hệ số hoàn thành x${res.completionMult}, độ dài x${res.deckLengthMult} ➔ Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
+            showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
             addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`);
           } else {
             const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-            showToast(`🎉 Đã học ${done}/${total} từ (${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
+            showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
             addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
           }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
@@ -26365,30 +27256,43 @@ Yêu cầu nghiêm ngặt:
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      const done = Math.min(quizTotalQuestions || (quizList ? quizList.length : 1), quizIndex + (quizIsAnswered ? 1 : 0));
+      const total = quizTotalQuestions || (quizList ? quizList.length : 1);
+      const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
+
+      if (!quizIsCompleted && (done > 0 || quizPointsEarned !== 0)) {
+        promptStudyEarlyExit({
+          mode: 'quiz',
+          done,
+          total,
+          basePoints: quizPointsEarned,
+          onConfirmExit: () => doExecuteExitQuiz(done, total)
+        });
+        return;
+      }
+      doExecuteExitQuiz(done, total);
+    }
+
+    function doExecuteExitQuiz(done, total) {
+      stopAllAudio();
       if (done > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
-      // Progressive incomplete session leniency / penalty (v0.10.6c)
+      // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
-        const total = quizTotalQuestions || (quizList ? quizList.length : 1);
-        const mult = getIncompleteSessionMultiplier(done, total);
-        let finalPts = 0;
-        if (quizPointsEarned > 0) {
-          finalPts = Math.round(quizPointsEarned * mult);
-        } else if (quizPointsEarned < 0) {
-          // Negative points penalty: divide by mult so rage quitters cannot escape penalties!
-          finalPts = Math.min(quizPointsEarned, Math.round(quizPointsEarned / Math.max(0.2, mult)));
-        }
+        const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
+        const finalPts = res.finalPts;
+
         if (finalPts !== 0) {
-          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
+          const curDeck = decks.find(d => d.id === currentDeckId);
+          const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} VoCoin!`);
-            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${mult})`);
+            showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
+            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`);
           } else {
-            showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} VoCoin (+${finalPts} VoCoin)!`);
-            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
+            const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
+            showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
+            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
           }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
           saveDatabase(true);
@@ -27351,6 +28255,26 @@ Yêu cầu nghiêm ngặt:
     function exitSpeakingMode() {
       if (speakingAutoPlayTimeout) { clearTimeout(speakingAutoPlayTimeout); speakingAutoPlayTimeout = null; }
       stopSpeakingRecord();
+
+      const total = speakingTotalWords || (speakingWordsList ? speakingWordsList.length : 1);
+      const done = speakingCompletedWords;
+
+      if (!speakingIsCompleted && (done > 0 || speakingSessionPointsEarned !== 0 || currentSpeakingIndex > 0)) {
+        promptStudyEarlyExit({
+          mode: 'speaking',
+          done,
+          total,
+          basePoints: speakingSessionPointsEarned,
+          onConfirmExit: () => doExecuteExitSpeaking(done, total)
+        });
+        return;
+      }
+      doExecuteExitSpeaking(done, total);
+    }
+
+    function doExecuteExitSpeaking(done, total) {
+      if (speakingAutoPlayTimeout) { clearTimeout(speakingAutoPlayTimeout); speakingAutoPlayTimeout = null; }
+      stopSpeakingRecord();
       resetSpeakingWordState();
       closeSpeakingResultModal();
 
@@ -27364,8 +28288,6 @@ Yêu cầu nghiêm ngặt:
       }
 
       if (speakingSessionPointsEarned !== 0) {
-        const total = speakingTotalWords || speakingWordsList.length || 1;
-        const done = speakingCompletedWords;
         const isComp = done >= total && total > 0;
         const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
         const finalPts = res.finalPts;
@@ -28784,7 +29706,35 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
     }
 
-    function exitAutoFlashcard() {
+    function exitAutoFlashcard(force = false) {
+      const total = (autoFlashcardList && autoFlashcardList.length) ? autoFlashcardList.length : 0;
+      const done = autoFlashcardIndex;
+
+      if (!force && done > 0 && done < total) {
+        if (isAutoPlaying) {
+          isAutoPlaying = false;
+          stopAllAudio();
+          const statusEl = document.getElementById('autofc-status-indicator');
+          if (statusEl) {
+            statusEl.textContent = '⏸️ Đã tạm dừng';
+            statusEl.style.color = 'var(--warning)';
+          }
+          syncAutoFlashcardControlsUI();
+        }
+
+        promptStudyEarlyExit({
+          mode: 'autofc',
+          done,
+          total,
+          basePoints: 0,
+          onConfirmExit: () => doExecuteExitAutoFlashcard()
+        });
+        return;
+      }
+      doExecuteExitAutoFlashcard();
+    }
+
+    function doExecuteExitAutoFlashcard() {
       checkAndApplyPendingAppUpdate();
       isAutoPlaying = false;
       isAutoFcMiniMode = false;
@@ -28878,7 +29828,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             isAutoPlaying = false;
             syncAutoFlashcardControlsUI();
             alert('Đã hoàn thành lượt đọc Auto Flashcard!');
-            exitAutoFlashcard();
+            exitAutoFlashcard(true);
             return;
           }
         }
@@ -41470,12 +42420,20 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (activeModals.length > 0) {
           e.preventDefault();
           const topModal = activeModals[activeModals.length - 1];
+          if (topModal.id === 'modal-study-exit-confirm') {
+            cancelStudyEarlyExit();
+            return;
+          }
           if (topModal.id === 'modal-quiz-result') {
             exitQuizToDeck();
             return;
           }
           if (topModal.id === 'modal-spelling-result') {
             exitSpellingToDeck();
+            return;
+          }
+          if (topModal.id === 'modal-speaking-result') {
+            closeSpeakingResultModal();
             return;
           }
           closeModal(topModal.id);

@@ -64,6 +64,7 @@ $modalsOrder = @(
     "modal-speaking-setup.html",
     "modal-speaking-result.html",
     "modal-spelling-result.html",
+    "modal-study-exit-confirm.html",
     "modal-quiz-setup.html",
     "modal-ai-deck-studio.html",
     "modal-deck.html",

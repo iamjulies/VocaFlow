@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-22)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-26)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-22';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-22 (Build 254)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-26';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-26 (Build 258)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -469,6 +469,119 @@
         total
       };
     }
+
+    // =========================================================================
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.9-alpha-23)
+    // =========================================================================
+    let pendingStudyEarlyExitCallback = null;
+
+    function promptStudyEarlyExit({ mode, done, total, basePoints, onConfirmExit }) {
+      // If user hasn't made any progress (done === 0 and 0 points), exit immediately without warning
+      if ((done <= 0 && basePoints === 0) || !total) {
+        if (typeof onConfirmExit === 'function') onConfirmExit();
+        return;
+      }
+
+      // Calculate Balance v2 (Official)
+      const resV2 = calculateSessionFinalPoints(basePoints, done, total, false);
+
+      // Calculate Balance v1 (Legacy comparison)
+      const v1Mult = getIncompleteSessionMultiplier(done, total);
+      let v1Pts = 0;
+      if (basePoints > 0) {
+        v1Pts = Math.round(basePoints * v1Mult);
+      } else if (basePoints < 0) {
+        v1Pts = Math.min(basePoints, Math.round(basePoints / Math.max(0.2, v1Mult)));
+      }
+
+      // Store callback
+      pendingStudyEarlyExitCallback = onConfirmExit;
+
+      // Update Modal UI
+      const modal = document.getElementById('modal-study-exit-confirm');
+      if (!modal) {
+        // Fallback: If modal element not found, use friendly native confirm
+        const signV2 = resV2.finalPts >= 0 ? '+' : '';
+        const signV1 = v1Pts >= 0 ? '+' : '';
+        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} từ)!\n\n` +
+          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})\n` +
+          `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
+          `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
+        if (window.confirm(msg)) {
+          if (typeof onConfirmExit === 'function') onConfirmExit();
+        }
+        return;
+      }
+
+      const modeTitles = {
+        quiz: 'bài Trắc Nghiệm (Quiz)',
+        spelling: 'bài Luyện Viết (Spelling)',
+        speaking: 'bài Luyện Nói (Speaking)',
+        autofc: 'phiên Auto Flashcard'
+      };
+      const titleEl = document.getElementById('study-exit-modal-title');
+      if (titleEl) titleEl.textContent = `Bạn Đang Làm Dở ${modeTitles[mode] || 'Bài Học'}!`;
+
+      const pct = Math.round((done / total) * 100);
+      const progEl = document.getElementById('study-exit-progress-text');
+      if (progEl) progEl.textContent = `${done} / ${total} ${mode === 'quiz' ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
+
+      const basePtsEl = document.getElementById('study-exit-base-points-text');
+      if (basePtsEl) {
+        basePtsEl.textContent = `${basePoints >= 0 ? '+' : ''}${basePoints} VoCoin`;
+        basePtsEl.style.color = basePoints >= 0 ? '#34d399' : '#f87171';
+      }
+
+      const v2Badge = document.getElementById('study-exit-v2-badge');
+      if (v2Badge) {
+        v2Badge.textContent = `${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} VoCoin`;
+        v2Badge.style.background = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+        v2Badge.style.color = resV2.finalPts >= 0 ? '#34d399' : '#f87171';
+        v2Badge.style.borderColor = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+      }
+
+      const multEl = document.getElementById('study-exit-v2-mult');
+      if (multEl) multEl.textContent = `x${resV2.completionMult}`;
+
+      const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
+      if (deckMultEl) deckMultEl.textContent = `x${resV2.deckLengthMult}`;
+
+      const milestoneEl = document.getElementById('study-exit-v2-milestone');
+      if (milestoneEl) milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin`;
+
+      const v1ResEl = document.getElementById('study-exit-v1-result');
+      if (v1ResEl) {
+        v1ResEl.textContent = `${v1Pts >= 0 ? '+' : ''}${v1Pts} VoCoin (x${v1Mult})`;
+      }
+
+      const confirmBtn = document.getElementById('btn-study-confirm-exit');
+      if (confirmBtn) {
+        if (resV2.finalPts !== 0) {
+          confirmBtn.textContent = `🚪 Thoát (Nhận ${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} Xu)`;
+        } else {
+          confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
+        }
+      }
+
+      openModal('modal-study-exit-confirm');
+    }
+    window.promptStudyEarlyExit = promptStudyEarlyExit;
+
+    function cancelStudyEarlyExit() {
+      closeModal('modal-study-exit-confirm');
+      pendingStudyEarlyExitCallback = null;
+    }
+    window.cancelStudyEarlyExit = cancelStudyEarlyExit;
+
+    function executeStudyEarlyExit() {
+      closeModal('modal-study-exit-confirm');
+      if (typeof pendingStudyEarlyExitCallback === 'function') {
+        const cb = pendingStudyEarlyExitCallback;
+        pendingStudyEarlyExitCallback = null;
+        cb();
+      }
+    }
+    window.executeStudyEarlyExit = executeStudyEarlyExit;
 
     // =========================================================================
     // CORE STORAGE KEYS & SETTINGS STATE (v0.10.8-alpha-10.3)
@@ -1066,6 +1179,19 @@
       }
     });
 
+    // Dynamic responsive header compacting (v0.10.9-alpha-26)
+    function adjustHeaderResponsiveLayout() {
+      const headerEl = document.querySelector('header');
+      if (!headerEl) return;
+      if (window.innerWidth <= 768) {
+        headerEl.classList.add('compact-header');
+      } else {
+        headerEl.classList.remove('compact-header');
+      }
+    }
+    window.addEventListener('resize', adjustHeaderResponsiveLayout);
+    window.addEventListener('DOMContentLoaded', adjustHeaderResponsiveLayout);
+
     // In-memory Database State & Tombstone Tracking (v0.0.8.15)
     let decks = [];
     let words = [];
@@ -1387,6 +1513,7 @@
           lastVipSpinDate: lastVipDate,
           flowFreezes: getUserFlowFreezes(),
           streakFreezes: getUserFlowFreezes(),
+          flowFreezeDates: getFlowFreezeDates(),
           updatedAt: nowIso
         };
         const rtdbUrl = firebaseConfig.databaseURL;
@@ -1395,6 +1522,11 @@
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
+          }),
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/flowFreezeDates.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getFlowFreezeDates())
           }),
           fetch(`${rtdbUrl}/users/${currentUser.uid}/lucky_spins_left.json${authParam}`, {
             method: 'PUT',
@@ -1542,14 +1674,27 @@
       const rawText = (input.value || '').trim();
       if (!rawText) return;
 
-      // Secret Minecraft Cheat Command to enter God Mode / Publisher Portal
-      const cleanLower = rawText.toLowerCase().replace(/\s+/g, ' ');
-      if (cleanLower === '/gamemode creative' || cleanLower === '/gamemode 1' || cleanLower === '/gamemode c') {
+      // Secret Cheat Command to enter God Mode / Publisher Portal
+      const cleanLower = rawText.toLowerCase().trim().replace(/\s+/g, ' ');
+      const godTriggers = [
+        '/gamemode creative', 'gamemode creative',
+        '/gamemode 1', 'gamemode 1',
+        '/gamemode c', 'gamemode c',
+        '/godmode', 'godmode',
+        '/god mode', 'god mode',
+        '/god', 'god',
+        '/creative', 'creative',
+        '/admin', 'admin',
+        '/publisher', 'publisher',
+        'congguantri', '/congguantri',
+        'cổng quản trị'
+      ];
+      if (godTriggers.includes(cleanLower)) {
         input.value = '';
         msg.style.display = 'none';
         closeModal('modal-shop');
-        showToast('🕹️ Set game mode to Creative Mode! (Chào mừng Nhà Phát Hành!)');
-        openPublisherModal();
+        showToast('🕹️ Đã mở Cổng Quản Trị & God Mode! (Chào mừng Nhà Phát Hành!)');
+        openPublisherModal(cleanLower.includes('god') ? 'wallet' : 'students');
         return;
       }
 
@@ -1990,6 +2135,38 @@
         fetchAdminStudentsList();
       }
     }
+    window.openPublisherModal = openPublisherModal;
+
+    function openGodMode() {
+      openPublisherModal('wallet');
+    }
+    window.openGodMode = openGodMode;
+
+    function openPublisherPortal(defaultTab = 'students') {
+      openPublisherModal(defaultTab);
+    }
+    window.openPublisherPortal = openPublisherPortal;
+
+    let versionBadgeClickCount = 0;
+    let versionBadgeClickTimer = null;
+    function handleVersionBadgeMultiClick(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      versionBadgeClickCount++;
+      if (versionBadgeClickTimer) clearTimeout(versionBadgeClickTimer);
+      versionBadgeClickTimer = setTimeout(() => {
+        versionBadgeClickCount = 0;
+      }, 3000);
+
+      if (versionBadgeClickCount >= 5) {
+        versionBadgeClickCount = 0;
+        clearTimeout(versionBadgeClickTimer);
+        showToast('👑 Chế độ Nhà Phát Hành: Đang mở Cổng Quản Trị & God Mode...');
+        openPublisherModal('students');
+      } else if (versionBadgeClickCount >= 3) {
+        showToast(`👑 Chạm thêm ${5 - versionBadgeClickCount} lần để mở Cổng Quản Trị!`);
+      }
+    }
+    window.handleVersionBadgeMultiClick = handleVersionBadgeMultiClick;
 
     // =========================================================================
     // VIP GATEWAY & MACRO RECONCILIATION ENGINE (v0.10.8-alpha-10.6 - AI RECONCILER)
@@ -3844,6 +4021,7 @@ function switchPublisherTab(tab) {
       initTheme();
       updateEconomyUI();
       updateStudyShuffleUI();
+      updateSyncStatusUI(navigator.onLine ? 'online' : 'offline');
       if (decks.length === 0) {
         seedSampleData();
       }
@@ -3860,7 +4038,7 @@ function switchPublisherTab(tab) {
       updateAiChatQuotaUI();
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       if (currentUser && currentUser.uid) {
-        if (!Array.isArray(decks) || decks.length === 0 || (decks.length === 1 && decks[0].id === 'deck-oxford-starter')) {
+        if (!Array.isArray(decks) || decks.length === 0 || (decks.length === 1 && decks[0].id === 'deck-oxford-starter') || decks.some(d => words.filter(w => w && w.deckId === d.id).length === 0)) {
           autoRecoverLostDecks(false).catch(() => {});
         }
         handleManualSync();
@@ -4072,16 +4250,19 @@ function switchPublisherTab(tab) {
                 const localFreezes = getUserFlowFreezes();
                 const maxCap = getMaxFlowFreezes();
                 let syncedFreezes = localFreezes;
-                const localUsed = localFreezeDates.length;
-                const remoteUsed = remoteStartupFreezeDates.length;
-                if (localUsed === remoteUsed) {
+                const localSet = new Set(localFreezeDates);
+                const remoteSet = new Set(remoteStartupFreezeDates);
+                const newFromRemote = remoteStartupFreezeDates.filter(d => !localSet.has(d)).length;
+                const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
+
+                if (remoteStartupFreezeDates.length === 0 && localFreezeDates.length > 0) {
                   syncedFreezes = Math.max(localFreezes, remoteStartupFreezes);
-                } else if (localUsed > remoteUsed) {
-                  syncedFreezes = Math.max(0, Math.min(localFreezes, remoteStartupFreezes - (localUsed - remoteUsed)));
                 } else {
-                  syncedFreezes = Math.max(0, Math.min(remoteStartupFreezes, localFreezes - (remoteUsed - localUsed)));
+                  const adjustedRemote = Math.max(0, remoteStartupFreezes - newFromLocal);
+                  const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
+                  syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
                 }
-                syncedFreezes = Math.min(maxCap, syncedFreezes);
+                syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
 
                 localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                 localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -7352,6 +7533,8 @@ function switchPublisherTab(tab) {
           pinnedBadges: userPinnedBadges,
           purchasedDeckIds: Array.from(userPurchasedDeckIds),
           deckSort: currentDeckSort,
+          deckTab: currentDeckTab,
+          wordFilter: currentWordFilter,
           decks: decks,
           words: words,
           deletedWordIds: Array.from(deletedWordIds),
@@ -7402,6 +7585,93 @@ function switchPublisherTab(tab) {
       }
     }
 
+    // =========================================================================
+    // REALTIME SYNC & NETWORK STATUS UI ENGINE (v0.10.8-alpha-24)
+    // =========================================================================
+    function updateSyncStatusUI(status = 'online') {
+      const syncIcon = document.getElementById('sync-icon');
+      const syncText = document.getElementById('sync-text');
+      const syncIconMob = document.getElementById('sync-icon-mobile');
+      const syncTextMob = document.getElementById('sync-text-mobile');
+      const syncBadge = document.getElementById('sync-status-badge');
+      const btnCloudSync = document.getElementById('btn-cloud-sync');
+
+      const isOnline = navigator.onLine;
+
+      if (status === 'syncing') {
+        if (syncIcon) syncIcon.textContent = '🔄';
+        if (syncText) syncText.textContent = 'Đang đồng bộ...';
+        if (syncIconMob) syncIconMob.textContent = '🔄';
+        if (syncTextMob) syncTextMob.textContent = 'Đang đồng bộ...';
+        if (syncBadge) {
+          syncBadge.textContent = 'Đang kết nối Cloud...';
+          syncBadge.style.color = '#38bdf8';
+        }
+        if (btnCloudSync) {
+          btnCloudSync.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+          btnCloudSync.style.color = '#38bdf8';
+        }
+        return;
+      }
+
+      if (!isOnline || status === 'offline') {
+        if (syncIcon) syncIcon.textContent = '☁️';
+        if (syncText) syncText.textContent = 'Ngoại tuyến';
+        if (syncIconMob) syncIconMob.textContent = '☁️';
+        if (syncTextMob) syncTextMob.textContent = 'Ngoại tuyến';
+        if (syncBadge) {
+          syncBadge.textContent = 'Mất kết nối Internet (Ngoại tuyến)';
+          syncBadge.style.color = '#ef4444';
+        }
+        if (btnCloudSync) {
+          btnCloudSync.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+          btnCloudSync.style.color = '#fbbf24';
+          btnCloudSync.title = 'Mất kết nối Internet - Đang lưu dữ liệu ngoại tuyến';
+        }
+        return;
+      }
+
+      // Online status
+      const lastSyncTime = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+      let syncTooltip = 'Trực tuyến • Bấm để đồng bộ Cloud';
+      if (lastSyncTime) {
+        try {
+          const syncDate = new Date(lastSyncTime);
+          syncTooltip = `Trực tuyến • Đồng bộ lần cuối: ${syncDate.toLocaleTimeString('vi-VN')}`;
+        } catch (e) {}
+      }
+
+      if (syncIcon) syncIcon.textContent = '☁️';
+      if (syncText) syncText.textContent = 'Trực tuyến';
+      if (syncIconMob) syncIconMob.textContent = '☁️';
+      if (syncTextMob) syncTextMob.textContent = 'Trực tuyến';
+      if (syncBadge) {
+        syncBadge.textContent = 'Trực tuyến (Đã kết nối Cloud)';
+        syncBadge.style.color = '#10b981';
+      }
+      if (btnCloudSync) {
+        btnCloudSync.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        btnCloudSync.style.color = '#34d399';
+        btnCloudSync.title = syncTooltip;
+      }
+    }
+    window.updateSyncStatusUI = updateSyncStatusUI;
+
+    window.addEventListener('online', () => {
+      console.log('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
+      updateSyncStatusUI('online');
+      showToast('🌐 Đã kết nối mạng trở lại (Trực tuyến)');
+      if (currentUser && currentUser.email && !isSyncing) {
+        handleManualSync();
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
+      updateSyncStatusUI('offline');
+      showToast('⚠️ Mất kết nối Internet (Ngoại tuyến)');
+    });
+
     // Bidirectional Cloud Sync Engine (Realtime Cloud Database)
     async function handleManualSync() {
       if (!currentUser || !currentUser.email) {
@@ -7412,19 +7682,7 @@ function switchPublisherTab(tab) {
       if (isSyncing) return;
       isSyncing = true;
 
-      const syncIcon = document.getElementById('sync-icon');
-      const syncText = document.getElementById('sync-text');
-      const syncIconMob = document.getElementById('sync-icon-mobile');
-      const syncTextMob = document.getElementById('sync-text-mobile');
-      const syncBadge = document.getElementById('sync-status-badge');
-      if (syncIcon) syncIcon.textContent = '🔄';
-      if (syncText) syncText.textContent = 'Đang đồng bộ...';
-      if (syncIconMob) syncIconMob.textContent = '🔄';
-      if (syncTextMob) syncTextMob.textContent = 'Đang đồng bộ...';
-      if (syncBadge) {
-        syncBadge.textContent = 'Đang kết nối Cloud...';
-        syncBadge.style.color = '#38bdf8';
-      }
+      updateSyncStatusUI('syncing');
 
       try {
         const userId = currentUser ? currentUser.uid : null;
@@ -7586,6 +7844,14 @@ function switchPublisherTab(tab) {
                   const sortSelect = document.getElementById('deck-sort-select');
                   if (sortSelect) sortSelect.value = currentDeckSort;
                 }
+                if (cloudData.deckTab && (cloudData.deckTab === 'active' || cloudData.deckTab === 'archived')) {
+                  currentDeckTab = cloudData.deckTab;
+                  localStorage.setItem('vocaflow_deck_tab', currentDeckTab);
+                }
+                if (cloudData.wordFilter) {
+                  currentWordFilter = cloudData.wordFilter;
+                  localStorage.setItem('vocaflow_word_filter', currentWordFilter);
+                }
 
                 // Merge deleted tombstones from cloud
                 if (cloudData.deletedWordIds && Array.isArray(cloudData.deletedWordIds)) {
@@ -7600,6 +7866,41 @@ function switchPublisherTab(tab) {
                   deletedDeckIds.delete('deck-oxford-starter');
                 }
                 saveDeletedTombstones();
+
+                // Build lookup of viable decks by normalized title (v0.10.8-alpha-24)
+                const survivingDecksByNormTitle = new Map();
+                decks.forEach(d => {
+                  if (d && d.id && !deletedDeckIds.has(d.id)) {
+                    const nt = normalizeDeckTitleForDedupe(d.title);
+                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, d);
+                  }
+                });
+                remoteDecks.forEach(rd => {
+                  if (rd && rd.id && !deletedDeckIds.has(rd.id)) {
+                    const nt = normalizeDeckTitleForDedupe(rd.title);
+                    if (nt && !survivingDecksByNormTitle.has(nt)) survivingDecksByNormTitle.set(nt, rd);
+                  }
+                });
+
+                const allKnownDecksById = new Map();
+                decks.forEach(d => { if (d && d.id) allKnownDecksById.set(d.id, d); });
+                remoteDecks.forEach(rd => { if (rd && rd.id) allKnownDecksById.set(rd.id, rd); });
+
+                // Before purging local words, rescue any words whose deck was tombstoned if a deck with the same title survives
+                words.forEach(w => {
+                  if (w && w.deckId && deletedDeckIds.has(w.deckId)) {
+                    const oldDeck = allKnownDecksById.get(w.deckId);
+                    if (oldDeck) {
+                      const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+                      const surviving = survivingDecksByNormTitle.get(nt);
+                      if (surviving) {
+                        console.log(`🛡️ [Sync Word Shield] Rescuing local word "${w.term}" (${w.id}) from tombstoned deck ${w.deckId} to surviving deck "${surviving.title}" (${surviving.id})`);
+                        w.deckId = surviving.id;
+                        deletedWordIds.delete(w.id);
+                      }
+                    }
+                  }
+                });
 
                 // Purge local deleted items
                 decks = decks.filter(d => !deletedDeckIds.has(d.id));
@@ -7639,12 +7940,12 @@ function switchPublisherTab(tab) {
                       } else if (localTime > remoteTime) {
                         // Local is newer: keep local deck
                       } else {
-                        // Equal timestamp: merge with boolean preservation
+                        // Equal timestamp: local user actions take priority!
                         decks[localIdx] = {
-                          ...localDeck,
                           ...cleanRemote,
-                          isPinned: (localDeck.isPinned === true) || (cleanRemote.isPinned === true),
-                          isArchived: (localDeck.isArchived === true) || (cleanRemote.isArchived === true)
+                          ...localDeck,
+                          isPinned: localDeck.isPinned === true,
+                          isArchived: localDeck.isArchived === true
                         };
                       }
                     } else {
@@ -7655,7 +7956,24 @@ function switchPublisherTab(tab) {
                 if (remoteWords.length > 0) {
                   // Merge words by ID (Last-Write-Wins with learning progress protection)
                   for (const remoteWord of remoteWords) {
-                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id) || deletedDeckIds.has(remoteWord.deckId)) continue;
+                    if (!remoteWord || !remoteWord.id || deletedWordIds.has(remoteWord.id)) continue;
+
+                    // Rescue remote word if its deck was tombstoned
+                    if (deletedDeckIds.has(remoteWord.deckId)) {
+                      const oldDeck = allKnownDecksById.get(remoteWord.deckId);
+                      if (oldDeck) {
+                        const nt = normalizeDeckTitleForDedupe(oldDeck.title);
+                        const surviving = survivingDecksByNormTitle.get(nt);
+                        if (surviving) {
+                          remoteWord.deckId = surviving.id;
+                        } else {
+                          continue; // truly deleted deck with no surviving duplicate
+                        }
+                      } else {
+                        continue;
+                      }
+                    }
+
                     const localIdx = words.findIndex(w => w.id === remoteWord.id);
                     if (localIdx >= 0) {
                       const localWord = words[localIdx];
@@ -7682,6 +8000,14 @@ function switchPublisherTab(tab) {
 
                 // Reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
                 reconcileAllDuplicateDecks(false);
+
+                // Auto-heal any remaining orphan words (v0.10.8-alpha-24)
+                autoHealOrphanWords(false);
+
+                // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
+                if (typeof reconcileDuplicateWordsInDecks === 'function') {
+                  reconcileDuplicateWordsInDecks(null, false);
+                }
 
                 if (cloudData.economy && typeof cloudData.economy === 'object') {
                   const remotePoints = typeof cloudData.economy.points === 'number' ? cloudData.economy.points : parseInt(cloudData.economy.points, 10);
@@ -7931,16 +8257,19 @@ function switchPublisherTab(tab) {
                   const localFreezes = getUserFlowFreezes();
                   const maxCap = getMaxFlowFreezes();
                   let syncedFreezes = localFreezes;
-                  const localUsed = localFreezeDates.length;
-                  const remoteUsed = remoteFreezeDates.length;
-                  if (localUsed === remoteUsed) {
+                  const localSet = new Set(localFreezeDates);
+                  const remoteSet = new Set(remoteFreezeDates);
+                  const newFromRemote = remoteFreezeDates.filter(d => !localSet.has(d)).length;
+                  const newFromLocal = localFreezeDates.filter(d => !remoteSet.has(d)).length;
+
+                  if (remoteFreezeDates.length === 0 && localFreezeDates.length > 0) {
                     syncedFreezes = Math.max(localFreezes, remoteFreezes);
-                  } else if (localUsed > remoteUsed) {
-                    syncedFreezes = Math.max(0, Math.min(localFreezes, remoteFreezes - (localUsed - remoteUsed)));
                   } else {
-                    syncedFreezes = Math.max(0, Math.min(remoteFreezes, localFreezes - (remoteUsed - localUsed)));
+                    const adjustedRemote = Math.max(0, remoteFreezes - newFromLocal);
+                    const adjustedLocal = Math.max(0, localFreezes - newFromRemote);
+                    syncedFreezes = Math.max(adjustedLocal, adjustedRemote);
                   }
-                  syncedFreezes = Math.min(maxCap, syncedFreezes);
+                  syncedFreezes = Math.min(maxCap, Math.max(0, syncedFreezes));
 
                   localStorage.setItem('vocaflow_flow_freezes', syncedFreezes.toString());
                   localStorage.setItem('vocaflow_streak_freezes', syncedFreezes.toString());
@@ -8122,26 +8451,12 @@ function switchPublisherTab(tab) {
         const nowIso = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, nowIso);
 
-        if (syncIcon) syncIcon.textContent = '☁️';
-        if (syncText) syncText.textContent = 'Đã đồng bộ';
-        if (syncIconMob) syncIconMob.textContent = '☁️';
-        if (syncTextMob) syncTextMob.textContent = 'Đã đồng bộ tức thì';
-        if (syncBadge) {
-          syncBadge.textContent = 'Đã đồng bộ Cloud';
-          syncBadge.style.color = '#10b981';
-        }
+        updateSyncStatusUI('online');
         showToast('Đồng bộ Cloud thành công!');
       } catch (e) {
         console.error('Sync general error:', e);
-        if (syncIcon) syncIcon.textContent = '☁️';
-        if (syncText) syncText.textContent = 'Ngoại tuyến';
-        if (syncIconMob) syncIconMob.textContent = '☁️';
-        if (syncTextMob) syncTextMob.textContent = 'Dữ liệu cục bộ';
-        if (syncBadge) {
-          syncBadge.textContent = 'Đang dùng bộ nhớ cục bộ';
-          syncBadge.style.color = '#fbbf24';
-        }
-        showToast('Đã lưu dữ liệu ngoại tuyến.');
+        updateSyncStatusUI(navigator.onLine ? 'online' : 'offline');
+        showToast(navigator.onLine ? 'Đã lưu dữ liệu cục bộ an toàn.' : '⚠️ Mất kết nối Internet (Ngoại tuyến).');
       } finally {
         isSyncing = false;
         updateAuthUI();
@@ -8205,6 +8520,327 @@ function switchPublisherTab(tab) {
         return false;
       }
     }
+
+    // =========================================================================
+    // ORPHAN WORDS RECOVERY & DATA PROTECTION ENGINE (v0.10.8-alpha-24)
+    // =========================================================================
+    function autoHealOrphanWords(triggerSave = true) {
+      if (!Array.isArray(decks) || decks.length === 0) return 0;
+      if (!Array.isArray(words)) words = [];
+
+      let healedCount = 0;
+      const activeDeckIds = new Set(decks.map(d => d.id));
+      const deckTitleMap = new Map(); // normalizedTitle -> deck
+
+      decks.forEach(d => {
+        if (!d || !d.id) return;
+        const norm = normalizeDeckTitleForDedupe(d.title);
+        if (norm && !deckTitleMap.has(norm)) {
+          deckTitleMap.set(norm, d);
+        }
+      });
+
+      // Step 1: Scan local words backup snapshot if any active deck currently has 0 words
+      const bWordsStr = localStorage.getItem('vocaflow_words_backup');
+      const bDecksStr = localStorage.getItem('vocaflow_decks_backup');
+      if (bWordsStr) {
+        try {
+          const bWords = JSON.parse(bWordsStr);
+          const bDecks = bDecksStr ? JSON.parse(bDecksStr) : [];
+          if (Array.isArray(bWords) && bWords.length > 0) {
+            decks.forEach(deck => {
+              const currentWordsForDeck = words.filter(w => w && w.deckId === deck.id);
+              if (currentWordsForDeck.length === 0) {
+                // Deck is completely empty! Try to restore from backup
+                let candidateWords = bWords.filter(bw => bw && bw.deckId === deck.id);
+
+                // If not found by deckId, search by backup deck title matching this deck's title
+                if (candidateWords.length === 0 && Array.isArray(bDecks)) {
+                  const targetNorm = normalizeDeckTitleForDedupe(deck.title);
+                  const matchingBDeck = bDecks.find(bd => bd && normalizeDeckTitleForDedupe(bd.title) === targetNorm);
+                  if (matchingBDeck && matchingBDeck.id) {
+                    candidateWords = bWords.filter(bw => bw && bw.deckId === matchingBDeck.id);
+                  }
+                }
+
+                if (candidateWords.length > 0) {
+                  console.log(`🛡️ [AutoHeal] Restoring ${candidateWords.length} words from backup snapshot for empty deck "${deck.title}" (${deck.id})`);
+                  candidateWords.forEach(cw => {
+                    const cloned = { ...cw, deckId: deck.id };
+                    const existingIdx = words.findIndex(w => w && w.id === cloned.id);
+                    if (existingIdx >= 0) {
+                      words[existingIdx].deckId = deck.id;
+                    } else {
+                      // Check if a word with the exact same normalized term already exists in this deck
+                      const existingTermIdx = words.findIndex(w => w && w.deckId === deck.id && normalizeWordTermForDedupe(w.term) === normalizeWordTermForDedupe(cloned.term));
+                      if (existingTermIdx >= 0) {
+                        // Word with same term already exists, reconcile progress instead of duplicating!
+                        const existW = words[existingTermIdx];
+                        if ((cloned.masteryScore || 0) > (existW.masteryScore || 0)) {
+                          existW.masteryScore = cloned.masteryScore;
+                          if (cloned.status) existW.status = cloned.status;
+                        }
+                      } else {
+                        words.push(cloned);
+                      }
+                    }
+                    if (deletedWordIds && deletedWordIds.has(cloned.id)) {
+                      deletedWordIds.delete(cloned.id);
+                    }
+                    healedCount++;
+                  });
+                }
+              }
+            });
+          }
+        } catch (eB) {
+          console.warn('AutoHeal backup scan error:', eB);
+        }
+      }
+
+      // Step 2: Scan words array for orphan words (deckId not in activeDeckIds or in deletedDeckIds)
+      const emptyActiveDecks = decks.filter(d => words.filter(w => w && w.deckId === d.id).length === 0);
+
+      words.forEach(w => {
+        if (!w || !w.id) return;
+        const isOrphan = !activeDeckIds.has(w.deckId) || (deletedDeckIds && deletedDeckIds.has(w.deckId));
+        if (isOrphan) {
+          let targetDeck = null;
+
+          // Check if backup decks can identify what title this orphan word's old deckId had
+          if (bDecksStr) {
+            try {
+              const bDecks = JSON.parse(bDecksStr);
+              if (Array.isArray(bDecks)) {
+                const oldDeck = bDecks.find(bd => bd && bd.id === w.deckId);
+                if (oldDeck) {
+                  const norm = normalizeDeckTitleForDedupe(oldDeck.title);
+                  if (deckTitleMap.has(norm)) {
+                    targetDeck = deckTitleMap.get(norm);
+                  }
+                }
+              }
+            } catch (eOld) {}
+          }
+
+          // If still no target deck, and there is exactly one empty active deck, reattach to it
+          if (!targetDeck && emptyActiveDecks.length === 1) {
+            targetDeck = emptyActiveDecks[0];
+          }
+
+          if (targetDeck) {
+            // Check if this term already exists in targetDeck
+            const existingTermIdx = words.findIndex(otherW => otherW && otherW.id !== w.id && otherW.deckId === targetDeck.id && normalizeWordTermForDedupe(otherW.term) === normalizeWordTermForDedupe(w.term));
+            if (existingTermIdx >= 0) {
+              // Duplicate term exists in target deck: tombstone the orphan word to avoid doubling!
+              deletedWordIds.add(w.id);
+              w._isDedupeRemoved = true;
+            } else {
+              console.log(`🛡️ [AutoHeal] Reconnecting orphan word "${w.term}" (${w.id}) to deck "${targetDeck.title}" (${targetDeck.id})`);
+              w.deckId = targetDeck.id;
+              if (deletedWordIds && deletedWordIds.has(w.id)) {
+                deletedWordIds.delete(w.id);
+              }
+              if (deletedDeckIds && deletedDeckIds.has(targetDeck.id)) {
+                deletedDeckIds.delete(targetDeck.id);
+              }
+              healedCount++;
+            }
+          }
+        }
+      });
+
+      if (healedCount > 0) {
+        saveDeletedTombstones();
+        takeDeckSnapshot();
+        if (triggerSave) {
+          saveDatabase(false);
+        }
+        console.log(`🛡️ [AutoHeal] Successfully healed ${healedCount} words!`);
+      }
+
+      // Always run deduplication across all decks
+      reconcileDuplicateWordsInDecks(null, false);
+
+      return healedCount;
+    }
+    window.autoHealOrphanWords = autoHealOrphanWords;
+
+    // =========================================================================
+    // INTRA-DECK WORD DEDUPLICATION & MERGE ENGINE (v0.10.9-alpha-26)
+    // Automatically groups case-insensitive identical words within each deck,
+    // merges definitions (drops exact or duplicate meanings), preserves best progress,
+    // and tombstones removed IDs so Cloud RTDB deletes them too.
+    // =========================================================================
+    function reconcileDuplicateWordsInDecks(targetDeckId = null, triggerSave = true) {
+      if (!Array.isArray(words) || words.length === 0) return 0;
+      if (!Array.isArray(decks) || decks.length === 0) return 0;
+
+      const targetDecks = targetDeckId ? decks.filter(d => d && d.id === targetDeckId) : decks;
+      let totalMergedWords = 0;
+
+      for (const deck of targetDecks) {
+        if (!deck || !deck.id) continue;
+        const deckWords = words.filter(w => w && w.deckId === deck.id && !w._isDedupeRemoved);
+        if (deckWords.length <= 1) continue;
+
+        // Group words by normalized term
+        const groups = new Map();
+        for (const w of deckWords) {
+          const normTerm = normalizeWordTermForDedupe(w.term);
+          if (!normTerm) continue;
+          if (!groups.has(normTerm)) groups.set(normTerm, []);
+          groups.get(normTerm).push(w);
+        }
+
+        // Process groups with duplicate terms
+        for (const [normTerm, dupList] of groups.entries()) {
+          if (dupList.length <= 1) continue;
+
+          // Rank duplicates: keep the one with best mastery/status, or oldest creation
+          dupList.sort((a, b) => {
+            const statusScore = (s) => (s === 'mastered' ? 3 : s === 'learning' ? 2 : 1);
+            const aStatus = statusScore(a.status);
+            const bStatus = statusScore(b.status);
+            if (aStatus !== bStatus) return bStatus - aStatus;
+
+            const aMastery = a.masteryScore || 0;
+            const bMastery = b.masteryScore || 0;
+            if (aMastery !== bMastery) return bMastery - aMastery;
+
+            // Prioritize item with more complete content (definition, example, phonetic)
+            const aContent = (a.definitionVi ? 10 : 0) + (a.phonetic ? 5 : 0) + (a.exampleSentence ? 5 : 0);
+            const bContent = (b.definitionVi ? 10 : 0) + (b.phonetic ? 5 : 0) + (b.exampleSentence ? 5 : 0);
+            if (aContent !== bContent) return bContent - aContent;
+
+            const aTime = new Date(a.createdAt || 0).getTime();
+            const bTime = new Date(b.createdAt || 0).getTime();
+            return aTime - bTime;
+          });
+
+          const primaryWord = dupList[0];
+          const secondaryWords = dupList.slice(1);
+
+          for (const secWord of secondaryWords) {
+            let primaryUpdated = false;
+
+            // 1. Mastery Score & Status
+            if ((secWord.masteryScore || 0) > (primaryWord.masteryScore || 0)) {
+              primaryWord.masteryScore = secWord.masteryScore;
+              primaryUpdated = true;
+            }
+            if (secWord.status === 'mastered' && primaryWord.status !== 'mastered') {
+              primaryWord.status = 'mastered';
+              primaryUpdated = true;
+            } else if (secWord.status === 'learning' && primaryWord.status === 'newWord') {
+              primaryWord.status = 'learning';
+              primaryUpdated = true;
+            }
+
+            // 2. Definition deduplication and merge:
+            // "nếu nghĩa giống thì bỏ qua (tức là xóa luôn nét nghĩa bị trùng)"
+            const primDef = (primaryWord.definitionVi || primaryWord.definition || '').trim();
+            const secDef = (secWord.definitionVi || secWord.definition || '').trim();
+            if (!primDef && secDef) {
+              primaryWord.definitionVi = secDef;
+              primaryUpdated = true;
+            } else if (primDef && secDef) {
+              const normPrimDef = primDef.toLowerCase().replace(/\s+/g, ' ');
+              const normSecDef = secDef.toLowerCase().replace(/\s+/g, ' ');
+              // If secondary definition is identical or already contained in primary definition, skip!
+              if (normPrimDef !== normSecDef && !normPrimDef.includes(normSecDef)) {
+                // Different meaning! Check if primary is contained in secondary
+                if (normSecDef.includes(normPrimDef)) {
+                  // Secondary is more comprehensive, replace primary
+                  primaryWord.definitionVi = secDef;
+                  primaryUpdated = true;
+                } else {
+                  // Split multiple meanings separated by semicolons or commas and deduplicate each sense
+                  const primSenses = primDef.split(/[,;\n•]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+                  const secSenses = secDef.split(/[,;\n•]+/).map(s => s.trim()).filter(Boolean);
+                  const newSenses = secSenses.filter(s => !primSenses.includes(s.toLowerCase()));
+                  if (newSenses.length > 0) {
+                    primaryWord.definitionVi = `${primDef}; ${newSenses.join('; ')}`;
+                    primaryUpdated = true;
+                  }
+                }
+              }
+            }
+
+            // 3. Phonetic, POS, Example, Note
+            if (!primaryWord.phonetic && secWord.phonetic) {
+              primaryWord.phonetic = secWord.phonetic;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.partOfSpeech && secWord.partOfSpeech) {
+              primaryWord.partOfSpeech = secWord.partOfSpeech;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.exampleSentence && secWord.exampleSentence) {
+              primaryWord.exampleSentence = secWord.exampleSentence;
+              primaryUpdated = true;
+            }
+            if (!primaryWord.note && secWord.note) {
+              primaryWord.note = secWord.note;
+              primaryUpdated = true;
+            }
+            if ((!primaryWord.synonyms || primaryWord.synonyms.length === 0) && Array.isArray(secWord.synonyms) && secWord.synonyms.length > 0) {
+              primaryWord.synonyms = secWord.synonyms;
+              primaryUpdated = true;
+            }
+            if ((!primaryWord.antonyms || primaryWord.antonyms.length === 0) && Array.isArray(secWord.antonyms) && secWord.antonyms.length > 0) {
+              primaryWord.antonyms = secWord.antonyms;
+              primaryUpdated = true;
+            }
+
+            if (primaryUpdated) {
+              primaryWord.updatedAt = new Date().toISOString();
+            }
+
+            // Tombstone secondary word so Cloud RTDB & local storage delete it completely
+            if (secWord.id) {
+              deletedWordIds.add(secWord.id);
+            }
+            secWord._isDedupeRemoved = true;
+            totalMergedWords++;
+          }
+        }
+      }
+
+      if (totalMergedWords > 0) {
+        words = words.filter(w => !w._isDedupeRemoved && !deletedWordIds.has(w.id));
+        saveDeletedTombstones();
+        takeDeckSnapshot();
+        if (triggerSave) {
+          saveDatabase(false);
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            pushCurrentDatabaseToCloud();
+          }
+        }
+        console.log(`🧹 [VocaFlow Dedupe] Successfully merged and removed ${totalMergedWords} duplicate words!`);
+      }
+
+      return totalMergedWords;
+    }
+    window.reconcileDuplicateWordsInDecks = reconcileDuplicateWordsInDecks;
+
+    function handleManualDeduplicateCurrentDeck() {
+      if (!currentDeckId) {
+        showToast('⚠️ Không tìm thấy VocaDeck hiện tại!');
+        return;
+      }
+      const deck = decks.find(d => d.id === currentDeckId);
+      const deckTitle = deck ? deck.title : 'VocaDeck';
+      const mergedCount = reconcileDuplicateWordsInDecks(currentDeckId, true);
+      if (mergedCount > 0) {
+        renderWordList();
+        updateDeckDetailHeader();
+        showToast(`🎉 Đã tự động dọn sạch và gộp ${mergedCount} từ vựng trùng lặp trong "${deckTitle}"!`);
+      } else {
+        showToast(`✨ VocaDeck "${deckTitle}" không có từ nào bị trùng lặp!`);
+      }
+    }
+    window.handleManualDeduplicateCurrentDeck = handleManualDeduplicateCurrentDeck;
 
     // =========================================================================
     // CROSS-DEVICE DECK RECONCILIATION & DEDUPLICATION ENGINE (v0.10.9-alpha-22)
@@ -8417,8 +9053,45 @@ function switchPublisherTab(tab) {
             });
 
             for (const pd of targetDecks) {
-              const exists = decks.some(d => normalizeDeckTitleForDedupe(d.title) === normalizeDeckTitleForDedupe(pd.title) || d.libSourceId === pd.id || d.id === pd.id);
-              if (!exists) {
+              const existingDeck = decks.find(d => normalizeDeckTitleForDedupe(d.title) === normalizeDeckTitleForDedupe(pd.title) || d.libSourceId === pd.id || d.id === pd.id);
+              if (existingDeck) {
+                // If existing deck has 0 words, but public deck has words: RESTORE THEM!
+                const existingWordsCount = words.filter(w => w && w.deckId === existingDeck.id).length;
+                if (existingWordsCount === 0 && Array.isArray(pd.words) && pd.words.length > 0) {
+                  console.log(`🛡️ [AutoRecover] Re-populating ${pd.words.length} words into 0-word existing deck "${existingDeck.title}" (${existingDeck.id})`);
+                  pd.words.forEach((w, idx) => {
+                    const wordId = 'w_' + existingDeck.id + '_' + idx;
+                    const newWord = {
+                      id: wordId,
+                      deckId: existingDeck.id,
+                      term: w.term,
+                      definitionVi: w.definitionVi || w.definition || '',
+                      definition: w.definitionVi || w.definition || '',
+                      phonetic: w.phonetic || '',
+                      partOfSpeech: w.partOfSpeech || 'noun',
+                      exampleSentence: w.exampleSentence || w.example || '',
+                      example: w.exampleSentence || w.example || '',
+                      cefrLevel: w.cefrLevel || w.level || 'B1',
+                      level: w.cefrLevel || w.level || 'B1',
+                      synonyms: Array.isArray(w.synonyms) ? w.synonyms : (w.synonyms ? w.synonyms.split(',').map(s => s.trim()) : []),
+                      antonyms: Array.isArray(w.antonyms) ? w.antonyms : (w.antonyms ? w.antonyms.split(',').map(s => s.trim()) : []),
+                      collocations: Array.isArray(w.collocations) ? w.collocations : (w.collocations ? w.collocations.split(',').map(s => s.trim()) : []),
+                      note: w.note || '',
+                      topic: w.topic || '',
+                      status: 'newWord',
+                      masteryScore: 0,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString()
+                    };
+                    words.push(newWord);
+                    if (deletedWordIds && deletedWordIds.has(wordId)) {
+                      deletedWordIds.delete(wordId);
+                    }
+                    recoveredWordsCount++;
+                  });
+                  recoveredCount++;
+                }
+              } else {
                 const localDeckId = 'deck_' + (pd.publishedAt ? new Date(pd.publishedAt).getTime() : Date.now()) + '_' + Math.random().toString(36).substr(2, 4);
                 const newDeck = {
                   id: localDeckId,
@@ -8537,6 +9210,16 @@ function switchPublisherTab(tab) {
 
         // Auto-reconcile and deduplicate decks across multi-device sync (v0.10.9-alpha-22)
         reconcileAllDuplicateDecks(false);
+
+        // Auto-heal orphan words (v0.10.8-alpha-24)
+        autoHealOrphanWords(false);
+
+        // Auto-reconcile and deduplicate words within all decks (v0.10.9-alpha-26)
+        reconcileDuplicateWordsInDecks(null, false);
+
+        // Restore saved deck tab and word filter preferences
+        currentDeckTab = localStorage.getItem('vocaflow_deck_tab') || 'active';
+        currentWordFilter = localStorage.getItem('vocaflow_word_filter') || 'all';
       } catch (e) {
         console.error('Failed to parse database from localStorage:', e);
         decks = [];
@@ -8924,9 +9607,15 @@ function switchPublisherTab(tab) {
 
     function setWordFilter(filter, el) {
       currentWordFilter = filter;
+      try {
+        localStorage.setItem('vocaflow_word_filter', filter);
+      } catch (e) {}
       document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => c.classList.remove('active'));
       if (el) el.classList.add('active');
       renderWordList();
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function updateWordModalMasteryPreview(val) {
@@ -9080,10 +9769,13 @@ function switchPublisherTab(tab) {
     // =========================================================================
     // DECK TABS, PINNING & ARCHIVE STORAGE ENGINE
     // =========================================================================
-    let currentDeckTab = 'active'; // 'active' | 'archived'
+    let currentDeckTab = localStorage.getItem('vocaflow_deck_tab') || 'active'; // 'active' | 'archived'
 
-    function setDeckTab(tab) {
+    function setDeckTab(tab, triggerSync = true) {
       currentDeckTab = tab;
+      try {
+        localStorage.setItem('vocaflow_deck_tab', tab);
+      } catch (e) {}
       const tabActiveEl = document.getElementById('tab-active-decks');
       const tabArchivedEl = document.getElementById('tab-archived-decks');
       if (tabActiveEl) {
@@ -9095,6 +9787,9 @@ function switchPublisherTab(tab) {
         else tabArchivedEl.classList.remove('active');
       }
       renderDecks();
+      if (triggerSync && currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        pushCurrentDatabaseToCloud();
+      }
     }
 
     function togglePinDeck(deckId) {
@@ -9181,6 +9876,8 @@ function switchPublisherTab(tab) {
     }
 
     function renderDecks() {
+      // Auto-heal orphan words before rendering (v0.10.8-alpha-24)
+      autoHealOrphanWords(false);
       renderDailyReviewBanner();
       const container = document.getElementById('deck-grid');
       if (!container) return;
@@ -9335,7 +10032,7 @@ function switchPublisherTab(tab) {
               <svg class="icon icon-sm"><use href="#${isArchived ? 'i-unarchive' : 'i-archive'}"/></svg> <span class="hide-on-mobile">${isArchived ? 'Khôi phục' : 'Lưu trữ'}</span>
             </button>
             <button class="btn btn-outline btn-sm ${isPinned ? 'active-pin-btn' : ''}" onclick="event.stopPropagation(); togglePinDeck('${deck.id}')" title="${isPinned ? 'Bỏ ghim VocaDeck' : 'Ghim VocaDeck lên đầu'}">
-              <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span>${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
+              <svg class="icon icon-sm"><use href="#i-pin"/></svg> <span class="hide-on-mobile">${isPinned ? 'Bỏ ghim' : 'Ghim'}</span>
             </button>
             <button class="btn btn-outline btn-sm btn-delete-deck" onclick="event.stopPropagation(); deleteDeck('${deck.id}')" title="Xóa VocaDeck này" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">
               <svg class="icon icon-sm"><use href="#i-delete"/></svg> <span class="hide-on-mobile">Xóa</span>
@@ -9424,6 +10121,9 @@ function switchPublisherTab(tab) {
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
 
+      // Automatically reconcile and clean any duplicate words inside this deck
+      reconcileDuplicateWordsInDecks(deckId, false);
+
       document.getElementById('deck-detail-title').textContent = deck.title;
       document.getElementById('deck-detail-desc').textContent = deck.description || '';
       const timeEl = document.getElementById('deck-detail-timestamp');
@@ -9441,7 +10141,25 @@ function switchPublisherTab(tab) {
         }
       }
       document.getElementById('word-search-input').value = '';
-      currentWordFilter = 'all';
+      
+      // Restore saved word filter preference
+      currentWordFilter = localStorage.getItem('vocaflow_word_filter') || 'all';
+      let matchedChip = false;
+      document.querySelectorAll('#deck-word-filter-chips .chip').forEach(c => {
+        const attr = c.getAttribute('onclick') || '';
+        if (attr.includes(`'${currentWordFilter}'`)) {
+          c.classList.add('active');
+          matchedChip = true;
+        } else {
+          c.classList.remove('active');
+        }
+      });
+      if (!matchedChip) {
+        currentWordFilter = 'all';
+        const firstChip = document.querySelector('#deck-word-filter-chips .chip');
+        if (firstChip) firstChip.classList.add('active');
+      }
+
       currentPosFilter = 'all';
       currentCefrFilter = 'all';
       const posFilterSelect = document.getElementById('filter-word-pos-select');
@@ -11451,6 +12169,8 @@ function switchPublisherTab(tab) {
             const isVocaFlow = id.startsWith('screen-') || 
                                id.startsWith('modal-') || 
                                id.startsWith('toast-') || 
+                               id.startsWith('btn-ai-mentor') ||
+                               id === 'btn-ai-mentor-fab' ||
                                id === 'app' || 
                                id === 'app-container' || 
                                id === 'toast-container' || 
@@ -12524,22 +13244,22 @@ function switchPublisherTab(tab) {
       pushCurrentDatabaseToCloud();
     }
 
-    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-6)
+    // Self-healing: Restore wrongly deducted Flow Freeze (v0.10.9-alpha-23)
     function healErroneousFreezeDeduction() {
-      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a6';
+      const HEAL_KEY = 'vocaflow_freeze_healed_v0109a23';
       if (localStorage.getItem(HEAL_KEY)) return;
       try {
         const freezeDates = getFlowFreezeDates();
         let currentFreezes = getUserFlowFreezes();
         const maxCap = getMaxFlowFreezes();
 
-        // If user used only 1 freeze date, but had their remaining freeze wiped out to 0:
-        if (freezeDates.length === 1 && currentFreezes === 0) {
+        // If user's flow freezes were wiped out to 0 due to cross-device sync bug:
+        if (currentFreezes === 0 && (freezeDates.length > 0 || isUserVip() || (currentUser && currentUser.email))) {
           currentFreezes = 1;
           setUserFlowFreezes(currentFreezes);
-          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ v0.10.9-alpha-6 (1/' + maxCap + ')');
+          addLedgerEntry('RECOVER_FLOW_FREEZE', 0, '❄️ Bồi hoàn +1 Flow Freeze bị trừ nhầm do lỗi đồng bộ (1/' + maxCap + ')');
           if (typeof showToast === 'function') {
-            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bị trừ nhầm vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
+            showToast('❄️ VocaFlow đã bồi hoàn +1 Flow Freeze bảo vệ chuỗi vào ví của bạn (Hiện có: 1/' + maxCap + ')!');
           }
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
@@ -16496,22 +17216,39 @@ function switchPublisherTab(tab) {
     function exitSpelling() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      // Progressive incomplete session leniency / penalty combined (v0.10.6c)
+      const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
+      const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
+
+      if (!spellingIsCompleted && (done > 0 || spellingPointsEarned !== 0)) {
+        promptStudyEarlyExit({
+          mode: 'spelling',
+          done,
+          total,
+          basePoints: spellingPointsEarned,
+          onConfirmExit: () => doExecuteExitSpelling(done, total)
+        });
+        return;
+      }
+      doExecuteExitSpelling(done, total);
+    }
+
+    function doExecuteExitSpelling(done, total) {
+      stopAllAudio();
+      // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
       if (!spellingIsCompleted && spellingPointsEarned !== 0) {
-        const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
-        const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
         const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
         const finalPts = res.finalPts;
 
         if (finalPts !== 0) {
-          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          const curDeck = decks.find(d => d.id === currentDeckId);
+          const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Hệ số hoàn thành x${res.completionMult}, độ dài x${res.deckLengthMult} ➔ Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
+            showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
             addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`);
           } else {
             const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-            showToast(`🎉 Đã học ${done}/${total} từ (${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
+            showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
             addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
           }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
@@ -18374,30 +19111,43 @@ Yêu cầu nghiêm ngặt:
     function exitQuiz() {
       checkAndApplyPendingAppUpdate();
       stopAllAudio();
-      const done = Math.min(quizTotalQuestions || (quizList ? quizList.length : 1), quizIndex + (quizIsAnswered ? 1 : 0));
+      const total = quizTotalQuestions || (quizList ? quizList.length : 1);
+      const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
+
+      if (!quizIsCompleted && (done > 0 || quizPointsEarned !== 0)) {
+        promptStudyEarlyExit({
+          mode: 'quiz',
+          done,
+          total,
+          basePoints: quizPointsEarned,
+          onConfirmExit: () => doExecuteExitQuiz(done, total)
+        });
+        return;
+      }
+      doExecuteExitQuiz(done, total);
+    }
+
+    function doExecuteExitQuiz(done, total) {
+      stopAllAudio();
       if (done > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
-      // Progressive incomplete session leniency / penalty (v0.10.6c)
+      // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
       if (!quizIsCompleted && quizPointsEarned !== 0) {
-        const total = quizTotalQuestions || (quizList ? quizList.length : 1);
-        const mult = getIncompleteSessionMultiplier(done, total);
-        let finalPts = 0;
-        if (quizPointsEarned > 0) {
-          finalPts = Math.round(quizPointsEarned * mult);
-        } else if (quizPointsEarned < 0) {
-          // Negative points penalty: divide by mult so rage quitters cannot escape penalties!
-          finalPts = Math.min(quizPointsEarned, Math.round(quizPointsEarned / Math.max(0.2, mult)));
-        }
+        const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
+        const finalPts = res.finalPts;
+
         if (finalPts !== 0) {
-          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
+          const curDeck = decks.find(d => d.id === currentDeckId);
+          const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
           const pctText = Math.round((done / total) * 100);
           if (finalPts < 0) {
-            showToast(`⚠️ Bỏ dở bài Quiz khi đang bị âm điểm (tiến độ ${done}/${total} câu, phạt chia /${mult}): Trừ ${finalPts} VoCoin!`);
-            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${mult})`);
+            showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
+            addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`);
           } else {
-            showToast(`⚠️ Bỏ dở bài Quiz (tiến độ ${done}/${total} câu - ${pctText}%): Nhận x${mult} VoCoin (+${finalPts} VoCoin)!`);
-            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${mult})`);
+            const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
+            showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
+            addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
           }
           setUserPoints(Math.max(0, getUserPoints() + finalPts));
           saveDatabase(true);
@@ -19360,6 +20110,26 @@ Yêu cầu nghiêm ngặt:
     function exitSpeakingMode() {
       if (speakingAutoPlayTimeout) { clearTimeout(speakingAutoPlayTimeout); speakingAutoPlayTimeout = null; }
       stopSpeakingRecord();
+
+      const total = speakingTotalWords || (speakingWordsList ? speakingWordsList.length : 1);
+      const done = speakingCompletedWords;
+
+      if (!speakingIsCompleted && (done > 0 || speakingSessionPointsEarned !== 0 || currentSpeakingIndex > 0)) {
+        promptStudyEarlyExit({
+          mode: 'speaking',
+          done,
+          total,
+          basePoints: speakingSessionPointsEarned,
+          onConfirmExit: () => doExecuteExitSpeaking(done, total)
+        });
+        return;
+      }
+      doExecuteExitSpeaking(done, total);
+    }
+
+    function doExecuteExitSpeaking(done, total) {
+      if (speakingAutoPlayTimeout) { clearTimeout(speakingAutoPlayTimeout); speakingAutoPlayTimeout = null; }
+      stopSpeakingRecord();
       resetSpeakingWordState();
       closeSpeakingResultModal();
 
@@ -19373,8 +20143,6 @@ Yêu cầu nghiêm ngặt:
       }
 
       if (speakingSessionPointsEarned !== 0) {
-        const total = speakingTotalWords || speakingWordsList.length || 1;
-        const done = speakingCompletedWords;
         const isComp = done >= total && total > 0;
         const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
         const finalPts = res.finalPts;
@@ -20793,7 +21561,35 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
     }
 
-    function exitAutoFlashcard() {
+    function exitAutoFlashcard(force = false) {
+      const total = (autoFlashcardList && autoFlashcardList.length) ? autoFlashcardList.length : 0;
+      const done = autoFlashcardIndex;
+
+      if (!force && done > 0 && done < total) {
+        if (isAutoPlaying) {
+          isAutoPlaying = false;
+          stopAllAudio();
+          const statusEl = document.getElementById('autofc-status-indicator');
+          if (statusEl) {
+            statusEl.textContent = '⏸️ Đã tạm dừng';
+            statusEl.style.color = 'var(--warning)';
+          }
+          syncAutoFlashcardControlsUI();
+        }
+
+        promptStudyEarlyExit({
+          mode: 'autofc',
+          done,
+          total,
+          basePoints: 0,
+          onConfirmExit: () => doExecuteExitAutoFlashcard()
+        });
+        return;
+      }
+      doExecuteExitAutoFlashcard();
+    }
+
+    function doExecuteExitAutoFlashcard() {
       checkAndApplyPendingAppUpdate();
       isAutoPlaying = false;
       isAutoFcMiniMode = false;
@@ -20887,7 +21683,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             isAutoPlaying = false;
             syncAutoFlashcardControlsUI();
             alert('Đã hoàn thành lượt đọc Auto Flashcard!');
-            exitAutoFlashcard();
+            exitAutoFlashcard(true);
             return;
           }
         }
@@ -33479,12 +34275,20 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (activeModals.length > 0) {
           e.preventDefault();
           const topModal = activeModals[activeModals.length - 1];
+          if (topModal.id === 'modal-study-exit-confirm') {
+            cancelStudyEarlyExit();
+            return;
+          }
           if (topModal.id === 'modal-quiz-result') {
             exitQuizToDeck();
             return;
           }
           if (topModal.id === 'modal-spelling-result') {
             exitSpellingToDeck();
+            return;
+          }
+          if (topModal.id === 'modal-speaking-result') {
+            closeSpeakingResultModal();
             return;
           }
           closeModal(topModal.id);
