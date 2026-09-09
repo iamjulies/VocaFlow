@@ -1,4 +1,35 @@
 ================================================================================
+Phiên bản: v0.10.9-alpha-30 (Build 262) - Free Auto Flashcard Exit & VocaMentor Syntax Fix
+================================================================================
+1. [Tự Do Thoát Chế Độ Auto Flashcard Không Gián Đoạn (Free Auto Flashcard Exit)]:
+   - Loại bỏ hoàn toàn modal cảnh báo sớm "Bạn Đang Làm Dở phiên Auto Flashcard!" khi người dùng bấm thoát hoặc quay lại từ màn hình Auto Flashcard.
+   - Do Auto Flashcard là chế độ phát âm/nghe tự động không tính điểm trắc nghiệm hay trừ điểm phạt, người dùng giờ đây có thể thoải mái bấm thoát/quay lại màn hình chi tiết bộ từ hoặc danh sách bộ từ bất cứ lúc nào một cách tức thì và êm ái.
+2. [Khắc Phục Triệt Để Lỗi Mất Tương Tác/Trống Trơn Màn Hình Do Cú Pháp VocaMentor (Syntax Error Fix)]:
+   - Sửa lỗi cú pháp Javascript (Unexpected token '}') do khối code đóng ngoặc bị trùng lặp ở hàm renderAiChatMessages.
+   - Khôi phục 100% khả năng khởi động, hiển thị danh sách VocaDeck, thanh điều hướng và toàn bộ tính năng tương tác của ứng dụng.
+3. [Nâng Cấp Hệ Thống Lên Phiên Bản v0.10.9-alpha-30 (Build 262)]:
+   - Đồng bộ hóa toàn bộ phiên bản trên Header, Cài Đặt, Service Worker, Desktop WebView2 và gói phát hành GitHub.
+
+================================================================================
+Phiên bản: v0.10.9-alpha-29 (Build 261) - Water Wave Flow Connectors, Balance VIP, Realtime Settings Sync & Multimodal VocaMentor AI
+================================================================================
+1. [Dải Sóng Nước Động Kết Nối Flow Streak (Dynamic Water Wave Flow Connectors)]:
+   - Hiện thực hóa dải sóng nước shimmer chuyển sắc Cyan–Blue chuyển động liên tục kết nối giữa các ngày học liên tiếp (active) và ngày dùng băng bảo vệ (freeze) trên lịch Flow.
+2. [Cơ Chế Cân Bằng Tài Khoản VIP (Balance VIP)]:
+   - Điểm tinh thông từ vựng (Word Mastery Score): Tăng +25% bonus (x1.25) khi làm đúng/tiến bộ.
+   - Thưởng phiên học: Tăng 150% (x1.5) VoCoin kiếm được từ các chế độ ôn tập.
+   - Giảm nhẹ phạt thoát sớm: Mức trừ điểm khi bỏ dở bài học được giảm 125% (chia 1.25) cho hội viên VIP.
+3. [Đồng Bộ Cài Đặt Tức Thì & Hiển Thị Timestamp]:
+   - Toàn bộ cài đặt giao diện và hiển thị thời gian học (showTimestamp) mặc định bật (true) cho tài khoản mới.
+   - Mọi thao tác gạt nút toggle lập tức lưu và đồng bộ lên Firebase Realtime Database.
+4. [Nâng Cấp AI Chấm Phát Âm Speaking Lên Gemini 3.8 Flash]:
+   - Tối ưu hóa mô hình AI chấm phát âm Speaking lên Gemini 3.8 Flash với độ chính xác âm vị học cao.
+5. [VocaMentor AI: An Toàn Dữ Liệu, Đa Phương Thức (Vision) & Khóa VIP]:
+   - Bảo toàn lịch sử chat độc lập theo từng UID và tự động sao lưu Cloud RTDB.
+   - Hỗ trợ đính kèm hình ảnh qua camera hoặc dán trực tiếp từ clipboard (Ctrl+V), hỗ trợ tối đa 5 ảnh/tin nhắn.
+   - Khóa độc quyền cho hội viên VocaVIP, chuyển hướng người dùng thường sang trang nâng cấp VIP.
+
+================================================================================
 Phiên bản: v0.10.9-alpha-28 (Build 260) - Rotating Light Badges, Purchased Decks Filter & Single-Claim Giftcode
 ================================================================================
 1. [Lọc Chuẩn Xác Tab "VocaDeck Đã Mua" (Purchased Decks Filtering)]:

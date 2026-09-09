@@ -2715,6 +2715,127 @@
       }
     }
 
+    /* =========================================================================
+       FLOW WATER-WAVE CONNECTOR (v0.10.9-alpha-29 / model2.txt)
+       ========================================================================= */
+    .flow-wave-connector {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 6px;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+      background: linear-gradient(
+        90deg, 
+        #00a8ff 0%, 
+        #00d2ff 25%, 
+        #00a8ff 50%, 
+        #00f5ff 75%, 
+        #00a8ff 100%
+      );
+      background-size: 50px 100%;
+      animation: waterFlow 1s linear infinite, waterGlow 2s ease-in-out infinite alternate;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+    }
+
+    .flow-wave-connector::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      background-size: 25px 100%;
+      animation: innerWave 0.7s linear infinite reverse;
+    }
+
+    @keyframes waterFlow {
+      0% { background-position-x: 0px; }
+      100% { background-position-x: 50px; }
+    }
+
+    @keyframes waterGlow {
+      0% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 2px #00d2ff) saturate(1);
+      }
+      100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px #00f5ff) saturate(1.4);
+      }
+    }
+
+    @keyframes innerWave {
+      0% { background-position-x: 0px; }
+      100% { background-position-x: 25px; }
+    }
+
+    /* =========================================================================
+       VOCAMENTOR AI MULTIMODAL ATTACHMENTS (v0.10.9-alpha-29)
+       ========================================================================= */
+    .ai-chat-image-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(99, 102, 241, 0.4);
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .ai-chat-image-chip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ai-chat-image-chip-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: background 0.15s;
+    }
+
+    .ai-chat-image-chip-remove:hover {
+      background: #ef4444;
+    }
+
+    .ai-chat-msg-images-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .ai-chat-msg-img-thumb {
+      max-width: 140px;
+      max-height: 140px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .ai-chat-msg-img-thumb:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
 
   </style>
 </head>
@@ -2757,7 +2878,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-28</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-alpha-30</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -5915,20 +6036,20 @@
   </div>
 
   <div class="modal-overlay" id="modal-ai-mentor" style="z-index: 10007;">
-    <div class="modal" style="max-width: 620px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
+    <div class="modal" style="max-width: 640px; width: 95vw; height: 85vh; max-height: 750px; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px;">
       
       <!-- HEADER -->
       <div style="padding: 12px 16px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-shrink: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #ec4899); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
             🤖
           </div>
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <strong style="font-size: 15px; color: var(--text);">Gemini English Mentor</strong>
-              <span id="ai-mentor-quota-badge" class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(16,185,129,0.3);">5 lượt free</span>
+              <strong style="font-size: 15px; color: var(--text);">VocaMentor AI</strong>
+              <span id="ai-mentor-quota-badge" class="badge" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.2)); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(251, 191, 36, 0.4);">👑 VocaVIP</span>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">Gia sư tiếng Anh học thuật & phản xạ thực chiến</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Gia sư tiếng Anh Gemini 3.8 Flash Vision • Multimodal 📷</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
@@ -5941,18 +6062,25 @@
         </div>
       </div>
 
-      <!-- GUEST LOCK VIEW FOR AI MENTOR (v0.10.8-released) -->
-      <div id="aimentor-guest-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 20px; flex: 1;">
-        <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(99,102,241,0.4));">🤖🔒</div>
-        <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Tính Năng Độc Quyền Cho Flower</h3>
-        <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
-          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng nhập hoặc tạo tài khoản miễn phí để mở khóa <strong>Gia Sư AI Gemini Mentor, Hỏi Đáp Ngữ Pháp, Phân Tích Từ Sâu & Luyện Hội Thoại</strong>!
+      <!-- VIP EXCLUSIVE LOCK VIEW FOR AI MENTOR (v0.10.9-alpha-29) -->
+      <div id="aimentor-vip-lock-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; flex: 1;">
+        <div style="width: 72px; height: 72px; border-radius: 20px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.2)); border: 2px solid rgba(245, 158, 11, 0.5); display: flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);">
+          👑
+        </div>
+        <h3 style="color: var(--text); font-size: 19px; margin-bottom: 8px; font-weight: 800; background: linear-gradient(135deg, #fbbf24, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Đặc Quyền VocaMentor AI Dành Riêng Cho VocaVIP</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 460px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Trợ lý <strong>VocaMentor AI (Gemini 3.8 Flash Vision)</strong> hỗ trợ phân tích đa phương thức (tải & dán ảnh tới 5 hình), sửa lỗi ngữ pháp, giải thích từ vựng học thuật chuyên sâu và đàm thoại thời gian thực chỉ dành riêng cho thành viên <strong>VocaVIP</strong>.
         </p>
-        <div style="display: flex; justify-content: center; gap: 12px;">
-          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openAuthModal('login');" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
-            🔑 Đăng Nhập / Đăng Ký Ngay
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 400px; margin-bottom: 24px; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 12px; color: var(--text);">
+          <div style="display: flex; align-items: center; gap: 8px;"><span>✨</span> <span><strong>Gemini 3.8 Flash Vision:</strong> Phân tích hình ảnh bài tập & sách</span></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span>⚡</span> <span><strong>Không giới hạn:</strong> Hỏi đáp thoải mái, không tiêu tốn VoCoin</span></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span>🛡️</span> <span><strong>An toàn dữ liệu:</strong> Lưu trữ & đồng bộ đoạn chat an toàn trên Cloud</span></div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 12px; width: 100%; max-width: 400px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openVipPricingModal();" style="flex: 1.5; justify-content: center; font-weight: 800; padding: 12px 20px; font-size: 13.5px; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);">
+            👑 Nâng Cấp VocaVIP Ngay
           </button>
-          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="padding: 10px 20px; font-size: 13.5px;">
+          <button class="btn btn-outline" onclick="closeModal('modal-ai-mentor');" style="flex: 1; justify-content: center; padding: 12px 16px; font-size: 13.5px;">
             Đóng
           </button>
         </div>
@@ -5963,7 +6091,7 @@
         <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(245,158,11,0.4));">🔑🔒</div>
         <h3 style="color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800;">Chưa Kết Nối Google Gemini API Key</h3>
         <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
-          Tính năng <strong>Gia Sư Gemini English Mentor</strong> cần kết nối tài khoản Gemini của bạn để AI có thể trò chuyện, giải thích ngữ pháp và sửa lỗi trực tiếp.
+          Tính năng <strong>VocaMentor AI</strong> cần kết nối API Key Gemini của bạn để AI có thể trò chuyện, giải thích ngữ pháp và phân tích hình ảnh trực tiếp.
         </p>
         <div style="display: flex; justify-content: center; gap: 12px;">
           <button class="btn btn-primary" onclick="closeModal('modal-ai-mentor'); openSettingsModal();" style="font-weight: 700; padding: 10px 24px; font-size: 13.5px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 14px rgba(245,158,11,0.4);">
@@ -5977,38 +6105,48 @@
 
       <!-- MAIN AUTHENTICATED VIEW -->
       <div id="aimentor-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-      <!-- CONTEXT BANNER -->
-      <div id="ai-mentor-context-banner" style="padding: 7px 14px; background: rgba(99, 102, 241, 0.08); border-bottom: 1px dashed rgba(99, 102, 241, 0.25); font-size: 11.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;">
-        <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-          <span>🎯 Ngữ cảnh:</span>
-          <span id="ai-mentor-context-text" style="font-weight: 700; color: var(--text);">Chế độ học tự do</span>
+        <!-- CONTEXT BANNER -->
+        <div id="ai-mentor-context-banner" style="padding: 7px 14px; background: rgba(99, 102, 241, 0.08); border-bottom: 1px dashed rgba(99, 102, 241, 0.25); font-size: 11.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span>🎯 Ngữ cảnh:</span>
+            <span id="ai-mentor-context-text" style="font-weight: 700; color: var(--text);">Chế độ học tự do</span>
+          </div>
+          <span id="ai-mentor-context-badge" class="badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Tự do</span>
         </div>
-        <span id="ai-mentor-context-badge" class="badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Tự do</span>
-      </div>
 
-      <!-- QUICK ACTION CHIPS (SCROLLABLE ROW) -->
-      <div id="ai-mentor-chips-container" style="display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none;">
-        <!-- Dynamic Quick Chips -->
-      </div>
-
-      <!-- MESSAGES CONTAINER -->
-      <div id="ai-chat-messages" style="flex: 1; overflow-y: auto; padding: 14px 14px; display: flex; flex-direction: column; gap: 12px; background: var(--bg);">
-        <!-- Messages -->
-      </div>
-
-      <!-- INPUT BAR -->
-      <div style="padding: 10px 14px; background: var(--surface-elevated); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
-        <form onsubmit="handleSendAiChatMessage(event)" style="display: flex; gap: 8px; align-items: center; position: relative;">
-          <input type="text" id="ai-chat-input" class="form-input" placeholder="Hỏi gia sư tiếng Anh (tối đa 300 ký tự)..." maxlength="300" style="flex: 1; font-size: 13px; padding: 10px 12px; border-radius: 10px;" autocomplete="off" oninput="updateAiChatInputLength()">
-          <button type="submit" id="btn-ai-chat-send" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-weight: 700; padding: 10px 16px; border-radius: 10px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
-            <span>🚀</span> <span id="btn-ai-chat-send-label">Gửi</span>
-          </button>
-        </form>
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--text-muted); padding: 0 2px;">
-          <span id="ai-chat-fee-notice">Miễn phí 5 lượt mỗi ngày • Hết lượt: 10 VoCoin/lượt</span>
-          <span id="ai-chat-char-counter">0/300</span>
+        <!-- QUICK ACTION CHIPS (SCROLLABLE ROW) -->
+        <div id="ai-mentor-chips-container" style="display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none;">
+          <!-- Dynamic Quick Chips -->
         </div>
-      </div>
+
+        <!-- MESSAGES CONTAINER -->
+        <div id="ai-chat-messages" style="flex: 1; overflow-y: auto; padding: 14px 14px; display: flex; flex-direction: column; gap: 12px; background: var(--bg);">
+          <!-- Messages -->
+        </div>
+
+        <!-- ATTACHED IMAGES PREVIEW TRAY (v0.10.9-alpha-29) -->
+        <div id="ai-chat-attached-images-container" style="display: none; flex-wrap: wrap; gap: 8px; padding: 8px 14px; background: var(--surface); border-top: 1px dashed var(--border);">
+          <!-- Thumbnail chips dynamically rendered -->
+        </div>
+
+        <!-- INPUT BAR -->
+        <div style="padding: 10px 14px; background: var(--surface-elevated); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+          <form onsubmit="handleSendAiChatMessage(event)" style="display: flex; gap: 8px; align-items: center; position: relative;">
+            <button type="button" class="btn btn-outline btn-icon" onclick="triggerAiChatImageSelect()" title="Đính kèm ảnh bài tập, đề thi (tối đa 5 ảnh hoặc nhấn Ctrl+V để dán ảnh)" style="padding: 9px; border-radius: 10px; border-color: rgba(99,102,241,0.4); color: #818cf8; background: rgba(99,102,241,0.1); flex-shrink: 0;">
+              📷
+            </button>
+            <input type="file" id="ai-chat-image-input" accept="image/*" multiple style="display:none;" onchange="handleAiChatImageFileInput(this)">
+            
+            <input type="text" id="ai-chat-input" class="form-input" placeholder="Hỏi VocaMentor AI hoặc dán ảnh bài tập (Ctrl+V)..." maxlength="300" style="flex: 1; font-size: 13px; padding: 10px 12px; border-radius: 10px;" autocomplete="off" oninput="updateAiChatInputLength()">
+            <button type="submit" id="btn-ai-chat-send" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-weight: 700; padding: 10px 16px; border-radius: 10px; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+              <span>🚀</span> <span id="btn-ai-chat-send-label">Gửi</span>
+            </button>
+          </form>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--text-muted); padding: 0 2px;">
+            <span id="ai-chat-fee-notice"><span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Hỗ trợ ảnh đính kèm (tối đa 5 ảnh) & Hỏi đáp không giới hạn</span>
+            <span id="ai-chat-char-counter">0/300</span>
+          </div>
+        </div>
       </div> <!-- end aimentor-main-authenticated-view -->
     </div>
   </div>
@@ -7619,7 +7757,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-28 (Build 260)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-alpha-30 (Build 262)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8240,10 +8378,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-28)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-alpha-30)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-28';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-28 (Build 260)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-30';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-30 (Build 262)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -8687,6 +8825,10 @@
       let finalPts = 0;
       if (basePoints > 0) {
         finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        // balance_vip: VIP earns +150% coins
+        if (isVip) {
+          finalPts = Math.round(finalPts * 1.5);
+        }
       } else if (basePoints < 0) {
         if (done <= 5) {
           const divisor = Math.max(0.1, combinedMult);
@@ -8694,8 +8836,9 @@
         } else {
           finalPts = basePoints;
         }
+        // balance_vip: Early quit penalty mitigated by 125% (penalized 20% less / divided by 1.25)
         if (isVip) {
-          finalPts = Math.round(finalPts * 0.9);
+          finalPts = Math.round(finalPts / 1.25);
         }
       }
 
@@ -8723,7 +8866,7 @@
         return;
       }
 
-      // Calculate Balance v2 (Official)
+      // Calculate Balance v2 / VIP (Official)
       const resV2 = calculateSessionFinalPoints(basePoints, done, total, false);
 
       // Calculate Balance v1 (Legacy comparison)
@@ -8744,8 +8887,9 @@
         // Fallback: If modal element not found, use friendly native confirm
         const signV2 = resV2.finalPts >= 0 ? '+' : '';
         const signV1 = v1Pts >= 0 ? '+' : '';
+        const vipPerkText = resV2.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
         const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} từ)!\n\n` +
-          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})\n` +
+          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
           `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
           `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
         if (window.confirm(msg)) {
@@ -8788,7 +8932,10 @@
       if (deckMultEl) deckMultEl.textContent = `x${resV2.deckLengthMult}`;
 
       const milestoneEl = document.getElementById('study-exit-v2-milestone');
-      if (milestoneEl) milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin`;
+      if (milestoneEl) {
+        const vipNote = resV2.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
+        milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin${vipNote}`;
+      }
 
       const v1ResEl = document.getElementById('study-exit-v1-result');
       if (v1ResEl) {
@@ -9381,6 +9528,7 @@
     function toggleShowTimestampSetting(checked) {
       showTimestampSetting = checked;
       localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
+      localStorage.setItem(STORAGE_KEY_SETTINGS_TIME, Date.now().toString());
       applyTimestampDisplay();
       if (currentUser && currentUser.uid) {
         pushCurrentDatabaseToCloud();
@@ -16446,6 +16594,11 @@ function switchPublisherTab(tab) {
                       showFilterScoreSetting = cloudData.settings.showFilterScore;
                       localStorage.setItem(STORAGE_KEY_SHOW_FILTER_SCORE, showFilterScoreSetting.toString());
                     }
+                    if (typeof cloudData.settings.showTimestamp === 'boolean') {
+                      showTimestampSetting = cloudData.settings.showTimestamp;
+                      localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
+                      applyTimestampDisplay();
+                    }
                     if (typeof cloudData.settings.vipCatMemesEnabled === 'boolean') {
                       localStorage.setItem('vocaflow_vip_cat_memes_enabled', cloudData.settings.vipCatMemesEnabled ? 'true' : 'false');
                     }
@@ -16808,6 +16961,7 @@ function switchPublisherTab(tab) {
                 showFilterPos: showFilterPosSetting,
                 showFilterCefr: showFilterCefrSetting,
                 showFilterScore: showFilterScoreSetting,
+                showTimestamp: showTimestampSetting,
                 vipCatMemesEnabled: localStorage.getItem('vocaflow_vip_cat_memes_enabled') !== 'false',
                 vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5'),
                 updatedAt: parseInt(localStorage.getItem(STORAGE_KEY_SETTINGS_TIME) || Date.now().toString(), 10)
@@ -18125,7 +18279,13 @@ function switchPublisherTab(tab) {
         else word.masteryScore = 0;
       }
 
-      let newScore = word.masteryScore + deltaPoints;
+      // balance_vip: VIP gains 125% mastery score on progress
+      let effectiveDelta = deltaPoints;
+      if (deltaPoints > 0 && typeof isUserVip === 'function' && isUserVip()) {
+        effectiveDelta = Math.round(deltaPoints * 1.25);
+      }
+
+      let newScore = word.masteryScore + effectiveDelta;
       if (newScore < 0) newScore = 0;
       if (newScore > 100) newScore = 100;
 
@@ -18147,7 +18307,7 @@ function switchPublisherTab(tab) {
         words[mainIdx].updatedAt = word.updatedAt;
       }
 
-      return { newScore, deltaPoints };
+      return { newScore, deltaPoints: effectiveDelta };
     }
 
     // =========================================================================
@@ -21997,12 +22157,12 @@ function switchPublisherTab(tab) {
             numberHtml = `<span style="position: absolute; top: 2px; left: 4px; font-size: 9px; font-weight: 800; color: #bae6fd; opacity: 0.9; line-height: 1; z-index: 4; text-shadow: 0 1px 3px rgba(0,0,0,0.9);">${d}</span>`;
           }
 
-          // Horizontal Connecting Path Lines
+          // Horizontal Connecting Path Lines (Dynamic Water Wave Flow - model2.txt)
           if (hasPrevActiveInRow) {
-            connectorLeftHtml = '<div style="position: absolute; left: -8px; right: 50%; top: 50%; height: 8px; transform: translateY(-50%); background: linear-gradient(90deg, #06b6d4, #22d3ee); z-index: 1; pointer-events: none; box-shadow: 0 0 10px rgba(6,182,212,0.85);"></div>';
+            connectorLeftHtml = '<div class="flow-wave-connector" style="left: -8px; right: 50%;"></div>';
           }
           if (hasNextActiveInRow) {
-            connectorRightHtml = '<div style="position: absolute; left: 50%; right: -8px; top: 50%; height: 8px; transform: translateY(-50%); background: linear-gradient(90deg, #22d3ee, #06b6d4); z-index: 1; pointer-events: none; box-shadow: 0 0 10px rgba(6,182,212,0.85);"></div>';
+            connectorRightHtml = '<div class="flow-wave-connector" style="left: 50%; right: -8px;"></div>';
           }
         } else {
           cellStyle += ' border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-muted); opacity: 0.65;';
@@ -29361,7 +29521,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+        const standardModels = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-pro-latest'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         let evalSuccess = false;
@@ -29965,30 +30125,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     function exitAutoFlashcard(force = false) {
-      const total = (autoFlashcardList && autoFlashcardList.length) ? autoFlashcardList.length : 0;
-      const done = autoFlashcardIndex;
-
-      if (!force && done > 0 && done < total) {
-        if (isAutoPlaying) {
-          isAutoPlaying = false;
-          stopAllAudio();
-          const statusEl = document.getElementById('autofc-status-indicator');
-          if (statusEl) {
-            statusEl.textContent = '⏸️ Đã tạm dừng';
-            statusEl.style.color = 'var(--warning)';
-          }
-          syncAutoFlashcardControlsUI();
-        }
-
-        promptStudyEarlyExit({
-          mode: 'autofc',
-          done,
-          total,
-          basePoints: 0,
-          onConfirmExit: () => doExecuteExitAutoFlashcard()
-        });
-        return;
-      }
+      // v0.10.9-alpha-30: Auto Flashcard allows free exit anytime without interruption/penalty modal
       doExecuteExitAutoFlashcard();
     }
 
@@ -43716,20 +43853,159 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
     }
 
-      // =========================================================================
-    // AI STUDY CHAT & GEMINI ENGLISH MENTOR ENGINE (v0.10.7g)
+    // =========================================================================
+    // AI STUDY CHAT & VOCAMENTOR AI ENGINE (v0.10.9-alpha-29 MULTIMODAL & VIP EXCLUSIVE)
     // =========================================================================
     let aiChatHistory = [];
     let aiChatIsLoading = false;
+    let aiChatAttachedImages = []; // Array of { id, name, mimeType, base64, previewUrl } (max 5)
     let aiMiniVoiceRecording = false;
     let aiMiniVoiceRecorder = null;
     let aiMiniVoiceChunks = [];
     let aiMiniVoiceWordTarget = '';
 
-    try {
-      const savedHistory = localStorage.getItem('vocaflow_ai_chat_history');
-      if (savedHistory) aiChatHistory = JSON.parse(savedHistory) || [];
-    } catch (e) {}
+    function getAiChatStorageKey() {
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        return `vocaflow_ai_chat_history_${currentUser.uid}`;
+      }
+      return 'vocaflow_ai_chat_history';
+    }
+
+    function loadAiChatHistory() {
+      try {
+        const key = getAiChatStorageKey();
+        const savedHistory = localStorage.getItem(key) || localStorage.getItem('vocaflow_ai_chat_history');
+        if (savedHistory) aiChatHistory = JSON.parse(savedHistory) || [];
+      } catch (e) {
+        aiChatHistory = [];
+      }
+    }
+    loadAiChatHistory();
+
+    function saveAiChatHistoryToStorage() {
+      try {
+        const key = getAiChatStorageKey();
+        localStorage.setItem(key, JSON.stringify(aiChatHistory));
+        localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+    }
+
+    function triggerAiChatImageSelect() {
+      if (typeof isUserVip === 'function' && !isUserVip()) {
+        alert('🔒 Tính năng đính kèm hình ảnh VocaMentor AI chỉ dành riêng cho thành viên VIP (VocaVIP)!');
+        openVipPricingModal();
+        return;
+      }
+      const input = document.getElementById('ai-chat-image-input');
+      if (input) input.click();
+    }
+    window.triggerAiChatImageSelect = triggerAiChatImageSelect;
+
+    function handleAiChatImageFileInput(input) {
+      if (!input || !input.files || input.files.length === 0) return;
+      processAiChatFiles(Array.from(input.files));
+      input.value = '';
+    }
+    window.handleAiChatImageFileInput = handleAiChatImageFileInput;
+
+    function processAiChatFiles(fileList) {
+      if (!fileList || fileList.length === 0) return;
+      if (typeof isUserVip === 'function' && !isUserVip()) {
+        alert('🔒 Tính năng VocaMentor AI chỉ dành riêng cho thành viên VIP (VocaVIP)!');
+        openVipPricingModal();
+        return;
+      }
+
+      const maxImages = 5;
+      const remainingSlots = maxImages - aiChatAttachedImages.length;
+      if (remainingSlots <= 0) {
+        showToast(`⚠️ Bạn đã đính kèm tối đa ${maxImages} ảnh!`);
+        return;
+      }
+
+      const filesToAdd = fileList.filter(f => f && f.type && f.type.startsWith('image/')).slice(0, remainingSlots);
+      if (filesToAdd.length === 0) {
+        showToast('⚠️ Vui lòng chỉ chọn tệp hình ảnh (PNG, JPG, WebP...)!');
+        return;
+      }
+
+      let loaded = 0;
+      filesToAdd.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target.result;
+          if (dataUrl) {
+            const mimeType = file.type || 'image/jpeg';
+            const base64 = dataUrl.split(',')[1];
+            aiChatAttachedImages.push({
+              id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              name: file.name || 'Ảnh đính kèm',
+              mimeType: mimeType,
+              base64: base64,
+              previewUrl: dataUrl
+            });
+          }
+          loaded++;
+          if (loaded === filesToAdd.length) {
+            renderAiChatAttachedImages();
+            showToast(`📸 Đã thêm ${filesToAdd.length} ảnh đính kèm (${aiChatAttachedImages.length}/${maxImages})`);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeAiChatAttachedImage(index) {
+      if (index >= 0 && index < aiChatAttachedImages.length) {
+        aiChatAttachedImages.splice(index, 1);
+        renderAiChatAttachedImages();
+      }
+    }
+    window.removeAiChatAttachedImage = removeAiChatAttachedImage;
+
+    function renderAiChatAttachedImages() {
+      const container = document.getElementById('ai-chat-attached-images-container');
+      if (!container) return;
+
+      if (aiChatAttachedImages.length === 0) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+
+      container.style.display = 'flex';
+      let html = '';
+      aiChatAttachedImages.forEach((img, idx) => {
+        html += `
+          <div class="ai-chat-image-chip" title="${escapeHtml(img.name || 'Ảnh đính kèm')}">
+            <img src="${img.previewUrl}" alt="Attached ${idx + 1}">
+            <button type="button" class="ai-chat-image-chip-remove" onclick="removeAiChatAttachedImage(${idx})" title="Xóa ảnh này">✕</button>
+          </div>
+        `;
+      });
+      html += `<div style="font-size: 11px; color: var(--text-muted); align-self: center; margin-left: 4px;">(${aiChatAttachedImages.length}/5 ảnh)</div>`;
+      container.innerHTML = html;
+    }
+
+    function handleAiChatClipboardPaste(e) {
+      const modal = document.getElementById('modal-ai-mentor');
+      if (!modal || !modal.classList.contains('active')) return;
+      if (!e.clipboardData || !e.clipboardData.items) return;
+
+      const items = Array.from(e.clipboardData.items);
+      const imageItems = items.filter(item => item.type && item.type.indexOf('image') !== -1);
+      if (imageItems.length === 0) return;
+
+      const files = imageItems.map(item => item.getAsFile()).filter(Boolean);
+      if (files.length > 0) {
+        e.preventDefault();
+        processAiChatFiles(files);
+      }
+    }
+    window.removeEventListener('paste', handleAiChatClipboardPaste);
+    window.addEventListener('paste', handleAiChatClipboardPaste);
 
     function getAiChatQuotaStatus() {
       checkResetAiChatDailyQuota();
@@ -43964,24 +44240,29 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     function openAiMentorModal() {
       try {
         const isGuest = !currentUser || !currentUser.email;
-        const gView = document.getElementById('aimentor-guest-lock-view');
+        const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
+        const vView = document.getElementById('aimentor-vip-lock-view');
         const kView = document.getElementById('aimentor-apikey-lock-view');
         const aView = document.getElementById('aimentor-main-authenticated-view');
-        if (isGuest) {
-          if (gView) gView.style.display = 'flex';
+
+        // Requirement 5: Lock completely for Guest and Non-VIP users
+        if (isGuest || !isVip) {
+          if (vView) vView.style.display = 'flex';
           if (kView) kView.style.display = 'none';
           if (aView) aView.style.display = 'none';
           openModal('modal-ai-mentor');
           return;
         }
+
         if (!hasAtLeastOneApiKey()) {
-          if (gView) gView.style.display = 'none';
+          if (vView) vView.style.display = 'none';
           if (kView) kView.style.display = 'flex';
           if (aView) aView.style.display = 'none';
           openModal('modal-ai-mentor');
           return;
         }
-        if (gView) gView.style.display = 'none';
+
+        if (vView) vView.style.display = 'none';
         if (kView) kView.style.display = 'none';
         if (aView) aView.style.display = 'flex';
 
@@ -43991,8 +44272,10 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           showToast('🔒 VocaAI không khả dụng trong phòng thi / chế độ luyện tập tập trung!');
           return;
         }
+        loadAiChatHistory();
         updateAiMentorContextUI();
         updateAiChatQuotaUI();
+        renderAiChatAttachedImages();
         renderAiChatMessages();
         openModal('modal-ai-mentor');
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
@@ -44015,9 +44298,9 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
     function clearAiChatHistory() {
       if (aiChatHistory.length === 0) return;
-      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện với Gia sư AI?')) return;
+      if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện với VocaMentor AI?')) return;
       aiChatHistory = [];
-      localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+      saveAiChatHistoryToStorage();
       renderAiChatMessages();
       showToast('🗑️ Đã xóa sạch lịch sử trò chuyện.');
 
@@ -44045,9 +44328,9 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         container.innerHTML = `
           <div style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
             <div style="font-size: 40px; margin-bottom: 10px;">🤖</div>
-            <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Chào bạn! Mình là Gemini English Mentor</div>
-            <div style="font-size: 12.5px; line-height: 1.5; max-width: 420px; margin: 0 auto; color: var(--text-muted);">
-              Mình có thể giúp bạn giải thích từ vựng chuyên sâu, sửa lỗi ngữ pháp, đóng vai hội thoại, luyện phát âm trực tiếp hoặc tạo mini-quiz ôn tập. Hãy chọn gợi ý nhanh bên trên hoặc nhập câu hỏi bên dưới nhé!
+            <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Chào bạn! Mình là VocaMentor AI</div>
+            <div style="font-size: 12.5px; line-height: 1.5; max-width: 440px; margin: 0 auto; color: var(--text-muted);">
+              Được trang bị <strong>Gemini 3.8 Flash Vision</strong>, mình có thể giải thích chuyên sâu, sửa lỗi ngữ pháp, đóng vai hội thoại, luyện phát âm và đặc biệt là <strong>phân tích ảnh chụp bài tập/sách (tối đa 5 ảnh hoặc dán Ctrl+V)</strong>.
             </div>
           </div>
         `;
@@ -44061,10 +44344,23 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '';
 
         if (isUser) {
+          let userImagesHtml = '';
+          if (msg.images && Array.isArray(msg.images) && msg.images.length > 0) {
+            userImagesHtml = '<div class="ai-chat-msg-images-grid">';
+            msg.images.forEach((imgObj, iIdx) => {
+              const src = imgObj.previewUrl || (imgObj.base64 ? `data:${imgObj.mimeType || 'image/jpeg'};base64,${imgObj.base64}` : '');
+              if (src) {
+                userImagesHtml += `<img src="${src}" class="ai-chat-msg-img-thumb" onclick="openBugScreenshotViewer('${src}')" title="Bấm để phóng to ảnh ${iIdx + 1}">`;
+              }
+            });
+            userImagesHtml += '</div>';
+          }
+
           html += `
             <div style="display: flex; justify-content: flex-end; align-items: flex-end; gap: 8px;">
-              <div style="max-width: 82%; background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border-radius: 14px 14px 2px 14px; padding: 10px 14px; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);">
-                <div style="font-size: 13px; line-height: 1.45; word-break: break-word;">${escapeHtml(msg.text)}</div>
+              <div style="max-width: 84%; background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border-radius: 14px 14px 2px 14px; padding: 10px 14px; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);">
+                ${userImagesHtml}
+                ${msg.text ? `<div style="font-size: 13px; line-height: 1.45; word-break: break-word;">${escapeHtml(msg.text)}</div>` : ''}
                 <div style="font-size: 9.5px; opacity: 0.75; text-align: right; margin-top: 4px;">${timeStr}</div>
               </div>
             </div>
@@ -44073,7 +44369,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           const parsedContent = formatAiChatMarkdown(msg.text, idx);
           html += `
             <div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 10px;">
-              <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 2px;">
+              <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 2px; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);">
                 🤖
               </div>
               <div style="max-width: 86%; background: ${isError ? 'rgba(239,68,68,0.1)' : 'var(--surface-elevated)'}; border: 1px solid ${isError ? 'rgba(239,68,68,0.3)' : 'var(--border)'}; border-radius: 14px 14px 14px 2px; padding: 12px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -44081,7 +44377,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
                   ${parsedContent}
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.06); font-size: 10px; color: var(--text-muted);">
-                  <span>Gemini English Mentor</span>
+                  <span>VocaMentor AI (Gemini 3.8 Flash)</span>
                   <div style="display: flex; gap: 6px;">
                     <button type="button" onclick="copyAiChatText(${idx})" title="Sao chép câu trả lời" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 0;">📋 Sao chép</button>
                     <span>• ${timeStr}</span>
@@ -44096,13 +44392,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       if (aiChatIsLoading) {
         html += `
           <div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 10px;" id="ai-chat-loading-bubble">
-            <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+            <div style="width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
               🤖
             </div>
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px 14px 14px 2px; padding: 12px 14px;">
               <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #a5b4fc;">
                 <span class="spinner" style="width: 14px; height: 14px; border: 2px solid #a5b4fc; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite;"></span>
-                <span>Gia sư AI đang phân tích và soạn câu trả lời...</span>
+                <span>VocaMentor AI đang phân tích dữ liệu & ảnh...</span>
               </div>
             </div>
           </div>
@@ -44502,42 +44798,48 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
     async function handleSendAiChatMessage(e = null) {
       if (e) e.preventDefault();
+      
+      // Requirement 5: VIP-exclusive lock
+      if (typeof isUserVip === 'function' && !isUserVip()) {
+        alert('🔒 Tính năng VocaMentor AI chỉ dành riêng cho thành viên VIP (VocaVIP)!\n\nHãy nâng cấp VIP để trải nghiệm Gia Sư Gemini 3.8 Flash Vision và đính kèm ảnh không giới hạn.');
+        openVipPricingModal();
+        return;
+      }
+
       if (!hasAtLeastOneApiKey()) {
-        alert('🔒 Chức năng Gia Sư AI Gemini Mentor yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt để nhập API Key.');
+        alert('🔒 Chức năng VocaMentor AI yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt để nhập API Key.');
         openSettingsModal();
         return;
       }
       if (aiChatIsLoading) return;
 
       const input = document.getElementById('ai-chat-input');
-      if (!input) return;
-      const rawText = (input.value || '').trim();
-      if (!rawText) return;
+      const rawText = input ? (input.value || '').trim() : '';
+      const attachedToSend = [...aiChatAttachedImages];
 
-      const quota = getAiChatQuotaStatus();
-      if (!quota.isVip && !quota.isFree) {
-        const curPoints = getUserPoints();
-        if (curPoints < quota.costXu) {
-          alert(`🪙 Bạn đã hết 5 lượt miễn phí hôm nay và không đủ VoCoin (cần ${quota.costXu} VoCoin, bạn đang có ${curPoints} VoCoin)!
-Hãy vào VocaShop hoặc làm Quiz để nhận thêm VoCoin nhé!`);
-          openShopModal();
-          return;
-        }
-      }
+      if (!rawText && attachedToSend.length === 0) return;
 
       const userMsg = {
         id: 'msg_' + Date.now(),
         role: 'user',
         text: rawText,
+        images: attachedToSend.map(img => ({
+          name: img.name || 'Ảnh đính kèm',
+          mimeType: img.mimeType || 'image/jpeg',
+          base64: img.base64,
+          previewUrl: img.previewUrl
+        })),
         timestamp: new Date().toISOString()
       };
 
       aiChatHistory.push(userMsg);
       if (typeof recordAiChatUsed === 'function') recordAiChatUsed();
       if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
-      localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+      saveAiChatHistoryToStorage();
 
-      input.value = '';
+      if (input) input.value = '';
+      aiChatAttachedImages = [];
+      renderAiChatAttachedImages();
       updateAiChatInputLength();
       aiChatIsLoading = true;
       renderAiChatMessages();
@@ -44549,7 +44851,7 @@ Hãy vào VocaShop hoặc làm Quiz để nhận thêm VoCoin nhé!`);
           id: 'msg_' + Date.now(),
           role: 'model',
           isError: true,
-          text: '🔑 **Chưa cấu hình Google Gemini API Key**\n\nĐể trò chuyện với Gia sư AI, bạn vui lòng mở **⚙️ Cài đặt** (trên thanh Header) và dán API Key Gemini của bạn nhé!',
+          text: '🔑 **Chưa cấu hình Google Gemini API Key**\n\nĐể trò chuyện với VocaMentor AI, bạn vui lòng mở **⚙️ Cài đặt** (trên thanh Header) và dán API Key Gemini của bạn nhé!',
           timestamp: new Date().toISOString()
         };
         aiChatHistory.push(errorMsg);
@@ -44567,31 +44869,50 @@ Hãy vào VocaShop hoặc làm Quiz để nhận thêm VoCoin nhé!`);
         contextInfo = `Ngữ cảnh học: Người dùng đang xem VocaDeck "${ctx.deck.title}" (${ctx.deck.description || ''}).`;
       }
 
-      const systemInstruction = `Bạn là Gemini English Mentor - Gia sư tiếng Anh học thuật kiêm bạn đồng hành luyện tập phản xạ của ứng dụng VocaFlow.
+      const systemInstruction = `Bạn là VocaMentor AI - Cố vấn học tập tiếng Anh kiêm chuyên gia phân tích hình ảnh/ngữ liệu của ứng dụng VocaFlow, vận hành trên mô hình Gemini 3.8 Flash Vision.
 ${contextInfo}
 Quy tắc phản hồi quan trọng:
-1. Giải thích ngắn gọn, trực diện bằng tiếng Việt, dùng Markdown in đậm **từ vựng/cấu trúc**.
-2. Khi người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố 1 câu: đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi trắc nghiệm?","options":["Lựa chọn 1","Lựa chọn 2","Lựa chọn 3","Lựa chọn 4"],"answer":0,"explain":"Giải thích chi tiết vì sao đáp án này đúng và các đáp án khác sai"}]
+1. Nếu người dùng đính kèm ảnh (ảnh chụp bài tập, trang sách, đề thi, bảng từ vựng...): Hãy phân tích kỹ nội dung trong ảnh, giải thích các câu hỏi/từ vựng liên quan, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết bằng tiếng Việt.
+2. Giải thích ngắn gọn, trực diện, dễ hiểu bằng tiếng Việt, dùng Markdown in đậm **từ vựng/cấu trúc**.
+3. Khi người dùng yêu cầu trắc nghiệm hoặc bạn muốn đố 1 câu: đính kèm thẻ: [MINI_QUIZ: {"q":"Câu hỏi trắc nghiệm?","options":["Lựa chọn 1","Lựa chọn 2","Lựa chọn 3","Lựa chọn 4"],"answer":0,"explain":"Giải thích chi tiết vì sao đáp án này đúng và các đáp án khác sai"}]
    LƯU Ý CỰC KỲ QUAN TRỌNG: TUYỆT ĐỐI KHÔNG lặp lại câu hỏi hay viết các lựa chọn A/B/C/D ở đoạn văn bản bên ngoài. Trong mảng options chỉ ghi nội dung phương án (không đính kèm tiền tố "A.", "B.", "1.", "2.").
-3. Khi người dùng yêu cầu luyện phát âm TỪ VỰNG: đính kèm thẻ: [VOICE_CHECK: {"text":"từ_cần_đọc","ipa":"/phiên âm IPA/"}]
-4. Khi người dùng yêu cầu luyện phát âm CÂU TIẾNG ANH (hoặc câu có chỉnh sửa): BẮT BUỘC đính kèm thẻ cho TOÀN BỘ CÂU ĐÓ: [VOICE_CHECK: {"text":"câu_tiếng_Anh_hoàn_chỉnh_cần_luyện_đọc","ipa":""}]
+4. Khi người dùng yêu cầu luyện phát âm TỪ VỰNG: đính kèm thẻ: [VOICE_CHECK: {"text":"từ_cần_đọc","ipa":"/phiên âm IPA/"}]
+5. Khi người dùng yêu cầu luyện phát âm CÂU TIẾNG ANH (hoặc câu có chỉnh sửa): BẮT BUỘC đính kèm thẻ cho TOÀN BỘ CÂU ĐÓ: [VOICE_CHECK: {"text":"câu_tiếng_Anh_hoàn_chỉnh_cần_luyện_đọc","ipa":""}]
    TUYỆT ĐỐI KHÔNG tự ý cắt vụn câu của người dùng thành 1 từ duy nhất khi người dùng yêu cầu luyện đọc cả câu.
-5. Luôn thân thiện, tạo cảm hứng học tập và giải thích cặn kẽ dễ hiểu.`;
+6. Luôn thân thiện, tạo cảm hứng học tập và hướng dẫn phương pháp học bản xứ sâu sắc.`;
 
-      // Multi-turn payload (last 8 turns)
+      // Multi-turn payload (last 8 turns with multimodal image parts)
       const contentsPayload = [];
       const recentTurns = aiChatHistory.slice(-8);
       recentTurns.forEach(turn => {
-        if (!turn.isError && turn.text) {
-          contentsPayload.push({
-            role: turn.role === 'user' ? 'user' : 'model',
-            parts: [{ text: turn.text }]
-          });
+        if (!turn.isError) {
+          const parts = [];
+          if (turn.images && Array.isArray(turn.images) && turn.images.length > 0) {
+            turn.images.forEach(img => {
+              if (img.base64) {
+                parts.push({
+                  inlineData: {
+                    mimeType: img.mimeType || 'image/jpeg',
+                    data: img.base64
+                  }
+                });
+              }
+            });
+          }
+          if (turn.text) {
+            parts.push({ text: turn.text });
+          }
+          if (parts.length > 0) {
+            contentsPayload.push({
+              role: turn.role === 'user' ? 'user' : 'model',
+              parts: parts
+            });
+          }
         }
       });
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const standardModels = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-pro-latest'];
       const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       let fetchSuccess = false;
@@ -44632,37 +44953,10 @@ Quy tắc phản hồi quan trọng:
       }
 
       if (fetchSuccess && replyText) {
-        // Burn-on-Success settlement (v0.10.8-alpha-10.3 VIP Privilege)
-        if (quota.isVip) {
-          // VIP: 100% Free Unlimited, no points deducted
-          aiChatDailyCount++;
-          localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
-          localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
-        } else if (quota.isFree) {
-          aiChatDailyCount++;
-          localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
-          localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
-
-          // Instant Cloud Sync for Daily Free Quota (v0.10.7g-6)
-          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
-            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-            const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-            fetch(`${rtdbUrl}/users/${currentUser.uid}/aiChatQuota.json${authParam}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                dailyDate: aiChatDailyDate,
-                dailyCount: aiChatDailyCount,
-                updatedAt: new Date().toISOString()
-              })
-            }).catch(() => {});
-          }
-        } else {
-          setUserPoints(getUserPoints() - quota.costXu);
-          addLedgerEntry('AI_CHAT', -quota.costXu, 'Hỏi đáp Gia sư tiếng Anh AI Mentor');
-          saveDatabase(true);
-          pushCurrentDatabaseToCloud();
-        }
+        // VIP Unlimited Free
+        aiChatDailyCount++;
+        localStorage.setItem('vocaflow_ai_chat_daily_count', aiChatDailyCount.toString());
+        localStorage.setItem('vocaflow_ai_chat_daily_date', aiChatDailyDate);
 
         const modelMsg = {
           id: 'msg_' + Date.now(),
@@ -44673,10 +44967,10 @@ Quy tắc phản hồi quan trọng:
 
         aiChatHistory.push(modelMsg);
         if (aiChatHistory.length > 30) aiChatHistory = aiChatHistory.slice(-30);
-        localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+        saveAiChatHistoryToStorage();
         updateAiChatQuotaUI();
 
-        // Cloud Sync History (last 30 messages)
+        // Cloud Sync History (last 30 messages to RTDB)
         if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
@@ -44687,15 +44981,15 @@ Quy tắc phản hồi quan trọng:
           }).catch(() => {});
         }
       } else {
-        // No-fail guarantee: do NOT deduct Xu / do NOT deduct quota
         const errorMsg = {
           id: 'msg_' + Date.now(),
           role: 'model',
           isError: true,
-          text: `⚠️ Không thể kết nối tới Google Gemini AI (${lastErrorMsg || 'Mạng gián đoạn'}). Vui lòng kiểm tra lại API Key trong mục Cài đặt! (Hệ thống KHÔNG trừ VoCoin / lượt chat của bạn).`,
+          text: `⚠️ Không thể kết nối tới Google Gemini AI (${lastErrorMsg || 'Mạng gián đoạn'}). Vui lòng kiểm tra lại API Key trong mục Cài đặt!`,
           timestamp: new Date().toISOString()
         };
         aiChatHistory.push(errorMsg);
+        saveAiChatHistoryToStorage();
       }
 
       aiChatIsLoading = false;
