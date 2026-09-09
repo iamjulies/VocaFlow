@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-37)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-38)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-37';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-37 (Build 269)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-38';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-38 (Build 270)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -13027,8 +13027,32 @@ function switchPublisherTab(tab) {
       const resultBox = document.getElementById('lucky-wheel-result-box');
       if (resultBox) resultBox.innerHTML = '<span style="color:#38bdf8;">🔄 Đang quay... Chúc bạn may mắn!</span>';
 
-      // 1. Pick winning index first (0..7) to guarantee 100% precision
-      const winningIndex = Math.floor(Math.random() * (currentActiveWheelSlices.length || 8));
+      // 1. Pick winning index with adjusted Jackpot probability (v0.10.9-38)
+      // VIP users: Jackpot rate is 6.25% (was 12.5%)
+      // Regular users: Jackpot rate is 7% (when jackpot appears on wheel; wheel has 33.3% jackpot spawn rate)
+      const isVip = isUserVip();
+      const vipTargetRate = isVip ? 0.0625 : 0.07;
+      const vipSliceIndex = currentActiveWheelSlices.findIndex(s => s.type === 'VIP' || s.id === 'vip_1d');
+
+      let winningIndex = 0;
+      if (vipSliceIndex >= 0) {
+        if (Math.random() < vipTargetRate) {
+          winningIndex = vipSliceIndex;
+        } else {
+          // Uniformly pick among the other 7 non-VIP slices
+          const otherIndices = [];
+          for (let i = 0; i < currentActiveWheelSlices.length; i++) {
+            if (i !== vipSliceIndex) otherIndices.push(i);
+          }
+          winningIndex = (otherIndices.length > 0)
+            ? otherIndices[Math.floor(Math.random() * otherIndices.length)]
+            : 0;
+        }
+      } else {
+        // No VIP slice on this wheel (regular user without jackpot) -> uniform 1/8 across all slices
+        winningIndex = Math.floor(Math.random() * (currentActiveWheelSlices.length || 8));
+      }
+
       const prize = currentActiveWheelSlices[winningIndex] || currentActiveWheelSlices[0];
 
       // 2. Calculate exact angle to place the winning slice directly under top needle (0 deg)
@@ -17602,7 +17626,7 @@ function switchPublisherTab(tab) {
           spellingCorrectCount++;
           if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
           spellingWrongAttemptsForCurrentWord = 0;
-          removeWordFromMistakeList(questionWord.id || questionWord.term);
+          removeWordFromMistakeList(questionWord, false);
 
           const totalBoxes = expected.length;
           const walletPts = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
@@ -17747,7 +17771,7 @@ function switchPublisherTab(tab) {
         spellingIsAnswered = true;
         spellingCorrectCount++;
         if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
-        removeWordFromMistakeList(questionWord.id || questionWord.term);
+        removeWordFromMistakeList(questionWord, false);
 
         // Balanced Point Calculation (v0.0.10.1d):
         // 1. Wallet Points: Full effort reward = Total boxes * multiplier
@@ -17848,15 +17872,12 @@ function switchPublisherTab(tab) {
     }
 
     function useSpellingSkip() {
-      if (spellingIsAnswered) return;
-      playVocaSfx('skip');
+      if (spellingIsAnswered) {
+        nextSpellingQuestion();
+        return;
+      }
       const questionWord = spellingList[spellingIndex];
       if (!questionWord) return;
-
-      addWordToMistakeList(questionWord, 'spelling');
-      if (!spellingSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
-        spellingSessionWrongWords.push(questionWord);
-      }
 
       const curSkips = getUserSkips();
       const curPts = getUserPoints();
@@ -17868,12 +17889,19 @@ function switchPublisherTab(tab) {
         return;
       }
 
+      playVocaSfx('skip');
+
       if (curSkips > 0) {
         setUserSkips(curSkips - 1);
         showToast('⏭️ Đã dùng 1 VocaSkip miễn phí (còn ' + getUserSkips() + ' lượt).');
       } else {
         setUserPoints(curPts - skipCost);
         showToast('⏭️ Đã dùng 100 VoCoin để đổi 1 VocaSkip.');
+      }
+
+      addWordToMistakeList(questionWord, 'spelling');
+      if (!spellingSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+        spellingSessionWrongWords.push(questionWord);
       }
 
       spellingIsAnswered = true;
@@ -17933,7 +17961,10 @@ function switchPublisherTab(tab) {
     }
 
     function useQuizSkip() {
-      if (quizIsAnswered) return;
+      if (quizIsAnswered) {
+        nextQuizQuestion();
+        return;
+      }
       playVocaSfx('skip');
       if (quizQuestionStartTime) {
         quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
@@ -17960,21 +17991,27 @@ function switchPublisherTab(tab) {
         showToast('⏭️ Đã dùng 100đ ví để Bỏ Qua câu này.');
       }
 
+      addWordToMistakeList(questionWord, 'quiz');
+      if (!quizSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+        quizSessionWrongWords.push(questionWord);
+      }
+
       quizIsAnswered = true;
       updateEconomyUI();
 
-      // Highlight correct answer button in blue/grey
-      const allButtons = document.querySelectorAll('.quiz-option');
+      // Highlight correct answer button in blue/green
+      const correctDef = (questionWord._activeQuizSense?.definitionVi || questionWord._activeQuizSense?.definition || questionWord.definitionVi || questionWord.definition || '').trim().toLowerCase();
+      const allButtons = document.querySelectorAll('#quiz-options-container .quiz-option');
       allButtons.forEach(btn => {
         btn.classList.add('disabled');
         btn.disabled = true;
-        if (btn.dataset.isCorrect === 'true') {
+        const txt = (btn.querySelector('.quiz-opt-text')?.textContent || btn.textContent || '').trim().toLowerCase();
+        if (txt === correctDef) {
           btn.classList.add('correct');
         }
       });
 
       if (questionWord) {
-        const correctDef = (questionWord.definitionVi || questionWord.definition || '').trim();
         renderWordDetailsCard('quiz', questionWord);
         loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
       }
@@ -19494,11 +19531,22 @@ Yêu cầu nghiêm ngặt:
         const existingIdx = list.findIndex(item => (item.wordId && item.wordId === wordId) || (item.term && item.term.toLowerCase() === termClean.toLowerCase()));
 
         const now = Date.now();
+        const phoneticVal = word.phonetic || (word._activeQuizSense && word._activeQuizSense.phonetic) || (word._activeSpellingSense && word._activeSpellingSense.phonetic) || '';
+        const defViVal = word.definitionVi || word.definition || (word._activeQuizSense && (word._activeQuizSense.definitionVi || word._activeQuizSense.definition)) || (word._activeSpellingSense && (word._activeSpellingSense.definitionVi || word._activeSpellingSense.definition)) || '';
+        const defVal = word.definition || word.definitionVi || (word._activeQuizSense && (word._activeQuizSense.definition || word._activeQuizSense.definitionVi)) || (word._activeSpellingSense && (word._activeSpellingSense.definition || word._activeSpellingSense.definitionVi)) || '';
+        const cefrVal = word.cefrLevel || word.level || 'B1';
+        const posVal = word.partOfSpeech || 'noun';
+        const exVal = word.exampleSentence || word.example || '';
+        const deckVal = word.deckId || currentDeckId || '';
+
         if (existingIdx >= 0) {
           const item = list[existingIdx];
-          item.mistakeCount = (item.mistakeCount || 1) + 1;
+          item.mistakeCount = (parseInt(item.mistakeCount, 10) || 1) + 1;
           item.lastMistakeMode = mode;
           item.lastMistakeAt = now;
+          if (!item.phonetic && phoneticVal) item.phonetic = phoneticVal;
+          if (!item.definitionVi && defViVal) item.definitionVi = defViVal;
+          if (!item.definition && defVal) item.definition = defVal;
           if (!Array.isArray(item.modesFailed)) item.modesFailed = [item.lastMistakeMode || mode];
           if (!item.modesFailed.includes(mode)) item.modesFailed.push(mode);
           // Move to top of the list
@@ -19508,13 +19556,13 @@ Yêu cầu nghiêm ngặt:
           const newItem = {
             wordId: wordId,
             term: termClean,
-            phonetic: word.phonetic || '',
-            definitionVi: word.definitionVi || word.definition || '',
-            definition: word.definition || word.definitionVi || '',
-            partOfSpeech: word.partOfSpeech || 'noun',
-            cefrLevel: word.cefrLevel || word.level || 'B1',
-            exampleSentence: word.exampleSentence || word.example || '',
-            deckId: word.deckId || currentDeckId || '',
+            phonetic: phoneticVal,
+            definitionVi: defViVal,
+            definition: defVal,
+            partOfSpeech: posVal,
+            cefrLevel: cefrVal,
+            exampleSentence: exVal,
+            deckId: deckVal,
             mistakeCount: 1,
             lastMistakeMode: mode,
             modesFailed: [mode],
@@ -19528,22 +19576,46 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
-    function removeWordFromMistakeList(wordIdOrTerm) {
-      if (!wordIdOrTerm) return;
+    function removeWordFromMistakeList(wordOrIdOrTerm, forceRemove = false) {
+      if (!wordOrIdOrTerm) return;
       try {
         const list = getMistakeWordsList();
-        const targetStr = String(wordIdOrTerm).trim().toLowerCase();
-        const initialLen = list.length;
-        const filtered = list.filter(item => {
-          const idMatch = item.wordId && String(item.wordId).toLowerCase() === targetStr;
-          const termMatch = item.term && item.term.toLowerCase() === targetStr;
-          return !idMatch && !termMatch;
+        const targetStr = (typeof wordOrIdOrTerm === 'object') 
+          ? String(wordOrIdOrTerm.id || wordOrIdOrTerm.term || '').trim().toLowerCase()
+          : String(wordOrIdOrTerm).trim().toLowerCase();
+        const targetTerm = (typeof wordOrIdOrTerm === 'object' && wordOrIdOrTerm.term)
+          ? String(wordOrIdOrTerm.term).trim().toLowerCase()
+          : targetStr;
+
+        const idx = list.findIndex(item => {
+          const idMatch = item.wordId && (String(item.wordId).toLowerCase() === targetStr || String(item.wordId).toLowerCase() === targetTerm);
+          const termMatch = item.term && (item.term.toLowerCase() === targetStr || item.term.toLowerCase() === targetTerm);
+          return idMatch || termMatch;
         });
-        if (filtered.length !== initialLen) {
-          saveMistakeWordsList(filtered);
+
+        if (idx >= 0) {
+          const item = list[idx];
+          if (forceRemove) {
+            list.splice(idx, 1);
+            saveMistakeWordsList(list);
+          } else {
+            // "sai bao nhiêu lần thì phải làm bù đúng bấy nhiêu lần"
+            const currentCount = parseInt(item.mistakeCount, 10) || 1;
+            const newCount = currentCount - 1;
+            if (newCount <= 0) {
+              list.splice(idx, 1);
+              saveMistakeWordsList(list);
+              showToast(`🎉 Tuyệt vời! Đã hoàn toàn khắc phục lỗi sai từ: "${item.term}"!`);
+            } else {
+              item.mistakeCount = newCount;
+              list[idx] = item;
+              saveMistakeWordsList(list);
+              showToast(`✨ Làm đúng từ "${item.term}"! (Còn ${newCount} lần làm đúng nữa để gỡ khỏi Sổ Tay Lỗi Sai)`);
+            }
+          }
         }
       } catch (e) {
-        console.warn('Error removing word from mistake list:', e);
+        console.warn('Error updating word in mistake list:', e);
       }
     }
 
@@ -19780,7 +19852,7 @@ Yêu cầu nghiêm ngặt:
     }
 
     function removeWordFromMistakeListAndRender(wordIdOrTerm) {
-      removeWordFromMistakeList(wordIdOrTerm);
+      removeWordFromMistakeList(wordIdOrTerm, true);
       renderMistakeNotebookList();
       showToast('🗑️ Đã xóa từ khỏi Sổ Tay Lỗi Sai!');
     }
@@ -20384,7 +20456,7 @@ Yêu cầu nghiêm ngặt:
 
           if (questionWord) {
             try {
-              removeWordFromMistakeList(questionWord.id || questionWord.term);
+              removeWordFromMistakeList(questionWord, false);
               const { masteryGain } = getQuizScoringDeltas(currentQuizDifficulty, true);
               const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
               saveDatabase(true);
@@ -22884,7 +22956,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
           if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
             speakingGradedWordIds.add(currentWord.id);
-            removeWordFromMistakeList(currentWord.id || currentWord.term);
+            removeWordFromMistakeList(currentWord, false);
             const syllCount = speakingSyllableCache[currentWord.id] || Math.max(1, Math.ceil((currentWord.term || '').length / 3));
             const baseXu = Math.max(3, syllCount * 3);
             const admissionScore = speakingTakes.reduce((a, b) => a + b, 0) / speakingTakes.length;

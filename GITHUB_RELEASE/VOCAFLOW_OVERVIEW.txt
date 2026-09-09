@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.9-38 (Build 270) - Khắc Phục Ghi Nhận Lỗi Quiz, Cơ Chế Bù Trừ Lỗi Sai & Tinh Chỉnh Tỉ Lệ Độc Đắc Vòng Quay
+================================================================================
+1. [Khắc Phục Thu Thập Từ Sai & Bỏ Qua Trong Trắc Nghiệm (Quiz)]:
+   - Tích hợp ghi nhận đầy đủ 100% tất cả các từ vựng trả lời sai hoặc bấm Bỏ Qua (VocaSkip) trong chế độ Trắc Nghiệm Quiz vào Sổ Tay Lỗi Sai (`vocaflow_mistake_notebook_v1`) và danh sách câu sai của phiên làm bài (`quizSessionWrongWords`).
+   - Tự động trích xuất ngữ cảnh, nghĩa và phiên âm từ giác quan câu hỏi đang chọn (`_activeQuizSense`), đảm bảo thông tin lưu trữ chính xác tuyệt đối.
+
+2. [Sửa Lỗi VocaSkip Trong Chế Độ Luyện Viết (Spelling)]:
+   - Khắc phục triệt để lỗi bấm nút Bỏ Qua (VocaSkip) bị kẹt hoặc không chuyển sang câu hỏi tiếp theo trong chế độ Spelling.
+   - Khi kích hoạt VocaSkip: tự động trừ 1 lượt skip (hoặc 100 VoCoin), lưu từ vào Sổ Tay Lỗi Sai, ghi nhận phiên làm bài và hỗ trợ chuyển ngay sang từ tiếp theo một cách mượt mà.
+
+3. [Cơ Chế Bù Trừ Số Lần Làm Đúng Trong Sổ Tay Lỗi Sai (Strict Mistake Offset)]:
+   - Thực thi chính xác quy tắc: sai bao nhiêu lần thì phải làm bù đúng bấy nhiêu lần để xóa hoàn toàn từ khỏi Sổ Tay Lỗi Sai.
+   - Mỗi lần làm đúng / phát âm chuẩn một từ đang có trong Sổ Tay Lỗi Sai (tại bất kỳ chế độ học nào), hệ thống sẽ giảm `mistakeCount` đi 1 đơn vị và thông báo số lần cần làm đúng còn lại.
+   - Khi `mistakeCount` giảm về 0, từ vựng sẽ chính thức được gỡ bỏ hoàn toàn khỏi Sổ Tay Lỗi Sai kèm hiệu ứng chúc mừng.
+   - Nút thùng rác 🗑️ trong Sổ Tay Lỗi Sai vẫn hỗ trợ xóa ép buộc (Force Delete) tức thì khi người dùng muốn.
+
+4. [Điều Chỉnh Tỉ Lệ Trúng Giải Độc Đắc "+1 Ngày VocaVIP" Vòng Quay May Mắn (VocaWheel)]:
+   - Tài khoản VocaVIP: Giảm tỉ lệ trúng giải Độc Đắc từ 12.5% xuống 6.25% (1/16) trên mỗi lượt quay (ô giải trên vòng quay vẫn giữ nguyên kích thước trực quan 45°).
+   - Tài khoản Thường (Non-VIP): Giảm tỉ lệ trúng giải Độc Đắc từ 12.5% xuống 7% khi ô Độc Đắc xuất hiện trên vòng quay (xác suất xuất hiện ô Độc Đắc trên vòng quay của tài khoản thường vẫn duy trì ở mức 33.33%).
+
+================================================================================
 Phiên bản: v0.10.9-37 (Build 269) - Sổ Tay Lỗi Sai & Làm Lại Câu Sai Tức Thì
 ================================================================================
 1. [Sổ Tay Lỗi Sai (Mistake Notebook & Persistent Wrong Answers Tracker)]:
