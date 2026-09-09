@@ -143,7 +143,24 @@ Script `GITHUB_RELEASE/push_github.ps1` thực hiện tự động hóa 100% cô
 
 ---
 
-## ⚠️ 4. CHECKLIST AN TOÀN DỮ LIỆU DÀNH CHO AI AGENT TIẾP QUẢN
+## 🔍 5. QUY TRÌNH CHẨN ĐOÁN & SỬA LỖI MẤT TƯƠNG TÁC / TRỐNG TRƠN MÀN HÌNH (BLANK SCREEN FIX)
+
+> **Dấu hiệu nhận biết**: Mở trang web hoặc ứng dụng desktop thấy Header tĩnh nhưng danh sách bộ từ trống trơn, bấm nút không phản hồi.
+
+1. **Nguyên nhân**: 99% do lỗi cú pháp JavaScript (`SyntaxError` - ví dụ thừa/thiếu dấu ngoặc `{}` hoặc `,`) trong `src/scripts/app.js` làm ngắt tiến trình nạp JavaScript, khiến các biến/hàm toàn cục không thể khởi tạo.
+2. **Kịch bản chẩn đoán 1-Click**:
+   ```powershell
+   $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+   $proc = Start-Process -FilePath $edgePath -ArgumentList "--headless", "--disable-gpu", "--enable-logging=stderr", "--v=1", "file:///C:/Users/DELL/Documents/Modding/browser/vocaflow.html" -PassThru -NoNewWindow -RedirectStandardError "edge_eval_err.txt"
+   Start-Sleep -Seconds 3
+   Stop-Process -Id $proc.Id -Force
+   Get-Content "edge_eval_err.txt" | Select-String "SyntaxError", "Uncaught"
+   ```
+3. **Sửa lỗi**: Mở vị trí dòng báo lỗi trong file nguồn `src/scripts/app.js`, loại bỏ dấu đóng ngoặc thừa/thiếu, chạy `build_vocaflow.ps1` và xác nhận lại với test script.
+
+---
+
+## ⚠️ 6. CHECKLIST AN TOÀN DỮ LIỆU DÀNH CHO AI AGENT TIẾP QUẢN
 
 > 1. **KHÔNG BAO GIỜ** sửa thẳng vào `vocaflow.html` hoặc `index.html`. Sửa ở `src/` rồi chạy `build_vocaflow.ps1`.
 > 2. **KHÔNG BAO GIỜ** dùng mảng rỗng `{}` để ghi đè `followers` hoặc `following` lên Firebase Cloud khi thiết bị mới khởi chạy (tham khảo chi tiết tại `MANDATORY_UPDATE_WORKFLOW.md`).
