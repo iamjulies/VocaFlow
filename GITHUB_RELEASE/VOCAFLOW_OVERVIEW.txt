@@ -1,4 +1,18 @@
 ================================================================================
+Phiên bản: v0.10.9-39 (Build 271) - Kiểm Kê & Đồng Bộ Chuẩn Xác Thông Số Thống Kê Phiên Học (VocaSkip, VocaHint, Wrong Attempts)
+================================================================================
+1. [Khắc Phục Lỗi Hiển Thị Số Lượng VocaSkip Trong Kết Quả Luyện Viết (Spelling)]:
+   - Khắc phục triệt để hiện tượng số lượng VocaSkip hiển thị sai lệch trên modal kết quả Luyện viết (ví dụ: không dùng VocaSkip nào nhưng kết quả vẫn hiện 3 từ).
+   - Thiết lập reset triệt để biến đếm phiên học `spellingSkipCount = 0` ngay khi khởi tạo chế độ Luyện viết (`startSpellingMode`), đảm bảo thông số chỉ tính chính xác cho phiên học hiện tại.
+
+2. [Chuẩn Hóa Bộ Thông Số Thống Kê 3-Trong-1 Cho Chế Độ Trắc Nghiệm (Quiz)]:
+   - Nâng cấp modal kết quả Trắc nghiệm (`modal-quiz-result.html`) với thanh thống kê 3-trong-1 đồng bộ và trực quan (`💡 VocaHint: X lượt`, `⏩ VocaSkip: Y câu`, `❌ Chọn sai: Z câu`).
+   - Khởi tạo và cô lập biến đếm `quizSkipCount = 0`, `quizHintsUsed = 0`, `quizWrongCount = 0` trong `startQuizMode` và ghi nhận chính xác mỗi khi sử dụng VocaSkip (`useQuizSkip`).
+
+3. [Cô Lập & Kiểm Kê Toàn Diện Thông Số Chế Độ Luyện Nói (Speaking)]:
+   - Khởi tạo tường minh và reset `speakingWordsSkippedCount = 0` trong `startSpeakingMode`, đảm bảo số lượt bỏ qua hiển thị trên modal kết quả (`spk-res-skips-used`) luôn chính xác 100%.
+
+================================================================================
 Phiên bản: v0.10.9-38 (Build 270) - Khắc Phục Ghi Nhận Lỗi Quiz, Cơ Chế Bù Trừ Lỗi Sai & Tinh Chỉnh Tỉ Lệ Độc Đắc Vòng Quay
 ================================================================================
 1. [Khắc Phục Thu Thập Từ Sai & Bỏ Qua Trong Trắc Nghiệm (Quiz)]:

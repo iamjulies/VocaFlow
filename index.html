@@ -4025,12 +4025,17 @@
           </div>
         </div>
 
-        <!-- 5. Gợi ý đã dùng (Full width tile) -->
-        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <div style="font-size: 12px; color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-            <span>💡</span> VocaHint đã dùng trong bài:
+        <!-- 5. Chi tiết chọn sai / gợi ý / bỏ qua (Full width tile) -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
+          <div style="color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>💡</span> VocaHint: <strong id="quiz-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
           </div>
-          <div id="quiz-res-hints" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 lượt</div>
+          <div style="color: #818cf8; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>⏭️</span> VocaSkip: <strong id="quiz-res-skips" style="color: #6366f1; font-family: monospace;">0 câu</strong>
+          </div>
+          <div style="color: #f87171; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>❌</span> Chọn sai: <strong id="quiz-res-wrongs" style="color: #ef4444; font-family: monospace;">0 câu</strong>
+          </div>
         </div>
 
         <!-- 6. WRONG QUESTIONS RETRY BANNER (v0.10.9-37) -->
@@ -7902,7 +7907,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-38 (Build 270)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-39 (Build 271)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8672,10 +8677,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-38)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-39)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-38';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-38 (Build 270)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-39';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-39 (Build 271)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -25936,6 +25941,7 @@ function switchPublisherTab(tab) {
       spellingWrongCount = 0;
       spellingPointsEarned = 0;
       spellingHintsUsed = 0;
+      spellingSkipCount = 0;
       spellingTotalQuestions = spellingList.length;
 
       loadSpellingQuestion();
@@ -26669,6 +26675,7 @@ function switchPublisherTab(tab) {
         quizSessionWrongWords.push(questionWord);
       }
 
+      quizSkipCount++;
       quizIsAnswered = true;
       updateEconomyUI();
 
@@ -27561,6 +27568,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     let quizWrongCount = 0;
     let quizPointsEarned = 0;
     let quizHintsUsed = 0;
+    let quizSkipCount = 0;
     let quizTotalQuestions = 0;
     let fireworksAnimationId = null;
 
@@ -28653,6 +28661,7 @@ Yêu cầu nghiêm ngặt:
       quizWrongCount = 0;
       quizPointsEarned = 0;
       quizHintsUsed = 0;
+      quizSkipCount = 0;
       quizTotalQuestions = quizList.length;
 
       loadQuizQuestion();
@@ -29211,6 +29220,8 @@ Yêu cầu nghiêm ngặt:
       const durationEl = document.getElementById('quiz-res-duration');
       const spqEl = document.getElementById('quiz-res-spq');
       const hintsEl = document.getElementById('quiz-res-hints');
+      const skipsEl = document.getElementById('quiz-res-skips');
+      const wrongsEl = document.getElementById('quiz-res-wrongs');
       const badgeIconEl = document.getElementById('quiz-res-badge-icon');
       const titleEl = document.getElementById('quiz-res-title');
       const subtitleEl = document.getElementById('quiz-res-subtitle');
@@ -29225,6 +29236,8 @@ Yêu cầu nghiêm ngặt:
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
+      if (skipsEl) skipsEl.textContent = quizSkipCount + ' câu';
+      if (wrongsEl) wrongsEl.textContent = quizWrongCount + ' câu';
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');
@@ -29983,6 +29996,7 @@ Yêu cầu nghiêm ngặt:
     let speakingTotalTakesCount = 0;     // Total recording takes submitted
     let speakingFloorTakesCount = 0;     // Total takes passing floor score
     let speakingWordsPassedFloorCount = 0;
+    let speakingWordsSkippedCount = 0;
     let speakingWordSkipsLeft = 3;
     let speakingTotalWords = 0;
     let speakingCompletedWords = 0;
@@ -30346,6 +30360,7 @@ Yêu cầu nghiêm ngặt:
       speakingTotalTakesCount = 0;
       speakingFloorTakesCount = 0;
       speakingWordsPassedFloorCount = 0;
+      speakingWordsSkippedCount = 0;
       speakingWordSkipsLeft = 3;
       speakingTotalWords = speakingWordsList.length;
       speakingCompletedWords = 0;

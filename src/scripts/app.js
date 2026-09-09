@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-38)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-39)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-38';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-38 (Build 270)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-39';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-39 (Build 271)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -17263,6 +17263,7 @@ function switchPublisherTab(tab) {
       spellingWrongCount = 0;
       spellingPointsEarned = 0;
       spellingHintsUsed = 0;
+      spellingSkipCount = 0;
       spellingTotalQuestions = spellingList.length;
 
       loadSpellingQuestion();
@@ -17996,6 +17997,7 @@ function switchPublisherTab(tab) {
         quizSessionWrongWords.push(questionWord);
       }
 
+      quizSkipCount++;
       quizIsAnswered = true;
       updateEconomyUI();
 
@@ -18888,6 +18890,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     let quizWrongCount = 0;
     let quizPointsEarned = 0;
     let quizHintsUsed = 0;
+    let quizSkipCount = 0;
     let quizTotalQuestions = 0;
     let fireworksAnimationId = null;
 
@@ -19980,6 +19983,7 @@ Yêu cầu nghiêm ngặt:
       quizWrongCount = 0;
       quizPointsEarned = 0;
       quizHintsUsed = 0;
+      quizSkipCount = 0;
       quizTotalQuestions = quizList.length;
 
       loadQuizQuestion();
@@ -20538,6 +20542,8 @@ Yêu cầu nghiêm ngặt:
       const durationEl = document.getElementById('quiz-res-duration');
       const spqEl = document.getElementById('quiz-res-spq');
       const hintsEl = document.getElementById('quiz-res-hints');
+      const skipsEl = document.getElementById('quiz-res-skips');
+      const wrongsEl = document.getElementById('quiz-res-wrongs');
       const badgeIconEl = document.getElementById('quiz-res-badge-icon');
       const titleEl = document.getElementById('quiz-res-title');
       const subtitleEl = document.getElementById('quiz-res-subtitle');
@@ -20552,6 +20558,8 @@ Yêu cầu nghiêm ngặt:
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
+      if (skipsEl) skipsEl.textContent = quizSkipCount + ' câu';
+      if (wrongsEl) wrongsEl.textContent = quizWrongCount + ' câu';
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');
@@ -21310,6 +21318,7 @@ Yêu cầu nghiêm ngặt:
     let speakingTotalTakesCount = 0;     // Total recording takes submitted
     let speakingFloorTakesCount = 0;     // Total takes passing floor score
     let speakingWordsPassedFloorCount = 0;
+    let speakingWordsSkippedCount = 0;
     let speakingWordSkipsLeft = 3;
     let speakingTotalWords = 0;
     let speakingCompletedWords = 0;
@@ -21673,6 +21682,7 @@ Yêu cầu nghiêm ngặt:
       speakingTotalTakesCount = 0;
       speakingFloorTakesCount = 0;
       speakingWordsPassedFloorCount = 0;
+      speakingWordsSkippedCount = 0;
       speakingWordSkipsLeft = 3;
       speakingTotalWords = speakingWordsList.length;
       speakingCompletedWords = 0;
