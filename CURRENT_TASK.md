@@ -1,41 +1,36 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-alpha-30 (Build 262)`  
+> **Phiên bản mục tiêu:** `v0.10.9-33 (Build 265)`  
 > **Cập nhật lần cuối:** 2026-09-09  
-> **Trạng thái:** ✅ **ĐÃ HOÀN TẤT 100% - KIỂM THỬ THÀNH CÔNG**
+> **Trạng thái:** ✅ **ĐÃ HOÀN TẤT 100% - KIỂM THỬ & PHÁT HÀNH GITHUB THÀNH CÔNG**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-alpha-30)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-33 Build 265)
 
-- [x] **Nhiệm vụ 1: Cho phép thoát chế độ Auto Flashcard tự do mọi lúc (Free Auto Flashcard Exit)**
-  - Người dùng phản ánh khi bấm nút "Thoát" hoặc "Quay lại" trong chế độ Auto Flashcard (`screen-autofc`), ứng dụng hiển thị popup cảnh báo sớm `modal-study-exit-confirm` ("Bạn Đang Làm Dở phiên Auto Flashcard!").
-  - Do Auto Flashcard là chế độ thụ động đọc/phát âm tự động (không cộng điểm làm đúng/sai hay tính phạt), việc hiển thị modal cảnh báo là không cần thiết và gây gián đoạn trải nghiệm người dùng.
-  - Sửa hàm `exitAutoFlashcard()` trong `src/scripts/app.js`: Tự động gọi thẳng `doExecuteExitAutoFlashcard()` mà không mở `promptStudyEarlyExit()`. Người dùng có thể bấm thoát hoặc chuyển màn hình mọi lúc một cách tức thì.
+- [x] **Nhiệm vụ 1: Trung Tâm VocaMail - Hỏi Đáp & Nhắn Tin Trực Tuyến Với Admin**
+  - Tạo mới `src/components/modals/modal-vocamail.html` với 2 tab: Soạn Thư (Compose) & Lịch Sử Đã Gửi (Sent History).
+  - Hỗ trợ chọn danh mục (Hỏi đáp, Báo lỗi, Góp ý, Hỗ trợ VIP, Khác), đính kèm tối đa 3 ảnh.
+  - Tự động đồng bộ gửi email đến `duwchao@gmail.com` và `nongduchaolop6c@gmail.com` qua REST FormSubmit và lưu trữ tại Firebase RTDB `/vocamails_inbox`.
+  - Tích hợp các nút mở VocaMail tại Header, Cài Đặt và Hồ Sơ Cá Nhân.
 
-- [x] **Nhiệm vụ 2: Khắc phục triệt để lỗi màn hình trống trơn / mất tương tác (Syntax Error Fix)**
-  - Phân tích và phát hiện lỗi cú pháp `Uncaught SyntaxError: Unexpected token '}'` do đoạn code kết thúc hàm `renderAiChatMessages()` bị nhân đôi:
-    ```javascript
-      container.innerHTML = html;
-      scrollAiChatToBottom();
-    }
-      container.innerHTML = html;
-      scrollAiChatToBottom();
-    }
-    ```
-  - Xóa bỏ khối mã trùng lặp, khôi phục sự cân bằng tuyệt đối của cấu trúc mã nguồn.
-  - Sau khi sửa lỗi, toàn bộ ứng dụng khởi động mượt mà, hiển thị đầy đủ danh sách VocaDeck, thanh điều hướng Header, các Modal popup và khôi phục 100% khả năng tương tác.
+- [x] **Nhiệm vụ 2: Khắc Phục Lỗi Quảng Cáo Nhận Thưởng Trên Bản Windows Desktop EXE**
+  - Gỡ bỏ chặn `isDesktop` trong `injectInPagePushAd`, `injectVignetteAd`, `triggerRewardedAdBanner` để bản Desktop EXE WebView2 mở xem video tài trợ nhận +1 VocaSpin bình thường như bản Web.
 
-- [x] **Nhiệm vụ 3: Nâng cấp toàn diện phiên bản lên v0.10.9-alpha-30 (Build 262)**
-  - `src/scripts/app.js`: Cập nhật `VOCAFLOW_APP_VERSION = 'v0.10.9-alpha-30'`, `VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-alpha-30 (Build 262)'`.
-  - `src/components/header.html`: Cập nhật nhãn phiên bản trên Header `v0.10.9-alpha-30`.
-  - `src/components/modals/modal-settings.html`: Cập nhật nhãn phiên bản trong Cài Đặt `v0.10.9-alpha-30 (Build 262)`.
-  - `sw.js` & `Release_App/sw.js`: Cập nhật `CACHE_NAME = 'vocaflow-pwa-v0.10.9-alpha-30'`.
-  - `pubspec.yaml`: Cập nhật `version: 0.10.9+262`.
-  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE\VOCAFLOW_OVERVIEW.txt`: Bổ sung chi tiết bản cập nhật `v0.10.9-alpha-30 (Build 262)`.
-  - `GITHUB_RELEASE\push_github.ps1`: Cập nhật tên file zip và commit message lên `v0.10.9-alpha-30`.
+- [x] **Nhiệm vụ 3: Nâng Cấp Đột Phá AI Speaking - Chống Âm Bồi & Khử Lỗi Từ Vô Nghĩa**
+  - Tái cấu trúc prompt Gemini: Bắt buộc chép chính tả thực tế `detectedTranscript`, phạt nặng từ vô nghĩa (< 35đ) và âm bồi tiếng Việt (45-60đ).
+  - Tích hợp hàm `calculateStringSimilarity` (Levenshtein Distance): Khóa cứng điểm <= 30đ khi đọc sai từ >30% hoặc từ vô nghĩa (ví dụ "acadepussy" thay vì "academic"), đảm bảo người đọc đúng "academic" đạt 85-95đ.
 
-- [x] **Nhiệm vụ 4: Kiểm thử và Biên dịch tự động**
-  - Chạy `build_vocaflow.ps1` lắp ghép toàn bộ các component `src/` vào `vocaflow.html` và `index.html`.
-  - Đồng bộ tệp sang `Release_App` và `GITHUB_RELEASE`.
-  - Chạy kiểm thử tự động Headless Edge qua `test_v0_10_9_30.ps1`: 11/11 bài kiểm thử vượt qua thành công (100% PASS), 0 lỗi JavaScript.
+- [x] **Nhiệm vụ 4: Đồng Bộ Cooldown Quảng Cáo 2 Chiều Thời Gian Thực (0ms Trễ)**
+  - Thêm `patchInstantAdCooldownToCloud` cập nhật `lastAdWatchTime` tức thì lên Firebase RTDB khi xem xong hoặc hủy xem quảng cáo.
+  - Bắt luồng SSE Stream (`applyCloudEconomyPatch`) tự động nhận diện và cập nhật thời gian hồi trên mọi thiết bị đang mở ngay lập tức.
+
+- [x] **Nhiệm vụ 5: Nâng Cấp Trung Tâm Thông Báo (Tự Động Đọc Ngầm & Routing Chuẩn)**
+  - Tự động đánh dấu đã đọc ngầm (`markAllNotificationsReadSilently`) khi mở modal Thông Báo, tự tắt badge đỏ không cần bấm nút thủ công.
+  - Bấm vào thông báo sẽ mở đúng trang liên quan (VocaDeck, Profile, VIP, Wheel, Shop, Bug Report, VocaMail, Flow).
+
+- [x] **Nhiệm vụ 6: Đồng Bộ 7 Vị Trí Phiên Bản, Lắp Ghép & Phát Hành Toàn Diện**
+  - Đồng bộ `v0.10.9-33 (Build 265)` trên: `header.html`, `modal-settings.html`, `app.js`, `sw.js`, `pubspec.yaml`, `Program.cs`, `VOCAFLOW_OVERVIEW.txt`, `push_github.ps1`.
+  - Lắp ghép `build_vocaflow.ps1` (46,523 dòng, 2.7MB).
+  - Chạy `test_v0_10_9_33.ps1` (Edge Headless DOM test đạt 100%).
+  - Chạy `push_github.ps1` biên dịch `VocaFlow.exe`, nén file zip phát hành `VocaFlow_v0.10.9-33_Windows_Portable.zip` và đẩy lên 3 kho GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
