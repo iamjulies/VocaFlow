@@ -1,8 +1,8 @@
     // =========================================================================
     // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-34';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-34 (Build 266)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-35';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-35 (Build 267)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -12683,26 +12683,69 @@ function switchPublisherTab(tab) {
         }).catch(() => {});
       } catch (e) {}
 
-      // 3. Send real email to duwchao@gmail.com & nongduchaolop6c@gmail.com
+      // 3. Send real email to duwchao@gmail.com & nongduchaolop6c@gmail.com via Multi-Channel Dispatch
+      const emailPayload = {
+        _subject: `[VocaMail] [${categoryLabel}] ${subjectVal}`,
+        _captcha: 'false',
+        _template: 'table',
+        _autoresponse: 'false',
+        'Mã Thư': mailId,
+        'Người Gửi': `${mailRecord.senderName} (${mailRecord.senderEmail})`,
+        'UID Học Viên': mailRecord.senderUid,
+        'Loại Tài Khoản': isVip ? '👑 VocaVIP' : 'Tài khoản thường',
+        'Phân Loại': categoryLabel,
+        'Tiêu Đề': subjectVal,
+        'Nội Dung Chi Tiết': bodyVal,
+        'Ảnh Đính Kèm': vocaMailAttachments.length > 0 ? `${vocaMailAttachments.length} ảnh` : 'Không có',
+        'Thời Gian Gửi': new Date().toLocaleString('vi-VN')
+      };
+
+      // 3a. Hidden Form Dispatch (Bypasses CORS/Origin file:/// blocks)
+      const dispatchViaForm = (targetEmail) => {
+        try {
+          const iframeName = 'vocamail_iframe_' + Math.random().toString(36).substring(2, 9);
+          const iframe = document.createElement('iframe');
+          iframe.name = iframeName;
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = `https://formsubmit.co/${targetEmail}`;
+          form.target = iframeName;
+          form.style.display = 'none';
+
+          for (const [k, v] of Object.entries(emailPayload)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = k;
+            input.value = v;
+            form.appendChild(input);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+
+          setTimeout(() => {
+            try { document.body.removeChild(form); } catch (e) {}
+            try { document.body.removeChild(iframe); } catch (e) {}
+          }, 3000);
+        } catch (e) {
+          console.warn('Form dispatch note:', e);
+        }
+      };
+
+      // Dispatch to both admin addresses
+      dispatchViaForm('duwchao@gmail.com');
+      setTimeout(() => dispatchViaForm('nongduchaolop6c@gmail.com'), 600);
+
+      // 3b. Direct AJAX fallback
       try {
         fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            _subject: `[VocaMail] [${categoryLabel}] ${subjectVal}`,
-            _cc: 'nongduchaolop6c@gmail.com',
-            _template: 'table',
-            'Mã Thư': mailId,
-            'Người Gửi': `${mailRecord.senderName} (${mailRecord.senderEmail})`,
-            'UID': mailRecord.senderUid,
-            'Tài Khoản': isVip ? '👑 VocaVIP' : 'Thường',
-            'Phân Loại': categoryLabel,
-            'Tiêu Đề': subjectVal,
-            'Nội Dung': bodyVal,
-            'Ảnh Đính Kèm': vocaMailAttachments.length > 0 ? `${vocaMailAttachments.length} ảnh` : 'Không có',
-            'Thời Gian': new Date().toLocaleString('vi-VN')
-          })
-        }).catch(err => console.warn('FormSubmit email note:', err));
+          body: JSON.stringify({ ...emailPayload, _cc: 'nongduchaolop6c@gmail.com' })
+        }).catch(() => {});
       } catch (err) {}
 
       // 4. In-App Notification & Sound
@@ -12733,18 +12776,31 @@ function switchPublisherTab(tab) {
     }
     window.submitVocaMail = submitVocaMail;
 
-    function openDirectGmailFallback() {
+    function openDirectGmailFallback(mode = 'web') {
       const subjectInput = document.getElementById('vocamail-input-subject');
       const bodyInput = document.getElementById('vocamail-input-body');
-      const subjectVal = subjectInput ? subjectInput.value.trim() : 'Hỏi đáp VocaFlow';
-      const bodyVal = bodyInput ? bodyInput.value.trim() : '';
+      const subjectVal = subjectInput && subjectInput.value.trim() ? subjectInput.value.trim() : 'Hỏi đáp & Hỗ trợ VocaFlow';
+      const bodyVal = bodyInput && bodyInput.value.trim() ? bodyInput.value.trim() : 'Xin chào Admin VocaFlow, em cần hỗ trợ:';
 
       const senderName = currentUser ? (currentUser.displayName || currentUser.username || 'Học viên') : 'Học viên';
       const senderUid = currentUser ? currentUser.uid : 'guest';
+      const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
 
-      const fullBody = `${bodyVal}\n\n---\nThông tin người gửi:\nTên: ${senderName}\nUID: ${senderUid}\nPhiên bản: ${VOCAFLOW_APP_VERSION}`;
-      const mailtoUrl = `mailto:duwchao@gmail.com,nongduchaolop6c@gmail.com?subject=${encodeURIComponent('[VocaMail] ' + subjectVal)}&body=${encodeURIComponent(fullBody)}`;
-      window.open(mailtoUrl, '_blank');
+      const fullBody = `${bodyVal}\n\n==============================\n📌 THÔNG TIN HỌC VIÊN VOCAFLOW:\n- Họ & Tên: ${senderName}\n- UID: ${senderUid}\n- Tài khoản: ${isVip ? '👑 VocaVIP' : 'Thường'}\n- Phiên bản: ${VOCAFLOW_APP_VERSION}\n==============================`;
+
+      const targetEmails = 'duwchao@gmail.com,nongduchaolop6c@gmail.com';
+      const subjectEncoded = encodeURIComponent('[VocaMail] ' + subjectVal);
+      const bodyEncoded = encodeURIComponent(fullBody);
+
+      if (mode === 'web') {
+        // Direct Web Gmail Composer (Opens in new browser tab pre-filled)
+        const webGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmails}&su=${subjectEncoded}&body=${bodyEncoded}`;
+        window.open(webGmailUrl, '_blank');
+      } else {
+        // Native Mail Client (mailto:)
+        const mailtoUrl = `mailto:${targetEmails}?subject=${subjectEncoded}&body=${bodyEncoded}`;
+        window.location.href = mailtoUrl;
+      }
     }
     window.openDirectGmailFallback = openDirectGmailFallback;
 
