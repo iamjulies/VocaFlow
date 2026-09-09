@@ -22,7 +22,7 @@ namespace VocaFlow
 
         public MainForm()
         {
-            Text = "VocaFlow v0.10.9-35 - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
+            Text = "VocaFlow v0.10.9-36 - Học Từ Vựng Cá Nhân Hóa (Offline-First)";
             Width = 1100;
             Height = 760;
             StartPosition = FormStartPosition.CenterScreen;
@@ -70,6 +70,38 @@ namespace VocaFlow
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
+
+                // Native C# WebMessage Bridge for guaranteed email dispatch from Desktop
+                _webView.CoreWebView2.WebMessageReceived += async (s, e) =>
+                {
+                    try
+                    {
+                        string messageJson = e.WebMessageAsJson;
+                        using var doc = System.Text.Json.JsonDocument.Parse(messageJson);
+                        var root = doc.RootElement;
+                        if (root.TryGetProperty("type", out var typeProp) && typeProp.GetString() == "SEND_VOCAMAIL")
+                        {
+                            if (root.TryGetProperty("payload", out var payloadProp))
+                            {
+                                string payloadJson = payloadProp.GetRawText();
+                                using var client = new System.Net.Http.HttpClient();
+                                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                                client.DefaultRequestHeaders.Add("Origin", "https://iamjulies.github.io");
+                                client.DefaultRequestHeaders.Add("Referer", "https://iamjulies.github.io/VocaFlow/");
+
+                                var content1 = new System.Net.Http.StringContent(payloadJson, System.Text.Encoding.UTF8, "application/json");
+                                await client.PostAsync("https://formsubmit.co/ajax/duwchao@gmail.com", content1);
+
+                                var content2 = new System.Net.Http.StringContent(payloadJson, System.Text.Encoding.UTF8, "application/json");
+                                await client.PostAsync("https://formsubmit.co/ajax/nongduchaolop6c@gmail.com", content2);
+                            }
+                        }
+                    }
+                    catch (Exception msgEx)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Native WebMessage Error: " + msgEx.Message);
+                    }
+                };
 
                 // Sync title with web page title
                 _webView.CoreWebView2.DocumentTitleChanged += (s, e) =>

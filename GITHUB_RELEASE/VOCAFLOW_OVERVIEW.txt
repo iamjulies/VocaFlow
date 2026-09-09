@@ -1,4 +1,13 @@
 ================================================================================
+Phiên bản: v0.10.9-36 (Build 268) - Native Desktop WebMessage & Standard FormSubmit VocaMail Engine
+================================================================================
+1. [Khắc Phục Toàn Diện Hộp Thư VocaMail - Gửi Email Trực Tiếp & Tức Thì Về Gmail]:
+   - Khắc phục lỗi FormSubmit bỏ qua thư do thiếu các trường bắt buộc chuẩn (name, email, message).
+   - Thiết lập chuẩn hóa toàn bộ payload: gửi song song cả trường chuẩn (name, email, message, _subject, _captcha, _template, _cc) và bảng định dạng chi tiết học viên.
+   - Tích hợp Native C# WebView2 WebMessage Bridge (`window.chrome.webview.postMessage`) cho Windows Desktop App (EXE), cho phép C# phát lệnh HTTP POST bằng `HttpClient` với Origin `https://iamjulies.github.io` hợp lệ 100%, xóa bỏ vĩnh viễn rào cản hạn chế giao thức `file:///`.
+   - Giữ nguyên các kênh gửi dự phòng song song: Fetch AJAX trực tiếp, Hidden HTML Form POST và 1-Click mở Web Gmail.
+
+================================================================================
 Phiên bản: v0.10.9-35 (Build 267) - VocaMail Multi-Pipeline Email Dispatch & Web Gmail 1-Click
 ================================================================================
 1. [Hộp Thư VocaMail - Trung Tâm Nhắn Tin & Hỏi Đáp Admin Trực Tuyến]:

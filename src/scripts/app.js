@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-36)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-35';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-35 (Build 267)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-36';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-36 (Build 268)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -12684,23 +12684,58 @@ function switchPublisherTab(tab) {
       } catch (e) {}
 
       // 3. Send real email to duwchao@gmail.com & nongduchaolop6c@gmail.com via Multi-Channel Dispatch
+      const senderName = currentUser.displayName || currentUser.username || 'Học viên VocaFlow';
+      const senderEmail = currentUser.email || 'student@vocaflow.app';
+      const formattedDate = new Date().toLocaleString('vi-VN');
+
       const emailPayload = {
+        name: senderName,
+        email: senderEmail,
+        message: bodyVal,
         _subject: `[VocaMail] [${categoryLabel}] ${subjectVal}`,
         _captcha: 'false',
         _template: 'table',
         _autoresponse: 'false',
+        _cc: 'nongduchaolop6c@gmail.com',
         'Mã Thư': mailId,
-        'Người Gửi': `${mailRecord.senderName} (${mailRecord.senderEmail})`,
-        'UID Học Viên': mailRecord.senderUid,
+        'Người Gửi': `${senderName} (${senderEmail})`,
+        'UID Học Viên': currentUser.uid,
         'Loại Tài Khoản': isVip ? '👑 VocaVIP' : 'Tài khoản thường',
         'Phân Loại': categoryLabel,
         'Tiêu Đề': subjectVal,
         'Nội Dung Chi Tiết': bodyVal,
         'Ảnh Đính Kèm': vocaMailAttachments.length > 0 ? `${vocaMailAttachments.length} ảnh` : 'Không có',
-        'Thời Gian Gửi': new Date().toLocaleString('vi-VN')
+        'Thời Gian Gửi': formattedDate
       };
 
-      // 3a. Hidden Form Dispatch (Bypasses CORS/Origin file:/// blocks)
+      // 3a. Native Windows Desktop C# Bridge (Bypasses all browser/file:/// restrictions)
+      if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === 'function') {
+        try {
+          window.chrome.webview.postMessage({
+            type: 'SEND_VOCAMAIL',
+            payload: emailPayload
+          });
+        } catch (e) {
+          console.warn('Native webview postMessage err:', e);
+        }
+      }
+
+      // 3b. Direct AJAX to both admin mailboxes (for Web PWA / Browser)
+      try {
+        fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(emailPayload)
+        }).catch(() => {});
+
+        fetch('https://formsubmit.co/ajax/nongduchaolop6c@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(emailPayload)
+        }).catch(() => {});
+      } catch (err) {}
+
+      // 3c. Hidden Form Dispatch Fallback (Standard HTML Form POST)
       const dispatchViaForm = (targetEmail) => {
         try {
           const iframeName = 'vocamail_iframe_' + Math.random().toString(36).substring(2, 9);
@@ -12719,7 +12754,7 @@ function switchPublisherTab(tab) {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = k;
-            input.value = v;
+            input.value = typeof v === 'object' ? JSON.stringify(v) : String(v);
             form.appendChild(input);
           }
 
@@ -12729,7 +12764,7 @@ function switchPublisherTab(tab) {
           setTimeout(() => {
             try { document.body.removeChild(form); } catch (e) {}
             try { document.body.removeChild(iframe); } catch (e) {}
-          }, 3000);
+          }, 4000);
         } catch (e) {
           console.warn('Form dispatch note:', e);
         }
@@ -12738,15 +12773,6 @@ function switchPublisherTab(tab) {
       // Dispatch to both admin addresses
       dispatchViaForm('duwchao@gmail.com');
       setTimeout(() => dispatchViaForm('nongduchaolop6c@gmail.com'), 600);
-
-      // 3b. Direct AJAX fallback
-      try {
-        fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ ...emailPayload, _cc: 'nongduchaolop6c@gmail.com' })
-        }).catch(() => {});
-      } catch (err) {}
 
       // 4. In-App Notification & Sound
       if (typeof addNotification === 'function') {

@@ -2878,7 +2878,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-35</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-36</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -7780,7 +7780,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-35 (Build 267)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-36 (Build 268)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8550,10 +8550,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-36)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-35';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-35 (Build 267)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-36';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-36 (Build 268)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -21235,23 +21235,58 @@ function switchPublisherTab(tab) {
       } catch (e) {}
 
       // 3. Send real email to duwchao@gmail.com & nongduchaolop6c@gmail.com via Multi-Channel Dispatch
+      const senderName = currentUser.displayName || currentUser.username || 'Học viên VocaFlow';
+      const senderEmail = currentUser.email || 'student@vocaflow.app';
+      const formattedDate = new Date().toLocaleString('vi-VN');
+
       const emailPayload = {
+        name: senderName,
+        email: senderEmail,
+        message: bodyVal,
         _subject: `[VocaMail] [${categoryLabel}] ${subjectVal}`,
         _captcha: 'false',
         _template: 'table',
         _autoresponse: 'false',
+        _cc: 'nongduchaolop6c@gmail.com',
         'Mã Thư': mailId,
-        'Người Gửi': `${mailRecord.senderName} (${mailRecord.senderEmail})`,
-        'UID Học Viên': mailRecord.senderUid,
+        'Người Gửi': `${senderName} (${senderEmail})`,
+        'UID Học Viên': currentUser.uid,
         'Loại Tài Khoản': isVip ? '👑 VocaVIP' : 'Tài khoản thường',
         'Phân Loại': categoryLabel,
         'Tiêu Đề': subjectVal,
         'Nội Dung Chi Tiết': bodyVal,
         'Ảnh Đính Kèm': vocaMailAttachments.length > 0 ? `${vocaMailAttachments.length} ảnh` : 'Không có',
-        'Thời Gian Gửi': new Date().toLocaleString('vi-VN')
+        'Thời Gian Gửi': formattedDate
       };
 
-      // 3a. Hidden Form Dispatch (Bypasses CORS/Origin file:/// blocks)
+      // 3a. Native Windows Desktop C# Bridge (Bypasses all browser/file:/// restrictions)
+      if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === 'function') {
+        try {
+          window.chrome.webview.postMessage({
+            type: 'SEND_VOCAMAIL',
+            payload: emailPayload
+          });
+        } catch (e) {
+          console.warn('Native webview postMessage err:', e);
+        }
+      }
+
+      // 3b. Direct AJAX to both admin mailboxes (for Web PWA / Browser)
+      try {
+        fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(emailPayload)
+        }).catch(() => {});
+
+        fetch('https://formsubmit.co/ajax/nongduchaolop6c@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(emailPayload)
+        }).catch(() => {});
+      } catch (err) {}
+
+      // 3c. Hidden Form Dispatch Fallback (Standard HTML Form POST)
       const dispatchViaForm = (targetEmail) => {
         try {
           const iframeName = 'vocamail_iframe_' + Math.random().toString(36).substring(2, 9);
@@ -21270,7 +21305,7 @@ function switchPublisherTab(tab) {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = k;
-            input.value = v;
+            input.value = typeof v === 'object' ? JSON.stringify(v) : String(v);
             form.appendChild(input);
           }
 
@@ -21280,7 +21315,7 @@ function switchPublisherTab(tab) {
           setTimeout(() => {
             try { document.body.removeChild(form); } catch (e) {}
             try { document.body.removeChild(iframe); } catch (e) {}
-          }, 3000);
+          }, 4000);
         } catch (e) {
           console.warn('Form dispatch note:', e);
         }
@@ -21289,15 +21324,6 @@ function switchPublisherTab(tab) {
       // Dispatch to both admin addresses
       dispatchViaForm('duwchao@gmail.com');
       setTimeout(() => dispatchViaForm('nongduchaolop6c@gmail.com'), 600);
-
-      // 3b. Direct AJAX fallback
-      try {
-        fetch('https://formsubmit.co/ajax/duwchao@gmail.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ ...emailPayload, _cc: 'nongduchaolop6c@gmail.com' })
-        }).catch(() => {});
-      } catch (err) {}
 
       // 4. In-App Notification & Sound
       if (typeof addNotification === 'function') {
