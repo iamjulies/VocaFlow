@@ -2,7 +2,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-36</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-37</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -21,6 +21,13 @@
       <button type="button" class="btn btn-outline btn-sm header-collapsible-flow" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Chuỗi Flow Học Tập - Bấm để xem lịch">
         <img src="icons/flow.png" alt="Flow" style="width: 16px; height: 16px; object-fit: contain;" onerror="this.outerHTML='🌊';">
         <span id="header-flow-count" class="btn-header-label">0</span>
+      </button>
+
+      <!-- MISTAKE NOTEBOOK BUTTON (v0.10.9-37) -->
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-mistakes" id="btn-header-mistakes" onclick="openMistakeNotebookModal()" title="Sổ Tay Lỗi Sai & Câu Cần Ôn Tập" style="display: flex; align-items: center; gap: 4px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer; position: relative;">
+        <span style="font-size: 13px;">📕</span>
+        <span class="hide-on-mobile btn-header-label">Từ Sai</span>
+        <span id="header-mistake-count" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
 
       <!-- NOTIFICATIONS BUTTON -->

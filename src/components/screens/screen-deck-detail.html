@@ -64,7 +64,9 @@
           </div>
           
           <div class="selection-study-actions">
-
+            <button class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700;" onclick="openMistakeNotebookModal(currentDeckId)" id="btn-study-mistakes-deck" title="Xem và ôn các từ bạn từng làm sai trong bộ này">
+              <span>📕</span> <span>Ôn Từ Sai</span><span id="deck-mistake-count-label" style="display: none; margin-left: 3px; font-size: 10px; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 8px;">0</span>
+            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>

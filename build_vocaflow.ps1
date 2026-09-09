@@ -59,6 +59,7 @@ Write-Host "  [+] Da tai $($screensOrder.Count) Man hinh doc lap" -ForegroundCol
 # 5. Modals
 $modalsOrder = @(
     "modal-word.html",
+    "modal-mistake-notebook.html",
     "modal-quiz-result.html",
     "modal-spelling-setup.html",
     "modal-speaking-setup.html",

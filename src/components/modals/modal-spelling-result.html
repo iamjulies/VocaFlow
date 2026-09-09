@@ -49,7 +49,7 @@
         </div>
 
         <!-- 5. Chi tiết gõ sai / gợi ý / bỏ qua (Full width tile) -->
-        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
           <div style="color: #f472b6; font-weight: 700; display: flex; align-items: center; gap: 4px;">
             <span>💡</span> VocaHint: <strong id="spelling-res-hints" style="color: #ec4899; font-family: monospace;">0 lượt</strong>
           </div>
@@ -59,6 +59,22 @@
           <div style="color: #f87171; font-weight: 700; display: flex; align-items: center; gap: 4px;">
             <span>❌</span> Gõ sai: <strong id="spelling-res-wrongs" style="color: #ef4444; font-family: monospace;">0 lần</strong>
           </div>
+        </div>
+
+        <!-- 6. WRONG WORDS RETRY BANNER (v0.10.9-37) -->
+        <div id="spelling-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px;">
+              <span>❌</span> <span>Từ chưa chuẩn xác: <strong id="spelling-res-wrong-count">0 từ</strong></span>
+            </div>
+            <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 10px; font-weight: 700;">Đã lưu vào Sổ Tay</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+            Luyện viết lại ngay những từ vựng này để rèn luyện trí nhớ cơ bắp!
+          </div>
+          <button class="btn btn-primary" onclick="retrySpellingWrongWordsOnly()" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; font-weight: 700; padding: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+            <svg class="icon icon-sm"><use href="#i-repeat"/></svg> <span>Luyện Viết Lại Riêng <span id="spelling-res-wrong-btn-label">0 từ sai</span></span>
+          </button>
         </div>
 
         <!-- Action Buttons -->

@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.9-37 (Build 269) - Sổ Tay Lỗi Sai & Làm Lại Câu Sai Tức Thì
+================================================================================
+1. [Sổ Tay Lỗi Sai (Mistake Notebook & Persistent Wrong Answers Tracker)]:
+   - Tự động tích lũy và lưu trữ tất cả các từ vựng/câu hỏi người dùng làm sai trong quá trình học tập (Trắc nghiệm Quiz, Luyện viết Spelling, Luyện nói Speaking) vào bộ nhớ cục bộ `localStorage` (`vocaflow_mistake_notebook_v1`).
+   - Cung cấp giao diện Sổ Tay Lỗi Sai (`modal-mistake-notebook`) chuyên nghiệp:
+     + Bộ lọc thông minh theo tên từ vựng/nghĩa tiếng Việt, theo từng bộ từ (VocaDeck) và theo từng chế độ làm sai (Quiz, Spelling, Speaking).
+     + Nút hành động nhanh 1-Click: "🎯 Ôn Trắc Nghiệm (X từ)", "✍️ Luyện Viết (X từ)", "🎙️ Luyện Nói (X từ)".
+     + Thống kê số lần làm sai của từng từ (`❌ Sai X lần`), thời gian làm sai và nhãn các chế độ đã sai.
+     + Hỗ trợ nghe phát âm chuẩn, luyện tập riêng từng từ và xóa từ khỏi sổ tay.
+     + Cơ chế Tự Động Thuộc Bài: Khi người dùng ôn tập lại và trả lời ĐÚNG, từ vựng sẽ tự động được gỡ bỏ khỏi Sổ Tay Lỗi Sai.
+   - Bổ sung nút truy cập "📕 Từ Sai" trên Header Navigation kèm live badge số đếm (`#header-mistake-count`) và nút "📕 Ôn Từ Sai" trong thanh công cụ của từng VocaDeck (`#btn-study-mistakes-deck`).
+
+2. [Làm Lại Ngay Các Câu Sai Sau Khi Kết Thúc Phiên Học (Session-Level Retry on Result Modals)]:
+   - Khi hoàn thành bài Trắc nghiệm Quiz, Luyện viết Spelling hoặc Luyện nói Speaking, nếu có câu/từ làm sai hoặc chưa đạt điểm sàn, bảng kết quả ăn mừng (Result Celebration Modal) sẽ lập tức hiển thị Banner Cảnh Báo Nổi Bật.
+   - Cung cấp nút làm lại 1-Click:
+     + Modal Quiz: "🔄 Làm Lại Riêng X Câu Sai" (`retryQuizWrongWordsOnly()`).
+     + Modal Spelling: "🔄 Luyện Viết Lại Riêng X Từ Sai" (`retrySpellingWrongWordsOnly()`).
+     + Modal Speaking: "🔄 Luyện Nói Lại Riêng X Từ Chưa Đạt" (`retrySpeakingWrongWordsOnly()`).
+   - Khởi chạy ngay phiên học tập trung chỉ với các câu làm sai trong phiên vừa kết thúc, giúp người dùng củng cố trí nhớ và phản xạ ngữ âm kịp thời.
+
+================================================================================
 Phiên bản: v0.10.9-36 (Build 268) - Native Desktop WebMessage & Standard FormSubmit VocaMail Engine
 ================================================================================
 1. [Khắc Phục Toàn Diện Hộp Thư VocaMail - Gửi Email Trực Tiếp & Tức Thì Về Gmail]:

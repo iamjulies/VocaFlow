@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-36)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-37)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-36';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-36 (Build 268)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-37';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-37 (Build 269)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -10457,6 +10457,7 @@ function switchPublisherTab(tab) {
     function refreshActiveScreenData() {
       renderDecks();
       renderDailyReviewBanner();
+      if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
       if (currentDeckId) {
         updateDeckDetailHeader();
         renderWordList();
@@ -17207,6 +17208,7 @@ function switchPublisherTab(tab) {
     function startSpellingMode(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
       studySourceContext = customWordList ? 'review-queue' : 'deck';
+      spellingSessionWrongWords = [];
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
@@ -17600,6 +17602,7 @@ function switchPublisherTab(tab) {
           spellingCorrectCount++;
           if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
           spellingWrongAttemptsForCurrentWord = 0;
+          removeWordFromMistakeList(questionWord.id || questionWord.term);
 
           const totalBoxes = expected.length;
           const walletPts = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
@@ -17645,6 +17648,10 @@ function switchPublisherTab(tab) {
           if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('fail');
           spellingWrongCount++;
           spellingWrongAttemptsForCurrentWord++;
+          addWordToMistakeList(questionWord, 'spelling');
+          if (!spellingSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+            spellingSessionWrongWords.push(questionWord);
+          }
 
           const totalBoxes = expected.length;
           const expectedWalletGain = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
@@ -17740,6 +17747,7 @@ function switchPublisherTab(tab) {
         spellingIsAnswered = true;
         spellingCorrectCount++;
         if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
+        removeWordFromMistakeList(questionWord.id || questionWord.term);
 
         // Balanced Point Calculation (v0.0.10.1d):
         // 1. Wallet Points: Full effort reward = Total boxes * multiplier
@@ -17795,6 +17803,10 @@ function switchPublisherTab(tab) {
         if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('fail');
         spellingWrongCount++;
         spellingWrongAttemptsForCurrentWord++;
+        addWordToMistakeList(questionWord, 'spelling');
+        if (!spellingSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+          spellingSessionWrongWords.push(questionWord);
+        }
 
         // Balanced Penalty calculation:
         const walletPenalty = Math.ceil(wrongCount * mult);
@@ -17840,6 +17852,11 @@ function switchPublisherTab(tab) {
       playVocaSfx('skip');
       const questionWord = spellingList[spellingIndex];
       if (!questionWord) return;
+
+      addWordToMistakeList(questionWord, 'spelling');
+      if (!spellingSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+        spellingSessionWrongWords.push(questionWord);
+      }
 
       const curSkips = getUserSkips();
       const curPts = getUserPoints();
@@ -18134,6 +18151,20 @@ function switchPublisherTab(tab) {
       if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
       if (skipsEl) skipsEl.textContent = spellingSkipCount + ' từ';
       if (wrongsEl) wrongsEl.textContent = spellingWrongCount + ' lần';
+
+      // WRONG WORDS RETRY BANNER (v0.10.9-37)
+      const wrongBannerEl = document.getElementById('spelling-res-wrong-banner');
+      const wrongCountEl = document.getElementById('spelling-res-wrong-count');
+      const wrongBtnLabelEl = document.getElementById('spelling-res-wrong-btn-label');
+      if (wrongBannerEl) {
+        if (spellingSessionWrongWords && spellingSessionWrongWords.length > 0) {
+          wrongBannerEl.style.display = 'block';
+          if (wrongCountEl) wrongCountEl.textContent = spellingSessionWrongWords.length + ' từ';
+          if (wrongBtnLabelEl) wrongBtnLabelEl.textContent = spellingSessionWrongWords.length + ' từ sai';
+        } else {
+          wrongBannerEl.style.display = 'none';
+        }
+      }
 
       if (accuracyPct >= 100) {
         if (badgeIconEl) badgeIconEl.textContent = '🏆';
@@ -19422,10 +19453,431 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
+    // =========================================================================
+    // MISTAKE NOTEBOOK ENGINE & PERSISTENT WRONG ANSWERS TRACKER (v0.10.9-37)
+    // =========================================================================
+    const STORAGE_KEY_MISTAKE_NOTEBOOK = 'vocaflow_mistake_notebook_v1';
+    let quizSessionWrongWords = [];
+    let spellingSessionWrongWords = [];
+    let speakingSessionWrongWords = [];
+    let currentMistakeSearchQuery = '';
+    let currentMistakeDeckFilter = 'all';
+    let currentMistakeModeFilter = 'all';
+
+    function getMistakeWordsList() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_MISTAKE_NOTEBOOK);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.warn('Error reading mistake notebook:', e);
+        return [];
+      }
+    }
+
+    function saveMistakeWordsList(list) {
+      try {
+        localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(Array.isArray(list) ? list : []));
+        updateMistakeBadgeUI();
+      } catch (e) {
+        console.warn('Error saving mistake notebook:', e);
+      }
+    }
+
+    function addWordToMistakeList(word, mode = 'quiz') {
+      if (!word || (!word.id && !word.term)) return;
+      try {
+        const list = getMistakeWordsList();
+        const wordId = word.id || ('w_' + encodeURIComponent(word.term).replace(/%/g, '_'));
+        const termClean = (word.term || '').trim();
+        const existingIdx = list.findIndex(item => (item.wordId && item.wordId === wordId) || (item.term && item.term.toLowerCase() === termClean.toLowerCase()));
+
+        const now = Date.now();
+        if (existingIdx >= 0) {
+          const item = list[existingIdx];
+          item.mistakeCount = (item.mistakeCount || 1) + 1;
+          item.lastMistakeMode = mode;
+          item.lastMistakeAt = now;
+          if (!Array.isArray(item.modesFailed)) item.modesFailed = [item.lastMistakeMode || mode];
+          if (!item.modesFailed.includes(mode)) item.modesFailed.push(mode);
+          // Move to top of the list
+          list.splice(existingIdx, 1);
+          list.unshift(item);
+        } else {
+          const newItem = {
+            wordId: wordId,
+            term: termClean,
+            phonetic: word.phonetic || '',
+            definitionVi: word.definitionVi || word.definition || '',
+            definition: word.definition || word.definitionVi || '',
+            partOfSpeech: word.partOfSpeech || 'noun',
+            cefrLevel: word.cefrLevel || word.level || 'B1',
+            exampleSentence: word.exampleSentence || word.example || '',
+            deckId: word.deckId || currentDeckId || '',
+            mistakeCount: 1,
+            lastMistakeMode: mode,
+            modesFailed: [mode],
+            lastMistakeAt: now
+          };
+          list.unshift(newItem);
+        }
+        saveMistakeWordsList(list);
+      } catch (e) {
+        console.warn('Error adding word to mistake list:', e);
+      }
+    }
+
+    function removeWordFromMistakeList(wordIdOrTerm) {
+      if (!wordIdOrTerm) return;
+      try {
+        const list = getMistakeWordsList();
+        const targetStr = String(wordIdOrTerm).trim().toLowerCase();
+        const initialLen = list.length;
+        const filtered = list.filter(item => {
+          const idMatch = item.wordId && String(item.wordId).toLowerCase() === targetStr;
+          const termMatch = item.term && item.term.toLowerCase() === targetStr;
+          return !idMatch && !termMatch;
+        });
+        if (filtered.length !== initialLen) {
+          saveMistakeWordsList(filtered);
+        }
+      } catch (e) {
+        console.warn('Error removing word from mistake list:', e);
+      }
+    }
+
+    function clearAllMistakeWords() {
+      const list = getMistakeWordsList();
+      if (!list || list.length === 0) {
+        showToast('ℹ️ Sổ Tay Lỗi Sai hiện đang trống!');
+        return;
+      }
+      if (confirm('🗑️ Bạn có chắc chắn muốn xóa toàn bộ ' + list.length + ' từ trong Sổ Tay Lỗi Sai không?')) {
+        saveMistakeWordsList([]);
+        renderMistakeNotebookList();
+        showToast('🗑️ Đã xóa sạch toàn bộ Sổ Tay Lỗi Sai!');
+      }
+    }
+
+    function updateMistakeBadgeUI() {
+      try {
+        const list = getMistakeWordsList();
+        const totalCount = list.length;
+
+        // 1. Header Badge
+        const headerBadge = document.getElementById('header-mistake-count');
+        if (headerBadge) {
+          if (totalCount > 0) {
+            headerBadge.style.display = 'flex';
+            headerBadge.textContent = totalCount > 99 ? '99+' : totalCount;
+          } else {
+            headerBadge.style.display = 'none';
+          }
+        }
+
+        // 2. Deck Detail Badge
+        const deckMistakeLabel = document.getElementById('deck-mistake-count-label');
+        if (deckMistakeLabel) {
+          if (currentDeckId) {
+            const deckMistakes = list.filter(item => item.deckId === currentDeckId);
+            if (deckMistakes.length > 0) {
+              deckMistakeLabel.style.display = 'inline-block';
+              deckMistakeLabel.textContent = deckMistakes.length;
+            } else {
+              deckMistakeLabel.style.display = 'none';
+            }
+          } else {
+            deckMistakeLabel.style.display = 'none';
+          }
+        }
+
+        // 3. Modal Header Count Badge
+        const modalCountBadge = document.getElementById('mistake-notebook-count-badge');
+        if (modalCountBadge) {
+          modalCountBadge.textContent = totalCount + ' từ';
+        }
+      } catch (e) {
+        console.warn('Error updating mistake badge UI:', e);
+      }
+    }
+
+    function openMistakeNotebookModal(deckIdFilter = null) {
+      // Populate Deck filter dropdown
+      const deckSelect = document.getElementById('mistake-notebook-deck-filter');
+      if (deckSelect) {
+        let optHtml = '<option value="all">📁 Tất cả VocaDeck</option>';
+        if (Array.isArray(decks)) {
+          decks.forEach(d => {
+            optHtml += '<option value="' + escapeHtml(d.id) + '">' + escapeHtml(d.title) + '</option>';
+          });
+        }
+        deckSelect.innerHTML = optHtml;
+        if (deckIdFilter && Array.isArray(decks) && decks.some(d => d.id === deckIdFilter)) {
+          deckSelect.value = deckIdFilter;
+          currentMistakeDeckFilter = deckIdFilter;
+        } else {
+          deckSelect.value = 'all';
+          currentMistakeDeckFilter = 'all';
+        }
+      }
+
+      const searchInp = document.getElementById('mistake-notebook-search');
+      if (searchInp) {
+        searchInp.value = '';
+        currentMistakeSearchQuery = '';
+      }
+
+      const modeSelect = document.getElementById('mistake-notebook-mode-filter');
+      if (modeSelect) {
+        modeSelect.value = 'all';
+        currentMistakeModeFilter = 'all';
+      }
+
+      renderMistakeNotebookList();
+      openModal('modal-mistake-notebook');
+    }
+
+    function onMistakeNotebookSearch(query) {
+      currentMistakeSearchQuery = (query || '').trim().toLowerCase();
+      renderMistakeNotebookList();
+    }
+
+    function onMistakeNotebookDeckFilterChange(deckId) {
+      currentMistakeDeckFilter = deckId || 'all';
+      renderMistakeNotebookList();
+    }
+
+    function onMistakeNotebookModeFilterChange(mode) {
+      currentMistakeModeFilter = mode || 'all';
+      renderMistakeNotebookList();
+    }
+
+    function getFilteredMistakeList() {
+      const fullList = getMistakeWordsList();
+      return fullList.filter(item => {
+        // 1. Search Query
+        if (currentMistakeSearchQuery) {
+          const t = (item.term || '').toLowerCase();
+          const defVi = (item.definitionVi || '').toLowerCase();
+          const def = (item.definition || '').toLowerCase();
+          if (!t.includes(currentMistakeSearchQuery) && !defVi.includes(currentMistakeSearchQuery) && !def.includes(currentMistakeSearchQuery)) {
+            return false;
+          }
+        }
+        // 2. Deck Filter
+        if (currentMistakeDeckFilter && currentMistakeDeckFilter !== 'all') {
+          if (item.deckId !== currentMistakeDeckFilter) return false;
+        }
+        // 3. Mode Filter
+        if (currentMistakeModeFilter && currentMistakeModeFilter !== 'all') {
+          const inModes = Array.isArray(item.modesFailed) ? item.modesFailed.includes(currentMistakeModeFilter) : false;
+          const lastMatch = item.lastMistakeMode === currentMistakeModeFilter;
+          if (!inModes && !lastMatch) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderMistakeNotebookList() {
+      const container = document.getElementById('mistake-notebook-list-container');
+      if (!container) return;
+
+      const filtered = getFilteredMistakeList();
+      const countBadge = document.getElementById('mistake-notebook-count-badge');
+      if (countBadge) countBadge.textContent = filtered.length + ' từ';
+
+      // Update Action Button labels & states
+      const btnQuiz = document.getElementById('btn-mistake-quiz');
+      const labelQuiz = document.getElementById('label-mistake-quiz');
+      const btnSpelling = document.getElementById('btn-mistake-spelling');
+      const labelSpelling = document.getElementById('label-mistake-spelling');
+      const btnSpeaking = document.getElementById('btn-mistake-speaking');
+      const labelSpeaking = document.getElementById('label-mistake-speaking');
+
+      if (labelQuiz) labelQuiz.textContent = '🎯 Ôn Trắc Nghiệm (' + filtered.length + ')';
+      if (labelSpelling) labelSpelling.textContent = '✍️ Luyện Viết (' + filtered.length + ')';
+      if (labelSpeaking) labelSpeaking.textContent = '🎙️ Luyện Nói (' + filtered.length + ')';
+
+      if (btnQuiz) btnQuiz.disabled = (filtered.length < 2);
+      if (btnSpelling) btnSpelling.disabled = (filtered.length < 1);
+      if (btnSpeaking) btnSpeaking.disabled = (filtered.length < 1);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 48px 16px; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--border);">
+            <div style="font-size: 46px; margin-bottom: 8px;">🎉</div>
+            <strong style="font-size: 15px; color: var(--text); display: block; margin-bottom: 4px;">Sổ Tay Lỗi Sai Đang Trống!</strong>
+            <p style="font-size: 12px; margin: 0; color: var(--text-muted);">
+              ${currentMistakeSearchQuery || currentMistakeDeckFilter !== 'all' || currentMistakeModeFilter !== 'all' 
+                ? 'Không tìm thấy từ vựng nào khớp với bộ lọc hiện tại.' 
+                : 'Bạn chưa làm sai từ vựng nào hoặc đã thuộc hết toàn bộ các câu sai! Hãy tiếp tục phát huy nhé.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(item => {
+        const deckObj = Array.isArray(decks) ? decks.find(d => d.id === item.deckId) : null;
+        const deckName = deckObj ? deckObj.title : 'VocaDeck';
+        const mistakeCount = item.mistakeCount || 1;
+        const cefrLevel = (item.cefrLevel || 'B1').toUpperCase();
+        const pos = (item.partOfSpeech || 'noun').toLowerCase();
+        const phonetic = item.phonetic ? '[' + item.phonetic + ']' : '';
+        const def = item.definitionVi || item.definition || '';
+
+        const modeBadges = (Array.isArray(item.modesFailed) && item.modesFailed.length > 0) ? item.modesFailed : [item.lastMistakeMode || 'quiz'];
+        let modesHtml = '';
+        modeBadges.forEach(m => {
+          if (m === 'quiz') modesHtml += '<span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10px;">🎯 Quiz</span> ';
+          if (m === 'spelling') modesHtml += '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px;">✍️ Viết</span> ';
+          if (m === 'speaking') modesHtml += '<span class="badge" style="background: rgba(236,72,153,0.15); color: #f472b6; font-size: 10px;">🎙️ Nói</span> ';
+        });
+
+        const timeStr = item.lastMistakeAt ? formatDateOnly(item.lastMistakeAt) : '';
+
+        html += `
+          <div class="mistake-item-card" style="background: var(--surface-elevated, #1e293b); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: border-color 0.2s;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                <strong style="font-size: 15px; color: var(--text);">${escapeHtml(item.term)}</strong>
+                ${phonetic ? `<span style="font-size: 12px; color: #a5b4fc; font-family: monospace;">${escapeHtml(phonetic)}</span>` : ''}
+                <span class="badge badge-level-${cefrLevel.toLowerCase()}" style="font-size: 10px; padding: 1px 6px;">${cefrLevel}</span>
+                <span style="font-size: 11px; color: var(--text-muted); font-style: italic;">(${pos})</span>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 10.5px; font-weight: 700; padding: 1px 6px;">❌ Sai ${mistakeCount} lần</span>
+              </div>
+              
+              <div style="font-size: 13px; color: var(--text); margin-bottom: 4px; line-height: 1.4;">
+                ${escapeHtml(def)}
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap;">
+                <span style="display: inline-flex; align-items: center; gap: 3px;">📁 <strong style="color: var(--text);">${escapeHtml(deckName)}</strong></span>
+                <span>•</span>
+                <span style="display: inline-flex; align-items: center; gap: 4px;">Chế độ: ${modesHtml}</span>
+                ${timeStr ? `<span>•</span> <span>🕒 ${timeStr}</span>` : ''}
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+              <button class="btn btn-outline btn-icon btn-sm" onclick="speakText('${escapeHtml(item.term)}')" title="Nghe phát âm chuẩn" style="border-radius: 8px;">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="startSingleMistakeReview('${escapeHtml(item.wordId || item.term)}')" title="Luyện tập riêng từ này ngay" style="padding: 4px 8px; font-size: 11px; color: #818cf8; border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.08);">
+                🎯 Ôn từ này
+              </button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="removeWordFromMistakeListAndRender('${escapeHtml(item.wordId || item.term)}')" title="Xóa khỏi sổ tay lỗi sai" style="color: #f87171; border-color: rgba(239,68,68,0.3); border-radius: 8px;">
+                <svg class="icon icon-sm" style="fill: var(--danger);"><use href="#i-delete"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function removeWordFromMistakeListAndRender(wordIdOrTerm) {
+      removeWordFromMistakeList(wordIdOrTerm);
+      renderMistakeNotebookList();
+      showToast('🗑️ Đã xóa từ khỏi Sổ Tay Lỗi Sai!');
+    }
+
+    function resolveMistakeWordsToAppWords(mistakeItems) {
+      if (!Array.isArray(mistakeItems)) return [];
+      return mistakeItems.map(item => {
+        const foundInWords = Array.isArray(words) ? words.find(w => (w.id && item.wordId && w.id === item.wordId) || (w.term && item.term && w.term.toLowerCase() === item.term.toLowerCase())) : null;
+        if (foundInWords) return foundInWords;
+        // Synthesize compatible word object
+        return {
+          id: item.wordId || ('w_synth_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)),
+          term: item.term,
+          phonetic: item.phonetic || '',
+          definitionVi: item.definitionVi || item.definition || '',
+          definition: item.definition || item.definitionVi || '',
+          partOfSpeech: item.partOfSpeech || 'noun',
+          cefrLevel: item.cefrLevel || 'B1',
+          level: item.cefrLevel || 'B1',
+          exampleSentence: item.exampleSentence || '',
+          example: item.exampleSentence || '',
+          deckId: item.deckId || currentDeckId || '',
+          masteryScore: 30,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      });
+    }
+
+    function startMistakeReviewSession(mode = 'quiz') {
+      const filtered = getFilteredMistakeList();
+      if (filtered.length === 0) {
+        showToast('ℹ️ Không có từ nào trong danh sách hiện tại để ôn tập!');
+        return;
+      }
+
+      if (mode === 'quiz' && filtered.length < 2) {
+        showToast('⚠️ Bài trắc nghiệm Quiz cần tối thiểu 2 từ vựng!');
+        return;
+      }
+
+      const reviewWords = resolveMistakeWordsToAppWords(filtered);
+      closeModal('modal-mistake-notebook');
+
+      if (mode === 'quiz') {
+        startQuizMode(false, reviewWords);
+      } else if (mode === 'spelling') {
+        startSpellingMode(false, reviewWords);
+      } else if (mode === 'speaking') {
+        startSpeakingMode(false, reviewWords);
+      }
+    }
+
+    function startSingleMistakeReview(wordIdOrTerm) {
+      const list = getMistakeWordsList();
+      const item = list.find(w => (w.wordId && w.wordId === wordIdOrTerm) || (w.term && w.term.toLowerCase() === String(wordIdOrTerm).toLowerCase()));
+      if (!item) return;
+
+      const resolved = resolveMistakeWordsToAppWords([item]);
+      closeModal('modal-mistake-notebook');
+      startSpellingMode(false, resolved);
+    }
+
+    function retryQuizWrongWordsOnly() {
+      if (!quizSessionWrongWords || quizSessionWrongWords.length === 0) {
+        showToast('🎉 Không có câu sai nào trong bài!');
+        return;
+      }
+      closeModal('modal-quiz-result');
+      const wordsToRetry = [...quizSessionWrongWords];
+      startQuizMode(false, wordsToRetry);
+    }
+
+    function retrySpellingWrongWordsOnly() {
+      if (!spellingSessionWrongWords || spellingSessionWrongWords.length === 0) {
+        showToast('🎉 Không có từ sai nào trong bài!');
+        return;
+      }
+      closeModal('modal-spelling-result');
+      const wordsToRetry = [...spellingSessionWrongWords];
+      startSpellingMode(false, wordsToRetry);
+    }
+
+    function retrySpeakingWrongWordsOnly() {
+      if (!speakingSessionWrongWords || speakingSessionWrongWords.length === 0) {
+        showToast('🎉 Tất cả các từ đã đạt điểm sàn phát âm!');
+        return;
+      }
+      closeSpeakingResultModal();
+      const wordsToRetry = [...speakingSessionWrongWords];
+      startSpeakingMode(false, wordsToRetry);
+    }
 
     function startQuizMode(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
       studySourceContext = customWordList ? 'review-queue' : 'deck';
+      quizSessionWrongWords = [];
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         deckWords = words.filter(w => selectedWordIds.has(w.id));
@@ -19932,6 +20384,7 @@ Yêu cầu nghiêm ngặt:
 
           if (questionWord) {
             try {
+              removeWordFromMistakeList(questionWord.id || questionWord.term);
               const { masteryGain } = getQuizScoringDeltas(currentQuizDifficulty, true);
               const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
               saveDatabase(true);
@@ -19947,6 +20400,10 @@ Yêu cầu nghiêm ngặt:
 
           if (questionWord) {
             try {
+              addWordToMistakeList(questionWord, 'quiz');
+              if (!quizSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+                quizSessionWrongWords.push(questionWord);
+              }
               const { masteryPenalty } = getQuizScoringDeltas(currentQuizDifficulty, false);
               const { newScore } = updateWordMasteryScore(questionWord, -masteryPenalty);
               saveDatabase(true);
@@ -20023,6 +20480,20 @@ Yêu cầu nghiêm ngặt:
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
+
+      // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
+      const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');
+      const wrongCountEl = document.getElementById('quiz-res-wrong-count');
+      const wrongBtnLabelEl = document.getElementById('quiz-res-wrong-btn-label');
+      if (wrongBannerEl) {
+        if (quizSessionWrongWords && quizSessionWrongWords.length > 0) {
+          wrongBannerEl.style.display = 'block';
+          if (wrongCountEl) wrongCountEl.textContent = quizSessionWrongWords.length + ' câu';
+          if (wrongBtnLabelEl) wrongBtnLabelEl.textContent = quizSessionWrongWords.length + ' câu sai';
+        } else {
+          wrongBannerEl.style.display = 'none';
+        }
+      }
 
       if (accuracyPct >= 100) {
         if (badgeIconEl) badgeIconEl.textContent = '🏆';
@@ -21106,6 +21577,7 @@ Yêu cầu nghiêm ngặt:
         currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
       }
       studySourceContext = customWordList ? 'review-queue' : 'deck';
+      speakingSessionWrongWords = [];
       let targetWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
         targetWords = words.filter(w => selectedWordIds.has(w.id));
@@ -21457,6 +21929,14 @@ Yêu cầu nghiêm ngặt:
     function skipSpeakingWord() {
       if (isSpeakingRecording) stopSpeakingRecord();
 
+      const curWord = (speakingWordsList && currentSpeakingIndex < speakingWordsList.length) ? speakingWordsList[currentSpeakingIndex] : null;
+      if (curWord) {
+        addWordToMistakeList(curWord, 'speaking');
+        if (!speakingSessionWrongWords.some(w => (w.id && w.id === curWord.id) || (w.term && w.term.toLowerCase() === curWord.term.toLowerCase()))) {
+          speakingSessionWrongWords.push(curWord);
+        }
+      }
+
       const curSkips = getUserSkips();
       const curPts = getUserPoints();
       const skipCost = 100;
@@ -21543,6 +22023,20 @@ Yêu cầu nghiêm ngặt:
         const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
         bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
         bonusBoxEl.style.display = 'block';
+      }
+
+      // WRONG WORDS RETRY BANNER (v0.10.9-37)
+      const wrongBannerEl = document.getElementById('spk-res-wrong-banner');
+      const wrongCountEl = document.getElementById('spk-res-wrong-count');
+      const wrongBtnLabelEl = document.getElementById('spk-res-wrong-btn-label');
+      if (wrongBannerEl) {
+        if (speakingSessionWrongWords && speakingSessionWrongWords.length > 0) {
+          wrongBannerEl.style.display = 'block';
+          if (wrongCountEl) wrongCountEl.textContent = speakingSessionWrongWords.length + ' từ';
+          if (wrongBtnLabelEl) wrongBtnLabelEl.textContent = speakingSessionWrongWords.length + ' từ';
+        } else {
+          wrongBannerEl.style.display = 'none';
+        }
       }
 
       openModal('modal-speaking-result');
@@ -22390,6 +22884,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
           if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
             speakingGradedWordIds.add(currentWord.id);
+            removeWordFromMistakeList(currentWord.id || currentWord.term);
             const syllCount = speakingSyllableCache[currentWord.id] || Math.max(1, Math.ceil((currentWord.term || '').length / 3));
             const baseXu = Math.max(3, syllCount * 3);
             const admissionScore = speakingTakes.reduce((a, b) => a + b, 0) / speakingTakes.length;
@@ -22427,6 +22922,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             if (currentWord) {
               speakingGradedWordIds.add(currentWord.id);
               updateWordMasteryScore(currentWord, -5);
+              addWordToMistakeList(currentWord, 'speaking');
+              if (!speakingSessionWrongWords.some(w => (w.id && w.id === currentWord.id) || (w.term && w.term.toLowerCase() === currentWord.term.toLowerCase()))) {
+                speakingSessionWrongWords.push(currentWord);
+              }
             }
 
             failBanner.style.display = 'block';
@@ -38083,6 +38582,7 @@ Quy tắc phản hồi quan trọng:
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
+    if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
     const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
     if (guideTabsNav) {
       guideTabsNav.addEventListener('wheel', (e) => {
