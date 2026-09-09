@@ -2878,7 +2878,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-33</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-34</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -6651,9 +6651,14 @@
           </div>
 
           <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <a href="https://zalo.me/0876048326" target="_blank" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56,189,248,0.4); text-decoration: none; font-size: 11px; padding: 6px 10px;">
-              💬 Hỗ trợ Zalo: 0876048326
-            </a>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <a href="https://zalo.me/0876048326" target="_blank" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56,189,248,0.4); text-decoration: none; font-size: 11px; padding: 6px 10px;">
+                💬 Hỗ trợ Zalo: 0876048326
+              </a>
+              <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-vip-pricing'); openVocaMailModal('compose');" style="color: #818cf8; border-color: rgba(129,140,248,0.4); font-size: 11px; padding: 6px 10px; background: rgba(129,140,248,0.08); font-weight: 700;">
+                ✉️ Nhắn Tin Admin
+              </button>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="confirmVipPaymentSubmitted()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 11.5px; padding: 6px 14px;">
               ✓ Tôi Đã Chuyển Khoản
             </button>
@@ -7775,7 +7780,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-33 (Build 265)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-34 (Build 266)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -7784,6 +7789,146 @@
       <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
         <button class="btn btn-primary" onclick="closeModal('modal-settings')">Đóng</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VOCAMAIL - TRUNG TÂM NHẮN TIN & HỎI ĐÁP ADMIN (v0.10.9-33) -->
+  <div class="modal-overlay" id="modal-vocamail" style="z-index: 10009;">
+    <div class="modal" style="max-width: 640px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(129, 140, 248, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.75);">
+      <div class="modal-title" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6));">✉️</span>
+          <div>
+            <h2 style="font-size: 19px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #818cf8, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VocaMail - Nhắn Tin & Hỏi Đáp Admin</h2>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0;">Gửi thư trực tiếp tới hòm thư Admin (duwchao@gmail.com & nongduchaolop6c@gmail.com)</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-vocamail')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- GUEST LOCK VIEW FOR VOCAMAIL -->
+      <div id="vocamail-guest-lock-view" style="display: none; text-align: center; padding: 36px 16px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">✉️🔒</div>
+        <h3 style="color: var(--text); font-size: 17px; margin-bottom: 8px; font-weight: 800;">Tính Năng Dành Cho Thành Viên</h3>
+        <p style="color: var(--text-muted); font-size: 12.5px; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.6;">
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để <strong>Gửi Thư VocaMail, Lưu Lịch Sử Hỏi Đáp & Nhận Phản Hồi Từ Admin</strong>!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="closeModal('modal-vocamail'); openAuthModal('login');" style="font-weight: 700; padding: 9px 22px; font-size: 13px;">
+            🔑 Đăng Nhập / Đăng Ký Ngay
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('modal-vocamail');" style="padding: 9px 18px; font-size: 13px;">
+            Đóng
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN AUTHENTICATED VIEW -->
+      <div id="vocamail-main-authenticated-view" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+        
+        <!-- Segmented Tab Navigation -->
+        <div style="display: flex; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 14px;">
+          <button type="button" class="btn btn-sm vocamail-tab-btn active" id="vocamail-tab-btn-compose" onclick="switchVocaMailTab('compose')" style="flex: 1; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>✍️</span> <span>Soạn VocaMail Mới</span>
+          </button>
+          <button type="button" class="btn btn-sm vocamail-tab-btn" id="vocamail-tab-btn-history" onclick="switchVocaMailTab('history')" style="flex: 1; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>📬</span> <span>Thư Đã Gửi</span> <span id="vocamail-sent-count-badge" class="badge" style="font-size: 10px; background: rgba(99,102,241,0.25); color: #818cf8; padding: 1px 6px;">0</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: COMPOSE MAIL -->
+        <div id="vocamail-view-compose" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding-right: 4px; gap: 12px;">
+          
+          <!-- Sender Info Bar -->
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 8px 12px; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <div>
+              <span style="color: var(--text-muted);">Người gửi:</span>
+              <strong id="vocamail-sender-name" style="color: #818cf8; margin-left: 4px;">--</strong>
+              <span id="vocamail-sender-email" style="color: var(--text-muted); font-size: 11px; margin-left: 4px;">(--)</span>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Gửi đến:</span>
+              <strong style="color: #38bdf8;">Admin VocaFlow</strong>
+            </div>
+          </div>
+
+          <!-- Category Selector -->
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: block;">1. Phân loại yêu cầu:</label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px;" id="vocamail-category-grid">
+              <button type="button" class="btn btn-outline btn-sm vocamail-cat-btn active" data-cat="qa" onclick="selectVocaMailCategory('qa', this)" style="border-radius: 8px; font-size: 11.5px; justify-content: flex-start; padding: 6px 10px;">
+                ❓ Hỏi đáp học tập
+              </button>
+              <button type="button" class="btn btn-outline btn-sm vocamail-cat-btn" data-cat="vip_payment" onclick="selectVocaMailCategory('vip_payment', this)" style="border-radius: 8px; font-size: 11.5px; justify-content: flex-start; padding: 6px 10px;">
+                👑 VocaVIP / Nạp tiền
+              </button>
+              <button type="button" class="btn btn-outline btn-sm vocamail-cat-btn" data-cat="feedback" onclick="selectVocaMailCategory('feedback', this)" style="border-radius: 8px; font-size: 11.5px; justify-content: flex-start; padding: 6px 10px;">
+                💡 Góp ý tính năng
+              </button>
+              <button type="button" class="btn btn-outline btn-sm vocamail-cat-btn" data-cat="bug" onclick="selectVocaMailCategory('bug', this)" style="border-radius: 8px; font-size: 11.5px; justify-content: flex-start; padding: 6px 10px;">
+                🐛 Báo cáo sự cố
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject Input -->
+          <div>
+            <label for="vocamail-input-subject" style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: block;">2. Tiêu đề thư:</label>
+            <input type="text" id="vocamail-input-subject" class="form-input" placeholder="Nhập tiêu đề ngắn gọn (ví dụ: Cần hỗ trợ kích hoạt VocaVIP năm)..." style="width: 100%; box-sizing: border-box; font-size: 13px; padding: 9px 12px; border-radius: 8px;">
+          </div>
+
+          <!-- Content Textarea -->
+          <div>
+            <label for="vocamail-input-body" style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: block;">3. Nội dung thư chi tiết:</label>
+            <textarea id="vocamail-input-body" class="form-input" rows="5" placeholder="Mô tả chi tiết câu hỏi hoặc vấn đề của bạn..." style="width: 100%; box-sizing: border-box; font-size: 12.5px; line-height: 1.5; padding: 10px 12px; border-radius: 8px; resize: vertical;"></textarea>
+          </div>
+
+          <!-- Attachments (Images) -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label style="font-size: 12px; font-weight: 700; color: var(--text); margin: 0;">4. Ảnh đính kèm (Biên lai / Ảnh màn hình - Tùy chọn):</label>
+              <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('vocamail-file-input').click()" style="font-size: 11px; padding: 3px 8px; color: #818cf8; border-color: rgba(129, 140, 248, 0.4);">
+                📎 Chọn ảnh (Tối đa 3)
+              </button>
+              <input type="file" id="vocamail-file-input" accept="image/*" multiple style="display: none;" onchange="handleVocaMailImageSelect(event)">
+            </div>
+            <div id="vocamail-attachments-preview" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
+
+          <!-- Send Notice -->
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: var(--text-muted); line-height: 1.5;">
+            💡 Thư sẽ được gửi tức thì đến hộp thư điện tử Gmail của Admin (<strong>duwchao@gmail.com</strong> & <strong>nongduchaolop6c@gmail.com</strong>) và lưu vào mục Thư Đã Gửi để bạn tiện theo dõi.
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border);">
+            <button type="button" class="btn btn-outline btn-sm" onclick="openDirectGmailFallback()" title="Mở ứng dụng Gmail trực tiếp" style="font-size: 11.5px; color: #38bdf8; border-color: rgba(56,189,248,0.4);">
+              🌐 Gửi qua App Gmail
+            </button>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-vocamail')">Hủy</button>
+              <button type="button" id="btn-vocamail-send" class="btn btn-primary" onclick="submitVocaMail()" style="background: linear-gradient(135deg, #6366f1, #a855f7); border: none; font-weight: 800; font-size: 13px; padding: 8px 20px; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
+                🚀 Gửi VocaMail Ngay
+              </button>
+            </div>
+          </div>
+
+        </div> <!-- end vocamail-view-compose -->
+
+        <!-- TAB 2: SENT MAIL HISTORY -->
+        <div id="vocamail-view-history" style="display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-right: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text);">Danh Sách Thư Bạn Đã Gửi Cho Admin:</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="clearVocaMailHistory()" style="font-size: 10.5px; padding: 2px 7px; color: #f87171; border-color: rgba(248,113,113,0.3);">
+              🗑️ Xóa lịch sử
+            </button>
+          </div>
+          <div id="vocamail-history-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+      </div> <!-- end vocamail-main-authenticated-view -->
     </div>
   </div>
 
@@ -8398,8 +8543,8 @@
     // =========================================================================
     // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-33';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-33 (Build 265)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-34';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-34 (Build 266)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)

@@ -91,6 +91,7 @@ $modalsOrder = @(
     "modal-bug-screenshot-viewer.html",
     "modal-bug-bounty-picker.html",
     "modal-settings.html",
+    "modal-vocamail.html",
     "modal-publisher.html",
     "modal-library.html",
     "modal-library-preview.html",
@@ -105,6 +106,15 @@ foreach ($mName in $modalsOrder) {
         $loadedModals++
     } else {
         Write-Host "  [!] Canh bao: Thieu file modal: $mName" -ForegroundColor Yellow
+    }
+}
+# Tu dong nap them bat ky file modal nao chua co trong $modalsOrder
+$allModalFiles = Get-ChildItem (Join-Path $srcDir "components\modals") -Filter "*.html"
+foreach ($mf in $allModalFiles) {
+    if (-not ($modalsOrder -contains $mf.Name)) {
+        $modalsBuilder.AppendLine([System.IO.File]::ReadAllText($mf.FullName, [System.Text.Encoding]::UTF8)) | Out-Null
+        $loadedModals++
+        Write-Host "  [+] Tu dong nap modal bo sung: $($mf.Name)" -ForegroundColor Cyan
     }
 }
 $modalsContent = $modalsBuilder.ToString()

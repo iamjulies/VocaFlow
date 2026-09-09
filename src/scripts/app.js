@@ -1,8 +1,8 @@
     // =========================================================================
     // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-33)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-33';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-33 (Build 265)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-34';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-34 (Build 266)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)

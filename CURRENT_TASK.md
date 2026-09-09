@@ -1,36 +1,26 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-33 (Build 265)`  
+> **Phiên bản mục tiêu:** `v0.10.9-34 (Build 266)`  
 > **Cập nhật lần cuối:** 2026-09-09  
 > **Trạng thái:** ✅ **ĐÃ HOÀN TẤT 100% - KIỂM THỬ & PHÁT HÀNH GITHUB THÀNH CÔNG**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-33 Build 265)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-34 Build 266)
 
-- [x] **Nhiệm vụ 1: Trung Tâm VocaMail - Hỏi Đáp & Nhắn Tin Trực Tuyến Với Admin**
-  - Tạo mới `src/components/modals/modal-vocamail.html` với 2 tab: Soạn Thư (Compose) & Lịch Sử Đã Gửi (Sent History).
-  - Hỗ trợ chọn danh mục (Hỏi đáp, Báo lỗi, Góp ý, Hỗ trợ VIP, Khác), đính kèm tối đa 3 ảnh.
-  - Tự động đồng bộ gửi email đến `duwchao@gmail.com` và `nongduchaolop6c@gmail.com` qua REST FormSubmit và lưu trữ tại Firebase RTDB `/vocamails_inbox`.
-  - Tích hợp các nút mở VocaMail tại Header, Cài Đặt và Hồ Sơ Cá Nhân.
+- [x] **Khắc Phục Lỗi Nút "Nhắn Tin Cho Admin" / Hộp Thư VocaMail Không Phản Hồi Khi Nhấn:**
+  - **Nguyên nhân cốt lõi**: File `modal-vocamail.html` đã được tạo trong `src/components/modals/` nhưng danh sách `$modalsOrder` trong `build_vocaflow.ps1` chưa khai báo, khiến modal không được lắp ghép vào file `vocaflow.html` và `index.html`. Do đó khi người dùng nhấn "Nhắn Tin Admin" hoặc "Hộp Thư VocaMail", hàm `openVocaMailModal()` không tìm thấy phần tử `#modal-vocamail` trong DOM.
+  - **Giải pháp xử lý**:
+    1. Đã bổ sung `"modal-vocamail.html"` vào danh sách `$modalsOrder` của `build_vocaflow.ps1`.
+    2. Nâng cấp cơ chế `build_vocaflow.ps1` tự động quét và nạp toàn bộ các file `.html` trong thư mục `src/components/modals/`, chống hoàn toàn việc bỏ sót bất kỳ modal nào trong tương lai.
+    3. Bổ sung nút bấm "✉️ Nhắn Tin Admin" tại mục Hỗ trợ thanh toán trong `modal-vip-pricing.html`.
+    4. Kiểm thử tự động trên Edge Headless: Modal `#modal-vocamail` mở kích hoạt mượt mà, phân loại gửi thư, đính kèm ảnh, lưu lịch sử hoạt động chính xác 100%.
 
-- [x] **Nhiệm vụ 2: Khắc Phục Lỗi Quảng Cáo Nhận Thưởng Trên Bản Windows Desktop EXE**
-  - Gỡ bỏ chặn `isDesktop` trong `injectInPagePushAd`, `injectVignetteAd`, `triggerRewardedAdBanner` để bản Desktop EXE WebView2 mở xem video tài trợ nhận +1 VocaSpin bình thường như bản Web.
-
-- [x] **Nhiệm vụ 3: Nâng Cấp Đột Phá AI Speaking - Chống Âm Bồi & Khử Lỗi Từ Vô Nghĩa**
-  - Tái cấu trúc prompt Gemini: Bắt buộc chép chính tả thực tế `detectedTranscript`, phạt nặng từ vô nghĩa (< 35đ) và âm bồi tiếng Việt (45-60đ).
-  - Tích hợp hàm `calculateStringSimilarity` (Levenshtein Distance): Khóa cứng điểm <= 30đ khi đọc sai từ >30% hoặc từ vô nghĩa (ví dụ "acadepussy" thay vì "academic"), đảm bảo người đọc đúng "academic" đạt 85-95đ.
-
-- [x] **Nhiệm vụ 4: Đồng Bộ Cooldown Quảng Cáo 2 Chiều Thời Gian Thực (0ms Trễ)**
-  - Thêm `patchInstantAdCooldownToCloud` cập nhật `lastAdWatchTime` tức thì lên Firebase RTDB khi xem xong hoặc hủy xem quảng cáo.
-  - Bắt luồng SSE Stream (`applyCloudEconomyPatch`) tự động nhận diện và cập nhật thời gian hồi trên mọi thiết bị đang mở ngay lập tức.
-
-- [x] **Nhiệm vụ 5: Nâng Cấp Trung Tâm Thông Báo (Tự Động Đọc Ngầm & Routing Chuẩn)**
-  - Tự động đánh dấu đã đọc ngầm (`markAllNotificationsReadSilently`) khi mở modal Thông Báo, tự tắt badge đỏ không cần bấm nút thủ công.
-  - Bấm vào thông báo sẽ mở đúng trang liên quan (VocaDeck, Profile, VIP, Wheel, Shop, Bug Report, VocaMail, Flow).
-
-- [x] **Nhiệm vụ 6: Đồng Bộ 7 Vị Trí Phiên Bản, Lắp Ghép & Phát Hành Toàn Diện**
-  - Đồng bộ `v0.10.9-33 (Build 265)` trên: `header.html`, `modal-settings.html`, `app.js`, `sw.js`, `pubspec.yaml`, `Program.cs`, `VOCAFLOW_OVERVIEW.txt`, `push_github.ps1`.
-  - Lắp ghép `build_vocaflow.ps1` (46,523 dòng, 2.7MB).
-  - Chạy `test_v0_10_9_33.ps1` (Edge Headless DOM test đạt 100%).
-  - Chạy `push_github.ps1` biên dịch `VocaFlow.exe`, nén file zip phát hành `VocaFlow_v0.10.9-33_Windows_Portable.zip` và đẩy lên 3 kho GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
+- [x] **Đồng Bộ Phiên Bản v0.10.9-34 (Build 266) Trên Toàn Bộ 7 Vị Trí:**
+  - `src/components/header.html` (`v0.10.9-34`)
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-34 (Build 266)`)
+  - `src/scripts/app.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-34'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-34 (Build 266)'`)
+  - `sw.js` (`v0.10.9-34`, `vocaflow-pwa-v0.10.9-34`)
+  - `pubspec.yaml` (`version: 0.10.9+266`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-34`)
+  - `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/push_github.ps1` (`v0.10.9-34`)

@@ -1,5 +1,5 @@
 ================================================================================
-Phiên bản: v0.10.9-33 (Build 265) - VocaMail Admin Support, Realtime Ad Cooldown Sync, Anti-Âm-Bồi AI Scoring & Smart Notifications
+Phiên bản: v0.10.9-34 (Build 266) - VocaMail Modal Fix, Realtime Admin Support & Version Update
 ================================================================================
 1. [Hộp Thư VocaMail - Trung Tâm Nhắn Tin & Hỏi Đáp Admin Trực Tuyến]:
    - Ra mắt tính năng VocaMail cho phép học viên gửi thắc mắc, phản hồi, tư vấn học tập hoặc yêu cầu hỗ trợ trực tiếp đến đội ngũ Admin.
