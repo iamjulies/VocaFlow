@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-39)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-40)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-39';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-39 (Build 271)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-40';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-40 (Build 272)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -10582,15 +10582,16 @@ function switchPublisherTab(tab) {
 
         const isPinned = !!deck.isPinned;
         const isArchived = !!deck.isArchived;
+        const isVipDeck = !!(deck.isVipOnly || deck.isVipExclusive || deck.isVip || (deck.tags && deck.tags.includes('vip')) || (deck.title && deck.title.includes('(VIP)')));
 
         const card = document.createElement('div');
-        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '');
+        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '') + (isVipDeck ? ' vip-deck-card' : '');
         card.innerHTML = `
           <div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
-              ${(deck.isVipOnly || deck.isVipExclusive) ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
+              ${isVipDeck ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
               ${isPinned ? '<span class="badge badge-pinned" title="VocaDeck đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
               ${isArchived ? '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>' : ''}
             </div>
@@ -35107,7 +35108,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const isAuthor = isDeckAuthor(deck);
 
         html += `
-          <div style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
+          <div class="vocalib-deck-card ${isVipDeck ? 'vip-vocalib-card' : ''}" style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
             <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${isVipDeck ? 'linear-gradient(to bottom, #f59e0b, #ec4899)' : color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>
             <div style="flex: 1; min-width: 240px; padding-left: 6px;">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">

@@ -71,28 +71,49 @@
     }
 
     /* =========================================================================
-       VIP GLOW & SHIMMER EFFECTS (v0.10.8-alpha-10.3 CRISP GPU-ACCELERATED)
+       VIP GLOW & SHIMMER EFFECTS (v0.10.9-40 QUÝ TỘC KIM LOẠI HOÀNG GIA)
        ========================================================================= */
-    @keyframes vip-combo {
-      0%, 100% {
-        background-position: 0% center;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
-                     0 0 20px rgba(255, 215, 0, 0.2);
+    @keyframes shimmerGold {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes goldGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.4)) 
+                drop-shadow(0 0 6px rgba(234, 179, 8, 0.3));
       }
-      50% {
-        text-shadow: 0 0 25px rgba(255, 215, 0, 0.9),
-                     0 0 35px rgba(255, 154, 158, 0.6);
-        background-position: 200% center;
+      100% {
+        filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.85)) 
+                drop-shadow(0 0 18px rgba(234, 179, 8, 0.6))
+                drop-shadow(0 0 24px rgba(244, 162, 97, 0.4));
       }
     }
 
+    @keyframes crownFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
+    }
+
+    @keyframes crownGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.5));
+      }
+      100% {
+        filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.95))
+                drop-shadow(0 0 20px rgba(244, 162, 97, 0.5));
+      }
+    }
+
+    /* Backwards compatibility aliases */
+    @keyframes vip-combo {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
     @keyframes crownFloatPulse {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-      }
-      50% {
-        transform: translateY(-4px) scale(1.05);
-      }
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
     }
 
     @keyframes avatarVipRingGlow {
@@ -110,18 +131,22 @@
       vertical-align: middle !important;
       transform: translateZ(0) !important;
       will-change: transform !important;
+      gap: 3px !important;
     }
 
     .vip-glowing-name,
     [data-theme="light"] .vip-glowing-name {
       display: inline-block !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px !important;
       background: linear-gradient(
-        to right,
-        #ffd700 0%,
-        #ff9a9e 35%,
-        #fecfef 50%,
-        #ff9a9e 65%,
-        #ffd700 100%
+        90deg, 
+        #fef08a 0%,    /* Vàng nhạt */
+        #fde047 20%,   /* Vàng nguyên bản */
+        #eab308 40%,   /* Vàng kim loại */
+        #f4a261 60%,   /* Vàng đào */
+        #b5838d 80%,   /* Vàng hồng / Vàng đồng */
+        #fef08a 100%   /* Quay lại vàng nhạt để lặp vô tận mượt mà */
       ) !important;
       background-size: 200% auto !important;
       -webkit-background-clip: text !important;
@@ -130,21 +155,22 @@
       text-fill-color: transparent !important;
       -webkit-font-smoothing: subpixel-antialiased !important;
       backface-visibility: hidden !important;
-      animation: vip-combo 2.5s ease-in-out infinite !important;
-      font-weight: 900 !important;
-      letter-spacing: 0.5px !important;
+      animation: 
+        shimmerGold 4s linear infinite,
+        goldGlow 1.8s ease-in-out infinite alternate !important;
       vertical-align: middle !important;
     }
 
     .vip-crown-icon {
       display: inline-block !important;
-      animation: crownFloatPulse 1.5s ease-in-out infinite !important;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) !important;
+      animation: 
+        crownFloat 2s ease-in-out infinite,
+        crownGlow 1.8s ease-in-out infinite alternate !important;
       backface-visibility: hidden !important;
       -webkit-font-smoothing: antialiased !important;
       transform-origin: center !important;
       line-height: 1 !important;
-      margin-left: 4px !important;
+      margin-left: 2px !important;
       vertical-align: middle !important;
       -webkit-text-fill-color: initial !important;
       -webkit-background-clip: initial !important;
@@ -154,6 +180,127 @@
     .vip-avatar-glow {
       border-radius: 50% !important;
       animation: avatarVipRingGlow 3s ease-in-out infinite !important;
+    }
+
+    /* =========================================================================
+       VIP ROTATING LIGHT BORDER EFFECT (v0.10.9-40 MODEL1 ANHSANG)
+       ========================================================================= */
+    .deck-card.vip-deck-card {
+      border: 1px solid transparent !important;
+      position: relative !important;
+      overflow: hidden !important;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22);
+    }
+    .deck-card.vip-deck-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 40%);
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .deck-card.vip-deck-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface, #1e293b);
+      border-radius: calc(var(--radius) - 2px);
+      z-index: 1;
+    }
+    .deck-card.vip-deck-card > * {
+      position: relative;
+      z-index: 2;
+    }
+    .deck-card.vip-deck-card .deck-card-strip {
+      z-index: 3;
+    }
+    .deck-card.vip-deck-card:hover {
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.35);
+    }
+
+    /* VIP Plan Pricing Cards Light Effect */
+    .vip-plan-card {
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid transparent !important;
+      box-sizing: border-box;
+    }
+    .vip-plan-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .vip-plan-card.tier-monthly::before,
+    #vip-card-monthly::before {
+      background: conic-gradient(transparent, #ffd700, #f59e0b, transparent 40%);
+    }
+    .vip-plan-card.tier-yearly::before,
+    #vip-card-yearly::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 45%);
+    }
+    .vip-plan-card.tier-lifetime::before,
+    #vip-card-lifetime::before {
+      background: conic-gradient(transparent, #00d2ff, #a855f7, #ec4899, transparent 45%);
+    }
+    .vip-plan-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface-elevated, #17202a);
+      border-radius: 14px;
+      z-index: 1;
+    }
+    .vip-plan-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* VocaLib VIP Deck Light Effect */
+    .vip-vocalib-card {
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid transparent !important;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25) !important;
+    }
+    .vip-vocalib-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 40%);
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .vip-vocalib-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface, #1e293b);
+      border-radius: 10px;
+      z-index: 1;
+    }
+    .vip-vocalib-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header Flow Badge (v0.10.9-40: Always Visible) */
+    .header-flow-badge {
+      display: inline-block !important;
+      font-weight: 800 !important;
+      font-family: monospace !important;
+      font-size: 11.5px !important;
+      line-height: 1 !important;
     }
 
     /* =========================================================================
@@ -2878,7 +3025,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-37</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-40</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -2893,10 +3040,10 @@
         <span class="btn-header-label" style="font-size: 11.5px; font-weight: 700;">VocaStudio</span>
       </button>
 
-      <!-- FLOW STREAK BUTTON (v0.10.8-alpha-10.3 / v0.10.9-alpha-27) -->
-      <button type="button" class="btn btn-outline btn-sm header-collapsible-flow" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0;" title="Chuỗi Flow Học Tập - Bấm để xem lịch">
-        <img src="icons/flow.png" alt="Flow" style="width: 16px; height: 16px; object-fit: contain;" onerror="this.outerHTML='🌊';">
-        <span id="header-flow-count" class="btn-header-label">0</span>
+      <!-- FLOW STREAK BUTTON (v0.10.8-alpha-10.3 / v0.10.9-alpha-27 / v0.10.9-40: Always Visible Neat Counter) -->
+      <button type="button" class="btn btn-outline btn-sm header-collapsible-flow" id="btn-header-flow" onclick="openFlowCalendarModal()" style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 800; padding: 4px 7px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.4); color: #22d3ee; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2); cursor: pointer; flex-shrink: 0; white-space: nowrap;" title="Chuỗi Flow Học Tập - Bấm để xem lịch">
+        <img src="icons/flow.png" alt="Flow" style="width: 15px; height: 15px; object-fit: contain; flex-shrink: 0;" onerror="this.outerHTML='🌊';">
+        <span id="header-flow-count" class="header-flow-badge" style="font-weight: 800; font-family: monospace; font-size: 11.5px; line-height: 1;">0</span>
       </button>
 
       <!-- MISTAKE NOTEBOOK BUTTON (v0.10.9-37) -->
@@ -6636,7 +6783,7 @@
         <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
           
           <!-- GÓI 1 THÁNG -->
-          <div id="vip-card-monthly" class="vip-plan-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-monthly" class="vip-plan-card tier-monthly" style="background: var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
@@ -6662,8 +6809,8 @@
           </div>
 
           <!-- GÓI 1 NĂM (POPULAR) -->
-          <div id="vip-card-yearly" class="vip-plan-card active-tab-card" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
-            <div id="vip-ribbon-yearly" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
+          <div id="vip-card-yearly" class="vip-plan-card active-tab-card tier-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+            <div id="vip-ribbon-yearly" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
               🔥 TIẾT KIỆM 36% • PHỔ BIẾN
             </div>
             <div>
@@ -6691,8 +6838,8 @@
           </div>
 
           <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
-          <div id="vip-card-lifetime" class="vip-plan-card" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border: 1.5px solid rgba(168, 85, 247, 0.6); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
-            <div id="vip-ribbon-lifetime" style="position: absolute; top: -11px; right: 14px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
+          <div id="vip-card-lifetime" class="vip-plan-card tier-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+            <div id="vip-ribbon-lifetime" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
               👑 ĐẲNG CẤP HOÀNG GIA
             </div>
             <div>
@@ -7907,7 +8054,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-39 (Build 271)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-40 (Build 272)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8677,10 +8824,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-39)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-40)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-39';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-39 (Build 271)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-40';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-40 (Build 272)';
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -19260,15 +19407,16 @@ function switchPublisherTab(tab) {
 
         const isPinned = !!deck.isPinned;
         const isArchived = !!deck.isArchived;
+        const isVipDeck = !!(deck.isVipOnly || deck.isVipExclusive || deck.isVip || (deck.tags && deck.tags.includes('vip')) || (deck.title && deck.title.includes('(VIP)')));
 
         const card = document.createElement('div');
-        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '');
+        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '') + (isVipDeck ? ' vip-deck-card' : '');
         card.innerHTML = `
           <div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
-              ${(deck.isVipOnly || deck.isVipExclusive) ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
+              ${isVipDeck ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
               ${isPinned ? '<span class="badge badge-pinned" title="VocaDeck đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
               ${isArchived ? '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>' : ''}
             </div>
@@ -43785,7 +43933,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const isAuthor = isDeckAuthor(deck);
 
         html += `
-          <div style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
+          <div class="vocalib-deck-card ${isVipDeck ? 'vip-vocalib-card' : ''}" style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
             <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${isVipDeck ? 'linear-gradient(to bottom, #f59e0b, #ec4899)' : color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>
             <div style="flex: 1; min-width: 240px; padding-left: 6px;">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">

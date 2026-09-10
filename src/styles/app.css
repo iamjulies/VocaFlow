@@ -45,28 +45,49 @@
     }
 
     /* =========================================================================
-       VIP GLOW & SHIMMER EFFECTS (v0.10.8-alpha-10.3 CRISP GPU-ACCELERATED)
+       VIP GLOW & SHIMMER EFFECTS (v0.10.9-40 QUÝ TỘC KIM LOẠI HOÀNG GIA)
        ========================================================================= */
-    @keyframes vip-combo {
-      0%, 100% {
-        background-position: 0% center;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
-                     0 0 20px rgba(255, 215, 0, 0.2);
+    @keyframes shimmerGold {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes goldGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.4)) 
+                drop-shadow(0 0 6px rgba(234, 179, 8, 0.3));
       }
-      50% {
-        text-shadow: 0 0 25px rgba(255, 215, 0, 0.9),
-                     0 0 35px rgba(255, 154, 158, 0.6);
-        background-position: 200% center;
+      100% {
+        filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.85)) 
+                drop-shadow(0 0 18px rgba(234, 179, 8, 0.6))
+                drop-shadow(0 0 24px rgba(244, 162, 97, 0.4));
       }
     }
 
+    @keyframes crownFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
+    }
+
+    @keyframes crownGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.5));
+      }
+      100% {
+        filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.95))
+                drop-shadow(0 0 20px rgba(244, 162, 97, 0.5));
+      }
+    }
+
+    /* Backwards compatibility aliases */
+    @keyframes vip-combo {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
     @keyframes crownFloatPulse {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-      }
-      50% {
-        transform: translateY(-4px) scale(1.05);
-      }
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
     }
 
     @keyframes avatarVipRingGlow {
@@ -84,18 +105,22 @@
       vertical-align: middle !important;
       transform: translateZ(0) !important;
       will-change: transform !important;
+      gap: 3px !important;
     }
 
     .vip-glowing-name,
     [data-theme="light"] .vip-glowing-name {
       display: inline-block !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px !important;
       background: linear-gradient(
-        to right,
-        #ffd700 0%,
-        #ff9a9e 35%,
-        #fecfef 50%,
-        #ff9a9e 65%,
-        #ffd700 100%
+        90deg, 
+        #fef08a 0%,    /* Vàng nhạt */
+        #fde047 20%,   /* Vàng nguyên bản */
+        #eab308 40%,   /* Vàng kim loại */
+        #f4a261 60%,   /* Vàng đào */
+        #b5838d 80%,   /* Vàng hồng / Vàng đồng */
+        #fef08a 100%   /* Quay lại vàng nhạt để lặp vô tận mượt mà */
       ) !important;
       background-size: 200% auto !important;
       -webkit-background-clip: text !important;
@@ -104,21 +129,22 @@
       text-fill-color: transparent !important;
       -webkit-font-smoothing: subpixel-antialiased !important;
       backface-visibility: hidden !important;
-      animation: vip-combo 2.5s ease-in-out infinite !important;
-      font-weight: 900 !important;
-      letter-spacing: 0.5px !important;
+      animation: 
+        shimmerGold 4s linear infinite,
+        goldGlow 1.8s ease-in-out infinite alternate !important;
       vertical-align: middle !important;
     }
 
     .vip-crown-icon {
       display: inline-block !important;
-      animation: crownFloatPulse 1.5s ease-in-out infinite !important;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) !important;
+      animation: 
+        crownFloat 2s ease-in-out infinite,
+        crownGlow 1.8s ease-in-out infinite alternate !important;
       backface-visibility: hidden !important;
       -webkit-font-smoothing: antialiased !important;
       transform-origin: center !important;
       line-height: 1 !important;
-      margin-left: 4px !important;
+      margin-left: 2px !important;
       vertical-align: middle !important;
       -webkit-text-fill-color: initial !important;
       -webkit-background-clip: initial !important;
@@ -128,6 +154,127 @@
     .vip-avatar-glow {
       border-radius: 50% !important;
       animation: avatarVipRingGlow 3s ease-in-out infinite !important;
+    }
+
+    /* =========================================================================
+       VIP ROTATING LIGHT BORDER EFFECT (v0.10.9-40 MODEL1 ANHSANG)
+       ========================================================================= */
+    .deck-card.vip-deck-card {
+      border: 1px solid transparent !important;
+      position: relative !important;
+      overflow: hidden !important;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22);
+    }
+    .deck-card.vip-deck-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 40%);
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .deck-card.vip-deck-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface, #1e293b);
+      border-radius: calc(var(--radius) - 2px);
+      z-index: 1;
+    }
+    .deck-card.vip-deck-card > * {
+      position: relative;
+      z-index: 2;
+    }
+    .deck-card.vip-deck-card .deck-card-strip {
+      z-index: 3;
+    }
+    .deck-card.vip-deck-card:hover {
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.35);
+    }
+
+    /* VIP Plan Pricing Cards Light Effect */
+    .vip-plan-card {
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid transparent !important;
+      box-sizing: border-box;
+    }
+    .vip-plan-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .vip-plan-card.tier-monthly::before,
+    #vip-card-monthly::before {
+      background: conic-gradient(transparent, #ffd700, #f59e0b, transparent 40%);
+    }
+    .vip-plan-card.tier-yearly::before,
+    #vip-card-yearly::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 45%);
+    }
+    .vip-plan-card.tier-lifetime::before,
+    #vip-card-lifetime::before {
+      background: conic-gradient(transparent, #00d2ff, #a855f7, #ec4899, transparent 45%);
+    }
+    .vip-plan-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface-elevated, #17202a);
+      border-radius: 14px;
+      z-index: 1;
+    }
+    .vip-plan-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* VocaLib VIP Deck Light Effect */
+    .vip-vocalib-card {
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid transparent !important;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25) !important;
+    }
+    .vip-vocalib-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 40%);
+      animation: rotateLight 3.5s linear infinite;
+      z-index: 0;
+    }
+    .vip-vocalib-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--surface, #1e293b);
+      border-radius: 10px;
+      z-index: 1;
+    }
+    .vip-vocalib-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header Flow Badge (v0.10.9-40: Always Visible) */
+    .header-flow-badge {
+      display: inline-block !important;
+      font-weight: 800 !important;
+      font-family: monospace !important;
+      font-size: 11.5px !important;
+      line-height: 1 !important;
     }
 
     /* =========================================================================

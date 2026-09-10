@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Nickname VIP Quý Tộc</title>
+  <style>
+    /* Căn giữa màn hình để dễ test */
+    body {
+      margin: 0;
+      background-color: #0b0f17;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Khung giả lập khu vực hiển thị tên trên profile */
+    .profile-name-box {
+      background-color: #1a222d;
+      padding: 20px 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Khoảng cách vừa phải giữa chữ và vương miện */
+      border: 1px solid #324156;
+    }
+
+    /* --- 1. CHỮ GRADIENT VÀNG KIM LOẠI QUÝ TỘC --- */
+    .animated-name {
+      font-size: 26px;
+      font-weight: 800; /* Tăng độ dày chữ để lộ rõ dải màu kim loại */
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
+      
+      /* Phối chuỗi màu: Vàng nhạt, Vàng hồng (Rose Gold), Vàng đào, Vàng kim loại, Vàng đồng */
+      background: linear-gradient(
+        90deg, 
+        #fef08a 0%,    /* Vàng nhạt */
+        #fde047 20%,   /* Vàng nguyên bản */
+        #eab308 40%,   /* Vàng kim loại */
+        #f4a261 60%,   /* Vàng đào */
+        #b5838d 80%,   /* Vàng hồng / Vàng đồng */
+        #fef08a 100%   /* Quay lại vàng nhạt để lặp vô tận mượt mà */
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+      /* Chạy dải màu + Nhấp nháy hào quang vàng quý tộc */
+      animation: 
+        shimmerGold 4s linear infinite,
+        goldGlow 1.8s ease-in-out infinite alternate;
+    }
+
+    /* --- 2. VƯƠNG MIỆN ĐUNG ĐƯA + PHÁT SÁNG HÀO QUANG --- */
+    .floating-crown {
+      font-size: 22px;
+      display: inline-block;
+      
+      /* Kích hoạt đồng thời 2 hiệu ứng: Đung đưa lên xuống + Nhấp nháy phát sáng viền */
+      animation: 
+        crownFloat 2s ease-in-out infinite,
+        crownGlow 1.8s ease-in-out infinite alternate;
+    }
+
+    /* --- ĐỊNH NGHĨA CÁC ANIMATION --- */
+
+    /* Chuyển động lướt dải màu kim loại */
+    @keyframes shimmerGold {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Chữ nhấp nháy phát sáng theo nhịp thở (Tone vàng hoàng gia) */
+    @keyframes goldGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.3)) 
+                drop-shadow(0 0 6px rgba(234, 179, 8, 0.2));
+      }
+      100% {
+        filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.8)) 
+                drop-shadow(0 0 18px rgba(234, 179, 8, 0.5));
+      }
+    }
+
+    /* Vương miện nhún nhảy lên xuống nhịp nhàng */
+    @keyframes crownFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(3deg); } /* Bay lên kèm nghiêng nhẹ 3 độ cho sinh động */
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* Vương miện phát sáng viền tỏa ra ngoài theo nhịp của chữ */
+    @keyframes crownGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.4));
+      }
+      100% {
+        filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.9))
+                drop-shadow(0 0 20px rgba(244, 162, 97, 0.4));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Khung hiển thị giao diện test -->
+  <div class="profile-name-box">
+    <span class="animated-name">oral sex</span>
+    <span class="floating-crown">👑</span>
+  </div>
+
+</body>
+</html>
