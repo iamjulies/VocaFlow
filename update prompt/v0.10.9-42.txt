@@ -1,0 +1,4 @@
+v0.10.9-42
+1. hình 1: ở màn tbi màn hình hẹp, cái phần công cụ, chọn này kia đã chiếm hơn 1 nửa màn hình rồi. cần có giải pháp để thu gọn phần này -> đề xuất: (1) thu hẹp + giảm cỡ chữ động; (2) sắp xếp lại cho tối ưu hơn;... (nên kết hợp cả hai)
+2. hình 1: lấy cái "Ôn từ sai" ra khỏi cái chỗ để mấy chế độ học đi, để ra chỗ khác.
+3. 

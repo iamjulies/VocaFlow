@@ -1,118 +1,102 @@
   <div class="modal-overlay" id="modal-profile">
-    <div class="modal" style="max-width: 500px;">
-      <div class="modal-title">
-        <span>Hồ Sơ & Đồng Bộ Cloud</span>
-        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
+    <div class="modal ig-profile-modal">
+      <!-- INSTAGRAM HEADER BAR -->
+      <div class="ig-profile-header">
+        <div class="ig-profile-handle-title">
+          <span style="font-size: 18px;">🔒</span>
+          <span id="profile-handle" style="font-family: monospace; font-size: 15.5px; font-weight: 800; color: var(--text);">@guest</span>
+          <span id="profile-handle-badge" class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">Khách</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="btn-profile-upgrade-vip" class="btn btn-xs ig-btn-vip" onclick="openVipPricingModal()" style="display: none;">👑 Nâng Cấp VIP</button>
+          <button class="btn btn-outline btn-icon" onclick="closeModal('modal-profile')"><svg class="icon"><use href="#i-close"/></svg></button>
+        </div>
       </div>
 
-      <!-- GUEST PERKS PROMOTION BANNER (v0.0.9.18) -->
-      <div id="guest-perks-banner" style="display: none; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-          ✨ Tạo tài khoản VocaFlow miễn phí để nhận trọn bộ đặc quyền:
-        </div>
-        <ul style="margin: 0 0 10px 0; padding-left: 18px; font-size: 12px; color: var(--text); line-height: 1.6;">
-          <li>☁️ <strong>Lưu trữ & đồng bộ vĩnh viễn trên Cloud</strong> (không sợ mất từ khi đổi máy).</li>
-          <li>📚 <strong>Mở khóa toàn bộ VocaLib THPT</strong> chất lượng cao.</li>
-          <li>🎁 <strong>Nhập mã quà tặng</strong> nhận VoCoin và 5 lượt VocaHint.</li>
-        </ul>
-        <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-profile'); openAuthModal('register');" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 14px; font-size: 13px;">
-          🚀 Đăng Ký / Đăng Nhập Ngay
-        </button>
-      </div>
+      <!-- MAIN SCROLLABLE BODY -->
+      <div class="ig-profile-body">
 
-      <!-- USER PROFILE HERO CARD -->
-      <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border);">
-        <div style="display: flex; align-items: flex-start; gap: 16px;">
-          <div id="profile-avatar" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: white; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; overflow: hidden; box-shadow: 0 4px 12px rgba(168,85,247,0.3); margin-top: 4px;" onclick="document.getElementById('avatar-file-input').click()" title="Bấm để tải ảnh đại diện từ thiết bị">
-            👤
+        <!-- GUEST PERKS PROMOTION BANNER (v0.0.9.18) -->
+        <div id="guest-perks-banner" style="display: none; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            ✨ Tạo tài khoản VocaFlow miễn phí để nhận trọn bộ đặc quyền:
           </div>
-          <div style="flex: 1; min-width: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <h3 id="profile-name" style="margin: 0; font-size: 17px; font-weight: 700;">Khách (Offline)</h3>
-                <span id="profile-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
-                <button type="button" id="btn-profile-upgrade-vip" class="btn btn-sm" onclick="openVipPricingModal()" style="font-size: 11px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; border: none; font-weight: 800; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 6px rgba(245,158,11,0.3);">👑 Nâng Cấp VocaVIP</button>
-              </div>
-            </div>
-            <!-- v0.10.7a: Unique Handle Row -->
-            <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap;">
-              <span id="profile-handle" style="font-size: 13.5px; font-weight: 800; color: #38bdf8; font-family: monospace;">@guest</span>
-              <span id="profile-handle-badge" class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">UID</span>
-            </div>
-            <!-- v0.10.7d: Follower / Following Stats -->
-            <div style="display: flex; gap: 12px; margin-top: 6px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; align-items: center;">
-              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openSubscribersListModal('followers')" title="Bấm để xem danh sách Flower theo dõi">
-                <strong id="profile-follower-count" style="color: #38bdf8; font-size: 13px;">0</strong> Flower theo dõi
-              </div>
-              <span>•</span>
-              <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openSubscribersListModal('following')" title="Bấm để xem danh sách Flower đang theo dõi">
-                <strong id="profile-following-count" style="color: #a5b4fc; font-size: 13px;">0</strong> Flower đang theo dõi
-              </div>
-            </div>
+          <ul style="margin: 0 0 10px 0; padding-left: 18px; font-size: 12px; color: var(--text); line-height: 1.6;">
+            <li>☁️ <strong>Lưu trữ & đồng bộ vĩnh viễn trên Cloud</strong> (không sợ mất từ khi đổi máy).</li>
+            <li>📚 <strong>Mở khóa toàn bộ VocaLib THPT</strong> chất lượng cao.</li>
+            <li>🎁 <strong>Nhập mã quà tặng</strong> nhận VoCoin và 5 lượt VocaHint.</li>
+          </ul>
+          <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-profile'); openAuthModal('register');" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 8px 14px; font-size: 13px;">
+            🚀 Đăng Ký / Đăng Nhập Ngay
+          </button>
+        </div>
 
-            <!-- v0.10.8-released: User Asset & Progress Stats (Ví VoCoin & Chuỗi Flow) -->
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; padding: 10px 14px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 12px; text-align: center;">
-              <div>
-                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                  <span>💰</span> <span>Ví VoCoin</span>
-                </div>
-                <div id="profile-user-points" style="font-size: 16px; font-weight: 800; color: #fbbf24; margin-top: 2px;">0 VoCoin</div>
-              </div>
-              <div>
-                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                  <span>🌊</span> <span>FlowStreak</span>
-                </div>
-                <div id="profile-flow-count" style="font-size: 16px; font-weight: 800; color: #22d3ee; margin-top: 2px;">0 Ngày</div>
-              </div>
+        <!-- INSTAGRAM HERO SECTION: AVATAR + 3 STATS COLUMNS -->
+        <div class="ig-hero-row">
+          <div class="ig-avatar-ring-container">
+            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
+            <div id="profile-avatar" class="ig-avatar-ring" onclick="document.getElementById('avatar-file-input').click()" title="Chạm để đổi ảnh đại diện">
+              <div class="ig-avatar-inner">👤</div>
             </div>
+            <div class="ig-avatar-action-badge" onclick="document.getElementById('avatar-file-input').click()" title="Đổi ảnh đại diện">
+              📷
+            </div>
+          </div>
 
-            <p id="profile-email" style="margin: 8px 0 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all;">Dữ liệu lưu trữ nội bộ trên máy này.</p>
-            
-            <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; align-items: center;">
-              <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileUpload(event)">
-              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('avatar-file-input').click()" style="font-size: 11px; padding: 4px 10px; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                <span>📷</span> Đổi Avatar
-              </button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="toggleProfileEditSection()" style="font-size: 11px; padding: 4px 10px; font-weight: 600; display: flex; align-items: center; gap: 4px; color: #a5b4fc; border-color: rgba(99,102,241,0.4);">
-                <span>✏️</span> Sửa Tên & Bio
-              </button>
-              <button type="button" class="btn btn-outline btn-sm" id="btn-remove-avatar" onclick="removeUserAvatar()" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
-                🗑️ Xóa Ảnh
-              </button>
+          <!-- 3 STATS COLUMNS (Instagram Standard) -->
+          <div class="ig-stats-row">
+            <div class="ig-stat-col" onclick="switchProfileTab('decks')" title="Xem danh sách VocaDecks của bạn">
+              <span class="ig-stat-number" id="profile-stat-decks">0</span>
+              <span class="ig-stat-label">VocaDecks</span>
             </div>
-            <!-- Referral & VocaMail quick CTA in profile (v0.10.9-33) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; width: 100%;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-profile'); openReferralModal();" style="font-size: 11px; padding: 5px 8px; color: #f472b6; border-color: rgba(236,72,153,0.4); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; background: rgba(236,72,153,0.08);">
-                🎁 Mã Giới Thiệu
-              </button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-profile'); openVocaMailModal();" style="font-size: 11px; padding: 5px 8px; color: #818cf8; border-color: rgba(129,140,248,0.4); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; background: rgba(129,140,248,0.08);">
-                ✉️ Nhắn Tin Admin
-              </button>
+            <div class="ig-stat-col" onclick="openSubscribersListModal('followers')" title="Xem danh sách người theo dõi">
+              <span class="ig-stat-number" id="profile-follower-count">0</span>
+              <span class="ig-stat-label">Followers</span>
+            </div>
+            <div class="ig-stat-col" onclick="openSubscribersListModal('following')" title="Xem danh sách đang theo dõi">
+              <span class="ig-stat-number" id="profile-following-count">0</span>
+              <span class="ig-stat-label">Following</span>
             </div>
           </div>
         </div>
 
-        <!-- PROFILE SHOWCASE: 3 PINNED BADGES (v0.10.8-alpha-10.3) -->
-        <div style="margin-top: 14px; background: rgba(0,0,0,0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Trưng Bày (Tối đa 3)</span>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08);">
-              🏆 Kho Huy Hiệu
-            </button>
+        <!-- BIO & IDENTITY BLOCK -->
+        <div class="ig-bio-block">
+          <div class="ig-bio-name-row">
+            <span class="ig-bio-name" id="profile-name">Khách (Offline)</span>
+            <span id="profile-badge" class="badge" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: rgba(245,158,11,0.2); color: #fbbf24; font-weight: 700;">Chưa liên kết</span>
           </div>
-          <div id="profile-pinned-badges-showcase" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-            <!-- 3 Slots populated dynamically -->
+          <div id="profile-bio-display" class="ig-bio-text">🎯 Chưa thiết lập mục tiêu cá nhân.</div>
+          
+          <!-- INFO CHIPS ROW -->
+          <div class="ig-chips-row">
+            <span class="ig-chip chip-coin" title="Số dư VoCoin">💰 <span id="profile-user-points">0 VoCoin</span></span>
+            <span class="ig-chip chip-flow" title="Chuỗi ngày học liên tục">🌊 <span id="profile-flow-count">0 Ngày</span></span>
+            <span class="ig-chip" id="profile-email-chip" style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="Email tài khoản">📧 <span id="profile-email">Offline</span></span>
           </div>
         </div>
 
-        <!-- BIO DISPLAY BOX (Always visible on profile card) -->
-        <div id="profile-bio-box" style="margin-top: 12px; background: var(--surface-elevated); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--border);">
-          <div style="font-size: 11px; font-weight: 700; color: #34d399; margin-bottom: 2px;">🎯 Ghi chú & Mục tiêu học tập:</div>
-          <p id="profile-bio-display" style="margin: 0; font-size: 12.5px; color: var(--text); line-height: 1.45; font-style: italic;">Chưa thiết lập mục tiêu cá nhân.</p>
+        <!-- ACTION BUTTONS ROW (INSTAGRAM STYLE) -->
+        <div class="ig-actions-row">
+          <button type="button" class="ig-btn ig-btn-outline" onclick="toggleProfileEditSection()" style="flex: 1.2;">
+            <span>✏️</span> Chỉnh Sửa Hồ Sơ
+          </button>
+          <button type="button" class="ig-btn ig-btn-outline" onclick="closeModal('modal-profile'); openWalletStudioModal();">
+            <span>💼</span> VocaStudio
+          </button>
+          <button type="button" class="ig-btn ig-btn-outline" onclick="closeModal('modal-profile'); openReferralModal();" title="Mã giới thiệu & quà tặng">
+            <span>🎁</span> Quà Tặng
+          </button>
+          <button type="button" class="ig-btn ig-btn-outline" onclick="closeModal('modal-profile'); openVocaMailModal();" title="Hộp thư VocaMail">
+            <span>✉️</span> VocaMail
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-remove-avatar" onclick="removeUserAvatar()" style="font-size: 11px; padding: 0 8px; height: 36px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;" title="Xóa ảnh đại diện">
+            🗑️
+          </button>
         </div>
 
-        <!-- COLLAPSIBLE EDIT FORM (Hidden by default, activated on click) -->
-        <div id="profile-custom-fields-container" style="display: none; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px; flex-direction: column; gap: 10px;">
+        <!-- COLLAPSIBLE EDIT FORM (Hidden by default) -->
+        <div id="profile-custom-fields-container" style="display: none; background: rgba(0,0,0,0.22); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 16px; flex-direction: column; gap: 10px;">
           <div>
             <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #a5b4fc; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
               <span>✏️</span> Tên Hiển Thị (Nickname):
@@ -147,39 +131,88 @@
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- CLOUD STATUS BOX -->
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-            ☁️ Trạng thái Cloud Firestore
-          </span>
-          <span id="sync-status-badge" style="font-size: 12px; color: #10b981; font-weight: 600;">Sẵn sàng</span>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 10px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted);">Tổng số VocaDeck:</div>
-            <div id="profile-stat-decks" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 deck</div>
+        <!-- STORY HIGHLIGHTS: 3 PINNED BADGES (Instagram Highlights Row) -->
+        <div style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Nổi Bật (Highlights)</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08);">
+              🏆 Kho Huy Hiệu
+            </button>
           </div>
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 10px; border-radius: 8px;">
-            <div style="font-size: 11px; color: var(--text-muted);">Tổng số từ vựng:</div>
-            <div id="profile-stat-words" style="font-size: 16px; font-weight: 800; color: #818cf8;">0 từ</div>
+          <div id="profile-pinned-badges-showcase" class="ig-highlights-container">
+            <!-- Populated dynamically -->
           </div>
         </div>
-        <div style="font-size: 12px; color: var(--text-muted);">
-          Lần đồng bộ gần nhất: <strong id="profile-last-sync" style="color: var(--text);">Chưa đồng bộ</strong>
-        </div>
-      </div>
 
-      <!-- SYNC & AUTH BUTTONS -->
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button type="button" class="btn btn-primary" id="btn-profile-sync" onclick="handleManualSync()">
-          🔄 Đồng bộ ngay (Sync Now)
-        </button>
-        <button type="button" class="btn btn-outline" id="btn-profile-auth-action" style="color: #ef4444; border-color: rgba(239,68,68,0.4);" onclick="handleAuthActionFromProfile()">
-          Đăng nhập / Đăng ký tài khoản
-        </button>
+        <!-- INSTAGRAM TABS BAR -->
+        <div class="ig-tabs-bar">
+          <button type="button" class="ig-tab-btn active" id="profile-tab-btn-decks" onclick="switchProfileTab('decks')">
+            <span>📑</span> <span>Tủ Từ Của Tôi</span>
+          </button>
+          <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')">
+            <span>🏆</span> <span>Thành Tựu</span>
+          </button>
+          <button type="button" class="ig-tab-btn" id="profile-tab-btn-cloud" onclick="switchProfileTab('cloud')">
+            <span>☁️</span> <span>Cloud & Đồng Bộ</span>
+          </button>
+        </div>
+
+        <!-- TAB PANEL 1: DECKS LIST -->
+        <div id="profile-tab-panel-decks">
+          <div id="profile-decks-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Populated via renderProfileDecksList() -->
+          </div>
+        </div>
+
+        <!-- TAB PANEL 2: ACHIEVEMENTS HIGHLIGHT -->
+        <div id="profile-tab-panel-achievements" style="display: none;">
+          <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 6px;">🏆✨</div>
+            <div style="font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Hệ Thống Danh Hiệu & Thành Tựu</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0;">Thu thập huy hiệu qua việc học từ, giữ FlowStreak, và tham gia cộng đồng.</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementsModal()" style="font-weight: 700; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 6px 16px;">
+              🏅 Mở Toàn Bộ Bảng Danh Hiệu
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 3: CLOUD & STATS -->
+        <div id="profile-tab-panel-cloud" style="display: none;">
+          <!-- CLOUD STATUS BOX -->
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-weight: 700; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+                ☁️ Trạng thái Cloud Firestore
+              </span>
+              <span id="sync-status-badge" style="font-size: 11.5px; color: #10b981; font-weight: 600;">Sẵn sàng</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+              <div style="background: var(--surface); border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px;">
+                <div style="font-size: 10.5px; color: var(--text-muted);">Tổng số VocaDeck:</div>
+                <div id="profile-stat-decks-cloud" style="font-size: 15px; font-weight: 800; color: #818cf8;">0 deck</div>
+              </div>
+              <div style="background: var(--surface); border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px;">
+                <div style="font-size: 10.5px; color: var(--text-muted);">Tổng số từ vựng:</div>
+                <div id="profile-stat-words" style="font-size: 15px; font-weight: 800; color: #818cf8;">0 từ</div>
+              </div>
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">
+              Lần đồng bộ gần nhất: <strong id="profile-last-sync" style="color: var(--text);">Chưa đồng bộ</strong>
+            </div>
+          </div>
+
+          <!-- SYNC & AUTH BUTTONS -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" class="btn btn-primary btn-sm" id="btn-profile-sync" onclick="handleManualSync()" style="height: 36px; font-weight: 700;">
+              🔄 Đồng bộ ngay (Sync Now)
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-profile-auth-action" style="height: 36px; color: #ef4444; border-color: rgba(239,68,68,0.4); font-weight: 700;" onclick="handleAuthActionFromProfile()">
+              Đăng nhập / Đăng ký tài khoản
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

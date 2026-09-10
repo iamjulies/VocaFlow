@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-41 (Build 273) - Khắc Phục Thu Hẹp Thẻ VocaLib, Tái Thiết Kế Hồ Sơ Phong Cách Instagram & Tối Ưu Thẩm Mỹ Thẻ VocaDeck
+================================================================================
+1. [Khắc Phục Hiện Tượng Thẻ VocaDeck Bị Thu Hẹp Trong Thư Viện VocaLib]:
+   - Tinh chỉnh CSS container `.vocalib-deck-card` và `.vip-vocalib-card` với `flex-shrink: 0 !important`, `width: 100% !important`, `min-height: fit-content !important`, và `box-sizing: border-box !important`.
+   - Đảm bảo các thẻ VocaDeck VIP trong danh sách thư viện cộng đồng (#library-deck-list) luôn giữ trọn vẹn chiều cao nội dung, hiển thị đầy đủ thông tin, tiêu đề, tác giả và các nút chức năng tương tác (Xem thử, Thêm vào tủ) trên mọi kích thước màn hình.
+
+2. [Tái Thiết Kế Giao Diện Hồ Sơ Cá Nhân & Công Khai Chuẩn Phong Cách Instagram]:
+   - Cải tổ toàn diện `modal-profile.html` (Hồ sơ của tôi) và `modal-public-profile.html` (Xem hồ sơ Flower khác) theo phong cách hiện đại của Instagram:
+     + Thanh Header tối giản hiển thị `@handle` độc nhất, huy hiệu trạng thái/VIP và nút Đóng.
+     + Khu vực Hero cá nhân: Avatar tròn nổi bật (82px) với vòng viền xoay chuyển sắc / hào quang hoàng kim VIP, đi kèm thanh 3 cột chỉ số chuẩn Instagram (VocaDecks • Followers • Following).
+     + Khối Danh tính & Tiểu sử: Tên người dùng phát sáng ánh kim đa sắc, huy hiệu danh hiệu, mục tiêu cá nhân (Bio), hàng thẻ thông tin tiện ích (Ví VoCoin, FlowStreak, Email/Tổng từ).
+     + Thanh nút hành động nhanh: Sửa hồ sơ, VocaStudio, Quà tặng, VocaMail cho cá nhân; Theo dõi/Bỏ theo dõi, Nhắn tin, Chia sẻ cho hồ sơ công khai.
+     + Khu vực Story Highlights: 3 huy hiệu danh hiệu nổi bật dạng hình tròn viền kim loại.
+     + Hệ thống 3 Tab Instagram mượt mà: `📑 Tủ Từ / VocaDecks`, `🏆 Thành Tựu & Danh Hiệu`, `📊 Chỉ Số / Cloud & Đồng Bộ`.
+
+3. [Tối Ưu Thẩm Mỹ & Loại Bỏ Xung Đột Viền Trên Thẻ VocaDeck]:
+   - Xóa bỏ dải màu xám `deck-card-strip` trên các thẻ VIP Deck nhằm giải phóng không gian viền sáng xoay Conic Gradient tinh xảo.
+   - Bo tròn 2 góc trên của `.deck-card-strip` cho các thẻ VocaDeck thông thường, ngăn chặn hiện tượng tràn góc và lệch viền trên thẻ.
+
+================================================================================
 Phiên bản: v0.10.9-40 (Build 272) - Tối Ưu Hiển Thị Flow Streak Màn Hình Hẹp, Hiệu Ứng Viền Sáng Xoay VIP & Nâng Cấp Tên VIP Ánh Kim Đa Sắc
 ================================================================================
 1. [Tối Ưu Hiển Thị Số Chuỗi Học Flow Trên Màn Hình Hẹp]:

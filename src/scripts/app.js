@@ -1,8 +1,9 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-40)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-41)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-40';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-40 (Build 272)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-41';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-41 (Build 273)';
+
 
     // =========================================================================
     // GLOBAL DATE, TRUSTED SERVER TIME & ANTI-TIME-TRAVEL ENGINE (v0.10.9-alpha-7)
@@ -6186,10 +6187,13 @@ function switchPublisherTab(tab) {
       }
 
       const statDecks = document.getElementById('profile-stat-decks');
+      const statDecksCloud = document.getElementById('profile-stat-decks-cloud');
       const statWords = document.getElementById('profile-stat-words');
       const lastSyncEl = document.getElementById('profile-last-sync');
-      if (statDecks) statDecks.textContent = `${decks.length} bộ`;
+      if (statDecks) statDecks.textContent = decks.length;
+      if (statDecksCloud) statDecksCloud.textContent = `${decks.length} deck`;
       if (statWords) statWords.textContent = `${words.length} từ`;
+      if (typeof renderProfileDecksList === 'function') renderProfileDecksList();
 
       const lastSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
       if (lastSyncEl) {
@@ -7521,6 +7525,15 @@ function switchPublisherTab(tab) {
       if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
       if (statWordsEl) statWordsEl.textContent = `${totalWords} từ`;
 
+      const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
+      if (statDecksNumEl) statDecksNumEl.textContent = authorDecks.length;
+      const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
+      if (statPointsCardEl) statPointsCardEl.textContent = `${targetPoints} VoCoin`;
+      const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
+      if (statFlowCardEl) statFlowCardEl.textContent = `${targetFlowDays} Ngày`;
+      const statWordsCardEl = document.getElementById('pub-view-stat-words-card');
+      if (statWordsCardEl) statWordsCardEl.textContent = `${totalWords} từ`;
+
       if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' VocaDeck';
       if (decksListEl) {
         if (authorDecks.length === 0) {
@@ -7542,7 +7555,7 @@ function switchPublisherTab(tab) {
         }
       }
 
-      // Render Author Pinned Badges (v0.10.8-alpha-10.3)
+      // Render Author Pinned Badges (v0.10.8-alpha-10.3 / Instagram Highlights)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
       const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
@@ -7556,12 +7569,11 @@ function switchPublisherTab(tab) {
             if (bDef) {
               const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
               bHtml += `
-                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div class="pinned-badge-content" style="padding: 6px 4px;">
-                    <div style="font-size: 20px; line-height: 1;">${bDef.icon}</div>
-                    <div style="font-size: 10.5px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
-                    <div style="font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${t.name}</div>
+                <div class="ig-highlight-item" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                  <div class="ig-highlight-circle tier-${bDef.tier || 'bronze'}">
+                    <span style="font-size: 20px;">${bDef.icon}</span>
                   </div>
+                  <span class="ig-highlight-label">${escapeHtml(bDef.name)}</span>
                 </div>
               `;
             }
@@ -7573,6 +7585,7 @@ function switchPublisherTab(tab) {
         }
       }
 
+      if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks');
       openModal('modal-public-profile');
     }
 
@@ -7582,10 +7595,110 @@ function switchPublisherTab(tab) {
       await openPublicProfileByAuthor(s.displayName, '', s.uid);
     }
 
+    // =========================================================================
+    // INSTAGRAM PROFILE TAB CONTROLLERS & DECKS LIST RENDERER (v0.10.9-41)
+    // =========================================================================
+    function renderProfileDecksList() {
+      const container = document.getElementById('profile-decks-list-container');
+      if (!container) return;
+      if (!Array.isArray(decks) || decks.length === 0) {
+        container.innerHTML = `
+          <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">📚✨</div>
+            <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">Chưa có VocaDeck nào</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 12px 0;">Hãy tạo VocaDeck đầu tiên hoặc khám phá thư viện VocaLib nhé!</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-profile'); openDeckModal();" style="font-weight: 700;">
+              ➕ Tạo VocaDeck Ngay
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      decks.forEach(deck => {
+        const deckWords = words.filter(w => w.deckId === deck.id);
+        const wordCount = deckWords.length;
+        const isVip = typeof isVipDeck === 'function' ? isVipDeck(deck) : false;
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid ${isVip ? 'rgba(251,191,36,0.5)' : 'var(--border)'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; transition: all 0.2s;">
+            <div style="min-width: 0; flex: 1;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="font-size: 16px;">${deck.icon || '📘'}</span>
+                <strong style="font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(deck.title)}</strong>
+                ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 9px; padding: 1px 5px; font-weight: 800;">👑 VIP</span>' : ''}
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <span>${wordCount} từ</span> • <span>${escapeHtml(deck.category || 'Mặc định')}</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-profile'); openDeckDetail('${deck.id}')" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700; flex-shrink: 0;">
+              📖 Học Ngay
+            </button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+    window.renderProfileDecksList = renderProfileDecksList;
+
+    function switchProfileTab(tabName = 'decks') {
+      const tabs = ['decks', 'achievements', 'cloud'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`profile-tab-btn-${t}`);
+        const panel = document.getElementById(`profile-tab-panel-${t}`);
+        if (btn) {
+          if (t === tabName) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+        if (panel) {
+          panel.style.display = (t === tabName) ? 'block' : 'none';
+        }
+      });
+      if (tabName === 'decks') {
+        renderProfileDecksList();
+      }
+    }
+    window.switchProfileTab = switchProfileTab;
+
+    function switchPubProfileTab(tabName = 'decks') {
+      const tabs = ['decks', 'achievements', 'stats'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`pub-tab-btn-${t}`);
+        const panel = document.getElementById(`pub-tab-panel-${t}`);
+        if (btn) {
+          if (t === tabName) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+        if (panel) {
+          panel.style.display = (t === tabName) ? 'block' : 'none';
+        }
+      });
+    }
+    window.switchPubProfileTab = switchPubProfileTab;
+
+    function sharePublicProfile() {
+      if (!currentPublicProfileAuthor) return;
+      const name = currentPublicProfileAuthor.resolvedName || 'Flower';
+      const handle = currentPublicProfileAuthor.resolvedHandle || 'member';
+      const shareText = `Khám phá hồ sơ học từ vựng của @${handle} (${name}) trên VocaFlow: https://vocaflow.app/@${handle}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).then(() => {
+          showToast(`🔗 Đã sao chép liên kết hồ sơ của @${handle}!`);
+        }).catch(() => {
+          showToast(`🔗 Hồ sơ Flower: @${handle}`);
+        });
+      } else {
+        showToast(`🔗 Hồ sơ Flower: @${handle}`);
+      }
+    }
+    window.sharePublicProfile = sharePublicProfile;
+
     function openProfileModal() {
       updateAuthUI();
       if (typeof checkMasteryAchievements === 'function') checkMasteryAchievements();
       if (typeof renderProfilePinnedBadges === 'function') renderProfilePinnedBadges();
+      if (typeof switchProfileTab === 'function') switchProfileTab('decks');
       openModal('modal-profile');
     }
 
@@ -10587,7 +10700,7 @@ function switchPublisherTab(tab) {
         const card = document.createElement('div');
         card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '') + (isVipDeck ? ' vip-deck-card' : '');
         card.innerHTML = `
-          <div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>
+          ${!isVipDeck ? `<div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>` : ''}
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
@@ -35109,8 +35222,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
         html += `
           <div class="vocalib-deck-card ${isVipDeck ? 'vip-vocalib-card' : ''}" style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${isVipDeck ? 'linear-gradient(to bottom, #f59e0b, #ec4899)' : color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>
-            <div style="flex: 1; min-width: 240px; padding-left: 6px;">
+            ${!isVipDeck ? `<div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>` : ''}
+            <div style="flex: 1; min-width: 240px; padding-left: ${isVipDeck ? '2px' : '6px'};">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
                 <span style="font-size: 20px; line-height: 1;">${icon}</span>
                 <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>

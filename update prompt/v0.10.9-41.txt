@@ -1,0 +1,4 @@
+v0.10.9-41
+1. lỗi ở trong vocalib (hình 1)
+2. quy hoạch lại trang hồ sơ cá nhân, hồ sơ người khác (khi mình đi xem) để giống với bên instagram 
+3. hình 3: cái thanh màu xanh này bị lệch -> đề xuất: xóa hoặc sửa lạ cho đúng chỗ
