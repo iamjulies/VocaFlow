@@ -1,16 +1,16 @@
 // =========================================================================
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-49 Build 281)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-50 Build 282)
 
 // Global constants, core database state, storage keys, recovery & audio engine
 
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-49 Build 281)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-50 Build 282)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-49';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-49 (Build 281)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-50';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-50 (Build 282)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -780,6 +780,24 @@
         return '';
       }
     }
+
+    function formatTimeAgo(isoStringOrDate) {
+      if (!isoStringOrDate) return 'Vừa xong';
+      try {
+        const date = (isoStringOrDate instanceof Date) ? isoStringOrDate : new Date(isoStringOrDate);
+        if (isNaN(date.getTime())) return 'Vừa xong';
+        const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+        if (diff < 60) return 'Vừa xong';
+        if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+        if (diff < 259200) return `${Math.floor(diff / 86400)} ngày trước`;
+        return date.toLocaleDateString('vi-VN');
+      } catch (e) {
+        return 'Vừa xong';
+      }
+    }
+    window.formatTimeAgo = formatTimeAgo;
+    window.formatRelativeTime = formatTimeAgo;
 
 
     // =========================================================================

@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.9-48)
+// VOCAFLOW 03-AUTH.JS (v0.10.9-50)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -4356,35 +4356,30 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.openPublicProfileByStudent = openPublicProfileByStudent;
 
-    async function openPublicProfileModal(authorName, authorUid, deckId) {
+    async function openPublicProfileModal(authorName, arg2 = '', arg3 = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
-      if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
-        try {
-          await fetchCloudLibraryDecks();
-        } catch (e) {}
+      let uid = '';
+      let deckId = '';
+      if (arg2 && (arg2.startsWith('deck_') || arg2.startsWith('lib_deck_'))) {
+        deckId = arg2;
+        uid = arg3 || '';
+      } else {
+        uid = arg2 || '';
+        deckId = arg3 || '';
       }
-      const allDecks = getAllLibraryDecks();
-
-      // Find deck matching the requested author specifically
-      let targetDeck = null;
-      if (authorUid) {
-        targetDeck = allDecks.find(d => d.authorUid === authorUid);
-      }
-      if (!targetDeck && authorName) {
-        targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
-      }
-      if (!targetDeck && deckId) {
-        const candidate = allDecks.find(d => d.id === deckId);
-        if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
-          targetDeck = candidate;
-        }
-      }
-
-      await openPublicProfileByAuthor(authorName, targetDeck?.id || deckId, authorUid || targetDeck?.authorUid || '');
+      return openPublicProfileByAuthor(authorName, uid, deckId);
     }
+    window.openPublicProfileModal = openPublicProfileModal;
 
-    async function openPublicProfileByAuthor(authorName, deckId, authorUid = '') {
+    async function openPublicProfileByAuthor(authorName, authorUid = '', deckId = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
+      let targetUid = authorUid || '';
+      let targetDeckId = deckId || '';
+      if (authorUid && (authorUid.startsWith('deck_') || authorUid.startsWith('lib_deck_'))) {
+        targetDeckId = authorUid;
+        targetUid = (deckId && !deckId.startsWith('deck_') && !deckId.startsWith('lib_deck_')) ? deckId : '';
+      }
+
       const authorClean = (authorName || '').replace(/^@/, '').trim().toLowerCase();
       showAppLoading('Đang tải hồ sơ Flower...');
 
@@ -4397,14 +4392,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const allDecks = getAllLibraryDecks();
 
         let targetDeck = null;
-        if (authorUid) {
-          targetDeck = allDecks.find(d => d.authorUid === authorUid);
+        if (targetUid) {
+          targetDeck = allDecks.find(d => d.authorUid === targetUid);
         }
         if (!targetDeck && authorName) {
           targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
         }
-        if (!targetDeck && deckId) {
-          const candidate = allDecks.find(d => d.id === deckId);
+        if (!targetDeck && targetDeckId) {
+          const candidate = allDecks.find(d => d.id === targetDeckId);
           if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
             targetDeck = candidate;
           }
@@ -4412,13 +4407,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
 
-        // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-45)
+        // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-50)
         const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
         const currentEmailPrefix = (currentUser?.email ? currentUser.email.split('@')[0] : '').toLowerCase();
         const currentDisplayName = (currentUser?.displayName || '').trim().toLowerCase();
         const currentUid = currentUser?.uid || '';
 
-        const isCurrentUser = (authorUid && currentUid && authorUid === currentUid) ||
+        const isCurrentUser = (targetUid && currentUid && targetUid === currentUid) ||
                               (targetDeck?.authorUid && currentUid && targetDeck.authorUid === currentUid) ||
                               (authorClean && currentHandle && authorClean === currentHandle) ||
                               (authorClean && currentEmailPrefix && authorClean === currentEmailPrefix) ||
@@ -4429,7 +4424,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let resolvedHandle = '';
         let resolvedAvatar = targetDeck?.authorAvatar || authorName;
         let resolvedBio = targetDeck?.authorBio || '';
-        let targetUid = authorUid || targetDeck?.authorUid || '';
         let targetFollowerCount = 0;
         let targetFollowingCount = 0;
         let authorDecks = [];
@@ -4446,64 +4440,73 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPoints = 999999;
           targetFlowDays = 365;
           targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
+          targetFollowerCount = 9999;
+          targetFollowingCount = 1;
         } else if (isCurrentUser) {
           targetUid = currentUid;
           resolvedName = currentUser.displayName || authorName;
           resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
           resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
           resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
-          authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
+          authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
           targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
           targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
           targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
+          targetFollowerCount = Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length);
+          targetFollowingCount = Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length);
         } else {
-          // Find targetUid from all available registries if not provided
+          // Resolve targetUid from all available registries if not provided
           if (!targetUid) {
-            const studentMatch = adminStudentsData.find(s => 
-              (s.username && s.username.toLowerCase() === authorClean) ||
-              (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
-              (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
-            );
-            if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
-            else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
-            else {
-              const deckMatch = allDecks.find(d => 
-                (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
-                (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
-                (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+            if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorClean]?.uid) {
+              targetUid = globalVipRegistryNameMap[authorClean].uid;
+            } else if (globalVipRegistryNameMap && globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]?.uid) {
+              targetUid = globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()].uid;
+            } else {
+              const studentMatch = adminStudentsData.find(s => 
+                (s.username && s.username.toLowerCase() === authorClean) ||
+                (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
+                (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
               );
-              if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
-            }
-
-            // v0.10.9-45: If still not found, fetch users list from Cloud RTDB to resolve authentic user UID
-            if (!targetUid) {
-              const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-              try {
-                const uListRes = await fetch(`${rtdbUrl}/users.json`);
-                if (uListRes.ok) {
-                  const allUsers = await uListRes.json();
-                  if (allUsers && typeof allUsers === 'object') {
-                    for (const [uid, uData] of Object.entries(allUsers)) {
-                      if (!uData) continue;
-                      const uHandle = (uData.profile?.username || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
-                      const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
-                      const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
-                      if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean) {
-                        targetUid = uid;
-                        break;
-                      }
-                    }
-                  }
-                }
-              } catch (e) {
-                console.warn('Failed to resolve targetUid from RTDB:', e);
+              if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
+              else {
+                const deckMatch = allDecks.find(d => 
+                  (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+                  (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+                  (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+                );
+                if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
               }
             }
           }
 
-          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-49 single fast pull)
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+          // Search /users.json if still not found
+          if (!targetUid) {
+            try {
+              const uListRes = await fetch(`${rtdbUrl}/users.json`);
+              if (uListRes.ok) {
+                const allUsers = await uListRes.json();
+                if (allUsers && typeof allUsers === 'object') {
+                  for (const [uid, uData] of Object.entries(allUsers)) {
+                    if (!uData) continue;
+                    const uHandle = (uData.profile?.username || (uData.username || '') || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
+                    const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
+                    const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
+                    if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean || uDisplay === (authorName || '').trim().toLowerCase()) {
+                      targetUid = uid;
+                      break;
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Failed to resolve targetUid from RTDB:', e);
+            }
+          }
+
+          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-50)
           if (targetUid && targetUid !== 'undefined') {
-            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
             try {
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
               if (rootUserRes.ok) {
@@ -4537,13 +4540,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                     targetFlowDays = uData.flow.currentFlow;
                   } else if (typeof uData.flow === 'number') {
                     targetFlowDays = uData.flow;
+                  } else if (Array.isArray(uData.flowDates)) {
+                    targetFlowDays = uData.flowDates.length;
                   }
 
                   if (uData.followers && typeof uData.followers === 'object') {
-                    targetFollowerCount = Object.keys(uData.followers).length;
+                    targetFollowerCount = Math.max(targetFollowerCount, Object.keys(uData.followers).length);
                   }
                   if (uData.following && typeof uData.following === 'object') {
-                    targetFollowingCount = Object.keys(uData.following).length;
+                    targetFollowingCount = Math.max(targetFollowingCount, Object.keys(uData.following).length);
                   }
 
                   if (Array.isArray(uData.decks) && uData.decks.length > 0) {
@@ -4571,13 +4576,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
             if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
           }
-          authorDecks = allDecks.filter(d => 
-            (targetUid && d.authorUid === targetUid) || 
-            (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || 
-            (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
-            (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
-            (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
-          );
+          if (authorDecks.length === 0) {
+            authorDecks = allDecks.filter(d => 
+              (targetUid && d.authorUid === targetUid) || 
+              (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || 
+              (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+              (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+              (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+            );
+          }
         }
 
         if (!resolvedHandle) {
@@ -4588,10 +4595,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         const nameEl = document.getElementById('pub-view-name');
         const avEl = document.getElementById('pub-view-avatar');
-        const bioEl = document.getElementById('pub-view-bio');
+        const bioEl = document.getElementById('pub-view-bio-text') || document.getElementById('pub-view-bio');
         const statPointsEl = document.getElementById('pub-view-stat-points');
         const statFlowEl = document.getElementById('pub-view-stat-flow');
-        const statDecksEl = document.getElementById('pub-view-stat-decks');
+        const statDecksEl = document.getElementById('pub-view-stat-decks-num') || document.getElementById('pub-view-stat-decks');
         const statWordsEl = document.getElementById('pub-view-stat-words');
         const decksCountEl = document.getElementById('pub-view-decks-count');
         const decksListEl = document.getElementById('pub-view-decks-list');
@@ -4785,19 +4792,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         hideAppLoading();
       }
     }
-
-    async function openPublicProfileByStudent(uid) {
-      const s = adminStudentsData.find(st => st.uid === uid);
-      if (!s) return;
-      await openPublicProfileByAuthor(s.displayName, '', s.uid);
-    }
     window.openPublicProfileByAuthor = openPublicProfileByAuthor;
-    window.openPublicProfileByStudent = openPublicProfileByStudent;
 
-    function openPublicProfileModal(authorName, deckId = '', studentUid = '') {
-      return openPublicProfileByAuthor(authorName, deckId, studentUid);
-    }
-    window.openPublicProfileModal = openPublicProfileModal;
 
     // =========================================================================
     // INSTAGRAM PROFILE TAB CONTROLLERS & DECKS LIST RENDERER (v0.10.9-41)
@@ -4908,10 +4904,68 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.clearCommunityPostImage = clearCommunityPostImage;
 
     function openCommunityBadgePicker() {
-      if (typeof openAchievementsModal === 'function') {
-        openAchievementsModal();
-        showToast('💡 Nhấn chọn huy hiệu bạn muốn đính kèm vào bài viết!');
+      const container = document.getElementById('community-badge-picker-list');
+      if (!container) return;
+
+      const unlockedBadges = [];
+      if (typeof ACHIEVEMENTS_REGISTRY !== 'undefined') {
+        Object.entries(ACHIEVEMENTS_REGISTRY).forEach(([badgeId, bDef]) => {
+          const userAch = userAchievements && userAchievements[badgeId];
+          const isUnlocked = userAch && userAch.unlocked;
+          if (isUnlocked) {
+            unlockedBadges.push({ badgeId, ...bDef });
+          }
+        });
       }
+
+      if (unlockedBadges.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 24px 12px; background: rgba(0,0,0,0.15); border-radius: 12px; border: 1px dashed var(--border);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🎖️🔒</div>
+            <strong style="font-size: 13.5px; color: var(--text);">Bạn chưa mở khóa danh hiệu nào</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 12px 0;">Hãy học từ vựng, duy trì FlowStreak và hoàn thành thử thách để thu thập danh hiệu nhé!</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-community-badge-picker'); openAchievementsModal();" style="font-size: 12px; font-weight: 700;">
+              🏆 Khám Phá 40 Danh Hiệu
+            </button>
+          </div>
+        `;
+      } else {
+        const tierColors = {
+          diamond: '#38bdf8',
+          gold: '#fbbf24',
+          silver: '#94a3b8',
+          bronze: '#d97706'
+        };
+        const tierNames = {
+          diamond: 'Kim Cương 💎',
+          gold: 'Vàng 🥇',
+          silver: 'Bạc 🥈',
+          bronze: 'Đồng 🥉'
+        };
+        let html = '';
+        unlockedBadges.forEach(b => {
+          const tier = b.tier || 'bronze';
+          const tColor = tierColors[tier] || '#fbbf24';
+          const tName = tierNames[tier] || 'Danh hiệu';
+          const isCurrentlySelected = communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId;
+
+          html += `
+            <div onclick="selectCommunityPostBadge('${b.badgeId}')" style="cursor: pointer; background: var(--surface-elevated); border: 2px solid ${isCurrentlySelected ? '#6366f1' : 'var(--border)'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='${isCurrentlySelected ? '#6366f1' : 'var(--border)'}'">
+              <span style="font-size: 26px; flex-shrink: 0;">${b.icon || '🏆'}</span>
+              <div style="min-width: 0; flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                  <strong style="font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(b.name)}</strong>
+                  <span style="font-size: 9.5px; color: ${tColor}; font-weight: 800; white-space: nowrap;">${tName}</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(b.desc || '')}</div>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+
+      openModal('modal-community-badge-picker');
     }
     window.openCommunityBadgePicker = openCommunityBadgePicker;
 
@@ -4933,6 +4987,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (nameEl) nameEl.textContent = bDef.name;
       if (descEl) descEl.textContent = bDef.desc || '';
       if (prevCont) prevCont.style.display = 'flex';
+      closeModal('modal-community-badge-picker');
       showToast(`🎖️ Đã đính kèm danh hiệu "${bDef.name}"!`);
     }
     window.selectCommunityPostBadge = selectCommunityPostBadge;
@@ -5125,7 +5180,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          const res = await fetch(`${rtdbUrl}/community_posts.json`);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
           if (res.ok) {
             const data = await res.json();
             if (data && typeof data === 'object') {
@@ -5631,13 +5690,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
 
-    function openProfileModal() {
+    function openProfileModal(initialTab = 'decks') {
       updateAuthUI();
       if (typeof checkMasteryAchievements === 'function') checkMasteryAchievements();
       if (typeof renderProfilePinnedBadges === 'function') renderProfilePinnedBadges();
-      if (typeof switchProfileTab === 'function') switchProfileTab('decks');
+      if (typeof switchProfileTab === 'function') switchProfileTab(initialTab);
       openModal('modal-profile');
     }
+    window.openProfileModal = openProfileModal;
+
+    function openCommunityFeed() {
+      openProfileModal('community');
+    }
+    window.openCommunityFeed = openCommunityFeed;
 
     function openAuthModal(defaultTab = 'login') {
       openModal('modal-auth');

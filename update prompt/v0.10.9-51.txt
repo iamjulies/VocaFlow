@@ -1,0 +1,3 @@
+v0.10.9-51
+1. nhận ra app mình chưa có chân trang footer. thêm chân trang nè. mà chắc mà mini footer thôi có: bản quyền của iamjulies và VocaFlow, Version build, Nút Báo lỗi, link đến facebook (https://www.facebook.com/iamjulies.artist)
+2. 

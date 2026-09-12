@@ -427,3 +427,28 @@
       </div>
     </div>
   </div>
+
+  <!-- SUB-MODAL: COMMUNITY BADGE PICKER (v0.10.9-50) -->
+  <div class="modal-overlay sub-modal-overlay" id="modal-community-badge-picker" style="z-index: 10010;">
+    <div class="modal" style="max-width: 580px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">🎖️</span>
+          <div>
+            <strong style="font-size: 15px; color: var(--text);">Chọn Danh Hiệu Khoe Lên Cộng Đồng</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Chỉ hiển thị các danh hiệu & thành tựu bạn đã mở khóa thành công</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-badge-picker')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <div id="community-badge-picker-list" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; padding: 4px 2px 14px 2px; margin-bottom: 12px;">
+        <!-- Dynamically rendered by JS -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-community-badge-picker')">Đóng</button>
+      </div>
+    </div>
+  </div>
+

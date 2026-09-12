@@ -1,0 +1,8 @@
+v0.10.9-50
+1. lỗi: khi xem prf của ngkhac thì kh hiện đúng thông số ví dụ như vocoin hay flow, và sai cả @username, số followers và số following. chỉ khi mở cổng quản trị (có bước tải thông tin user) thì nó mới hiện đúng mấy thông tin này. -> sửa: mỗi khi nhấn vào prf ngkhac thì tiến hành kéo đúng thông tin của ngta về.
+2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 171206.png" mở rộng trang này ra to to như mấy cái khác đi
+3. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 171206.png" lỗi: đang trực tuyến mà kh đăng được bài lên tab cộng đồng. nhấn vào khoe danh hiệu cũng kh chọn được huy hiệu để đính kèm bài viết để khoe. chỉ hiện ⏳ Đang tải bảng tin cộng đồng... mà kh có cái gì nữa trơn.
+4. thêm nút mở cộng đồng (Vocommunity) vào dấu 3 chấm nữa đi.
+5. thông tin của bản thân khi xem như cách xem prf ngkhac ấy thì kh hiên đúng số follow nha
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
