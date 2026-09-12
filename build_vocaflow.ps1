@@ -161,8 +161,10 @@ $indexOut = Join-Path $root "index.html"
 
 # Đồng bộ tự động vào Release_App & GITHUB_RELEASE
 $releaseAppHtml = Join-Path $root "Release_App\vocaflow.html"
+$releaseAppIndex = Join-Path $root "Release_App\index.html"
 if (Test-Path (Join-Path $root "Release_App")) {
     [System.IO.File]::WriteAllText($releaseAppHtml, $out, [System.Text.Encoding]::UTF8)
+    [System.IO.File]::WriteAllText($releaseAppIndex, $out, [System.Text.Encoding]::UTF8)
     Copy-Item (Join-Path $root "sw.js") (Join-Path $root "Release_App\sw.js") -Force
 }
 $ghReleaseHtml = Join-Path $root "GITHUB_RELEASE\vocaflow_web_single_file.html"

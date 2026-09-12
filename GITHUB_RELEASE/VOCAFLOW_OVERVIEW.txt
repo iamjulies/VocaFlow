@@ -1,4 +1,28 @@
 ================================================================================
+Phiên bản: v0.10.9-47 (Build 279) - Tự Động Nhận Diện CEFR Đa Nét Nghĩa, Chuẩn Hóa Cài Đặt Meme Cat & Đồng Bộ Cloud, Tinh Chỉnh Prompt Đố Vui VocaMentor AI, Hiệu Ứng Loading Toàn Cục & Khắc Phục Định Tuyến Dynamic Profile /@<username>
+================================================================================
+1. [Tự Động Nhận Diện CEFR Đa Nét Nghĩa Trong Modal Soạn Từ Vựng]:
+   - Chuyển cấp độ CEFR mặc định từ 'B1' cố định sang 'Không' (Tự động / Auto) trong modal thêm từ vựng mới và thêm nét nghĩa.
+   - Nâng cấp prompt AI AutoFill (fetchWordFromGemini): Khi người dùng để CEFR là "Không", AI sẽ tự động phân tích độ khó thực tế theo chuẩn Oxford/Cambridge và gán đúng cấp độ CEFR (A1, A2, B1, B2, C1, C2) cho từng nét nghĩa riêng biệt.
+   - Khi lưu thủ công không qua AI, hệ thống tự động gán fallback 'B1' chuẩn mực.
+
+2. [Chuẩn Hóa Thước Đo Thời Gian Meme Cat & Đồng Bộ Cài Đặt Cloud]:
+   - Tinh chỉnh thang đo slider Meme Cat trong modal cài đặt: dải giá trị từ 1.0s đến 4.0s (bước nhảy 0.5s, mặc định 2.5s) giúp mốc 2.5s (Chuẩn) nằm chính xác tại vị trí tâm giữa 50% thanh trượt.
+   - Khởi tạo chính xác trạng thái checkbox và slider Meme Cat khi mở modal cài đặt.
+   - Bổ sung trường vipCatMemesEnabled và vipCatMemesDuration vào payload đồng bộ Cloud (pushCurrentDatabaseToCloud & applyCloudSettingsPatch) đảm bảo cấu hình được đồng bộ xuyên suốt trên mọi thiết bị.
+
+3. [Tinh Chỉnh Prompt Đố Vui Trắc Nghiệm VocaMentor AI]:
+   - Khi nhấp chip nhanh "🎯 Đố vui trắc nghiệm", hệ thống tự động điền sẵn câu lệnh "🎯 Tạo cho tao 1 câu đố trắc nghiệm chủ đề: " vào ô chat và tự động focus con trỏ văn bản tại cuối câu để người dùng dễ dàng điền chủ đề mong muốn thay vì tự động gửi ngay câu hỏi IELTS B2 ngẫu nhiên.
+
+4. [Vòng Xoay Loading Toàn Cục (Global Loading Spinner Overlay)]:
+   - Bổ sung overlay hiệu ứng tải trang mượt mà (#app-global-loader) kèm các hàm điều khiển showAppLoading(msg) và hideAppLoading().
+   - Tự động kích hoạt khi chuyển trang hoặc nạp dữ liệu hồ sơ công khai từ Cloud giúp người dùng luôn nhận biết trạng thái xử lý dữ liệu.
+
+5. [Khắc Phục Lỗi TDZ & Hoàn Thiện Định Tuyến Hồ Sơ Cá Nhân /@<username>]:
+   - Khắc phục triệt để lỗi ReferenceError (TDZ) trong hàm openPublicProfileByAuthor khi truy cập hồ sơ công khai.
+   - Đảm bảo cơ chế định tuyến động /@<username> hoạt động trơn tru trên cả Web SPA Router và GitHub Pages 404 redirect.
+
+================================================================================
 Phiên bản: v0.10.9-46 (Build 278) - Tinh Gọn Cổng Quản Trị Publisher, Nhật Ký Kích Hoạt VocaVIP Thành Công, Cập Nhật VIP FAQ, Nâng Cấp Hồ Sơ @official Chuẩn & Hỗ Trợ Đa Nét Nghĩa Auto Flashcard
 ================================================================================
 1. [Thu Gọn Header Cổng Quản Trị Publisher Portal]:

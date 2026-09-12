@@ -1,8 +1,53 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-46)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-47)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-46';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-46 (Build 278)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-47';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-47 (Build 279)';
+
+    // =========================================================================
+    // GLOBAL APP LOADING SPINNER CONTROLLER (v0.10.9-47)
+    // =========================================================================
+    let appLoadingCounter = 0;
+    let appLoadingTimeout = null;
+
+    function showAppLoading(text = 'Đang tải dữ liệu...') {
+      appLoadingCounter++;
+      const loader = document.getElementById('app-global-loader');
+      const textEl = document.getElementById('app-global-loader-text');
+      if (textEl) textEl.textContent = text;
+      if (loader) {
+        loader.style.display = 'flex';
+        loader.classList.add('active');
+      }
+      if (appLoadingTimeout) clearTimeout(appLoadingTimeout);
+      // Fallback safety timeout (10 seconds)
+      appLoadingTimeout = setTimeout(() => {
+        hideAppLoading(true);
+      }, 10000);
+    }
+    window.showAppLoading = showAppLoading;
+
+    function hideAppLoading(force = false) {
+      if (force) appLoadingCounter = 0;
+      else appLoadingCounter = Math.max(0, appLoadingCounter - 1);
+
+      if (appLoadingCounter === 0) {
+        if (appLoadingTimeout) {
+          clearTimeout(appLoadingTimeout);
+          appLoadingTimeout = null;
+        }
+        const loader = document.getElementById('app-global-loader');
+        if (loader) {
+          loader.classList.remove('active');
+          setTimeout(() => {
+            if (!loader.classList.contains('active')) {
+              loader.style.display = 'none';
+            }
+          }, 200);
+        }
+      }
+    }
+    window.hideAppLoading = hideAppLoading;
 
 
     // =========================================================================
@@ -1105,6 +1150,13 @@
         if (durationCont) {
           durationCont.style.opacity = isEnabled ? '1' : '0.4';
           durationCont.style.pointerEvents = isEnabled ? 'auto' : 'none';
+        }
+      }
+      if (durationSlider) {
+        const savedDuration = parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5') || 2.5;
+        durationSlider.value = savedDuration;
+        if (durationLabel) {
+          durationLabel.textContent = `${savedDuration.toFixed(1)} giây`;
         }
       }
       // Hide Meme Mèo setting for non-VIP users (v0.10.8-alpha-10.10)
@@ -7504,348 +7556,352 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     async function openPublicProfileByAuthor(authorName, deckId, authorUid = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
-      if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
-        try {
-          await fetchCloudLibraryDecks();
-        } catch (e) {}
-      }
-      const allDecks = getAllLibraryDecks();
-
-      let targetDeck = null;
-      if (authorUid) {
-        targetDeck = allDecks.find(d => d.authorUid === authorUid);
-      }
-      if (!targetDeck && authorName) {
-        targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
-      }
-      if (!targetDeck && deckId) {
-        const candidate = allDecks.find(d => d.id === deckId);
-        if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
-          targetDeck = candidate;
-        }
-      }
-
-      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
-
-      // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-45)
       const authorClean = (authorName || '').replace(/^@/, '').trim().toLowerCase();
-      const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
-      const currentEmailPrefix = (currentUser?.email ? currentUser.email.split('@')[0] : '').toLowerCase();
-      const currentDisplayName = (currentUser?.displayName || '').trim().toLowerCase();
-      const currentUid = currentUser?.uid || '';
+      showAppLoading('Đang tải hồ sơ Flower...');
 
-      const isCurrentUser = (authorUid && currentUid && authorUid === currentUid) ||
-                            (targetDeck?.authorUid && currentUid && targetDeck.authorUid === currentUid) ||
-                            (authorClean && currentHandle && authorClean === currentHandle) ||
-                            (authorClean && currentEmailPrefix && authorClean === currentEmailPrefix) ||
-                            (authorClean && currentDisplayName && authorClean === currentDisplayName) ||
-                            (authorName && currentDisplayName && authorName.trim().toLowerCase() === currentDisplayName);
+      try {
+        if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
+          try {
+            await fetchCloudLibraryDecks();
+          } catch (e) {}
+        }
+        const allDecks = getAllLibraryDecks();
 
-      let resolvedName = authorName;
-      let resolvedHandle = '';
-      let resolvedAvatar = targetDeck?.authorAvatar || authorName;
-      let resolvedBio = targetDeck?.authorBio || '';
-      let targetUid = authorUid || targetDeck?.authorUid || '';
-      let targetFollowerCount = 0;
-      let targetFollowingCount = 0;
-      let authorDecks = [];
-      let targetPoints = 0;
-      let targetFlowDays = 0;
-      let targetPinnedBadges = [];
+        let targetDeck = null;
+        if (authorUid) {
+          targetDeck = allDecks.find(d => d.authorUid === authorUid);
+        }
+        if (!targetDeck && authorName) {
+          targetDeck = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+        }
+        if (!targetDeck && deckId) {
+          const candidate = allDecks.find(d => d.id === deckId);
+          if (candidate && (!authorName || (candidate.author || '').trim().toLowerCase() === authorName.trim().toLowerCase())) {
+            targetDeck = candidate;
+          }
+        }
 
-      if (isVocaFlowOfficial) {
-        resolvedName = 'VocaFlow Chuẩn';
-        resolvedHandle = 'official';
-        resolvedAvatar = 'icons/vocaflow_official_avatar.png';
-        resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
-        authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
-        targetPoints = 999999;
-        targetFlowDays = 365;
-        targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
-      } else if (isCurrentUser) {
-        targetUid = currentUid;
-        resolvedName = currentUser.displayName || authorName;
-        resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
-        resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
-        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
-        authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
-        targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
-        targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
-        targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
-      } else {
-        // Find targetUid from all available registries if not provided
-        if (!targetUid) {
-          const studentMatch = adminStudentsData.find(s => 
+        const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
+
+        // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-45)
+        const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        const currentEmailPrefix = (currentUser?.email ? currentUser.email.split('@')[0] : '').toLowerCase();
+        const currentDisplayName = (currentUser?.displayName || '').trim().toLowerCase();
+        const currentUid = currentUser?.uid || '';
+
+        const isCurrentUser = (authorUid && currentUid && authorUid === currentUid) ||
+                              (targetDeck?.authorUid && currentUid && targetDeck.authorUid === currentUid) ||
+                              (authorClean && currentHandle && authorClean === currentHandle) ||
+                              (authorClean && currentEmailPrefix && authorClean === currentEmailPrefix) ||
+                              (authorClean && currentDisplayName && authorClean === currentDisplayName) ||
+                              (authorName && currentDisplayName && authorName.trim().toLowerCase() === currentDisplayName);
+
+        let resolvedName = authorName;
+        let resolvedHandle = '';
+        let resolvedAvatar = targetDeck?.authorAvatar || authorName;
+        let resolvedBio = targetDeck?.authorBio || '';
+        let targetUid = authorUid || targetDeck?.authorUid || '';
+        let targetFollowerCount = 0;
+        let targetFollowingCount = 0;
+        let authorDecks = [];
+        let targetPoints = 0;
+        let targetFlowDays = 0;
+        let targetPinnedBadges = [];
+
+        if (isVocaFlowOfficial) {
+          resolvedName = 'VocaFlow Chuẩn';
+          resolvedHandle = 'official';
+          resolvedAvatar = 'icons/vocaflow_official_avatar.png';
+          resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
+          authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
+          targetPoints = 999999;
+          targetFlowDays = 365;
+          targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
+        } else if (isCurrentUser) {
+          targetUid = currentUid;
+          resolvedName = currentUser.displayName || authorName;
+          resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
+          resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
+          resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
+          authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
+          targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
+          targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
+          targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
+        } else {
+          // Find targetUid from all available registries if not provided
+          if (!targetUid) {
+            const studentMatch = adminStudentsData.find(s => 
+              (s.username && s.username.toLowerCase() === authorClean) ||
+              (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
+              (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
+            );
+            if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
+            else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
+            else {
+              const deckMatch = allDecks.find(d => 
+                (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+                (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+                (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+              );
+              if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
+            }
+
+            // v0.10.9-45: If still not found, fetch users list from Cloud RTDB to resolve authentic user UID
+            if (!targetUid) {
+              const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+              try {
+                const uListRes = await fetch(`${rtdbUrl}/users.json`);
+                if (uListRes.ok) {
+                  const allUsers = await uListRes.json();
+                  if (allUsers && typeof allUsers === 'object') {
+                    for (const [uid, uData] of Object.entries(allUsers)) {
+                      if (!uData) continue;
+                      const uHandle = (uData.profile?.username || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
+                      const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
+                      const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
+                      if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean) {
+                        targetUid = uid;
+                        break;
+                      }
+                    }
+                  }
+                }
+              } catch (e) {
+                console.warn('Failed to resolve targetUid from RTDB:', e);
+              }
+            }
+          }
+
+          // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
+          if (targetUid && targetUid !== 'undefined') {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            try {
+              const [pRes, fRes, fingRes, wRes, flRes, ecoRes, rootUserRes] = await Promise.allSettled([
+                fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}/following.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}/wallet/points.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}/flow.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}/economy.json`),
+                fetch(`${rtdbUrl}/users/${targetUid}.json`)
+              ]);
+
+              if (pRes.status === 'fulfilled' && pRes.value.ok) {
+                const uProf = await pRes.value.json();
+                if (uProf && typeof uProf === 'object') {
+                  if (uProf.displayName) resolvedName = uProf.displayName;
+                  if (uProf.username) resolvedHandle = uProf.username;
+                  resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
+                  resolvedBio = uProf.bio || resolvedBio;
+                  if (typeof uProf.followerCount === 'number') targetFollowerCount = uProf.followerCount;
+                  if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
+                  if (Array.isArray(uProf.pinnedBadges)) targetPinnedBadges = uProf.pinnedBadges;
+                  if (typeof uProf.points === 'number') targetPoints = uProf.points;
+                  else if (uProf.points !== undefined && !isNaN(parseInt(uProf.points, 10))) targetPoints = parseInt(uProf.points, 10);
+                }
+              }
+
+              if (ecoRes.status === 'fulfilled' && ecoRes.value.ok) {
+                const ecoData = await ecoRes.value.json();
+                if (ecoData && typeof ecoData === 'object') {
+                  if (typeof ecoData.points === 'number') targetPoints = ecoData.points;
+                  else if (ecoData.points !== undefined && !isNaN(parseInt(ecoData.points, 10))) targetPoints = parseInt(ecoData.points, 10);
+                }
+              }
+
+              if (wRes.status === 'fulfilled' && wRes.value.ok) {
+                const wData = await wRes.value.json();
+                if (typeof wData === 'number') targetPoints = wData;
+                else if (wData !== null && !isNaN(parseInt(wData, 10))) targetPoints = parseInt(wData, 10);
+              }
+
+              if (rootUserRes.status === 'fulfilled' && rootUserRes.value.ok) {
+                const uData = await rootUserRes.value.json();
+                if (uData && typeof uData === 'object') {
+                  if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
+                  else if (uData.economy && uData.economy.points !== undefined && !isNaN(parseInt(uData.economy.points, 10))) targetPoints = parseInt(uData.economy.points, 10);
+                  else if (typeof uData.points === 'number') targetPoints = uData.points;
+                  else if (uData.points !== undefined && !isNaN(parseInt(uData.points, 10))) targetPoints = parseInt(uData.points, 10);
+                  else if (uData.profile && typeof uData.profile.points === 'number') targetPoints = uData.profile.points;
+                  else if (uData.profile && uData.profile.points !== undefined && !isNaN(parseInt(uData.profile.points, 10))) targetPoints = parseInt(uData.profile.points, 10);
+
+                  if (uData.profile && typeof uData.profile === 'object') {
+                    if (uData.profile.displayName && !resolvedName) resolvedName = uData.profile.displayName;
+                    if (uData.profile.username && !resolvedHandle) resolvedHandle = uData.profile.username;
+                    if (uData.profile.avatar) resolvedAvatar = uData.profile.avatar;
+                    if (uData.profile.bio) resolvedBio = uData.profile.bio;
+                    if (Array.isArray(uData.profile.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = uData.profile.pinnedBadges;
+                  }
+                  if (Array.isArray(uData.pinnedBadges) && targetPinnedBadges.length === 0) {
+                    targetPinnedBadges = uData.pinnedBadges;
+                  }
+
+                  if (uData.flow && typeof uData.flow.days === 'number') {
+                    targetFlowDays = uData.flow.days;
+                  } else if (uData.flow && typeof uData.flow.currentFlow === 'number') {
+                    targetFlowDays = uData.flow.currentFlow;
+                  } else if (typeof uData.flow === 'number') {
+                    targetFlowDays = uData.flow;
+                  }
+                }
+              }
+
+              if (flRes.status === 'fulfilled' && flRes.value.ok) {
+                const flData = await flRes.value.json();
+                if (flData && typeof flData === 'object') {
+                  if (typeof flData.days === 'number') targetFlowDays = flData.days;
+                  else if (typeof flData.currentFlow === 'number') targetFlowDays = flData.currentFlow;
+                } else if (typeof flData === 'number') {
+                  targetFlowDays = flData;
+                }
+              }
+
+              if (fRes.status === 'fulfilled' && fRes.value.ok) {
+                const fData = await fRes.value.json();
+                if (fData && typeof fData === 'object') {
+                  targetFollowerCount = Object.keys(fData).length;
+                }
+              }
+
+              if (fingRes.status === 'fulfilled' && fingRes.value.ok) {
+                const fingData = await fingRes.value.json();
+                if (fingData && typeof fingData === 'object') {
+                  targetFollowingCount = Object.keys(fingData).length;
+                }
+              }
+            } catch (e) {}
+          }
+
+          const matchedStudent = adminStudentsData.find(s => 
+            (targetUid && s.uid === targetUid) || 
             (s.username && s.username.toLowerCase() === authorClean) ||
             (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
             (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
           );
-          if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
-          else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
-          else {
-            const deckMatch = allDecks.find(d => 
-              (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
-              (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
-              (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
-            );
-            if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
+          if (matchedStudent) {
+            resolvedName = matchedStudent.displayName || resolvedName;
+            resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
+            resolvedBio = matchedStudent.bio || resolvedBio || '';
+            if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
+            if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
           }
+          authorDecks = allDecks.filter(d => 
+            (targetUid && d.authorUid === targetUid) || 
+            (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || 
+            (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+            (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+            (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+          );
+        }
 
-          // v0.10.9-45: If still not found, fetch users list from Cloud RTDB to resolve authentic user UID
-          if (!targetUid) {
-            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-            try {
-              const uListRes = await fetch(`${rtdbUrl}/users.json`);
-              if (uListRes.ok) {
-                const allUsers = await uListRes.json();
-                if (allUsers && typeof allUsers === 'object') {
-                  for (const [uid, uData] of Object.entries(allUsers)) {
-                    if (!uData) continue;
-                    const uHandle = (uData.profile?.username || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
-                    const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
-                    const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
-                    if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean) {
-                      targetUid = uid;
-                      break;
-                    }
-                  }
-                }
-              }
-            } catch (e) {
-              console.warn('Failed to resolve targetUid from RTDB:', e);
-            }
+        if (!resolvedHandle) {
+          resolvedHandle = targetDeck?.authorUsername || (targetDeck?.authorEmail ? targetDeck.authorEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : authorName.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 15));
+        }
+        const handleEl = document.getElementById('pub-view-handle');
+        if (handleEl) handleEl.textContent = `@${resolvedHandle}`;
+
+        const nameEl = document.getElementById('pub-view-name');
+        const avEl = document.getElementById('pub-view-avatar');
+        const bioEl = document.getElementById('pub-view-bio');
+        const statPointsEl = document.getElementById('pub-view-stat-points');
+        const statFlowEl = document.getElementById('pub-view-stat-flow');
+        const statDecksEl = document.getElementById('pub-view-stat-decks');
+        const statWordsEl = document.getElementById('pub-view-stat-words');
+        const decksCountEl = document.getElementById('pub-view-decks-count');
+        const decksListEl = document.getElementById('pub-view-decks-list');
+        const pubSubBadgeEl = document.getElementById('pub-view-sub-badge');
+
+        const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
+
+        currentPublicProfileAuthor = {
+          targetUid: targetUid,
+          resolvedName: resolvedName,
+          resolvedHandle: resolvedHandle,
+          isCurrentUser: isCurrentUser,
+          targetFollowerCount: targetFollowerCount,
+          targetFollowingCount: targetFollowingCount
+        };
+        updatePubViewFollowBtn(targetUid);
+
+        const pubFollowerEl = document.getElementById('pub-view-follower-count');
+        const pubFollowingEl = document.getElementById('pub-view-following-count');
+        if (pubFollowerEl) pubFollowerEl.textContent = formatNumber(targetFollowerCount);
+        if (pubFollowingEl) pubFollowingEl.textContent = formatNumber(targetFollowingCount);
+
+        const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
+        const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
+        const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
+        const cleanResolvedName = stripVipAffixes(resolvedName);
+
+        if (nameEl) {
+          if (isVocaFlowOfficial) {
+            nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+          } else if (isAuthorVip) {
+            nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          } else {
+            nameEl.textContent = cleanResolvedName;
           }
         }
-
-        // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
-        if (targetUid && targetUid !== 'undefined') {
-          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          try {
-            const [pRes, fRes, fingRes, wRes, flRes, ecoRes, rootUserRes] = await Promise.allSettled([
-              fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/following.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/wallet/points.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/flow.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}/economy.json`),
-              fetch(`${rtdbUrl}/users/${targetUid}.json`)
-            ]);
-
-            if (pRes.status === 'fulfilled' && pRes.value.ok) {
-              const uProf = await pRes.value.json();
-              if (uProf && typeof uProf === 'object') {
-                if (uProf.displayName) resolvedName = uProf.displayName;
-                if (uProf.username) resolvedHandle = uProf.username;
-                resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
-                resolvedBio = uProf.bio || resolvedBio;
-                if (typeof uProf.followerCount === 'number') targetFollowerCount = uProf.followerCount;
-                if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
-                if (Array.isArray(uProf.pinnedBadges)) targetPinnedBadges = uProf.pinnedBadges;
-                if (typeof uProf.points === 'number') targetPoints = uProf.points;
-                else if (uProf.points !== undefined && !isNaN(parseInt(uProf.points, 10))) targetPoints = parseInt(uProf.points, 10);
-              }
-            }
-
-            if (ecoRes.status === 'fulfilled' && ecoRes.value.ok) {
-              const ecoData = await ecoRes.value.json();
-              if (ecoData && typeof ecoData === 'object') {
-                if (typeof ecoData.points === 'number') targetPoints = ecoData.points;
-                else if (ecoData.points !== undefined && !isNaN(parseInt(ecoData.points, 10))) targetPoints = parseInt(ecoData.points, 10);
-              }
-            }
-
-            if (wRes.status === 'fulfilled' && wRes.value.ok) {
-              const wData = await wRes.value.json();
-              if (typeof wData === 'number') targetPoints = wData;
-              else if (wData !== null && !isNaN(parseInt(wData, 10))) targetPoints = parseInt(wData, 10);
-            }
-
-            if (rootUserRes.status === 'fulfilled' && rootUserRes.value.ok) {
-              const uData = await rootUserRes.value.json();
-              if (uData && typeof uData === 'object') {
-                if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
-                else if (uData.economy && uData.economy.points !== undefined && !isNaN(parseInt(uData.economy.points, 10))) targetPoints = parseInt(uData.economy.points, 10);
-                else if (typeof uData.points === 'number') targetPoints = uData.points;
-                else if (uData.points !== undefined && !isNaN(parseInt(uData.points, 10))) targetPoints = parseInt(uData.points, 10);
-                else if (uData.profile && typeof uData.profile.points === 'number') targetPoints = uData.profile.points;
-                else if (uData.profile && uData.profile.points !== undefined && !isNaN(parseInt(uData.profile.points, 10))) targetPoints = parseInt(uData.profile.points, 10);
-
-                if (uData.profile && typeof uData.profile === 'object') {
-                  if (uData.profile.displayName && !resolvedName) resolvedName = uData.profile.displayName;
-                  if (uData.profile.username && !resolvedHandle) resolvedHandle = uData.profile.username;
-                  if (uData.profile.avatar) resolvedAvatar = uData.profile.avatar;
-                  if (uData.profile.bio) resolvedBio = uData.profile.bio;
-                  if (Array.isArray(uData.profile.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = uData.profile.pinnedBadges;
-                }
-                if (Array.isArray(uData.pinnedBadges) && targetPinnedBadges.length === 0) {
-                  targetPinnedBadges = uData.pinnedBadges;
-                }
-
-                if (uData.flow && typeof uData.flow.days === 'number') {
-                  targetFlowDays = uData.flow.days;
-                } else if (uData.flow && typeof uData.flow.currentFlow === 'number') {
-                  targetFlowDays = uData.flow.currentFlow;
-                } else if (typeof uData.flow === 'number') {
-                  targetFlowDays = uData.flow;
-                }
-              }
-            }
-
-            if (flRes.status === 'fulfilled' && flRes.value.ok) {
-              const flData = await flRes.value.json();
-              if (flData && typeof flData === 'object') {
-                if (typeof flData.days === 'number') targetFlowDays = flData.days;
-                else if (typeof flData.currentFlow === 'number') targetFlowDays = flData.currentFlow;
-              } else if (typeof flData === 'number') {
-                targetFlowDays = flData;
-              }
-            }
-
-            if (fRes.status === 'fulfilled' && fRes.value.ok) {
-              const fData = await fRes.value.json();
-              if (fData && typeof fData === 'object') {
-                targetFollowerCount = Object.keys(fData).length;
-              }
-            }
-
-            if (fingRes.status === 'fulfilled' && fingRes.value.ok) {
-              const fingData = await fingRes.value.json();
-              if (fingData && typeof fingData === 'object') {
-                targetFollowingCount = Object.keys(fingData).length;
-              }
-            }
-          } catch (e) {}
+        if (avEl) {
+          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+          if (isVocaFlowOfficial) {
+            avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
+            avEl.style.borderColor = '#c084fc';
+          } else if (isAuthorVip) {
+            avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
+            avEl.style.borderColor = '#fbbf24';
+          } else {
+            avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
+            avEl.style.borderColor = 'rgba(255,255,255,0.3)';
+          }
         }
-
-        const cleanAuthorName = (authorName || '').replace(/^@/, '').trim().toLowerCase();
-        const matchedStudent = adminStudentsData.find(s => 
-          (targetUid && s.uid === targetUid) || 
-          (s.username && s.username.toLowerCase() === cleanAuthorName) ||
-          (s.email && s.email.split('@')[0].toLowerCase() === cleanAuthorName) ||
-          (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
-        );
-        if (matchedStudent) {
-          resolvedName = matchedStudent.displayName || resolvedName;
-          resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
-          resolvedBio = matchedStudent.bio || resolvedBio || '';
-          if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
-          if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
+        if (pubSubBadgeEl) {
+          if (isVocaFlowOfficial) {
+            pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
+            pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
+            pubSubBadgeEl.style.color = '#fbbf24';
+            pubSubBadgeEl.style.fontWeight = '800';
+            pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
+          } else if (isAuthorVip) {
+            pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
+            pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
+            pubSubBadgeEl.style.color = '#fbbf24';
+            pubSubBadgeEl.style.fontWeight = '700';
+            pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+          } else {
+            pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+            pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+            pubSubBadgeEl.style.color = '#34d399';
+            pubSubBadgeEl.style.fontWeight = '700';
+            pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+          }
         }
-        authorDecks = allDecks.filter(d => 
-          (targetUid && d.authorUid === targetUid) || 
-          (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || 
-          (d.authorUsername && d.authorUsername.toLowerCase() === cleanAuthorName) ||
-          (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === cleanAuthorName) ||
-          (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
-        );
-      }
-
-      if (!resolvedHandle) {
-        resolvedHandle = targetDeck?.authorUsername || (targetDeck?.authorEmail ? targetDeck.authorEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : authorName.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 15));
-      }
-      const handleEl = document.getElementById('pub-view-handle');
-      if (handleEl) handleEl.textContent = `@${resolvedHandle}`;
-
-      const nameEl = document.getElementById('pub-view-name');
-      const avEl = document.getElementById('pub-view-avatar');
-      const pubSubBadgeEl = document.getElementById('pub-view-sub-badge');
-      const bioEl = document.getElementById('pub-view-bio-text');
-      const statDecksEl = document.getElementById('pub-view-stat-decks');
-      const statWordsEl = document.getElementById('pub-view-stat-words');
-      const statPointsEl = document.getElementById('pub-view-stat-points');
-      const statFlowEl = document.getElementById('pub-view-stat-flow');
-      const decksListEl = document.getElementById('pub-view-decks-list');
-      const decksCountEl = document.getElementById('pub-view-decks-count');
-
-      const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
-
-      if (isCurrentUser) {
-        targetFollowerCount = currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0;
-        targetFollowingCount = currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0;
-      }
-
-      // v0.10.7d: Set current profile author state & update follow button
-      currentPublicProfileAuthor = {
-        targetUid: targetUid,
-        resolvedName: resolvedName,
-        resolvedHandle: resolvedHandle,
-        isCurrentUser: isCurrentUser,
-        targetFollowerCount: targetFollowerCount,
-        targetFollowingCount: targetFollowingCount
-      };
-      updatePubViewFollowBtn(targetUid);
-
-      const pubFollowerEl = document.getElementById('pub-view-follower-count');
-      const pubFollowingEl = document.getElementById('pub-view-following-count');
-      if (pubFollowerEl) pubFollowerEl.textContent = formatNumber(targetFollowerCount);
-      if (pubFollowingEl) pubFollowingEl.textContent = formatNumber(targetFollowingCount);
-
-      const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
-      const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
-      const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
-      const cleanResolvedName = stripVipAffixes(resolvedName);
-
-      if (nameEl) {
-        if (isVocaFlowOfficial) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
-        } else if (isAuthorVip) {
-          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
-        } else {
-          nameEl.textContent = cleanResolvedName;
-        }
-      }
-      if (avEl) {
-        avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
-        if (isVocaFlowOfficial) {
-          avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
-          avEl.style.borderColor = '#c084fc';
-        } else if (isAuthorVip) {
-          avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
-          avEl.style.borderColor = '#fbbf24';
-        } else {
-          avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
-          avEl.style.borderColor = 'rgba(255,255,255,0.3)';
-        }
-      }
-      if (pubSubBadgeEl) {
-        if (isVocaFlowOfficial) {
-          pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
-          pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
-          pubSubBadgeEl.style.color = '#fbbf24';
-          pubSubBadgeEl.style.fontWeight = '800';
-          pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
-        } else if (isAuthorVip) {
-          pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
-          pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
-          pubSubBadgeEl.style.color = '#fbbf24';
-          pubSubBadgeEl.style.fontWeight = '700';
-          pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
-        } else {
-          pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
-          pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
-          pubSubBadgeEl.style.color = '#34d399';
-          pubSubBadgeEl.style.fontWeight = '700';
-          pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-        }
-      }
-      const pubBadgeEl = document.getElementById('pub-view-badge');
-      if (pubBadgeEl) {
-        if (isVocaFlowOfficial) {
-          pubBadgeEl.innerHTML = '⭐ VocaFlow Official';
-          pubBadgeEl.style.background = 'linear-gradient(135deg, #6366f1, #a855f7, #ec4899)';
-          pubBadgeEl.style.color = '#ffffff';
-          pubBadgeEl.style.fontWeight = '800';
-          pubBadgeEl.style.border = '1px solid rgba(255,255,255,0.4)';
-          pubBadgeEl.style.boxShadow = '0 2px 14px rgba(168,85,247,0.5)';
-        } else if (isAuthorVip) {
-          const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
-          if (durationLabel !== 'Hết hạn') {
-            pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
-            pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        const pubBadgeEl = document.getElementById('pub-view-badge');
+        if (pubBadgeEl) {
+          if (isVocaFlowOfficial) {
+            pubBadgeEl.innerHTML = '⭐ VocaFlow Official';
+            pubBadgeEl.style.background = 'linear-gradient(135deg, #6366f1, #a855f7, #ec4899)';
             pubBadgeEl.style.color = '#ffffff';
             pubBadgeEl.style.fontWeight = '800';
-            pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
-            pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+            pubBadgeEl.style.border = '1px solid rgba(255,255,255,0.4)';
+            pubBadgeEl.style.boxShadow = '0 2px 14px rgba(168,85,247,0.5)';
+          } else if (isAuthorVip) {
+            const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
+            if (durationLabel !== 'Hết hạn') {
+              pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+              pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+              pubBadgeEl.style.color = '#ffffff';
+              pubBadgeEl.style.fontWeight = '800';
+              pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+              pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+            } else {
+              pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+              pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+              pubBadgeEl.style.color = '#a5b4fc';
+              pubBadgeEl.style.fontWeight = '700';
+              pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+              pubBadgeEl.style.boxShadow = 'none';
+            }
           } else {
             pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
             pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
@@ -7854,95 +7910,93 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
             pubBadgeEl.style.boxShadow = 'none';
           }
-        } else {
-          pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
-          pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
-          pubBadgeEl.style.color = '#a5b4fc';
-          pubBadgeEl.style.fontWeight = '700';
-          pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
-          pubBadgeEl.style.boxShadow = 'none';
         }
-      }
-      if (bioEl) {
-        const cleanBio = (resolvedBio || '').trim();
-        if (!cleanBio || cleanBio.startsWith('Tác giả đóng góp') || cleanBio.startsWith('Chưa có')) {
-          bioEl.style.display = 'none';
-          bioEl.textContent = '';
-        } else {
-          bioEl.style.display = 'block';
-          bioEl.textContent = cleanBio;
+        if (bioEl) {
+          const cleanBio = (resolvedBio || '').trim();
+          if (!cleanBio || cleanBio.startsWith('Tác giả đóng góp') || cleanBio.startsWith('Chưa có')) {
+            bioEl.style.display = 'none';
+            bioEl.textContent = '';
+          } else {
+            bioEl.style.display = 'block';
+            bioEl.textContent = cleanBio;
+          }
         }
-      }
-      if (statPointsEl) statPointsEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
-      if (statFlowEl) statFlowEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
-      if (statDecksEl) statDecksEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
-      if (statWordsEl) statWordsEl.textContent = `${formatNumber(totalWords)} từ`;
+        if (statPointsEl) statPointsEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
+        if (statFlowEl) statFlowEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
+        if (statDecksEl) statDecksEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
+        if (statWordsEl) statWordsEl.textContent = `${formatNumber(totalWords)} từ`;
 
-      const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
-      if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
-      const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
-      if (statPointsCardEl) statPointsCardEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
-      const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
-      if (statFlowCardEl) statFlowCardEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
-      const statWordsCardEl = document.getElementById('pub-view-stat-words-card');
-      if (statWordsCardEl) statWordsCardEl.textContent = `${formatNumber(totalWords)} từ`;
+        const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
+        if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
+        const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
+        if (statPointsCardEl) statPointsCardEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
+        const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
+        if (statFlowCardEl) statFlowCardEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
+        const statWordsCardEl = document.getElementById('pub-view-stat-words-card');
+        if (statWordsCardEl) statWordsCardEl.textContent = `${formatNumber(totalWords)} từ`;
 
-      if (decksCountEl) decksCountEl.textContent = formatNumber(authorDecks.length) + ' VocaDeck';
-      if (decksListEl) {
-        if (authorDecks.length === 0) {
-          decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có VocaDeck công khai nào.</div>';
-        } else {
-          let h = '';
-          authorDecks.forEach(d => {
-            h += `
-              <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                <div style="min-width: 0; flex: 1;">
-                  <div style="font-weight: 700; font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.icon || '📘'} ${escapeHtml(d.title)}</div>
-                  <div style="font-size: 10.5px; color: var(--text-muted);">${Array.isArray(d.words) ? d.words.length : 0} từ • ${escapeHtml(d.category || 'THPT')}</div>
-                </div>
-                <button class="btn btn-outline btn-sm" style="font-size: 11px; padding: 3px 8px;" onclick="closeModal('modal-public-profile'); previewLibraryDeck('${d.id}', 'modal-public-profile')">👁️ Xem</button>
-              </div>
-            `;
-          });
-          decksListEl.innerHTML = h;
-        }
-      }
-
-      // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
-      const pubBadgesContainer = document.getElementById('pub-view-badges-container');
-      const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
-      const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
-
-      if (pubBadgesContainer && pubBadgesShowcase) {
-        if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
-          pubBadgesContainer.style.display = 'block';
-          let bHtml = '';
-          authorPinnedBadges.slice(0, 3).forEach(bId => {
-            const bDef = ACHIEVEMENTS_REGISTRY[bId];
-            if (bDef) {
-              const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
-              bHtml += `
-                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div class="pinned-badge-content" style="padding: 6px 3px;">
-                    <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${bDef.icon}</div>
-                    <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
-                    <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+        if (decksCountEl) decksCountEl.textContent = formatNumber(authorDecks.length) + ' VocaDeck';
+        if (decksListEl) {
+          if (authorDecks.length === 0) {
+            decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có VocaDeck công khai nào.</div>';
+          } else {
+            let h = '';
+            authorDecks.forEach(d => {
+              h += `
+                <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-weight: 700; font-size: 12.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.icon || '📘'} ${escapeHtml(d.title)}</div>
+                    <div style="font-size: 10.5px; color: var(--text-muted);">${Array.isArray(d.words) ? d.words.length : 0} từ • ${escapeHtml(d.category || 'THPT')}</div>
                   </div>
+                  <button class="btn btn-outline btn-sm" style="font-size: 11px; padding: 3px 8px;" onclick="closeModal('modal-public-profile'); previewLibraryDeck('${d.id}', 'modal-public-profile')">👁️ Xem</button>
                 </div>
               `;
-            }
-          });
-          pubBadgesShowcase.innerHTML = bHtml;
-        } else {
-          pubBadgesContainer.style.display = 'none';
-          pubBadgesShowcase.innerHTML = '';
+            });
+            decksListEl.innerHTML = h;
+          }
         }
-      }
 
-      if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks');
-      openModal('modal-public-profile');
-      if (typeof updateAppUrlRoute === 'function' && resolvedHandle) {
-        updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
+        // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
+        const pubBadgesContainer = document.getElementById('pub-view-badges-container');
+        const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
+        const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+
+        if (pubBadgesContainer && pubBadgesShowcase) {
+          if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
+            pubBadgesContainer.style.display = 'block';
+            let bHtml = '';
+            authorPinnedBadges.slice(0, 3).forEach(bId => {
+              const bDef = ACHIEVEMENTS_REGISTRY[bId];
+              if (bDef) {
+                const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
+                bHtml += `
+                  <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                    <div class="pinned-badge-content" style="padding: 6px 3px;">
+                      <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${bDef.icon}</div>
+                      <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
+                      <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
+                    </div>
+                  </div>
+                `;
+              }
+            });
+            pubBadgesShowcase.innerHTML = bHtml;
+          } else {
+            pubBadgesContainer.style.display = 'none';
+            pubBadgesShowcase.innerHTML = '';
+          }
+        }
+
+        if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks');
+        openModal('modal-public-profile');
+        if (typeof updateAppUrlRoute === 'function' && resolvedHandle) {
+          updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
+        }
+      } catch (err) {
+        console.warn('Error in openPublicProfileByAuthor:', err);
+        showToast('⚠️ Không thể tải hồ sơ lúc này. Vui lòng thử lại sau!');
+      } finally {
+        hideAppLoading();
       }
     }
 
@@ -8576,6 +8630,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           points: getUserPoints(),
           hints: getUserHints(),
           skips: getUserSkips(),
+          settings: {
+            showReviewQueue: showReviewQueueSetting,
+            showFilterPos: showFilterPosSetting,
+            showFilterCefr: showFilterCefrSetting,
+            showFilterScore: showFilterScoreSetting,
+            showTimestamp: showTimestampSetting,
+            speechRateEn: currentSpeechRateEn,
+            speechRateVi: currentSpeechRateVi,
+            sfxEnabled: (typeof sfxEnabled !== 'undefined' ? sfxEnabled : true),
+            sfxVolume: (typeof sfxVolume !== 'undefined' ? sfxVolume : 80),
+            vipCatMemesEnabled: localStorage.getItem('vocaflow_vip_cat_memes_enabled') !== 'false',
+            vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5') || 2.5,
+            updatedAt: new Date().toISOString()
+          },
           lastSync: new Date().toISOString()
         };
 
@@ -8805,6 +8873,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         showTimestampSetting = settingsData.showTimestamp;
         localStorage.setItem(STORAGE_KEY_SHOW_TIMESTAMP, showTimestampSetting ? 'true' : 'false');
         applyTimestampDisplay();
+      }
+      if (typeof settingsData.vipCatMemesEnabled === 'boolean') {
+        localStorage.setItem('vocaflow_vip_cat_memes_enabled', settingsData.vipCatMemesEnabled ? 'true' : 'false');
+        const memeChk = document.getElementById('setting-vip-cat-meme');
+        if (memeChk) memeChk.checked = settingsData.vipCatMemesEnabled;
+        const durationCont = document.getElementById('setting-vip-cat-meme-duration-container');
+        if (durationCont) {
+          durationCont.style.opacity = settingsData.vipCatMemesEnabled ? '1' : '0.4';
+          durationCont.style.pointerEvents = settingsData.vipCatMemesEnabled ? 'auto' : 'none';
+        }
+      }
+      if (typeof settingsData.vipCatMemesDuration === 'number') {
+        const dur = Math.max(1.0, Math.min(4.0, settingsData.vipCatMemesDuration));
+        localStorage.setItem('vocaflow_vip_cat_memes_duration', dur.toFixed(1));
+        const durationSlider = document.getElementById('setting-vip-cat-meme-duration');
+        const durationLabel = document.getElementById('vip-cat-meme-duration-label');
+        if (durationSlider) durationSlider.value = dur;
+        if (durationLabel) durationLabel.textContent = `${dur.toFixed(1)} giây`;
       }
       applyUiFilterSettings();
     }
@@ -13800,7 +13886,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const id = child.id || '';
           const cls = child.className || '';
           const style = child.getAttribute('style') || '';
-          const isVocaFlowElement = id.startsWith('screen-') || id.startsWith('modal-') || id.startsWith('toast-') || id === 'app' || id === 'app-container' || child.tagName === 'HEADER' || child.tagName === 'MAIN' || child.tagName === 'NAV';
+          const isVocaFlowElement = id.startsWith('screen-') || id.startsWith('modal-') || id.startsWith('toast-') || id === 'toast' || id.startsWith('app-global-') || id === 'app' || id === 'app-container' || child.tagName === 'HEADER' || child.tagName === 'MAIN' || child.tagName === 'NAV';
           if (!isVocaFlowElement && (style.includes('position: fixed') || style.includes('position: absolute')) && (style.includes('z-index') || cls.includes('ad') || id.includes('ad'))) {
             if (!child.querySelector('#screen-decks') && !child.querySelector('.brand') && !child.classList.contains('modal-overlay')) {
               try { child.remove(); } catch (e) {}
@@ -13848,6 +13934,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             const isVocaFlow = id.startsWith('screen-') || 
                                id.startsWith('modal-') || 
                                id.startsWith('toast-') || 
+                               id === 'toast' ||
+                               id.startsWith('app-global-') ||
                                id.startsWith('btn-ai-mentor') ||
                                id === 'btn-ai-mentor-fab' ||
                                id === 'app' || 
@@ -13858,6 +13946,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                                child.tagName === 'MAIN' || 
                                child.tagName === 'NAV' || 
                                child.classList.contains('modal-overlay') || 
+                               child.classList.contains('app-global-loader') ||
                                child.classList.contains('screen');
             if (isVocaFlow) return;
 
@@ -16665,7 +16754,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const list = [];
       cards.forEach((card, idx) => {
         const pos = document.getElementById('word-pos-' + idx)?.value ?? '';
-        const cefr = document.getElementById('word-cefr-' + idx)?.value || 'B1';
+        const cefr = document.getElementById('word-cefr-' + idx)?.value || '';
         const phonetic = (document.getElementById('word-phonetic-' + idx)?.value || '').trim();
         const def = (document.getElementById('word-def-' + idx)?.value || '').trim();
         const example = (document.getElementById('word-example-' + idx)?.value || '').trim();
@@ -16695,7 +16784,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!container) return;
 
       const list = (sensesList && sensesList.length > 0) ? sensesList : [{
-        partOfSpeech: '', cefrLevel: 'B1', phonetic: '', definitionVi: '',
+        partOfSpeech: '', cefrLevel: '', phonetic: '', definitionVi: '',
         exampleSentence: '', synonyms: [], antonyms: [], collocations: [], note: ''
       }];
 
@@ -16757,7 +16846,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         { val: 'other', label: 'Khác (Other)' }
       ];
 
-      const cefrOptions = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+      const cefrOptions = [
+        { val: '', label: 'Không (Tự động / Auto)' },
+        { val: 'A1', label: 'A1' },
+        { val: 'A2', label: 'A2' },
+        { val: 'B1', label: 'B1' },
+        { val: 'B2', label: 'B2' },
+        { val: 'C1', label: 'C1' },
+        { val: 'C2', label: 'C2' }
+      ];
 
       let html = '';
       list.forEach((s, idx) => {
@@ -16775,9 +16872,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         });
 
         let cefrOptHtml = '';
-        cefrOptions.forEach(c => {
-          const selected = (s.cefrLevel || 'B1').toUpperCase() === c ? 'selected' : '';
-          cefrOptHtml += `<option value="${c}" ${selected}>${c}</option>`;
+        cefrOptions.forEach(opt => {
+          const curCefr = (s.cefrLevel || '').toUpperCase().trim();
+          const optVal = opt.val.toUpperCase().trim();
+          const selected = (curCefr === optVal) ? 'selected' : '';
+          cefrOptHtml += `<option value="${opt.val}" ${selected}>${opt.label}</option>`;
         });
 
         html += `
@@ -16860,7 +16959,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const currentList = getModalSensesFromDOM();
       currentList.push({
         partOfSpeech: '',
-        cefrLevel: 'B1',
+        cefrLevel: '',
         phonetic: '',
         definitionVi: '',
         exampleSentence: '',
@@ -16934,7 +17033,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (dupWarn) dupWarn.style.display = 'none';
       renderWordModalSenses([{
         partOfSpeech: '',
-        cefrLevel: 'B1',
+        cefrLevel: '',
         phonetic: '',
         definitionVi: '',
         exampleSentence: '',
@@ -17031,10 +17130,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
-      // If user left POS as "Không" and typed manually, default to 'noun'
+      // If user left POS or CEFR as "Không" and typed manually, default gracefully
       validSenses.forEach(s => {
         if (!s.partOfSpeech || !s.partOfSpeech.trim()) {
           s.partOfSpeech = 'noun';
+        }
+        if (!s.cefrLevel || !s.cefrLevel.trim()) {
+          s.cefrLevel = 'B1';
         }
       });
 
@@ -19303,6 +19405,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         posInstruction = `\n- NGƯỜI DÙNG ĐỂ TỪ LOẠI LÀ "Không" (TỰ ĐỘNG): Bạn hãy tự do nhận diện và tự chọn các từ loại chính xác, tự nhiên nhất cho từng nét nghĩa của từ "${term}" (ví dụ nghĩa 1 là danh từ, nghĩa 2 là động từ, v.v.).`;
       }
 
+      let cefrInstruction = '';
+      if (userContext.cefrLevel) {
+        cefrInstruction = `\n- NGƯỜI DÙNG ĐÃ CHỦ ĐỘNG CHỌN CẤP ĐỘ CEFR: "${userContext.cefrLevel}". BẮT BUỘC: Bạn hãy ưu tiên gán cấp độ "${userContext.cefrLevel}" cho nét nghĩa phù hợp nhất!`;
+      } else {
+        cefrInstruction = `\n- NGƯỜI DÙNG ĐỂ CẤP ĐỘ CEFR LÀ "Không" (TỰ ĐỘNG): Bạn hãy tự động phân tích độ khó thực tế của từ "${term}" theo chuẩn Oxford/Cambridge và tự do gán cấp độ CEFR chuẩn xác nhất (A1, A2, B1, B2, C1, hoặc C2) cho từng nét nghĩa riêng biệt. KHÔNG ĐƯỢC mặc định gán B1 cho tất cả nếu từ thuộc cấp độ khác.`;
+      }
+
       let contextNote = '';
       if (userContext.definitionVi) contextNote += `\n- Nghĩa người dùng đã gợi ý: "${userContext.definitionVi}"`;
       if (userContext.exampleSentence) contextNote += `\n- Câu ví dụ người dùng đã viết: "${userContext.exampleSentence}"`;
@@ -19314,6 +19423,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const prompt = `Bạn là chuyên gia ngôn ngữ học & biên soạn từ điển Oxford/Cambridge hàng đầu cho Flower Việt Nam.
 Hãy phân tích và hoàn thiện trọn vẹn 100% dữ liệu từ điển cho từ vựng tiếng Anh: "${term}".
 ${posInstruction}
+${cefrInstruction}
 ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\n` : ''}
 ĐẶC BIỆT LƯU Ý VỀ TỰ ĐỘNG ĐIỀN ĐA NÉT NGHĨA (POLYSEMY & HOMOGRAPHS):
 - Tự động phân tích và trả về ĐẦY ĐỦ các nét nghĩa thông dụng và quan trọng nhất của từ "${term}" (thường từ 2 đến 4 nét nghĩa phong phú nếu từ có nhiều nghĩa hoặc nhiều từ loại khác nhau). Flower cần nạp đầy đủ tất cả các nét nghĩa này ngay lập tức vào các tab mà không cần bấm thêm thủ công.
@@ -38046,7 +38156,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       } else if (chipKey === 'read') {
         promptText = '🎙️ Giúp tao luyện đọc câu tiếng Anh này: ';
       } else if (chipKey === 'quiz_free') {
-        promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm từ vựng IELTS B2 ngẫu nhiên';
+        promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm chủ đề: ';
       } else if (chipKey === 'deck_summary') {
         const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
         promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong VocaDeck "${title}"`;
@@ -38082,6 +38192,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       updateAiChatInputLength();
       if (promptText.endsWith(': ')) {
         input.focus();
+        input.selectionStart = input.selectionEnd = input.value.length;
       } else {
         handleSendAiChatMessage();
       }
