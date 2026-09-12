@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.9-48)
 
@@ -1037,77 +1037,6 @@
       }
     }
 
-    function useQuizSkip() {
-      if (quizIsAnswered) {
-        nextQuizQuestion();
-        return;
-      }
-      playVocaSfx('skip');
-      if (quizQuestionStartTime) {
-        quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
-        quizQuestionStartTime = null;
-      }
-      const questionWord = quizList[quizIndex];
-      if (!questionWord) return;
-
-      const curSkips = getUserSkips();
-      const curPts = getUserPoints();
-      const skipCost = 100;
-
-      if (curSkips <= 0 && curPts < skipCost) {
-        showToast('🪙 Bạn không đủ điểm ví (cần 100đ để đổi 1 lượt Bỏ Qua)');
-        openShopModal();
-        return;
-      }
-
-      if (curSkips > 0) {
-        setUserSkips(curSkips - 1);
-        showToast('⏭️ Đã dùng 1 lượt Bỏ Qua miễn phí (còn ' + getUserSkips() + ' lượt).');
-      } else {
-        setUserPoints(curPts - skipCost);
-        showToast('⏭️ Đã dùng 100đ ví để Bỏ Qua câu này.');
-      }
-
-      addWordToMistakeList(questionWord, 'quiz');
-      if (!quizSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
-        quizSessionWrongWords.push(questionWord);
-      }
-
-      quizSkipCount++;
-      quizIsAnswered = true;
-      updateEconomyUI();
-
-      // Highlight correct answer button in blue/green
-      const correctDef = (questionWord._activeQuizSense?.definitionVi || questionWord._activeQuizSense?.definition || questionWord.definitionVi || questionWord.definition || '').trim().toLowerCase();
-      const allButtons = document.querySelectorAll('#quiz-options-container .quiz-option');
-      allButtons.forEach(btn => {
-        btn.classList.add('disabled');
-        btn.disabled = true;
-        const txt = (btn.querySelector('.quiz-opt-text')?.textContent || btn.textContent || '').trim().toLowerCase();
-        if (txt === correctDef) {
-          btn.classList.add('correct');
-        }
-      });
-
-      if (questionWord) {
-        renderWordDetailsCard('quiz', questionWord);
-        loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
-      }
-      const quizNextCont = document.getElementById('quiz-next-container');
-      if (quizNextCont) {
-        quizNextCont.style.display = 'block';
-        const qNextBtn = quizNextCont.querySelector('button');
-        if (qNextBtn) {
-          qNextBtn.className = 'btn btn-warning';
-          qNextBtn.style.background = 'linear-gradient(135deg, #d97706, #b45309)';
-          qNextBtn.style.boxShadow = '0 4px 14px rgba(217,119,6,0.35)';
-          qNextBtn.innerHTML = '<span>⏭️ Đã Bỏ Qua • Câu tiếp theo</span> <kbd class="key-shortcut-badge">Enter ↵</kbd>';
-        }
-      }
-
-      showToast('⏭️ Đã bỏ qua câu hỏi!');
-    }
-
     function useSpellingHint() {
       if (spellingIsAnswered) return;
       const questionWord = spellingList[spellingIndex];
@@ -1127,7 +1056,7 @@
         const curHints = getUserHints();
         const curPts = getUserPoints();
         if (curHints <= 0 && curPts < hintCost) {
-          showToast('🪙 Bạn không đủ điểm ví (cần 50đ để đổi 1 Gợi ý)');
+          showToast('🪙 Bạn không đủ VoCoin (cần 50 VoCoin để đổi 1 Gợi ý)');
           openShopModal();
           return;
         }
@@ -1162,7 +1091,7 @@
       const curPts = getUserPoints();
 
       if (curHints <= 0 && curPts < hintCost) {
-        showToast('🪙 Bạn không đủ điểm ví (cần 50đ để đổi 1 Gợi ý)');
+        showToast('🪙 Bạn không đủ VoCoin (cần 50 VoCoin để đổi 1 Gợi ý)');
         openShopModal();
         return;
       }
@@ -1230,6 +1159,15 @@
       }
       if (currentSpellingDifficulty === 'hard' && totalWords >= 50 && accuracyPct >= 100 && (spellingWrongCount || 0) === 0) {
         if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
+      }
+
+      // Auto-publish community milestone
+      if (typeof autoPublishCommunityMilestone === 'function') {
+        if (totalWords >= 50 && accuracyPct >= 100) {
+          autoPublishCommunityMilestone('study_perfect', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+        } else if (totalWords >= 30) {
+          autoPublishCommunityMilestone('study_marathon', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+        }
       }
 
       const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
@@ -1791,8 +1729,8 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
-      const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const m of models) {
         try {

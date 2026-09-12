@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.9-48)
 
@@ -499,6 +499,10 @@
       }
 
       if (isNewDay) {
+        const milestones = [7, 30, 100, 200, 365];
+        if (milestones.includes(currentFlow) && typeof autoPostMilestoneToCommunity === 'function') {
+          autoPostMilestoneToCommunity('flow_streak', { days: currentFlow });
+        }
         saveDatabase(true);
         pushCurrentDatabaseToCloud();
       }

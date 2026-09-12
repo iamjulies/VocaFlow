@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.9-48)
 
@@ -309,8 +309,8 @@
         '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
-      const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const k of keys) {
         for (const m of models) {
@@ -577,8 +577,8 @@
       // If Gemini API is available, fetch live custom mnemonic & etymology
       const key = (typeof geminiApiKey !== 'undefined' && geminiApiKey) ? geminiApiKey : (localStorage.getItem('vocaflow_gemini_api_key') || '');
       const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
-      const modelsToTry = cachedModel ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+      const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
 
       if (key && key.trim()) {
         const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
@@ -1457,8 +1457,8 @@ Yêu cầu nghiêm ngặt:
 
       try {
         const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
-        const modelsToTry = cachedModel ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+        const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
         const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
         for (const m of modelsToTry) {
@@ -1637,6 +1637,83 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
+    function useQuizSkip() {
+      if (quizIsAnswered) {
+        nextQuizQuestion();
+        return;
+      }
+      playVocaSfx('skip');
+      if (quizQuestionStartTime) {
+        quizActiveTimeMs += (Date.now() - quizQuestionStartTime);
+        quizQuestionStartTime = null;
+      }
+      const questionWord = (quizList && quizIndex < quizList.length) ? quizList[quizIndex] : null;
+      if (!questionWord) return;
+
+      const curSkips = getUserSkips();
+      const curPts = getUserPoints();
+      const skipCost = 100;
+
+      if (curSkips <= 0 && curPts < skipCost) {
+        showToast('🪙 Bạn không đủ VoCoin (cần 100 VoCoin để đổi 1 lượt VocaSkip)');
+        openShopModal();
+        return;
+      }
+
+      if (curSkips > 0) {
+        setUserSkips(curSkips - 1);
+        showToast('⏭️ Đã dùng 1 lượt VocaSkip miễn phí (còn ' + getUserSkips() + ' lượt).');
+      } else {
+        setUserPoints(curPts - skipCost);
+        showToast('⏭️ Đã dùng 100 VoCoin để VocaSkip câu này.');
+      }
+
+      quizSkipCount++;
+      addWordToMistakeList(questionWord, 'quiz');
+      if (!quizSessionWrongWords.some(w => (w.id && w.id === questionWord.id) || (w.term && w.term.toLowerCase() === questionWord.term.toLowerCase()))) {
+        quizSessionWrongWords.push(questionWord);
+      }
+
+      // Update word timestamp so SRS tracks it as practiced
+      questionWord.updatedAt = new Date().toISOString();
+      const wIdx = words.findIndex(w => w.id === questionWord.id);
+      if (wIdx >= 0) words[wIdx].updatedAt = questionWord.updatedAt;
+      saveDatabase(true);
+
+      quizIsAnswered = true;
+      if (typeof updateEconomyUI === 'function') updateEconomyUI();
+
+      // Highlight correct answer button in green
+      const correctDef = (questionWord._activeQuizSense?.definitionVi || questionWord._activeQuizSense?.definition || questionWord.definitionVi || questionWord.definition || '').trim().toLowerCase();
+      const allButtons = document.querySelectorAll('#quiz-options-container .quiz-option');
+      allButtons.forEach(btn => {
+        btn.classList.add('disabled');
+        btn.disabled = true;
+        const txt = (btn.querySelector('.quiz-opt-text')?.textContent || btn.textContent || '').trim().toLowerCase();
+        if (txt === correctDef || (questionWord.definitionVi && txt === questionWord.definitionVi.trim().toLowerCase()) || (questionWord.definition && txt === questionWord.definition.trim().toLowerCase())) {
+          btn.classList.add('correct');
+        }
+      });
+
+      if (questionWord) {
+        renderWordDetailsCard('quiz', questionWord);
+        loadQuizAiExplanation(questionWord, correctDef, currentQuizChoices);
+      }
+      const quizNextCont = document.getElementById('quiz-next-container');
+      if (quizNextCont) {
+        quizNextCont.style.display = 'block';
+        const qNextBtn = quizNextCont.querySelector('button');
+        if (qNextBtn) {
+          qNextBtn.className = 'btn btn-warning';
+          qNextBtn.style.background = 'linear-gradient(135deg, #d97706, #b45309)';
+          qNextBtn.style.boxShadow = '0 4px 14px rgba(217,119,6,0.35)';
+          qNextBtn.innerHTML = '<span>⏭️ Bỏ Qua • Câu tiếp theo</span> <kbd class="key-shortcut-badge">Enter ↵</kbd>';
+          qNextBtn.focus();
+        }
+      }
+    }
+    window.useQuizSkip = useQuizSkip;
+
     function nextQuizQuestion() {
       if (typeof dismissVipMemeOverlay === 'function') dismissVipMemeOverlay();
       quizIndex++;
@@ -1682,6 +1759,16 @@ Yêu cầu nghiêm ngặt:
       if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
         if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
       }
+
+      // Auto-publish community milestone on long / perfect study sessions
+      if (typeof autoPublishCommunityMilestone === 'function') {
+        if (total >= 50 && accuracyPct >= 100) {
+          autoPublishCommunityMilestone('study_perfect', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+        } else if (total >= 30) {
+          autoPublishCommunityMilestone('study_marathon', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+        }
+      }
+
       const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
       const pointsEl = document.getElementById('quiz-res-points');
       const durationEl = document.getElementById('quiz-res-duration');
@@ -1695,8 +1782,7 @@ Yêu cầu nghiêm ngặt:
 
       const diffBadgeEl = document.getElementById('quiz-res-difficulty-badge');
       if (diffBadgeEl) {
-        const mult = getDifficultyMultiplier();
-        diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty) + ' (Hệ số x' + mult + ' Điểm)';
+        diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty);
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
       if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';

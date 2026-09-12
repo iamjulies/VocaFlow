@@ -8,4 +8,5 @@ hơn nữa, do app đang dần mở rộng và rất nhiều thông tin cần đ
 
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
 
-nhiệm vụ bổ sung (nếu phát sinh): 
+nhiệm vụ bổ sung (nếu phát sinh):
+- lỗi: khi xem prf của ngkhac thì kh hiện đúng thông số ví dụ như vocoin hay flow, và sai cả @username. -> sửa: mỗi khi nhấn vào prf ngkhac thì tiến hành kéo đúng thông tin của ngta về.

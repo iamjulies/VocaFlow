@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.9-48)
 
@@ -2417,9 +2417,15 @@
       playVocaSfx('success');
       showToast(`🎉 Mở khóa ${badgeDef.isSecret ? 'Thành Tựu Bí Ẩn' : 'Danh hiệu'} "${badgeDef.icon} ${badgeDef.name}"! Vào Bảng Thành Tựu để nhận thưởng.`);
 
-      // Auto pin if user has less than 3 pinned badges
-      if (userPinnedBadges.length < 3 && !userPinnedBadges.includes(id)) {
-        userPinnedBadges.push(id);
+      // Auto post to community on major milestone badges (Diamond / Legendary)
+      if (typeof autoPostMilestoneToCommunity === 'function' && (badgeDef.tier === 'diamond' || badgeDef.tier === 'legendary')) {
+        autoPostMilestoneToCommunity('badge', {
+          badgeId: id,
+          name: badgeDef.name,
+          icon: badgeDef.icon,
+          desc: badgeDef.desc,
+          tier: badgeDef.tier
+        });
       }
 
       saveAchievementsState();

@@ -1,4 +1,36 @@
-﻿================================================================================
+================================================================================
+Phiên bản: v0.10.9-49 (Build 281) - Triệt Tiêu Hoàn Toàn Lỗi Gemini API 404, Bổ Sung Tab Cộng Đồng (Community Feed) Đa Năng Trong Hồ Sơ Cá Nhân, Sửa Lỗi Thống Kê Modal Hoàn Thành & Tối Ưu Hóa Realtime Cloud Sync
+================================================================================
+1. [Triệt Tiêu Hoàn Toàn Lỗi Gemini API 404 & Nâng Cao Tỷ Lệ Phản Hồi]:
+   - Chuẩn hóa danh sách model Google Gemini khả dụng (`gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-flash-8b`, `gemini-1.5-pro` và vision: `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-pro`).
+   - Loại bỏ triệt để các chuỗi định danh model không tồn tại hoặc gây lỗi 404 (`gemini-3.5-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.0-flash-lite`, `gemini-3.7-flash`).
+   - Tích hợp chuỗi fallback chuẩn mực xuyên suốt 6 engine: VocaMentor Chatbot, AI AutoFill từ vựng, Đánh giá phát âm AI Speaking Lab, Thử kết nối API Key và Tạo bộ từ vựng tự động.
+
+2. [Bổ Sung Tab "💬 Cộng Đồng" (Community Feed) Trong Hồ Sơ Cá Nhân]:
+   - Trình soạn thảo bài viết tiện lợi: Viết văn bản tự do, đính kèm ảnh nén tự động tối đa 1.5MB, đính kèm huy hiệu thành tựu người dùng đã đạt được.
+   - Bộ lọc linh hoạt 3 chế độ: "Tất Cả", "Bài Của Tôi", và "Thành Tích".
+   - Tương tác bài viết thời gian thực: Tên tác giả, huy hiệu VIP/Official, thời gian đăng tương đối, nút Thả tim cô lập chống giật lag, Bình luận phản hồi trực tiếp `@handle`, Chỉnh sửa/Xóa bài viết của tác giả, Sao chép liên kết chia sẻ trực tiếp (`/@<username>?post=<id>`).
+   - Cơ chế tự động đăng bài kỷ niệm (Milestone Auto-Post) khi mở khóa huy hiệu Kim Cương/Huyền Thoại, hoàn thành phiên học >= 30 hoặc 50 từ, đạt chuỗi Flow Streak 7, 30, 100, 200, 365 ngày, và khi kích hoạt VocaVIP.
+   - Bắn thông báo Realtime Cloud (`dispatchFollowersNotification`) gửi đến tất cả người theo dõi khi có bài viết hoặc mốc kỷ niệm mới.
+
+3. [Sửa Lỗi Hiển Thị & Thống Kê Modal Hoàn Thành Phiên Học (Celebration Modals)]:
+   - Khắc phục các biến số không khớp trong Quiz, Spelling, Speaking: thời lượng học thực tế (phút:giây), tốc độ giây/từ (SPW / SPQ), độ chính xác (%), thưởng VoCoin theo chuẩn hệ số Balance v2, nhãn cấp độ khó, bộ đếm từ sai/bỏ qua/manh mối.
+
+4. [Tối Ưu Hóa Tốc Độ Đồng Bộ Realtime Cloud (Fast Cloud Sync)]:
+   - Cơ chế Debounce Coalescing 1200ms gom cụm các thao tác lưu trữ liên tiếp, khử trùng dữ liệu payload loại bỏ các trường thừa không cần thiết, bộ điều khiển timeout 8s chống nghẽn mạng.
+
+5. [Cơ Chế Miễn Trừ / Đặt Lại Hàng Đợi Ôn Tập Quá Hạn SRS (Overdue Reset)]:
+   - Cập nhật trường `updatedAt` của từ vựng ngay khi vượt qua bài tập hoặc hoàn thành lượt học trong Quiz, Spelling, Speaking và Auto-Flashcards.
+   - Đẩy khoảng thời gian ôn tập tiếp theo và làm mới banner hàng đợi ôn tập hằng ngày (`renderDailyReviewBanner`).
+
+6. [Đồng Bộ Dữ Liệu Hồ Sơ Công Khai Thời Gian Thực Từ Cloud (Public Profile Realtime Fetch)]:
+   - Tinh gọn 7 truy vấn rời rạc thành 1 lượt nạp duy nhất `/users/{targetUid}.json` lấy đầy đủ Ví VoCoin, Flow Streak, @username, tiểu sử, huy hiệu ghim và danh sách bộ từ công khai.
+
+7. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-49 Build 281)]:
+   - Cập nhật chuẩn hóa phiên bản trên toàn bộ 7 vị trí bắt buộc.
+   - Biên dịch thành công nhị phân Windows Native VocaFlow.exe và đóng gói tệp phân phối GITHUB_RELEASE.
+
+================================================================================
 Phiên bản: v0.10.9-48 (Build 280) - Tái Cấu Trúc Toàn Diện "Chia Để Trị" Mã Nguồn JavaScript Thành 12 Modules Chuyên Biệt, Khắc Phục Triệt Để Định Tuyến Dynamic Profile & Chuẩn Hóa Liên Kết Chia Sẻ Hồ Sơ
 ================================================================================
 1. [Tái Cấu Trúc Toàn Diện Kiến Trúc Mã Nguồn JavaScript "Chia Để Trị" (12 Modules)]:

@@ -1,16 +1,22 @@
-﻿// =========================================================================
+// =========================================================================
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-48 Build 280)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-49 Build 281)
 
 // Global constants, core database state, storage keys, recovery & audio engine
 
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-47)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-49 Build 281)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-48';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-48 (Build 280)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-49';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-49 (Build 281)';
+
+    // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
+    const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    window.GEMINI_STANDARD_MODELS = GEMINI_STANDARD_MODELS;
+    window.GEMINI_VISION_MODELS = GEMINI_VISION_MODELS;
 
     // =========================================================================
     // GLOBAL APP LOADING SPINNER CONTROLLER (v0.10.9-47)
@@ -202,6 +208,13 @@
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
       if (userIsVip && typeof purgeAllAdArtifactsFromDOM === 'function') purgeAllAdArtifactsFromDOM();
       if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
+      if (userIsVip && typeof autoPostMilestoneToCommunity === 'function') {
+        const lastVipPost = localStorage.getItem('vocaflow_last_vip_auto_post_tier');
+        if (lastVipPost !== userVipTier) {
+          localStorage.setItem('vocaflow_last_vip_auto_post_tier', userVipTier);
+          autoPostMilestoneToCommunity('vip_upgrade', { tier: userVipTier });
+        }
+      }
       return { userIsVip, userVipTier, userVipExpiresAt };
     }
 

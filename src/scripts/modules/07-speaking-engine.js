@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.9-48)
 
@@ -849,6 +849,18 @@
         }
       }
 
+      if (typeof autoPostMilestoneToCommunity === 'function' && speakingCompletedWords >= 30) {
+        autoPostMilestoneToCommunity('session_long', {
+          mode: 'Speaking (Luyện Nói)',
+          wordCount: speakingCompletedWords,
+          difficulty: currentSpeakingDifficulty,
+          accuracy: floorRatePct
+        });
+      }
+      if (studySourceContext === 'review-queue' && typeof renderDailyReviewBanner === 'function') {
+        renderDailyReviewBanner();
+      }
+
       openModal('modal-speaking-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
@@ -1356,7 +1368,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
+        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         let evalSuccess = false;
@@ -2203,7 +2215,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // AUTO FC PROGRESSION (v0.0.9.22):
+        // AUTO FC PROGRESSION (v0.0.9.22 & v0.10.9-49):
         // If word is brand new (masteryScore === 0), award +1% so it transitions to "Đang học (1%)"
         const currentScore = (typeof word.masteryScore === 'number') ? word.masteryScore : 0;
         if (currentScore === 0) {
@@ -2214,6 +2226,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           if (globalIdx >= 0) {
             words[globalIdx].masteryScore = 1;
             words[globalIdx].status = 'learning';
+            words[globalIdx].updatedAt = word.updatedAt;
+          }
+          saveDatabase(true);
+        } else if (studySourceContext === 'review-queue') {
+          word.updatedAt = new Date().toISOString();
+          const globalIdx = words.findIndex(w => w.id === word.id);
+          if (globalIdx >= 0) {
             words[globalIdx].updatedAt = word.updatedAt;
           }
           saveDatabase(true);

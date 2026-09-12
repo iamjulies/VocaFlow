@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 03-AUTH.JS (v0.10.9-48)
 
@@ -882,7 +882,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
   "code": "S40"
 }`;
 
-            const visionModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
             for (const vModel of visionModels) {
               try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${vModel}:generateContent?key=${apiKey}`, {
@@ -4501,66 +4501,32 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             }
           }
 
-          // Fetch fresh profile & follow stats from Cloud RTDB for authentic user metadata
+          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-49 single fast pull)
           if (targetUid && targetUid !== 'undefined') {
             const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
             try {
-              const [pRes, fRes, fingRes, wRes, flRes, ecoRes, rootUserRes] = await Promise.allSettled([
-                fetch(`${rtdbUrl}/users/${targetUid}/profile.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}/followers.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}/following.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}/wallet/points.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}/flow.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}/economy.json`),
-                fetch(`${rtdbUrl}/users/${targetUid}.json`)
-              ]);
-
-              if (pRes.status === 'fulfilled' && pRes.value.ok) {
-                const uProf = await pRes.value.json();
-                if (uProf && typeof uProf === 'object') {
-                  if (uProf.displayName) resolvedName = uProf.displayName;
-                  if (uProf.username) resolvedHandle = uProf.username;
-                  resolvedAvatar = uProf.avatar || uProf.displayName || resolvedAvatar;
-                  resolvedBio = uProf.bio || resolvedBio;
-                  if (typeof uProf.followerCount === 'number') targetFollowerCount = uProf.followerCount;
-                  if (typeof uProf.followingCount === 'number') targetFollowingCount = uProf.followingCount;
-                  if (Array.isArray(uProf.pinnedBadges)) targetPinnedBadges = uProf.pinnedBadges;
-                  if (typeof uProf.points === 'number') targetPoints = uProf.points;
-                  else if (uProf.points !== undefined && !isNaN(parseInt(uProf.points, 10))) targetPoints = parseInt(uProf.points, 10);
-                }
-              }
-
-              if (ecoRes.status === 'fulfilled' && ecoRes.value.ok) {
-                const ecoData = await ecoRes.value.json();
-                if (ecoData && typeof ecoData === 'object') {
-                  if (typeof ecoData.points === 'number') targetPoints = ecoData.points;
-                  else if (ecoData.points !== undefined && !isNaN(parseInt(ecoData.points, 10))) targetPoints = parseInt(ecoData.points, 10);
-                }
-              }
-
-              if (wRes.status === 'fulfilled' && wRes.value.ok) {
-                const wData = await wRes.value.json();
-                if (typeof wData === 'number') targetPoints = wData;
-                else if (wData !== null && !isNaN(parseInt(wData, 10))) targetPoints = parseInt(wData, 10);
-              }
-
-              if (rootUserRes.status === 'fulfilled' && rootUserRes.value.ok) {
-                const uData = await rootUserRes.value.json();
+              const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
+              if (rootUserRes.ok) {
+                const uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object') {
                   if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
-                  else if (uData.economy && uData.economy.points !== undefined && !isNaN(parseInt(uData.economy.points, 10))) targetPoints = parseInt(uData.economy.points, 10);
+                  else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
-                  else if (uData.points !== undefined && !isNaN(parseInt(uData.points, 10))) targetPoints = parseInt(uData.points, 10);
                   else if (uData.profile && typeof uData.profile.points === 'number') targetPoints = uData.profile.points;
-                  else if (uData.profile && uData.profile.points !== undefined && !isNaN(parseInt(uData.profile.points, 10))) targetPoints = parseInt(uData.profile.points, 10);
 
                   if (uData.profile && typeof uData.profile === 'object') {
-                    if (uData.profile.displayName && !resolvedName) resolvedName = uData.profile.displayName;
-                    if (uData.profile.username && !resolvedHandle) resolvedHandle = uData.profile.username;
+                    if (uData.profile.displayName) resolvedName = uData.profile.displayName;
+                    if (uData.profile.username) resolvedHandle = uData.profile.username;
                     if (uData.profile.avatar) resolvedAvatar = uData.profile.avatar;
                     if (uData.profile.bio) resolvedBio = uData.profile.bio;
-                    if (Array.isArray(uData.profile.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = uData.profile.pinnedBadges;
+                    if (Array.isArray(uData.profile.pinnedBadges)) targetPinnedBadges = uData.profile.pinnedBadges;
+                    if (typeof uData.profile.followerCount === 'number') targetFollowerCount = uData.profile.followerCount;
+                    if (typeof uData.profile.followingCount === 'number') targetFollowingCount = uData.profile.followingCount;
                   }
+                  if (uData.username && !resolvedHandle) resolvedHandle = uData.username;
+                  if (uData.displayName && !resolvedName) resolvedName = uData.displayName;
+                  if (uData.bio && !resolvedBio) resolvedBio = uData.bio;
+                  if (uData.avatar && !resolvedAvatar) resolvedAvatar = uData.avatar;
                   if (Array.isArray(uData.pinnedBadges) && targetPinnedBadges.length === 0) {
                     targetPinnedBadges = uData.pinnedBadges;
                   }
@@ -4572,33 +4538,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   } else if (typeof uData.flow === 'number') {
                     targetFlowDays = uData.flow;
                   }
-                }
-              }
 
-              if (flRes.status === 'fulfilled' && flRes.value.ok) {
-                const flData = await flRes.value.json();
-                if (flData && typeof flData === 'object') {
-                  if (typeof flData.days === 'number') targetFlowDays = flData.days;
-                  else if (typeof flData.currentFlow === 'number') targetFlowDays = flData.currentFlow;
-                } else if (typeof flData === 'number') {
-                  targetFlowDays = flData;
-                }
-              }
+                  if (uData.followers && typeof uData.followers === 'object') {
+                    targetFollowerCount = Object.keys(uData.followers).length;
+                  }
+                  if (uData.following && typeof uData.following === 'object') {
+                    targetFollowingCount = Object.keys(uData.following).length;
+                  }
 
-              if (fRes.status === 'fulfilled' && fRes.value.ok) {
-                const fData = await fRes.value.json();
-                if (fData && typeof fData === 'object') {
-                  targetFollowerCount = Object.keys(fData).length;
+                  if (Array.isArray(uData.decks) && uData.decks.length > 0) {
+                    authorDecks = uData.decks;
+                  } else if (uData.decks && typeof uData.decks === 'object') {
+                    authorDecks = Object.values(uData.decks);
+                  }
                 }
               }
-
-              if (fingRes.status === 'fulfilled' && fingRes.value.ok) {
-                const fingData = await fingRes.value.json();
-                if (fingData && typeof fingData === 'object') {
-                  targetFollowingCount = Object.keys(fingData).length;
-                }
-              }
-            } catch (e) {}
+            } catch (e) {
+              console.warn('Single RTDB pull error:', e);
+            }
           }
 
           const matchedStudent = adminStudentsData.find(s => 
@@ -4890,7 +4847,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.renderProfileDecksList = renderProfileDecksList;
 
     function switchProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'achievements', 'cloud'];
+      const tabs = ['decks', 'achievements', 'community', 'cloud'];
       tabs.forEach(t => {
         const btn = document.getElementById(`profile-tab-btn-${t}`);
         const panel = document.getElementById(`profile-tab-panel-${t}`);
@@ -4904,9 +4861,683 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       });
       if (tabName === 'decks') {
         renderProfileDecksList();
+      } else if (tabName === 'community') {
+        fetchAndRenderCommunityFeed();
       }
     }
     window.switchProfileTab = switchProfileTab;
+
+    // =========================================================================
+    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-49 - ZERO-BUDGET CLOUD STRATEGY)
+    // =========================================================================
+    let communityPosts = [];
+    let communityCurrentFilter = 'all';
+    let communityActiveAttachedImage = null;
+    let communityActiveAttachedBadge = null;
+    let communityReplyingToComment = null; // { postId, commentId, authorHandle }
+    let communityActiveCommentsPostId = null;
+
+    function handleCommunityImageUpload(event) {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert('⚠️ Kích thước ảnh tối đa là 1.5MB!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        communityActiveAttachedImage = e.target.result;
+        const prevContainer = document.getElementById('community-post-image-preview-container');
+        const prevImg = document.getElementById('community-post-image-preview');
+        if (prevImg) prevImg.src = communityActiveAttachedImage;
+        if (prevContainer) prevContainer.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+    window.handleCommunityImageUpload = handleCommunityImageUpload;
+
+    function clearCommunityPostImage() {
+      communityActiveAttachedImage = null;
+      const prevContainer = document.getElementById('community-post-image-preview-container');
+      const prevImg = document.getElementById('community-post-image-preview');
+      if (prevImg) prevImg.src = '';
+      if (prevContainer) prevContainer.style.display = 'none';
+      const fileInp = document.getElementById('community-image-file-input');
+      if (fileInp) fileInp.value = '';
+    }
+    window.clearCommunityPostImage = clearCommunityPostImage;
+
+    function openCommunityBadgePicker() {
+      if (typeof openAchievementsModal === 'function') {
+        openAchievementsModal();
+        showToast('💡 Nhấn chọn huy hiệu bạn muốn đính kèm vào bài viết!');
+      }
+    }
+    window.openCommunityBadgePicker = openCommunityBadgePicker;
+
+    function selectCommunityPostBadge(badgeId) {
+      const bDef = (typeof ACHIEVEMENTS_REGISTRY !== 'undefined') ? ACHIEVEMENTS_REGISTRY[badgeId] : null;
+      if (!bDef) return;
+      communityActiveAttachedBadge = {
+        id: badgeId,
+        name: bDef.name,
+        icon: bDef.icon || '🏆',
+        desc: bDef.desc || '',
+        tier: bDef.tier || 'bronze'
+      };
+      const prevCont = document.getElementById('community-post-badge-preview-container');
+      const iconEl = document.getElementById('community-post-badge-icon');
+      const nameEl = document.getElementById('community-post-badge-name');
+      const descEl = document.getElementById('community-post-badge-desc');
+      if (iconEl) iconEl.textContent = bDef.icon || '🏆';
+      if (nameEl) nameEl.textContent = bDef.name;
+      if (descEl) descEl.textContent = bDef.desc || '';
+      if (prevCont) prevCont.style.display = 'flex';
+      showToast(`🎖️ Đã đính kèm danh hiệu "${bDef.name}"!`);
+    }
+    window.selectCommunityPostBadge = selectCommunityPostBadge;
+
+    function clearCommunityPostBadge() {
+      communityActiveAttachedBadge = null;
+      const prevCont = document.getElementById('community-post-badge-preview-container');
+      if (prevCont) prevCont.style.display = 'none';
+    }
+    window.clearCommunityPostBadge = clearCommunityPostBadge;
+
+    async function submitCommunityPost() {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập tài khoản để đăng bài lên Cộng Đồng!');
+        openAuthModal('login');
+        return;
+      }
+      const contentEl = document.getElementById('community-post-content');
+      const text = (contentEl?.value || '').trim();
+      if (!text && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
+        showToast('⚠️ Vui lòng nhập nội dung hoặc đính kèm ảnh/danh hiệu trước khi đăng!');
+        return;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-community-post');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Đang đăng...'; }
+
+      const postId = 'post_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      const postObj = {
+        id: postId,
+        authorUid: currentUser.uid,
+        authorName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Flower'),
+        authorHandle: currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : 'user'),
+        authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
+        isVip: isUserVip(),
+        vipTier: getUserVipTier(),
+        content: text,
+        image: communityActiveAttachedImage || null,
+        badge: communityActiveAttachedBadge || null,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        type: 'manual'
+      };
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(postObj)
+        });
+
+        dispatchFollowersNotification({
+          type: 'new_post',
+          postId: postId,
+          authorName: postObj.authorName,
+          authorHandle: postObj.authorHandle,
+          message: `${postObj.authorName} vừa đăng một bài viết mới trên Cộng Đồng!`
+        });
+
+        if (contentEl) contentEl.value = '';
+        clearCommunityPostImage();
+        clearCommunityPostBadge();
+
+        communityPosts.unshift(postObj);
+        renderCommunityFeed();
+        showToast('🎉 Đã đăng bài viết lên Cộng Đồng thành công!');
+      } catch (err) {
+        console.error('Error posting to community:', err);
+        showToast('⚠️ Không thể đăng bài lúc này. Vui lòng kiểm tra kết nối!');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '🚀 Đăng Bài'; }
+      }
+    }
+    window.submitCommunityPost = submitCommunityPost;
+
+    async function autoPostMilestoneToCommunity(type, meta = {}) {
+      if (isGuest() || !currentUser || !currentUser.uid) return;
+      const postId = 'auto_' + type + '_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+      let contentText = '';
+      let badgeData = null;
+
+      if (type === 'badge') {
+        contentText = `🏆 Tôi vừa mở khóa danh hiệu: "${meta.name || 'Thành Tựu Mới'}" (${(meta.tier || 'Kim Cương').toUpperCase()})! ${meta.desc ? '• ' + meta.desc : ''}`;
+        badgeData = {
+          id: meta.badgeId,
+          name: meta.name,
+          icon: meta.icon || '🎖️',
+          desc: meta.desc || '',
+          tier: meta.tier || 'diamond'
+        };
+      } else if (type === 'session_long') {
+        contentText = `🔥 Vừa hoàn thành xuất sắc phiên học ${meta.mode || 'Luyện Tập'} với ${meta.wordCount || 30} từ vựng! Độ chính xác: ${meta.accuracy || 100}% • Cấp độ: ${(meta.difficulty || 'easy').toUpperCase()}! 🚀`;
+      } else if (type === 'flow_streak') {
+        contentText = `🌊 Giữ vững chuỗi Flow Streak ${meta.days || 7} ngày liên tục! Quyết tâm duy trì thói quen học từ mỗi ngày! 🌟`;
+      } else if (type === 'vip_upgrade') {
+        contentText = `👑 Vừa nâng cấp VocaVIP (${(meta.tier || 'PRO').toUpperCase()})! Sẵn sàng chinh phục từ vựng cùng AI thông minh! ✨`;
+      }
+
+      const postObj = {
+        id: postId,
+        authorUid: currentUser.uid,
+        authorName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Flower'),
+        authorHandle: currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : 'user'),
+        authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
+        isVip: isUserVip(),
+        vipTier: getUserVipTier(),
+        content: contentText,
+        image: null,
+        badge: badgeData,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        type: 'milestone',
+        milestoneType: type
+      };
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(postObj)
+        });
+
+        dispatchFollowersNotification({
+          type: 'milestone',
+          postId: postId,
+          authorName: postObj.authorName,
+          authorHandle: postObj.authorHandle,
+          message: `${postObj.authorName} vừa đạt cột mốc mới: ${contentText}`
+        });
+
+        communityPosts.unshift(postObj);
+      } catch (err) {
+        console.warn('Auto milestone post sync error:', err);
+      }
+    }
+    window.autoPostMilestoneToCommunity = autoPostMilestoneToCommunity;
+
+    async function dispatchFollowersNotification(notifData) {
+      if (!currentUser || !currentUser.uid || !myFollowersMap) return;
+      const followerUids = Object.keys(myFollowersMap);
+      if (followerUids.length === 0) return;
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+
+      const notifId = 'notif_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+      const notifPayload = {
+        id: notifId,
+        type: notifData.type || 'community',
+        title: notifData.authorName || 'Cộng đồng VocaFlow',
+        message: notifData.message,
+        authorHandle: notifData.authorHandle,
+        postId: notifData.postId,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+
+      followerUids.forEach(fUid => {
+        fetch(`${rtdbUrl}/users/${fUid}/notifications/${notifId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(notifPayload)
+        }).catch(e => console.warn('Failed to dispatch follower notif to ' + fUid, e));
+      });
+    }
+
+    async function fetchAndRenderCommunityFeed(force = false) {
+      const container = document.getElementById('community-posts-container');
+      if (!container) return;
+
+      const compAv = document.getElementById('community-composer-avatar');
+      if (compAv) {
+        compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
+      }
+
+      if (communityPosts.length === 0 || force) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const res = await fetch(`${rtdbUrl}/community_posts.json`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data === 'object') {
+              communityPosts = Object.values(data).filter(p => p && p.id);
+              communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+              localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+            } else {
+              communityPosts = [];
+            }
+          }
+        } catch (err) {
+          console.warn('Community feed load error, fallback to cache:', err);
+          const cached = localStorage.getItem('vocaflow_community_posts_cache');
+          if (cached) {
+            try { communityPosts = JSON.parse(cached); } catch (e) {}
+          }
+        }
+      }
+
+      renderCommunityFeed();
+    }
+    window.fetchAndRenderCommunityFeed = fetchAndRenderCommunityFeed;
+
+    function filterCommunityFeed(filter) {
+      communityCurrentFilter = filter;
+      ['all', 'mine', 'milestone'].forEach(f => {
+        const btn = document.getElementById('community-filter-' + f);
+        if (btn) {
+          if (f === filter) {
+            btn.classList.add('active-pill');
+            btn.style.background = '#6366f1';
+            btn.style.color = '#fff';
+          } else {
+            btn.classList.remove('active-pill');
+            btn.style.background = 'var(--surface-elevated)';
+            btn.style.color = 'var(--text-muted)';
+          }
+        }
+      });
+      renderCommunityFeed();
+    }
+    window.filterCommunityFeed = filterCommunityFeed;
+
+    function renderCommunityFeed() {
+      const container = document.getElementById('community-posts-container');
+      if (!container) return;
+
+      const myUid = currentUser?.uid;
+      let filtered = communityPosts;
+      if (communityCurrentFilter === 'mine') {
+        filtered = communityPosts.filter(p => p.authorUid === myUid);
+      } else if (communityCurrentFilter === 'milestone') {
+        filtered = communityPosts.filter(p => p.type === 'milestone' || p.badge);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">💬✨</div>
+            <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy là người đầu tiên chia sẻ cảm nghĩ hoặc chiến tích học tập!</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(post => {
+        const isAuthor = myUid && post.authorUid === myUid;
+        const likesMap = post.likes || {};
+        const likesCount = Object.keys(likesMap).length;
+        const isLiked = myUid && !!likesMap[myUid];
+
+        const commentsMap = post.comments || {};
+        const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
+        const commentsCount = commentsList.length;
+
+        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+
+        html += `
+          <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
+            <!-- AUTHOR HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '', '${post.authorUid}')">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                  ${renderAvatarHtml(post.authorAvatar || post.authorName, 40, 16)}
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
+                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                    <span>@${escapeHtml(post.authorHandle || 'user')}</span>
+                    <span>•</span>
+                    <span>${timeAgo}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AUTHOR ACTION MENU -->
+              ${isAuthor ? `
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- POST CONTENT -->
+            ${post.content ? `
+              <div id="post-content-text-${post.id}" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">
+                ${escapeHtml(post.content)}
+              </div>
+            ` : ''}
+
+            <!-- ATTACHED BADGE BANNER -->
+            ${post.badge ? `
+              <div style="margin-bottom: 10px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.15)); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 26px;">${post.badge.icon || '🏆'}</span>
+                <div>
+                  <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">${escapeHtml(post.badge.name)}</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || '')}</div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- ATTACHED IMAGE -->
+            ${post.image ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
+                <img src="${post.image}" alt="Post image" style="width: 100%; height: auto; max-height: 320px; object-fit: contain; display: block;">
+              </div>
+            ` : ''}
+
+            <!-- INTERACTION ACTION BAR -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;">
+              <div style="display: flex; gap: 10px;">
+                <!-- LIKE BUTTON -->
+                <button type="button" class="btn btn-xs ${isLiked ? 'btn-primary' : 'btn-outline'}" onclick="togglePostLike('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px; ${isLiked ? 'background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.5);' : ''}">
+                  <span>${isLiked ? '❤️' : '🤍'}</span>
+                  <span>${likesCount}</span>
+                </button>
+
+                <!-- COMMENT TOGGLE BUTTON -->
+                <button type="button" class="btn btn-xs btn-outline" onclick="togglePostCommentsSection('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
+                  <span>💬</span>
+                  <span>${commentsCount} bình luận</span>
+                </button>
+              </div>
+
+              <!-- SHARE BUTTON -->
+              <button type="button" class="btn btn-xs btn-outline" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ liên kết bài viết" style="font-size: 11px;">
+                <span>🔗</span>
+              </button>
+            </div>
+
+            <!-- COMMENTS SECTION (Collapsible) -->
+            <div id="post-comments-section-${post.id}" style="display: ${communityActiveCommentsPostId === post.id ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+              
+              <!-- COMMENTS LIST -->
+              <div id="post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                ${commentsList.length === 0 ? `
+                  <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
+                ` : commentsList.map(c => `
+                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                      </div>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                    </div>
+                    ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
+                    <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- COMMENT INPUT -->
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div id="reply-indicator-${post.id}" style="display: none; font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 3px 8px; border-radius: 6px; justify-content: space-between; align-items: center;">
+                  <span id="reply-indicator-text-${post.id}">Đang trả lời @user</span>
+                  <button type="button" onclick="cancelReplyingToComment('${post.id}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <input type="text" id="post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitPostComment('${post.id}')">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="submitPostComment('${post.id}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    async function togglePostLike(postId) {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập để thả tim bài viết!');
+        openAuthModal('login');
+        return;
+      }
+      const myUid = currentUser?.uid;
+      if (!myUid) return;
+
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post) return;
+      if (!post.likes) post.likes = {};
+
+      const isLiked = !!post.likes[myUid];
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+
+      try {
+        if (isLiked) {
+          delete post.likes[myUid];
+          await fetch(`${rtdbUrl}/community_posts/${postId}/likes/${myUid}.json${authParam}`, { method: 'DELETE' });
+        } else {
+          post.likes[myUid] = true;
+          await fetch(`${rtdbUrl}/community_posts/${postId}/likes/${myUid}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(true)
+          });
+
+          if (post.authorUid && post.authorUid !== myUid) {
+            const notifId = 'notif_like_' + Date.now();
+            fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: notifId,
+                type: 'like',
+                title: '❤️ Lượt thích mới',
+                message: `@${currentUser.username || 'user'} đã thích bài viết của bạn!`,
+                postId: postId,
+                timestamp: new Date().toISOString(),
+                read: false
+              })
+            }).catch(e => console.warn(e));
+          }
+        }
+        renderCommunityFeed();
+      } catch (err) {
+        console.warn('Like toggle sync error:', err);
+      }
+    }
+    window.togglePostLike = togglePostLike;
+
+    function togglePostCommentsSection(postId) {
+      communityActiveCommentsPostId = (communityActiveCommentsPostId === postId) ? null : postId;
+      renderCommunityFeed();
+      if (communityActiveCommentsPostId === postId) {
+        setTimeout(() => {
+          document.getElementById(`post-comment-input-${postId}`)?.focus();
+        }, 100);
+      }
+    }
+    window.togglePostCommentsSection = togglePostCommentsSection;
+
+    function setReplyingToComment(postId, commentId, authorHandle) {
+      communityReplyingToComment = { postId, commentId, authorHandle };
+      const ind = document.getElementById(`reply-indicator-${postId}`);
+      const txt = document.getElementById(`reply-indicator-text-${postId}`);
+      const inp = document.getElementById(`post-comment-input-${postId}`);
+      if (ind) ind.style.display = 'flex';
+      if (txt) txt.textContent = `Đang trả lời @${authorHandle}`;
+      if (inp) {
+        inp.value = `@${authorHandle} `;
+        inp.focus();
+      }
+    }
+    window.setReplyingToComment = setReplyingToComment;
+
+    function cancelReplyingToComment(postId) {
+      communityReplyingToComment = null;
+      const ind = document.getElementById(`reply-indicator-${postId}`);
+      if (ind) ind.style.display = 'none';
+      const inp = document.getElementById(`post-comment-input-${postId}`);
+      if (inp) inp.value = '';
+    }
+    window.cancelReplyingToComment = cancelReplyingToComment;
+
+    async function submitPostComment(postId) {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập để bình luận!');
+        openAuthModal('login');
+        return;
+      }
+      const inp = document.getElementById(`post-comment-input-${postId}`);
+      const text = (inp?.value || '').trim();
+      if (!text) return;
+
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post) return;
+      if (!post.comments) post.comments = {};
+
+      const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+      const replyHandle = communityReplyingToComment?.postId === postId ? communityReplyingToComment.authorHandle : null;
+      const replyCommentId = communityReplyingToComment?.postId === postId ? communityReplyingToComment.commentId : null;
+
+      const commentObj = {
+        id: commentId,
+        authorUid: currentUser.uid,
+        authorName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Flower'),
+        authorHandle: currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : 'user'),
+        authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
+        content: text,
+        replyToCommentId: replyCommentId,
+        replyToAuthorHandle: replyHandle,
+        timestamp: new Date().toISOString()
+      };
+
+      post.comments[commentId] = commentObj;
+      if (inp) inp.value = '';
+      cancelReplyingToComment(postId);
+      renderCommunityFeed();
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}/comments/${commentId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(commentObj)
+        });
+
+        if (post.authorUid && post.authorUid !== currentUser.uid) {
+          const notifId = 'notif_comment_' + Date.now();
+          fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: notifId,
+              type: 'comment',
+              title: '💬 Bình luận mới',
+              message: `@${commentObj.authorHandle} đã bình luận: "${text.slice(0, 60)}"`,
+              postId: postId,
+              timestamp: new Date().toISOString(),
+              read: false
+            })
+          }).catch(e => console.warn(e));
+        }
+      } catch (err) {
+        console.warn('Comment sync error:', err);
+      }
+    }
+    window.submitPostComment = submitPostComment;
+
+    async function editCommunityPost(postId) {
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || post.authorUid !== currentUser?.uid) return;
+      const newText = prompt('Chỉnh sửa nội dung bài viết:', post.content || '');
+      if (newText === null) return;
+      post.content = newText.trim();
+      post.updatedAt = new Date().toISOString();
+      renderCommunityFeed();
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: post.content, updatedAt: post.updatedAt })
+        });
+        showToast('✏️ Đã cập nhật bài viết thành công!');
+      } catch (err) {
+        console.warn('Edit post sync error:', err);
+      }
+    }
+    window.editCommunityPost = editCommunityPost;
+
+    async function deleteCommunityPost(postId) {
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || post.authorUid !== currentUser?.uid) return;
+      if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
+
+      communityPosts = communityPosts.filter(p => p.id !== postId);
+      renderCommunityFeed();
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, { method: 'DELETE' });
+        showToast('🗑️ Đã xóa bài viết thành công!');
+      } catch (err) {
+        console.warn('Delete post sync error:', err);
+      }
+    }
+    window.deleteCommunityPost = deleteCommunityPost;
+
+    function shareCommunityPost(postId) {
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post) return;
+      const url = getStandardProfileUrl(post.authorHandle) + `&post=${postId}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('🔗 Đã sao chép liên kết bài viết vào bộ nhớ tạm!');
+      }).catch(() => {
+        prompt('Sao chép liên kết bài viết:', url);
+      });
+    }
+    window.shareCommunityPost = shareCommunityPost;
 
     function switchPubProfileTab(tabName = 'decks') {
       const tabs = ['decks', 'stats'];
@@ -5363,7 +5994,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (autoSyncTimer) clearTimeout(autoSyncTimer);
         autoSyncTimer = setTimeout(() => {
           pushCurrentDatabaseToCloud();
-        }, 300);
+        }, 1200);
       }
     }
 
@@ -5409,13 +6040,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             userNotifications.forEach(n => { if (n && n.id) nMap[n.id] = n; });
             return nMap;
           })(),
-          displayName: currentUser.displayName || '',
-          bio: currentUser.bio || '',
-          avatar: avToSave,
-          avatarTime: avTimeToSave,
-          geminiApiKey: geminiApiKey || '',
-          geminiApiKeys: getStoredApiKeys(),
-          referredBy: refToSave,
           achievements: userAchievements,
           pinnedBadges: userPinnedBadges,
           purchasedDeckIds: Array.from(userPurchasedDeckIds),
@@ -5454,11 +6078,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowDates: getFlowDates(),
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
-          streakFreezes: getUserFlowFreezes(),
-          studyDates: getFlowDates(),
-          points: getUserPoints(),
-          hints: getUserHints(),
-          skips: getUserSkips(),
           settings: {
             showReviewQueue: showReviewQueueSetting,
             showFilterPos: showFilterPosSetting,
@@ -5476,12 +6095,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           lastSync: new Date().toISOString()
         };
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
         // Safe PATCH method protects sibling nodes (following, followers, notifications)
         await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, {
           method: 'PATCH',
+          signal: controller.signal,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        clearTimeout(timeoutId);
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
       } catch (err) {
         console.warn('Auto background push note:', err);
