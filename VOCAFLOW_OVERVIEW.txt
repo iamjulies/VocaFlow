@@ -1,4 +1,33 @@
 ================================================================================
+Phiên bản: v0.10.9-55 (Build 287) - Định Tuyến URL Đa Tầng Cho Toàn Bộ Modal & Màn Hình, Hệ Thống Sub-Links Hồ Sơ 2 Chiều (/me/mydeck, /me/stats, /me/achievements, /me/community, /me/sync, /me/followers, /me/following), Chuẩn Hóa Màn Hình Tổng Kết & Chỉ Số Học Tập (Quiz, Spelling, Speaking)
+================================================================================
+1. [Định Tuyến URL Tức Thì Cho Toàn Bộ Modal & Màn Hình (Universal Modal & Screen SPA Routing)]:
+   - Khi mở bất kỳ modal hay tính năng nào (/flowstreak, /notifications, /vocavip, /invite, /report, /vocamail, /vocadeckai, /vocalib, /queue, /ads, /admin, /mentor, /wallet, /mistakes, /wheel, /settings, /achievements, /guide), thanh địa chỉ trình duyệt lập tức cập nhật đường dẫn tương ứng mà không làm tải lại trang.
+   - Hỗ trợ đầy đủ phím Back / Forward (Popstate) của trình duyệt để quay lại màn hình trước đó một cách mượt mà.
+   - Tự động hoàn trả route của màn hình đang học hoặc màn hình chính khi đóng modal.
+
+2. [Hệ Thống Sub-Links Đa Tầng 2 Chiều Cho Hồ Sơ Cá Nhân & Công Khai (Hierarchical Sub-Routes Engine)]:
+   - Hỗ trợ đầy đủ các đường dẫn con cho Hồ sơ cá nhân:
+     + https://iamjulies.github.io/VocaFlow/me/mydeck (Tủ Từ Của Tôi)
+     + https://iamjulies.github.io/VocaFlow/me/stats (📊 Chỉ Số)
+     + https://iamjulies.github.io/VocaFlow/me/achievements (Thành Tựu)
+     + https://iamjulies.github.io/VocaFlow/me/community (Cộng Đồng)
+     + https://iamjulies.github.io/VocaFlow/me/sync (Cloud & Đồng Bộ)
+     + https://iamjulies.github.io/VocaFlow/me/followers (👥 Danh Sách Người Theo Dõi)
+     + https://iamjulies.github.io/VocaFlow/me/following (✨ Danh Sách Đang Theo Dõi)
+   - Hỗ trợ các sub-routes cho Public Profile: /@handle/stats, /@handle/community, /@handle/decks.
+   - Cơ chế đồng bộ 2 chiều: Nhấp chọn tab nào lập tức cập nhật URL con tương ứng; nhập trực tiếp URL trên trình duyệt lập tức mở đúng modal và chuyển ngay đến tab đó.
+
+3. [Khắc Phục & Chuẩn Hóa Toàn Diện Màn Hình Tổng Kết & Chỉ Số Học Tập (Quiz, Spelling, Speaking)]:
+   - Sửa lỗi cấp độ thử thách: Không bao giờ bị ép tụt từ Siêu Khó/Khó/Trung Bình về "Dễ" cho tài khoản khách hoặc khi chưa có API key (tự động sử dụng bộ từ gây nhiễu thông minh offline).
+   - Sửa lỗi tính tỷ lệ chính xác (Accuracy %): Luyện viết (Spelling) và Trắc nghiệm (Quiz) tính đúng số lượng từ đúng thực tế trên tổng số câu (khắc phục hoàn toàn lỗi làm sai nhiều lần nhưng khi hoàn thành vẫn hiện 100%).
+   - Sửa lỗi tổng thời gian và tốc độ làm bài (SPQ / SPW): Tính toán chuẩn xác tổng thời lượng buổi học thực tế từ lúc bắt đầu đến lúc kết thúc thay vì cắt vụn theo từng câu.
+   - Sửa lỗi thống kê số lượt gợi ý (VocaHint), số lượt bỏ qua (VocaSkip), số lần làm sai, và lượng VoCoin thưởng kèm hệ số quy mô VocaDeck.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-55 Build 287)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe và đóng gói VocaFlow_v0.10.9-55_Windows_Portable.zip.
+
+================================================================================
 Phiên bản: v0.10.9-54 (Build 286) - FlowStreak Widescreen 2 Cột & Biểu Đồ Kết Hợp 7 Ngày (Combo Chart), Tích Hợp Chỉ Số Hồ Sơ, Thanh Tìm Kiếm Nhanh VocaDecks, Trạng Thái Mạng Header & Huy Hiệu @iamjulies Official
 ================================================================================
 1. [Mở Rộng Widescreen FlowStreak Modal & Biểu Đồ Kết Hợp 7 Ngày (7-Day Activity/Performance Combo Chart)]:

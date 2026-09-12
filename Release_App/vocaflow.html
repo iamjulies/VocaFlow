@@ -4527,7 +4527,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-54 (Build 286)</span>
+            <span class="mini-footer-version">v0.10.9-55 (Build 287)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4726,7 +4726,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-54 (Build 286)</span>
+            <span class="mini-footer-version">v0.10.9-55 (Build 287)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9741,7 +9741,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-54 (Build 286)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-55 (Build 287)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10696,8 +10696,8 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-53 Build 285)
-// Enables direct clean URLs & browser history navigation (pushState/popstate)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-55 Build 287)
+// Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
 let isRouterNavigating = false;
@@ -10792,6 +10792,9 @@ function navigateToRoute(route, isPopState = false) {
     let clean = route.trim();
     if (clean.startsWith('/')) clean = clean.slice(1);
     clean = clean.split('?')[0].split('#')[0].replace(/\/+$/, '').trim();
+    const segments = clean.split('/').map(s => s.trim().toLowerCase());
+    const firstSegment = segments[0] || '';
+    const secondSegment = segments[1] || '';
 
     // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId
     if (clean.includes('/post/')) {
@@ -10800,7 +10803,6 @@ function navigateToRoute(route, isPopState = false) {
       const postId = (parts[1] || '').trim();
 
       if (authorPart && authorPart !== 'community') {
-        // Open user public profile on community tab and highlight post
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + authorPart, '', authorPart);
         } else if (typeof openPublicProfileByAuthor === 'function') {
@@ -10814,7 +10816,6 @@ function navigateToRoute(route, isPopState = false) {
         }, 300);
         return;
       } else if (postId) {
-        // Open main community feed, expand comments and highlight post
         if (typeof openProfileModal === 'function') openProfileModal('community');
         setTimeout(() => {
           if (typeof togglePostCommentsSection === 'function') {
@@ -10830,14 +10831,12 @@ function navigateToRoute(route, isPopState = false) {
     }
 
     // 2. Handle /invite/@username/code or /invite/code or /referral/...
-    if (clean.startsWith('invite') || clean.startsWith('referral')) {
+    if (firstSegment === 'invite' || firstSegment === 'referral') {
       const parts = clean.split('/').filter(Boolean);
       let refCode = '';
       if (parts.length >= 3) {
-        // invite/@username/code
         refCode = parts[2].trim().toUpperCase();
       } else if (parts.length === 2) {
-        // invite/code or invite/@username
         const seg = parts[1].trim();
         if (!seg.startsWith('@')) {
           refCode = seg.toUpperCase();
@@ -10850,33 +10849,105 @@ function navigateToRoute(route, isPopState = false) {
       return;
     }
 
-    // 3. Handle @username or user/@username or u/username
-    if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
-      let handle = clean.replace(/^(user\/@?|u\/|@+)/, '').trim();
-      handle = handle.replace(/^@+/, '').trim();
+    // 3. Handle /me sub-routes: /me/mydeck, /me/stats, /me/achievements, /me/community, /me/sync, /me/followers, /me/following
+    if (firstSegment === 'me' || firstSegment === 'profile') {
+      if (secondSegment === 'followers' || secondSegment === 'follower') {
+        if (typeof openProfileModal === 'function') openProfileModal('decks');
+        setTimeout(() => {
+          if (typeof openSubscribersListModal === 'function') openSubscribersListModal('followers');
+        }, 120);
+        return;
+      }
+      if (secondSegment === 'following' || secondSegment === 'follows') {
+        if (typeof openProfileModal === 'function') openProfileModal('decks');
+        setTimeout(() => {
+          if (typeof openSubscribersListModal === 'function') openSubscribersListModal('following');
+        }, 120);
+        return;
+      }
+      if (secondSegment === 'stats' || secondSegment === 'chiso') {
+        if (typeof openProfileModal === 'function') openProfileModal('stats');
+        return;
+      }
+      if (secondSegment === 'achievements' || secondSegment === 'thanhtuu' || secondSegment === 'badges') {
+        if (typeof openProfileModal === 'function') openProfileModal('achievements');
+        return;
+      }
+      if (secondSegment === 'community' || secondSegment === 'congdong' || secondSegment === 'feed') {
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        return;
+      }
+      if (secondSegment === 'sync' || secondSegment === 'cloud' || secondSegment === 'dongbo') {
+        if (typeof openProfileModal === 'function') openProfileModal('cloud');
+        return;
+      }
+      // Default /me or /me/mydeck or /me/decks
+      if (typeof openProfileModal === 'function') openProfileModal('decks');
+      return;
+    }
+
+    // 4. Handle Public Profile sub-routes: /@handle/stats, /@handle/community, /@handle/decks, /@handle/followers, /@handle/following
+    if (firstSegment.startsWith('@') || firstSegment === 'user' || firstSegment === 'u') {
+      let handle = '';
+      let subTab = '';
+      if (firstSegment.startsWith('@')) {
+        handle = firstSegment.replace(/^@+/, '').trim();
+        subTab = secondSegment;
+      } else {
+        handle = (secondSegment || '').replace(/^@+/, '').trim();
+        subTab = segments[2] || '';
+      }
+
       if (handle) {
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + handle, '', handle);
         } else if (typeof openPublicProfileByAuthor === 'function') {
           openPublicProfileByAuthor('@' + handle, '', handle);
         }
+
+        if (subTab === 'stats') {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('stats'); }, 200);
+        } else if (subTab === 'community') {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community'); }, 200);
+        } else {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks'); }, 200);
+        }
       }
       return;
     }
 
-    // Clean first segment
-    const segment = clean.split('/')[0].toLowerCase();
-    switch (segment) {
+    // 5. Handle /deck/:deckId
+    if (firstSegment === 'deck' && secondSegment) {
+      const targetDeckId = clean.split('/')[1]?.trim();
+      if (targetDeckId && typeof openDeckDetail === 'function') {
+        openDeckDetail(targetDeckId);
+      }
+      return;
+    }
+
+    // 6. Handle /study/:mode
+    if (firstSegment === 'study' && secondSegment) {
+      if (secondSegment === 'quiz' && typeof startQuizMode === 'function') {
+        startQuizMode();
+        return;
+      }
+      if (secondSegment === 'spelling' && typeof startSpellingMode === 'function') {
+        startSpellingMode();
+        return;
+      }
+      if (secondSegment === 'speaking' && typeof startSpeakingMode === 'function') {
+        startSpeakingMode();
+        return;
+      }
+    }
+
+    // 7. Clean primary navigation and modal routes
+    switch (firstSegment) {
       case 'homepage':
       case 'decks':
       case 'home':
         if (typeof showScreen === 'function') showScreen('screen-decks');
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-        break;
-
-      case 'me':
-      case 'profile':
-        if (typeof openProfileModal === 'function') openProfileModal();
         break;
 
       case 'community':
@@ -11003,11 +11074,6 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openLuckyWheelModal === 'function') openLuckyWheelModal();
         break;
 
-      case 'referral':
-      case 'invite':
-        if (typeof openReferralModal === 'function') openReferralModal();
-        break;
-
       case 'settings':
         if (typeof openSettingsModal === 'function') openSettingsModal();
         break;
@@ -11023,7 +11089,7 @@ function navigateToRoute(route, isPopState = false) {
         break;
 
       default:
-        // If unknown route, default to homepage without error
+        // Default to homepage without error
         if (typeof showScreen === 'function') showScreen('screen-decks');
         break;
     }
@@ -11060,15 +11126,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-54 Build 286)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-55 Build 287)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-54 Build 286)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-55 Build 287)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-54';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-54 (Build 286)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-55';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-55 (Build 287)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -17363,6 +17429,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (titleEl) titleEl.textContent = isFollowing ? '✨ Danh Sách Đang Theo Dõi' : '👥 Danh Sách Người Theo Dõi';
       if (iconEl) iconEl.textContent = isFollowing ? '✨' : '👥';
 
+      if (typeof updateAppUrlRoute === 'function') {
+        updateAppUrlRoute(isFollowing ? '/me/following' : '/me/followers', `${isFollowing ? 'Đang theo dõi' : 'Người theo dõi'} - VocaFlow`);
+      }
+
       const map = isFollowing ? myFollowingMap : myFollowersMap;
       const uids = Object.keys(map || {}).filter(uid => uid && uid !== currentUser?.uid && uid !== 'undefined' && uid !== 'null');
 
@@ -19490,21 +19560,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.renderProfileDecksList = renderProfileDecksList;
 
     function switchProfileTab(tabName = 'decks') {
+      let cleanTab = tabName;
+      if (cleanTab === 'mydeck') cleanTab = 'decks';
+      if (cleanTab === 'sync') cleanTab = 'cloud';
       const tabs = ['decks', 'stats', 'achievements', 'community', 'cloud'];
       tabs.forEach(t => {
         const btn = document.getElementById(`profile-tab-btn-${t}`);
         const panel = document.getElementById(`profile-tab-panel-${t}`);
         if (btn) {
-          if (t === tabName) btn.classList.add('active');
+          if (t === cleanTab) btn.classList.add('active');
           else btn.classList.remove('active');
         }
         if (panel) {
-          panel.style.display = (t === tabName) ? 'block' : 'none';
+          panel.style.display = (t === cleanTab) ? 'block' : 'none';
         }
       });
-      if (tabName === 'decks') {
+      if (cleanTab === 'decks') {
         renderProfileDecksList();
-      } else if (tabName === 'stats') {
+      } else if (cleanTab === 'stats') {
         if (typeof render7DayPerformanceChart === 'function') {
           render7DayPerformanceChart('me-profile-7day-chart-container');
         }
@@ -19516,8 +19589,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (flowCardEl && typeof calculateCurrentFlow === 'function') {
           flowCardEl.textContent = `${calculateCurrentFlow().currentFlow} Ngày`;
         }
-      } else if (tabName === 'community') {
+      } else if (cleanTab === 'community') {
         fetchAndRenderCommunityFeed();
+      }
+
+      // v0.10.9-55: Synchronize Sub-URL for ME Profile
+      if (typeof updateAppUrlRoute === 'function') {
+        const routeMap = {
+          'decks': '/me/mydeck',
+          'stats': '/me/stats',
+          'achievements': '/me/achievements',
+          'community': '/me/community',
+          'cloud': '/me/sync'
+        };
+        const targetRoute = routeMap[cleanTab] || '/me/mydeck';
+        updateAppUrlRoute(targetRoute, `Hồ sơ cá nhân - VocaFlow`);
       }
     }
     window.switchProfileTab = switchProfileTab;
@@ -20963,6 +21049,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
       } else if (tabName === 'community') {
         renderPubProfileCommunityPosts();
+      }
+
+      // v0.10.9-55: Synchronize Sub-URL for Public Profile
+      if (typeof updateAppUrlRoute === 'function' && currentPublicProfileAuthor && currentPublicProfileAuthor.resolvedHandle) {
+        const cleanHandle = currentPublicProfileAuthor.resolvedHandle.replace(/^@+/, '');
+        const name = currentPublicProfileAuthor.resolvedName || cleanHandle;
+        const subRoute = tabName === 'decks' ? '' : `/${tabName}`;
+        updateAppUrlRoute(`/@${cleanHandle}${subRoute}`, `${name} (@${cleanHandle}) - VocaFlow`);
       }
     }
     window.switchPubProfileTab = switchPubProfileTab;
@@ -26516,9 +26610,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
 
       let savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
-      if (savedDiff !== 'easy' && (!hasAtLeastOneApiKey() || isGuest())) {
-        savedDiff = 'easy';
-      }
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(savedDiff)) savedDiff = 'easy';
       selectQuizSetupDifficulty(savedDiff);
 
       // Render visual lock indicators on cards if no API key
@@ -26528,12 +26620,11 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         if (card) {
           let badge = card.querySelector('.quiz-key-lock-badge');
           if (!hasKey) {
-            card.style.opacity = '0.65';
             if (!badge) {
               badge = document.createElement('span');
               badge.className = 'quiz-key-lock-badge badge';
-              badge.style.cssText = 'background: rgba(239, 68, 68, 0.18); color: #f87171; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(239, 68, 68, 0.3);';
-              badge.textContent = '🔒 Cần Gemini Key';
+              badge.style.cssText = 'background: rgba(99, 102, 241, 0.18); color: #818cf8; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(99, 102, 241, 0.3);';
+              badge.textContent = '⚡ Bẫy Cục Bộ';
               const titleWrapper = card.querySelector('strong');
               if (titleWrapper && titleWrapper.parentNode) titleWrapper.parentNode.appendChild(badge);
             }
@@ -26561,19 +26652,6 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     }
 
     function selectQuizSetupDifficulty(diff) {
-      if (diff !== 'easy') {
-        if (isGuest()) {
-          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-          closeModal('modal-quiz-setup');
-          openAuthModal('login');
-          return;
-        }
-        if (!hasAtLeastOneApiKey()) {
-          alert('🔒 Cấp độ ' + (diff === 'medium' ? 'Bình Thường' : (diff === 'hard' ? 'Khó' : 'Cực Khó')) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể sinh các phương án bẫy trắc nghiệm thông minh!\n\nVui lòng vào Cài Đặt để nhập Gemini API Key hoặc chọn cấp độ Dễ (Easy).');
-          openSettingsModal();
-          return;
-        }
-      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
       const cards = {
@@ -26613,12 +26691,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     }
 
     function confirmStartQuizFromModal() {
-      if (selectedSetupDifficulty !== 'easy' && !hasAtLeastOneApiKey()) {
-        alert('🔒 Cấp độ này yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!\n\nVui lòng vào Cài Đặt hoặc chọn cấp độ Dễ.');
-        openSettingsModal();
-        return;
-      }
-      currentQuizDifficulty = selectedSetupDifficulty;
+      currentQuizDifficulty = selectedSetupDifficulty || 'easy';
       localStorage.setItem('vocaflow_quiz_difficulty', currentQuizDifficulty);
 
       const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
@@ -28166,10 +28239,10 @@ Yêu cầu nghiêm ngặt:
       }
       quizIsCompleted = true;
 
-      const totalSeconds = Math.max(1, Math.round(quizActiveTimeMs / 1000));
+      const totalSeconds = Math.max(1, Math.round((Date.now() - (quizStartTime || Date.now())) / 1000));
       const mins = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
-      const durationText = mins > 0 ? (mins + 'm ' + secs + 's') : (secs + ' giây');
+      const durationText = mins > 0 ? (mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's') : (secs + ' giây');
 
       const total = quizTotalQuestions || quizList.length || 1;
       const accuracyPct = Math.round((quizCorrectCount / total) * 100);
@@ -28603,12 +28676,6 @@ Yêu cầu nghiêm ngặt:
     }
 
     function selectSpellingSetupDifficulty(diff) {
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường, Khó và Siêu Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        closeModal('modal-spelling-setup');
-        openAuthModal('login');
-        return;
-      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSpellingSetupDifficulty = diff;
       const cards = {
@@ -29605,12 +29672,16 @@ Yêu cầu nghiêm ngặt:
       spellingIsCompleted = true;
 
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
-      const elapsedSec = Math.max(1, Math.round(spellingActiveTimeMs / 1000));
-      const mins = Math.floor(elapsedSec / 60);
-      const secs = elapsedSec % 60;
-      const durationText = mins > 0 ? (mins + ' phút ' + secs + ' giây') : (secs + ' giây');
-      const spw = (elapsedSec / totalWords).toFixed(1);
-      const accuracyPct = Math.round((spellingCorrectCount / totalWords) * 100);
+      const totalSessionElapsedSec = Math.max(1, Math.round((Date.now() - (spellingStartTime || Date.now())) / 1000));
+      const mins = Math.floor(totalSessionElapsedSec / 60);
+      const secs = totalSessionElapsedSec % 60;
+      const durationText = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      const spw = (totalSessionElapsedSec / totalWords).toFixed(1);
+
+      const wrongWordsCount = (spellingSessionWrongWords && spellingSessionWrongWords.length) ? spellingSessionWrongWords.length : 0;
+      const correctWordsCount = Math.max(0, totalWords - wrongWordsCount);
+      const accuracyPct = Math.round((correctWordsCount / totalWords) * 100);
+
       if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
         if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
       }
@@ -29633,7 +29704,7 @@ Yêu cầu nghiêm ngặt:
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
         const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
         setUserPoints(newBalance);
-        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
+        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
         saveDatabase(true);
       }
 
@@ -29651,11 +29722,11 @@ Yêu cầu nghiêm ngặt:
 
       if (diffBadgeEl) {
         const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
-        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢');
+        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
         diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
       }
 
-      if (scoreRatioEl) scoreRatioEl.textContent = spellingCorrectCount + '/' + totalWords + ' (' + accuracyPct + '%)';
+      if (scoreRatioEl) scoreRatioEl.textContent = correctWordsCount + '/' + totalWords + ' (' + accuracyPct + '%)';
       if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
@@ -30526,11 +30597,6 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       if (!hasAtLeastOneApiKey()) {
         alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key!\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
         openSettingsModal();
-        return;
-      }
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        openAuthModal('login');
         return;
       }
       if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
@@ -52681,9 +52747,21 @@ Quy tắc phản hồi quan trọng:
         btnAdd.style.display = 'none';
       }
 
-      // v0.10.9-45: SPA URL Routing
-      if (screenId === 'screen-decks') {
-        if (typeof updateAppUrlRoute === 'function') updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+      // v0.10.9-55: SPA URL Routing for Screens
+      if (typeof updateAppUrlRoute === 'function') {
+        if (screenId === 'screen-decks') {
+          updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+        } else if (screenId === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
+          updateAppUrlRoute(`/deck/${currentDeckId}`);
+        } else if (screenId === 'screen-quiz') {
+          updateAppUrlRoute('/study/quiz');
+        } else if (screenId === 'screen-spelling') {
+          updateAppUrlRoute('/study/spelling');
+        } else if (screenId === 'screen-speaking') {
+          updateAppUrlRoute('/study/speaking');
+        } else if (screenId === 'screen-autofc') {
+          updateAppUrlRoute('/study/autofc');
+        }
       }
 
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
@@ -52710,12 +52788,22 @@ Quy tắc phản hồi quan trọng:
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       }
 
-      // v0.10.9-45: SPA URL Routing on modal open
+      // v0.10.9-55: SPA URL Routing on modal open
       if (typeof updateAppUrlRoute === 'function') {
         const modalRouteMap = {
-          'modal-profile': '/me',
+          'modal-profile': '/me/mydeck',
           'modal-shop': '/shop',
-          'modal-vip-pricing': '/vip',
+          'modal-vip-pricing': '/vocavip',
+          'modal-flow-calendar': '/flowstreak',
+          'modal-notifications': '/notifications',
+          'modal-referral': '/invite',
+          'modal-bug-report': '/report',
+          'modal-vocamail': '/vocamail',
+          'modal-library': '/vocalib',
+          'modal-ai-deck-studio': '/vocadeckai',
+          'modal-review-queue': '/queue',
+          'modal-rewarded-ad': '/ads',
+          'modal-publisher': '/admin',
           'modal-ai-mentor': '/mentor',
           'modal-wallet-studio': '/wallet',
           'modal-mistake-notebook': '/mistakes',
@@ -52759,11 +52847,24 @@ Quy tắc phản hồi quan trọng:
         }, 60);
       }
 
-      // v0.10.9-45: Restore homepage route if no other modal is active
+      // v0.10.9-55: Restore active screen route if no other modal is active
       if (typeof updateAppUrlRoute === 'function') {
         const anyActiveModal = document.querySelector('.modal-overlay.active');
         if (!anyActiveModal) {
-          updateAppUrlRoute('/homepage');
+          const activeScreen = document.querySelector('.screen.active');
+          if (activeScreen && activeScreen.id === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
+            updateAppUrlRoute(`/deck/${currentDeckId}`);
+          } else if (activeScreen && activeScreen.id === 'screen-quiz') {
+            updateAppUrlRoute('/study/quiz');
+          } else if (activeScreen && activeScreen.id === 'screen-spelling') {
+            updateAppUrlRoute('/study/spelling');
+          } else if (activeScreen && activeScreen.id === 'screen-speaking') {
+            updateAppUrlRoute('/study/speaking');
+          } else if (activeScreen && activeScreen.id === 'screen-autofc') {
+            updateAppUrlRoute('/study/autofc');
+          } else {
+            updateAppUrlRoute('/homepage');
+          }
         }
       }
     }

@@ -169,11 +169,6 @@
         openSettingsModal();
         return;
       }
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường và Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        openAuthModal('login');
-        return;
-      }
       if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
       selectedSpeakingSetupDifficulty = diff;
       currentSpeakingDifficulty = diff;

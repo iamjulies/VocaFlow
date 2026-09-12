@@ -146,12 +146,6 @@
     }
 
     function selectSpellingSetupDifficulty(diff) {
-      if (diff !== 'easy' && isGuest()) {
-        alert('🔒 Cấp độ Thường, Khó và Siêu Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-        closeModal('modal-spelling-setup');
-        openAuthModal('login');
-        return;
-      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSpellingSetupDifficulty = diff;
       const cards = {
@@ -1148,12 +1142,16 @@
       spellingIsCompleted = true;
 
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
-      const elapsedSec = Math.max(1, Math.round(spellingActiveTimeMs / 1000));
-      const mins = Math.floor(elapsedSec / 60);
-      const secs = elapsedSec % 60;
-      const durationText = mins > 0 ? (mins + ' phút ' + secs + ' giây') : (secs + ' giây');
-      const spw = (elapsedSec / totalWords).toFixed(1);
-      const accuracyPct = Math.round((spellingCorrectCount / totalWords) * 100);
+      const totalSessionElapsedSec = Math.max(1, Math.round((Date.now() - (spellingStartTime || Date.now())) / 1000));
+      const mins = Math.floor(totalSessionElapsedSec / 60);
+      const secs = totalSessionElapsedSec % 60;
+      const durationText = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      const spw = (totalSessionElapsedSec / totalWords).toFixed(1);
+
+      const wrongWordsCount = (spellingSessionWrongWords && spellingSessionWrongWords.length) ? spellingSessionWrongWords.length : 0;
+      const correctWordsCount = Math.max(0, totalWords - wrongWordsCount);
+      const accuracyPct = Math.round((correctWordsCount / totalWords) * 100);
+
       if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
         if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
       }
@@ -1176,7 +1174,7 @@
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
         const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
         setUserPoints(newBalance);
-        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
+        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
         saveDatabase(true);
       }
 
@@ -1194,11 +1192,11 @@
 
       if (diffBadgeEl) {
         const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
-        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢');
+        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
         diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
       }
 
-      if (scoreRatioEl) scoreRatioEl.textContent = spellingCorrectCount + '/' + totalWords + ' (' + accuracyPct + '%)';
+      if (scoreRatioEl) scoreRatioEl.textContent = correctWordsCount + '/' + totalWords + ' (' + accuracyPct + '%)';
       if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';

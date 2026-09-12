@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-53 Build 285)
-// Enables direct clean URLs & browser history navigation (pushState/popstate)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-55 Build 287)
+// Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
 let isRouterNavigating = false;
@@ -95,6 +95,9 @@ function navigateToRoute(route, isPopState = false) {
     let clean = route.trim();
     if (clean.startsWith('/')) clean = clean.slice(1);
     clean = clean.split('?')[0].split('#')[0].replace(/\/+$/, '').trim();
+    const segments = clean.split('/').map(s => s.trim().toLowerCase());
+    const firstSegment = segments[0] || '';
+    const secondSegment = segments[1] || '';
 
     // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId
     if (clean.includes('/post/')) {
@@ -103,7 +106,6 @@ function navigateToRoute(route, isPopState = false) {
       const postId = (parts[1] || '').trim();
 
       if (authorPart && authorPart !== 'community') {
-        // Open user public profile on community tab and highlight post
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + authorPart, '', authorPart);
         } else if (typeof openPublicProfileByAuthor === 'function') {
@@ -117,7 +119,6 @@ function navigateToRoute(route, isPopState = false) {
         }, 300);
         return;
       } else if (postId) {
-        // Open main community feed, expand comments and highlight post
         if (typeof openProfileModal === 'function') openProfileModal('community');
         setTimeout(() => {
           if (typeof togglePostCommentsSection === 'function') {
@@ -133,14 +134,12 @@ function navigateToRoute(route, isPopState = false) {
     }
 
     // 2. Handle /invite/@username/code or /invite/code or /referral/...
-    if (clean.startsWith('invite') || clean.startsWith('referral')) {
+    if (firstSegment === 'invite' || firstSegment === 'referral') {
       const parts = clean.split('/').filter(Boolean);
       let refCode = '';
       if (parts.length >= 3) {
-        // invite/@username/code
         refCode = parts[2].trim().toUpperCase();
       } else if (parts.length === 2) {
-        // invite/code or invite/@username
         const seg = parts[1].trim();
         if (!seg.startsWith('@')) {
           refCode = seg.toUpperCase();
@@ -153,33 +152,105 @@ function navigateToRoute(route, isPopState = false) {
       return;
     }
 
-    // 3. Handle @username or user/@username or u/username
-    if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
-      let handle = clean.replace(/^(user\/@?|u\/|@+)/, '').trim();
-      handle = handle.replace(/^@+/, '').trim();
+    // 3. Handle /me sub-routes: /me/mydeck, /me/stats, /me/achievements, /me/community, /me/sync, /me/followers, /me/following
+    if (firstSegment === 'me' || firstSegment === 'profile') {
+      if (secondSegment === 'followers' || secondSegment === 'follower') {
+        if (typeof openProfileModal === 'function') openProfileModal('decks');
+        setTimeout(() => {
+          if (typeof openSubscribersListModal === 'function') openSubscribersListModal('followers');
+        }, 120);
+        return;
+      }
+      if (secondSegment === 'following' || secondSegment === 'follows') {
+        if (typeof openProfileModal === 'function') openProfileModal('decks');
+        setTimeout(() => {
+          if (typeof openSubscribersListModal === 'function') openSubscribersListModal('following');
+        }, 120);
+        return;
+      }
+      if (secondSegment === 'stats' || secondSegment === 'chiso') {
+        if (typeof openProfileModal === 'function') openProfileModal('stats');
+        return;
+      }
+      if (secondSegment === 'achievements' || secondSegment === 'thanhtuu' || secondSegment === 'badges') {
+        if (typeof openProfileModal === 'function') openProfileModal('achievements');
+        return;
+      }
+      if (secondSegment === 'community' || secondSegment === 'congdong' || secondSegment === 'feed') {
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        return;
+      }
+      if (secondSegment === 'sync' || secondSegment === 'cloud' || secondSegment === 'dongbo') {
+        if (typeof openProfileModal === 'function') openProfileModal('cloud');
+        return;
+      }
+      // Default /me or /me/mydeck or /me/decks
+      if (typeof openProfileModal === 'function') openProfileModal('decks');
+      return;
+    }
+
+    // 4. Handle Public Profile sub-routes: /@handle/stats, /@handle/community, /@handle/decks, /@handle/followers, /@handle/following
+    if (firstSegment.startsWith('@') || firstSegment === 'user' || firstSegment === 'u') {
+      let handle = '';
+      let subTab = '';
+      if (firstSegment.startsWith('@')) {
+        handle = firstSegment.replace(/^@+/, '').trim();
+        subTab = secondSegment;
+      } else {
+        handle = (secondSegment || '').replace(/^@+/, '').trim();
+        subTab = segments[2] || '';
+      }
+
       if (handle) {
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + handle, '', handle);
         } else if (typeof openPublicProfileByAuthor === 'function') {
           openPublicProfileByAuthor('@' + handle, '', handle);
         }
+
+        if (subTab === 'stats') {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('stats'); }, 200);
+        } else if (subTab === 'community') {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community'); }, 200);
+        } else {
+          setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks'); }, 200);
+        }
       }
       return;
     }
 
-    // Clean first segment
-    const segment = clean.split('/')[0].toLowerCase();
-    switch (segment) {
+    // 5. Handle /deck/:deckId
+    if (firstSegment === 'deck' && secondSegment) {
+      const targetDeckId = clean.split('/')[1]?.trim();
+      if (targetDeckId && typeof openDeckDetail === 'function') {
+        openDeckDetail(targetDeckId);
+      }
+      return;
+    }
+
+    // 6. Handle /study/:mode
+    if (firstSegment === 'study' && secondSegment) {
+      if (secondSegment === 'quiz' && typeof startQuizMode === 'function') {
+        startQuizMode();
+        return;
+      }
+      if (secondSegment === 'spelling' && typeof startSpellingMode === 'function') {
+        startSpellingMode();
+        return;
+      }
+      if (secondSegment === 'speaking' && typeof startSpeakingMode === 'function') {
+        startSpeakingMode();
+        return;
+      }
+    }
+
+    // 7. Clean primary navigation and modal routes
+    switch (firstSegment) {
       case 'homepage':
       case 'decks':
       case 'home':
         if (typeof showScreen === 'function') showScreen('screen-decks');
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-        break;
-
-      case 'me':
-      case 'profile':
-        if (typeof openProfileModal === 'function') openProfileModal();
         break;
 
       case 'community':
@@ -306,11 +377,6 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openLuckyWheelModal === 'function') openLuckyWheelModal();
         break;
 
-      case 'referral':
-      case 'invite':
-        if (typeof openReferralModal === 'function') openReferralModal();
-        break;
-
       case 'settings':
         if (typeof openSettingsModal === 'function') openSettingsModal();
         break;
@@ -326,7 +392,7 @@ function navigateToRoute(route, isPopState = false) {
         break;
 
       default:
-        // If unknown route, default to homepage without error
+        // Default to homepage without error
         if (typeof showScreen === 'function') showScreen('screen-decks');
         break;
     }

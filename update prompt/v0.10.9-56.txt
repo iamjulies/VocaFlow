@@ -1,0 +1,6 @@
+v0.10.9-56
+1. hiện tại, khi học xong 1 lần các từ trong hàng đợi ôn tập đã quá hạn ấy, nó kh tạm thời loại mấy từ đã học ra khỏi danh sách ấy, tức là nó kh đếm lại số ngày để đến lần học tiếp theo -> sửa nhé.
+2. xem qua https://huggingface.co/moxeeeem/wav2vec2-finetuned-pronunciation-correction và đánh giá tính khả thi nếu thay thế/bổ sung 1 AI chấm bài speaking để chuẩn hơn
+3. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 211143.png" 3 dòng thông số hơi xấu (chưa đẹp) và khi di chuột hay nhấn vào thì chưa hiện tooltips gì cả. với cả nếu mấy ngày trước chưa thu thập được thông tin thì cứ để nó trống (ở mức 0) thôi chứ kh cần phải bịa thông số.
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.9-48)
 
@@ -19,9 +19,21 @@
         btnAdd.style.display = 'none';
       }
 
-      // v0.10.9-45: SPA URL Routing
-      if (screenId === 'screen-decks') {
-        if (typeof updateAppUrlRoute === 'function') updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+      // v0.10.9-55: SPA URL Routing for Screens
+      if (typeof updateAppUrlRoute === 'function') {
+        if (screenId === 'screen-decks') {
+          updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+        } else if (screenId === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
+          updateAppUrlRoute(`/deck/${currentDeckId}`);
+        } else if (screenId === 'screen-quiz') {
+          updateAppUrlRoute('/study/quiz');
+        } else if (screenId === 'screen-spelling') {
+          updateAppUrlRoute('/study/spelling');
+        } else if (screenId === 'screen-speaking') {
+          updateAppUrlRoute('/study/speaking');
+        } else if (screenId === 'screen-autofc') {
+          updateAppUrlRoute('/study/autofc');
+        }
       }
 
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
@@ -48,12 +60,22 @@
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       }
 
-      // v0.10.9-45: SPA URL Routing on modal open
+      // v0.10.9-55: SPA URL Routing on modal open
       if (typeof updateAppUrlRoute === 'function') {
         const modalRouteMap = {
-          'modal-profile': '/me',
+          'modal-profile': '/me/mydeck',
           'modal-shop': '/shop',
-          'modal-vip-pricing': '/vip',
+          'modal-vip-pricing': '/vocavip',
+          'modal-flow-calendar': '/flowstreak',
+          'modal-notifications': '/notifications',
+          'modal-referral': '/invite',
+          'modal-bug-report': '/report',
+          'modal-vocamail': '/vocamail',
+          'modal-library': '/vocalib',
+          'modal-ai-deck-studio': '/vocadeckai',
+          'modal-review-queue': '/queue',
+          'modal-rewarded-ad': '/ads',
+          'modal-publisher': '/admin',
           'modal-ai-mentor': '/mentor',
           'modal-wallet-studio': '/wallet',
           'modal-mistake-notebook': '/mistakes',
@@ -97,11 +119,24 @@
         }, 60);
       }
 
-      // v0.10.9-45: Restore homepage route if no other modal is active
+      // v0.10.9-55: Restore active screen route if no other modal is active
       if (typeof updateAppUrlRoute === 'function') {
         const anyActiveModal = document.querySelector('.modal-overlay.active');
         if (!anyActiveModal) {
-          updateAppUrlRoute('/homepage');
+          const activeScreen = document.querySelector('.screen.active');
+          if (activeScreen && activeScreen.id === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
+            updateAppUrlRoute(`/deck/${currentDeckId}`);
+          } else if (activeScreen && activeScreen.id === 'screen-quiz') {
+            updateAppUrlRoute('/study/quiz');
+          } else if (activeScreen && activeScreen.id === 'screen-spelling') {
+            updateAppUrlRoute('/study/spelling');
+          } else if (activeScreen && activeScreen.id === 'screen-speaking') {
+            updateAppUrlRoute('/study/speaking');
+          } else if (activeScreen && activeScreen.id === 'screen-autofc') {
+            updateAppUrlRoute('/study/autofc');
+          } else {
+            updateAppUrlRoute('/homepage');
+          }
         }
       }
     }

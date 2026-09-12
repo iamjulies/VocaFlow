@@ -2742,6 +2742,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (titleEl) titleEl.textContent = isFollowing ? '✨ Danh Sách Đang Theo Dõi' : '👥 Danh Sách Người Theo Dõi';
       if (iconEl) iconEl.textContent = isFollowing ? '✨' : '👥';
 
+      if (typeof updateAppUrlRoute === 'function') {
+        updateAppUrlRoute(isFollowing ? '/me/following' : '/me/followers', `${isFollowing ? 'Đang theo dõi' : 'Người theo dõi'} - VocaFlow`);
+      }
+
       const map = isFollowing ? myFollowingMap : myFollowersMap;
       const uids = Object.keys(map || {}).filter(uid => uid && uid !== currentUser?.uid && uid !== 'undefined' && uid !== 'null');
 
@@ -4869,21 +4873,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.renderProfileDecksList = renderProfileDecksList;
 
     function switchProfileTab(tabName = 'decks') {
+      let cleanTab = tabName;
+      if (cleanTab === 'mydeck') cleanTab = 'decks';
+      if (cleanTab === 'sync') cleanTab = 'cloud';
       const tabs = ['decks', 'stats', 'achievements', 'community', 'cloud'];
       tabs.forEach(t => {
         const btn = document.getElementById(`profile-tab-btn-${t}`);
         const panel = document.getElementById(`profile-tab-panel-${t}`);
         if (btn) {
-          if (t === tabName) btn.classList.add('active');
+          if (t === cleanTab) btn.classList.add('active');
           else btn.classList.remove('active');
         }
         if (panel) {
-          panel.style.display = (t === tabName) ? 'block' : 'none';
+          panel.style.display = (t === cleanTab) ? 'block' : 'none';
         }
       });
-      if (tabName === 'decks') {
+      if (cleanTab === 'decks') {
         renderProfileDecksList();
-      } else if (tabName === 'stats') {
+      } else if (cleanTab === 'stats') {
         if (typeof render7DayPerformanceChart === 'function') {
           render7DayPerformanceChart('me-profile-7day-chart-container');
         }
@@ -4895,8 +4902,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (flowCardEl && typeof calculateCurrentFlow === 'function') {
           flowCardEl.textContent = `${calculateCurrentFlow().currentFlow} Ngày`;
         }
-      } else if (tabName === 'community') {
+      } else if (cleanTab === 'community') {
         fetchAndRenderCommunityFeed();
+      }
+
+      // v0.10.9-55: Synchronize Sub-URL for ME Profile
+      if (typeof updateAppUrlRoute === 'function') {
+        const routeMap = {
+          'decks': '/me/mydeck',
+          'stats': '/me/stats',
+          'achievements': '/me/achievements',
+          'community': '/me/community',
+          'cloud': '/me/sync'
+        };
+        const targetRoute = routeMap[cleanTab] || '/me/mydeck';
+        updateAppUrlRoute(targetRoute, `Hồ sơ cá nhân - VocaFlow`);
       }
     }
     window.switchProfileTab = switchProfileTab;
@@ -6342,6 +6362,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
       } else if (tabName === 'community') {
         renderPubProfileCommunityPosts();
+      }
+
+      // v0.10.9-55: Synchronize Sub-URL for Public Profile
+      if (typeof updateAppUrlRoute === 'function' && currentPublicProfileAuthor && currentPublicProfileAuthor.resolvedHandle) {
+        const cleanHandle = currentPublicProfileAuthor.resolvedHandle.replace(/^@+/, '');
+        const name = currentPublicProfileAuthor.resolvedName || cleanHandle;
+        const subRoute = tabName === 'decks' ? '' : `/${tabName}`;
+        updateAppUrlRoute(`/@${cleanHandle}${subRoute}`, `${name} (@${cleanHandle}) - VocaFlow`);
       }
     }
     window.switchPubProfileTab = switchPubProfileTab;

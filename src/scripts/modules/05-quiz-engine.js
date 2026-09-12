@@ -86,9 +86,7 @@
       }
 
       let savedDiff = localStorage.getItem('vocaflow_quiz_difficulty') || 'easy';
-      if (savedDiff !== 'easy' && (!hasAtLeastOneApiKey() || isGuest())) {
-        savedDiff = 'easy';
-      }
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(savedDiff)) savedDiff = 'easy';
       selectQuizSetupDifficulty(savedDiff);
 
       // Render visual lock indicators on cards if no API key
@@ -98,12 +96,11 @@
         if (card) {
           let badge = card.querySelector('.quiz-key-lock-badge');
           if (!hasKey) {
-            card.style.opacity = '0.65';
             if (!badge) {
               badge = document.createElement('span');
               badge.className = 'quiz-key-lock-badge badge';
-              badge.style.cssText = 'background: rgba(239, 68, 68, 0.18); color: #f87171; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(239, 68, 68, 0.3);';
-              badge.textContent = '🔒 Cần Gemini Key';
+              badge.style.cssText = 'background: rgba(99, 102, 241, 0.18); color: #818cf8; font-size: 10px; font-weight: 700; margin-left: 6px; border: 1px solid rgba(99, 102, 241, 0.3);';
+              badge.textContent = '⚡ Bẫy Cục Bộ';
               const titleWrapper = card.querySelector('strong');
               if (titleWrapper && titleWrapper.parentNode) titleWrapper.parentNode.appendChild(badge);
             }
@@ -131,19 +128,6 @@
     }
 
     function selectQuizSetupDifficulty(diff) {
-      if (diff !== 'easy') {
-        if (isGuest()) {
-          alert('🔒 Cấp độ Thường, Khó và Cực Khó yêu cầu đăng nhập/đăng ký tài khoản để mở khóa!');
-          closeModal('modal-quiz-setup');
-          openAuthModal('login');
-          return;
-        }
-        if (!hasAtLeastOneApiKey()) {
-          alert('🔒 Cấp độ ' + (diff === 'medium' ? 'Bình Thường' : (diff === 'hard' ? 'Khó' : 'Cực Khó')) + ' yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể sinh các phương án bẫy trắc nghiệm thông minh!\n\nVui lòng vào Cài Đặt để nhập Gemini API Key hoặc chọn cấp độ Dễ (Easy).');
-          openSettingsModal();
-          return;
-        }
-      }
       if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSetupDifficulty = diff;
       const cards = {
@@ -183,12 +167,7 @@
     }
 
     function confirmStartQuizFromModal() {
-      if (selectedSetupDifficulty !== 'easy' && !hasAtLeastOneApiKey()) {
-        alert('🔒 Cấp độ này yêu cầu kết nối ít nhất 1 Google Gemini API Key để sinh bẫy AI!\n\nVui lòng vào Cài Đặt hoặc chọn cấp độ Dễ.');
-        openSettingsModal();
-        return;
-      }
-      currentQuizDifficulty = selectedSetupDifficulty;
+      currentQuizDifficulty = selectedSetupDifficulty || 'easy';
       localStorage.setItem('vocaflow_quiz_difficulty', currentQuizDifficulty);
 
       const shuffleCb = document.getElementById('quiz-setup-shuffle-checkbox');
@@ -1736,10 +1715,10 @@ Yêu cầu nghiêm ngặt:
       }
       quizIsCompleted = true;
 
-      const totalSeconds = Math.max(1, Math.round(quizActiveTimeMs / 1000));
+      const totalSeconds = Math.max(1, Math.round((Date.now() - (quizStartTime || Date.now())) / 1000));
       const mins = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
-      const durationText = mins > 0 ? (mins + 'm ' + secs + 's') : (secs + ' giây');
+      const durationText = mins > 0 ? (mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's') : (secs + ' giây');
 
       const total = quizTotalQuestions || quizList.length || 1;
       const accuracyPct = Math.round((quizCorrectCount / total) * 100);
