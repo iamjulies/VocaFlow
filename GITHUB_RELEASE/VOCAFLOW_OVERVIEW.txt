@@ -1,4 +1,62 @@
 ================================================================================
+Phiên bản: v0.10.9-44 (Build 276) - Bộ Lọc Trung Tâm Thông Báo Đa Dạng, Công Cụ Cắt Avatar Tương Tác, Chuẩn Hóa Link Chia Sẻ, Định Dạng Số Hàng Nghìn & Mở Rộng Widescreen Desktop
+================================================================================
+1. [Nâng Cấp Toàn Diện Bộ Lọc Trung Tâm Thông Báo]:
+   - Bổ sung bộ lọc "🎁 Quà & Thưởng" (REWARD): Tự động gom nhóm toàn bộ thông báo thưởng xem quảng cáo, trúng giải vòng quay VocaWheel, quà tặng VIP hàng ngày, quà tân thủ và sự kiện.
+   - Bổ sung bộ lọc "🔔 Hệ thống" (SYSTEM): Phân loại riêng các thông báo phản hồi báo cáo lỗi, thông báo admin và cập nhật ứng dụng.
+   - Nâng cấp bộ lọc "💎 Ví VoCoin", "📘 VocaDeck mới" và "👥 Tương tác" với màu sắc, icon trực quan và gắn thẻ danh mục thông minh.
+
+2. [Công Cụ Cắt & Căn Chỉnh Ảnh Đại Diện Tương Tác (Avatar Cropper)]:
+   - Tích hợp cửa sổ cắt ảnh chuyên nghiệp (modal-avatar-cropper) với khung tròn chuẩn Instagram/VocaFlow.
+   - Hỗ trợ kéo di chuyển ảnh tự do (Drag & Pan bằng chuột và cảm ứng), thanh trượt thu phóng (Zoom slider 0.8x - 3.5x), con lăn chuột, xoay 90° và xem trước hình tròn thời gian thực (Live Preview).
+   - Xuất dữ liệu Canvas độ nét cao 256x256 nén JPEG 88% tối ưu lưu trữ và tự động đồng bộ tức thì lên Firebase RTDB.
+
+3. [Chuẩn Hóa Liên Kết Chia Sẻ Hồ Sơ Flower & Deep Link Router]:
+   - Chuẩn hóa đường dẫn chia sẻ hồ sơ học tập thực tế theo tên miền máy chủ / GitHub Pages (https://iamjulies.github.io/VocaFlow/?user=@username).
+   - Tích hợp Web Share API (navigator.share) trên thiết bị di động và cơ chế sao chép clipboard thông minh.
+   - Tự động bắt tham số URL (?user=@... hoặc ?profile=...) lúc khởi động để mở ngay hồ sơ công khai của thành viên tương ứng.
+   - Bổ sung nút "🔗 Chia Sẻ" trực tiếp ngay trong giao diện hồ sơ cá nhân của người dùng.
+
+4. [Chuẩn Hóa Định Dạng Số Hàng Nghìn & Hàng Triệu (formatNumber)]:
+   - Xây dựng tiện ích toàn cục formatNumber(num) hiển thị dấu phân cách hàng nghìn (ví dụ: 23,155 VoCoin, 1,250 từ, 1,000,000 Xu).
+   - Áp dụng đồng bộ cho số dư VoCoin, số lượng từ vựng trong Deck/VocaLib/Profile, số người theo dõi, điểm bảng xếp hạng và các giao dịch sổ cái.
+   - Đảm bảo 100% các biến logic nội bộ duy trì kiểu dữ liệu số thuần túy (number), không gây lỗi tính toán số học.
+
+5. [Mở Rộng Không Gian Màn Hình Rộng Desktop & Bố Cục Responsive]:
+   - Tối ưu hóa kích thước toàn bộ các cửa sổ Modal quan trọng trên máy tính/laptop (Profile, AI Mentor, VocaShop, Wallet Studio, Deck Studio, Mistake Notebook, Settings, Notifications) mở rộng lên đến 860px - 1060px (94vw).
+   - Tự động kích hoạt bố cục 2 cột (Profile Widescreen Grid, Shop Package Grid) trên màn hình rộng và giữ vững trải nghiệm thu gọn 1 cột hoàn hảo trên màn hình di động (< 768px).
+
+6. [Kiến Trúc Lắp Ghép & Hỗ Trợ Mô-đun Hóa Mã Nguồn "Chia Để Trị"]:
+   - Cập nhật build_vocaflow.ps1 hỗ trợ nạp tự động các mô-đun JavaScript tách rời trong src/scripts/ và chuẩn bị sẵn sàng cho cấu trúc chia nhỏ module tiếp theo.
+
+================================================================================
+Phiên bản: v0.10.9-43 (Build 275) - Chuẩn Hóa Dải Mô Hình Gemini AI, Hoàn Thiện Sổ Cái Giao Dịch & Đồng Bộ Sổ Tay Lỗi Sai Đa Thiết Bị
+================================================================================
+1. [Hiện Đại Hóa & Chuẩn Hóa Dải Mô Hình Gemini AI Toàn Diện]:
+   - Đồng bộ dải mô hình Gemini AI thế hệ mới nhất ('gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash') trên toàn bộ hệ thống tính năng AI của VocaFlow.
+   - Nâng cấp cơ chế thử lại đa mô hình (multi-model failover) cho:
+     + Bộ tạo phương án bẫy trắc nghiệm tinh vi (fetchAiDistractors).
+     + Gợi ý ngữ cảnh thông minh VocaHint (getGeminiQuizHint).
+     + Phân tích mẹo nhớ & từ nguyên học Quiz (loadQuizAiExplanation).
+     + Thẩm định & chấm điểm phát âm ngữ âm ELSA (evaluateSpeakingAudioWithGemini).
+     + Xưởng sáng tạo bộ từ tự động VocaStudio (generateAiDeckStudioContent).
+     + Cố vấn học tập tương tác VocaMentor AI (sendAiMentorMessage).
+   - Loại bỏ 100% các mã định danh mô hình lỗi thời/không khả dụng.
+
+2. [Chính Xác Hóa Sổ Cái Ví & Quyết Toán Phiên Học (Ledger Balance Audit)]:
+   - Khắc phục triệt để hiện tượng lệch số dư ghi nhận trong sổ cái giao dịch bằng việc truyền tham số số dư đích thực (explicitBalanceAfter) tại thời điểm giao dịch phát sinh.
+   - Chuẩn hóa quyết toán cho cả 3 chế độ: Luyện Viết (Spelling), Trắc Nghiệm (Quiz) và Luyện Nói (Speaking) khi hoàn thành bài cũng như khi thoát sớm (tính toán thưởng hoàn thành, quy mô và khấu trừ điểm âm chính xác).
+   - Tự động đẩy bản ghi giao dịch lên Firebase Realtime Database ngay khi hoàn tất phiên.
+
+3. [Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai (Mistake Notebook)]:
+   - Bổ sung trường mistakeNotebook vào cấu trúc sao lưu Cloud (pushCurrentDatabaseToCloud) và cơ chế hợp nhất 2 chiều (mergeCloudDataIntoLocal).
+   - Áp dụng thuật toán bảo toàn số lần sai cao nhất và hợp nhất danh sách các chế độ thi bị sai (modesFailed) tránh thất lạc từ vựng cần ôn luyện trên nhiều thiết bị.
+   - Hỗ trợ bắt đầu phiên ôn luyện lỗi sai tức thì với danh sách từ đã giải mã.
+
+4. [Tối Ưu Hàng Đợi Ôn Tập Gián Đoạn (SRS Review Queue)]:
+   - Lọc bỏ triệt để các từ vựng mới tạo chưa từng học (masteryScore === 0) khỏi hàng đợi ôn tập hàng ngày, chỉ nhắc nhở các từ vựng đã có lịch sử học tập đến hạn lặp lại.
+
+================================================================================
 Phiên bản: v0.10.9-42 (Build 274) - Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail, Bố Cục Nút Học 2x2, Nâng Cấp Avatar Cá Nhân & Hoàn Thiện Hồ Sơ Công Khai
 ================================================================================
 1. [Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail Màn Hình Hẹp]:

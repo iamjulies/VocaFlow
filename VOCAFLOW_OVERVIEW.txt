@@ -1,5 +1,184 @@
 ================================================================================
-Phiên bản: v0.10.9-33 (Build 265) - VocaMail Admin Support, Realtime Ad Cooldown Sync, Anti-Âm-Bồi AI Scoring & Smart Notifications
+Phiên bản: v0.10.9-44 (Build 276) - Bộ Lọc Trung Tâm Thông Báo Đa Dạng, Công Cụ Cắt Avatar Tương Tác, Chuẩn Hóa Link Chia Sẻ, Định Dạng Số Hàng Nghìn & Mở Rộng Widescreen Desktop
+================================================================================
+1. [Nâng Cấp Toàn Diện Bộ Lọc Trung Tâm Thông Báo]:
+   - Bổ sung bộ lọc "🎁 Quà & Thưởng" (REWARD): Tự động gom nhóm toàn bộ thông báo thưởng xem quảng cáo, trúng giải vòng quay VocaWheel, quà tặng VIP hàng ngày, quà tân thủ và sự kiện.
+   - Bổ sung bộ lọc "🔔 Hệ thống" (SYSTEM): Phân loại riêng các thông báo phản hồi báo cáo lỗi, thông báo admin và cập nhật ứng dụng.
+   - Nâng cấp bộ lọc "💎 Ví VoCoin", "📘 VocaDeck mới" và "👥 Tương tác" với màu sắc, icon trực quan và gắn thẻ danh mục thông minh.
+
+2. [Công Cụ Cắt & Căn Chỉnh Ảnh Đại Diện Tương Tác (Avatar Cropper)]:
+   - Tích hợp cửa sổ cắt ảnh chuyên nghiệp (modal-avatar-cropper) với khung tròn chuẩn Instagram/VocaFlow.
+   - Hỗ trợ kéo di chuyển ảnh tự do (Drag & Pan bằng chuột và cảm ứng), thanh trượt thu phóng (Zoom slider 0.8x - 3.5x), con lăn chuột, xoay 90° và xem trước hình tròn thời gian thực (Live Preview).
+   - Xuất dữ liệu Canvas độ nét cao 256x256 nén JPEG 88% tối ưu lưu trữ và tự động đồng bộ tức thì lên Firebase RTDB.
+
+3. [Chuẩn Hóa Liên Kết Chia Sẻ Hồ Sơ Flower & Deep Link Router]:
+   - Chuẩn hóa đường dẫn chia sẻ hồ sơ học tập thực tế theo tên miền máy chủ / GitHub Pages (https://iamjulies.github.io/VocaFlow/?user=@username).
+   - Tích hợp Web Share API (navigator.share) trên thiết bị di động và cơ chế sao chép clipboard thông minh.
+   - Tự động bắt tham số URL (?user=@... hoặc ?profile=...) lúc khởi động để mở ngay hồ sơ công khai của thành viên tương ứng.
+   - Bổ sung nút "🔗 Chia Sẻ" trực tiếp ngay trong giao diện hồ sơ cá nhân của người dùng.
+
+4. [Chuẩn Hóa Định Dạng Số Hàng Nghìn & Hàng Triệu (formatNumber)]:
+   - Xây dựng tiện ích toàn cục formatNumber(num) hiển thị dấu phân cách hàng nghìn (ví dụ: 23,155 VoCoin, 1,250 từ, 1,000,000 Xu).
+   - Áp dụng đồng bộ cho số dư VoCoin, số lượng từ vựng trong Deck/VocaLib/Profile, số người theo dõi, điểm bảng xếp hạng và các giao dịch sổ cái.
+   - Đảm bảo 100% các biến logic nội bộ duy trì kiểu dữ liệu số thuần túy (number), không gây lỗi tính toán số học.
+
+5. [Mở Rộng Không Gian Màn Hình Rộng Desktop & Bố Cục Responsive]:
+   - Tối ưu hóa kích thước toàn bộ các cửa sổ Modal quan trọng trên máy tính/laptop (Profile, AI Mentor, VocaShop, Wallet Studio, Deck Studio, Mistake Notebook, Settings, Notifications) mở rộng lên đến 860px - 1060px (94vw).
+   - Tự động kích hoạt bố cục 2 cột (Profile Widescreen Grid, Shop Package Grid) trên màn hình rộng và giữ vững trải nghiệm thu gọn 1 cột hoàn hảo trên màn hình di động (< 768px).
+
+6. [Kiến Trúc Lắp Ghép & Hỗ Trợ Mô-đun Hóa Mã Nguồn "Chia Để Trị"]:
+   - Cập nhật build_vocaflow.ps1 hỗ trợ nạp tự động các mô-đun JavaScript tách rời trong src/scripts/ và chuẩn bị sẵn sàng cho cấu trúc chia nhỏ module tiếp theo.
+
+================================================================================
+Phiên bản: v0.10.9-43 (Build 275) - Chuẩn Hóa Dải Mô Hình Gemini AI, Hoàn Thiện Sổ Cái Giao Dịch & Đồng Bộ Sổ Tay Lỗi Sai Đa Thiết Bị
+================================================================================
+1. [Hiện Đại Hóa & Chuẩn Hóa Dải Mô Hình Gemini AI Toàn Diện]:
+   - Đồng bộ dải mô hình Gemini AI thế hệ mới nhất ('gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash') trên toàn bộ hệ thống tính năng AI của VocaFlow.
+   - Nâng cấp cơ chế thử lại đa mô hình (multi-model failover) cho:
+     + Bộ tạo phương án bẫy trắc nghiệm tinh vi (fetchAiDistractors).
+     + Gợi ý ngữ cảnh thông minh VocaHint (getGeminiQuizHint).
+     + Phân tích mẹo nhớ & từ nguyên học Quiz (loadQuizAiExplanation).
+     + Thẩm định & chấm điểm phát âm ngữ âm ELSA (evaluateSpeakingAudioWithGemini).
+     + Xưởng sáng tạo bộ từ tự động VocaStudio (generateAiDeckStudioContent).
+     + Cố vấn học tập tương tác VocaMentor AI (sendAiMentorMessage).
+   - Loại bỏ 100% các mã định danh mô hình lỗi thời/không khả dụng.
+
+2. [Chính Xác Hóa Sổ Cái Ví & Quyết Toán Phiên Học (Ledger Balance Audit)]:
+   - Khắc phục triệt để hiện tượng lệch số dư ghi nhận trong sổ cái giao dịch bằng việc truyền tham số số dư đích thực (explicitBalanceAfter) tại thời điểm giao dịch phát sinh.
+   - Chuẩn hóa quyết toán cho cả 3 chế độ: Luyện Viết (Spelling), Trắc Nghiệm (Quiz) và Luyện Nói (Speaking) khi hoàn thành bài cũng như khi thoát sớm (tính toán thưởng hoàn thành, quy mô và khấu trừ điểm âm chính xác).
+   - Tự động đẩy bản ghi giao dịch lên Firebase Realtime Database ngay khi hoàn tất phiên.
+
+3. [Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai (Mistake Notebook)]:
+   - Bổ sung trường mistakeNotebook vào cấu trúc sao lưu Cloud (pushCurrentDatabaseToCloud) và cơ chế hợp nhất 2 chiều (mergeCloudDataIntoLocal).
+   - Áp dụng thuật toán bảo toàn số lần sai cao nhất và hợp nhất danh sách các chế độ thi bị sai (modesFailed) tránh thất lạc từ vựng cần ôn luyện trên nhiều thiết bị.
+   - Hỗ trợ bắt đầu phiên ôn luyện lỗi sai tức thì với danh sách từ đã giải mã.
+
+4. [Tối Ưu Hàng Đợi Ôn Tập Gián Đoạn (SRS Review Queue)]:
+   - Lọc bỏ triệt để các từ vựng mới tạo chưa từng học (masteryScore === 0) khỏi hàng đợi ôn tập hàng ngày, chỉ nhắc nhở các từ vựng đã có lịch sử học tập đến hạn lặp lại.
+
+================================================================================
+Phiên bản: v0.10.9-42 (Build 274) - Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail, Bố Cục Nút Học 2x2, Nâng Cấp Avatar Cá Nhân & Hoàn Thiện Hồ Sơ Công Khai
+================================================================================
+1. [Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail Màn Hình Hẹp]:
+   - Tinh gọn chiều cao toàn bộ khối điều khiển cố định phía trên (.deck-detail-sticky-pane) giảm hơn 45% diện tích chiếm dụng màn hình.
+   - Bố trí lại 4 chế độ học cốt lõi (Luyện Nói, Auto Flashcard, Luyện Viết, Trắc Nghiệm) theo dạng lưới 2 cột x 2 hàng (2x2 Grid) cực kỳ cân đối, thẩm mỹ trên di động.
+   - Chuyển nút "Ôn từ sai" sang thanh chọn từ vựng cạnh ô checkbox "Chọn tất cả" dưới dạng pill button nhỏ gọn, thanh thoát.
+   - Tinh chỉnh chiều cao nút và thanh tìm kiếm/lọc xuống 28px-30px, tối đa hóa không gian hiển thị danh sách từ vựng bên dưới.
+
+2. [Tinh Chỉnh & Nâng Cấp Hồ Sơ Cá Nhân]:
+   - Mở rộng kích thước khung Avatar từ 82px lên 90px (chữ ký tự 36px) nổi bật, sắc nét hơn.
+   - Loại bỏ biểu tượng máy ảnh đè góc trên Avatar; người dùng có thể nhấp trực tiếp vào vòng tròn Avatar để tải ảnh lên.
+
+3. [Hoàn Thiện Giao Diện Hồ Sơ Công Khai (Public Profile)]:
+   - Chuyển đổi khối 3 huy hiệu ghim nổi bật (#pub-view-badges-showcase) từ dạng hình tròn sang dạng thẻ danh hiệu 3 cột (.pinned-badge-card) đồng bộ chuẩn xác với giao diện hồ sơ cá nhân.
+   - Loại bỏ hoàn toàn đoạn văn bản giới thiệu mẫu ("Tác giả đóng góp 1 VocaDeck hữu ích...") khi người dùng chưa đặt Bio.
+   - Loại bỏ tab "Thành Tựu" chưa sử dụng trên hồ sơ công khai, giữ lại 2 tab trọng tâm: "VocaDecks" và "Chỉ Số".
+   - Tạm thời gỡ bỏ nút "Nhắn Tin" trên thanh hành động hồ sơ công khai.
+
+================================================================================
+Phiên bản: v0.10.9-41 (Build 273) - Khắc Phục Thu Hẹp Thẻ VocaLib, Tái Thiết Kế Hồ Sơ Phong Cách Instagram & Tối Ưu Thẩm Mỹ Thẻ VocaDeck
+================================================================================
+1. [Khắc Phục Hiện Tượng Thẻ VocaDeck Bị Thu Hẹp Trong Thư Viện VocaLib]:
+   - Tinh chỉnh CSS container `.vocalib-deck-card` và `.vip-vocalib-card` với `flex-shrink: 0 !important`, `width: 100% !important`, `min-height: fit-content !important`, và `box-sizing: border-box !important`.
+   - Đảm bảo các thẻ VocaDeck VIP trong danh sách thư viện cộng đồng (#library-deck-list) luôn giữ trọn vẹn chiều cao nội dung, hiển thị đầy đủ thông tin, tiêu đề, tác giả và các nút chức năng tương tác (Xem thử, Thêm vào tủ) trên mọi kích thước màn hình.
+
+2. [Tái Thiết Kế Giao Diện Hồ Sơ Cá Nhân & Công Khai Chuẩn Phong Cách Instagram]:
+   - Cải tổ toàn diện `modal-profile.html` (Hồ sơ của tôi) và `modal-public-profile.html` (Xem hồ sơ Flower khác) theo phong cách hiện đại của Instagram:
+     + Thanh Header tối giản hiển thị `@handle` độc nhất, huy hiệu trạng thái/VIP và nút Đóng.
+     + Khu vực Hero cá nhân: Avatar tròn nổi bật (82px) với vòng viền xoay chuyển sắc / hào quang hoàng kim VIP, đi kèm thanh 3 cột chỉ số chuẩn Instagram (VocaDecks • Followers • Following).
+     + Khối Danh tính & Tiểu sử: Tên người dùng phát sáng ánh kim đa sắc, huy hiệu danh hiệu, mục tiêu cá nhân (Bio), hàng thẻ thông tin tiện ích (Ví VoCoin, FlowStreak, Email/Tổng từ).
+     + Thanh nút hành động nhanh: Sửa hồ sơ, VocaStudio, Quà tặng, VocaMail cho cá nhân; Theo dõi/Bỏ theo dõi, Nhắn tin, Chia sẻ cho hồ sơ công khai.
+     + Khu vực Story Highlights: 3 huy hiệu danh hiệu nổi bật dạng hình tròn viền kim loại.
+     + Hệ thống 3 Tab Instagram mượt mà: `📑 Tủ Từ / VocaDecks`, `🏆 Thành Tựu & Danh Hiệu`, `📊 Chỉ Số / Cloud & Đồng Bộ`.
+
+3. [Tối Ưu Thẩm Mỹ & Loại Bỏ Xung Đột Viền Trên Thẻ VocaDeck]:
+   - Xóa bỏ dải màu xám `deck-card-strip` trên các thẻ VIP Deck nhằm giải phóng không gian viền sáng xoay Conic Gradient tinh xảo.
+   - Bo tròn 2 góc trên của `.deck-card-strip` cho các thẻ VocaDeck thông thường, ngăn chặn hiện tượng tràn góc và lệch viền trên thẻ.
+
+================================================================================
+Phiên bản: v0.10.9-40 (Build 272) - Tối Ưu Hiển Thị Flow Streak Màn Hình Hẹp, Hiệu Ứng Viền Sáng Xoay VIP & Nâng Cấp Tên VIP Ánh Kim Đa Sắc
+================================================================================
+1. [Tối Ưu Hiển Thị Số Chuỗi Học Flow Trên Màn Hình Hẹp]:
+   - Tinh chỉnh nút Flow Streak trên Header (`#header-flow-count`) sử dụng class chuyên biệt `.header-flow-badge` thay vì `.btn-header-label`.
+   - Đảm bảo số ngày duy trì chuỗi học liên tục luôn hiển thị gọn gàng, rõ ràng cạnh biểu tượng sóng 🌊 trên mọi kích thước màn hình điện thoại và máy tính bảng mà không bị ẩn nhầm bởi media query.
+
+2. [Hiệu Ứng Viền Sáng Xoay Ánh Kim Cho Các Thành Phần VIP (Model 1 Ánh Sáng)]:
+   - Ứng dụng dải màu Conic Gradient chuyển sắc chuyển động liên tục quanh viền cho các VocaDeck VIP trong "VocaDeck Của Bạn", các thẻ VocaDeck VIP trong kho thư viện cộng đồng "VocaLib", và 3 thẻ bảng giá gói nâng cấp VocaVIP (Tháng, Năm, Trọn Đời).
+   - Tối ưu hóa GPU-accelerated với pseudo-element `::before` và `::after` giúp chuyển động xoay 360 độ 3.5s siêu mượt mà, không giật lag và không ảnh hưởng đến bố cục nội dung.
+   - Thẻ gói Tháng dùng dải vàng kim - cam hổ phách, gói Năm kết hợp vàng - cam - hồng hoàng gia, gói Trọn Đời kết hợp lam băng - tím thạch anh - hồng dạ quang.
+
+3. [Nâng Cấp Hiệu Ứng Tên VIP Ánh Kim Đa Sắc & Vương Miện Lơ Lửng (Model 3 Tên VIP)]:
+   - Nâng cấp `.vip-glowing-name` với dải màu Metallic Gold đa điểm dừng (Vàng nhạt #fef08a, Vàng nguyên bản #fde047, Vàng kim loại #eab308, Vàng đào #f4a261, Vàng hồng/đồng #b5838d).
+   - Kết hợp 2 tầng animation đồng thời: `shimmerGold` (quét vệt sáng kim loại 4s tuần hoàn) và `goldGlow` (nhịp thở hào quang 1.8s).
+   - Vương miện VIP `.vip-crown-icon` được tích hợp hiệu ứng lơ lửng bồng bềnh `crownFloat` kết hợp tỏa sáng `crownGlow`.
+
+================================================================================
+Phiên bản: v0.10.9-39 (Build 271) - Kiểm Kê & Đồng Bộ Chuẩn Xác Thông Số Thống Kê Phiên Học (VocaSkip, VocaHint, Wrong Attempts)
+================================================================================
+1. [Khắc Phục Lỗi Hiển Thị Số Lượng VocaSkip Trong Kết Quả Luyện Viết (Spelling)]:
+   - Khắc phục triệt để hiện tượng số lượng VocaSkip hiển thị sai lệch trên modal kết quả Luyện viết (ví dụ: không dùng VocaSkip nào nhưng kết quả vẫn hiện 3 từ).
+   - Thiết lập reset triệt để biến đếm phiên học `spellingSkipCount = 0` ngay khi khởi tạo chế độ Luyện viết (`startSpellingMode`), đảm bảo thông số chỉ tính chính xác cho phiên học hiện tại.
+
+2. [Chuẩn Hóa Bộ Thông Số Thống Kê 3-Trong-1 Cho Chế Độ Trắc Nghiệm (Quiz)]:
+   - Nâng cấp modal kết quả Trắc nghiệm (`modal-quiz-result.html`) với thanh thống kê 3-trong-1 đồng bộ và trực quan (`💡 VocaHint: X lượt`, `⏩ VocaSkip: Y câu`, `❌ Chọn sai: Z câu`).
+   - Khởi tạo và cô lập biến đếm `quizSkipCount = 0`, `quizHintsUsed = 0`, `quizWrongCount = 0` trong `startQuizMode` và ghi nhận chính xác mỗi khi sử dụng VocaSkip (`useQuizSkip`).
+
+3. [Cô Lập & Kiểm Kê Toàn Diện Thông Số Chế Độ Luyện Nói (Speaking)]:
+   - Khởi tạo tường minh và reset `speakingWordsSkippedCount = 0` trong `startSpeakingMode`, đảm bảo số lượt bỏ qua hiển thị trên modal kết quả (`spk-res-skips-used`) luôn chính xác 100%.
+
+================================================================================
+Phiên bản: v0.10.9-38 (Build 270) - Khắc Phục Ghi Nhận Lỗi Quiz, Cơ Chế Bù Trừ Lỗi Sai & Tinh Chỉnh Tỉ Lệ Độc Đắc Vòng Quay
+================================================================================
+1. [Khắc Phục Thu Thập Từ Sai & Bỏ Qua Trong Trắc Nghiệm (Quiz)]:
+   - Tích hợp ghi nhận đầy đủ 100% tất cả các từ vựng trả lời sai hoặc bấm Bỏ Qua (VocaSkip) trong chế độ Trắc Nghiệm Quiz vào Sổ Tay Lỗi Sai (`vocaflow_mistake_notebook_v1`) và danh sách câu sai của phiên làm bài (`quizSessionWrongWords`).
+   - Tự động trích xuất ngữ cảnh, nghĩa và phiên âm từ giác quan câu hỏi đang chọn (`_activeQuizSense`), đảm bảo thông tin lưu trữ chính xác tuyệt đối.
+
+2. [Sửa Lỗi VocaSkip Trong Chế Độ Luyện Viết (Spelling)]:
+   - Khắc phục triệt để lỗi bấm nút Bỏ Qua (VocaSkip) bị kẹt hoặc không chuyển sang câu hỏi tiếp theo trong chế độ Spelling.
+   - Khi kích hoạt VocaSkip: tự động trừ 1 lượt skip (hoặc 100 VoCoin), lưu từ vào Sổ Tay Lỗi Sai, ghi nhận phiên làm bài và hỗ trợ chuyển ngay sang từ tiếp theo một cách mượt mà.
+
+3. [Cơ Chế Bù Trừ Số Lần Làm Đúng Trong Sổ Tay Lỗi Sai (Strict Mistake Offset)]:
+   - Thực thi chính xác quy tắc: sai bao nhiêu lần thì phải làm bù đúng bấy nhiêu lần để xóa hoàn toàn từ khỏi Sổ Tay Lỗi Sai.
+   - Mỗi lần làm đúng / phát âm chuẩn một từ đang có trong Sổ Tay Lỗi Sai (tại bất kỳ chế độ học nào), hệ thống sẽ giảm `mistakeCount` đi 1 đơn vị và thông báo số lần cần làm đúng còn lại.
+   - Khi `mistakeCount` giảm về 0, từ vựng sẽ chính thức được gỡ bỏ hoàn toàn khỏi Sổ Tay Lỗi Sai kèm hiệu ứng chúc mừng.
+   - Nút thùng rác 🗑️ trong Sổ Tay Lỗi Sai vẫn hỗ trợ xóa ép buộc (Force Delete) tức thì khi người dùng muốn.
+
+4. [Điều Chỉnh Tỉ Lệ Trúng Giải Độc Đắc "+1 Ngày VocaVIP" Vòng Quay May Mắn (VocaWheel)]:
+   - Tài khoản VocaVIP: Giảm tỉ lệ trúng giải Độc Đắc từ 12.5% xuống 6.25% (1/16) trên mỗi lượt quay (ô giải trên vòng quay vẫn giữ nguyên kích thước trực quan 45°).
+   - Tài khoản Thường (Non-VIP): Giảm tỉ lệ trúng giải Độc Đắc từ 12.5% xuống 7% khi ô Độc Đắc xuất hiện trên vòng quay (xác suất xuất hiện ô Độc Đắc trên vòng quay của tài khoản thường vẫn duy trì ở mức 33.33%).
+
+================================================================================
+Phiên bản: v0.10.9-37 (Build 269) - Sổ Tay Lỗi Sai & Làm Lại Câu Sai Tức Thì
+================================================================================
+1. [Sổ Tay Lỗi Sai (Mistake Notebook & Persistent Wrong Answers Tracker)]:
+   - Tự động tích lũy và lưu trữ tất cả các từ vựng/câu hỏi người dùng làm sai trong quá trình học tập (Trắc nghiệm Quiz, Luyện viết Spelling, Luyện nói Speaking) vào bộ nhớ cục bộ `localStorage` (`vocaflow_mistake_notebook_v1`).
+   - Cung cấp giao diện Sổ Tay Lỗi Sai (`modal-mistake-notebook`) chuyên nghiệp:
+     + Bộ lọc thông minh theo tên từ vựng/nghĩa tiếng Việt, theo từng bộ từ (VocaDeck) và theo từng chế độ làm sai (Quiz, Spelling, Speaking).
+     + Nút hành động nhanh 1-Click: "🎯 Ôn Trắc Nghiệm (X từ)", "✍️ Luyện Viết (X từ)", "🎙️ Luyện Nói (X từ)".
+     + Thống kê số lần làm sai của từng từ (`❌ Sai X lần`), thời gian làm sai và nhãn các chế độ đã sai.
+     + Hỗ trợ nghe phát âm chuẩn, luyện tập riêng từng từ và xóa từ khỏi sổ tay.
+     + Cơ chế Tự Động Thuộc Bài: Khi người dùng ôn tập lại và trả lời ĐÚNG, từ vựng sẽ tự động được gỡ bỏ khỏi Sổ Tay Lỗi Sai.
+   - Bổ sung nút truy cập "📕 Từ Sai" trên Header Navigation kèm live badge số đếm (`#header-mistake-count`) và nút "📕 Ôn Từ Sai" trong thanh công cụ của từng VocaDeck (`#btn-study-mistakes-deck`).
+
+2. [Làm Lại Ngay Các Câu Sai Sau Khi Kết Thúc Phiên Học (Session-Level Retry on Result Modals)]:
+   - Khi hoàn thành bài Trắc nghiệm Quiz, Luyện viết Spelling hoặc Luyện nói Speaking, nếu có câu/từ làm sai hoặc chưa đạt điểm sàn, bảng kết quả ăn mừng (Result Celebration Modal) sẽ lập tức hiển thị Banner Cảnh Báo Nổi Bật.
+   - Cung cấp nút làm lại 1-Click:
+     + Modal Quiz: "🔄 Làm Lại Riêng X Câu Sai" (`retryQuizWrongWordsOnly()`).
+     + Modal Spelling: "🔄 Luyện Viết Lại Riêng X Từ Sai" (`retrySpellingWrongWordsOnly()`).
+     + Modal Speaking: "🔄 Luyện Nói Lại Riêng X Từ Chưa Đạt" (`retrySpeakingWrongWordsOnly()`).
+   - Khởi chạy ngay phiên học tập trung chỉ với các câu làm sai trong phiên vừa kết thúc, giúp người dùng củng cố trí nhớ và phản xạ ngữ âm kịp thời.
+
+================================================================================
+Phiên bản: v0.10.9-36 (Build 268) - Native Desktop WebMessage & Standard FormSubmit VocaMail Engine
+================================================================================
+1. [Khắc Phục Toàn Diện Hộp Thư VocaMail - Gửi Email Trực Tiếp & Tức Thì Về Gmail]:
+   - Khắc phục lỗi FormSubmit bỏ qua thư do thiếu các trường bắt buộc chuẩn (name, email, message).
+   - Thiết lập chuẩn hóa toàn bộ payload: gửi song song cả trường chuẩn (name, email, message, _subject, _captcha, _template, _cc) và bảng định dạng chi tiết học viên.
+   - Tích hợp Native C# WebView2 WebMessage Bridge (`window.chrome.webview.postMessage`) cho Windows Desktop App (EXE), cho phép C# phát lệnh HTTP POST bằng `HttpClient` với Origin `https://iamjulies.github.io` hợp lệ 100%, xóa bỏ vĩnh viễn rào cản hạn chế giao thức `file:///`.
+   - Giữ nguyên các kênh gửi dự phòng song song: Fetch AJAX trực tiếp, Hidden HTML Form POST và 1-Click mở Web Gmail.
+
+================================================================================
+Phiên bản: v0.10.9-35 (Build 267) - VocaMail Multi-Pipeline Email Dispatch & Web Gmail 1-Click
 ================================================================================
 1. [Hộp Thư VocaMail - Trung Tâm Nhắn Tin & Hỏi Đáp Admin Trực Tuyến]:
    - Ra mắt tính năng VocaMail cho phép học viên gửi thắc mắc, phản hồi, tư vấn học tập hoặc yêu cầu hỗ trợ trực tiếp đến đội ngũ Admin.

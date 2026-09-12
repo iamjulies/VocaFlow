@@ -3354,3 +3354,68 @@
       background: rgba(56, 189, 248, 0.05);
     }
 
+    /* =========================================================================
+       RESPONSIVE WIDESCREEN DESKTOP & MOBILE HARMONY (v0.10.9-44)
+       ========================================================================= */
+    .modal-xl-desktop {
+      max-width: min(94vw, 980px) !important;
+      width: 94vw !important;
+      max-height: 90vh !important;
+    }
+    .modal-lg-desktop {
+      max-width: min(94vw, 880px) !important;
+      width: 94vw !important;
+      max-height: 90vh !important;
+    }
+    .modal-full-desktop {
+      max-width: min(95vw, 1060px) !important;
+      width: 95vw !important;
+      max-height: 90vh !important;
+    }
+
+    .ig-profile-modal {
+      max-width: min(94vw, 940px);
+      width: 94vw;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 820px) {
+      .profile-layout-split {
+        display: grid !important;
+        grid-template-columns: 330px 1fr !important;
+        gap: 20px !important;
+        align-items: start !important;
+      }
+      .profile-layout-left {
+        position: sticky !important;
+        top: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        background: rgba(0, 0, 0, 0.15) !important;
+        padding: 16px !important;
+        border-radius: 14px !important;
+        border: 1px solid var(--border) !important;
+      }
+      .profile-layout-right {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        min-width: 0 !important;
+      }
+      .shop-packages-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+        gap: 12px !important;
+      }
+      .modal-ai-mentor-container {
+        max-width: min(95vw, 1020px) !important;
+        height: 86vh !important;
+      }
+    }
+

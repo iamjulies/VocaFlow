@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-42)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-44)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-42';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-42 (Build 274)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-44';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-44 (Build 276)';
 
 
     // =========================================================================
@@ -566,8 +566,10 @@
 
       const confirmBtn = document.getElementById('btn-study-confirm-exit');
       if (confirmBtn) {
-        if (resV2.finalPts !== 0) {
-          confirmBtn.textContent = `🚪 Thoát (Nhận ${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} Xu)`;
+        if (resV2.finalPts < 0) {
+          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resV2.finalPts)} Xu)`;
+        } else if (resV2.finalPts > 0) {
+          confirmBtn.textContent = `🚪 Thoát (Nhận +${resV2.finalPts} Xu)`;
         } else {
           confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
         }
@@ -969,7 +971,7 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử toàn bộ khóa...';
-      const models = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest'];
+      const models = ['gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
 
       const results = [];
       for (let i = 0; i < keys.length; i++) {
@@ -1420,14 +1422,30 @@
       broadcastEconomyUpdate();
     }
 
-    function formatPointsCompact(pts) {
-      if (pts >= 100000) {
-        return (pts / 1000).toFixed(0) + 'k VoCoin';
-      }
-      return pts + ' VoCoin';
+    // =========================================================================
+    // NUMBER FORMATTING HELPER (v0.10.9-44 - THOUSANDS & MILLIONS SEPARATORS)
+    // =========================================================================
+    function formatNumber(num) {
+      if (num === null || num === undefined || num === '') return '0';
+      const n = Number(num);
+      if (isNaN(n)) return String(num);
+      return n.toLocaleString('en-US');
     }
+    window.formatNumber = formatNumber;
 
-        // =========================================================================
+    function formatPointsCompact(pts) {
+      const n = Number(pts) || 0;
+      if (n >= 1000000) {
+        return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M VoCoin';
+      }
+      if (n >= 100000) {
+        return (n / 1000).toFixed(0) + 'k VoCoin';
+      }
+      return formatNumber(n) + ' VoCoin';
+    }
+    window.formatPointsCompact = formatPointsCompact;
+
+    // =========================================================================
     // ECONOMY & LEDGER HARD RESET MIGRATION (v0.10.6c)
     // =========================================================================
     function runEconomyMigrationV0104i() {
@@ -1468,37 +1486,37 @@
       if (headerPoints) headerPoints.textContent = formatPointsCompact(points);
 
       const studioBal = document.getElementById('studio-wallet-balance');
-      if (studioBal) studioBal.textContent = points + ' VoCoin';
+      if (studioBal) studioBal.textContent = formatNumber(points) + ' VoCoin';
 
       const profPoints = document.getElementById('profile-user-points');
-      if (profPoints) profPoints.textContent = points + ' VoCoin';
+      if (profPoints) profPoints.textContent = formatNumber(points) + ' VoCoin';
 
       const shopPoints = document.getElementById('shop-user-points');
-      if (shopPoints) shopPoints.textContent = points;
+      if (shopPoints) shopPoints.textContent = formatNumber(points);
 
       const shopHints = document.getElementById('shop-user-hints');
-      if (shopHints) shopHints.textContent = hints;
+      if (shopHints) shopHints.textContent = formatNumber(hints);
 
       const shopSkips = document.getElementById('shop-user-skips');
-      if (shopSkips) shopSkips.textContent = skips;
+      if (shopSkips) shopSkips.textContent = formatNumber(skips);
 
       const quizWalletPoints = document.getElementById('quiz-wallet-points');
-      if (quizWalletPoints) quizWalletPoints.textContent = `${points} VoCoin`;
+      if (quizWalletPoints) quizWalletPoints.textContent = `${formatNumber(points)} VoCoin`;
 
       const quizCardHintsCount = document.getElementById('quiz-card-hints-count');
-      if (quizCardHintsCount) quizCardHintsCount.textContent = hints > 0 ? hints : '50';
+      if (quizCardHintsCount) quizCardHintsCount.textContent = formatNumber(hints > 0 ? hints : 50);
 
       const quizCardSkipsCount = document.getElementById('quiz-card-skips-count');
-      if (quizCardSkipsCount) quizCardSkipsCount.textContent = skips > 0 ? skips : '100';
+      if (quizCardSkipsCount) quizCardSkipsCount.textContent = formatNumber(skips > 0 ? skips : 100);
 
       const spellingWalletPoints = document.getElementById('spelling-wallet-points');
-      if (spellingWalletPoints) spellingWalletPoints.textContent = `${points} VoCoin`;
+      if (spellingWalletPoints) spellingWalletPoints.textContent = `${formatNumber(points)} VoCoin`;
 
       const spellingHintsCount = document.getElementById('spelling-hints-count');
-      if (spellingHintsCount) spellingHintsCount.textContent = hints > 0 ? hints : '50';
+      if (spellingHintsCount) spellingHintsCount.textContent = formatNumber(hints > 0 ? hints : 50);
 
       const spellingSkipsCount = document.getElementById('spelling-skips-count');
-      if (spellingSkipsCount) spellingSkipsCount.textContent = skips > 0 ? skips : '100';
+      if (spellingSkipsCount) spellingSkipsCount.textContent = formatNumber(skips > 0 ? skips : 100);
     }
 
     async function syncEconomyToCloud() {
@@ -1996,38 +2014,271 @@
       return name.trim()[0].toUpperCase();
     }
 
+    // =========================================================================
+    // AVATAR CROPPER & FRAMING ENGINE (v0.10.9-44)
+    // =========================================================================
+    let avatarCropperState = {
+      image: null,
+      zoom: 1.0,
+      panX: 0,
+      panY: 0,
+      rotation: 0,
+      isDragging: false,
+      startX: 0,
+      startY: 0,
+      canvasSize: 280,
+      cropRadius: 115
+    };
+
     function handleAvatarFileUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
       if (!file.type.startsWith('image/')) {
-        alert('Vui lòng chọn file hình ảnh hợp lệ (PNG, JPG, WebP)!');
+        alert('Vui lòng chọn file hình ảnh hợp lệ (PNG, JPG, WebP, GIF)!');
         return;
       }
 
       const reader = new FileReader();
       reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const size = 128;
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext('2d');
-
-          const minDim = Math.min(img.width, img.height);
-          const sx = (img.width - minDim) / 2;
-          const sy = (img.height - minDim) / 2;
-
-          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-          setUserAvatarImage(compressedDataUrl);
-          showToast('🎉 Đã tải lên và cập nhật ảnh đại diện thành công!');
-        };
-        img.src = evt.target.result;
+        openAvatarCropperModal(evt.target.result);
       };
       reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function openAvatarCropperModal(imageDataUrl) {
+      const img = new Image();
+      img.onload = function() {
+        avatarCropperState.image = img;
+        avatarCropperState.zoom = 1.0;
+        avatarCropperState.panX = 0;
+        avatarCropperState.panY = 0;
+        avatarCropperState.rotation = 0;
+        avatarCropperState.isDragging = false;
+
+        const slider = document.getElementById('avatar-crop-zoom-slider');
+        if (slider) slider.value = '1.0';
+        const label = document.getElementById('avatar-crop-zoom-label');
+        if (label) label.textContent = '1.0x';
+
+        initAvatarCropperEvents();
+        openModal('modal-avatar-cropper');
+        setTimeout(() => {
+          drawAvatarCropCanvas();
+        }, 50);
+      };
+      img.src = imageDataUrl;
+    }
+
+    let avatarCropperEventsBound = false;
+    function initAvatarCropperEvents() {
+      if (avatarCropperEventsBound) return;
+      const canvas = document.getElementById('avatar-cropper-canvas');
+      if (!canvas) return;
+
+      avatarCropperEventsBound = true;
+
+      // Mouse events
+      canvas.addEventListener('mousedown', (e) => {
+        avatarCropperState.isDragging = true;
+        avatarCropperState.startX = e.clientX - avatarCropperState.panX;
+        avatarCropperState.startY = e.clientY - avatarCropperState.panY;
+        canvas.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!avatarCropperState.isDragging) return;
+        avatarCropperState.panX = e.clientX - avatarCropperState.startX;
+        avatarCropperState.panY = e.clientY - avatarCropperState.startY;
+        drawAvatarCropCanvas();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (avatarCropperState.isDragging) {
+          avatarCropperState.isDragging = false;
+          const canvas = document.getElementById('avatar-cropper-canvas');
+          if (canvas) canvas.style.cursor = 'grab';
+        }
+      });
+
+      // Touch events
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          avatarCropperState.isDragging = true;
+          avatarCropperState.startX = e.touches[0].clientX - avatarCropperState.panX;
+          avatarCropperState.startY = e.touches[0].clientY - avatarCropperState.panY;
+        }
+      }, { passive: true });
+
+      canvas.addEventListener('touchmove', (e) => {
+        if (!avatarCropperState.isDragging || !e.touches || e.touches.length !== 1) return;
+        avatarCropperState.panX = e.touches[0].clientX - avatarCropperState.startX;
+        avatarCropperState.panY = e.touches[0].clientY - avatarCropperState.startY;
+        drawAvatarCropCanvas();
+      }, { passive: true });
+
+      canvas.addEventListener('touchend', () => {
+        avatarCropperState.isDragging = false;
+      });
+
+      // Mouse Wheel Zoom
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.1 : -0.1;
+        adjustAvatarCropZoom(delta);
+      }, { passive: false });
+    }
+
+    function onAvatarCropZoomInput(val) {
+      avatarCropperState.zoom = Math.max(0.8, Math.min(3.5, parseFloat(val) || 1.0));
+      const label = document.getElementById('avatar-crop-zoom-label');
+      if (label) label.textContent = avatarCropperState.zoom.toFixed(1) + 'x';
+      drawAvatarCropCanvas();
+    }
+
+    function adjustAvatarCropZoom(delta) {
+      avatarCropperState.zoom = Math.max(0.8, Math.min(3.5, Math.round((avatarCropperState.zoom + delta) * 20) / 20));
+      const slider = document.getElementById('avatar-crop-zoom-slider');
+      if (slider) slider.value = avatarCropperState.zoom.toString();
+      const label = document.getElementById('avatar-crop-zoom-label');
+      if (label) label.textContent = avatarCropperState.zoom.toFixed(1) + 'x';
+      drawAvatarCropCanvas();
+    }
+
+    function rotateAvatarCrop(degrees = 90) {
+      avatarCropperState.rotation = (avatarCropperState.rotation + degrees) % 360;
+      drawAvatarCropCanvas();
+    }
+
+    function resetAvatarCrop() {
+      avatarCropperState.zoom = 1.0;
+      avatarCropperState.panX = 0;
+      avatarCropperState.panY = 0;
+      avatarCropperState.rotation = 0;
+      const slider = document.getElementById('avatar-crop-zoom-slider');
+      if (slider) slider.value = '1.0';
+      const label = document.getElementById('avatar-crop-zoom-label');
+      if (label) label.textContent = '1.0x';
+      drawAvatarCropCanvas();
+    }
+
+    function drawAvatarCropCanvas() {
+      const canvas = document.getElementById('avatar-cropper-canvas');
+      if (!canvas || !avatarCropperState.image) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = avatarCropperState.cropRadius || 115;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Draw Image with Transformations
+      ctx.save();
+      ctx.translate(cx + avatarCropperState.panX, cy + avatarCropperState.panY);
+      ctx.rotate((avatarCropperState.rotation * Math.PI) / 180);
+      ctx.scale(avatarCropperState.zoom, avatarCropperState.zoom);
+
+      const img = avatarCropperState.image;
+      const minDim = Math.min(img.width, img.height);
+      const baseScale = (r * 2) / minDim;
+      const drawW = img.width * baseScale;
+      const drawH = img.height * baseScale;
+
+      ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      ctx.restore();
+
+      // 2. Draw Dark Semi-transparent Overlay Outside the Crop Circle
+      ctx.save();
+      ctx.fillStyle = 'rgba(9, 13, 22, 0.76)';
+      ctx.beginPath();
+      ctx.rect(0, 0, w, h);
+      ctx.arc(cx, cy, r, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. Draw Crop Ring Guide
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Crosshair / Grid hints
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
+      ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r);
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Update live thumbnail preview
+      updateAvatarCropperThumb();
+    }
+
+    function updateAvatarCropperThumb() {
+      const thumb = document.getElementById('avatar-cropper-preview-thumb');
+      if (!thumb || !avatarCropperState.image) return;
+      const tCtx = thumb.getContext('2d');
+      const tw = thumb.width;
+      const th = thumb.height;
+      const tcx = tw / 2;
+      const tcy = th / 2;
+      const tr = tw / 2;
+
+      tCtx.clearRect(0, 0, tw, th);
+      tCtx.save();
+      tCtx.beginPath();
+      tCtx.arc(tcx, tcy, tr, 0, Math.PI * 2);
+      tCtx.clip();
+
+      const scaleRatio = tw / (avatarCropperState.cropRadius * 2);
+      tCtx.translate(tcx + avatarCropperState.panX * scaleRatio, tcy + avatarCropperState.panY * scaleRatio);
+      tCtx.rotate((avatarCropperState.rotation * Math.PI) / 180);
+      tCtx.scale(avatarCropperState.zoom * scaleRatio, avatarCropperState.zoom * scaleRatio);
+
+      const img = avatarCropperState.image;
+      const minDim = Math.min(img.width, img.height);
+      const baseScale = (avatarCropperState.cropRadius * 2) / minDim;
+      const drawW = img.width * baseScale;
+      const drawH = img.height * baseScale;
+
+      tCtx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      tCtx.restore();
+    }
+
+    function confirmAndApplyCroppedAvatar() {
+      if (!avatarCropperState.image) return;
+      const exportCanvas = document.createElement('canvas');
+      const outSize = 256;
+      exportCanvas.width = outSize;
+      exportCanvas.height = outSize;
+      const ctx = exportCanvas.getContext('2d');
+
+      const cx = outSize / 2;
+      const cy = outSize / 2;
+      const scaleRatio = outSize / (avatarCropperState.cropRadius * 2);
+
+      ctx.translate(cx + avatarCropperState.panX * scaleRatio, cy + avatarCropperState.panY * scaleRatio);
+      ctx.rotate((avatarCropperState.rotation * Math.PI) / 180);
+      ctx.scale(avatarCropperState.zoom * scaleRatio, avatarCropperState.zoom * scaleRatio);
+
+      const img = avatarCropperState.image;
+      const minDim = Math.min(img.width, img.height);
+      const baseScale = (avatarCropperState.cropRadius * 2) / minDim;
+      const drawW = img.width * baseScale;
+      const drawH = img.height * baseScale;
+
+      ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+
+      const finalDataUrl = exportCanvas.toDataURL('image/jpeg', 0.88);
+      setUserAvatarImage(finalDataUrl);
+      closeModal('modal-avatar-cropper');
+      showToast('🎉 Đã cắt & cập nhật ảnh đại diện chuẩn hóa thành công!');
     }
 
     function removeUserAvatar() {
@@ -5121,15 +5372,39 @@ function switchPublisherTab(tab) {
 
       let list = [...userNotifications];
       if (currentNotificationFilter !== 'all') {
-        list = list.filter(n => n.type === currentNotificationFilter);
+        list = list.filter(n => {
+          const type = n.type || '';
+          const title = (n.title || '').toLowerCase();
+          const actionType = n.actionType || '';
+          if (currentNotificationFilter === 'REWARD') {
+            return type === 'REWARD' || type === 'VIP_BONUS' || type === 'STUDY' || n.rewardType ||
+                   title.includes('thưởng') || title.includes('quà') || title.includes('trúng') ||
+                   title.includes('spin') || title.includes('quảng cáo') || title.includes('vòng quay');
+          }
+          if (currentNotificationFilter === 'FINANCIAL') {
+            return type === 'FINANCIAL' || title.includes('vocoin') || title.includes('ví') ||
+                   title.includes('mua') || title.includes('thanh toán') || title.includes('nạp');
+          }
+          if (currentNotificationFilter === 'NEW_DECK') {
+            return type === 'NEW_DECK' || (actionType === 'PREVIEW_DECK' && !title.includes('mua'));
+          }
+          if (currentNotificationFilter === 'NEW_FOLLOWER') {
+            return type === 'NEW_FOLLOWER' || type === 'VOCAMAIL' || actionType === 'VIEW_PROFILE' || title.includes('theo dõi');
+          }
+          if (currentNotificationFilter === 'SYSTEM') {
+            return type === 'SYSTEM' || type === 'BUG_REPORT' || title.includes('báo cáo') ||
+                   title.includes('sự cố') || title.includes('hệ thống') || title.includes('admin');
+          }
+          return type === currentNotificationFilter;
+        });
       }
 
       if (list.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
             <div style="font-size: 36px; margin-bottom: 8px;">🔔</div>
-            <div style="font-size: 14px; font-weight: 700; color: var(--text);">Không có thông báo nào</div>
-            <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">Các cập nhật từ tác giả bạn theo dõi và biến động tài khoản sẽ hiển thị tại đây.</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text);">Không có thông báo nào trong mục này</div>
+            <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">Các cập nhật từ tác giả bạn theo dõi, quà tặng & biến động tài khoản sẽ hiển thị tại đây.</div>
           </div>
         `;
         return;
@@ -5143,18 +5418,29 @@ function switchPublisherTab(tab) {
         let typeBg = 'rgba(56,189,248,0.12)';
         let typeBorder = 'rgba(56,189,248,0.3)';
 
-        if (n.type === 'NEW_DECK') {
+        const tLower = (n.title || '').toLowerCase();
+        if (n.type === 'NEW_DECK' || (n.actionType === 'PREVIEW_DECK' && !tLower.includes('mua'))) {
           typeIcon = '📘';
           typeColor = '#818cf8';
           typeBg = 'rgba(99,102,241,0.12)';
           typeBorder = 'rgba(99,102,241,0.3)';
-        } else if (n.type === 'NEW_FOLLOWER') {
+        } else if (n.type === 'NEW_FOLLOWER' || n.actionType === 'VIEW_PROFILE') {
           typeIcon = '👥';
           typeColor = '#34d399';
           typeBg = 'rgba(16,185,129,0.12)';
           typeBorder = 'rgba(16,185,129,0.3)';
-        } else if (n.type === 'FINANCIAL') {
-          typeIcon = '💎';
+        } else if (n.type === 'VIP_BONUS' || tLower.includes('vip') || tLower.includes('quà tân thủ')) {
+          typeIcon = '👑';
+          typeColor = '#fbbf24';
+          typeBg = 'rgba(245,158,11,0.15)';
+          typeBorder = 'rgba(245,158,11,0.4)';
+        } else if (n.type === 'REWARD' || n.type === 'STUDY' || n.rewardType || tLower.includes('thưởng') || tLower.includes('quà') || tLower.includes('trúng') || tLower.includes('spin') || tLower.includes('quảng cáo')) {
+          typeIcon = tLower.includes('quảng cáo') ? '🎬' : (tLower.includes('vòng quay') || tLower.includes('spin') ? '🎡' : (tLower.includes('skip') ? '⏭️' : (tLower.includes('hint') ? '💡' : '🎁')));
+          typeColor = '#f472b6';
+          typeBg = 'rgba(244,114,182,0.12)';
+          typeBorder = 'rgba(244,114,182,0.35)';
+        } else if (n.type === 'FINANCIAL' || tLower.includes('vocoin') || tLower.includes('ví') || tLower.includes('mua') || tLower.includes('thanh toán')) {
+          typeIcon = tLower.includes('thanh toán') || tLower.includes('thẻ') ? '💳' : (tLower.includes('mua') ? '🛒' : '💎');
           typeColor = '#fbbf24';
           typeBg = 'rgba(245,158,11,0.12)';
           typeBorder = 'rgba(245,158,11,0.3)';
@@ -5163,6 +5449,11 @@ function switchPublisherTab(tab) {
           typeColor = '#c084fc';
           typeBg = 'rgba(168,85,247,0.12)';
           typeBorder = 'rgba(168,85,247,0.3)';
+        } else if (n.type === 'SYSTEM' || n.type === 'BUG_REPORT' || tLower.includes('báo cáo') || tLower.includes('sự cố')) {
+          typeIcon = tLower.includes('báo cáo') || tLower.includes('sự cố') ? '🐛' : '🔔';
+          typeColor = '#38bdf8';
+          typeBg = 'rgba(56,189,248,0.12)';
+          typeBorder = 'rgba(56,189,248,0.3)';
         }
 
         const timeStr = formatRelativeTime(n.timestamp);
@@ -6180,19 +6471,19 @@ function switchPublisherTab(tab) {
       const followerCountEl = document.getElementById('profile-follower-count');
       const followingCountEl = document.getElementById('profile-following-count');
       if (followerCountEl) {
-        followerCountEl.textContent = isRegisteredUser ? (currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0) : 0;
+        followerCountEl.textContent = formatNumber(isRegisteredUser ? (currentUser?.followerCount || Object.keys(myFollowersMap || {}).length || 0) : 0);
       }
       if (followingCountEl) {
-        followingCountEl.textContent = isRegisteredUser ? (currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0) : 0;
+        followingCountEl.textContent = formatNumber(isRegisteredUser ? (currentUser?.followingCount || Object.keys(myFollowingMap || {}).length || 0) : 0);
       }
 
       const statDecks = document.getElementById('profile-stat-decks');
       const statDecksCloud = document.getElementById('profile-stat-decks-cloud');
       const statWords = document.getElementById('profile-stat-words');
       const lastSyncEl = document.getElementById('profile-last-sync');
-      if (statDecks) statDecks.textContent = decks.length;
-      if (statDecksCloud) statDecksCloud.textContent = `${decks.length} deck`;
-      if (statWords) statWords.textContent = `${words.length} từ`;
+      if (statDecks) statDecks.textContent = formatNumber(decks.length);
+      if (statDecksCloud) statDecksCloud.textContent = `${formatNumber(decks.length)} deck`;
+      if (statWords) statWords.textContent = `${formatNumber(words.length)} từ`;
       if (typeof renderProfileDecksList === 'function') renderProfileDecksList();
 
       const lastSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
@@ -6515,7 +6806,7 @@ function switchPublisherTab(tab) {
       console.warn('Error loading ledger/purchased decks:', e);
     }
 
-    function addLedgerEntry(type, amount, description) {
+    function addLedgerEntry(type, amount, description, explicitBalanceAfter) {
       if (isGuest()) return; // Never record guest transactions into user account ledger
       const numAmount = Number(amount) || 0;
       
@@ -6524,13 +6815,16 @@ function switchPublisherTab(tab) {
         return;
       }
 
-      const currentBalance = getUserPoints();
+      const balanceAfter = (typeof explicitBalanceAfter === 'number' && !isNaN(explicitBalanceAfter))
+        ? explicitBalanceAfter
+        : getUserPoints();
+
       const tx = {
         id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         timestamp: new Date().toISOString(),
         type: type,
         amount: numAmount,
-        balanceAfter: currentBalance,
+        balanceAfter: balanceAfter,
         description: description || 'Giao dịch ví'
       };
 
@@ -7420,7 +7714,13 @@ function switchPublisherTab(tab) {
           } catch (e) {}
         }
 
-        const matchedStudent = adminStudentsData.find(s => (targetUid && s.uid === targetUid) || (s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+        const cleanAuthorName = (authorName || '').replace(/^@/, '').trim().toLowerCase();
+        const matchedStudent = adminStudentsData.find(s => 
+          (targetUid && s.uid === targetUid) || 
+          (s.username && s.username.toLowerCase() === cleanAuthorName) ||
+          (s.email && s.email.split('@')[0].toLowerCase() === cleanAuthorName) ||
+          (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
+        );
         if (matchedStudent) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
@@ -7428,7 +7728,13 @@ function switchPublisherTab(tab) {
           if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
           if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
         }
-        authorDecks = allDecks.filter(d => (targetUid && d.authorUid === targetUid) || (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase());
+        authorDecks = allDecks.filter(d => 
+          (targetUid && d.authorUid === targetUid) || 
+          (targetDeck?.authorUid && d.authorUid === targetDeck.authorUid) || 
+          (d.authorUsername && d.authorUsername.toLowerCase() === cleanAuthorName) ||
+          (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === cleanAuthorName) ||
+          (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+        );
       }
 
       if (!resolvedHandle) {
@@ -7466,8 +7772,8 @@ function switchPublisherTab(tab) {
 
       const pubFollowerEl = document.getElementById('pub-view-follower-count');
       const pubFollowingEl = document.getElementById('pub-view-following-count');
-      if (pubFollowerEl) pubFollowerEl.textContent = targetFollowerCount;
-      if (pubFollowingEl) pubFollowingEl.textContent = targetFollowingCount;
+      if (pubFollowerEl) pubFollowerEl.textContent = formatNumber(targetFollowerCount);
+      if (pubFollowingEl) pubFollowingEl.textContent = formatNumber(targetFollowingCount);
 
       const isAuthorVip = isAuthorVipUser(targetUid, resolvedName);
       const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
@@ -7529,21 +7835,21 @@ function switchPublisherTab(tab) {
           bioEl.textContent = cleanBio;
         }
       }
-      if (statPointsEl) statPointsEl.textContent = `${targetPoints} VoCoin`;
-      if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
-      if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
-      if (statWordsEl) statWordsEl.textContent = `${totalWords} từ`;
+      if (statPointsEl) statPointsEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
+      if (statFlowEl) statFlowEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
+      if (statDecksEl) statDecksEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
+      if (statWordsEl) statWordsEl.textContent = `${formatNumber(totalWords)} từ`;
 
       const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
-      if (statDecksNumEl) statDecksNumEl.textContent = authorDecks.length;
+      if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
       const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
-      if (statPointsCardEl) statPointsCardEl.textContent = `${targetPoints} VoCoin`;
+      if (statPointsCardEl) statPointsCardEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
       const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
-      if (statFlowCardEl) statFlowCardEl.textContent = `${targetFlowDays} Ngày`;
+      if (statFlowCardEl) statFlowCardEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
       const statWordsCardEl = document.getElementById('pub-view-stat-words-card');
-      if (statWordsCardEl) statWordsCardEl.textContent = `${totalWords} từ`;
+      if (statWordsCardEl) statWordsCardEl.textContent = `${formatNumber(totalWords)} từ`;
 
-      if (decksCountEl) decksCountEl.textContent = authorDecks.length + ' VocaDeck';
+      if (decksCountEl) decksCountEl.textContent = formatNumber(authorDecks.length) + ' VocaDeck';
       if (decksListEl) {
         if (authorDecks.length === 0) {
           decksListEl.innerHTML = '<div style="text-align:center; padding:14px; font-size:12px; color:var(--text-muted);">Chưa có VocaDeck công khai nào.</div>';
@@ -7604,6 +7910,13 @@ function switchPublisherTab(tab) {
       if (!s) return;
       await openPublicProfileByAuthor(s.displayName, '', s.uid);
     }
+    window.openPublicProfileByAuthor = openPublicProfileByAuthor;
+    window.openPublicProfileByStudent = openPublicProfileByStudent;
+
+    function openPublicProfileModal(authorName, deckId = '', studentUid = '') {
+      return openPublicProfileByAuthor(authorName, deckId, studentUid);
+    }
+    window.openPublicProfileModal = openPublicProfileModal;
 
     // =========================================================================
     // INSTAGRAM PROFILE TAB CONTROLLERS & DECKS LIST RENDERER (v0.10.9-41)
@@ -7687,11 +8000,71 @@ function switchPublisherTab(tab) {
     }
     window.switchPubProfileTab = switchPubProfileTab;
 
+    function getStandardProfileUrl(handle) {
+      const cleanHandle = (handle || '').replace(/^@/, '').trim();
+      let baseUrl = 'https://iamjulies.github.io/VocaFlow/';
+      try {
+        if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) {
+          baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '').replace(/\/vocaflow\.html$/, '');
+          if (!baseUrl.endsWith('/')) baseUrl += '/';
+        }
+      } catch (e) {}
+      return `${baseUrl}?user=@${cleanHandle}`;
+    }
+    window.getStandardProfileUrl = getStandardProfileUrl;
+
     function sharePublicProfile() {
       if (!currentPublicProfileAuthor) return;
       const name = currentPublicProfileAuthor.resolvedName || 'Flower';
-      const handle = currentPublicProfileAuthor.resolvedHandle || 'member';
-      const shareText = `Khám phá hồ sơ học từ vựng của @${handle} (${name}) trên VocaFlow: https://vocaflow.app/@${handle}`;
+      const handle = (currentPublicProfileAuthor.resolvedHandle || 'member').replace(/^@/, '');
+      const profileUrl = getStandardProfileUrl(handle);
+      const shareTitle = `Hồ sơ học từ vựng của @${handle} trên VocaFlow`;
+      const shareText = `Khám phá hồ sơ học từ vựng của @${handle} (${name}) trên VocaFlow: ${profileUrl}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: profileUrl
+        }).then(() => {
+          showToast(`🔗 Đã chia sẻ liên kết hồ sơ của @${handle}!`);
+        }).catch(() => {
+          copyProfileLinkFallback(shareText, handle);
+        });
+      } else {
+        copyProfileLinkFallback(shareText, handle);
+      }
+    }
+    window.sharePublicProfile = sharePublicProfile;
+
+    function shareMyProfile() {
+      if (!currentUser || !currentUser.email) {
+        showToast('🔒 Hãy đăng nhập tài khoản để chia sẻ hồ sơ cá nhân nhé!');
+        return;
+      }
+      const name = currentUser.displayName || 'Flower';
+      const handle = (currentUser.username || currentUser.email.split('@')[0]).replace(/^@/, '');
+      const profileUrl = getStandardProfileUrl(handle);
+      const shareTitle = `Hồ sơ học từ vựng của @${handle} trên VocaFlow`;
+      const shareText = `Khám phá hồ sơ học từ vựng của @${handle} (${name}) trên VocaFlow: ${profileUrl}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: profileUrl
+        }).then(() => {
+          showToast(`🔗 Đã chia sẻ liên kết hồ sơ của bạn!`);
+        }).catch(() => {
+          copyProfileLinkFallback(shareText, handle);
+        });
+      } else {
+        copyProfileLinkFallback(shareText, handle);
+      }
+    }
+    window.shareMyProfile = shareMyProfile;
+
+    function copyProfileLinkFallback(shareText, handle) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(shareText).then(() => {
           showToast(`🔗 Đã sao chép liên kết hồ sơ của @${handle}!`);
@@ -7702,7 +8075,6 @@ function switchPublisherTab(tab) {
         showToast(`🔗 Hồ sơ Flower: @${handle}`);
       }
     }
-    window.sharePublicProfile = sharePublicProfile;
 
     function openProfileModal() {
       updateAuthUI();
@@ -8128,6 +8500,7 @@ function switchPublisherTab(tab) {
           wordFilter: currentWordFilter,
           decks: decks,
           words: words,
+          mistakeNotebook: getMistakeWordsList(),
           deletedWordIds: Array.from(deletedWordIds),
           deletedDeckIds: Array.from(deletedDeckIds),
           aiChatHistory: sanitizeAiChatHistoryForCloud(aiChatHistory),
@@ -9064,6 +9437,53 @@ function switchPublisherTab(tab) {
       localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
       updateNotificationsUI();
       renderNotificationsList();
+
+      // 15. Mistake Notebook Two-Way Sync (v0.10.9-43)
+      if (cloudData.mistakeNotebook !== undefined) {
+        try {
+          const remoteMistakes = Array.isArray(cloudData.mistakeNotebook)
+            ? cloudData.mistakeNotebook
+            : (cloudData.mistakeNotebook && typeof cloudData.mistakeNotebook === 'object' ? Object.values(cloudData.mistakeNotebook) : []);
+          const localMistakes = getMistakeWordsList();
+          const mergedMap = new Map();
+
+          localMistakes.forEach(item => {
+            if (item && (item.wordId || item.term)) {
+              const key = String(item.wordId || item.term).toLowerCase();
+              mergedMap.set(key, { ...item });
+            }
+          });
+
+          remoteMistakes.forEach(item => {
+            if (item && (item.wordId || item.term)) {
+              const key = String(item.wordId || item.term).toLowerCase();
+              if (mergedMap.has(key)) {
+                const existing = mergedMap.get(key);
+                const mergedCount = Math.max(parseInt(existing.mistakeCount, 10) || 1, parseInt(item.mistakeCount, 10) || 1);
+                const mergedTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
+                const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
+                mergedMap.set(key, {
+                  ...existing,
+                  ...item,
+                  mistakeCount: mergedCount,
+                  lastMistakeAt: mergedTime,
+                  modesFailed: mergedModes
+                });
+              } else {
+                mergedMap.set(key, { ...item });
+              }
+            }
+          });
+
+          const finalMistakeList = Array.from(mergedMap.values()).sort((a, b) => (b.lastMistakeAt || 0) - (a.lastMistakeAt || 0));
+          saveMistakeWordsList(finalMistakeList, false);
+          if (typeof renderMistakeNotebookList === 'function') {
+            renderMistakeNotebookList();
+          }
+        } catch (errMistakeMerge) {
+          console.warn('Mistake notebook cloud merge error:', errMistakeMerge);
+        }
+      }
 
       saveDatabase(triggerCloudPush);
       refreshActiveScreenData();
@@ -16666,9 +17086,10 @@ function switchPublisherTab(tab) {
       return words.filter(w => {
         if (archivedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
+        if (score <= 0) return false; // Words with 0% mastery have not been learned yet, exclude from review queue
         const intervalDays = getReviewIntervalDays(score);
         const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
-        if (!lastTime) return true;
+        if (!lastTime) return false;
         const diffDays = (now - lastTime) / msPerDay;
         return diffDays >= intervalDays;
       });
@@ -16686,11 +17107,11 @@ function switchPublisherTab(tab) {
       container.style.display = 'block';
 
       const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
-      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
+      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && getWordScore(w) > 0);
       const dueWords = getDueReviewWords();
       reviewDueWordsList = dueWords;
 
-      if (nonArchivedWords.length === 0) {
+      if (learnedWords.length === 0) {
         container.innerHTML = '';
         return;
       }
@@ -16730,7 +17151,7 @@ function switchPublisherTab(tab) {
               </div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="openReviewQueueModal()" style="font-size: 11.5px; padding: 4px 10px;">
-              👁️ Xem lịch chu kỳ (${nonArchivedWords.length} từ)
+              👁️ Xem lịch chu kỳ (${learnedWords.length} từ đã học)
             </button>
           </div>
         `;
@@ -16739,14 +17160,14 @@ function switchPublisherTab(tab) {
 
     function openReviewQueueModal() {
       const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
-      const nonArchivedWords = words.filter(w => !archivedDeckIds.has(w.deckId));
+      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && getWordScore(w) > 0);
       const dueWords = getDueReviewWords();
-      reviewQueueMasterList = dueWords.length > 0 ? dueWords : [...nonArchivedWords];
+      reviewQueueMasterList = dueWords.length > 0 ? dueWords : [...learnedWords];
       reviewDueWordsList = reviewQueueMasterList;
 
       const countBadge = document.getElementById('review-queue-modal-count-badge');
       if (countBadge) {
-        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${nonArchivedWords.length} từ`;
+        countBadge.textContent = dueWords.length > 0 ? `${dueWords.length} từ cần ôn` : `0 từ đến hạn / ${learnedWords.length} từ đã học`;
         countBadge.style.background = dueWords.length > 0 ? '#ef4444' : '#10b981';
       }
 
@@ -17170,7 +17591,7 @@ function switchPublisherTab(tab) {
       const subtitle = document.getElementById('spelling-setup-subtitle');
       if (subtitle) {
         if (customWordList) {
-          subtitle.textContent = '🔔 Hàng đợi ôn tập hôm nay • Tổng số: ' + deckWords.length + ' từ';
+          subtitle.textContent = 'Ôn tập ' + deckWords.length + ' từ vựng đã chọn';
         } else {
           subtitle.textContent = 'VocaDeck: "' + (deck ? deck.title : 'Từ vựng đã chọn') + '" • Tổng số: ' + deckWords.length + ' từ';
         }
@@ -18284,8 +18705,9 @@ function switchPublisherTab(tab) {
       spellingPointsEarned = res.finalPts;
       if (spellingPointsEarned !== 0) {
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
-        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ, x${res.combinedMult})`);
-        setUserPoints(Math.max(0, getUserPoints() + spellingPointsEarned));
+        const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
+        setUserPoints(newBalance);
+        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${spellingCorrectCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
         saveDatabase(true);
       }
 
@@ -18469,15 +18891,16 @@ function switchPublisherTab(tab) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
             const pctText = Math.round((done / total) * 100);
+            const newBalance = Math.max(0, getUserPoints() + finalPts);
+            setUserPoints(newBalance);
             if (finalPts < 0) {
               showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
-              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`, newBalance);
             } else {
               const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
               showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
-              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`);
+              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            setUserPoints(Math.max(0, getUserPoints() + finalPts));
             saveDatabase(true);
           }
           spellingPointsEarned = finalPts;
@@ -18829,7 +19252,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 }`;
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
+      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
       const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const m of models) {
@@ -19303,7 +19726,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
         '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
       const models = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       for (const k of keys) {
@@ -19570,11 +19993,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 
       // If Gemini API is available, fetch live custom mnemonic & etymology
       const key = (typeof geminiApiKey !== 'undefined' && geminiApiKey) ? geminiApiKey : (localStorage.getItem('vocaflow_gemini_api_key') || '');
-      const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
+      const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
+      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
+      const modelsToTry = cachedModel ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
 
       if (key && key.trim()) {
-        try {
-          const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
+        const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
 Định nghĩa: "${def}".
 ${example ? `Ví dụ: "${example}"` : ''}
 
@@ -19589,30 +20013,34 @@ Yêu cầu nghiêm ngặt:
 💡 Mẹo nhớ: [nội dung]
 🏛️ Nguồn gốc: [nội dung]`;
 
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 4500);
+        for (const m of modelsToTry) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-          const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + key.trim(), {
-            method: 'POST',
-            signal: controller.signal,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
-            })
-          });
-          clearTimeout(timeoutId);
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + key.trim(), {
+              method: 'POST',
+              signal: controller.signal,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
+              })
+            });
+            clearTimeout(timeoutId);
 
-          if (res.ok) {
-            const data = await res.json();
-            const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-            if (rawExp) {
-              const formatted = formatAiMarkdownText(rawExp);
-              expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
+            if (res.ok) {
+              const data = await res.json();
+              const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+              if (rawExp) {
+                const formatted = formatAiMarkdownText(rawExp);
+                expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
+                break;
+              }
             }
+          } catch (e) {
+            console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
           }
-        } catch (e) {
-          console.warn('AI Quiz Explanation notice:', e);
         }
       }
     }
@@ -20445,37 +20873,45 @@ Yêu cầu nghiêm ngặt:
       hintText.innerHTML = '✨ <em>VocaAI đang tạo VocaHint ngữ cảnh...</em>';
 
       try {
-        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model') || 'gemini-3.5-flash-lite';
+        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
+        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
+        const modelsToTry = cachedModel ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
         const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        for (const m of modelsToTry) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + cachedModel + ':generateContent?key=' + geminiApiKey.trim(), {
-          method: 'POST',
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
-            safetySettings: [
-              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-            ]
-          })
-        });
-        clearTimeout(timeoutId);
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + geminiApiKey.trim(), {
+              method: 'POST',
+              signal: controller.signal,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
+                safetySettings: [
+                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ]
+              })
+            });
+            clearTimeout(timeoutId);
 
-        if (res.ok) {
-          const data = await res.json();
-          const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-          if (rawHint) {
-            setUserHints(currentHints - 1);
-            hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
-            showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
-            return;
+            if (res.ok) {
+              const data = await res.json();
+              const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+              if (rawHint) {
+                setUserHints(currentHints - 1);
+                hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
+                showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
+                return;
+              }
+            }
+          } catch (modelErr) {
+            console.warn('AI Hint model try error for ' + m + ':', modelErr);
           }
         }
       } catch (err) {
@@ -20653,9 +21089,11 @@ Yêu cầu nghiêm ngặt:
       quizPointsEarned = res.finalPts;
       if (quizPointsEarned !== 0) {
         const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
-        addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`);
-        setUserPoints(Math.max(0, getUserPoints() + quizPointsEarned));
+        const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
+        setUserPoints(newBalance);
+        addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
         saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       }
 
       if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
@@ -20857,16 +21295,18 @@ Yêu cầu nghiêm ngặt:
             const curDeck = decks.find(d => d.id === currentDeckId);
             const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
             const pctText = Math.round((done / total) * 100);
+            const newBalance = Math.max(0, getUserPoints() + finalPts);
+            setUserPoints(newBalance);
             if (finalPts < 0) {
               showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
-              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`, newBalance);
             } else {
               const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
               showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
-              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            setUserPoints(Math.max(0, getUserPoints() + finalPts));
             saveDatabase(true);
+            pushCurrentDatabaseToCloud();
           }
           quizPointsEarned = finalPts;
         }
@@ -21878,9 +22318,10 @@ Yêu cầu nghiêm ngặt:
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
-            setUserPoints(Math.max(0, getUserPoints() + finalPts));
+            const newBalance = Math.max(0, getUserPoints() + finalPts);
+            setUserPoints(newBalance);
             const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
-            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')');
+            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')', newBalance);
             saveDatabase(true);
             pushCurrentDatabaseToCloud();
             showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
@@ -22752,7 +23193,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-pro-latest'];
+        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         let evalSuccess = false;
@@ -36682,7 +37123,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         let rawResponseText = '';
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         let fetchSuccess = false;
@@ -37929,7 +38370,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         }
 
         const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-flash-latest', 'gemini-pro-latest'];
+        const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
         const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
         const isSentence = targetText.trim().includes(' ');
@@ -38166,7 +38607,7 @@ Quy tắc phản hồi quan trọng:
       });
 
       const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-pro-latest'];
+      const standardModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-3.5-flash', 'gemini-3.7-flash'];
       const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
       let fetchSuccess = false;
@@ -38781,6 +39222,26 @@ Quy tắc phản hồi quan trọng:
     }, 'modal-settings');
   }
 
+  function checkUrlProfileDeepLink() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userParam = urlParams.get('user') || urlParams.get('u') || urlParams.get('profile');
+      if (userParam) {
+        const clean = userParam.replace(/^@/, '').trim();
+        if (clean) {
+          setTimeout(() => {
+            if (typeof openPublicProfileModal === 'function') {
+              openPublicProfileModal(clean, '', clean);
+            } else if (typeof openPublicProfileByAuthor === 'function') {
+              openPublicProfileByAuthor(clean, '', clean);
+            }
+          }, 800);
+        }
+      }
+    } catch (e) {}
+  }
+  window.checkUrlProfileDeepLink = checkUrlProfileDeepLink;
+
   // Horizontal mouse-wheel scroll for guide tabs nav on PC
   window.addEventListener('DOMContentLoaded', () => {
     const verLabel = document.getElementById('settings-app-version-label');
@@ -38789,14 +39250,6 @@ Quy tắc phản hồi quan trọng:
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
-    const guideTabsNav = document.getElementById('guide-tabs-container') || document.querySelector('.guide-tabs-nav');
-    if (guideTabsNav) {
-      guideTabsNav.addEventListener('wheel', (e) => {
-        if (e.deltaY !== 0) {
-          e.preventDefault();
-          guideTabsNav.scrollLeft += e.deltaY;
-        }
-      }, { passive: false });
-    }
+    checkUrlProfileDeepLink();
   });
 

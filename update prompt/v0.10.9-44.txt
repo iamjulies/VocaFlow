@@ -6,4 +6,6 @@ v0.10.9-44
 5. mở rộng tất cả các cửa sổ ra gần tối đa để nhìn dễ hơn. hiện tại các cửa sổ, ví dụ: profile cá nhân, vocamentor ai,..v.v và còn nhiều nữa đang bị giới hạn ở 1 cửa sổ rất hẹp nhìn rất không phù hợp với ng dùng tbi màn hình rộng. đồng thời cần chuẩn hóa giao diện động mới này với các tbi màn hình hẹp.
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
 
-nhiệm vụ bổ sung (nếu phát sinh): 
+nhiệm vụ bổ sung (nếu phát sinh):
+- app.js dài quá, có thể chia nhỏ ra như html trước đó không? kiểu chia để trị ấy. chứ hiện tại để tìm kiếm gì đó để sửa rất mệt và tốn thời gian.
+- v0.10.9-43 chưa được update trên web. -> update v44 lên luôn 

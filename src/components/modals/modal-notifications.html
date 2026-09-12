@@ -1,5 +1,5 @@
   <div class="modal-overlay" id="modal-notifications" style="z-index: 10006;">
-    <div class="modal" style="max-width: 580px; width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="modal notif-modal-responsive" style="max-width: 760px; width: 92vw; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 22px;">🔔</span>
@@ -33,11 +33,13 @@
 
       <!-- FILTER TABS & BULK ACTIONS -->
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-        <div style="display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;" id="notif-filter-tabs">
-          <button class="btn btn-sm btn-primary notif-tab-btn active" data-filter="all" onclick="setNotificationFilter('all')" style="font-size: 11.5px; padding: 4px 10px;">Tất cả</button>
-          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_DECK" onclick="setNotificationFilter('NEW_DECK')" style="font-size: 11.5px; padding: 4px 10px;">📘 VocaDeck mới</button>
-          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_FOLLOWER" onclick="setNotificationFilter('NEW_FOLLOWER')" style="font-size: 11.5px; padding: 4px 10px;">👥 Tương tác</button>
-          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="FINANCIAL" onclick="setNotificationFilter('FINANCIAL')" style="font-size: 11.5px; padding: 4px 10px;">💎 Ví VoCoin</button>
+        <div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;" id="notif-filter-tabs">
+          <button class="btn btn-sm btn-primary notif-tab-btn active" data-filter="all" onclick="setNotificationFilter('all')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">Tất cả</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="REWARD" onclick="setNotificationFilter('REWARD')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">🎁 Quà & Thưởng</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="FINANCIAL" onclick="setNotificationFilter('FINANCIAL')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">💎 Ví VoCoin</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_DECK" onclick="setNotificationFilter('NEW_DECK')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">📘 VocaDeck mới</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="NEW_FOLLOWER" onclick="setNotificationFilter('NEW_FOLLOWER')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">👥 Tương tác</button>
+          <button class="btn btn-sm btn-outline notif-tab-btn" data-filter="SYSTEM" onclick="setNotificationFilter('SYSTEM')" style="font-size: 11.5px; padding: 5px 11px; border-radius: 8px; white-space: nowrap;">🔔 Hệ thống</button>
         </div>
 
         <div style="display: flex; gap: 6px;">

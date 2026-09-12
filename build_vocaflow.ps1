@@ -88,6 +88,7 @@ $modalsOrder = @(
     "modal-achievements.html",
     "modal-flow-calendar.html",
     "modal-profile.html",
+    "modal-avatar-cropper.html",
     "modal-bug-report.html",
     "modal-bug-screenshot-viewer.html",
     "modal-bug-bounty-picker.html",
