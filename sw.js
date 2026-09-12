@@ -1,7 +1,7 @@
 // =========================================================================
-// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-58)
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.9-59)
 // =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v0.10.9-58';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.9-59';
 const ASSETS = [
   './',
   './index.html',
@@ -53,20 +53,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first for HTML page navigation so users always see latest updates immediately
+  // Fast Navigation / SPA Shell response: serve cached index.html immediately with background revalidation
   if (event.request.mode === 'navigate' || event.request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request).then((res) => res || caches.match('./index.html') || caches.match('./'));
-        })
+      caches.match('./index.html').then((cachedIndex) => {
+        const networkFetch = fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200) {
+              const copy = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+              return response;
+            }
+            return cachedIndex || caches.match('./vocaflow.html') || response;
+          })
+          .catch(() => cachedIndex || caches.match('./vocaflow.html') || caches.match('./'));
+
+        return cachedIndex || networkFetch;
+      })
     );
     return;
   }

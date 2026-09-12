@@ -1254,6 +1254,9 @@
       openModal('modal-spelling-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (totalSeconds > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(totalSeconds, 'spelling');
+      }
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling'); } catch (e) {}
       if (typeof recordStudySessionWordReviews === 'function' && spellingList) {
         recordStudySessionWordReviews(spellingList);
@@ -1362,6 +1365,13 @@
 
     function doExecuteExitSpelling(done, total) {
       stopAllAudio();
+
+      if (spellingStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - spellingStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'spelling');
+        spellingStartTime = 0;
+      }
+
       try {
         // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
         if (!spellingIsCompleted && spellingPointsEarned !== 0) {
@@ -1753,7 +1763,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       for (const m of models) {
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 6500);
+          const timeoutId = setTimeout(() => controller.abort(), 12000);
 
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key.trim()}`, {
             method: 'POST',

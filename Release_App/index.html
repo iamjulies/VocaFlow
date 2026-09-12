@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-58 (Build 290)</span>
+            <span class="mini-footer-version">v0.10.9-59 (Build 291)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-58 (Build 290)</span>
+            <span class="mini-footer-version">v0.10.9-59 (Build 291)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9875,7 +9875,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-58 (Build 290)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-59 (Build 291)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10830,7 +10830,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-58 Build 290)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-59 Build 291)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11255,7 +11255,7 @@ function initSpaRouter() {
   // Delay slightly to let data and DOM finish initializing
   setTimeout(() => {
     navigateToRoute(targetRoute, false);
-  }, 400);
+  }, 60);
 
   // Listen to popstate (Browser Back/Forward buttons)
   window.addEventListener('popstate', (e) => {
@@ -11266,25 +11266,25 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-58 Build 290)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-59 Build 291)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-58 Build 290)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-59 Build 291)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-58';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-58 (Build 290)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-59';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-59 (Build 291)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-59)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
-    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
     // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
-    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
     // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
-    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
     const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
     window.GEMINI_MODELS_DEEP = GEMINI_MODELS_DEEP;
@@ -11316,7 +11316,7 @@ window.initSpaRouter = initSpaRouter;
     window.saveWorkingGeminiModel = saveWorkingGeminiModel;
 
     function purgeInvalidGeminiModelCache() {
-      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro'];
+      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro', '1.5-pro'];
       ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
         const val = localStorage.getItem(k);
         if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {
@@ -14436,11 +14436,10 @@ window.initSpaRouter = initSpaRouter;
   
 
     // =========================================================================
-    // DAILY SCREEN TIME & ACTIVE APP ACTIVITY TRACKER (v0.10.9-54)
+    // DAILY STUDY TIME TRACKER (4 MODES: FLASHCARDS, QUIZ, SPELLING, SPEAKING)
     // =========================================================================
+    const STORAGE_KEY_DAILY_STUDY_TIME = 'vocaflow_daily_study_time';
     const STORAGE_KEY_DAILY_SCREEN_TIME = 'vocaflow_daily_screen_time';
-    let activeAppHeartbeatTimer = null;
-    let lastActiveAppTimeCheck = Date.now();
 
     function getTodayIsoDateString() {
       const now = new Date();
@@ -14451,7 +14450,51 @@ window.initSpaRouter = initSpaRouter;
     }
     window.getTodayIsoDateString = getTodayIsoDateString;
 
+    function getDailyStudyTimeMap() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_DAILY_STUDY_TIME);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+      } catch (e) {}
+      return {};
+    }
+    window.getDailyStudyTimeMap = getDailyStudyTimeMap;
+
+    function addDailyStudySeconds(seconds = 0, mode = 'general') {
+      if (!seconds || seconds <= 0) return;
+      const mins = Math.max(1, Math.round(seconds / 60));
+      const todayStr = getTodayIsoDateString();
+      const map = getDailyStudyTimeMap();
+      const current = typeof map[todayStr] === 'number' ? map[todayStr] : 0;
+      map[todayStr] = current + mins;
+      try {
+        localStorage.setItem(STORAGE_KEY_DAILY_STUDY_TIME, JSON.stringify(map));
+      } catch (e) {}
+
+      // 2-way cloud sync to user profile
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        if (!currentUser.dailyStudyTime) currentUser.dailyStudyTime = {};
+        currentUser.dailyStudyTime[todayStr] = map[todayStr];
+        try {
+          const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(map[todayStr])
+          }).catch(() => {});
+        } catch (err) {}
+      }
+    }
+    window.addDailyStudySeconds = addDailyStudySeconds;
+    window.recordStudySessionTime = addDailyStudySeconds;
+
+    // Legacy Screen Time fallback
     function getDailyScreenTimeMap() {
+      const studyMap = getDailyStudyTimeMap();
+      if (Object.keys(studyMap).length > 0) return studyMap;
       try {
         const raw = localStorage.getItem(STORAGE_KEY_DAILY_SCREEN_TIME);
         if (raw) {
@@ -14463,57 +14506,16 @@ window.initSpaRouter = initSpaRouter;
     }
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
-    function incrementTodayScreenMinutes(minutes = 1) {
-      const todayStr = getTodayIsoDateString();
-      const map = getDailyScreenTimeMap();
-      const current = typeof map[todayStr] === 'number' ? map[todayStr] : 0;
-      map[todayStr] = Math.max(0, current + minutes);
-      try {
-        localStorage.setItem(STORAGE_KEY_DAILY_SCREEN_TIME, JSON.stringify(map));
-      } catch (e) {}
-    }
-    window.incrementTodayScreenMinutes = incrementTodayScreenMinutes;
-
-    function trackActiveAppTime() {
-      if (activeAppHeartbeatTimer) clearInterval(activeAppHeartbeatTimer);
-      lastActiveAppTimeCheck = Date.now();
-      // Heartbeat every 60 seconds
-      activeAppHeartbeatTimer = setInterval(() => {
-        const now = Date.now();
-        const diffSeconds = (now - lastActiveAppTimeCheck) / 1000;
-        lastActiveAppTimeCheck = now;
-        // Check if page is visible and user was active
-        if (!document.hidden && document.hasFocus && document.hasFocus() && diffSeconds >= 45 && diffSeconds <= 120) {
-          incrementTodayScreenMinutes(1);
-        }
-      }, 60000);
-
-      // Event listeners for user interaction
-      ['click', 'keydown', 'touchstart', 'scroll'].forEach(evtType => {
-        window.addEventListener(evtType, () => {
-          const now = Date.now();
-          if (now - lastActiveAppTimeCheck >= 60000) {
-            incrementTodayScreenMinutes(1);
-            lastActiveAppTimeCheck = now;
-          }
-        }, { passive: true });
-      });
-    }
-    window.trackActiveAppTime = trackActiveAppTime;
-    // Auto-start active screen time tracking on load
-    if (typeof window !== 'undefined') {
-      setTimeout(trackActiveAppTime, 1000);
-    }
-
     // =========================================================================
-    // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-56)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-59)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
       const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-      const screenTimeMap = getDailyScreenTimeMap();
       const now = new Date();
+
+      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
+      const studyTimeMap = isCurrent ? getDailyStudyTimeMap() : (targetAuthor?.dailyStudyTime || targetAuthor?.stats?.dailyStudyTime || {});
 
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -14525,14 +14527,14 @@ window.initSpaRouter = initSpaRouter;
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Screen time in minutes (Real recorded data only)
-        let screenMinutes = screenTimeMap[dateStr] || 0;
+        // Study time in minutes (Real recorded study time across 4 study modes)
+        let screenMinutes = typeof studyTimeMap[dateStr] === 'number' ? studyTimeMap[dateStr] : 0;
 
         // VoCoins earned & study points
         let vocoinsEarned = 0;
         let studyPoints = 0;
 
-        if (!targetAuthor || (targetAuthor && targetAuthor.isCurrentUser)) {
+        if (isCurrent) {
           // Current user: aggregate from userLedger
           if (Array.isArray(userLedger)) {
             userLedger.forEach(entry => {
@@ -14553,10 +14555,25 @@ window.initSpaRouter = initSpaRouter;
             });
           }
         } else {
-          // Public profile author - Real data only: if author has no ledger/stats, leave at 0
-          vocoinsEarned = 0;
-          studyPoints = 0;
-          screenMinutes = 0;
+          // Public profile author
+          if (targetAuthor && Array.isArray(targetAuthor.ledger)) {
+            targetAuthor.ledger.forEach(entry => {
+              if (!entry || !entry.timestamp) return;
+              const entryDate = new Date(entry.timestamp);
+              const eY = entryDate.getFullYear();
+              const eM = String(entryDate.getMonth() + 1).padStart(2, '0');
+              const eD = String(entryDate.getDate()).padStart(2, '0');
+              const eDateStr = `${eY}-${eM}-${eD}`;
+              if (eDateStr === dateStr) {
+                if (entry.amount && entry.amount > 0) vocoinsEarned += entry.amount;
+                if (entry.type && String(entry.type).startsWith('STUDY')) studyPoints += Math.max(0, entry.amount || 0);
+              }
+            });
+          } else {
+            // Real data: if no day ledger logs exist, keep accurate 0
+            vocoinsEarned = 0;
+            studyPoints = 0;
+          }
         }
 
         days.push({
@@ -14572,7 +14589,9 @@ window.initSpaRouter = initSpaRouter;
       }
 
       const totalScreenMinutes = days.reduce((sum, d) => sum + d.screenMinutes, 0);
-      const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
+      const totalVoCoins = isCurrent 
+        ? days.reduce((sum, d) => sum + d.vocoinsEarned, 0)
+        : (targetAuthor?.points || targetAuthor?.vocoins || targetAuthor?.stats?.totalCoins || days.reduce((sum, d) => sum + d.vocoinsEarned, 0));
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
       // Best days
@@ -14633,7 +14652,7 @@ window.initSpaRouter = initSpaRouter;
         return padTop + chartH - (ratio * chartH);
       }
 
-      // Generate Bars (Screen Time)
+      // Generate Bars (Study Time across 4 modes)
       let barsSvg = '';
       const barWidth = 26;
       days.forEach((d, i) => {
@@ -14731,11 +14750,11 @@ window.initSpaRouter = initSpaRouter;
                 <span>📊</span> Hoạt Động & Hiệu Suất 7 Ngày
               </strong>
               <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                Cột: Thời gian truy cập • Đường vàng: VoCoin • Đường xanh: Điểm rèn luyện
+                Cột: Thời gian học (4 chế độ) • Đường vàng: VoCoin • Đường xanh: Điểm rèn luyện
               </div>
             </div>
             <div class="voca-chart-legend">
-              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: linear-gradient(135deg, #6366f1, #818cf8);"></span> Thời gian (h)</span>
+              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: linear-gradient(135deg, #6366f1, #818cf8);"></span> Thời gian học (h)</span>
               <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #fbbf24;"></span> VoCoin</span>
               <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #34d399;"></span> Điểm học</span>
             </div>
@@ -14757,7 +14776,7 @@ window.initSpaRouter = initSpaRouter;
               <!-- Grid & Axes Labels -->
               ${gridSvg}
 
-              <!-- Bars (Screen Time) -->
+              <!-- Bars (Study Time across 4 modes) -->
               ${barsSvg}
 
               <!-- Line 2: Study Points -->
@@ -14776,15 +14795,15 @@ window.initSpaRouter = initSpaRouter;
                  onmouseenter="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
                  onclick="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
-                 title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
-              <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
+                 title="Bấm để xem chi tiết thời gian học tập 4 chế độ 7 ngày qua">
+              <div class="voca-stat-label">⏱️ Tổng Thời Gian Học</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
             <div class="voca-chart-stat-card" 
                  onmouseenter="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
                  onclick="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
-                 title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
+                 title="Bấm để xem chi tiết VoCoin tích lũy">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
@@ -14805,7 +14824,7 @@ window.initSpaRouter = initSpaRouter;
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-58)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-59)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -14826,7 +14845,7 @@ window.initSpaRouter = initSpaRouter;
         </div>
         <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11.5px;">
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">⏱️ Truy cập:</span>
+            <span style="color: var(--text-muted);">⏱️ Thời gian học:</span>
             <strong style="color: #818cf8;">${screenTimeStr}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -14872,7 +14891,7 @@ window.initSpaRouter = initSpaRouter;
       let rowsHtml = '';
 
       if (type === 'time') {
-        headerTitle = isOtherUser ? '⏱️ Thời Gian Hoạt Động (7 Ngày)' : '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        headerTitle = isOtherUser ? '⏱️ Thời Gian Học Tập (7 Ngày)' : '⏱️ Tổng Thời Gian Học Tập 4 Chế Độ (7 Ngày)';
         const totalHours = Math.floor(data.totalScreenMinutes / 60);
         const totalMins = data.totalScreenMinutes % 60;
         const avgMins = Math.round(data.totalScreenMinutes / 7);
@@ -14880,7 +14899,7 @@ window.initSpaRouter = initSpaRouter;
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Tổng thời lượng:</span>
+            <span style="color: var(--text-muted);">Tổng thời lượng học:</span>
             <strong style="color: #818cf8;">${totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -14893,13 +14912,13 @@ window.initSpaRouter = initSpaRouter;
           </div>
         `;
       } else if (type === 'coins') {
-        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy (7 Ngày)' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
         const avgCoins = Math.round(data.totalVoCoins / 7);
         const best = data.bestCoinsDay;
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu tích lũy:' : 'Tổng Xu kiếm được:'}</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu trong ví:' : 'Tổng Xu kiếm được:'}</span>
             <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -14926,8 +14945,8 @@ window.initSpaRouter = initSpaRouter;
             <strong style="color: var(--text);">+${avgPts} đ/ngày</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
-            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Chưa có'}</strong>
+            <span style="color: var(--text-muted);">Ngày tích cực nhất:</span>
+            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints})` : 'Chưa có'}</strong>
           </div>
         `;
       }
@@ -15921,7 +15940,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
   "code": "S40"
 }`;
 
-            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
             for (const vModel of visionModels) {
               try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${vModel}:generateContent?key=${apiKey}`, {
@@ -20917,6 +20936,86 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.getCommunityAuthorAvatar = getCommunityAuthorAvatar;
 
+    function getCommunityAuthorName(post) {
+      if (!post) return 'Flower';
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        return (currentUser.displayName || currentUser.username || post.authorName || 'Flower').trim();
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && (student.displayName || student.name)) {
+          return (student.displayName || student.name).trim();
+        }
+      }
+      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === post.authorUid) {
+        if (currentPublicProfileAuthor.resolvedName) return currentPublicProfileAuthor.resolvedName.trim();
+      }
+      return (post.authorName || 'Flower').trim();
+    }
+    window.getCommunityAuthorName = getCommunityAuthorName;
+
+    function getCommunityAuthorHandle(post) {
+      if (!post) return 'user';
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
+        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
+        return (post.authorHandle || myName || 'user').replace(/^@/, '');
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && (student.handle || student.username)) {
+          return (student.handle || student.username).replace(/^@/, '');
+        }
+      }
+      return (post.authorHandle || post.authorName || 'user').replace(/^@/, '');
+    }
+    window.getCommunityAuthorHandle = getCommunityAuthorHandle;
+
+    function getCommunityAuthorIsVip(post) {
+      if (!post) return false;
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        return typeof isUserVip === 'function' ? isUserVip() : (currentUser.isVip === true);
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && student.isVip) return true;
+      }
+      return !!post.isVip;
+    }
+    window.getCommunityAuthorIsVip = getCommunityAuthorIsVip;
+
+    function getCommunityCommentAuthorName(c) {
+      if (!c) return 'Flower';
+      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
+        return (currentUser.displayName || currentUser.username || c.authorName || 'Flower').trim();
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === c.authorUid);
+        if (student && (student.displayName || student.name)) {
+          return (student.displayName || student.name).trim();
+        }
+      }
+      return (c.authorName || 'Flower').trim();
+    }
+    window.getCommunityCommentAuthorName = getCommunityCommentAuthorName;
+
+    function getCommunityCommentAuthorHandle(c) {
+      if (!c) return 'user';
+      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
+        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
+        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
+        return (c.authorHandle || myName || 'user').replace(/^@/, '');
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === c.authorUid);
+        if (student && (student.handle || student.username)) {
+          return (student.handle || student.username).replace(/^@/, '');
+        }
+      }
+      return (c.authorHandle || c.authorName || 'user').replace(/^@/, '');
+    }
+    window.getCommunityCommentAuthorHandle = getCommunityCommentAuthorHandle;
+
     function highlightAndScrollToPost(postId, isPublicProfile = false) {
       setTimeout(() => {
         const targetId = isPublicProfile ? `pub-post-card-${postId}` : `post-card-${postId}`;
@@ -20972,6 +21071,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const timeAgo = formatTimeAgo(postDate);
         const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+        const authorName = getCommunityAuthorName(post);
+        const authorHandle = getCommunityAuthorHandle(post);
+        const isVip = getCommunityAuthorIsVip(post);
 
         const postImg = post.image || post.imageUrl || '';
 
@@ -20979,17 +21081,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
             <!-- AUTHOR HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '${post.authorUid}')">
+              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${post.authorUid}')">
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                   ${renderAvatarHtml(authorAvatar, 40, 16)}
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
-                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml(post.authorHandle || 'user')}</span>
+                    <span>@${escapeHtml(authorHandle || 'user')}</span>
                     <span>•</span>
                     <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
@@ -21025,7 +21127,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
             <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
             ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
                 <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
                 <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
                   <span>🔍 Phóng to</span>
@@ -21064,14 +21166,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
                 ` : commentsList.map(c => {
                   const commentDate = new Date(c.timestamp || Date.now());
+                  const cAuthorName = getCommunityCommentAuthorName(c);
+                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
@@ -21473,6 +21577,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const timeAgo = formatTimeAgo(postDate);
         const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+        const authorName = getCommunityAuthorName(post);
+        const authorHandle = getCommunityAuthorHandle(post);
+        const isVip = getCommunityAuthorIsVip(post);
 
         const postImg = post.image || post.imageUrl || '';
 
@@ -21486,11 +21593,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
-                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
+                    <span>@${escapeHtml((authorHandle || 'user').replace(/^@/, ''))}</span>
                     <span>•</span>
                     <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
@@ -21524,7 +21631,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
             <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
             ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
                 <img src="${escapeHtml(postImg)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 360px; display: block;" onerror="this.parentElement.style.display='none';">
                 <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
                   <span>🔍 Phóng to</span>
@@ -21556,14 +21663,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
                 ` : commentsList.map(c => {
                   const commentDate = new Date(c.timestamp || Date.now());
+                  const cAuthorName = getCommunityCommentAuthorName(c);
+                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
@@ -26487,7 +26596,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         let rawResponseText = '';
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
         let fetchSuccess = false;
         let lastErrorMsg = '';
@@ -27213,7 +27322,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         for (const m of models) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
             const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
               method: 'POST',
@@ -27505,7 +27614,7 @@ Yêu cầu nghiêm ngặt:
           for (const m of models) {
             try {
               const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 4500);
+              const timeoutId = setTimeout(() => controller.abort(), 12000);
 
               const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
                 method: 'POST',
@@ -28377,7 +28486,7 @@ Yêu cầu nghiêm ngặt:
           for (const m of models) {
             try {
               const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 4000);
+              const timeoutId = setTimeout(() => controller.abort(), 12000);
 
               const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
                 method: 'POST',
@@ -28754,6 +28863,9 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-quiz-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (totalSeconds > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(totalSeconds, 'quiz');
+      }
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       if (typeof recordStudySessionWordReviews === 'function' && quizList) {
         recordStudySessionWordReviews(quizList);
@@ -28881,6 +28993,13 @@ Yêu cầu nghiêm ngặt:
 
     function doExecuteExitQuiz(done, total) {
       stopAllAudio();
+
+      if (quizStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - quizStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'quiz');
+        quizStartTime = 0;
+      }
+
       if (done > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
@@ -30211,6 +30330,9 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-spelling-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (totalSeconds > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(totalSeconds, 'spelling');
+      }
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling'); } catch (e) {}
       if (typeof recordStudySessionWordReviews === 'function' && spellingList) {
         recordStudySessionWordReviews(spellingList);
@@ -30319,6 +30441,13 @@ Yêu cầu nghiêm ngặt:
 
     function doExecuteExitSpelling(done, total) {
       stopAllAudio();
+
+      if (spellingStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - spellingStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'spelling');
+        spellingStartTime = 0;
+      }
+
       try {
         // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
         if (!spellingIsCompleted && spellingPointsEarned !== 0) {
@@ -30710,7 +30839,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       for (const m of models) {
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 6500);
+          const timeoutId = setTimeout(() => controller.abort(), 12000);
 
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key.trim()}`, {
             method: 'POST',
@@ -31352,6 +31481,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       resetSpeakingWordState();
       closeSpeakingResultModal();
 
+      if (speakingStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - speakingStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'speaking');
+        speakingStartTime = 0;
+      }
+
       if (speakingCompletedWords > 0 || speakingTotalTakesCount > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       }
@@ -31760,6 +31895,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       openModal('modal-speaking-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (durationSec > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(durationSec, 'speaking');
+      }
 
       setTimeout(() => {
         const intensity = totalTakes > 0 ? Math.min(1.0, Math.max(0.3, floorTakes / totalTakes)) : 0.5;
@@ -32264,7 +32402,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
         let evalSuccess = false;
         let evalData = null;
@@ -32734,6 +32872,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
     }
 
+    let autoFlashcardStartTime = 0;
+
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
       lastScreenBeforeAutoFc = document.querySelector('.screen.active')?.id || 'screen-decks';
       isAutoFcMiniMode = false;
@@ -32759,6 +32899,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
       autoFlashcardIndex = 0;
       isAutoPlaying = true;
+      autoFlashcardStartTime = Date.now();
       showScreen('screen-autofc');
       syncAutoFlashcardControlsUI();
       runAutoFlashcardLoop();
@@ -32909,6 +33050,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       stopAllAudio();
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
+
+      if (autoFlashcardStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - autoFlashcardStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'flashcard');
+        autoFlashcardStartTime = 0;
+      }
+
       if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
         recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
       }
@@ -35725,7 +35873,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
 
       if (btn) btn.textContent = '⏳ Đang thử toàn bộ khóa...';
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
       const results = [];
       for (let i = 0; i < keys.length; i++) {
@@ -35734,7 +35882,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         for (const m of models) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
             const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -36600,7 +36748,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         }
 
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
         const isSentence = targetText.trim().includes(' ');
         const promptInstruction = isSentence
@@ -36846,7 +36994,7 @@ Quy tắc phản hồi quan trọng:
         }
       });
 
-      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
       let fetchSuccess = false;
       let replyText = '';

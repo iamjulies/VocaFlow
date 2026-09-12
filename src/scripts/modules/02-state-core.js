@@ -1,22 +1,22 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-58 Build 290)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-59 Build 291)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-58 Build 290)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-59 Build 291)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-58';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-58 (Build 290)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-59';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-59 (Build 291)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-59)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
-    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
     // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
-    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
     // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
-    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
     const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
     window.GEMINI_MODELS_DEEP = GEMINI_MODELS_DEEP;
@@ -48,7 +48,7 @@
     window.saveWorkingGeminiModel = saveWorkingGeminiModel;
 
     function purgeInvalidGeminiModelCache() {
-      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro'];
+      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro', '1.5-pro'];
       ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
         const val = localStorage.getItem(k);
         if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {
@@ -3168,11 +3168,10 @@
   
 
     // =========================================================================
-    // DAILY SCREEN TIME & ACTIVE APP ACTIVITY TRACKER (v0.10.9-54)
+    // DAILY STUDY TIME TRACKER (4 MODES: FLASHCARDS, QUIZ, SPELLING, SPEAKING)
     // =========================================================================
+    const STORAGE_KEY_DAILY_STUDY_TIME = 'vocaflow_daily_study_time';
     const STORAGE_KEY_DAILY_SCREEN_TIME = 'vocaflow_daily_screen_time';
-    let activeAppHeartbeatTimer = null;
-    let lastActiveAppTimeCheck = Date.now();
 
     function getTodayIsoDateString() {
       const now = new Date();
@@ -3183,7 +3182,51 @@
     }
     window.getTodayIsoDateString = getTodayIsoDateString;
 
+    function getDailyStudyTimeMap() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_DAILY_STUDY_TIME);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+      } catch (e) {}
+      return {};
+    }
+    window.getDailyStudyTimeMap = getDailyStudyTimeMap;
+
+    function addDailyStudySeconds(seconds = 0, mode = 'general') {
+      if (!seconds || seconds <= 0) return;
+      const mins = Math.max(1, Math.round(seconds / 60));
+      const todayStr = getTodayIsoDateString();
+      const map = getDailyStudyTimeMap();
+      const current = typeof map[todayStr] === 'number' ? map[todayStr] : 0;
+      map[todayStr] = current + mins;
+      try {
+        localStorage.setItem(STORAGE_KEY_DAILY_STUDY_TIME, JSON.stringify(map));
+      } catch (e) {}
+
+      // 2-way cloud sync to user profile
+      if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        if (!currentUser.dailyStudyTime) currentUser.dailyStudyTime = {};
+        currentUser.dailyStudyTime[todayStr] = map[todayStr];
+        try {
+          const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(map[todayStr])
+          }).catch(() => {});
+        } catch (err) {}
+      }
+    }
+    window.addDailyStudySeconds = addDailyStudySeconds;
+    window.recordStudySessionTime = addDailyStudySeconds;
+
+    // Legacy Screen Time fallback
     function getDailyScreenTimeMap() {
+      const studyMap = getDailyStudyTimeMap();
+      if (Object.keys(studyMap).length > 0) return studyMap;
       try {
         const raw = localStorage.getItem(STORAGE_KEY_DAILY_SCREEN_TIME);
         if (raw) {
@@ -3195,57 +3238,16 @@
     }
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
-    function incrementTodayScreenMinutes(minutes = 1) {
-      const todayStr = getTodayIsoDateString();
-      const map = getDailyScreenTimeMap();
-      const current = typeof map[todayStr] === 'number' ? map[todayStr] : 0;
-      map[todayStr] = Math.max(0, current + minutes);
-      try {
-        localStorage.setItem(STORAGE_KEY_DAILY_SCREEN_TIME, JSON.stringify(map));
-      } catch (e) {}
-    }
-    window.incrementTodayScreenMinutes = incrementTodayScreenMinutes;
-
-    function trackActiveAppTime() {
-      if (activeAppHeartbeatTimer) clearInterval(activeAppHeartbeatTimer);
-      lastActiveAppTimeCheck = Date.now();
-      // Heartbeat every 60 seconds
-      activeAppHeartbeatTimer = setInterval(() => {
-        const now = Date.now();
-        const diffSeconds = (now - lastActiveAppTimeCheck) / 1000;
-        lastActiveAppTimeCheck = now;
-        // Check if page is visible and user was active
-        if (!document.hidden && document.hasFocus && document.hasFocus() && diffSeconds >= 45 && diffSeconds <= 120) {
-          incrementTodayScreenMinutes(1);
-        }
-      }, 60000);
-
-      // Event listeners for user interaction
-      ['click', 'keydown', 'touchstart', 'scroll'].forEach(evtType => {
-        window.addEventListener(evtType, () => {
-          const now = Date.now();
-          if (now - lastActiveAppTimeCheck >= 60000) {
-            incrementTodayScreenMinutes(1);
-            lastActiveAppTimeCheck = now;
-          }
-        }, { passive: true });
-      });
-    }
-    window.trackActiveAppTime = trackActiveAppTime;
-    // Auto-start active screen time tracking on load
-    if (typeof window !== 'undefined') {
-      setTimeout(trackActiveAppTime, 1000);
-    }
-
     // =========================================================================
-    // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-56)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-59)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
       const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-      const screenTimeMap = getDailyScreenTimeMap();
       const now = new Date();
+
+      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
+      const studyTimeMap = isCurrent ? getDailyStudyTimeMap() : (targetAuthor?.dailyStudyTime || targetAuthor?.stats?.dailyStudyTime || {});
 
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -3257,14 +3259,14 @@
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Screen time in minutes (Real recorded data only)
-        let screenMinutes = screenTimeMap[dateStr] || 0;
+        // Study time in minutes (Real recorded study time across 4 study modes)
+        let screenMinutes = typeof studyTimeMap[dateStr] === 'number' ? studyTimeMap[dateStr] : 0;
 
         // VoCoins earned & study points
         let vocoinsEarned = 0;
         let studyPoints = 0;
 
-        if (!targetAuthor || (targetAuthor && targetAuthor.isCurrentUser)) {
+        if (isCurrent) {
           // Current user: aggregate from userLedger
           if (Array.isArray(userLedger)) {
             userLedger.forEach(entry => {
@@ -3285,10 +3287,25 @@
             });
           }
         } else {
-          // Public profile author - Real data only: if author has no ledger/stats, leave at 0
-          vocoinsEarned = 0;
-          studyPoints = 0;
-          screenMinutes = 0;
+          // Public profile author
+          if (targetAuthor && Array.isArray(targetAuthor.ledger)) {
+            targetAuthor.ledger.forEach(entry => {
+              if (!entry || !entry.timestamp) return;
+              const entryDate = new Date(entry.timestamp);
+              const eY = entryDate.getFullYear();
+              const eM = String(entryDate.getMonth() + 1).padStart(2, '0');
+              const eD = String(entryDate.getDate()).padStart(2, '0');
+              const eDateStr = `${eY}-${eM}-${eD}`;
+              if (eDateStr === dateStr) {
+                if (entry.amount && entry.amount > 0) vocoinsEarned += entry.amount;
+                if (entry.type && String(entry.type).startsWith('STUDY')) studyPoints += Math.max(0, entry.amount || 0);
+              }
+            });
+          } else {
+            // Real data: if no day ledger logs exist, keep accurate 0
+            vocoinsEarned = 0;
+            studyPoints = 0;
+          }
         }
 
         days.push({
@@ -3304,7 +3321,9 @@
       }
 
       const totalScreenMinutes = days.reduce((sum, d) => sum + d.screenMinutes, 0);
-      const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
+      const totalVoCoins = isCurrent 
+        ? days.reduce((sum, d) => sum + d.vocoinsEarned, 0)
+        : (targetAuthor?.points || targetAuthor?.vocoins || targetAuthor?.stats?.totalCoins || days.reduce((sum, d) => sum + d.vocoinsEarned, 0));
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
       // Best days
@@ -3365,7 +3384,7 @@
         return padTop + chartH - (ratio * chartH);
       }
 
-      // Generate Bars (Screen Time)
+      // Generate Bars (Study Time across 4 modes)
       let barsSvg = '';
       const barWidth = 26;
       days.forEach((d, i) => {
@@ -3463,11 +3482,11 @@
                 <span>📊</span> Hoạt Động & Hiệu Suất 7 Ngày
               </strong>
               <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                Cột: Thời gian truy cập • Đường vàng: VoCoin • Đường xanh: Điểm rèn luyện
+                Cột: Thời gian học (4 chế độ) • Đường vàng: VoCoin • Đường xanh: Điểm rèn luyện
               </div>
             </div>
             <div class="voca-chart-legend">
-              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: linear-gradient(135deg, #6366f1, #818cf8);"></span> Thời gian (h)</span>
+              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: linear-gradient(135deg, #6366f1, #818cf8);"></span> Thời gian học (h)</span>
               <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #fbbf24;"></span> VoCoin</span>
               <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #34d399;"></span> Điểm học</span>
             </div>
@@ -3489,7 +3508,7 @@
               <!-- Grid & Axes Labels -->
               ${gridSvg}
 
-              <!-- Bars (Screen Time) -->
+              <!-- Bars (Study Time across 4 modes) -->
               ${barsSvg}
 
               <!-- Line 2: Study Points -->
@@ -3508,15 +3527,15 @@
                  onmouseenter="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
                  onclick="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
-                 title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
-              <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
+                 title="Bấm để xem chi tiết thời gian học tập 4 chế độ 7 ngày qua">
+              <div class="voca-stat-label">⏱️ Tổng Thời Gian Học</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
             <div class="voca-chart-stat-card" 
                  onmouseenter="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
                  onclick="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
-                 title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
+                 title="Bấm để xem chi tiết VoCoin tích lũy">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
@@ -3537,7 +3556,7 @@
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-58)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-59)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -3558,7 +3577,7 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11.5px;">
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">⏱️ Truy cập:</span>
+            <span style="color: var(--text-muted);">⏱️ Thời gian học:</span>
             <strong style="color: #818cf8;">${screenTimeStr}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -3604,7 +3623,7 @@
       let rowsHtml = '';
 
       if (type === 'time') {
-        headerTitle = isOtherUser ? '⏱️ Thời Gian Hoạt Động (7 Ngày)' : '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        headerTitle = isOtherUser ? '⏱️ Thời Gian Học Tập (7 Ngày)' : '⏱️ Tổng Thời Gian Học Tập 4 Chế Độ (7 Ngày)';
         const totalHours = Math.floor(data.totalScreenMinutes / 60);
         const totalMins = data.totalScreenMinutes % 60;
         const avgMins = Math.round(data.totalScreenMinutes / 7);
@@ -3612,7 +3631,7 @@
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Tổng thời lượng:</span>
+            <span style="color: var(--text-muted);">Tổng thời lượng học:</span>
             <strong style="color: #818cf8;">${totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -3625,13 +3644,13 @@
           </div>
         `;
       } else if (type === 'coins') {
-        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy (7 Ngày)' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
         const avgCoins = Math.round(data.totalVoCoins / 7);
         const best = data.bestCoinsDay;
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu tích lũy:' : 'Tổng Xu kiếm được:'}</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu trong ví:' : 'Tổng Xu kiếm được:'}</span>
             <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -3658,8 +3677,8 @@
             <strong style="color: var(--text);">+${avgPts} đ/ngày</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
-            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Chưa có'}</strong>
+            <span style="color: var(--text-muted);">Ngày tích cực nhất:</span>
+            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints})` : 'Chưa có'}</strong>
           </div>
         `;
       }

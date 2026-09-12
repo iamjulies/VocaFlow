@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-58 Build 290)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-59 Build 291)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -424,7 +424,7 @@ function initSpaRouter() {
   // Delay slightly to let data and DOM finish initializing
   setTimeout(() => {
     navigateToRoute(targetRoute, false);
-  }, 400);
+  }, 60);
 
   // Listen to popstate (Browser Back/Forward buttons)
   window.addEventListener('popstate', (e) => {

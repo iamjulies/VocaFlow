@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.9-59 (Build 291) - Đồng Bộ Display Name ME & Community Feed, Thống Kê Hiệu Suất 7 Ngày 2 Chiều & Thời Gian Học Thực Tế 4 Chế Độ, Tối Ưu Hóa Bộ Nhận Diện Mô Hình Gemini AI & Triệt Tiêu Độ Trễ Subpath
+================================================================================
+1. [Đồng Bộ Display Name Thời Gian Thực Giữa ME & Community Feed]:
+   - Khắc phục triệt để lỗi Community Feed hiển thị tên cũ bị đóng băng tại thời điểm đăng bài (ví dụ `sếch-xi bích`) thay vì biệt danh mới cập nhật trong trang ME (ví dụ `clgt?`).
+   - Xây dựng các hàm phân giải thông tin tác giả động: `getCommunityAuthorName`, `getCommunityAuthorHandle`, `getCommunityAuthorIsVip`, `getCommunityCommentAuthorName`, `getCommunityCommentAuthorHandle`. Tự động kiểm tra `post.authorUid === currentUser.uid` để luôn lấy `currentUser.displayName` mới nhất cho cả bài viết lẫn bình luận.
+
+2. [Thống Kê Hiệu Suất 7 Ngày 2 Chiều & Thời Gian Học Thực Tế 4 Chế Độ]:
+   - Thay thế thời gian mở màn hình thụ động bằng tổng thời gian học thực tế được tích lũy chuẩn xác từ 4 chế độ học: Flashcard, Quiz (Trắc nghiệm), Spelling (Luyện viết), Speaking (Luyện nói).
+   - Tích hợp `addDailyStudySeconds(seconds, mode)` và `getDailyStudyTimeMap()` với cơ chế đồng bộ 2 chiều (2-way sync) lên Firebase Realtime Database (`users/{uid}/dailyStudyTime/{YYYY-MM-DD}`).
+   - Cập nhật biểu đồ 7 ngày `render7DayPerformanceChart` và các thẻ thống kê tổng quan với dữ liệu thật từ ví VoCoins, điểm học tập và log thời gian.
+
+3. [Loại Bỏ Hoàn Toàn Mô Hình Cũ & Tối Ưu Hóa Gemini AI 2 Tầng]:
+   - Thanh trừng triệt để `gemini-1.5-pro` và `gemini-pro` khỏi bộ nhớ đệm `localStorage` (`purgeInvalidGeminiModelCache`) và toàn bộ chuỗi fallback code để xóa bỏ hoàn toàn lỗi `models/gemini-1.5-pro is not found` (404).
+   - Chuẩn hóa phân tầng mô hình:
+     + Deep / Reasoning Tier: `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-2.0-flash-lite`.
+     + Fast / Micro-Task Tier: `gemini-2.0-flash-lite`, `gemini-2.0-flash`, `gemini-1.5-flash`.
+   - Nâng thời gian timeout gọi API lên 12,000ms cho các tác vụ sinh phương án gây nhiễu, giải thích và gợi ý VocaHint.
+
+4. [Triệt Tiêu Độ Trễ 36 Giây Tải Subpath URL Trên GitHub Pages]:
+   - Nâng cấp Service Worker (`sw.js` & `Release_App/sw.js`) với chiến lược Cache-first SPA Shell cho tất cả yêu cầu điều hướng (`event.request.mode === 'navigate'`). Phục vụ ngay lập tức file `index.html` trong bộ nhớ đệm mà không cần chờ đợi phản hồi 404 từ máy chủ GitHub Pages.
+   - Giảm độ trễ khởi tạo `initSpaRouter` xuống 60ms giúp giao diện chuyển màn hình và xử lý URL tức thì.
+
+5. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-59 Build 291)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe và đóng gói VocaFlow_v0.10.9-59_Windows_Portable.zip.
+
+================================================================================
 Phiên bản: v0.10.9-58 (Build 290) - Sửa Lỗi Thông Số Modal Tổng Kết Các Chế Độ Học (Quiz/Spelling/Speaking), Khắc Phục Tải Chậm Subpath GitHub Pages (/homepage), Sửa Lỗi Tooltip Thẻ Thống Kê 7 Ngày Profile
 ================================================================================
 1. [Khắc Phục Toàn Diện Thông Số Bảng Tổng Kết (Study Summary Modals Overhaul)]:

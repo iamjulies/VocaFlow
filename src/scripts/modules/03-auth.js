@@ -897,7 +897,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
   "code": "S40"
 }`;
 
-            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
             for (const vModel of visionModels) {
               try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${vModel}:generateContent?key=${apiKey}`, {
@@ -5893,6 +5893,86 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.getCommunityAuthorAvatar = getCommunityAuthorAvatar;
 
+    function getCommunityAuthorName(post) {
+      if (!post) return 'Flower';
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        return (currentUser.displayName || currentUser.username || post.authorName || 'Flower').trim();
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && (student.displayName || student.name)) {
+          return (student.displayName || student.name).trim();
+        }
+      }
+      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === post.authorUid) {
+        if (currentPublicProfileAuthor.resolvedName) return currentPublicProfileAuthor.resolvedName.trim();
+      }
+      return (post.authorName || 'Flower').trim();
+    }
+    window.getCommunityAuthorName = getCommunityAuthorName;
+
+    function getCommunityAuthorHandle(post) {
+      if (!post) return 'user';
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
+        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
+        return (post.authorHandle || myName || 'user').replace(/^@/, '');
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && (student.handle || student.username)) {
+          return (student.handle || student.username).replace(/^@/, '');
+        }
+      }
+      return (post.authorHandle || post.authorName || 'user').replace(/^@/, '');
+    }
+    window.getCommunityAuthorHandle = getCommunityAuthorHandle;
+
+    function getCommunityAuthorIsVip(post) {
+      if (!post) return false;
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        return typeof isUserVip === 'function' ? isUserVip() : (currentUser.isVip === true);
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && student.isVip) return true;
+      }
+      return !!post.isVip;
+    }
+    window.getCommunityAuthorIsVip = getCommunityAuthorIsVip;
+
+    function getCommunityCommentAuthorName(c) {
+      if (!c) return 'Flower';
+      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
+        return (currentUser.displayName || currentUser.username || c.authorName || 'Flower').trim();
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === c.authorUid);
+        if (student && (student.displayName || student.name)) {
+          return (student.displayName || student.name).trim();
+        }
+      }
+      return (c.authorName || 'Flower').trim();
+    }
+    window.getCommunityCommentAuthorName = getCommunityCommentAuthorName;
+
+    function getCommunityCommentAuthorHandle(c) {
+      if (!c) return 'user';
+      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
+        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
+        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
+        return (c.authorHandle || myName || 'user').replace(/^@/, '');
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === c.authorUid);
+        if (student && (student.handle || student.username)) {
+          return (student.handle || student.username).replace(/^@/, '');
+        }
+      }
+      return (c.authorHandle || c.authorName || 'user').replace(/^@/, '');
+    }
+    window.getCommunityCommentAuthorHandle = getCommunityCommentAuthorHandle;
+
     function highlightAndScrollToPost(postId, isPublicProfile = false) {
       setTimeout(() => {
         const targetId = isPublicProfile ? `pub-post-card-${postId}` : `post-card-${postId}`;
@@ -5948,6 +6028,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const timeAgo = formatTimeAgo(postDate);
         const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+        const authorName = getCommunityAuthorName(post);
+        const authorHandle = getCommunityAuthorHandle(post);
+        const isVip = getCommunityAuthorIsVip(post);
 
         const postImg = post.image || post.imageUrl || '';
 
@@ -5955,17 +6038,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
             <!-- AUTHOR HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '${post.authorUid}')">
+              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${post.authorUid}')">
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                   ${renderAvatarHtml(authorAvatar, 40, 16)}
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
-                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml(post.authorHandle || 'user')}</span>
+                    <span>@${escapeHtml(authorHandle || 'user')}</span>
                     <span>•</span>
                     <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
@@ -6001,7 +6084,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
             <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
             ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
                 <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
                 <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
                   <span>🔍 Phóng to</span>
@@ -6040,14 +6123,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
                 ` : commentsList.map(c => {
                   const commentDate = new Date(c.timestamp || Date.now());
+                  const cAuthorName = getCommunityCommentAuthorName(c);
+                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
@@ -6449,6 +6534,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const timeAgo = formatTimeAgo(postDate);
         const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+        const authorName = getCommunityAuthorName(post);
+        const authorHandle = getCommunityAuthorHandle(post);
+        const isVip = getCommunityAuthorIsVip(post);
 
         const postImg = post.image || post.imageUrl || '';
 
@@ -6462,11 +6550,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
-                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
+                    <span>@${escapeHtml((authorHandle || 'user').replace(/^@/, ''))}</span>
                     <span>•</span>
                     <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
@@ -6500,7 +6588,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
             <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
             ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
                 <img src="${escapeHtml(postImg)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 360px; display: block;" onerror="this.parentElement.style.display='none';">
                 <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
                   <span>🔍 Phóng to</span>
@@ -6532,14 +6620,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
                 ` : commentsList.map(c => {
                   const commentDate = new Date(c.timestamp || Date.now());
+                  const cAuthorName = getCommunityCommentAuthorName(c);
+                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>

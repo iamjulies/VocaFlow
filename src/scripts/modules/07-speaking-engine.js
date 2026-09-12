@@ -458,6 +458,12 @@
       resetSpeakingWordState();
       closeSpeakingResultModal();
 
+      if (speakingStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - speakingStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'speaking');
+        speakingStartTime = 0;
+      }
+
       if (speakingCompletedWords > 0 || speakingTotalTakesCount > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('speaking'); } catch (e) {}
       }
@@ -866,6 +872,9 @@
       openModal('modal-speaking-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (durationSec > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(durationSec, 'speaking');
+      }
 
       setTimeout(() => {
         const intensity = totalTakes > 0 ? Math.min(1.0, Math.max(0.3, floorTakes / totalTakes)) : 0.5;
@@ -1370,7 +1379,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 
         let evalSuccess = false;
         let evalData = null;
@@ -1840,6 +1849,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
     }
 
+    let autoFlashcardStartTime = 0;
+
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
       lastScreenBeforeAutoFc = document.querySelector('.screen.active')?.id || 'screen-decks';
       isAutoFcMiniMode = false;
@@ -1865,6 +1876,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
       autoFlashcardIndex = 0;
       isAutoPlaying = true;
+      autoFlashcardStartTime = Date.now();
       showScreen('screen-autofc');
       syncAutoFlashcardControlsUI();
       runAutoFlashcardLoop();
@@ -2015,6 +2027,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       stopAllAudio();
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
+
+      if (autoFlashcardStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - autoFlashcardStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'flashcard');
+        autoFlashcardStartTime = 0;
+      }
+
       if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
         recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
       }

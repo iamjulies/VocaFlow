@@ -293,7 +293,7 @@
         for (const m of models) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
             const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
               method: 'POST',
@@ -585,7 +585,7 @@ Yêu cầu nghiêm ngặt:
           for (const m of models) {
             try {
               const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 4500);
+              const timeoutId = setTimeout(() => controller.abort(), 12000);
 
               const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
                 method: 'POST',
@@ -1457,7 +1457,7 @@ Yêu cầu nghiêm ngặt:
           for (const m of models) {
             try {
               const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 4000);
+              const timeoutId = setTimeout(() => controller.abort(), 12000);
 
               const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
                 method: 'POST',
@@ -1834,6 +1834,9 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-quiz-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (totalSeconds > 0 && typeof addDailyStudySeconds === 'function') {
+        addDailyStudySeconds(totalSeconds, 'quiz');
+      }
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       if (typeof recordStudySessionWordReviews === 'function' && quizList) {
         recordStudySessionWordReviews(quizList);
@@ -1961,6 +1964,13 @@ Yêu cầu nghiêm ngặt:
 
     function doExecuteExitQuiz(done, total) {
       stopAllAudio();
+
+      if (quizStartTime > 0) {
+        const elapsed = Math.max(1, Math.round((Date.now() - quizStartTime) / 1000));
+        if (typeof addDailyStudySeconds === 'function') addDailyStudySeconds(elapsed, 'quiz');
+        quizStartTime = 0;
+      }
+
       if (done > 0) {
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
