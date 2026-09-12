@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 // VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-48)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
@@ -106,14 +106,100 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openProfileModal === 'function') openProfileModal();
         break;
 
+      case 'community':
+      case 'feed':
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        break;
+
       case 'shop':
       case 'store':
         if (typeof openShopModal === 'function') openShopModal();
         break;
 
+      case 'vocavip':
       case 'vip':
       case 'pricing':
         if (typeof openVipPricingModal === 'function') openVipPricingModal();
+        break;
+
+      case 'flowtreak':
+      case 'flowstreak':
+      case 'streak':
+      case 'calendar':
+        if (typeof openFlowCalendarModal === 'function') openFlowCalendarModal();
+        break;
+
+      case 'notifications':
+      case 'notification':
+      case 'notif':
+        if (typeof openNotificationsModal === 'function') openNotificationsModal();
+        break;
+
+      case 'vocamail':
+      case 'mail':
+      case 'inbox':
+        if (typeof openVocaMailModal === 'function') openVocaMailModal();
+        break;
+
+      case 'report':
+      case 'bug':
+      case 'feedback':
+        if (typeof openBugReportModal === 'function') openBugReportModal();
+        break;
+
+      case 'queue':
+      case 'review':
+      case 'daily':
+        if (typeof openReviewQueueModal === 'function') openReviewQueueModal();
+        break;
+
+      case 'vocalib':
+      case 'library':
+      case 'lib':
+        if (typeof openLibraryModal === 'function') openLibraryModal();
+        break;
+
+      case 'vocadeckai':
+      case 'aistudio':
+      case 'ai-studio':
+      case 'deckai':
+        if (typeof openAiDeckStudioModal === 'function') openAiDeckStudioModal();
+        break;
+
+      case 'dev':
+      case 'publisher':
+      case 'admin':
+        if (sessionStorage.getItem('vocaflow_dev_authorized') === 'true') {
+          if (typeof openPublisherModal === 'function') openPublisherModal('students');
+        } else {
+          const pass = prompt('🔒 CỔNG QUẢN TRỊ DEVELOPER (PUBLISHER PORTAL)\nVui lòng nhập mật khẩu xác thực Developer:');
+          if (pass) {
+            const cleanPass = pass.toLowerCase().trim().replace(/\s+/g, ' ');
+            const validTriggers = [
+              '/gamemode creative', 'gamemode creative',
+              '/gamemode 1', 'gamemode 1',
+              '/gamemode c', 'gamemode c',
+              '/godmode', 'godmode',
+              '/god mode', 'god mode',
+              '/god', 'god',
+              '/creative', 'creative',
+              '/admin', 'admin',
+              '/publisher', 'publisher',
+              'congguantri', '/congguantri',
+              'cổng quản trị'
+            ];
+            if (validTriggers.includes(cleanPass)) {
+              sessionStorage.setItem('vocaflow_dev_authorized', 'true');
+              if (typeof showToast === 'function') showToast('🕹️ Xác thực Developer thành công!');
+              if (typeof openPublisherModal === 'function') openPublisherModal('students');
+            } else {
+              if (typeof showToast === 'function') showToast('⛔ Mật khẩu Developer không chính xác!');
+              if (typeof showScreen === 'function') showScreen('screen-decks');
+            }
+          } else {
+            if (typeof showScreen === 'function') showScreen('screen-decks');
+          }
+        }
         break;
 
       case 'mentor':
@@ -123,6 +209,7 @@ function navigateToRoute(route, isPopState = false) {
         break;
 
       case 'wallet':
+      case 'studio':
         if (typeof openWalletStudioModal === 'function') openWalletStudioModal();
         break;
 
@@ -136,15 +223,22 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openLuckyWheelModal === 'function') openLuckyWheelModal();
         break;
 
+      case 'referral':
+      case 'invite':
+        if (typeof openReferralModal === 'function') openReferralModal();
+        break;
+
       case 'settings':
         if (typeof openSettingsModal === 'function') openSettingsModal();
         break;
 
       case 'achievements':
+      case 'badges':
         if (typeof openAchievementsModal === 'function') openAchievementsModal();
         break;
 
       case 'guide':
+      case 'help':
         if (typeof openUserGuideModal === 'function') openUserGuideModal();
         break;
 

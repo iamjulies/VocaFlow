@@ -1829,6 +1829,17 @@
     .mobile-more-wrapper {
       position: relative;
     }
+    .mobile-more-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 8px;
+      color: var(--text);
+      height: 32px;
+    }
     .header-more-dropdown {
       position: absolute;
       top: calc(100% + 8px);
@@ -3080,22 +3091,26 @@
     }
 
     .ig-avatar-ring {
-      width: 90px;
-      height: 90px;
-      min-width: 90px;
-      min-height: 90px;
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      min-height: 96px;
       border-radius: 50%;
-      padding: 3.5px;
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 0;
+      background: transparent;
+      border: 2.5px solid rgba(255, 255, 255, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 18px rgba(220, 39, 67, 0.35);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
+      overflow: hidden;
     }
 
     .ig-avatar-ring.vip-ring {
+      padding: 3px;
+      border: none;
       background: linear-gradient(135deg, #ffd700, #f59e0b, #ec4899, #8b5cf6);
       box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 24px rgba(251, 191, 36, 0.75);
       animation: avatarVipRingGlow 3s ease-in-out infinite;
@@ -3106,7 +3121,7 @@
       height: 100%;
       border-radius: 50%;
       background: var(--surface-elevated);
-      border: 2.5px solid var(--surface);
+      border: none;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -3478,6 +3493,88 @@
       color: var(--text, #f8fafc);
       letter-spacing: 0.2px;
       text-align: center;
+    }
+
+    /* VOCAFLOW MINI FOOTER (v0.10.9-51) */
+    .vocaflow-mini-footer {
+      margin-top: 36px;
+      padding: 18px 10px 28px 10px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .mini-footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .mini-footer-left, .mini-footer-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mini-footer-divider {
+      color: var(--border);
+      opacity: 0.6;
+    }
+    .mini-footer-version {
+      font-family: monospace;
+      font-size: 11px;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.12);
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .mini-footer-btn {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mini-footer-btn:hover {
+      background: rgba(248, 113, 113, 0.15);
+      color: #fca5a5;
+    }
+    .mini-footer-link {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mini-footer-link:hover {
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .mini-footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+      }
     }
 
 

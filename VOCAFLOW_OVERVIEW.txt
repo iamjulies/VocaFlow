@@ -1,4 +1,40 @@
 ================================================================================
+Phiên bản: v0.10.9-51 (Build 283) - Bổ Sung Chân Trang Mini Footer, Tab Cộng Đồng Hồ Sơ Công Khai, Hệ Thống Deep Linking Toàn Diện, Gom Nút Header Vào Menu 3 Chấm & Xóa Vòng Tròn Đỏ Avatar
+================================================================================
+1. [Bổ Sung Chân Trang Mini Footer & Tối Giản Logo Header]:
+   - Tích hợp Chân trang Mini Footer (`vocaflow-mini-footer`) đồng bộ tại Trang chủ (`screen-decks.html`) và Chi tiết bộ từ (`screen-deck-detail.html`).
+   - Hiển thị đầy đủ: Bản quyền `© 2026 VocaFlow by iamjulies`, Nhãn phiên bản `v0.10.9-51 (Build 283)`, Nút `🐞 Báo Lỗi` (mở modal báo cáo sự cố) và Liên kết `💬 Liên hệ (Facebook)` dẫn thẳng tới `https://www.facebook.com/iamjulies.artist`.
+   - Bỏ huy hiệu phiên bản cạnh logo thương hiệu VocaFlow trên Header giúp logo tinh tế và gọn gàng.
+
+2. [Bổ Sung Tab "💬 Cộng Đồng" Khi Soi Hồ Sơ Người Dùng Khác (Public Profile Community Tab)]:
+   - Bổ sung nút tab `💬 Cộng Đồng` và Tab Panel hiển thị bài viết cộng đồng của tác giả trong `modal-public-profile.html`.
+   - Lọc và hiển thị toàn bộ bài viết, chiến tích, hình ảnh và danh hiệu đính kèm của người dùng tương ứng trên VocaCommunity.
+   - Khi tác giả chưa đăng bài, hiển thị giao diện thông báo trạng thái trống lịch thiệp: `📭 [Tên Flower] chưa đăng bài viết nào trên VocaCommunity.`
+
+3. [Hệ Thống Đường Dẫn Trực Tiếp Deep Linking & Xác Thực Bảo Mật Cổng Quản Trị Dev]:
+   - Mở rộng bộ định tuyến SPA (`01-router.js`) hỗ trợ truy cập trực tiếp các đường link tĩnh tiện lợi:
+     + Bảng Giá Nâng Cấp VocaVIP: `/vocavip`
+     + FlowStreak Học Tập: `/flowtreak` hoặc `/flowstreak`
+     + Trung Tâm Thông Báo: `/notifications`
+     + VocaMail - Nhắn Tin & Hỏi Đáp Admin: `/vocamail`
+     + Báo Cáo Sự Cố & Đóng Góp Ý Kiến: `/report`
+     + Hàng Đợi Ôn Tập Hôm Nay: `/queue`
+     + Thư Viện VocaLib: `/vocalib`
+     + VocaDeck AI Studio: `/vocadeckai`
+   - Cổng Quản Trị Developer (`/dev`): Tích hợp cổng kiểm tra bảo mật (Passcode Gate), yêu cầu nhập đúng mật khẩu xác thực developer (`/gamemode creative`, `/gamemode 1`, `/gamemode c`...) trước khi cho phép mở Cổng Quản Trị Publisher Portal.
+
+4. [Gom Gọn Nút Header Vào Menu 3 Chấm Cho Mọi Kích Thước Màn Hình]:
+   - Tinh gọn thanh điều hướng Header: Gom các nút VocaVIP, Hướng dẫn, Cài đặt ứng dụng, Sao lưu (.json), Đồng bộ Cloud vào trong nút 3 chấm `#header-more-dropdown`.
+   - Nút 3 chấm luôn hiển thị linh hoạt trên cả màn hình máy tính (Desktop) và điện thoại (Mobile).
+
+5. [Loại Bỏ Vòng Tròn Đỏ / Gradient Quanh Avatar Hồ Sơ Công Khai]:
+   - Xóa bỏ viền đỏ Instagram gradient xung quanh ảnh đại diện trong `modal-public-profile.html` và `app.css`.
+   - Tăng kích thước ảnh đại diện lên 96px sắc nét, hiển thị trọn vẹn, viền kính mờ tinh tế và đồng bộ.
+
+6. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-51 Build 283)]:
+   - Cập nhật chuẩn hóa phiên bản trên toàn bộ 7 vị trí bắt buộc theo quy trình xuất bản.
+
+================================================================================
 Phiên bản: v0.10.9-50 (Build 282) - Sửa Lỗi Hiển Thị Chỉ Số Hồ Sơ Công Khai Realtime Cloud, Mở Rộng Kích Thước Profile Modal, Sửa Lỗi Bảng Tin Community Feed & Bổ Sung Modal Khoe Danh Hiệu
 ================================================================================
 1. [Sửa Lỗi Hiển Thị Chỉ Số Hồ Sơ Công Khai & Cá Nhân Thời Gian Thực (Public Profile Fix)]:

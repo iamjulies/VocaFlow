@@ -4636,16 +4636,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
         if (avEl) {
-          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
           if (isVocaFlowOfficial) {
-            avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
+            avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
             avEl.style.borderColor = '#c084fc';
           } else if (isAuthorVip) {
-            avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
+            avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
             avEl.style.borderColor = '#fbbf24';
           } else {
-            avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
-            avEl.style.borderColor = 'rgba(255,255,255,0.3)';
+            avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
+            avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
           }
         }
         if (pubSubBadgeEl) {
@@ -5599,7 +5599,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.shareCommunityPost = shareCommunityPost;
 
     function switchPubProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'stats'];
+      const tabs = ['decks', 'stats', 'community'];
       tabs.forEach(t => {
         const btn = document.getElementById(`pub-tab-btn-${t}`);
         const panel = document.getElementById(`pub-tab-panel-${t}`);
@@ -5611,8 +5611,149 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           panel.style.display = (t === tabName) ? 'block' : 'none';
         }
       });
+      if (tabName === 'community') {
+        renderPubProfileCommunityPosts();
+      }
     }
     window.switchPubProfileTab = switchPubProfileTab;
+
+    async function renderPubProfileCommunityPosts() {
+      const container = document.getElementById('pub-view-community-container');
+      if (!container) return;
+
+      if (!currentPublicProfileAuthor) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Không tìm thấy thông tin tác giả.</div>';
+        return;
+      }
+
+      const targetUid = currentPublicProfileAuthor.targetUid;
+      const targetName = (currentPublicProfileAuthor.resolvedName || '').trim().toLowerCase();
+      const targetHandle = (currentPublicProfileAuthor.resolvedHandle || '').replace(/^@/, '').trim().toLowerCase();
+
+      // Ensure communityPosts is loaded
+      if (communityPosts.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết...</div>';
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data === 'object') {
+              communityPosts = Object.values(data).filter(p => p && p.id);
+              communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+              localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+            }
+          }
+        } catch (e) {
+          const cached = localStorage.getItem('vocaflow_community_posts_cache');
+          if (cached) {
+            try { communityPosts = JSON.parse(cached); } catch (err) {}
+          }
+        }
+      }
+
+      // Filter posts belonging to this author
+      const authorPosts = communityPosts.filter(p => {
+        if (!p) return false;
+        if (targetUid && p.authorUid === targetUid) return true;
+        if (targetHandle && (p.authorHandle || '').replace(/^@/, '').toLowerCase() === targetHandle) return true;
+        if (targetName && (p.authorName || '').trim().toLowerCase() === targetName) return true;
+        return false;
+      });
+
+      if (authorPosts.length === 0) {
+        const displayName = currentPublicProfileAuthor.resolvedName || `@${currentPublicProfileAuthor.resolvedHandle || 'Flower'}`;
+        container.innerHTML = `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📭</div>
+            <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">${escapeHtml(displayName)} chưa đăng bài viết nào trên VocaCommunity.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const myUid = currentUser?.uid;
+      let html = '';
+      authorPosts.forEach(post => {
+        const isAuthor = myUid && post.authorUid === myUid;
+        const likesMap = post.likes || {};
+        const likesCount = Object.keys(likesMap).length;
+        const isLiked = myUid && !!likesMap[myUid];
+
+        const commentsMap = post.comments || {};
+        const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
+        const commentsCount = commentsList.length;
+
+        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+
+        html += `
+          <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 10px;">
+            <!-- AUTHOR HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                  ${renderAvatarHtml(post.authorAvatar || post.authorName, 38, 16)}
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <strong style="font-size: 13px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
+                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                    <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
+                    <span>•</span>
+                    <span>${timeAgo}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- POST CONTENT -->
+            <div style="font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+
+            <!-- ATTACHED BADGE BRAG -->
+            ${post.badge ? `
+              <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 6px 12px; margin-bottom: 10px;">
+                <span style="font-size: 20px;">${post.badge.icon || '🏅'}</span>
+                <div>
+                  <div style="font-size: 12px; font-weight: 700; color: #fbbf24;">${escapeHtml(post.badge.title || 'Danh Hiệu VocaFlow')}</div>
+                  <div style="font-size: 10.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || 'Thành tích đạt được trong quá trình học tập')}</div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- ATTACHED IMAGE -->
+            ${post.imageUrl ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; max-height: 320px; background: #000;">
+                <img src="${escapeHtml(post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
+              </div>
+            ` : ''}
+
+            <!-- INTERACTIONS ROW -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; font-size: 12px;">
+              <div style="display: flex; gap: 14px; align-items: center;">
+                <button type="button" class="btn-like-post" onclick="toggleLikeCommunityPost('${post.id}')" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; color: ${isLiked ? '#ef4444' : 'var(--text-muted)'}; font-size: 12.5px; font-weight: 700; padding: 4px 6px; border-radius: 6px;">
+                  <span>${isLiked ? '❤️' : '🤍'}</span> <span>${likesCount}</span>
+                </button>
+                <div style="display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 12px;">
+                  <span>💬</span> <span>${commentsCount} bình luận</span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline btn-xs" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ bài viết" style="font-size: 11px; padding: 3px 8px;">
+                <span>🔗</span> Chia Sẻ
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+    window.renderPubProfileCommunityPosts = renderPubProfileCommunityPosts;
 
     function getStandardProfileUrl(handle) {
       const cleanHandle = (handle || '').replace(/^@/, '').trim();

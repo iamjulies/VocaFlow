@@ -1855,6 +1855,17 @@
     .mobile-more-wrapper {
       position: relative;
     }
+    .mobile-more-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 8px;
+      color: var(--text);
+      height: 32px;
+    }
     .header-more-dropdown {
       position: absolute;
       top: calc(100% + 8px);
@@ -3106,22 +3117,26 @@
     }
 
     .ig-avatar-ring {
-      width: 90px;
-      height: 90px;
-      min-width: 90px;
-      min-height: 90px;
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      min-height: 96px;
       border-radius: 50%;
-      padding: 3.5px;
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 0;
+      background: transparent;
+      border: 2.5px solid rgba(255, 255, 255, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 18px rgba(220, 39, 67, 0.35);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
+      overflow: hidden;
     }
 
     .ig-avatar-ring.vip-ring {
+      padding: 3px;
+      border: none;
       background: linear-gradient(135deg, #ffd700, #f59e0b, #ec4899, #8b5cf6);
       box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 24px rgba(251, 191, 36, 0.75);
       animation: avatarVipRingGlow 3s ease-in-out infinite;
@@ -3132,7 +3147,7 @@
       height: 100%;
       border-radius: 50%;
       background: var(--surface-elevated);
-      border: 2.5px solid var(--surface);
+      border: none;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -3506,6 +3521,88 @@
       text-align: center;
     }
 
+    /* VOCAFLOW MINI FOOTER (v0.10.9-51) */
+    .vocaflow-mini-footer {
+      margin-top: 36px;
+      padding: 18px 10px 28px 10px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .mini-footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .mini-footer-left, .mini-footer-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mini-footer-divider {
+      color: var(--border);
+      opacity: 0.6;
+    }
+    .mini-footer-version {
+      font-family: monospace;
+      font-size: 11px;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.12);
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .mini-footer-btn {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mini-footer-btn:hover {
+      background: rgba(248, 113, 113, 0.15);
+      color: #fca5a5;
+    }
+    .mini-footer-link {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mini-footer-link:hover {
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .mini-footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+      }
+    }
+
 
 
   </style>
@@ -3560,15 +3657,8 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); user-select: none;">v0.10.9-50</span>
     </div>
     <div class="header-actions">
-      <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
-      <button type="button" class="btn btn-sm header-collapsible-vip" id="btn-header-vip" onclick="openVipPricingModal()" title="Gói VocaVIP - Mở khóa toàn quyền tính năng" style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(236, 72, 153, 0.18)); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); cursor: pointer;">
-        <span style="font-size: 14px;">👑</span>
-        <span class="btn-header-label" style="font-size: 11.5px; font-weight: 800;">VocaVIP</span>
-      </button>
-
       <!-- STUDIO & WALLET BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
       <button type="button" class="btn btn-outline btn-sm header-collapsible-studio" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="VocaStudio - Trung tâm Sáng tạo & Ví VoCoin" style="display: flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer;">
         <span style="font-size: 13px;">💼</span>
@@ -3595,12 +3685,6 @@
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
 
-      <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-2) -->
-      <button type="button" class="btn btn-outline btn-sm header-collapsible-guide" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
-        <span style="font-size: 14px;">📖</span>
-        <span class="hide-on-mobile btn-header-label">Hướng Dẫn</span>
-      </button>
-
       <!-- VOCASHOP / POINTS WALLET BUTTON -->
       <button class="btn btn-outline btn-sm header-collapsible-shop" id="btn-shop" onclick="openShopModal()" title="Cửa hàng VocaShop" style="position: relative; display: flex; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">
         <span style="font-size: 13px;">🏪</span>
@@ -3608,26 +3692,17 @@
         <span id="header-ad-ready-dot" style="display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: 2px solid var(--surface, #1e293b); border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: white; box-shadow: 0 0 8px #38bdf8; animation: pulse-ad 1.5s infinite; cursor: pointer;" title="🎬 Có video nhận +1 VocaSpin!">🎬</span>
       </button>
 
-      <!-- Desktop Action Buttons (Hidden on mobile) -->
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399;" onclick="handleManualSync()" title="Trực tuyến • Bấm để đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text">Trực tuyến</span>
-      </button>
+      <!-- Desktop Action Buttons -->
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
         <span id="user-avatar-icon" style="font-size: 16px;">👤</span> <span id="user-display-name" class="user-display-truncate">Khách</span>
       </button>
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
         ⚙️ <span>Cài đặt</span>
       </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" onclick="triggerPwaInstall()" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;">
-        📲 <span>Cài App</span>
-      </button>
-      <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
-        <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
-      </button>
 
-      <!-- Mobile 3-Dots Dropdown Menu (Visible only on mobile <= 768px) -->
+      <!-- 3-Dots Dropdown Menu (Visible on Desktop & Mobile) -->
       <div class="mobile-more-wrapper">
-        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: none; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text);">
+        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text); height: 32px;">
           ⋮
         </button>
 
@@ -3815,6 +3890,26 @@
              data-ad-client="ca-pub-1343250003116465"
              data-ad-slot="4211562925"></ins>
       </div>
+
+      <!-- MINI FOOTER (v0.10.9-51) -->
+      <footer class="vocaflow-mini-footer">
+        <div class="mini-footer-content">
+          <div class="mini-footer-left">
+            <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
+            <span class="mini-footer-divider">•</span>
+            <span class="mini-footer-version">v0.10.9-51 (Build 283)</span>
+          </div>
+          <div class="mini-footer-right">
+            <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
+              <span>🐞</span> <span>Báo Lỗi</span>
+            </button>
+            <span class="mini-footer-divider">•</span>
+            <a href="https://www.facebook.com/iamjulies.artist" target="_blank" rel="noopener noreferrer" class="mini-footer-link" title="Liên hệ tác giả iamjulies trên Facebook">
+              <span>💬</span> <span>Liên hệ (Facebook)</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </section>
 
     <section id="screen-deck-detail" class="screen">
@@ -3990,6 +4085,26 @@
              data-ad-client="ca-pub-1343250003116465"
              data-ad-slot="4211562925"></ins>
       </div>
+
+      <!-- MINI FOOTER (v0.10.9-51) -->
+      <footer class="vocaflow-mini-footer">
+        <div class="mini-footer-content">
+          <div class="mini-footer-left">
+            <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
+            <span class="mini-footer-divider">•</span>
+            <span class="mini-footer-version">v0.10.9-51 (Build 283)</span>
+          </div>
+          <div class="mini-footer-right">
+            <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
+              <span>🐞</span> <span>Báo Lỗi</span>
+            </button>
+            <span class="mini-footer-divider">•</span>
+            <a href="https://www.facebook.com/iamjulies.artist" target="_blank" rel="noopener noreferrer" class="mini-footer-link" title="Liên hệ tác giả iamjulies trên Facebook">
+              <span>💬</span> <span>Liên hệ (Facebook)</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </section>
 
     <section id="screen-quiz" class="screen">
@@ -6781,8 +6896,8 @@
         <!-- INSTAGRAM HERO SECTION: AVATAR + 3 STATS COLUMNS -->
         <div class="ig-hero-row">
           <div class="ig-avatar-ring-container">
-            <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default;">
-              <div class="ig-avatar-inner">👤</div>
+            <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default; background: transparent; border: 2.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
+              <div class="ig-avatar-inner" style="border: none;">👤</div>
             </div>
           </div>
 
@@ -6847,6 +6962,9 @@
           <button type="button" class="ig-tab-btn" id="pub-tab-btn-stats" onclick="switchPubProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
           </button>
+          <button type="button" class="ig-tab-btn" id="pub-tab-btn-community" onclick="switchPubProfileTab('community')">
+            <span>💬</span> <span>Cộng Đồng</span>
+          </button>
         </div>
 
         <!-- TAB PANEL 1: DECKS LIST -->
@@ -6879,6 +6997,13 @@
               <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">📝 Tổng từ vựng</div>
               <div id="pub-view-stat-words-card" style="font-size: 16px; font-weight: 800; color: #34d399;">0 từ</div>
             </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 3: COMMUNITY POSTS (v0.10.9-51) -->
+        <div id="pub-tab-panel-community" style="display: none;">
+          <div id="pub-view-community-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding: 2px;">
+            <!-- Populated dynamically -->
           </div>
         </div>
 
@@ -8863,7 +8988,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-50 (Build 282)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-51 (Build 283)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9713,14 +9838,100 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openProfileModal === 'function') openProfileModal();
         break;
 
+      case 'community':
+      case 'feed':
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        break;
+
       case 'shop':
       case 'store':
         if (typeof openShopModal === 'function') openShopModal();
         break;
 
+      case 'vocavip':
       case 'vip':
       case 'pricing':
         if (typeof openVipPricingModal === 'function') openVipPricingModal();
+        break;
+
+      case 'flowtreak':
+      case 'flowstreak':
+      case 'streak':
+      case 'calendar':
+        if (typeof openFlowCalendarModal === 'function') openFlowCalendarModal();
+        break;
+
+      case 'notifications':
+      case 'notification':
+      case 'notif':
+        if (typeof openNotificationsModal === 'function') openNotificationsModal();
+        break;
+
+      case 'vocamail':
+      case 'mail':
+      case 'inbox':
+        if (typeof openVocaMailModal === 'function') openVocaMailModal();
+        break;
+
+      case 'report':
+      case 'bug':
+      case 'feedback':
+        if (typeof openBugReportModal === 'function') openBugReportModal();
+        break;
+
+      case 'queue':
+      case 'review':
+      case 'daily':
+        if (typeof openReviewQueueModal === 'function') openReviewQueueModal();
+        break;
+
+      case 'vocalib':
+      case 'library':
+      case 'lib':
+        if (typeof openLibraryModal === 'function') openLibraryModal();
+        break;
+
+      case 'vocadeckai':
+      case 'aistudio':
+      case 'ai-studio':
+      case 'deckai':
+        if (typeof openAiDeckStudioModal === 'function') openAiDeckStudioModal();
+        break;
+
+      case 'dev':
+      case 'publisher':
+      case 'admin':
+        if (sessionStorage.getItem('vocaflow_dev_authorized') === 'true') {
+          if (typeof openPublisherModal === 'function') openPublisherModal('students');
+        } else {
+          const pass = prompt('🔒 CỔNG QUẢN TRỊ DEVELOPER (PUBLISHER PORTAL)\nVui lòng nhập mật khẩu xác thực Developer:');
+          if (pass) {
+            const cleanPass = pass.toLowerCase().trim().replace(/\s+/g, ' ');
+            const validTriggers = [
+              '/gamemode creative', 'gamemode creative',
+              '/gamemode 1', 'gamemode 1',
+              '/gamemode c', 'gamemode c',
+              '/godmode', 'godmode',
+              '/god mode', 'god mode',
+              '/god', 'god',
+              '/creative', 'creative',
+              '/admin', 'admin',
+              '/publisher', 'publisher',
+              'congguantri', '/congguantri',
+              'cổng quản trị'
+            ];
+            if (validTriggers.includes(cleanPass)) {
+              sessionStorage.setItem('vocaflow_dev_authorized', 'true');
+              if (typeof showToast === 'function') showToast('🕹️ Xác thực Developer thành công!');
+              if (typeof openPublisherModal === 'function') openPublisherModal('students');
+            } else {
+              if (typeof showToast === 'function') showToast('⛔ Mật khẩu Developer không chính xác!');
+              if (typeof showScreen === 'function') showScreen('screen-decks');
+            }
+          } else {
+            if (typeof showScreen === 'function') showScreen('screen-decks');
+          }
+        }
         break;
 
       case 'mentor':
@@ -9730,6 +9941,7 @@ function navigateToRoute(route, isPopState = false) {
         break;
 
       case 'wallet':
+      case 'studio':
         if (typeof openWalletStudioModal === 'function') openWalletStudioModal();
         break;
 
@@ -9743,15 +9955,22 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openLuckyWheelModal === 'function') openLuckyWheelModal();
         break;
 
+      case 'referral':
+      case 'invite':
+        if (typeof openReferralModal === 'function') openReferralModal();
+        break;
+
       case 'settings':
         if (typeof openSettingsModal === 'function') openSettingsModal();
         break;
 
       case 'achievements':
+      case 'badges':
         if (typeof openAchievementsModal === 'function') openAchievementsModal();
         break;
 
       case 'guide':
+      case 'help':
         if (typeof openUserGuideModal === 'function') openUserGuideModal();
         break;
 
@@ -9792,19 +10011,15 @@ function initSpaRouter() {
 }
 window.initSpaRouter = initSpaRouter;
 
-// =========================================================================
-
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-50 Build 282)
-
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-51 Build 283)
 // Global constants, core database state, storage keys, recovery & audio engine
-
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-50 Build 282)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-51 Build 283)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-50';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-50 (Build 282)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-51';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-51 (Build 283)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -17490,16 +17705,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
         if (avEl) {
-          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
+          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
           if (isVocaFlowOfficial) {
-            avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
+            avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
             avEl.style.borderColor = '#c084fc';
           } else if (isAuthorVip) {
-            avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
+            avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
             avEl.style.borderColor = '#fbbf24';
           } else {
-            avEl.style.boxShadow = '0 6px 18px rgba(168, 85, 247, 0.4)';
-            avEl.style.borderColor = 'rgba(255,255,255,0.3)';
+            avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
+            avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
           }
         }
         if (pubSubBadgeEl) {
@@ -18453,7 +18668,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.shareCommunityPost = shareCommunityPost;
 
     function switchPubProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'stats'];
+      const tabs = ['decks', 'stats', 'community'];
       tabs.forEach(t => {
         const btn = document.getElementById(`pub-tab-btn-${t}`);
         const panel = document.getElementById(`pub-tab-panel-${t}`);
@@ -18465,8 +18680,149 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           panel.style.display = (t === tabName) ? 'block' : 'none';
         }
       });
+      if (tabName === 'community') {
+        renderPubProfileCommunityPosts();
+      }
     }
     window.switchPubProfileTab = switchPubProfileTab;
+
+    async function renderPubProfileCommunityPosts() {
+      const container = document.getElementById('pub-view-community-container');
+      if (!container) return;
+
+      if (!currentPublicProfileAuthor) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">Không tìm thấy thông tin tác giả.</div>';
+        return;
+      }
+
+      const targetUid = currentPublicProfileAuthor.targetUid;
+      const targetName = (currentPublicProfileAuthor.resolvedName || '').trim().toLowerCase();
+      const targetHandle = (currentPublicProfileAuthor.resolvedHandle || '').replace(/^@/, '').trim().toLowerCase();
+
+      // Ensure communityPosts is loaded
+      if (communityPosts.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết...</div>';
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data === 'object') {
+              communityPosts = Object.values(data).filter(p => p && p.id);
+              communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+              localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+            }
+          }
+        } catch (e) {
+          const cached = localStorage.getItem('vocaflow_community_posts_cache');
+          if (cached) {
+            try { communityPosts = JSON.parse(cached); } catch (err) {}
+          }
+        }
+      }
+
+      // Filter posts belonging to this author
+      const authorPosts = communityPosts.filter(p => {
+        if (!p) return false;
+        if (targetUid && p.authorUid === targetUid) return true;
+        if (targetHandle && (p.authorHandle || '').replace(/^@/, '').toLowerCase() === targetHandle) return true;
+        if (targetName && (p.authorName || '').trim().toLowerCase() === targetName) return true;
+        return false;
+      });
+
+      if (authorPosts.length === 0) {
+        const displayName = currentPublicProfileAuthor.resolvedName || `@${currentPublicProfileAuthor.resolvedHandle || 'Flower'}`;
+        container.innerHTML = `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📭</div>
+            <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">${escapeHtml(displayName)} chưa đăng bài viết nào trên VocaCommunity.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const myUid = currentUser?.uid;
+      let html = '';
+      authorPosts.forEach(post => {
+        const isAuthor = myUid && post.authorUid === myUid;
+        const likesMap = post.likes || {};
+        const likesCount = Object.keys(likesMap).length;
+        const isLiked = myUid && !!likesMap[myUid];
+
+        const commentsMap = post.comments || {};
+        const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
+        const commentsCount = commentsList.length;
+
+        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+
+        html += `
+          <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 10px;">
+            <!-- AUTHOR HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                  ${renderAvatarHtml(post.authorAvatar || post.authorName, 38, 16)}
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <strong style="font-size: 13px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
+                    ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                    <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
+                    <span>•</span>
+                    <span>${timeAgo}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- POST CONTENT -->
+            <div style="font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+
+            <!-- ATTACHED BADGE BRAG -->
+            ${post.badge ? `
+              <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 6px 12px; margin-bottom: 10px;">
+                <span style="font-size: 20px;">${post.badge.icon || '🏅'}</span>
+                <div>
+                  <div style="font-size: 12px; font-weight: 700; color: #fbbf24;">${escapeHtml(post.badge.title || 'Danh Hiệu VocaFlow')}</div>
+                  <div style="font-size: 10.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || 'Thành tích đạt được trong quá trình học tập')}</div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- ATTACHED IMAGE -->
+            ${post.imageUrl ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; max-height: 320px; background: #000;">
+                <img src="${escapeHtml(post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
+              </div>
+            ` : ''}
+
+            <!-- INTERACTIONS ROW -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; font-size: 12px;">
+              <div style="display: flex; gap: 14px; align-items: center;">
+                <button type="button" class="btn-like-post" onclick="toggleLikeCommunityPost('${post.id}')" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; color: ${isLiked ? '#ef4444' : 'var(--text-muted)'}; font-size: 12.5px; font-weight: 700; padding: 4px 6px; border-radius: 6px;">
+                  <span>${isLiked ? '❤️' : '🤍'}</span> <span>${likesCount}</span>
+                </button>
+                <div style="display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 12px;">
+                  <span>💬</span> <span>${commentsCount} bình luận</span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline btn-xs" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ bài viết" style="font-size: 11px; padding: 3px 8px;">
+                <span>🔗</span> Chia Sẻ
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+    window.renderPubProfileCommunityPosts = renderPubProfileCommunityPosts;
 
     function getStandardProfileUrl(handle) {
       const cleanHandle = (handle || '').replace(/^@/, '').trim();

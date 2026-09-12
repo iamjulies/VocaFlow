@@ -2,15 +2,8 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); user-select: none;">v0.10.9-50</span>
     </div>
     <div class="header-actions">
-      <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
-      <button type="button" class="btn btn-sm header-collapsible-vip" id="btn-header-vip" onclick="openVipPricingModal()" title="Gói VocaVIP - Mở khóa toàn quyền tính năng" style="display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(236, 72, 153, 0.18)); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); cursor: pointer;">
-        <span style="font-size: 14px;">👑</span>
-        <span class="btn-header-label" style="font-size: 11.5px; font-weight: 800;">VocaVIP</span>
-      </button>
-
       <!-- STUDIO & WALLET BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
       <button type="button" class="btn btn-outline btn-sm header-collapsible-studio" id="btn-wallet-studio" onclick="openWalletStudioModal()" title="VocaStudio - Trung tâm Sáng tạo & Ví VoCoin" style="display: flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1); font-weight: 700; height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; cursor: pointer;">
         <span style="font-size: 13px;">💼</span>
@@ -37,12 +30,6 @@
         <span id="header-notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 0 4px; border: 2px solid var(--surface); align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
       </button>
 
-      <!-- USER GUIDE / HELP BUTTON (v0.10.9-alpha-2) -->
-      <button type="button" class="btn btn-outline btn-sm header-collapsible-guide" id="btn-header-guide" onclick="openUserGuideModal()" title="Hướng Dẫn Sử Dụng Từng Bước Cho Người Mới" style="display: flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.12); height: 32px; padding: 4px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
-        <span style="font-size: 14px;">📖</span>
-        <span class="hide-on-mobile btn-header-label">Hướng Dẫn</span>
-      </button>
-
       <!-- VOCASHOP / POINTS WALLET BUTTON -->
       <button class="btn btn-outline btn-sm header-collapsible-shop" id="btn-shop" onclick="openShopModal()" title="Cửa hàng VocaShop" style="position: relative; display: flex; align-items: center; gap: 4px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); height: 32px; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">
         <span style="font-size: 13px;">🏪</span>
@@ -50,26 +37,17 @@
         <span id="header-ad-ready-dot" style="display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: 2px solid var(--surface, #1e293b); border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: white; box-shadow: 0 0 8px #38bdf8; animation: pulse-ad 1.5s infinite; cursor: pointer;" title="🎬 Có video nhận +1 VocaSpin!">🎬</span>
       </button>
 
-      <!-- Desktop Action Buttons (Hidden on mobile) -->
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-cloud-sync" style="align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #34d399;" onclick="handleManualSync()" title="Trực tuyến • Bấm để đồng bộ Cloud">
-        <span id="sync-icon">☁️</span> <span id="sync-text">Trực tuyến</span>
-      </button>
+      <!-- Desktop Action Buttons -->
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-profile" onclick="openProfileModal()" title="Hồ sơ & Tài khoản" style="align-items: center; gap: 4px;">
         <span id="user-avatar-icon" style="font-size: 16px;">👤</span> <span id="user-display-name" class="user-display-truncate">Khách</span>
       </button>
       <button class="btn btn-outline btn-sm desktop-only-action" id="btn-settings" onclick="openSettingsModal()" title="Cài đặt & Giao diện" style="align-items: center; gap: 4px;">
         ⚙️ <span>Cài đặt</span>
       </button>
-      <button class="btn btn-outline btn-sm desktop-only-action" id="btn-install-pwa" onclick="triggerPwaInstall()" style="display:inline-flex; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; font-weight: 700; align-items: center; gap: 4px;">
-        📲 <span>Cài App</span>
-      </button>
-      <button class="btn btn-outline btn-sm hide-on-mobile" onclick="exportAllBackup()">
-        <svg class="icon icon-sm"><use href="#i-download"/></svg> Sao lưu
-      </button>
 
-      <!-- Mobile 3-Dots Dropdown Menu (Visible only on mobile <= 768px) -->
+      <!-- 3-Dots Dropdown Menu (Visible on Desktop & Mobile) -->
       <div class="mobile-more-wrapper">
-        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: none; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text);">
+        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text); height: 32px;">
           ⋮
         </button>
 

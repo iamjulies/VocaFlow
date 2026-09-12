@@ -18,8 +18,8 @@
         <!-- INSTAGRAM HERO SECTION: AVATAR + 3 STATS COLUMNS -->
         <div class="ig-hero-row">
           <div class="ig-avatar-ring-container">
-            <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default;">
-              <div class="ig-avatar-inner">👤</div>
+            <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default; background: transparent; border: 2.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
+              <div class="ig-avatar-inner" style="border: none;">👤</div>
             </div>
           </div>
 
@@ -84,6 +84,9 @@
           <button type="button" class="ig-tab-btn" id="pub-tab-btn-stats" onclick="switchPubProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
           </button>
+          <button type="button" class="ig-tab-btn" id="pub-tab-btn-community" onclick="switchPubProfileTab('community')">
+            <span>💬</span> <span>Cộng Đồng</span>
+          </button>
         </div>
 
         <!-- TAB PANEL 1: DECKS LIST -->
@@ -116,6 +119,13 @@
               <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">📝 Tổng từ vựng</div>
               <div id="pub-view-stat-words-card" style="font-size: 16px; font-weight: 800; color: #34d399;">0 từ</div>
             </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 3: COMMUNITY POSTS (v0.10.9-51) -->
+        <div id="pub-tab-panel-community" style="display: none;">
+          <div id="pub-view-community-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding: 2px;">
+            <!-- Populated dynamically -->
           </div>
         </div>
 

@@ -1,3 +1,17 @@
 v0.10.9-51
-1. nhận ra app mình chưa có chân trang footer. thêm chân trang nè. mà chắc mà mini footer thôi có: bản quyền của iamjulies và VocaFlow, Version build, Nút Báo lỗi, link đến facebook (https://www.facebook.com/iamjulies.artist)
-2. 
+1. nhận ra app mình chưa có chân trang footer. thêm chân trang nè. mà chắc mà mini footer thôi có: bản quyền của iamjulies và VocaFlow, Version build (rồi bỏ cái version build trên logo góc trái đi), Nút Báo lỗi, link contact đến facebook (https://www.facebook.com/iamjulies.artist). footer có ở: homepage, trong các vocadeck
+2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 173138.png" chưa có tab cộng đồng khi soi prf ng khác kìa, phải có kể cả ngta kh đăng gì thì khi xem sẽ chỉ hiện là ngta chưa đăng gì vậy thui á
+3. thêm link trực tiếp cho các trang này:
+- Bảng Giá Nâng Cấp VocaVIP: https://iamjulies.github.io/VocaFlow/vocavip
+- FlowStreak Học Tập: https://iamjulies.github.io/VocaFlow/flowtreak
+- Trung Tâm Thông Báo:  https://iamjulies.github.io/VocaFlow/notifications
+- VocaMail - Nhắn Tin & Hỏi Đáp Admin: https://iamjulies.github.io/VocaFlow/vocamail
+- Báo Cáo Sự Cố & Đóng Góp Ý Kiến: https://iamjulies.github.io/VocaFlow/report
+- 🔔 Hàng Đợi Ôn Tập Hôm Nay: https://iamjulies.github.io/VocaFlow/queue
+- Thư Viện VocaLib: https://iamjulies.github.io/VocaFlow/vocalib
+- VocaDeck AI Studio: https://iamjulies.github.io/VocaFlow/vocadeckai
+- Cổng Quản Trị & Quản Lý Flower (Publisher Portal):  https://iamjulies.github.io/VocaFlow/dev -> lưu ý: link truy cập dành cho dev, nếu mở nhanh bằng đường link này thì phải nhập đúng mật khẩu (/GAMEMODE C hay /GAMEMODE 1...). ngoài ra thì nên tìm ra cách tăng tính bảo mật cho cái trang này. t còn thắc mắc là nếu dùng f12 rồi sửa này kia thì có hack được app kh? trả lời luôn nhé
+4. gom mấy nút này trên header vào trong nút 3 chấm đi (đối với cả máy rộng hay hẹp): vocavip, guide, cài app, sao lưu, nút đồng bộ.
+5. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 174056.png" hiện tại avatar khi xem prf của ngkhac bị có vòng tròn đỏ -> bỏ đi cho avt to hơn 
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
