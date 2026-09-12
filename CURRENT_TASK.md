@@ -1,52 +1,49 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-53 (Build 285)`  
+> **Phiên bản mục tiêu:** `v0.10.9-54 (Build 286)`  
 > **Cập nhật lần cuối:** 2026-09-12  
 > **Trạng thái:** 🚀 **HOÀN TẤT TRIỂN KHAI VÀ XUẤT BẢN ĐA NỀN TẢNG**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-53 Build 285)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-54 Build 286)
 
-- [x] **Chỉnh Sửa Bài Viết Toàn Diện & Modal Chuyên Nghiệp (Full Post Editing)**:
-  - Bổ sung Modal Chỉnh Sửa Toàn Diện (`modal-edit-community-post`): Cho phép tác giả cập nhật trọn vẹn nội dung văn bản rich text, thay đổi/xóa hình ảnh đính kèm (hỗ trợ nén Canvas), và chọn lại/gỡ bỏ danh hiệu thành tích đính kèm.
-  - Cơ chế lưu trữ thông minh: Đồng bộ dữ liệu cập nhật tức thì lên Firebase RTDB `/community_posts` và bộ nhớ cục bộ, tự động hiển thị nhãn "(đã chỉnh sửa)" minh bạch.
+- [x] **Mở Rộng Widescreen FlowStreak Modal & Biểu Đồ Kết Hợp 7 Ngày (7-Day Activity/Performance Combo Chart)**:
+  - Tái thiết kế Modal Lịch Dòng Chảy (`modal-flow-calendar.html`) với layout 2 cột Widescreen hiện đại (`max-width: 980px`).
+  - Cột trái: Lịch giọt nước FlowStreak, các chỉ số chuỗi ngày học, mua FlowFreeze bảo vệ chuỗi.
+  - Cột phải: Biểu đồ kết hợp thông minh (SVG Combo Chart) hiển thị hoạt động trong 7 ngày gần nhất:
+    + Cột (Bar Chart): Thời gian truy cập/học tập trong ngày từ 00h - 24h.
+    + Đường 1 (Line Chart Vàng Hổ Phách #fbbf24): Số lượng VoCoin kiếm được mỗi ngày.
+    + Đường 2 (Line Chart Xanh Lục Bảo #34d399): Điểm rèn luyện/học thuộc từ vựng mỗi ngày.
+    + Interactive Tooltip chi tiết khi hover/chạm và bộ 3 thẻ tóm tắt tổng thời gian, tổng VoCoin, tổng điểm rèn luyện.
 
-- [x] **Thanh Công Cụ Soạn Thảo Phong Phú (Rich Text Formatting Toolbar)**:
-  - Tích hợp thanh công cụ soạn thảo trực quan cho cả khung đăng bài mới và modal chỉnh sửa:
-    + Định dạng cơ bản: In đậm (**B**), In nghiêng (*I*), Gạch chân (<u>U</u>), Gạch ngang (<s>S</s>).
-    + Cỡ chữ tùy chỉnh: Nhỏ (12px), Vừa (14px), Lớn (16px), Tiêu đề (20px).
-    + Phông chữ: Inter / Hệ thống, Tròn trịa (Quicksand), Đơn cách (Monospace), Cổ điển (Serif).
-    + Bảng chọn màu sắc chữ đa dạng (Color Palette) với các tông màu chuẩn VocaFlow.
-    + Canh lề văn bản: Canh trái, Canh giữa, Canh phải.
-    + Bảng chọn Emoji cảm xúc nhanh & Nút Xóa định dạng.
-  - Bộ lọc và làm sạch mã an toàn `sanitizePostHtml()` chống XSS toàn diện mà vẫn giữ trọn vẹn kiểu dáng chữ viết.
+- [x] **Tích Hợp Biểu Đồ 7 Ngày Vào Tab Chỉ Số (📊 Chỉ Số)**:
+  - Hồ sơ cá nhân ME (`modal-profile.html`): Bổ sung tab button `📊 Chỉ Số` và panel `profile-tab-panel-stats` chứa biểu đồ 7 ngày và thẻ tóm tắt Ví VoCoin & Chuỗi ngày học.
+  - Hồ sơ công khai (`modal-public-profile.html`): Tích hợp biểu đồ hoạt động 7 ngày vào tab `📊 Chỉ Số` (`pub-tab-panel-stats`).
 
-- [x] **Định Dạng Thời Gian Phong Cách Facebook & Tooltip Ngày Giờ Chuẩn Xác**:
-  - Nâng cấp `formatTimeAgo()` theo chuẩn mạng xã hội: "Vừa xong", "X phút trước", "X giờ trước", "Hôm qua lúc HH:mm", "D tháng M lúc HH:mm".
-  - Bổ sung thuộc tính `title` với hàm `formatFullExactDateTime()`: Rê chuột hoặc chạm giữ vào thời gian sẽ hiển thị chính xác Thứ, Ngày Tháng Năm và Giờ Phút Giây.
+- [x] **Sửa Lỗi Điều Hướng & Ánh Xạ Profile Tác Giả Bài Viết (Community Feed)**:
+  - Khắc phục lỗi truyền tham số `post.authorUid` ở vị trí thứ 3 thành đúng vị trí thứ 2 trong `openPublicProfileByAuthor()`.
+  - Tăng cường thuật toán tra cứu ưu tiên `targetUid` hàng đầu từ Firebase Cloud RTDB, danh sách học sinh và `currentUser`, chấm dứt tình trạng tên tác giả tiếng Việt (như `sếch-xi bích`) bị chuyển đổi sai lệch thành username không tồn tại `@s_ch_xi_b_ch`.
 
-- [x] **Trình Phóng To Xem Ảnh Toàn Màn Hình (Image Lightbox Viewer Modal)**:
-  - Thiết kế Modal Xem Ảnh Độc Lập Chuyên Nghiệp (`modal-image-viewer`):
-    + Nhấp vào bất kỳ hình ảnh nào trong bài viết (trên Bảng tin chung hoặc Hồ sơ công khai) để mở trình xem ảnh độ nét cao.
-    + Bộ điều khiển mạnh mẽ: Phóng to (Zoom In), Thu nhỏ (Zoom Out), Xoay ảnh 90° (Rotate), Đặt lại kích thước (Reset), Tải ảnh về máy (Download), Sao chép liên kết ảnh (Copy Link).
-    + Hỗ trợ cuộn chuột (Mouse Wheel) để zoom mượt và kéo rê (Drag to Pan) khi đang phóng to ảnh.
+- [x] **Thanh Tìm Kiếm Nhanh VocaDecks Realtime (Realtime Search & Filter)**:
+  - Bổ sung thanh tìm kiếm `#deck-search-input` với icon kính lúp và nút xóa nhanh `✕` trên màn hình danh sách VocaDecks (`screen-decks.html`).
+  - Lọc tức thì theo tiêu đề, mô tả, tác giả, danh mục và thẻ phân loại (tags).
 
-- [x] **Đồng Bộ Chỉ Số Hồ Sơ Công Khai & Loại Bỏ Khung Rỗng Danh Hiệu**:
-  - Khắc phục triệt để lỗi bất đồng bộ ID DOM (`pub-view-stat-decks-num` và `pub-view-stat-decks`) khi xem hồ sơ công khai, đảm bảo số bộ từ và số từ chia sẻ luôn nhảy số chuẩn xác theo thời gian thực.
-  - Loại bỏ khung placeholder danh hiệu rỗng trên khung tạo bài viết khi chưa chọn đính kèm danh hiệu.
+- [x] **Huy Hiệu Trạng Thái Mạng Trên Header (Header Network Status Badge)**:
+  - Bổ sung badge trạng thái mạng `#header-network-status-badge` ngay cạnh logo thương hiệu VocaFlow.
+  - Tự động nhận diện và cập nhật realtime: 🟢 Đã đồng bộ / 🟡 Chế độ Offline / 🔄 Đang đồng bộ...
 
-- [x] **Bảo Đảm Tuyệt Đối Định Tuyến Deep Links Không Phân Biệt Hoa Thường**:
-  - Chuẩn hóa điều hướng trực tiếp cho các route: `/vocavip` (bảng giá VIP), `/flowtreak` & `/flowstreak` (dòng chảy học tập), `/notifications` (thông báo), `/vocamail` (hòm thư), `/report` & `/feedback` (báo lỗi).
-  - Xuất khẩu toàn bộ các hàm mở modal tương ứng ra phạm vi toàn cục `window.*` để router gọi an toàn mọi lúc mọi nơi.
+- [x] **Nút Liên Kết @iamjulies Ở Mini Footer & Huy Hiệu ⭐ VocaFlow Official**:
+  - Thêm nút liên kết `✨ @iamjulies` ở góc phải chân trang mini footer, dẫn trực tiếp tới `https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies`.
+  - Gắn huy hiệu `⭐ VocaFlow Official` và vương miện hoàng gia cho `@iamjulies` trên hồ sơ công khai như `@official`.
 
-- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-53 Build 285)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-53 (Build 285)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.9-53 (Build 285)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.9-53 (Build 285)`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-53'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-53 (Build 285)'`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.9-53`)
-  - `pubspec.yaml` (`version: 0.10.9+285`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-53`)
-  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-53_Windows_Portable.zip`, commit `v0.10.9-53`)
-  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-53 (Build 285)`)
+- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-54 Build 286)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-54 (Build 286)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.9-54 (Build 286)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.9-54 (Build 286)`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-54'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-54 (Build 286)'`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.9-54`)
+  - `pubspec.yaml` (`version: 0.10.9+286`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-54`)
+  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-54_Windows_Portable.zip`, commit `v0.10.9-54 (Build 286)`)
+  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-54 (Build 286)`)

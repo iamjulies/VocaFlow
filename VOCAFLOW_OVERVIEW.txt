@@ -1,4 +1,41 @@
 ================================================================================
+Phiên bản: v0.10.9-54 (Build 286) - FlowStreak Widescreen 2 Cột & Biểu Đồ Kết Hợp 7 Ngày (Combo Chart), Tích Hợp Chỉ Số Hồ Sơ, Thanh Tìm Kiếm Nhanh VocaDecks, Trạng Thái Mạng Header & Huy Hiệu @iamjulies Official
+================================================================================
+1. [Mở Rộng Widescreen FlowStreak Modal & Biểu Đồ Kết Hợp 7 Ngày (7-Day Activity/Performance Combo Chart)]:
+   - Tái thiết kế Modal Lịch Dòng Chảy (modal-flow-calendar.html) với bố cục Widescreen 2 Cột hiện đại (max-width: 980px):
+     + Cột trái: Lịch giọt nước FlowStreak, các chỉ số streak, mua FlowFreeze bảo vệ chuỗi ngày học.
+     + Cột phải: Biểu đồ kết hợp thông minh (SVG Combo Chart) hiển thị hoạt động trong 7 ngày gần nhất (với hôm nay là ngày cuối cùng):
+       * Cột (Bar Chart): Thời lượng sử dụng/học tập trong ngày từ 00h - 24h với gradient tím/chàm mượt mà.
+       * Đường 1 (Line Chart Vàng Hổ Phách #fbbf24): Số lượng VoCoin kiếm được mỗi ngày.
+       * Đường 2 (Line Chart Xanh Lục Bảo #34d399): Điểm rèn luyện/học thuộc từ vựng mỗi ngày.
+       * Tương tác Tooltip chi tiết khi rê chuột/chạm: Hiển thị ngày cụ thể, thời gian truy cập (giờ/phút), VoCoin thu được và điểm rèn luyện.
+       * Bộ 3 thẻ tóm tắt tổng quan: Tổng thời gian học, Tổng VoCoin thu được, Tổng điểm rèn luyện trong 7 ngày.
+
+2. [Tích Hợp Biểu Đồ 7 Ngày Vào Tab Chỉ Số (📊 Chỉ Số) Trong Hồ Sơ Cá Nhân & Công Khai]:
+   - Trang cá nhân ME (modal-profile.html): Bổ sung tab button 📊 Chỉ Số và panel profile-tab-panel-stats chứa biểu đồ 7 ngày cùng 2 thẻ tóm tắt Ví VoCoin & Chuỗi ngày học.
+   - Hồ sơ công khai (modal-public-profile.html): Tích hợp biểu đồ hoạt động 7 ngày vào tab 📊 Chỉ Số (pub-tab-panel-stats).
+
+3. [Sửa Lỗi Điều Hướng & Ánh Xạ Profile Tác Giả Bài Viết (Community Feed)]:
+   - Khắc phục lỗi truyền tham số post.authorUid ở vị trí thứ 3 trong các thẻ bài đăng và bình luận sang đúng vị trí thứ 2 của hàm openPublicProfileByAuthor().
+   - Tăng cường thuật toán tra cứu ưu tiên targetUid hàng đầu từ Firebase Cloud RTDB /users/{uid}, danh sách học sinh và currentUser, chấm dứt tình trạng tên tác giả tiếng Việt (như sếch-xi bích) bị chuyển đổi sai lệch thành username không tồn tại @s_ch_xi_b_ch.
+
+4. [Thanh Tìm Kiếm Nhanh VocaDecks Realtime (Realtime Search & Filter)]:
+   - Bổ sung thanh tìm kiếm #deck-search-input với icon kính lúp và nút xóa nhanh ✕ trên màn hình danh sách VocaDecks (screen-decks.html).
+   - Lọc tức thì theo tiêu đề bộ từ, mô tả, tên tác giả, danh mục và thẻ phân loại (tags).
+   - Hiển thị giao diện thông báo đẹp mắt kèm nút xóa bộ lọc khi không tìm thấy bộ từ phù hợp.
+
+5. [Huy Hiệu Trạng Thái Mạng Trên Header (Header Network Status Badge)]:
+   - Bổ sung badge trạng thái mạng #header-network-status-badge ngay cạnh logo thương hiệu VocaFlow.
+   - Tự động nhận diện và cập nhật realtime: 🟢 Đã đồng bộ / 🟡 Chế độ Offline / 🔄 Đang đồng bộ... khi mạng thay đổi hoặc khi đồng bộ Firebase Cloud Firestore.
+
+6. [Nút Liên Kết @iamjulies Ở Mini Footer & Huy Hiệu ⭐ VocaFlow Official]:
+   - Thêm nút liên kết ✨ @iamjulies ở góc phải chân trang mini footer, dẫn trực tiếp tới https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies.
+   - Gắn huy hiệu ⭐ VocaFlow Official và vương miện hoàng gia cho @iamjulies trên hồ sơ công khai như @official.
+
+7. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-54 Build 286)]:
+   - Đồng bộ hoàn tất 7 điểm chuẩn hóa phiên bản trên toàn bộ hệ sinh thái tệp tin.
+
+================================================================================
 Phiên bản: v0.10.9-53 (Build 285) - Chỉnh Sửa Bài Viết Toàn Diện, Thanh Công Cụ Soạn Thảo Phong Phú (Rich Text), Thời Gian Tương Đối Kiểu Facebook, Trình Xem Ảnh Phóng To (Lightbox Modal), Đồng Bộ Chỉ Số Hồ Sơ & Chuẩn Hóa Deep Link
 ================================================================================
 1. [Chỉnh Sửa Bài Viết Toàn Diện & Modal Chuyên Nghiệp (Full Post Editing)]:

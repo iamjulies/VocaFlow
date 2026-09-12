@@ -1,3 +1,10 @@
 v0.10.9-54
 1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 182706.png" mở rộng trang này theo chiều ngang và thêm 1 ô biểu đồ này bên phải còn ô lịch này vẫn giữ nguyên kích thước và để bên trái. biểu đồ đó là gì? là biểu đồ kết hợp cột + đường. với cột là thể hiện thời gian truy cập app trong ngày (từ 00h ngày hôm nay đến 00h ngày hôm sau ấy), 1 đường thể hiện số xu kiếm được trong ngày và 1 đường còn lại là thể hiện số điểm rèn luyện kiếm được (ý là điểm học thuộc bài ấy). nó sẽ thể hiện 7 ngày gần nhất với ngày hôm nay là ngày cuối cùng trong biểu đồ. t nói thế m hiểu chưa?
 2. thêm cái biểu đồ này vào tab chỉ số ở cả trang pub prf và trang me
+3. tên ở bài đăng "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 184039.png" kh đồng bộ với tên ở trang ME. và khi truy cập vào tên đó thì mở ra trang ng dùng sai "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 184206.png" chứng tỏ link đó dùng nickname chứ đang kh dùng username nên mới lỗi -> sửa
+4. Thanh tìm kiếm nhanh (Search & Filter): Khi số lượng deck tăng lên (đặc biệt trong Kho lưu trữ), cần có ô Search realtime theo tên deck hoặc tag thay vì chỉ có bộ lọc Sắp xếp.
+5. Badge trạng thái mạng: Một chấm tròn nhỏ ở góc báo trạng thái 🟢 Đã đồng bộ hoặc 🟡 Chế độ Offline giúp người dùng hoàn toàn yên tâm về dữ liệu trên thiết bị. (sory mày lấy ra header hộ t nha)
+6. thêm nút chứa link đến trang cá nhân của t (https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies) vào footer nữa để thu hút follower
+7. ở pub prf của @iamjulies cũng thêm cái "⭐ VocaFlow Official" nha, để giống với thằng @official (hihi dù gì cũng đúng mà)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+giải đáp thắc mắc: nếu hiệu tại user đổi username thì có lỗi liên kết nào xảy ra không, chẳng hạn kh map trúng bài đăng hay gì đó này nọ? hay là đùng uid cho nó an toàn??

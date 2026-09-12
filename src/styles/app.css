@@ -3833,5 +3833,364 @@
       filter: brightness(1.06);
     }
 
+    /* =========================================================================
+       FLOWSTREAK WIDESCREEN 2-COLUMN MODAL & 7-DAY COMBO CHART (v0.10.9-54)
+       ========================================================================= */
+    .flow-calendar-widescreen-modal {
+      max-width: 980px !important;
+      width: 95vw !important;
+      background: var(--surface) !important;
+      border: 1.5px solid rgba(6, 182, 212, 0.45) !important;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 0 35px rgba(6, 182, 212, 0.25) !important;
+    }
+
+    .flow-calendar-cols {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      flex-direction: row;
+    }
+
+    .flow-calendar-col-left {
+      flex: 0 0 440px;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flow-calendar-col-right {
+      flex: 1 1 440px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-elevated, rgba(15, 23, 42, 0.5));
+      border: 1px solid var(--border, rgba(51, 65, 85, 0.6));
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .flow-calendar-cols {
+        flex-direction: column;
+      }
+      .flow-calendar-col-left,
+      .flow-calendar-col-right {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    /* 7-Day Performance Combo Chart Component */
+    .voca-combo-chart-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .voca-combo-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .voca-chart-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .voca-chart-kpi-item {
+      background: var(--surface, #1e293b);
+      border: 1px solid var(--border, #334155);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .voca-chart-kpi-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted, #94a3b8);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .voca-chart-kpi-val {
+      font-size: 15px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .voca-combo-chart-svg-wrap {
+      position: relative;
+      width: 100%;
+      background: var(--surface, #0f172a);
+      border: 1px solid var(--border, #334155);
+      border-radius: 12px;
+      padding: 10px 6px 4px 6px;
+      overflow: visible;
+    }
+
+    .voca-combo-chart-svg {
+      width: 100%;
+      height: 180px;
+      overflow: visible;
+    }
+
+    .voca-chart-legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .voca-chart-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .voca-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .voca-legend-dot-bar {
+      background: linear-gradient(180deg, #38bdf8, #0284c7);
+    }
+
+    .voca-legend-dot-coins {
+      background: #fbbf24;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+    }
+
+    .voca-legend-dot-points {
+      background: #34d399;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(52, 211, 153, 0.6);
+    }
+
+    /* SVG Elements */
+    .voca-svg-grid-line {
+      stroke: rgba(255, 255, 255, 0.07);
+      stroke-dasharray: 4 4;
+      stroke-width: 1;
+    }
+
+    .voca-svg-axis-text {
+      font-size: 9.5px;
+      font-weight: 600;
+      fill: var(--text-muted, #94a3b8);
+      text-anchor: middle;
+      font-family: inherit;
+    }
+
+    .voca-svg-bar-col {
+      fill: url(#vocaBarGradient);
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .voca-svg-bar-col:hover {
+      opacity: 0.85;
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5));
+    }
+
+    .voca-svg-line-coins {
+      fill: none;
+      stroke: #fbbf24;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 6px rgba(251, 191, 36, 0.45));
+    }
+
+    .voca-svg-line-points {
+      fill: none;
+      stroke: #34d399;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 6px rgba(52, 211, 153, 0.45));
+    }
+
+    .voca-svg-point-coins {
+      fill: #fbbf24;
+      stroke: var(--surface, #1e293b);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: transform 0.15s, r 0.15s;
+    }
+
+    .voca-svg-point-coins:hover {
+      r: 6;
+      filter: drop-shadow(0 0 8px #fbbf24);
+    }
+
+    .voca-svg-point-points {
+      fill: #34d399;
+      stroke: var(--surface, #1e293b);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: transform 0.15s, r 0.15s;
+    }
+
+    .voca-svg-point-points:hover {
+      r: 6;
+      filter: drop-shadow(0 0 8px #34d399);
+    }
+
+    /* Floating Tooltip */
+    .voca-chart-tooltip-box {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      backdrop-filter: blur(8px);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: #fff;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+
+    /* Header Network Status Badge */
+    .header-network-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .header-network-badge.net-badge-online {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+
+    .header-network-badge.net-badge-online:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: rgba(16, 185, 129, 0.6);
+    }
+
+    .header-network-badge.net-badge-offline {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+
+    .header-network-badge.net-badge-syncing {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+    }
+
+    .header-network-badge .net-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .net-badge-online .net-badge-dot {
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .net-badge-offline .net-badge-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 6px #f59e0b;
+    }
+
+    .net-badge-syncing .net-badge-dot {
+      background: #818cf8;
+      box-shadow: 0 0 6px #818cf8;
+      animation: pulse 1s infinite;
+    }
+
+    /* Deck Realtime Search Box */
+    .deck-search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 180px;
+      max-width: 360px;
+    }
+
+    .deck-search-input {
+      width: 100%;
+      background: var(--surface-elevated, #334155);
+      border: 1px solid var(--border, #475569);
+      border-radius: 10px;
+      padding: 7px 32px 7px 34px;
+      font-size: 13px;
+      color: var(--text, #f8fafc);
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .deck-search-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .deck-search-icon {
+      position: absolute;
+      left: 10px;
+      font-size: 14px;
+      color: var(--text-muted, #94a3b8);
+      pointer-events: none;
+    }
+
+    .deck-search-clear-btn {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted, #94a3b8);
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .deck-search-clear-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+
 
 

@@ -150,6 +150,9 @@
           <button type="button" class="ig-tab-btn active" id="profile-tab-btn-decks" onclick="switchProfileTab('decks')">
             <span>📑</span> <span>Tủ Từ Của Tôi</span>
           </button>
+          <button type="button" class="ig-tab-btn" id="profile-tab-btn-stats" onclick="switchProfileTab('stats')">
+            <span>📊</span> <span>Chỉ Số</span>
+          </button>
           <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')">
             <span>🏆</span> <span>Thành Tựu</span>
           </button>
@@ -165,6 +168,23 @@
         <div id="profile-tab-panel-decks">
           <div id="profile-decks-list-container" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Populated via renderProfileDecksList() -->
+          </div>
+        </div>
+
+        <!-- TAB PANEL 2: STATS & 7-DAY COMBO CHART (v0.10.9-54) -->
+        <div id="profile-tab-panel-stats" style="display: none;">
+          <div id="me-profile-7day-chart-container" style="margin-bottom: 14px;">
+            <!-- Rendered dynamically via render7DayPerformanceChart('me-profile-7day-chart-container') -->
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
+              <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">💰 Ví VoCoin</div>
+              <div id="me-view-stat-points-card" style="font-size: 16px; font-weight: 800; color: #fbbf24;">0 VoCoin</div>
+            </div>
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
+              <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">🌊 FlowStreak</div>
+              <div id="me-view-stat-flow-card" style="font-size: 16px; font-weight: 800; color: #22d3ee;">0 Ngày</div>
+            </div>
           </div>
         </div>
 

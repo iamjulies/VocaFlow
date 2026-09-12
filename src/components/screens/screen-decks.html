@@ -20,7 +20,7 @@
       <!-- SPACED REPETITION DAILY REVIEW BANNER (v0.0.10.0) -->
       <div id="daily-review-banner-container" style="margin-bottom: 18px;"></div>
 
-      <!-- DECK FILTER TABS WITH LIVE SORT SELECTOR (v0.0.8.14) -->
+      <!-- DECK FILTER TABS WITH LIVE SEARCH & SORT SELECTOR (v0.10.9-54) -->
       <div class="deck-tabs-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
         <div class="deck-tabs" style="margin-bottom: 0;">
           <button class="deck-tab active" id="tab-active-decks" onclick="setDeckTab('active')">
@@ -29,6 +29,13 @@
           <button class="deck-tab" id="tab-archived-decks" onclick="setDeckTab('archived')">
             <svg class="icon icon-sm"><use href="#i-archive"/></svg> <span>Kho Lưu Trữ</span> (<span id="count-archived-decks">0</span>)
           </button>
+        </div>
+
+        <!-- REALTIME DECK SEARCH & FILTER (v0.10.9-54) -->
+        <div class="deck-search-box">
+          <span class="deck-search-icon">🔍</span>
+          <input type="text" id="deck-search-input" class="deck-search-input" placeholder="Tìm nhanh VocaDeck theo tên, tag, tác giả..." oninput="handleDeckSearchInput(this.value)" autocomplete="off">
+          <button type="button" id="deck-search-clear-btn" class="deck-search-clear-btn" onclick="clearDeckSearch()" title="Xóa tìm kiếm">✕</button>
         </div>
 
         <!-- SORT CONTROLS -->
@@ -61,15 +68,19 @@
              data-ad-slot="4211562925"></ins>
       </div>
 
-      <!-- MINI FOOTER (v0.10.9-51) -->
+      <!-- MINI FOOTER (v0.10.9-54) -->
       <footer class="vocaflow-mini-footer">
         <div class="mini-footer-content">
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-53 (Build 285)</span>
+            <span class="mini-footer-version">v0.10.9-54 (Build 286)</span>
           </div>
           <div class="mini-footer-right">
+            <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
+              <span>✨</span> <span>@iamjulies</span>
+            </a>
+            <span class="mini-footer-divider">•</span>
             <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
               <span>🐞</span> <span>Báo Lỗi</span>
             </button>

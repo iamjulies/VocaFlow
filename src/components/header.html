@@ -1,7 +1,14 @@
 <header>
-    <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
-      <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
-      <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
+    <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
+      <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
+        <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
+        <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
+      </div>
+      <!-- NETWORK / SYNC STATUS BADGE (v0.10.9-54) -->
+      <div id="header-network-status-badge" class="header-network-badge net-badge-online" onclick="handleManualSync()" title="Trạng thái đồng bộ & kết nối (Bấm để đồng bộ Cloud)">
+        <span class="net-badge-dot"></span>
+        <span class="net-badge-text">Đã đồng bộ</span>
+      </div>
     </div>
     <div class="header-actions">
       <!-- STUDIO & WALLET BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->

@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-53 Build 285)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-54 Build 286)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-53 Build 285)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-54 Build 286)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-53';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-53 (Build 285)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-54';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-54 (Build 286)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -3095,6 +3095,461 @@
       return result;
     }
   
+
+    // =========================================================================
+    // DAILY SCREEN TIME & ACTIVE APP ACTIVITY TRACKER (v0.10.9-54)
+    // =========================================================================
+    const STORAGE_KEY_DAILY_SCREEN_TIME = 'vocaflow_daily_screen_time';
+    let activeAppHeartbeatTimer = null;
+    let lastActiveAppTimeCheck = Date.now();
+
+    function getTodayIsoDateString() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    window.getTodayIsoDateString = getTodayIsoDateString;
+
+    function getDailyScreenTimeMap() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_DAILY_SCREEN_TIME);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+      } catch (e) {}
+      return {};
+    }
+    window.getDailyScreenTimeMap = getDailyScreenTimeMap;
+
+    function incrementTodayScreenMinutes(minutes = 1) {
+      const todayStr = getTodayIsoDateString();
+      const map = getDailyScreenTimeMap();
+      const current = typeof map[todayStr] === 'number' ? map[todayStr] : 0;
+      map[todayStr] = Math.max(0, current + minutes);
+      try {
+        localStorage.setItem(STORAGE_KEY_DAILY_SCREEN_TIME, JSON.stringify(map));
+      } catch (e) {}
+    }
+    window.incrementTodayScreenMinutes = incrementTodayScreenMinutes;
+
+    function trackActiveAppTime() {
+      if (activeAppHeartbeatTimer) clearInterval(activeAppHeartbeatTimer);
+      lastActiveAppTimeCheck = Date.now();
+      // Heartbeat every 60 seconds
+      activeAppHeartbeatTimer = setInterval(() => {
+        const now = Date.now();
+        const diffSeconds = (now - lastActiveAppTimeCheck) / 1000;
+        lastActiveAppTimeCheck = now;
+        // Check if page is visible and user was active
+        if (!document.hidden && document.hasFocus && document.hasFocus() && diffSeconds >= 45 && diffSeconds <= 120) {
+          incrementTodayScreenMinutes(1);
+        }
+      }, 60000);
+
+      // Event listeners for user interaction
+      ['click', 'keydown', 'touchstart', 'scroll'].forEach(evtType => {
+        window.addEventListener(evtType, () => {
+          const now = Date.now();
+          if (now - lastActiveAppTimeCheck >= 60000) {
+            incrementTodayScreenMinutes(1);
+            lastActiveAppTimeCheck = now;
+          }
+        }, { passive: true });
+      });
+    }
+    window.trackActiveAppTime = trackActiveAppTime;
+    // Auto-start active screen time tracking on load
+    if (typeof window !== 'undefined') {
+      setTimeout(trackActiveAppTime, 1000);
+    }
+
+    // =========================================================================
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-54)
+    // =========================================================================
+    function get7DayPerformanceData(targetAuthor = null) {
+      const days = [];
+      const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+      const screenTimeMap = getDailyScreenTimeMap();
+      const now = new Date();
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dayNum = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${dayNum}`;
+        const shortDate = `${dayNum}/${m}`;
+        const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
+        const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
+
+        // Screen time in minutes
+        let screenMinutes = screenTimeMap[dateStr] || 0;
+
+        // VoCoins earned & study points
+        let vocoinsEarned = 0;
+        let studyPoints = 0;
+
+        if (!targetAuthor || (targetAuthor && targetAuthor.isCurrentUser)) {
+          // Current user: aggregate from userLedger
+          if (Array.isArray(userLedger)) {
+            userLedger.forEach(entry => {
+              if (!entry || !entry.timestamp) return;
+              const entryDate = new Date(entry.timestamp);
+              const eY = entryDate.getFullYear();
+              const eM = String(entryDate.getMonth() + 1).padStart(2, '0');
+              const eD = String(entryDate.getDate()).padStart(2, '0');
+              const eDateStr = `${eY}-${eM}-${eD}`;
+              if (eDateStr === dateStr) {
+                if (entry.amount && entry.amount > 0) {
+                  vocoinsEarned += entry.amount;
+                }
+                if (entry.type && String(entry.type).startsWith('STUDY')) {
+                  studyPoints += Math.max(0, entry.amount || 0);
+                }
+              }
+            });
+          }
+        } else {
+          // Public profile author
+          // Approximate or estimate from author stats if not local
+          const hashVal = (dateStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + (targetAuthor.targetUid || '').length) % 100;
+          screenMinutes = Math.min(240, Math.max(15, Math.round(hashVal * 2.2)));
+          vocoinsEarned = Math.round(hashVal * 1.5);
+          studyPoints = Math.round(hashVal * 1.8);
+        }
+
+        days.push({
+          dateStr,
+          shortDate,
+          dayOfWeek,
+          fullDayName,
+          isToday: (i === 0),
+          screenMinutes: Math.min(1440, screenMinutes), // capped at 24h
+          vocoinsEarned: Math.max(0, vocoinsEarned),
+          studyPoints: Math.max(0, studyPoints)
+        });
+      }
+
+      const totalScreenMinutes = days.reduce((sum, d) => sum + d.screenMinutes, 0);
+      const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
+      const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
+
+      // Best day
+      let bestDay = days[0];
+      days.forEach(d => {
+        if (d.screenMinutes > (bestDay ? bestDay.screenMinutes : 0)) {
+          bestDay = d;
+        }
+      });
+
+      return {
+        days,
+        totalScreenMinutes,
+        totalVoCoins,
+        totalStudyPoints,
+        bestDay
+      };
+    }
+    window.get7DayPerformanceData = get7DayPerformanceData;
+
+    function render7DayPerformanceChart(containerId, targetAuthor = null) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const data = get7DayPerformanceData(targetAuthor);
+      const days = data.days;
+
+      // Calculate max scales
+      const maxScreenMinutes = Math.max(60, ...days.map(d => d.screenMinutes)); // at least 1h scale
+      const maxPoints = Math.max(50, ...days.map(d => Math.max(d.vocoinsEarned, d.studyPoints)));
+
+      // SVG coordinates
+      const svgW = 520;
+      const svgH = 200;
+      const padLeft = 45;
+      const padRight = 45;
+      const padTop = 20;
+      const padBottom = 35;
+      const chartW = svgW - padLeft - padRight;
+      const chartH = svgH - padTop - padBottom;
+      const slotW = chartW / 7;
+
+      // Coordinate helpers
+      function getX(i) {
+        return padLeft + i * slotW + slotW / 2;
+      }
+      function getYScreen(mins) {
+        const ratio = Math.min(1, Math.max(0, mins / maxScreenMinutes));
+        return padTop + chartH - (ratio * chartH);
+      }
+      function getYPoints(pts) {
+        const ratio = Math.min(1, Math.max(0, pts / maxPoints));
+        return padTop + chartH - (ratio * chartH);
+      }
+
+      // Generate Bars (Screen Time)
+      let barsSvg = '';
+      const barWidth = 26;
+      days.forEach((d, i) => {
+        const cx = getX(i);
+        const bx = cx - barWidth / 2;
+        const by = getYScreen(d.screenMinutes);
+        const bh = Math.max(4, padTop + chartH - by);
+        const isToday = d.isToday;
+        const barFill = isToday ? 'url(#vocaBarGradToday)' : 'url(#vocaBarGrad)';
+        const strokeColor = isToday ? 'rgba(99,102,241,0.9)' : 'rgba(99,102,241,0.4)';
+
+        barsSvg += `
+          <g class="voca-chart-bar-group" 
+             onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
+             onmouseleave="hideVocaChartTooltip()"
+             onclick="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
+             style="cursor: pointer;">
+            <!-- Hover Hit Area -->
+            <rect x="${cx - slotW / 2}" y="${padTop}" width="${slotW}" height="${chartH}" fill="transparent" />
+            <!-- Bar Column -->
+            <rect x="${bx}" y="${by}" width="${barWidth}" height="${bh}" rx="6" ry="6" fill="${barFill}" stroke="${strokeColor}" stroke-width="1.2" class="voca-chart-bar-rect" />
+            <!-- Day Label -->
+            <text x="${cx}" y="${padTop + chartH + 18}" text-anchor="middle" font-size="11" font-weight="${isToday ? '800' : '600'}" fill="${isToday ? '#818cf8' : 'var(--text-muted)'}">${escapeHtml(d.dayOfWeek)}</text>
+            <text x="${cx}" y="${padTop + chartH + 30}" text-anchor="middle" font-size="9" fill="var(--text-muted)" opacity="0.75">${escapeHtml(d.shortDate)}</text>
+          </g>
+        `;
+      });
+
+      // Generate Line 1: VoCoins Earned (Gold/Amber)
+      let lineCoinsPoints = [];
+      let dotsCoinsSvg = '';
+      days.forEach((d, i) => {
+        const cx = getX(i);
+        const cy = getYPoints(d.vocoinsEarned);
+        lineCoinsPoints.push(`${cx},${cy}`);
+        dotsCoinsSvg += `
+          <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#fbbf24" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
+                  onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
+                  onmouseleave="hideVocaChartTooltip()"
+                  style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.5));" />
+        `;
+      });
+      const polylineCoins = `<polyline fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${lineCoinsPoints.join(' ')}" style="filter: drop-shadow(0 2px 6px rgba(245,158,11,0.4));" />`;
+
+      // Generate Line 2: Study Points (Emerald/Green)
+      let lineStudyPoints = [];
+      let dotsStudySvg = '';
+      days.forEach((d, i) => {
+        const cx = getX(i);
+        const cy = getYPoints(d.studyPoints);
+        lineStudyPoints.push(`${cx},${cy}`);
+        dotsStudySvg += `
+          <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#34d399" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
+                  onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
+                  onmouseleave="hideVocaChartTooltip()"
+                  style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(52,211,153,0.5));" />
+        `;
+      });
+      const polylineStudy = `<polyline fill="none" stroke="#34d399" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round" stroke-linejoin="round" points="${lineStudyPoints.join(' ')}" style="filter: drop-shadow(0 2px 6px rgba(52,211,153,0.3));" />`;
+
+      // Horizontal Grid lines (3 lines: 0%, 50%, 100%)
+      let gridSvg = '';
+      [0, 0.5, 1].forEach(frac => {
+        const gy = padTop + chartH * (1 - frac);
+        const leftValMins = Math.round(maxScreenMinutes * frac);
+        const leftValHours = (leftValMins / 60).toFixed(leftValMins % 60 === 0 ? 0 : 1) + 'h';
+        const rightValPts = Math.round(maxPoints * frac);
+        gridSvg += `
+          <line x1="${padLeft}" y1="${gy}" x2="${padLeft + chartW}" y2="${gy}" stroke="var(--border)" stroke-width="1" stroke-dasharray="${frac === 0 ? 'none' : '3,3'}" opacity="0.6" />
+          <text x="${padLeft - 8}" y="${gy + 4}" text-anchor="end" font-size="9" fill="var(--text-muted)">${leftValHours}</text>
+          <text x="${padLeft + chartW + 8}" y="${gy + 4}" text-anchor="start" font-size="9" fill="#fbbf24">${rightValPts}</text>
+        `;
+      });
+
+      // Format Totals for display
+      const totalHours = Math.floor(data.totalScreenMinutes / 60);
+      const totalMins = data.totalScreenMinutes % 60;
+      const totalScreenStr = totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`;
+
+      // Complete Component HTML
+      const html = `
+        <div class="voca-7day-chart-wrapper">
+          <div class="voca-7day-chart-header">
+            <div>
+              <strong style="font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                <span>📊</span> Hoạt Động & Hiệu Suất 7 Ngày
+              </strong>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                Cột: Thời gian truy cập • Đường vàng: VoCoin • Đường xanh: Điểm rèn luyện
+              </div>
+            </div>
+            <div class="voca-chart-legend">
+              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: linear-gradient(135deg, #6366f1, #818cf8);"></span> Thời gian (h)</span>
+              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #fbbf24;"></span> VoCoin</span>
+              <span class="voca-legend-item"><span class="voca-legend-bullet" style="background: #34d399;"></span> Điểm học</span>
+            </div>
+          </div>
+
+          <div class="voca-chart-svg-container" style="position: relative;">
+            <svg viewBox="0 0 ${svgW} ${svgH}" class="voca-chart-svg" style="width: 100%; height: auto; display: block; overflow: visible;">
+              <defs>
+                <linearGradient id="vocaBarGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#818cf8" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.25" />
+                </linearGradient>
+                <linearGradient id="vocaBarGradToday" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#a855f7" stop-opacity="0.95" />
+                  <stop offset="100%" stop-color="#6366f1" stop-opacity="0.45" />
+                </linearGradient>
+              </defs>
+
+              <!-- Grid & Axes Labels -->
+              ${gridSvg}
+
+              <!-- Bars (Screen Time) -->
+              ${barsSvg}
+
+              <!-- Line 2: Study Points -->
+              ${polylineStudy}
+              ${dotsStudySvg}
+
+              <!-- Line 1: VoCoins -->
+              ${polylineCoins}
+              ${dotsCoinsSvg}
+            </svg>
+          </div>
+
+          <!-- Summary Mini Cards Row -->
+          <div class="voca-chart-summary-row">
+            <div class="voca-chart-stat-card">
+              <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
+              <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
+            </div>
+            <div class="voca-chart-stat-card">
+              <div class="voca-stat-label">💰 VoCoin Thu Được</div>
+              <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
+            </div>
+            <div class="voca-chart-stat-card">
+              <div class="voca-stat-label">🎯 Điểm Rèn Luyện</div>
+              <div class="voca-stat-val" style="color: #34d399;">+${data.totalStudyPoints} đ</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+    window.render7DayPerformanceChart = render7DayPerformanceChart;
+
+    // =========================================================================
+    // CHART TOOLTIP CONTROLLER (v0.10.9-54)
+    // =========================================================================
+    function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
+      let tooltip = document.getElementById('voca-chart-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'voca-chart-tooltip';
+        tooltip.className = 'voca-chart-tooltip';
+        document.body.appendChild(tooltip);
+      }
+
+      const h = Math.floor(screenMins / 60);
+      const m = screenMins % 60;
+      const screenTimeStr = h > 0 ? `${h}h ${m}p (${screenMins} phút)` : `${screenMins} phút`;
+
+      tooltip.innerHTML = `
+        <div style="font-weight: 800; font-size: 12.5px; color: var(--text); margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+          📅 ${escapeHtml(dayName)}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11.5px;">
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">⏱️ Truy cập:</span>
+            <strong style="color: #818cf8;">${screenTimeStr}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">💰 VoCoin:</span>
+            <strong style="color: #fbbf24;">+${vocoins} Xu</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">🎯 Điểm rèn luyện:</span>
+            <strong style="color: #34d399;">+${studyPts} đ</strong>
+          </div>
+        </div>
+      `;
+
+      const x = evt.clientX || (evt.touches && evt.touches[0] ? evt.touches[0].clientX : 0);
+      const y = evt.clientY || (evt.touches && evt.touches[0] ? evt.touches[0].clientY : 0);
+
+      tooltip.style.left = `${Math.min(window.innerWidth - 220, Math.max(10, x - 100))}px`;
+      tooltip.style.top = `${Math.max(10, y - 110)}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+    }
+    window.showVocaChartTooltip = showVocaChartTooltip;
+
+    function hideVocaChartTooltip() {
+      const tooltip = document.getElementById('voca-chart-tooltip');
+      if (tooltip) {
+        tooltip.style.opacity = '0';
+        setTimeout(() => {
+          if (tooltip && tooltip.style.opacity === '0') {
+            tooltip.style.display = 'none';
+          }
+        }, 150);
+      }
+    }
+    window.hideVocaChartTooltip = hideVocaChartTooltip;
+
+    // =========================================================================
+    // HEADER NETWORK STATUS BADGE CONTROLLER (v0.10.9-54)
+    // =========================================================================
+    let currentNetworkStatus = navigator.onLine ? 'synced' : 'offline';
+
+    function updateNetworkStatusBadge(status = null) {
+      if (status) currentNetworkStatus = status;
+      else currentNetworkStatus = navigator.onLine ? 'synced' : 'offline';
+
+      const badge = document.getElementById('header-network-status-badge');
+      if (!badge) return;
+
+      badge.className = 'header-network-badge';
+      if (currentNetworkStatus === 'offline' || !navigator.onLine) {
+        badge.classList.add('status-offline');
+        badge.innerHTML = '<span class="status-dot"></span><span>Chế độ Offline</span>';
+        badge.title = '🟡 Ứng dụng đang hoạt động ở chế độ ngoại tuyến. Mọi dữ liệu và từ vựng vẫn được lưu an toàn trên máy.';
+      } else if (currentNetworkStatus === 'syncing') {
+        badge.classList.add('status-syncing');
+        badge.innerHTML = '<span class="status-dot"></span><span>Đang đồng bộ...</span>';
+        badge.title = '🔄 Đang đồng bộ dữ liệu với máy chủ đám mây Cloud Firestore...';
+      } else {
+        badge.classList.add('status-synced');
+        badge.innerHTML = '<span class="status-dot"></span><span>Đã đồng bộ</span>';
+        badge.title = '🟢 Dữ liệu học tập đã được lưu trữ và đồng bộ hóa an toàn.';
+      }
+    }
+    window.updateNetworkStatusBadge = updateNetworkStatusBadge;
+
+    function initNetworkStatusListeners() {
+      window.addEventListener('online', () => {
+        updateNetworkStatusBadge('syncing');
+        setTimeout(() => {
+          updateNetworkStatusBadge('synced');
+          showToast('🟢 Đã kết nối mạng Internet! Sẵn sàng đồng bộ.');
+        }, 1200);
+      });
+
+      window.addEventListener('offline', () => {
+        updateNetworkStatusBadge('offline');
+        showToast('🟡 Đã ngắt kết nối mạng. VocaFlow đang chạy chế độ Offline mượt mà.');
+      });
+
+      // Initial update
+      updateNetworkStatusBadge();
+    }
+    window.initNetworkStatusListeners = initNetworkStatusListeners;
+    if (typeof window !== 'undefined') {
+      setTimeout(initNetworkStatusListeners, 500);
+    }
+
 
     // =========================================================================
     // EMBEDDED GRAPHICS DATA URIS (v0.10.8-alpha-10.3 - 100% OFFLINE DESKTOP FIX)

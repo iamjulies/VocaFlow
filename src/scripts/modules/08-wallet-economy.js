@@ -594,6 +594,9 @@
       }
       currentFlowCalendarMonthOffset = 0;
       renderFlowCalendar();
+      if (typeof render7DayPerformanceChart === 'function') {
+        render7DayPerformanceChart('flow-calendar-7day-chart-container');
+      }
       openModal('modal-flow-calendar');
     }
     window.openFlowCalendarModal = openFlowCalendarModal;

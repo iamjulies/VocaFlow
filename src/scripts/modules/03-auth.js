@@ -4640,10 +4640,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const authorVipTier = getAuthorVipTier(targetUid, resolvedName);
         const authorVipExpiresAt = getAuthorVipExpiresAt(targetUid, resolvedName);
         const cleanResolvedName = stripVipAffixes(resolvedName);
+        const isIamJulies = (authorClean === 'iamjulies' || (resolvedHandle && resolvedHandle.toLowerCase() === 'iamjulies') || (targetUid && targetUid.toLowerCase() === 'iamjulies'));
 
         if (nameEl) {
           if (isVocaFlowOfficial) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+          } else if (isIamJulies) {
+            nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(cleanResolvedName)}</span><span style="font-size: 1.25em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
           } else if (isAuthorVip) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
           } else {
@@ -4652,7 +4655,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
         if (avEl) {
           avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
-          if (isVocaFlowOfficial) {
+          if (isVocaFlowOfficial || isIamJulies) {
             avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
             avEl.style.borderColor = '#c084fc';
           } else if (isAuthorVip) {
@@ -4666,6 +4669,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (pubSubBadgeEl) {
           if (isVocaFlowOfficial) {
             pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
+            pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
+            pubSubBadgeEl.style.color = '#fbbf24';
+            pubSubBadgeEl.style.fontWeight = '800';
+            pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
+          } else if (isIamJulies) {
+            pubSubBadgeEl.innerHTML = '👑 Nhà Sáng Lập & Phát Triển';
             pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
             pubSubBadgeEl.style.color = '#fbbf24';
             pubSubBadgeEl.style.fontWeight = '800';
@@ -4686,7 +4695,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
         const pubBadgeEl = document.getElementById('pub-view-badge');
         if (pubBadgeEl) {
-          if (isVocaFlowOfficial) {
+          if (isVocaFlowOfficial || isIamJulies) {
             pubBadgeEl.innerHTML = '⭐ VocaFlow Official';
             pubBadgeEl.style.background = 'linear-gradient(135deg, #6366f1, #a855f7, #ec4899)';
             pubBadgeEl.style.color = '#ffffff';
@@ -4860,7 +4869,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.renderProfileDecksList = renderProfileDecksList;
 
     function switchProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'achievements', 'community', 'cloud'];
+      const tabs = ['decks', 'stats', 'achievements', 'community', 'cloud'];
       tabs.forEach(t => {
         const btn = document.getElementById(`profile-tab-btn-${t}`);
         const panel = document.getElementById(`profile-tab-panel-${t}`);
@@ -4874,6 +4883,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       });
       if (tabName === 'decks') {
         renderProfileDecksList();
+      } else if (tabName === 'stats') {
+        if (typeof render7DayPerformanceChart === 'function') {
+          render7DayPerformanceChart('me-profile-7day-chart-container');
+        }
+        const pointsCardEl = document.getElementById('me-view-stat-points-card');
+        const flowCardEl = document.getElementById('me-view-stat-flow-card');
+        if (pointsCardEl && typeof getUserPoints === 'function') {
+          pointsCardEl.textContent = `${formatNumber(getUserPoints())} VoCoin`;
+        }
+        if (flowCardEl && typeof calculateCurrentFlow === 'function') {
+          flowCardEl.textContent = `${calculateCurrentFlow().currentFlow} Ngày`;
+        }
       } else if (tabName === 'community') {
         fetchAndRenderCommunityFeed();
       }
@@ -5914,7 +5935,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
             <!-- AUTHOR HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '', '${post.authorUid}')">
+              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '${post.authorUid}')">
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                   ${renderAvatarHtml(authorAvatar, 40, 16)}
                 </div>
@@ -6002,7 +6023,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
@@ -6315,7 +6336,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           panel.style.display = (t === tabName) ? 'block' : 'none';
         }
       });
-      if (tabName === 'community') {
+      if (tabName === 'stats') {
+        if (typeof render7DayPerformanceChart === 'function') {
+          render7DayPerformanceChart('pub-profile-7day-chart-container', currentPublicProfileAuthor);
+        }
+      } else if (tabName === 'community') {
         renderPubProfileCommunityPosts();
       }
     }
@@ -6482,7 +6507,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
                         <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>

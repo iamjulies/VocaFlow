@@ -844,6 +844,28 @@
       }
     }
 
+    let deckSearchQuery = '';
+
+    function handleDeckSearchInput(val) {
+      deckSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('btn-clear-deck-search');
+      if (clearBtn) {
+        clearBtn.style.display = deckSearchQuery ? 'inline-flex' : 'none';
+      }
+      renderDecks();
+    }
+    window.handleDeckSearchInput = handleDeckSearchInput;
+
+    function clearDeckSearch() {
+      deckSearchQuery = '';
+      const input = document.getElementById('deck-search-input');
+      if (input) input.value = '';
+      const clearBtn = document.getElementById('btn-clear-deck-search');
+      if (clearBtn) clearBtn.style.display = 'none';
+      renderDecks();
+    }
+    window.clearDeckSearch = clearDeckSearch;
+
     function renderDecks() {
       // Auto-heal orphan words before rendering (v0.10.8-alpha-24)
       autoHealOrphanWords(false);
@@ -917,7 +939,37 @@
         displayDecks = sortDeckList(archivedDecks);
       }
 
+      if (deckSearchQuery) {
+        displayDecks = displayDecks.filter(d => {
+          const t = (d.title || '').toLowerCase();
+          const desc = (d.description || '').toLowerCase();
+          const auth = (d.author || '').toLowerCase();
+          const cat = (d.category || '').toLowerCase();
+          const tags = Array.isArray(d.tags) ? d.tags.map(x => String(x).toLowerCase()) : [];
+          return t.includes(deckSearchQuery) || 
+                 desc.includes(deckSearchQuery) || 
+                 auth.includes(deckSearchQuery) || 
+                 cat.includes(deckSearchQuery) || 
+                 tags.some(tag => tag.includes(deckSearchQuery));
+        });
+      }
+
       if (displayDecks.length === 0) {
+        if (deckSearchQuery) {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
+              <div style="font-size: 36px; margin-bottom: 10px;">🔍</div>
+              <h3 style="font-size: 16.5px; margin-bottom: 6px; color: var(--text);">Không Tìm Thấy VocaDeck Nào</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 16px;">
+                Không có bộ từ nào khớp với từ khóa "<strong>${escapeHtml(deckSearchQuery)}</strong>".
+              </p>
+              <button class="btn btn-outline btn-sm" onclick="clearDeckSearch()" style="font-weight: 700;">
+                ✕ Xóa Bộ Lọc Tìm Kiếm
+              </button>
+            </div>
+          `;
+          return;
+        }
         if (currentDeckTab === 'active') {
           container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 42px 20px; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">
