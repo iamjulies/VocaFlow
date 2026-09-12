@@ -46,7 +46,7 @@
             <span class="ig-bio-name" id="pub-view-name">Flower VocaFlow</span>
             <span id="pub-view-sub-badge" class="badge" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Flower VocaFlow</span>
           </div>
-          <div id="pub-view-bio-text" class="ig-bio-text">Tác giả đóng góp các VocaDeck hữu ích cho cộng đồng VocaFlow.</div>
+          <div id="pub-view-bio-text" class="ig-bio-text" style="display: none;"></div>
 
           <!-- INFO CHIPS ROW -->
           <div class="ig-chips-row">
@@ -61,9 +61,6 @@
           <button type="button" id="btn-pub-follow" class="ig-btn ig-btn-primary" onclick="handlePubViewFollowToggle()" style="flex: 1.2;">
             <span>➕</span> Theo dõi
           </button>
-          <button type="button" class="ig-btn ig-btn-outline" onclick="closeModal('modal-public-profile'); openVocaMailModal('compose');" title="Gửi thư VocaMail cho Flower này">
-            <span>✉️</span> Nhắn Tin
-          </button>
           <button type="button" class="ig-btn ig-btn-outline" onclick="sharePublicProfile()" title="Chia sẻ hồ sơ cá nhân">
             <span>🔗</span> Chia Sẻ
           </button>
@@ -74,7 +71,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Nổi Bật (Highlights)</span>
           </div>
-          <div id="pub-view-badges-showcase" class="ig-highlights-container">
+          <div id="pub-view-badges-showcase" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
             <!-- Populated dynamically -->
           </div>
         </div>
@@ -83,9 +80,6 @@
         <div class="ig-tabs-bar">
           <button type="button" class="ig-tab-btn active" id="pub-tab-btn-decks" onclick="switchPubProfileTab('decks')">
             <span>📑</span> <span>VocaDecks</span>
-          </button>
-          <button type="button" class="ig-tab-btn" id="pub-tab-btn-achievements" onclick="switchPubProfileTab('achievements')">
-            <span>🏆</span> <span>Thành Tựu</span>
           </button>
           <button type="button" class="ig-tab-btn" id="pub-tab-btn-stats" onclick="switchPubProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
@@ -103,16 +97,7 @@
           </div>
         </div>
 
-        <!-- TAB PANEL 2: ACHIEVEMENTS -->
-        <div id="pub-tab-panel-achievements" style="display: none;">
-          <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center;">
-            <div style="font-size: 32px; margin-bottom: 6px;">🏆✨</div>
-            <div style="font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Danh Hiệu & Đóng Góp</div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Flower tích cực tham gia học tập, giữ FlowStreak và đóng góp tài nguyên từ vựng cho VocaCommunity.</p>
-          </div>
-        </div>
-
-        <!-- TAB PANEL 3: STATS -->
+        <!-- TAB PANEL 2: STATS -->
         <div id="pub-tab-panel-stats" style="display: none;">
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">

@@ -1235,9 +1235,9 @@
       top: 57px;
       z-index: 35;
       background-color: var(--bg);
-      padding: 4px 0 6px;
+      padding: 2px 0 4px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       transition: background-color 0.25s ease, border-color 0.25s ease;
@@ -1246,8 +1246,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 4px;
       flex-wrap: wrap;
     }
     .deck-detail-left {
@@ -1265,7 +1265,7 @@
       flex-wrap: nowrap;
     }
     .deck-title-group .screen-title {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 800;
       margin: 0;
       white-space: nowrap;
@@ -1281,18 +1281,18 @@
     .deck-detail-right {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
       flex-shrink: 0;
     }
     .deck-detail-right .btn {
-      padding: 4px 10px;
-      font-size: 12px;
-      height: 30px;
-      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      height: 28px;
+      border-radius: 7px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     /* TIMESTAMPS DISPLAY (DECKS & WORDS) */
@@ -1302,7 +1302,7 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
     body.hide-timestamps .deck-timestamp,
     body.hide-timestamps .word-timestamp {
@@ -1313,9 +1313,9 @@
     .selection-study-bar {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px 10px;
-      margin-bottom: 6px;
+      border-radius: 9px;
+      padding: 3px 8px;
+      margin-bottom: 5px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1328,29 +1328,49 @@
       gap: 6px;
       flex-shrink: 0;
     }
+    .btn-mistake-pill {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.08);
+      font-weight: 700;
+      padding: 2px 7px;
+      font-size: 11px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-mistake-pill:hover {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: #ef4444;
+      color: #fff;
+    }
     .selection-checkbox-label {
       display: flex;
       align-items: center;
       gap: 5px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       user-select: none;
     }
     .selection-study-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
     .selection-study-actions .btn {
-      padding: 3px 9px;
-      font-size: 12px;
-      height: 28px;
-      border-radius: 7px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      height: 26px;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     /* AUTO FLASHCARD (HANDS-FREE AUDIO LOOP) */
@@ -2019,19 +2039,19 @@
         font-size: 11px;
       }
 
-      /* DECK DETAIL STICKY PANE (MOBILE REFINEMENT) */
+      /* DECK DETAIL STICKY PANE (MOBILE REFINEMENT - v0.10.9-42 COMPACT OVERHAUL) */
       .deck-detail-nav {
         flex-direction: column;
         align-items: stretch;
-        gap: 8px;
-        margin-bottom: 6px;
+        gap: 4px;
+        margin-bottom: 4px;
       }
       .deck-detail-left {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 6px;
+        gap: 4px;
         flex-wrap: nowrap;
       }
       .deck-title-group {
@@ -2039,10 +2059,10 @@
         min-width: 0;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
       }
       .deck-title-group .screen-title {
-        font-size: 16px;
+        font-size: 15px;
         max-width: 140px;
         white-space: nowrap;
         overflow: hidden;
@@ -2055,56 +2075,65 @@
         flex-shrink: 0;
       }
       .deck-quick-actions .btn {
-        padding: 4px;
-        width: 28px;
-        height: 28px;
+        padding: 3px;
+        width: 26px;
+        height: 26px;
       }
 
       .deck-detail-right {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 4px;
         width: 100%;
       }
       .deck-detail-right .btn {
         width: 100%;
-        padding: 6px 4px;
-        font-size: 11.5px;
+        padding: 4px 4px;
+        font-size: 11px;
         font-weight: 600;
         justify-content: center;
-        height: 34px;
+        height: 28px;
         white-space: nowrap;
-        border-radius: 8px;
+        border-radius: 6px;
+      }
+      .deck-detail-right .btn:last-child:nth-child(odd) {
+        grid-column: span 2;
       }
 
       .selection-study-bar {
-        padding: 6px 8px;
-        gap: 6px;
-        margin-bottom: 6px;
+        padding: 4px 6px;
+        gap: 4px;
+        margin-bottom: 4px;
+        border-radius: 8px;
       }
       .selection-bar-left {
         width: 100%;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
+        gap: 4px;
+        flex-wrap: wrap;
       }
       .selection-study-actions {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 5px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
         width: 100%;
         box-sizing: border-box;
       }
       .selection-study-actions .btn {
         width: 100%;
         min-width: 0;
-        padding: 6px 2px;
+        padding: 4px 2px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         justify-content: center;
-        height: 32px;
+        height: 28px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
+        border-radius: 6px;
       }
       .selection-study-actions .btn span {
         overflow: hidden;
@@ -2114,25 +2143,50 @@
       .filter-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 6px;
+        gap: 4px;
       }
       .search-input {
         width: 100%;
         min-width: 100%;
+        height: 30px;
+        font-size: 11.5px;
+        padding: 0 10px;
         box-sizing: border-box;
+        border-radius: 8px;
+      }
+      .deck-filter-controls-row {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+      }
+      .deck-filter-controls-row .form-select {
+        flex: 1;
+        min-width: 0;
+        height: 28px !important;
+        font-size: 11px !important;
+        padding: 0 6px !important;
+        border-radius: 6px !important;
+      }
+      .deck-filter-controls-row .btn {
+        height: 28px !important;
+        padding: 0 6px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
       }
       .chip-group {
         width: 100%;
         display: flex;
-        gap: 5px;
+        gap: 4px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         padding-bottom: 2px;
       }
       .chip {
         flex-shrink: 0;
-        padding: 4px 10px;
-        font-size: 11px;
+        padding: 2px 7px;
+        font-size: 10.5px;
+        height: 22px;
+        border-radius: 6px;
       }
 
       /* AUTO FLASHCARD (FIX HORIZONTAL OVERFLOW & HEIGHT FIT) */
@@ -3052,22 +3106,24 @@
     }
 
     .ig-avatar-ring {
-      width: 82px;
-      height: 82px;
+      width: 90px;
+      height: 90px;
+      min-width: 90px;
+      min-height: 90px;
       border-radius: 50%;
-      padding: 3px;
+      padding: 3.5px;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(220, 39, 67, 0.35);
+      box-shadow: 0 4px 18px rgba(220, 39, 67, 0.35);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
 
     .ig-avatar-ring.vip-ring {
       background: linear-gradient(135deg, #ffd700, #f59e0b, #ec4899, #8b5cf6);
-      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 22px rgba(251, 191, 36, 0.7);
+      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 24px rgba(251, 191, 36, 0.75);
       animation: avatarVipRingGlow 3s ease-in-out infinite;
     }
 
@@ -3081,27 +3137,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 800;
       color: white;
     }
 
     .ig-avatar-action-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #4f46e5;
-      color: white;
-      border: 2px solid var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      display: none !important;
     }
 
     .ig-stats-row {
@@ -3380,7 +3422,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-41</span>
+      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-42</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -3677,6 +3719,10 @@
             </label>
             <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600; font-size: 11px;">0 từ</span>
             
+            <button class="btn btn-outline btn-sm btn-mistake-pill" onclick="openMistakeNotebookModal(currentDeckId)" id="btn-study-mistakes-deck" title="Sổ tay xem & ôn các từ từng làm sai trong bộ này">
+              <span>📕</span> <span>Ôn Từ Sai</span><span id="deck-mistake-count-label" style="display: none; margin-left: 3px; font-size: 10px; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 8px;">0</span>
+            </button>
+
             <!-- CLIPBOARD MULTI ACTION BUTTONS -->
             <button class="btn btn-outline btn-sm" onclick="copySelectedWords()" id="btn-copy-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08);" title="Sao chép các từ đã chọn">
               <svg class="icon icon-sm"><use href="#i-copy"/></svg> Sao chép
@@ -3694,9 +3740,6 @@
           </div>
           
           <div class="selection-study-actions">
-            <button class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700;" onclick="openMistakeNotebookModal(currentDeckId)" id="btn-study-mistakes-deck" title="Xem và ôn các từ bạn từng làm sai trong bộ này">
-              <span>📕</span> <span>Ôn Từ Sai</span><span id="deck-mistake-count-label" style="display: none; margin-left: 3px; font-size: 10px; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 8px;">0</span>
-            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>
@@ -6624,7 +6667,7 @@
             <span class="ig-bio-name" id="pub-view-name">Flower VocaFlow</span>
             <span id="pub-view-sub-badge" class="badge" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Flower VocaFlow</span>
           </div>
-          <div id="pub-view-bio-text" class="ig-bio-text">Tác giả đóng góp các VocaDeck hữu ích cho cộng đồng VocaFlow.</div>
+          <div id="pub-view-bio-text" class="ig-bio-text" style="display: none;"></div>
 
           <!-- INFO CHIPS ROW -->
           <div class="ig-chips-row">
@@ -6639,9 +6682,6 @@
           <button type="button" id="btn-pub-follow" class="ig-btn ig-btn-primary" onclick="handlePubViewFollowToggle()" style="flex: 1.2;">
             <span>➕</span> Theo dõi
           </button>
-          <button type="button" class="ig-btn ig-btn-outline" onclick="closeModal('modal-public-profile'); openVocaMailModal('compose');" title="Gửi thư VocaMail cho Flower này">
-            <span>✉️</span> Nhắn Tin
-          </button>
           <button type="button" class="ig-btn ig-btn-outline" onclick="sharePublicProfile()" title="Chia sẻ hồ sơ cá nhân">
             <span>🔗</span> Chia Sẻ
           </button>
@@ -6652,7 +6692,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Nổi Bật (Highlights)</span>
           </div>
-          <div id="pub-view-badges-showcase" class="ig-highlights-container">
+          <div id="pub-view-badges-showcase" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
             <!-- Populated dynamically -->
           </div>
         </div>
@@ -6661,9 +6701,6 @@
         <div class="ig-tabs-bar">
           <button type="button" class="ig-tab-btn active" id="pub-tab-btn-decks" onclick="switchPubProfileTab('decks')">
             <span>📑</span> <span>VocaDecks</span>
-          </button>
-          <button type="button" class="ig-tab-btn" id="pub-tab-btn-achievements" onclick="switchPubProfileTab('achievements')">
-            <span>🏆</span> <span>Thành Tựu</span>
           </button>
           <button type="button" class="ig-tab-btn" id="pub-tab-btn-stats" onclick="switchPubProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
@@ -6681,16 +6718,7 @@
           </div>
         </div>
 
-        <!-- TAB PANEL 2: ACHIEVEMENTS -->
-        <div id="pub-tab-panel-achievements" style="display: none;">
-          <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center;">
-            <div style="font-size: 32px; margin-bottom: 6px;">🏆✨</div>
-            <div style="font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Danh Hiệu & Đóng Góp</div>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Flower tích cực tham gia học tập, giữ FlowStreak và đóng góp tài nguyên từ vựng cho VocaCommunity.</p>
-          </div>
-        </div>
-
-        <!-- TAB PANEL 3: STATS -->
+        <!-- TAB PANEL 2: STATS -->
         <div id="pub-tab-panel-stats" style="display: none;">
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center;">
@@ -7650,9 +7678,6 @@
             <div id="profile-avatar" class="ig-avatar-ring" onclick="document.getElementById('avatar-file-input').click()" title="Chạm để đổi ảnh đại diện">
               <div class="ig-avatar-inner">👤</div>
             </div>
-            <div class="ig-avatar-action-badge" onclick="document.getElementById('avatar-file-input').click()" title="Đổi ảnh đại diện">
-              📷
-            </div>
           </div>
 
           <!-- 3 STATS COLUMNS (Instagram Standard) -->
@@ -8487,7 +8512,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-41 (Build 273)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-42 (Build 274)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9257,10 +9282,10 @@
 
   <script>
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-41)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-42)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-41';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-41 (Build 273)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-42';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-42 (Build 274)';
 
 
     // =========================================================================
@@ -16561,7 +16586,7 @@ function switchPublisherTab(tab) {
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
-        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
         targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
         targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
@@ -16682,7 +16707,7 @@ function switchPublisherTab(tab) {
         if (matchedStudent) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
-          resolvedBio = matchedStudent.bio || resolvedBio || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+          resolvedBio = matchedStudent.bio || resolvedBio || '';
           if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
           if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
         }
@@ -16777,7 +16802,16 @@ function switchPublisherTab(tab) {
           pubBadgeEl.style.boxShadow = 'none';
         }
       }
-      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+      if (bioEl) {
+        const cleanBio = (resolvedBio || '').trim();
+        if (!cleanBio || cleanBio.startsWith('Tác giả đóng góp') || cleanBio.startsWith('Chưa có')) {
+          bioEl.style.display = 'none';
+          bioEl.textContent = '';
+        } else {
+          bioEl.style.display = 'block';
+          bioEl.textContent = cleanBio;
+        }
+      }
       if (statPointsEl) statPointsEl.textContent = `${targetPoints} VoCoin`;
       if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
       if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
@@ -16813,7 +16847,7 @@ function switchPublisherTab(tab) {
         }
       }
 
-      // Render Author Pinned Badges (v0.10.8-alpha-10.3 / Instagram Highlights)
+      // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
       const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
@@ -16827,11 +16861,12 @@ function switchPublisherTab(tab) {
             if (bDef) {
               const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
               bHtml += `
-                <div class="ig-highlight-item" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div class="ig-highlight-circle tier-${bDef.tier || 'bronze'}">
-                    <span style="font-size: 20px;">${bDef.icon}</span>
+                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                  <div class="pinned-badge-content" style="padding: 6px 3px;">
+                    <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${bDef.icon}</div>
+                    <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
+                    <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
                   </div>
-                  <span class="ig-highlight-label">${escapeHtml(bDef.name)}</span>
                 </div>
               `;
             }
@@ -16920,7 +16955,7 @@ function switchPublisherTab(tab) {
     window.switchProfileTab = switchProfileTab;
 
     function switchPubProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'achievements', 'stats'];
+      const tabs = ['decks', 'stats'];
       tabs.forEach(t => {
         const btn = document.getElementById(`pub-tab-btn-${t}`);
         const panel = document.getElementById(`pub-tab-panel-${t}`);

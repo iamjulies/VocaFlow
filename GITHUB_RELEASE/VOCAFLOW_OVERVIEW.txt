@@ -1,4 +1,23 @@
 ================================================================================
+Phiên bản: v0.10.9-42 (Build 274) - Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail, Bố Cục Nút Học 2x2, Nâng Cấp Avatar Cá Nhân & Hoàn Thiện Hồ Sơ Công Khai
+================================================================================
+1. [Tối Ưu Thu Gọn Bảng Điều Khiển Deck Detail Màn Hình Hẹp]:
+   - Tinh gọn chiều cao toàn bộ khối điều khiển cố định phía trên (.deck-detail-sticky-pane) giảm hơn 45% diện tích chiếm dụng màn hình.
+   - Bố trí lại 4 chế độ học cốt lõi (Luyện Nói, Auto Flashcard, Luyện Viết, Trắc Nghiệm) theo dạng lưới 2 cột x 2 hàng (2x2 Grid) cực kỳ cân đối, thẩm mỹ trên di động.
+   - Chuyển nút "Ôn từ sai" sang thanh chọn từ vựng cạnh ô checkbox "Chọn tất cả" dưới dạng pill button nhỏ gọn, thanh thoát.
+   - Tinh chỉnh chiều cao nút và thanh tìm kiếm/lọc xuống 28px-30px, tối đa hóa không gian hiển thị danh sách từ vựng bên dưới.
+
+2. [Tinh Chỉnh & Nâng Cấp Hồ Sơ Cá Nhân]:
+   - Mở rộng kích thước khung Avatar từ 82px lên 90px (chữ ký tự 36px) nổi bật, sắc nét hơn.
+   - Loại bỏ biểu tượng máy ảnh đè góc trên Avatar; người dùng có thể nhấp trực tiếp vào vòng tròn Avatar để tải ảnh lên.
+
+3. [Hoàn Thiện Giao Diện Hồ Sơ Công Khai (Public Profile)]:
+   - Chuyển đổi khối 3 huy hiệu ghim nổi bật (#pub-view-badges-showcase) từ dạng hình tròn sang dạng thẻ danh hiệu 3 cột (.pinned-badge-card) đồng bộ chuẩn xác với giao diện hồ sơ cá nhân.
+   - Loại bỏ hoàn toàn đoạn văn bản giới thiệu mẫu ("Tác giả đóng góp 1 VocaDeck hữu ích...") khi người dùng chưa đặt Bio.
+   - Loại bỏ tab "Thành Tựu" chưa sử dụng trên hồ sơ công khai, giữ lại 2 tab trọng tâm: "VocaDecks" và "Chỉ Số".
+   - Tạm thời gỡ bỏ nút "Nhắn Tin" trên thanh hành động hồ sơ công khai.
+
+================================================================================
 Phiên bản: v0.10.9-41 (Build 273) - Khắc Phục Thu Hẹp Thẻ VocaLib, Tái Thiết Kế Hồ Sơ Phong Cách Instagram & Tối Ưu Thẩm Mỹ Thẻ VocaDeck
 ================================================================================
 1. [Khắc Phục Hiện Tượng Thẻ VocaDeck Bị Thu Hẹp Trong Thư Viện VocaLib]:

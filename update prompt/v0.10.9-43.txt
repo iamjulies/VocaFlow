@@ -1,0 +1,13 @@
+v0.10.9-43
+1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 225640.png" khi nhấn vào học các chế độ học tập ở đây kh hiện bảng chọn cấp độ mà app tự ấn định luôn: trắc nghiệm là siêu khó, luyện viết là siêu khó, luyện nói là trung bình? -> có 2 phương án: (1) chọn mức độ, giống chế độ mới được; (2) bắt buộc học đúng mức độ, chế độ mới được.
+2. hiện tại khi thoát các chế độ học ở trạng thái đang bị âm xu thì nó hiện cái này "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 225223.png" -> sửa: trừ xu theo balance_v2 cho user thường và theo balance_vip cho vip user
+3. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 225738.png" đối với các từ có độ thuộc là 0% thì kh tính vào danh sách các từ cần ôn tập vì còn chưa học nữa mà? 
+4. chỉnh sửa lại các model gemini sử dụng ở các nơi: (bỏ gemini 3.8 flash vì quá chậm)
+- gemini 3.7 flash: vocamentor ai, vocadeck ai, vocaspeaking ai (ai chấm speaking)
+- gemini 3.5 flashlite: vocafill ai (ai tự động điền từ), vocahint ai (ai gợi ý trong chế độ trắc nghiệm), vocaoption ai (ai tạo các phương án cho chế độ trắc nghiệm), vocacomment ai (ai tạo nhận xét ở chế độ trắc nghiệm và luyện viết, "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 232117.png")
+5. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 232231.png", lỗi số dư kh đổi khi bị trừ xu (thực tế vẫn trừ, chỉ là số ghi ở bên dưới kh bị trừ)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
+
+nhiệm vụ bổ sung (nếu phát sinh):
+- các từ làm sai chưa được đồng bộ hai chiều -> sửa
+- xem qua https://huggingface.co/moxeeeem/wav2vec2-finetuned-pronunciation-correction và đánh giá tính khả thi nếu thay thế/bổ sung 1 AI chấm bài speaking để chuẩn hơn

@@ -1,4 +1,8 @@
 v0.10.9-42
 1. hình 1: ở màn tbi màn hình hẹp, cái phần công cụ, chọn này kia đã chiếm hơn 1 nửa màn hình rồi. cần có giải pháp để thu gọn phần này -> đề xuất: (1) thu hẹp + giảm cỡ chữ động; (2) sắp xếp lại cho tối ưu hơn;... (nên kết hợp cả hai)
 2. hình 1: lấy cái "Ôn từ sai" ra khỏi cái chỗ để mấy chế độ học đi, để ra chỗ khác.
-3. 
+3. chỉnh sửa 1 chút về giao diện vừa hoàn thành ở bản trước:
+- hình 2: ở trang cá nhân của mình, bỏ ô tròn hình camera ở ô avatar đi, chỉ cần nhấn vào avatar là sửa được rồi. dồng thời phóng to avt lên 1 chút
+- hình 3: ở trang cá nhân của người khác, sửa lại mấy khung danh hiệu nổi bật cho giống với ở prf của mình, bỏ dòng mô tả "Tác giả đóng góp 1 VocaDeck hữu ích cho VocaCommunity VocaFlow." nếu user kh ghi mô tả gì, bỏ chỗ tab thành tựu vì kh cần thiết.
+- hình 3: hiện tại, tạm thời bỏ ô Nhắn Tin vì chưa có ở phiên bản này, khi nào có thì sẽ bổ sung sau
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"

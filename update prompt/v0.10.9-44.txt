@@ -1,0 +1,9 @@
+v0.10.9-44
+1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 232504.png", thêm/sửa các bộ lọc cho trung tâm thông báo
+2. hiện tại chỉ thay đổi được avatar chứ chưa có khả năng crop/chọn vùng để chuẩn hóa cái mình muốn hiện (u know what im saying?)
+3. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 232956.png", chuẩn hóa link chia sẻ vì hiện tại đoạn văn bản đó là "Khám phá hồ sơ học từ vựng của @nglinh_k8 (ngoclinhcutes1) trên VocaFlow: https://vocaflow.app/@nglinh_k8" mà link "https://vocaflow.app/@nglinh_k8" kh phải là link dúng, kh chuẩn.
+4. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 233205.png", chuẩn hóa số hàng nghìn, hàng triệu bằng cách thêm dấu phân cách hàng nghìn. ví dụ: 23556 -> 23,556 (hoặc chỉ cần cách ra 23 556 là được), cố gắng kh gây ra lỗi
+5. mở rộng tất cả các cửa sổ ra gần tối đa để nhìn dễ hơn. hiện tại các cửa sổ, ví dụ: profile cá nhân, vocamentor ai,..v.v và còn nhiều nữa đang bị giới hạn ở 1 cửa sổ rất hẹp nhìn rất không phù hợp với ng dùng tbi màn hình rộng. đồng thời cần chuẩn hóa giao diện động mới này với các tbi màn hình hẹp.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
+
+nhiệm vụ bổ sung (nếu phát sinh): 

@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-41)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-42)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-41';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-41 (Build 273)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-42';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-42 (Build 274)';
 
 
     // =========================================================================
@@ -7303,7 +7303,7 @@ function switchPublisherTab(tab) {
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
-        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+        resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
         authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
         targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
         targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
@@ -7424,7 +7424,7 @@ function switchPublisherTab(tab) {
         if (matchedStudent) {
           resolvedName = matchedStudent.displayName || resolvedName;
           resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
-          resolvedBio = matchedStudent.bio || resolvedBio || `Tác giả đóng góp các VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+          resolvedBio = matchedStudent.bio || resolvedBio || '';
           if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
           if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
         }
@@ -7519,7 +7519,16 @@ function switchPublisherTab(tab) {
           pubBadgeEl.style.boxShadow = 'none';
         }
       }
-      if (bioEl) bioEl.textContent = resolvedBio || `Tác giả đóng góp ${authorDecks.length} VocaDeck hữu ích cho VocaCommunity VocaFlow.`;
+      if (bioEl) {
+        const cleanBio = (resolvedBio || '').trim();
+        if (!cleanBio || cleanBio.startsWith('Tác giả đóng góp') || cleanBio.startsWith('Chưa có')) {
+          bioEl.style.display = 'none';
+          bioEl.textContent = '';
+        } else {
+          bioEl.style.display = 'block';
+          bioEl.textContent = cleanBio;
+        }
+      }
       if (statPointsEl) statPointsEl.textContent = `${targetPoints} VoCoin`;
       if (statFlowEl) statFlowEl.textContent = `${targetFlowDays} Ngày`;
       if (statDecksEl) statDecksEl.textContent = `${authorDecks.length} bộ`;
@@ -7555,7 +7564,7 @@ function switchPublisherTab(tab) {
         }
       }
 
-      // Render Author Pinned Badges (v0.10.8-alpha-10.3 / Instagram Highlights)
+      // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
       const pubBadgesContainer = document.getElementById('pub-view-badges-container');
       const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
       const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
@@ -7569,11 +7578,12 @@ function switchPublisherTab(tab) {
             if (bDef) {
               const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
               bHtml += `
-                <div class="ig-highlight-item" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
-                  <div class="ig-highlight-circle tier-${bDef.tier || 'bronze'}">
-                    <span style="font-size: 20px;">${bDef.icon}</span>
+                <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
+                  <div class="pinned-badge-content" style="padding: 6px 3px;">
+                    <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${bDef.icon}</div>
+                    <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(bDef.name)}</div>
+                    <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
                   </div>
-                  <span class="ig-highlight-label">${escapeHtml(bDef.name)}</span>
                 </div>
               `;
             }
@@ -7662,7 +7672,7 @@ function switchPublisherTab(tab) {
     window.switchProfileTab = switchProfileTab;
 
     function switchPubProfileTab(tabName = 'decks') {
-      const tabs = ['decks', 'achievements', 'stats'];
+      const tabs = ['decks', 'stats'];
       tabs.forEach(t => {
         const btn = document.getElementById(`pub-tab-btn-${t}`);
         const panel = document.getElementById(`pub-tab-panel-${t}`);

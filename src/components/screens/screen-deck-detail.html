@@ -47,6 +47,10 @@
             </label>
             <span id="selected-word-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 600; font-size: 11px;">0 từ</span>
             
+            <button class="btn btn-outline btn-sm btn-mistake-pill" onclick="openMistakeNotebookModal(currentDeckId)" id="btn-study-mistakes-deck" title="Sổ tay xem & ôn các từ từng làm sai trong bộ này">
+              <span>📕</span> <span>Ôn Từ Sai</span><span id="deck-mistake-count-label" style="display: none; margin-left: 3px; font-size: 10px; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 8px;">0</span>
+            </button>
+
             <!-- CLIPBOARD MULTI ACTION BUTTONS -->
             <button class="btn btn-outline btn-sm" onclick="copySelectedWords()" id="btn-copy-selected" style="display: none; padding: 2px 8px; font-size: 11px; border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; background: rgba(99, 102, 241, 0.08);" title="Sao chép các từ đã chọn">
               <svg class="icon icon-sm"><use href="#i-copy"/></svg> Sao chép
@@ -64,9 +68,6 @@
           </div>
           
           <div class="selection-study-actions">
-            <button class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: rgba(239, 68, 68, 0.08); font-weight: 700;" onclick="openMistakeNotebookModal(currentDeckId)" id="btn-study-mistakes-deck" title="Xem và ôn các từ bạn từng làm sai trong bộ này">
-              <span>📕</span> <span>Ôn Từ Sai</span><span id="deck-mistake-count-label" style="display: none; margin-left: 3px; font-size: 10px; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 8px;">0</span>
-            </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>

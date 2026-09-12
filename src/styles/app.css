@@ -1209,9 +1209,9 @@
       top: 57px;
       z-index: 35;
       background-color: var(--bg);
-      padding: 4px 0 6px;
+      padding: 2px 0 4px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       transition: background-color 0.25s ease, border-color 0.25s ease;
@@ -1220,8 +1220,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 4px;
       flex-wrap: wrap;
     }
     .deck-detail-left {
@@ -1239,7 +1239,7 @@
       flex-wrap: nowrap;
     }
     .deck-title-group .screen-title {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 800;
       margin: 0;
       white-space: nowrap;
@@ -1255,18 +1255,18 @@
     .deck-detail-right {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
       flex-shrink: 0;
     }
     .deck-detail-right .btn {
-      padding: 4px 10px;
-      font-size: 12px;
-      height: 30px;
-      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      height: 28px;
+      border-radius: 7px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     /* TIMESTAMPS DISPLAY (DECKS & WORDS) */
@@ -1276,7 +1276,7 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
     body.hide-timestamps .deck-timestamp,
     body.hide-timestamps .word-timestamp {
@@ -1287,9 +1287,9 @@
     .selection-study-bar {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px 10px;
-      margin-bottom: 6px;
+      border-radius: 9px;
+      padding: 3px 8px;
+      margin-bottom: 5px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1302,29 +1302,49 @@
       gap: 6px;
       flex-shrink: 0;
     }
+    .btn-mistake-pill {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.08);
+      font-weight: 700;
+      padding: 2px 7px;
+      font-size: 11px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-mistake-pill:hover {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: #ef4444;
+      color: #fff;
+    }
     .selection-checkbox-label {
       display: flex;
       align-items: center;
       gap: 5px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       user-select: none;
     }
     .selection-study-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
     .selection-study-actions .btn {
-      padding: 3px 9px;
-      font-size: 12px;
-      height: 28px;
-      border-radius: 7px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      height: 26px;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     /* AUTO FLASHCARD (HANDS-FREE AUDIO LOOP) */
@@ -1993,19 +2013,19 @@
         font-size: 11px;
       }
 
-      /* DECK DETAIL STICKY PANE (MOBILE REFINEMENT) */
+      /* DECK DETAIL STICKY PANE (MOBILE REFINEMENT - v0.10.9-42 COMPACT OVERHAUL) */
       .deck-detail-nav {
         flex-direction: column;
         align-items: stretch;
-        gap: 8px;
-        margin-bottom: 6px;
+        gap: 4px;
+        margin-bottom: 4px;
       }
       .deck-detail-left {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 6px;
+        gap: 4px;
         flex-wrap: nowrap;
       }
       .deck-title-group {
@@ -2013,10 +2033,10 @@
         min-width: 0;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
       }
       .deck-title-group .screen-title {
-        font-size: 16px;
+        font-size: 15px;
         max-width: 140px;
         white-space: nowrap;
         overflow: hidden;
@@ -2029,56 +2049,65 @@
         flex-shrink: 0;
       }
       .deck-quick-actions .btn {
-        padding: 4px;
-        width: 28px;
-        height: 28px;
+        padding: 3px;
+        width: 26px;
+        height: 26px;
       }
 
       .deck-detail-right {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 4px;
         width: 100%;
       }
       .deck-detail-right .btn {
         width: 100%;
-        padding: 6px 4px;
-        font-size: 11.5px;
+        padding: 4px 4px;
+        font-size: 11px;
         font-weight: 600;
         justify-content: center;
-        height: 34px;
+        height: 28px;
         white-space: nowrap;
-        border-radius: 8px;
+        border-radius: 6px;
+      }
+      .deck-detail-right .btn:last-child:nth-child(odd) {
+        grid-column: span 2;
       }
 
       .selection-study-bar {
-        padding: 6px 8px;
-        gap: 6px;
-        margin-bottom: 6px;
+        padding: 4px 6px;
+        gap: 4px;
+        margin-bottom: 4px;
+        border-radius: 8px;
       }
       .selection-bar-left {
         width: 100%;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
+        gap: 4px;
+        flex-wrap: wrap;
       }
       .selection-study-actions {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 5px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
         width: 100%;
         box-sizing: border-box;
       }
       .selection-study-actions .btn {
         width: 100%;
         min-width: 0;
-        padding: 6px 2px;
+        padding: 4px 2px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         justify-content: center;
-        height: 32px;
+        height: 28px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
+        border-radius: 6px;
       }
       .selection-study-actions .btn span {
         overflow: hidden;
@@ -2088,25 +2117,50 @@
       .filter-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 6px;
+        gap: 4px;
       }
       .search-input {
         width: 100%;
         min-width: 100%;
+        height: 30px;
+        font-size: 11.5px;
+        padding: 0 10px;
         box-sizing: border-box;
+        border-radius: 8px;
+      }
+      .deck-filter-controls-row {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+      }
+      .deck-filter-controls-row .form-select {
+        flex: 1;
+        min-width: 0;
+        height: 28px !important;
+        font-size: 11px !important;
+        padding: 0 6px !important;
+        border-radius: 6px !important;
+      }
+      .deck-filter-controls-row .btn {
+        height: 28px !important;
+        padding: 0 6px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
       }
       .chip-group {
         width: 100%;
         display: flex;
-        gap: 5px;
+        gap: 4px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         padding-bottom: 2px;
       }
       .chip {
         flex-shrink: 0;
-        padding: 4px 10px;
-        font-size: 11px;
+        padding: 2px 7px;
+        font-size: 10.5px;
+        height: 22px;
+        border-radius: 6px;
       }
 
       /* AUTO FLASHCARD (FIX HORIZONTAL OVERFLOW & HEIGHT FIT) */
@@ -3026,22 +3080,24 @@
     }
 
     .ig-avatar-ring {
-      width: 82px;
-      height: 82px;
+      width: 90px;
+      height: 90px;
+      min-width: 90px;
+      min-height: 90px;
       border-radius: 50%;
-      padding: 3px;
+      padding: 3.5px;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(220, 39, 67, 0.35);
+      box-shadow: 0 4px 18px rgba(220, 39, 67, 0.35);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
 
     .ig-avatar-ring.vip-ring {
       background: linear-gradient(135deg, #ffd700, #f59e0b, #ec4899, #8b5cf6);
-      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 22px rgba(251, 191, 36, 0.7);
+      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5), 0 0 24px rgba(251, 191, 36, 0.75);
       animation: avatarVipRingGlow 3s ease-in-out infinite;
     }
 
@@ -3055,27 +3111,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 800;
       color: white;
     }
 
     .ig-avatar-action-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #4f46e5;
-      color: white;
-      border: 2px solid var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      display: none !important;
     }
 
     .ig-stats-row {

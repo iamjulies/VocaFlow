@@ -1,0 +1,9 @@
+v0.10.9-46
+1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 235830.png", chỉnh lại phần header cho gọn lại vì đang che hết phần danh sách rồi
+2. ở cổng vocavip và đối soát, bỏ những cái sau: "Dán Nhanh Tin Nhắn MB Bank / SMS (Bóc Tách & Kích Hoạt Tức Thì)" (vì kh có ý nghĩa với t), "Nhật Ký Giao Dịch MB Bank Tự Động (Macro Feed)" (do kh dùng được). thay vào đó, hãy thêm danh sách các lần kích hoạt thành công.
+3. tinh chỉnh lại "Câu Hỏi Thường Gặp Khi Nâng Cấp VocaVIP" cho giống với mấy cái mới update gần đây
+4. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-11 001712.png", sửa lại cái profile của @official cho nó đẹp hơn. avatar dùng "C:\Users\DELL\Documents\Modding\browser\save\VocaFLow_icon.png". 
+5. hiện tại khi học ở chế độ auto flashcard chưa hiện và đọc tất cả các nét nghĩa cho những từ nhiều nghĩa -> hãy sửa đi
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
+
+nhiệm vụ bổ sung (nếu phát sinh): 
