@@ -3487,7 +3487,7 @@
     <div class="brand" onclick="showScreen('screen-decks')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0;">
       <img src="icons/Icon-192.png" alt="VocaFlow Logo" style="width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.45));">
       <span class="brand-text" style="font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">VocaFlow</span>
-      <span class="brand-version" onclick="handleVersionBadgeMultiClick(event)" title="Chạm 5 lần để mở Cổng Quản Trị" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); cursor: pointer;">v0.10.9-44</span>
+      <span class="brand-version" style="font-size: 10.5px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-weight: 800; border: 1px solid rgba(168, 85, 247, 0.4); white-space: nowrap; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); user-select: none;">v0.10.9-46</span>
     </div>
     <div class="header-actions">
       <!-- VIP CROWN BUTTON (v0.10.8-alpha-10.3: Visible on Desktop & Mobile) -->
@@ -7212,7 +7212,7 @@
   </div>
 
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
-    <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
+    <div class="modal vip-pricing-modal" style="max-width: 1040px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 28px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));">👑</span>
@@ -7260,8 +7260,11 @@
         <!-- EVENT DISCOUNT BANNER FOR VIP (v0.10.9-alpha-22) -->
         <div id="vip-sale-event-banner" style="display: none; background: linear-gradient(135deg, #ef4444, #f59e0b); color: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(239,68,68,0.4); animation: pulse-ad 2s infinite;"></div>
 
-        <!-- Segmented Tab Bar for Mobile & Compact Views (v0.10.8-alpha-10.3) -->
+        <!-- Segmented Tab Bar for Mobile & Compact Views (v0.10.9-45) -->
         <div class="vip-plan-segmented-switch" style="display: flex; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 16px;">
+          <button type="button" class="vip-plan-segment-btn tab-free" id="vip-tab-btn-free" onclick="switchVipPlanTab('free')">
+            <span>🌱</span> <span>MIỄN PHÍ</span>
+          </button>
           <button type="button" class="vip-plan-segment-btn tab-monthly" id="vip-tab-btn-monthly" onclick="switchVipPlanTab('monthly')">
             <span>🥉</span> <span>THÁNG</span>
           </button>
@@ -7273,11 +7276,36 @@
           </button>
         </div>
 
-        <!-- 3 Pricing Cards Grid Container -->
-        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
+        <!-- 4 Pricing Cards Grid Container (v0.10.9-45) -->
+        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; margin-top: 6px;">
           
+          <!-- GÓI MIỄN PHÍ (FLOWER FREE) -->
+          <div id="vip-card-free" class="vip-plan-card tier-free" style="background: var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; border: 1px solid var(--border); transition: all 0.2s;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span id="vip-badge-free" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🌱 GÓI CƠ BẢN</span>
+                <span style="font-size: 22px;">🌱</span>
+              </div>
+              <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">Flower Free</h3>
+              <div style="margin: 12px 0 16px 0;">
+                <span id="vip-price-display-free" style="font-size: 26px; font-weight: 900; color: #34d399;">0đ</span>
+                <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>5 lượt VocaMentor AI</strong>/ngày (cố định)</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Tự do tạo & quản lý <strong>VocaDeck</strong> cá nhân</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎮</span><span>Học trọn 4 chế độ: Flashcard, Quiz, Spelling, Speaking</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎡</span><span>1 lượt quay <strong>Vòng Quay May Mắn</strong> miễn phí/ngày</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">☁️</span><span>Lưu trữ tiến độ Cloud Realtime an toàn</span></li>
+              </ul>
+            </div>
+            <button id="btn-plan-free" class="btn btn-outline" disabled style="width: 100%; justify-content: center; font-weight: 700; border-color: var(--border); color: var(--text-muted); background: rgba(255, 255, 255, 0.04); padding: 10px; cursor: default;">
+              ✓ Gói Mặc Định
+            </button>
+          </div>
+
           <!-- GÓI 1 THÁNG -->
-          <div id="vip-card-monthly" class="vip-plan-card tier-monthly" style="background: var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-monthly" class="vip-plan-card tier-monthly" style="background: var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
@@ -7285,15 +7313,15 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">VocaVIP 1 Tháng</h3>
               <div style="margin: 12px 0 16px 0;">
-                <span id="vip-price-display-monthly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">39.000đ</span>
+                <span id="vip-price-display-monthly" style="font-size: 26px; font-weight: 900; color: #fbbf24;">39.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ tháng</span>
               </div>
-                <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">✨</span><span>Tên phát sáng neon ánh kim</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">👑</span><span>Vương miện VocaVIP độc quyền</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⚖️</span><span><strong>Balance VIP</strong>: +125% điểm thuộc từ, +150% VoCoin, giảm phạt 125%</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Mở khóa toàn bộ kho <strong>VocaLib</strong> (THPT, IELTS, v.v.)</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span>50 lượt tạo VocaDeck AI & <strong>VocaMentor AI</strong>/tháng</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Mở khóa toàn bộ kho <strong>VocaLib</strong> VIP (THPT, IELTS)</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>VocaMentor AI</strong> & tạo VocaDeck AI không giới hạn</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">☁️</span><span>Đồng bộ Cloud Realtime 2 chiều</span></li>
               </ul>
             </div>
@@ -7303,7 +7331,7 @@
           </div>
 
           <!-- GÓI 1 NĂM (POPULAR) -->
-          <div id="vip-card-yearly" class="vip-plan-card active-tab-card tier-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+          <div id="vip-card-yearly" class="vip-plan-card active-tab-card tier-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
             <div id="vip-ribbon-yearly" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
               🔥 TIẾT KIỆM 36% • PHỔ BIẾN
             </div>
@@ -7314,13 +7342,13 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #fbbf24; margin: 0 0 4px 0;">VocaVIP 1 Năm</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span id="vip-price-display-yearly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">299.000đ</span>
+                <span id="vip-price-display-yearly" style="font-size: 26px; font-weight: 900; color: #fbbf24;">299.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ năm</span>
               </div>
               <div id="vip-monthly-equiv-yearly" style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 14px;">Chỉ ~25.000đ / tháng</div>
               <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⭐</span><span><strong>Tất cả đặc quyền Gói Tháng</strong> (gồm Balance VIP)</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>Không giới hạn</strong> tạo VocaDeck AI & VocaMentor AI</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>Không giới hạn</strong> VocaMentor AI & VocaDeck AI suốt 365 ngày</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⚡</span><span>Ưu tiên đồng bộ Cloud Realtime 2 chiều siêu tốc</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🥈</span><span>Huy hiệu VocaVIP 1 Năm lấp lánh</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎁</span><span>Tặng ngay <strong>100 VoCoin</strong> vào Ví</span></li>
@@ -7332,7 +7360,7 @@
           </div>
 
           <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
-          <div id="vip-card-lifetime" class="vip-plan-card tier-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-lifetime" class="vip-plan-card tier-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div id="vip-ribbon-lifetime" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
               👑 ĐẲNG CẤP HOÀNG GIA
             </div>
@@ -7343,7 +7371,7 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #c084fc; margin: 0 0 4px 0;">VocaVIP Trọn Đời</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span id="vip-price-display-lifetime" style="font-size: 28px; font-weight: 900; color: #c084fc;">599.000đ</span>
+                <span id="vip-price-display-lifetime" style="font-size: 26px; font-weight: 900; color: #c084fc;">599.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
               </div>
               <div style="font-size: 11px; color: #a855f7; font-weight: 700; margin-bottom: 14px;">Thanh toán 1 lần duy nhất</div>
@@ -7433,31 +7461,53 @@
           </div>
         </div>
 
-        <!-- VIP FAQ / HELP SECTION (v0.10.8-alpha-10.3) -->
+        <!-- VIP FAQ / HELP SECTION (v0.10.9-46) -->
         <div style="margin-top: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
-          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-            <span>❓</span> Câu Hỏi Thường Gặp Khi Nâng Cấp VocaVIP
+          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>❓</span> <span>Câu Hỏi Thường Gặp Khi Nâng Cấp VocaVIP</span>
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted);">
+            <div style="background: rgba(99,102,241,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.25);">
+              <strong style="color: #a5b4fc;">🌱 1. Sự khác biệt cốt lõi giữa gói Flower Free (0đ) và gói VocaVIP là gì?</strong>
+              <p style="margin: 3px 0 0 0; color: #e2e8f0; font-size: 11.5px;">
+                Gói <strong>Flower Free (0đ)</strong> phục vụ học tập cơ bản với <strong>5 tin nhắn/ngày cùng Trợ lý AI VocaMentor</strong>, 4 chế độ học và quay thưởng may mắn. 
+                Khi nâng cấp <strong>VocaVIP</strong>, bạn được <strong>mở khóa VÔ HẠN</strong> trò chuyện cùng Gia sư AI VocaMentor, luyện phát âm chuẩn ELSA trong Speaking Lab, sở hữu <strong>Huy hiệu Vương miện vàng 👑</strong> danh giá và nhận gói quà tặng VocaSpin &amp; Flow Freeze cực lớn.
+              </p>
+            </div>
+
             <div style="background: rgba(245,158,11,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);">
-              <strong style="color: #fbbf24;">❓ Nếu sau 5 - 10 phút chưa được kích hoạt VocaVIP hoặc VocaSpin thì sao?</strong>
-              <p style="margin: 2px 0 0 0; color: #ffd700; font-size: 11.5px;">Bạn <u style="font-weight: 800;">KHÔNG CẦN CHUYỂN TIỀN LẠI LẦN 2</u>! Chỉ cần bấm nút <strong>"💬 Hỗ trợ Zalo"</strong> hoặc nhắn tin hotline <strong>0876048326</strong> kèm ảnh biên lai chuyển khoản, Admin sẽ hỗ trợ kiểm tra và kích hoạt ngay tức thì.</p>
+              <strong style="color: #fbbf24;">🤖 2. Khi dùng hết 5 lượt AI VocaMentor trong ngày ở gói Free thì có thể dùng VoCoin để chat tiếp không?</strong>
+              <p style="margin: 3px 0 0 0; color: #ffd700; font-size: 11.5px;">
+                <strong>Không thể dùng VoCoin để mua thêm lượt chat lẻ!</strong> Nhằm đảm bảo trải nghiệm AI chất lượng cao nhất, khi hết 5 tin nhắn miễn phí trong ngày (0/5), hệ thống sẽ tạm khóa chat đến 00:00 ngày hôm sau hoặc bạn có thể nâng cấp VocaVIP để mở khóa trò chuyện không giới hạn ngay lập tức.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">⏱️ Thời gian xử lý giao dịch chuyển khoản là bao lâu?</strong>
-              <p style="margin: 2px 0 0 0;">Thông thường hệ thống xử lý đối soát tự động từ <strong>1 - 5 phút</strong>. Nếu ngân hàng bảo trì hoặc ngoài giờ cao điểm, tối đa từ <strong>10 - 15 phút</strong>.</p>
+              <strong style="color: var(--text);">📱 3. Nâng cấp VocaVIP có sử dụng được trên nhiều thiết bị (Web, Điện thoại, App Windows) không?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Được 100%!</strong> Đặc quyền VocaVIP được lưu trữ trực tiếp trên Firebase Cloud theo tài khoản đăng nhập của bạn. Khi đăng nhập trên điện thoại, máy tính bảng hay máy tính Windows, toàn bộ trạng thái VIP, bộ từ vựng và lịch sử chuỗi Flow đều được đồng bộ tự động 2 chiều.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">📱 Quét mã VietQR có cần gõ lại nội dung chuyển khoản không?</strong>
-              <p style="margin: 2px 0 0 0;"><strong>Không cần gõ!</strong> Khi quét mã QR bằng app ngân hàng hoặc ví điện tử, hệ thống đã tự động điền chuẩn 100% STK (0916541813), Chủ tài khoản (NONG DUC HAO), số tiền và cú pháp chuẩn.</p>
+              <strong style="color: var(--text);">⏱️ 4. Thời gian kích hoạt sau khi quét mã VietQR và chuyển khoản là bao lâu?</strong>
+              <p style="margin: 2px 0 0 0;">
+                Thông thường hệ thống xử lý đối soát và kích hoạt trong vòng <strong>1 - 5 phút</strong>. Khi quét mã VietQR, hệ thống đã tự động điền sẵn STK (0916541813 - MB Bank), Tên người nhận (NONG DUC HAO), số tiền và cú pháp chuẩn <code style="color: #ffd700; font-weight: 700;">VOCA &lt;UID_16&gt; &lt;MÃ_GÓI&gt;</code>.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">💸 Nếu chuyển khoản mà quên ghi cú pháp thì có bị mất tiền không?</strong>
-              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0876048326)</strong> để được hỗ trợ đối soát và kích hoạt VocaVIP trong 1 phút.</p>
+              <strong style="color: var(--text);">💸 5. Nếu chuyển khoản mà quên ghi cú pháp hoặc sau 5 - 10 phút chưa thấy lên VIP thì sao?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Bạn hoàn toàn yên tâm, tiền không bị mất!</strong> Bạn chỉ cần bấm nút <strong>"💬 Hỗ Trợ Zalo"</strong> hoặc nhắn tin Zalo/Hotline: <strong style="color: #38bdf8;">0876048326 (NONG DUC HAO)</strong> kèm ảnh chụp biên lai chuyển khoản, Admin sẽ hỗ trợ kích hoạt thủ công cho bạn trong vòng 1 phút.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">⚠️ Chưa chuyển tiền mà bấm "Tôi Đã Chuyển Khoản" thì sao?</strong>
-              <p style="margin: 2px 0 0 0;">Hệ thống sẽ ghi nhận yêu cầu và tự động đối soát với tài khoản MB Bank. Sau 2 - 5 phút nếu không tìm thấy giao dịch chuyển tiền thực tế, hệ thống sẽ gửi thông báo <em>"Đối soát chưa thành công"</em> vào Trung Tâm Thông Báo và không kích hoạt VocaVIP.</p>
+              <strong style="color: var(--text);">👑 6. Gói VocaVIP Trọn Đời (Lifetime) có phải trả thêm bất kỳ khoản phí nào sau này không?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Hoàn toàn không!</strong> Bạn chỉ thanh toán 1 lần duy nhất 599.000đ và sở hữu vĩnh viễn toàn bộ đặc quyền VIP, bao gồm quyền truy cập không giới hạn mọi tính năng mới và các bản cập nhật trong tương lai của VocaFlow.
+              </p>
             </div>
           </div>
         </div>
@@ -8638,7 +8688,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); cursor: pointer;" id="settings-app-version-label" onclick="handleVersionBadgeMultiClick()" title="Chạm 5 lần để mở Cổng Quản Trị">VocaFlow v0.10.9-44 (Build 276)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-46 (Build 278)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -8799,13 +8849,13 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="modal-publisher">
-    <div class="modal" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
-      <div class="modal-title">
+<div class="modal-overlay" id="modal-publisher">
+    <div class="modal" style="max-width: min(94vw, 880px); height: 88vh; max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-title" style="margin-bottom: 10px; padding-bottom: 8px;">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">👑</span>
+          <span style="font-size: 20px;">👑</span>
           <div>
-            <strong style="font-size: 17px; color: #c084fc;">Cổng Quản Trị & Quản Lý Flower (Publisher Portal)</strong>
+            <strong style="font-size: 16px; color: #c084fc;">Cổng Quản Trị &amp; Quản Lý Flower (Publisher Portal)</strong>
             <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Quản lý toàn bộ Flower, ví điểm, mã quà tặng và kho VocaLib trên Firebase Cloud</div>
           </div>
         </div>
@@ -8813,53 +8863,53 @@
       </div>
 
       <!-- PORTAL TABS -->
-      <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap;">
-        <button class="btn btn-sm btn-primary" id="pub-tab-btn-students" onclick="switchPublisherTab('students')" style="display: flex; align-items: center; gap: 6px;">
+      <div style="display: flex; gap: 6px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-wrap: wrap;">
+        <button class="btn btn-sm btn-primary" id="pub-tab-btn-students" onclick="switchPublisherTab('students')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
           <span>👥</span> <strong>Quản Lý Flower</strong>
         </button>
-        <button class="btn btn-sm btn-outline" id="pub-tab-btn-codes" onclick="switchPublisherTab('codes')" style="display: flex; align-items: center; gap: 6px;">
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-codes" onclick="switchPublisherTab('codes')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
           <span>🎁</span> <strong>Mã Quà Tặng</strong>
         </button>
-        <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 6px;">
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
           <span>⚡</span> <strong>God Mode Ví Của Bạn</strong>
         </button>
-        <button class="btn btn-sm btn-outline" id="pub-tab-btn-bugs" onclick="switchPublisherTab('bugs')" style="display: flex; align-items: center; gap: 6px;">
-          <span>🐛</span> <strong>Báo Cáo Lỗi & Góp Ý</strong>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-bugs" onclick="switchPublisherTab('bugs')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
+          <span>🐛</span> <strong>Báo Cáo Lỗi &amp; Góp Ý</strong>
           <span id="pub-bugs-badge" class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 9px; display: none;">0</span>
         </button>
-        <button class="btn btn-sm btn-outline" id="pub-tab-btn-vip-gateway" onclick="switchPublisherTab('vip-gateway')" style="display: flex; align-items: center; gap: 6px; border-color: rgba(245,158,11,0.4); color: #fbbf24;">
-          <span>👑</span> <strong>Cổng VocaVIP & Đối Soát</strong>
+        <button class="btn btn-sm btn-outline" id="pub-tab-btn-vip-gateway" onclick="switchPublisherTab('vip-gateway')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px; border-color: rgba(245,158,11,0.4); color: #fbbf24;">
+          <span>👑</span> <strong>Cổng VocaVIP &amp; Đối Soát</strong>
         </button>
       </div>
 
       <!-- TAB 1: STUDENT MANAGEMENT PORTAL -->
-      <div id="pub-tab-content-students" style="flex: 1; overflow-y: auto;">
-        <!-- OVERVIEW METRICS DASHBOARD -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;">
-          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 10px 12px;">
-            <div style="font-size: 11px; color: #818cf8; font-weight: 700; margin-bottom: 2px;">👥 Tổng Flower</div>
-            <div id="admin-stat-total-students" style="font-size: 17px; font-weight: 800; color: var(--text);">0 Flower</div>
+      <div id="pub-tab-content-students" style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
+        <!-- OVERVIEW COMPACT METRICS DASHBOARD -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px;">
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 11px; color: #818cf8; font-weight: 700;">👥 Tổng Flower</div>
+            <div id="admin-stat-total-students" style="font-size: 13.5px; font-weight: 800; color: var(--text);">0 Flower</div>
           </div>
-          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 10px 12px;">
-            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px;">📚 Tổng VocaDeck & Từ Vựng</div>
-            <div id="admin-stat-total-decks" style="font-size: 15px; font-weight: 800; color: #10b981;">0 VocaDeck (0 từ)</div>
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">📚 Decks &amp; Từ Vựng</div>
+            <div id="admin-stat-total-decks" style="font-size: 13px; font-weight: 800; color: #10b981;">0 bộ (0 từ)</div>
           </div>
-          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 10px 12px;">
-            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px;">💰 VoCoin & VocaHint Lưu Hành</div>
-            <div id="admin-stat-total-points" style="font-size: 15px; font-weight: 800; color: #f59e0b;">0 VoCoin (0 VocaHint)</div>
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700;">💰 VoCoin &amp; Hint</div>
+            <div id="admin-stat-total-points" style="font-size: 13px; font-weight: 800; color: #f59e0b;">0 VoCoin</div>
           </div>
         </div>
 
         <!-- SEARCH & ACTION BAR -->
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <input type="text" id="admin-students-search-input" class="form-input" placeholder="🔍 Tìm kiếm Flower theo Tên, Email hoặc UID..." style="flex: 1; font-size: 12.5px;" oninput="filterAdminStudents(this.value)">
-          <button class="btn btn-outline btn-sm" onclick="fetchAdminStudentsList()" style="white-space: nowrap; display: flex; align-items: center; gap: 4px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" id="admin-students-search-input" class="form-input" placeholder="🔍 Tìm kiếm Flower theo Tên, Email hoặc UID..." style="flex: 1; font-size: 12px; padding: 6px 10px;" oninput="filterAdminStudents(this.value)">
+          <button class="btn btn-outline btn-sm" onclick="fetchAdminStudentsList()" style="white-space: nowrap; display: flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 6px 10px;">
             🔄 Làm Mới
           </button>
         </div>
 
-        <!-- STUDENTS LIST CONTAINER -->
-        <div id="admin-students-list-container" style="max-height: 400px; overflow-y: auto; background: var(--surface); border-radius: 10px; padding: 8px; border: 1px solid var(--border);">
+        <!-- STUDENTS LIST CONTAINER (FULL HEIGHT, SINGLE SCROLLBAR) -->
+        <div id="admin-students-list-container" style="flex: 1; min-height: 250px; overflow-y: auto; background: var(--surface); border-radius: 10px; padding: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
           <div style="text-align: center; padding: 20px; color: var(--text-muted);">
             <em>Đang tải dữ liệu Flower từ Firebase Cloud...</em>
           </div>
@@ -8869,7 +8919,7 @@
       <!-- TAB 2: GIFT CODE STUDIO -->
       <div id="pub-tab-content-codes" style="display: none; flex: 1; overflow-y: auto;">
         <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo & Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo &amp; Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
           <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 10px;">
             <div>
               <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
@@ -8919,30 +8969,34 @@
       <div id="pub-tab-content-wallet" style="display: none; flex: 1; overflow-y: auto;">
         <!-- GOD MODE: WALLET OVERRIDE -->
         <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 16px;">
-          <div style="font-size: 14px; font-weight: 700; color: #c084fc; margin-bottom: 8px;">⚡ God Mode: Điều Chỉnh Ví Của Bạn</div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tùy ý nạp VoCoin và VocaHint không giới hạn cho tài khoản quản trị của bạn.</p>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div style="font-size: 14px; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>⚡</span> <span>God Mode: Tự Do Can Thiệp Ví Điểm &amp; Vật Phẩm Của Chính Bạn</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+            Cài đặt trực tiếp số dư VoCoin, VocaHint, VocaSkip hoặc Băng bảo vệ chuỗi cho tài khoản của bạn để kiểm thử hệ thống.
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
             <div>
-              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💰 Số VoCoin:</label>
-              <input type="number" id="admin-set-points-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #fbbf24;">
+              <label style="font-size: 11.5px; color: #fbbf24; font-weight: 700;">💰 VoCoin Hiện Tại:</label>
+              <input type="number" id="admin-wallet-points" class="form-input" style="padding: 6px 10px; font-size: 13px; font-weight: 700;">
             </div>
             <div>
-              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">💡 VocaHint:</label>
-              <input type="number" id="admin-set-hints-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #f472b6;">
+              <label style="font-size: 11.5px; color: #c084fc; font-weight: 700;">💡 VocaHint Gợi Ý:</label>
+              <input type="number" id="admin-wallet-hints" class="form-input" style="padding: 6px 10px; font-size: 13px; font-weight: 700;">
             </div>
             <div>
-              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">⏩ VocaSkip:</label>
-              <input type="number" id="admin-set-skips-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #c084fc;">
+              <label style="font-size: 11.5px; color: #38bdf8; font-weight: 700;">⏩ VocaSkip Bỏ Qua:</label>
+              <input type="number" id="admin-wallet-skips" class="form-input" style="padding: 6px 10px; font-size: 13px; font-weight: 700;">
             </div>
             <div>
-              <label style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">🎡 VocaSpin (Spins):</label>
-              <input type="number" id="admin-set-spins-input" class="form-input" style="padding: 8px 12px; font-size: 14px; font-weight: 700; color: #38bdf8;">
+              <label style="font-size: 11.5px; color: #34d399; font-weight: 700;">❄️ Flow Freeze (Băng):</label>
+              <input type="number" id="admin-wallet-freezes" class="form-input" style="padding: 6px 10px; font-size: 13px; font-weight: 700;">
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn btn-primary btn-sm" onclick="applyAdminWalletChanges()" style="background: linear-gradient(135deg, #a855f7, #6366f1); border: none; font-weight: 700;">⚡ Áp Dụng Ví Ngay</button>
-            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200, 50)">+200 VocaHint, +50 VocaSkip & +500 VoCoin</button>
-            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000, 200)">+1000 VocaHint, +200 VocaSkip & +2000 VoCoin</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(500, 200, 50)">+200 VocaHint, +50 VocaSkip &amp; +500 VoCoin</button>
+            <button class="btn btn-outline btn-sm" onclick="quickAddAdminRewards(2000, 1000, 200)">+1000 VocaHint, +200 VocaSkip &amp; +2000 VoCoin</button>
           </div>
         </div>
 
@@ -8968,7 +9022,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE (v0.10.8-alpha-10.3) -->
+      <!-- TAB 4: BUG REPORTS MANAGEMENT & BOUNTY ENGINE -->
       <div id="pub-tab-content-bugs" style="display: none; flex: 1; overflow-y: auto;">
         <!-- METRICS & FILTER BAR -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -8991,14 +9045,14 @@
         </div>
       </div>
 
-      <!-- TAB 5: VIP GATEWAY & MACRO RECONCILIATION (v0.10.8-alpha-10.4) -->
+      <!-- TAB 5: VIP GATEWAY & MACRO RECONCILIATION -->
       <div id="pub-tab-content-vip-gateway" style="display: none; flex: 1; overflow-y: auto;">
         
         <!-- SECTION 1: QUICK STUDENT LOOKUP BY 16-CHAR SHORT UID -->
         <div style="background: var(--surface-elevated); border: 1.5px solid rgba(245,158,11,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 14px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
-              <span>🔍</span> <span>Tra Cứu Flower & Kích Hoạt Nhanh (UID 16 Ký Tự / Email / Tên)</span>
+              <span>🔍</span> <span>Tra Cứu Flower &amp; Kích Hoạt Nhanh (UID 16 Ký Tự / Email / Tên)</span>
             </div>
             <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10.5px; font-weight: 700;">Cú Pháp: VOCA &lt;UID_16&gt; &lt;MÃ_GÓI&gt;</span>
           </div>
@@ -9019,36 +9073,7 @@
           </div>
         </div>
 
-        <!-- SECTION 1.5: INSTANT PASTE & AI SMART RECONCILER (KHÔNG CẦN CHỜ MACRO) -->
-        <div style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.12)); border: 1.5px solid rgba(99,102,241,0.4); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-            <div style="font-size: 14px; font-weight: 800; color: #818cf8; display: flex; align-items: center; gap: 8px;">
-              <span>⚡</span> <span>Dán Nhanh Tin Nhắn MB Bank / SMS (Bóc Tách & Kích Hoạt Tức Thì)</span>
-            </div>
-            <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; font-size: 10.5px;">✅ Hoạt Động 100% - Không Lo Lỗi App Ngầm</span>
-          </div>
-          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5;">
-            Sao chép toàn bộ dòng thông báo biến động số dư từ điện thoại và dán vào đây. Hệ thống &amp; AI Gemini sẽ tự động bóc tách số tiền, mã gói, tìm Flower và kích hoạt 1-Click!
-          </p>
-
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-            <textarea id="admin-paste-sms-input" class="form-input" placeholder="📋 Dán dòng tin nhắn MB Bank vào đây (VD: TK 09xxx813|GD: +25,000VND 29/08/26 16:16 |SD: 745,505VND ND: 05CH7KCEB4QH-VOCA MJFITS6BTHWAJB6M S15)..." style="width: 100%; height: 68px; font-size: 12px; font-family: monospace; padding: 8px 10px; resize: vertical;"></textarea>
-            
-            <div style="display: flex; gap: 8px; justify-content: flex-end;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="pasteFromClipboardToSmsInput()" style="font-size: 11.5px; padding: 6px 12px; display: flex; align-items: center; gap: 4px;">
-                📋 Dán Từ Clipboard
-              </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="processPastedBankingSms()" style="background: linear-gradient(135deg, #6366f1, #a855f7); border: none; font-weight: 700; font-size: 12px; padding: 6px 16px; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
-                ⚡ Bóc Tách &amp; Đối Soát Ngay
-              </button>
-            </div>
-          </div>
-
-          <!-- SMART PASTE RESULT PREVIEW -->
-          <div id="admin-paste-sms-result" style="display: none;"></div>
-        </div>
-
-        <!-- SECTION 1.8: TẢI LÊN / DÁN ẢNH CHUYỂN KHOẢN NGÂN HÀNG (TỐI ĐA 5 ẢNH 1 LẦN) CHO AI VISION BÓC TÁCH & KÍCH HOẠT VOCAVIP -->
+        <!-- SECTION 1.8: TẢI LÊN / DÁN ẢNH CHUYỂN KHOẢN NGÂN HÀNG CHO AI VISION BÓC TÁCH & KÍCH HOẠT VOCAVIP -->
         <div style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(99,102,241,0.08)); border: 1.5px solid rgba(16,185,129,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 14px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 8px;">
@@ -9099,35 +9124,36 @@
           <div id="admin-multi-bill-results" style="display: none; margin-top: 14px; flex-direction: column; gap: 10px;"></div>
         </div>
 
-        <!-- SECTION 2: MACRODROID / REALTIME BANK TRANSACTIONS LOG -->
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+        <!-- SECTION 2: DANH SÁCH CÁC LẦN KÍCH HOẠT THÀNH CÔNG (SUCCESSFUL ACTIVATIONS LOG) -->
+        <div style="background: var(--surface-elevated); border: 1.5px solid rgba(16,185,129,0.35); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
-                <span>📡</span> <span>Nhật Ký Giao Dịch MB Bank Tự Động (Macro Feed)</span>
+              <div style="font-size: 14px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 6px;">
+                <span>📜</span> <span>Danh Sách Các Lần Kích Hoạt Thành Công (Cloud &amp; Local)</span>
               </div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Dữ liệu biến động số dư được MacroDroid trên điện thoại tự động đẩy lên Firebase Cloud</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Nhật ký ghi nhận lịch sử các gói VocaVIP &amp; VocaSpin đã kích hoạt thành công cho Flower</div>
             </div>
             <div style="display: flex; gap: 6px;">
-              <button class="btn btn-outline btn-sm" onclick="fetchAdminBankTransactions()" style="font-size: 11.5px; padding: 4px 10px; display: flex; align-items: center; gap: 4px;">
-                🔄 Làm Mới Logs
+              <button type="button" class="btn btn-outline btn-sm" onclick="fetchAdminVipActivations()" style="font-size: 11.5px; padding: 4px 10px; display: flex; align-items: center; gap: 4px;">
+                🔄 Làm Mới
               </button>
-              <button class="btn btn-outline btn-sm" onclick="clearAdminBankTransactionsLog()" style="font-size: 11.5px; padding: 4px 10px; color: #f87171; border-color: rgba(239,68,68,0.35);">
+              <button type="button" class="btn btn-outline btn-sm" onclick="clearAdminVipActivationsLog()" style="font-size: 11.5px; padding: 4px 10px; color: #f87171; border-color: rgba(239,68,68,0.35);">
                 🗑️ Xóa Lịch Sử
               </button>
             </div>
           </div>
 
-          <div id="admin-bank-transactions-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; border: 1px solid var(--border);">
+          <div id="admin-vip-activations-list" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; border: 1px solid var(--border);">
             <div style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 12px;">
-              <em>Chưa có giao dịch mới nào được gửi về từ MacroDroid.</em>
+              <em>Chưa có bản ghi kích hoạt nào.</em>
             </div>
           </div>
         </div>
 
-        </div>
-      <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);">
-        <button class="btn btn-primary" onclick="closeModal('modal-publisher')">Đóng Cổng Quản Trị</button>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-publisher')" style="padding: 6px 18px;">Đóng Cổng Quản Trị</button>
       </div>
     </div>
   </div>
@@ -9407,11 +9433,195 @@
 
 
   <script>
+// =========================================================================
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-45)
+// Enables direct clean URLs & browser history navigation (pushState/popstate)
+// =========================================================================
+
+let isRouterNavigating = false;
+
+function getAppBasePath() {
+  if (window.location.protocol === 'file:') return '';
+  const pathname = window.location.pathname;
+  if (pathname.includes('/VocaFlow')) return '/VocaFlow';
+  return '';
+}
+window.getAppBasePath = getAppBasePath;
+
+function updateAppUrlRoute(routePath, title = 'VocaFlow', replace = false) {
+  if (window.location.protocol === 'file:') return;
+  if (isRouterNavigating) return;
+
+  const basePath = getAppBasePath();
+  let cleanRoute = routePath.startsWith('/') ? routePath : '/' + routePath;
+  const fullTarget = basePath ? (basePath + cleanRoute) : cleanRoute;
+
+  try {
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl === fullTarget) return;
+
+    if (replace) {
+      window.history.replaceState({ route: routePath }, title, fullTarget);
+    } else {
+      window.history.pushState({ route: routePath }, title, fullTarget);
+    }
+  } catch (e) {
+    console.warn('Router pushState failed:', e);
+  }
+}
+window.updateAppUrlRoute = updateAppUrlRoute;
+
+function resolveRouteFromUrl() {
+  const l = window.location;
+  const searchParams = new URLSearchParams(l.search);
+
+  // 1. Check GitHub Pages 404 SPA redirect param ?p=...
+  const pParam = searchParams.get('p');
+  if (pParam) {
+    return decodeURIComponent(pParam);
+  }
+
+  // 2. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
+  const userParam = searchParams.get('user') || searchParams.get('u') || searchParams.get('profile');
+  if (userParam) {
+    const cleanUser = userParam.replace(/^@/, '').trim();
+    return cleanUser ? '/@' + cleanUser : '';
+  }
+
+  // 3. Check direct pathname
+  const basePath = getAppBasePath();
+  let path = l.pathname;
+  if (basePath && path.startsWith(basePath)) {
+    path = path.slice(basePath.length);
+  }
+  if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
+    return '/homepage';
+  }
+  return path;
+}
+window.resolveRouteFromUrl = resolveRouteFromUrl;
+
+function navigateToRoute(route, isPopState = false) {
+  if (!route) return;
+  isRouterNavigating = true;
+
+  try {
+    let clean = route.trim();
+    if (clean.startsWith('/')) clean = clean.slice(1);
+
+    // Handle @username or user/@username or u/username
+    if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
+      let handle = clean.replace(/^(user\/@?|u\/|@)/, '').trim();
+      if (handle) {
+        if (typeof openPublicProfileModal === 'function') {
+          openPublicProfileModal('@' + handle, '', handle);
+        } else if (typeof openPublicProfileByAuthor === 'function') {
+          openPublicProfileByAuthor('@' + handle, '', handle);
+        }
+      }
+      return;
+    }
+
+    // Clean first segment
+    const segment = clean.split('/')[0].toLowerCase();
+    switch (segment) {
+      case 'homepage':
+      case 'decks':
+      case 'home':
+        if (typeof showScreen === 'function') showScreen('screen-decks');
+        // Close modal overlays if open
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        break;
+
+      case 'me':
+      case 'profile':
+        if (typeof openProfileModal === 'function') openProfileModal();
+        break;
+
+      case 'shop':
+      case 'store':
+        if (typeof openShopModal === 'function') openShopModal();
+        break;
+
+      case 'vip':
+      case 'pricing':
+        if (typeof openVipPricingModal === 'function') openVipPricingModal();
+        break;
+
+      case 'mentor':
+      case 'ai':
+      case 'chat':
+        if (typeof openAiMentorModal === 'function') openAiMentorModal();
+        break;
+
+      case 'wallet':
+        if (typeof openWalletStudioModal === 'function') openWalletStudioModal();
+        break;
+
+      case 'mistakes':
+      case 'errors':
+        if (typeof openMistakeNotebookModal === 'function') openMistakeNotebookModal();
+        break;
+
+      case 'wheel':
+      case 'spin':
+        if (typeof openLuckyWheelModal === 'function') openLuckyWheelModal();
+        break;
+
+      case 'settings':
+        if (typeof openSettingsModal === 'function') openSettingsModal();
+        break;
+
+      case 'achievements':
+        if (typeof openAchievementsModal === 'function') openAchievementsModal();
+        break;
+
+      case 'guide':
+        if (typeof openUserGuideModal === 'function') openUserGuideModal();
+        break;
+
+      default:
+        // If unknown route, default to homepage without error
+        if (typeof showScreen === 'function') showScreen('screen-decks');
+        break;
+    }
+  } finally {
+    isRouterNavigating = false;
+  }
+}
+window.navigateToRoute = navigateToRoute;
+
+function initSpaRouter() {
+  const targetRoute = resolveRouteFromUrl();
+
+  // Restore clean URL in address bar if ?p= was used
+  const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.has('p') || searchParams.has('user') || searchParams.has('u') || searchParams.has('profile')) {
+    const basePath = getAppBasePath();
+    const cleanPath = (targetRoute.startsWith('/') ? targetRoute : '/' + targetRoute);
+    try {
+      window.history.replaceState({ route: cleanPath }, 'VocaFlow', basePath ? basePath + cleanPath : cleanPath);
+    } catch (e) {}
+  }
+
+  // Delay slightly to let data and DOM finish initializing
+  setTimeout(() => {
+    navigateToRoute(targetRoute, false);
+  }, 400);
+
+  // Listen to popstate (Browser Back/Forward buttons)
+  window.addEventListener('popstate', (e) => {
+    const route = resolveRouteFromUrl();
+    navigateToRoute(route, true);
+  });
+}
+window.initSpaRouter = initSpaRouter;
+
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-44)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-46)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-44';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-44 (Build 276)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-46';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-46 (Build 278)';
 
 
     // =========================================================================
@@ -11400,8 +11610,11 @@
     let editingStudentUid = null;
 
     function renderAvatarHtml(avatarVal, size = 28, fontSize = 14) {
-      if (typeof avatarVal === 'string' && (avatarVal.startsWith('data:image') || avatarVal.startsWith('http'))) {
-        return '<img src="' + avatarVal + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto;" alt="Avatar" />';
+      if (typeof avatarVal === 'string') {
+        const clean = avatarVal.trim();
+        if (clean.startsWith('data:image') || clean.startsWith('http') || clean.startsWith('icons/') || clean.startsWith('save/') || clean.endsWith('.png') || clean.endsWith('.jpg') || clean.endsWith('.webp') || clean.endsWith('.svg') || clean.includes('/')) {
+          return '<img src="' + escapeHtml(clean) + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto;" alt="Avatar" onerror="this.onerror=null; this.src=\'icons/Icon-192.png\';" />';
+        }
       }
       const rawText = (typeof avatarVal === 'string' && avatarVal.trim()) ? avatarVal.trim()[0].toUpperCase() : '👤';
       return '<span style="font-size: ' + fontSize + 'px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: ' + size + 'px; height: ' + size + 'px; font-weight: 800; color: white;">' + escapeHtml(rawText) + '</span>';
@@ -11996,25 +12209,8 @@
     }
     window.openPublisherPortal = openPublisherPortal;
 
-    let versionBadgeClickCount = 0;
-    let versionBadgeClickTimer = null;
-    function handleVersionBadgeMultiClick(e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      versionBadgeClickCount++;
-      if (versionBadgeClickTimer) clearTimeout(versionBadgeClickTimer);
-      versionBadgeClickTimer = setTimeout(() => {
-        versionBadgeClickCount = 0;
-      }, 3000);
-
-      if (versionBadgeClickCount >= 5) {
-        versionBadgeClickCount = 0;
-        clearTimeout(versionBadgeClickTimer);
-        showToast('👑 Chế độ Nhà Phát Hành: Đang mở Cổng Quản Trị & God Mode...');
-        openPublisherModal('students');
-      } else if (versionBadgeClickCount >= 3) {
-        showToast(`👑 Chạm thêm ${5 - versionBadgeClickCount} lần để mở Cổng Quản Trị!`);
-      }
-    }
+    // v0.10.9-45: Removed 5-click easter egg for Admin Portal (accessible via Settings if configured)
+    function handleVersionBadgeMultiClick(e) {}
     window.handleVersionBadgeMultiClick = handleVersionBadgeMultiClick;
 
     // =========================================================================
@@ -13213,6 +13409,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (typeof refreshAdminVipUI === 'function') refreshAdminVipUI();
         }
 
+        // v0.10.9-46: Record to Successful Activations Log (Cloud & Local)
+        const activationRecord = {
+          key: 'act_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+          timestamp: Date.now(),
+          uid: student.uid,
+          shortUid: student.shortUid || getShortUidUpper(student.uid),
+          displayName: student.displayName || 'Flower ' + getShortUidUpper(student.uid),
+          email: student.email || '',
+          actionType: act,
+          actionLabel: actionLabel,
+          status: 'success'
+        };
+        saveAdminVipActivationRecord(activationRecord);
+
         showToast(`🎉 ${actionLabel} thành công cho ${student.displayName}!`);
         lookupVipStudentByInput(document.getElementById('admin-vip-lookup-input')?.value || student.uid);
         if (typeof renderAdminStudentsTable === 'function') renderAdminStudentsTable();
@@ -13224,151 +13434,119 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.quickApplyStudentVipOrSpin = quickApplyStudentVipOrSpin;
 
-    async function fetchAdminBankTransactions() {
-      const listEl = document.getElementById('admin-bank-transactions-list');
-      if (!listEl) return;
-      listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải nhật ký giao dịch từ Firebase...</div>';
+    // =========================================================================
+    // VIP ACTIVATIONS AUDIT LOG ENGINE (v0.10.9-46)
+    // =========================================================================
+    let adminVipActivations = [];
+
+    async function saveAdminVipActivationRecord(record) {
+      if (!record || !record.key) return;
+      if (!Array.isArray(adminVipActivations)) adminVipActivations = [];
+      adminVipActivations.unshift(record);
 
       try {
-        if (!adminStudentsData || adminStudentsData.length === 0) {
-          await fetchAdminStudentsList();
+        localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100)));
+      } catch (e) {}
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        await fetch(`${rtdbUrl}/vip_activations/${record.key}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+      } catch (e) {
+        console.warn('Failed to push vip activation record to Cloud:', e);
+      }
+      renderAdminVipActivationsListUI();
+    }
+
+    async function fetchAdminVipActivations() {
+      const listEl = document.getElementById('admin-vip-activations-list');
+      if (!listEl) return;
+      listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải lịch sử kích hoạt từ Firebase Cloud...</div>';
+
+      try {
+        const savedLocal = localStorage.getItem('vocaflow_admin_vip_activations');
+        if (savedLocal) {
+          try { adminVipActivations = JSON.parse(savedLocal) || []; } catch(e) {}
         }
 
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        
-        let res = await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`);
-        if (!res.ok) {
-          res = await fetch(`${rtdbUrl}/bankTransactions.json${authParam}`);
-        }
 
-        if (!res.ok) {
-          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào trong cơ sở dữ liệu.</div>';
-          return;
-        }
-
-        const data = await res.json();
-        if (!data || typeof data !== 'object') {
-          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
-          return;
-        }
-
-        const items = [];
-        for (const [key, val] of Object.entries(data)) {
-          if (val && typeof val === 'object') {
-            const rawContent = val.text || val.content || val.syntax || val.message || '';
-            const parsed = parseBankTransactionMultiLayer(rawContent, adminStudentsData);
-
-            let sUid = val.shortUid || (parsed ? parsed.shortUid : '');
-            let pCode = val.code || (parsed ? parsed.code : '');
-            let amount = val.amount || (parsed ? parsed.amount : 0);
-            let matchedStudent = (parsed && parsed.matchedStudent) ? parsed.matchedStudent : adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === sUid.toUpperCase());
-
-            items.push({
-              key,
-              ...val,
-              shortUid: sUid,
-              code: pCode,
-              amount: amount,
-              matchedStudent: matchedStudent,
-              matchMethod: parsed ? parsed.matchMethod : 'manual'
-            });
+        const res = await fetch(`${rtdbUrl}/vip_activations.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            const cloudItems = [];
+            for (const [key, val] of Object.entries(data)) {
+              if (val && typeof val === 'object') {
+                cloudItems.push({ key, ...val });
+              }
+            }
+            cloudItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            adminVipActivations = cloudItems;
+            try { localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100))); } catch(e) {}
           }
         }
-
-        items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        adminBankTransactions = items;
-        renderAdminBankTransactionsListUI();
-        showToast('🔄 Đã làm mới nhật ký giao dịch Macro Feed!');
-
+        renderAdminVipActivationsListUI();
+        showToast('🔄 Đã cập nhật danh sách kích hoạt thành công!');
       } catch (e) {
-        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: #f87171;">Lỗi nạp logs: ' + e.message + '</div>';
+        renderAdminVipActivationsListUI();
       }
     }
-    window.fetchAdminBankTransactions = fetchAdminBankTransactions;
+    window.fetchAdminVipActivations = fetchAdminVipActivations;
 
-    function renderAdminBankTransactionsListUI() {
-      const listEl = document.getElementById('admin-bank-transactions-list');
+    function renderAdminVipActivationsListUI() {
+      const listEl = document.getElementById('admin-vip-activations-list');
       if (!listEl) return;
 
-      if (!adminBankTransactions || adminBankTransactions.length === 0) {
-        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
+      if (!adminVipActivations || adminVipActivations.length === 0) {
+        listEl.innerHTML = '<div style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 12px;"><em>Chưa có bản ghi kích hoạt nào trên hệ thống.</em></div>';
         return;
       }
 
-      const packageNames = {
-        '1M': '👑 VocaVIP Tháng (39k)',
-        '1Y': '🟡 VocaVIP Năm (299k)',
-        'LT': '👑 VocaVIP Trọn Đời (599k)',
-        'S5': '🎡 5 VocaSpin (10k)',
-        'S15': '🎡 15 VocaSpin (25k)',
-        'S40': '🎡 40 VocaSpin (50k)'
+      const pkgColors = {
+        '1M': { bg: 'rgba(16,185,129,0.15)', text: '#34d399', border: 'rgba(16,185,129,0.4)', title: '👑 VocaVIP Tháng (39k)' },
+        '1Y': { bg: 'rgba(56,189,248,0.15)', text: '#38bdf8', border: 'rgba(56,189,248,0.4)', title: '🟡 VocaVIP Năm (299k)' },
+        'LT': { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24', border: 'rgba(245,158,11,0.4)', title: '👑 VocaVIP Trọn Đời (599k)' },
+        'S5': { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24', border: 'rgba(245,158,11,0.4)', title: '🎡 +5 VocaSpin (10k)' },
+        'S15': { bg: 'rgba(236,72,153,0.15)', text: '#f472b6', border: 'rgba(236,72,153,0.4)', title: '🎡 +15 VocaSpin (25k)' },
+        'S40': { bg: 'rgba(168,85,247,0.15)', text: '#c084fc', border: 'rgba(168,85,247,0.4)', title: '🎡 +40 VocaSpin (50k)' },
+        'CANCEL_VIP': { bg: 'rgba(239,68,68,0.15)', text: '#f87171', border: 'rgba(239,68,68,0.4)', title: '❌ Hủy VIP' }
       };
 
       let html = '';
-      adminBankTransactions.forEach(tx => {
-        const timeStr = tx.timestamp ? formatDateTime(new Date(tx.timestamp).toISOString()) : 'Vừa xong';
-        const shortUid = (tx.shortUid || '').toUpperCase();
-        const code = (tx.code || '').toUpperCase();
-        const status = tx.status || 'pending';
-        const matchedStudent = tx.matchedStudent || adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === shortUid);
-        const pkgTitle = packageNames[code] || (code ? `Gói ${code}` : 'Chưa nhận diện gói');
-
-        const isCompleted = status === 'completed' || status === 'auto_processed';
-        const statusBadge = isCompleted
-          ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight:700;">✅ Đã Xử Lý</span>'
-          : '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px; font-weight:700;">⏳ Chờ Duyệt</span>';
-
-        const aiBadge = tx.aiAnalyzed 
-          ? `<span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 9.5px;" title="Đã phân tích bởi AI Gemini">🤖 AI (${Math.round((tx.aiConfidence || 1) * 100)}%)</span>`
-          : '';
+      adminVipActivations.forEach(item => {
+        const timeStr = item.timestamp ? formatDateTime(new Date(item.timestamp).toISOString()) : 'Vừa xong';
+        const code = (item.actionType || '').toUpperCase();
+        const pkgInfo = pkgColors[code] || { bg: 'rgba(99,102,241,0.15)', text: '#818cf8', border: 'rgba(99,102,241,0.4)', title: item.actionLabel || code };
+        const sUid = (item.shortUid || getShortUidUpper(item.uid || '')).toUpperCase();
 
         html += `
-          <div style="background: var(--surface-elevated); border: 1.5px solid ${isCompleted ? 'rgba(16,185,129,0.3)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-            <!-- Row 1: Status, Package & Actions -->
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div style="background: var(--surface-elevated); border: 1px solid rgba(255,255,255,0.08); border-left: 4px solid ${pkgInfo.text}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;">
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <strong style="font-size: 13.5px; color: #38bdf8; font-family: monospace;">${escapeHtml(code ? pkgTitle : 'Giao dịch MB Bank')}</strong>
-                ${statusBadge}
-                ${aiBadge}
-                ${tx.amount ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; font-size: 11px;">+${tx.amount.toLocaleString('vi-VN')} đ</span>` : ''}
+                <span class="badge" style="background: ${pkgInfo.bg}; color: ${pkgInfo.text}; border: 1px solid ${pkgInfo.border}; font-weight: 800; font-size: 11px; padding: 2px 8px;">${escapeHtml(pkgInfo.title)}</span>
+                <strong style="font-size: 13px; color: var(--text); cursor: pointer; text-decoration: underline;" onclick="lookupVipStudentByInput('${escapeHtml(item.uid)}')" title="Bấm để tra cứu Flower này">${escapeHtml(item.displayName || 'Flower')}</strong>
+                ${item.email ? `<span style="font-size: 11.5px; color: var(--text-muted);">(${escapeHtml(item.email)})</span>` : ''}
               </div>
-
-              <!-- Action buttons -->
-              <div style="display: flex; gap: 6px; align-items: center;">
-                ${matchedStudent && code && !isCompleted ? `
-                  <button type="button" class="btn btn-primary btn-sm" onclick="processAdminBankTransactionAction('${tx.key}', '${matchedStudent.uid}', '${code}')" style="font-size: 11.5px; padding: 4px 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
-                    ⚡ Kích Hoạt ${code}
-                  </button>
-                ` : ''}
-                ${(!matchedStudent || !code) && !isCompleted ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="analyzeBankTransactionWithAi('${tx.key}')" style="font-size: 11px; padding: 4px 10px; border-color: rgba(99,102,241,0.5); color: #a5b4fc; background: rgba(99,102,241,0.1); font-weight: 700;" title="Nhờ AI Gemini đọc và bóc tách tự động">
-                    🤖 AI Đối Soát
-                  </button>
-                ` : ''}
-                <button type="button" class="btn btn-outline btn-sm" onclick="deleteAdminBankTransaction('${tx.key}')" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Xóa giao dịch này">
-                  🗑️
-                </button>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                <span>🆔 <code>${escapeHtml(sUid)}</code></span>
+                <span>•</span>
+                <span>⏱️ ${timeStr}</span>
+                <span>•</span>
+                <span style="color: #34d399; font-weight: 700;">✅ Thành công</span>
               </div>
             </div>
-
-            <!-- Row 2: Raw Banking Content -->
-            <div style="font-size: 11.5px; background: rgba(0,0,0,0.35); border-radius: 6px; padding: 6px 10px; color: #cbd5e1; font-family: monospace; word-break: break-all; border-left: 3px solid #38bdf8;">
-              ${escapeHtml(tx.content || tx.syntax || 'Nội dung trống')}
-            </div>
-
-            <!-- Row 3: Matching & Student Profile Bar -->
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
-              <div>
-                ⏱️ ${timeStr} • Khớp Flower: 
-                ${matchedStudent ? `
-                  <strong style="color: #ffd700; text-decoration: underline; cursor: pointer;" onclick="lookupVipStudentByInput('${escapeHtml(matchedStudent.uid)}')" title="Bấm để tra cứu Flower này">
-                    ${escapeHtml(matchedStudent.displayName)} (${escapeHtml(matchedStudent.email)}) - [${shortUid}]
-                  </strong>
-                ` : `<span style="color: #f87171;">${shortUid ? 'Mã 16 ký tự: ' + shortUid + ' (Chưa có trên hệ thống)' : 'Chưa nhận diện UID'}</span>`}
-              </div>
-              ${tx.aiExplanation ? `<div style="font-size: 10.5px; color: #a5b4fc; font-style: italic;">💡 ${escapeHtml(tx.aiExplanation)}</div>` : ''}
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="btn btn-outline btn-icon btn-sm" onclick="deleteAdminVipActivation('${escapeHtml(item.key)}')" style="color: #f87171; border-color: rgba(239,68,68,0.3); padding: 4px 6px;" title="Xóa bản ghi này">
+                <svg class="icon icon-sm"><use href="#i-close"/></svg>
+              </button>
             </div>
           </div>
         `;
@@ -13377,56 +13555,41 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       listEl.innerHTML = html;
     }
 
-    async function processAdminBankTransactionAction(txKey, uid, code) {
-      await quickApplyStudentVipOrSpin(uid, code);
+    async function deleteAdminVipActivation(actKey) {
+      if (!confirm('Xóa bản ghi lịch sử kích hoạt này?')) return;
+      adminVipActivations = adminVipActivations.filter(a => a.key !== actKey);
       try {
-        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
-        const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'completed', processedAt: Date.now() })
-        });
-        const tx = adminBankTransactions.find(t => t.key === txKey);
-        if (tx) tx.status = 'completed';
-        renderAdminBankTransactionsListUI();
-      } catch (e) {}
-    }
-    window.processAdminBankTransactionAction = processAdminBankTransactionAction;
+        localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100)));
+      } catch(e) {}
+      renderAdminVipActivationsListUI();
 
-    async function deleteAdminBankTransaction(txKey) {
-      if (!confirm('Bạn có chắc muốn xóa bản ghi giao dịch này khỏi hệ thống?')) return;
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, { method: 'DELETE' });
-        adminBankTransactions = adminBankTransactions.filter(t => t.key !== txKey);
-        renderAdminBankTransactionsListUI();
-        showToast('🗑️ Đã xóa bản ghi giao dịch!');
-      } catch (e) {
-        showToast('Lỗi xóa giao dịch: ' + e.message);
-      }
+        await fetch(`${rtdbUrl}/vip_activations/${actKey}.json${authParam}`, { method: 'DELETE' });
+      } catch(e) {}
+      showToast('🗑️ Đã xóa bản ghi!');
     }
-    window.deleteAdminBankTransaction = deleteAdminBankTransaction;
+    window.deleteAdminVipActivation = deleteAdminVipActivation;
 
-    async function clearAdminBankTransactionsLog() {
-      if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử giao dịch MacroDroid trên Cloud?')) return;
+    async function clearAdminVipActivationsLog() {
+      if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử kích hoạt thành công trên Cloud & Local?')) return;
+      adminVipActivations = [];
+      try { localStorage.removeItem('vocaflow_admin_vip_activations'); } catch(e) {}
+      renderAdminVipActivationsListUI();
+
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`, { method: 'DELETE' });
-        adminBankTransactions = [];
-        renderAdminBankTransactionsListUI();
-        showToast('🗑️ Đã xóa sạch lịch sử giao dịch!');
-      } catch (e) {
-        showToast('Lỗi xóa: ' + e.message);
-      }
+        await fetch(`${rtdbUrl}/vip_activations.json${authParam}`, { method: 'DELETE' });
+      } catch(e) {}
+      showToast('🗑️ Đã xóa toàn bộ lịch sử kích hoạt!');
     }
-    window.clearAdminBankTransactionsLog = clearAdminBankTransactionsLog;
-function switchPublisherTab(tab) {
+    window.clearAdminVipActivationsLog = clearAdminVipActivationsLog;
+
+    function switchPublisherTab(tab) {
       const isStudents = tab === 'students';
       const isCodes = tab === 'codes';
       const isWallet = tab === 'wallet';
@@ -13439,7 +13602,7 @@ function switchPublisherTab(tab) {
       const bContent = document.getElementById('pub-tab-content-bugs');
       const vContent = document.getElementById('pub-tab-content-vip-gateway');
 
-      if (sContent) sContent.style.display = isStudents ? 'block' : 'none';
+      if (sContent) sContent.style.display = isStudents ? 'flex' : 'none';
       if (cContent) cContent.style.display = isCodes ? 'block' : 'none';
       if (wContent) wContent.style.display = isWallet ? 'block' : 'none';
       if (bContent) bContent.style.display = isBugs ? 'block' : 'none';
@@ -13468,7 +13631,7 @@ function switchPublisherTab(tab) {
       }
       if (isVipGateway) {
         if (adminStudentsData.length === 0) fetchAdminStudentsList();
-        fetchAdminBankTransactions();
+        fetchAdminVipActivations();
       }
     }
 
@@ -15254,7 +15417,13 @@ function switchPublisherTab(tab) {
       const btn = document.getElementById('btn-pub-follow');
       if (!btn) return;
 
-      if (!targetUid || (currentUser && targetUid === currentUser.uid) || targetUid === 'official' || targetUid === 'undefined') {
+      const authorClean = (currentPublicProfileAuthor?.resolvedHandle || '').replace(/^@/, '').trim().toLowerCase();
+      const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      const isSelf = (currentUser && targetUid && targetUid === currentUser.uid) ||
+                     (currentPublicProfileAuthor && currentPublicProfileAuthor.isCurrentUser) ||
+                     (authorClean && currentHandle && authorClean === currentHandle);
+
+      if (!targetUid || isSelf || targetUid === 'official' || targetUid === 'undefined') {
         btn.style.display = 'none';
         return;
       }
@@ -16975,11 +17144,21 @@ function switchPublisherTab(tab) {
         }
       }
 
-      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
+      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
 
-      // STRICT USER MATCH: Only true if author identity matches current logged in user (v0.10.6c)
-      const isCurrentUser = (authorUid && currentUser && authorUid === currentUser.uid) ||
-                            (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase());
+      // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-45)
+      const authorClean = (authorName || '').replace(/^@/, '').trim().toLowerCase();
+      const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      const currentEmailPrefix = (currentUser?.email ? currentUser.email.split('@')[0] : '').toLowerCase();
+      const currentDisplayName = (currentUser?.displayName || '').trim().toLowerCase();
+      const currentUid = currentUser?.uid || '';
+
+      const isCurrentUser = (authorUid && currentUid && authorUid === currentUid) ||
+                            (targetDeck?.authorUid && currentUid && targetDeck.authorUid === currentUid) ||
+                            (authorClean && currentHandle && authorClean === currentHandle) ||
+                            (authorClean && currentEmailPrefix && authorClean === currentEmailPrefix) ||
+                            (authorClean && currentDisplayName && authorClean === currentDisplayName) ||
+                            (authorName && currentDisplayName && authorName.trim().toLowerCase() === currentDisplayName);
 
       let resolvedName = authorName;
       let resolvedHandle = '';
@@ -16996,13 +17175,14 @@ function switchPublisherTab(tab) {
       if (isVocaFlowOfficial) {
         resolvedName = 'VocaFlow Chuẩn';
         resolvedHandle = 'official';
-        resolvedAvatar = 'icons/Icon-192.png';
+        resolvedAvatar = 'icons/vocaflow_official_avatar.png';
         resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
         targetPoints = 999999;
         targetFlowDays = 365;
         targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
       } else if (isCurrentUser) {
+        targetUid = currentUid;
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
@@ -17014,12 +17194,45 @@ function switchPublisherTab(tab) {
       } else {
         // Find targetUid from all available registries if not provided
         if (!targetUid) {
-          const studentMatch = adminStudentsData.find(s => s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase());
+          const studentMatch = adminStudentsData.find(s => 
+            (s.username && s.username.toLowerCase() === authorClean) ||
+            (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
+            (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
+          );
           if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
           else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
           else {
-            const deckMatch = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() && d.authorUid);
+            const deckMatch = allDecks.find(d => 
+              (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+              (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+              (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+            );
             if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
+          }
+
+          // v0.10.9-45: If still not found, fetch users list from Cloud RTDB to resolve authentic user UID
+          if (!targetUid) {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            try {
+              const uListRes = await fetch(`${rtdbUrl}/users.json`);
+              if (uListRes.ok) {
+                const allUsers = await uListRes.json();
+                if (allUsers && typeof allUsers === 'object') {
+                  for (const [uid, uData] of Object.entries(allUsers)) {
+                    if (!uData) continue;
+                    const uHandle = (uData.profile?.username || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
+                    const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
+                    const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
+                    if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean) {
+                      targetUid = uid;
+                      break;
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Failed to resolve targetUid from RTDB:', e);
+            }
           }
         }
 
@@ -17154,6 +17367,7 @@ function switchPublisherTab(tab) {
 
       const nameEl = document.getElementById('pub-view-name');
       const avEl = document.getElementById('pub-view-avatar');
+      const pubSubBadgeEl = document.getElementById('pub-view-sub-badge');
       const bioEl = document.getElementById('pub-view-bio-text');
       const statDecksEl = document.getElementById('pub-view-stat-decks');
       const statWordsEl = document.getElementById('pub-view-stat-words');
@@ -17174,6 +17388,7 @@ function switchPublisherTab(tab) {
         targetUid: targetUid,
         resolvedName: resolvedName,
         resolvedHandle: resolvedHandle,
+        isCurrentUser: isCurrentUser,
         targetFollowerCount: targetFollowerCount,
         targetFollowingCount: targetFollowingCount
       };
@@ -17190,7 +17405,9 @@ function switchPublisherTab(tab) {
       const cleanResolvedName = stripVipAffixes(resolvedName);
 
       if (nameEl) {
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+        } else if (isAuthorVip) {
           nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
         } else {
           nameEl.textContent = cleanResolvedName;
@@ -17198,7 +17415,10 @@ function switchPublisherTab(tab) {
       }
       if (avEl) {
         avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
+          avEl.style.borderColor = '#c084fc';
+        } else if (isAuthorVip) {
           avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
           avEl.style.borderColor = '#fbbf24';
         } else {
@@ -17206,9 +17426,37 @@ function switchPublisherTab(tab) {
           avEl.style.borderColor = 'rgba(255,255,255,0.3)';
         }
       }
+      if (pubSubBadgeEl) {
+        if (isVocaFlowOfficial) {
+          pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
+          pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
+          pubSubBadgeEl.style.color = '#fbbf24';
+          pubSubBadgeEl.style.fontWeight = '800';
+          pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
+        } else if (isAuthorVip) {
+          pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
+          pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
+          pubSubBadgeEl.style.color = '#fbbf24';
+          pubSubBadgeEl.style.fontWeight = '700';
+          pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+        } else {
+          pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+          pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+          pubSubBadgeEl.style.color = '#34d399';
+          pubSubBadgeEl.style.fontWeight = '700';
+          pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        }
+      }
       const pubBadgeEl = document.getElementById('pub-view-badge');
       if (pubBadgeEl) {
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          pubBadgeEl.innerHTML = '⭐ VocaFlow Official';
+          pubBadgeEl.style.background = 'linear-gradient(135deg, #6366f1, #a855f7, #ec4899)';
+          pubBadgeEl.style.color = '#ffffff';
+          pubBadgeEl.style.fontWeight = '800';
+          pubBadgeEl.style.border = '1px solid rgba(255,255,255,0.4)';
+          pubBadgeEl.style.boxShadow = '0 2px 14px rgba(168,85,247,0.5)';
+        } else if (isAuthorVip) {
           const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
           if (durationLabel !== 'Hết hạn') {
             pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
@@ -17312,6 +17560,9 @@ function switchPublisherTab(tab) {
 
       if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks');
       openModal('modal-public-profile');
+      if (typeof updateAppUrlRoute === 'function' && resolvedHandle) {
+        updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
+      }
     }
 
     async function openPublicProfileByStudent(uid) {
@@ -19879,6 +20130,11 @@ function switchPublisherTab(tab) {
         btnAdd.style.display = 'none';
       }
 
+      // v0.10.9-45: SPA URL Routing
+      if (screenId === 'screen-decks') {
+        if (typeof updateAppUrlRoute === 'function') updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+      }
+
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
       const fab = document.getElementById('btn-ai-mentor-fab');
       if (fab) {
@@ -20856,6 +21112,25 @@ function switchPublisherTab(tab) {
       if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       }
+
+      // v0.10.9-45: SPA URL Routing on modal open
+      if (typeof updateAppUrlRoute === 'function') {
+        const modalRouteMap = {
+          'modal-profile': '/me',
+          'modal-shop': '/shop',
+          'modal-vip-pricing': '/vip',
+          'modal-ai-mentor': '/mentor',
+          'modal-wallet-studio': '/wallet',
+          'modal-mistake-notebook': '/mistakes',
+          'modal-lucky-wheel': '/wheel',
+          'modal-settings': '/settings',
+          'modal-achievements': '/achievements',
+          'modal-user-guide': '/guide'
+        };
+        if (modalRouteMap[id]) {
+          updateAppUrlRoute(modalRouteMap[id]);
+        }
+      }
     }
     function closeModal(id) {
       const el = document.getElementById(id);
@@ -20885,6 +21160,14 @@ function switchPublisherTab(tab) {
             openUserGuideModal(ctx.category, ctx.starterStep, ctx.scrollTop);
           }
         }, 60);
+      }
+
+      // v0.10.9-45: Restore homepage route if no other modal is active
+      if (typeof updateAppUrlRoute === 'function') {
+        const anyActiveModal = document.querySelector('.modal-overlay.active');
+        if (!anyActiveModal) {
+          updateAppUrlRoute('/homepage');
+        }
       }
     }
 
@@ -23166,6 +23449,12 @@ function switchPublisherTab(tab) {
 
     function cleanForeignClickBlockers() {
       try {
+        const rewardedAdModal = document.getElementById('modal-rewarded-ad');
+        if (rewardedAdModal && rewardedAdModal.classList.contains('active')) {
+          // Do not delete active ad frames while user is watching rewarded video
+          return;
+        }
+
         const parents = [document.body, document.documentElement];
         parents.forEach(parent => {
           if (!parent) return;
@@ -23335,20 +23624,39 @@ function switchPublisherTab(tab) {
     // =========================================================================
     const AD_FEATURE_SLIDES = [
       {
-        title: 'VocaFlow Pro - AI English Mentor',
-        desc: 'Trợ lý học thuật và luyện phản xạ giao tiếp tiếng Anh 24/7 không giới hạn.'
+        icon: '👑',
+        sponsor: 'VocaVIP Hoàng Gia',
+        title: 'VocaFlow Pro - AI English Mentor 24/7',
+        desc: 'Trợ lý học thuật và luyện phản xạ giao tiếp tiếng Anh 24/7 không giới hạn, kèm vương miện neon độc quyền.',
+        tags: ['✓ VIP Unlimited', '✓ Realtime Sync', '✓ 0đ Phí AI']
       },
       {
-        title: 'Spaced Repetition System (SRS)',
-        desc: 'Phương pháp lặp lại ngắt quãng dựa trên đường cong quên lãng Ebbinghaus chuẩn quốc tế.'
+        icon: '🎙️',
+        sponsor: 'ELSA Speak Phonetics AI',
+        title: 'ELSA Speak AI - Chuẩn Hóa Phát Âm Bản Xứ',
+        desc: 'Công nghệ AI chấm điểm khẩu hình, nối âm, nuốt âm và trọng âm ngữ điệu chuẩn kỳ thi quốc tế.',
+        tags: ['✓ AI Phonetics', '✓ Chuẩn Bản Xứ', '✓ IELTS 8.0+']
       },
       {
-        title: 'Đồng Bộ Cloud Realtime Siêu Tốc',
-        desc: 'Học tập liên tục mọi lúc mọi nơi trên cả Web Online và Windows Desktop App.'
+        icon: '🧠',
+        sponsor: 'Oxford & Cambridge E-Learning',
+        title: 'Spaced Repetition System (SRS Ebbinghaus)',
+        desc: 'Phương pháp lặp lại ngắt quãng dựa trên đường cong quên lãng Ebbinghaus giúp nhớ 3.000 từ vựng cốt lõi.',
+        tags: ['✓ Chuẩn Quốc Tế', '✓ Nhớ Lâu x5', '✓ Flashcards 3D']
       },
       {
-        title: 'Kho Thư Viện THPT & IELTS Khổng Lồ',
-        desc: 'Hơn 50+ VocaDeck tuyển chọn chuẩn SGK Global Success và đề thi THPT Quốc Gia.'
+        icon: '⚡',
+        sponsor: 'Google Cloud Asia-Southeast1',
+        title: 'Hạ Tầng Cloud Realtime Siêu Tốc',
+        desc: 'Đồng bộ học tập tức thì giữa Web Online và Windows Desktop App mà không lo mất tiến độ.',
+        tags: ['✓ Offline-First', '✓ Auto Backup', '✓ Bảo Mật 100%']
+      },
+      {
+        icon: '📚',
+        sponsor: 'Global Success & IELTS Cambridge',
+        title: 'Kho Thư Viện THPT Quốc Gia & IELTS 8.0+',
+        desc: 'Hơn 50+ VocaDeck tuyển chọn chuẩn SGK Global Success và bộ đề thi trọng tâm mới nhất.',
+        tags: ['✓ Chuẩn SGK Mới', '✓ 100% Miễn Phí', '✓ Audio HD']
       }
     ];
 
@@ -23372,7 +23680,7 @@ function switchPublisherTab(tab) {
       const progressFill = document.getElementById('ad-player-progress-fill');
       const claimBtn = document.getElementById('btn-ad-claim-reward');
 
-      if (titleEl) titleEl.textContent = currentAdActiveSlide.title;
+      if (titleEl) titleEl.textContent = `${currentAdActiveSlide.icon} ${currentAdActiveSlide.title}`;
       if (descEl) descEl.textContent = currentAdActiveSlide.desc;
       if (progressFill) progressFill.style.width = '0%';
 
@@ -33271,28 +33579,54 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         hintEl.textContent = isAutoPlaying ? '⏳ Tự động lật và đọc tiếng Việt sau khi phát âm' : '👆 Chạm vào thẻ để lật xem mặt trước / sau';
       }
 
+      const senses = (typeof getWordSenses === 'function') ? getWordSenses(word) : [];
+      const isMultiSense = senses.length > 1;
+
       // Front
       const cefrEl = document.getElementById('autofc-front-cefr');
-      if (word.cefrLevel) {
-        cefrEl.textContent = word.cefrLevel;
+      if (word.cefrLevel || (senses[0] && senses[0].cefrLevel)) {
+        cefrEl.textContent = word.cefrLevel || senses[0].cefrLevel;
         cefrEl.style.display = 'inline-block';
       } else {
         cefrEl.style.display = 'none';
       }
-      document.getElementById('autofc-front-pos').textContent = (word.partOfSpeech || 'WORD').toUpperCase();
+      document.getElementById('autofc-front-pos').textContent = (word.partOfSpeech || (senses[0] && senses[0].partOfSpeech) || 'WORD').toUpperCase();
       document.getElementById('autofc-front-term').textContent = word.term;
-      document.getElementById('autofc-front-phonetic').textContent = word.phonetic || '';
+      document.getElementById('autofc-front-phonetic').textContent = word.phonetic || (senses[0] && senses[0].phonetic) || '';
 
       // Back
       document.getElementById('autofc-back-term').textContent = word.term;
-      document.getElementById('autofc-back-def').textContent = word.definitionVi;
-      document.getElementById('autofc-back-example').textContent = word.exampleSentence ? `“${word.exampleSentence}”` : '';
+      const backDefEl = document.getElementById('autofc-back-def');
+      const backExEl = document.getElementById('autofc-back-example');
+
+      if (isMultiSense) {
+        let sensesHtml = '<div style="display: flex; flex-direction: column; gap: 8px; text-align: left; max-height: 190px; overflow-y: auto; padding-right: 4px; margin-top: 4px;">';
+        senses.forEach((s, sIdx) => {
+          sensesHtml += `
+            <div style="background: var(--surface-elevated, rgba(255,255,255,0.06)); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 13px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+                <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 10px; font-weight: 700;">Nghĩa ${sIdx + 1}</span>
+                <span class="badge badge-pos" style="font-size: 9.5px;">${escapeHtml(s.partOfSpeech || 'noun')}</span>
+                <span class="badge badge-level-${(s.cefrLevel || 'b1').toLowerCase()}" style="font-size: 9.5px;">${escapeHtml(s.cefrLevel || 'B1')}</span>
+              </div>
+              <div style="font-weight: 700; color: var(--text);">${escapeHtml(s.definitionVi)}</div>
+              ${s.exampleSentence ? `<div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; margin-top: 2px;">“${escapeHtml(s.exampleSentence)}”</div>` : ''}
+            </div>
+          `;
+        });
+        sensesHtml += '</div>';
+        if (backDefEl) backDefEl.innerHTML = sensesHtml;
+        if (backExEl) backExEl.textContent = '';
+      } else {
+        if (backDefEl) backDefEl.textContent = word.definitionVi || senses[0]?.definitionVi || '';
+        if (backExEl) backExEl.textContent = (word.exampleSentence || senses[0]?.exampleSentence) ? `“${word.exampleSentence || senses[0]?.exampleSentence}”` : '';
+      }
 
       const metaEl = document.getElementById('autofc-back-meta');
       let metaHtml = '';
-      if (word.synonyms && word.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(word.synonyms.join(', '))}</div>`;
-      if (word.antonyms && word.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(word.antonyms.join(', '))}</div>`;
-      if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}</div>`;
+      if (word.synonyms && word.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(Array.isArray(word.synonyms) ? word.synonyms.join(', ') : word.synonyms)}</div>`;
+      if (word.antonyms && word.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(Array.isArray(word.antonyms) ? word.antonyms.join(', ') : word.antonyms)}</div>`;
+      if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(Array.isArray(word.collocations) ? word.collocations.join(', ') : word.collocations)}</div>`;
       if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
       metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
 
@@ -33309,11 +33643,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       if (miniTitle) miniTitle.textContent = `Auto FC (${index + 1}/${total})`;
       if (miniProg) miniProg.style.width = `${Math.round(((index + 1) / total) * 100)}%`;
-      if (miniPos) miniPos.textContent = (word.partOfSpeech || 'WORD').toLowerCase();
+      if (miniPos) miniPos.textContent = (word.partOfSpeech || (senses[0] && senses[0].partOfSpeech) || 'WORD').toLowerCase();
       if (miniFrontTerm) miniFrontTerm.textContent = word.term;
-      if (miniFrontPhonetic) miniFrontPhonetic.textContent = word.phonetic || '';
+      if (miniFrontPhonetic) miniFrontPhonetic.textContent = word.phonetic || (senses[0] && senses[0].phonetic) || '';
       if (miniBackTerm) miniBackTerm.textContent = word.term;
-      if (miniBackDef) miniBackDef.textContent = word.definitionVi;
+      if (miniBackDef) {
+        if (isMultiSense) {
+          miniBackDef.textContent = senses.map((s, i) => `${i + 1}. ${s.definitionVi}`).join(' | ');
+        } else {
+          miniBackDef.textContent = word.definitionVi || senses[0]?.definitionVi || '';
+        }
+      }
       if (miniCardEl) miniCardEl.classList.remove('flipped');
       if (miniStatus) {
         miniStatus.textContent = '🔊 EN';
@@ -33385,13 +33725,35 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         await new Promise(r => setTimeout(r, 850));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 6. Speak Vietnamese Definition completely
-        if (word.definitionVi) {
+        // 6. Speak Vietnamese Definition completely (Multi-sense sequential support)
+        const senses = (typeof getWordSenses === 'function') ? getWordSenses(word) : [];
+        if (senses.length > 1) {
+          for (let sIdx = 0; sIdx < senses.length; sIdx++) {
+            const s = senses[sIdx];
+            if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+            if (s.definitionVi) {
+              if (statusEl) {
+                statusEl.textContent = `🇻🇳 Đang đọc nghĩa ${sIdx + 1}/${senses.length}...`;
+                statusEl.style.color = '#34d399';
+              }
+              if (miniStatusEl) {
+                miniStatusEl.textContent = `🔊 VI (${sIdx + 1}/${senses.length})`;
+              }
+              const senseSpeech = `Nét nghĩa ${sIdx + 1}: ${s.definitionVi}`;
+              await playAudioAsync(senseSpeech, 'vi', currentSpeechRateVi);
+              if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+              if (sIdx < senses.length - 1) {
+                await new Promise(r => setTimeout(r, 450));
+              }
+            }
+          }
+        } else if (word.definitionVi || (senses[0] && senses[0].definitionVi)) {
+          const singleDef = word.definitionVi || senses[0].definitionVi;
           if (statusEl) {
             statusEl.textContent = '🇻🇳 Đang đọc tiếng Việt...';
             statusEl.style.color = '#34d399';
           }
-          await playAudioAsync(word.definitionVi, 'vi', currentSpeechRateVi);
+          await playAudioAsync(singleDef, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
@@ -33438,7 +33800,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const nextWord = autoFlashcardList[nextIdx];
         if (nextWord) {
           if (nextWord.term) preloadAudioBlob(nextWord.term, 'en-US');
-          if (nextWord.definitionVi) preloadAudioBlob(nextWord.definitionVi, 'vi');
+          const senses = (typeof getWordSenses === 'function') ? getWordSenses(nextWord) : [];
+          if (senses.length > 1) {
+            senses.forEach((s, sIdx) => {
+              if (s.definitionVi) {
+                preloadAudioBlob(`Nét nghĩa ${sIdx + 1}: ${s.definitionVi}`, 'vi');
+              }
+            });
+          } else if (nextWord.definitionVi || (senses[0] && senses[0].definitionVi)) {
+            preloadAudioBlob(nextWord.definitionVi || senses[0].definitionVi, 'vi');
+          }
         }
       }
     }
@@ -47121,6 +47492,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           usedToday: aiChatDailyCount,
           remainingFree: 999999,
           isFree: true,
+          canSend: true,
           costXu: 0
         };
       }
@@ -47132,7 +47504,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         usedToday: aiChatDailyCount,
         remainingFree,
         isFree: remainingFree > 0,
-        costXu: 10
+        canSend: remainingFree > 0,
+        costXu: 0
       };
     }
 
@@ -47155,12 +47528,12 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
         }
         if (feeNotice) {
-          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Trò chuyện không giới hạn lượt & 0 VoCoin!';
+          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Trò chuyện AI không giới hạn 24/7!';
         }
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
-      } else if (status.isFree) {
+      } else if (status.canSend) {
         if (badge) {
-          badge.textContent = `${status.remainingFree} lượt free`;
+          badge.textContent = `${status.remainingFree}/5 lượt free`;
           badge.style.background = 'rgba(16,185,129,0.15)';
           badge.style.color = '#34d399';
           badge.style.border = '1px solid rgba(16,185,129,0.3)';
@@ -47169,21 +47542,21 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.textContent = status.remainingFree;
           fabBadge.style.background = '#10b981';
         }
-        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt: 10 VoCoin/lượt`;
+        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt sẽ không thể dùng xu để tiếp tục`;
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
       } else {
         if (badge) {
-          badge.textContent = `10 VoCoin / tin`;
-          badge.style.background = 'rgba(245,158,11,0.15)';
-          badge.style.color = '#fbbf24';
-          badge.style.border = '1px solid rgba(245,158,11,0.3)';
+          badge.textContent = `0/5 lượt hôm nay`;
+          badge.style.background = 'rgba(239,68,68,0.15)';
+          badge.style.color = '#f87171';
+          badge.style.border = '1px solid rgba(239,68,68,0.3)';
         }
         if (fabBadge) {
-          fabBadge.textContent = '🪙';
-          fabBadge.style.background = '#f59e0b';
+          fabBadge.textContent = '0';
+          fabBadge.style.background = '#ef4444';
         }
-        if (feeNotice) feeNotice.textContent = `Đã dùng hết 5 lượt miễn phí hôm nay • Phí: 10 VoCoin / lượt gửi`;
-        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi (10 VoCoin)';
+        if (feeNotice) feeNotice.innerHTML = '<span style="color: #f87171; font-weight: 700;">⚠️ Đã dùng hết 5/5 lượt hôm nay:</span> Nâng cấp VocaVIP để mở khóa vô hạn!';
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Hết lượt (0/5)';
       }
     }
 
@@ -47903,9 +48276,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     async function handleSendAiChatMessage(e = null) {
       if (e) e.preventDefault();
       
-      // Requirement 5: VIP-exclusive lock
-      if (typeof isUserVip === 'function' && !isUserVip()) {
-        alert('🔒 Tính năng VocaMentor AI chỉ dành riêng cho thành viên VIP (VocaVIP)!\n\nHãy nâng cấp VIP để trải nghiệm Gia Sư Gemini 3.8 Flash Vision và đính kèm ảnh không giới hạn.');
+      const quota = getAiChatQuotaStatus();
+      if (!quota.isVip && !quota.canSend) {
+        alert('🔒 Bạn đã sử dụng hết 5/5 lượt VocaMentor AI miễn phí hôm nay!\n\nTheo quy định mới, tài khoản thường không thể dùng VoCoin để tiếp tục. Hãy nâng cấp VocaVIP để trò chuyện không giới hạn hoặc quay lại vào ngày mai nhé!');
         openVipPricingModal();
         return;
       }
@@ -48110,19 +48483,23 @@ Quy tắc phản hồi quan trọng:
     currentActiveVipTab = tier;
     
     // Update tab buttons
+    const btnFree = document.getElementById('vip-tab-btn-free');
     const btnMonthly = document.getElementById('vip-tab-btn-monthly');
     const btnYearly = document.getElementById('vip-tab-btn-yearly');
     const btnLifetime = document.getElementById('vip-tab-btn-lifetime');
 
+    if (btnFree) btnFree.classList.toggle('active', tier === 'free');
     if (btnMonthly) btnMonthly.classList.toggle('active', tier === 'monthly');
     if (btnYearly) btnYearly.classList.toggle('active', tier === 'yearly');
     if (btnLifetime) btnLifetime.classList.toggle('active', tier === 'lifetime');
 
     // Update active-tab-card class on cards (for mobile display)
+    const cardFree = document.getElementById('vip-card-free');
     const cardMonthly = document.getElementById('vip-card-monthly');
     const cardYearly = document.getElementById('vip-card-yearly');
     const cardLifetime = document.getElementById('vip-card-lifetime');
 
+    if (cardFree) cardFree.classList.toggle('active-tab-card', tier === 'free');
     if (cardMonthly) cardMonthly.classList.toggle('active-tab-card', tier === 'monthly');
     if (cardYearly) cardYearly.classList.toggle('active-tab-card', tier === 'yearly');
     if (cardLifetime) cardLifetime.classList.toggle('active-tab-card', tier === 'lifetime');
@@ -48193,6 +48570,9 @@ Quy tắc phản hồi quan trọng:
     const bannerExpiryEl = document.getElementById('vip-banner-expiry-info');
 
     // Cards & Buttons
+    const cardFree = document.getElementById('vip-card-free');
+    const btnFree = document.getElementById('btn-plan-free');
+
     const cardMonthly = document.getElementById('vip-card-monthly');
     const btnMonthly = document.getElementById('btn-plan-monthly');
 
@@ -48211,6 +48591,9 @@ Quy tắc phản hồi quan trọng:
           ? 'Đặc quyền sở hữu: <strong>Vĩnh Viễn (Không bao giờ hết hạn)</strong>'
           : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong> (${durationLabel})`;
       }
+
+      if (cardFree) { cardFree.style.opacity = '0.5'; cardFree.style.filter = 'grayscale(0.6)'; }
+      if (btnFree) { btnFree.disabled = true; btnFree.textContent = '🌱 Gói Cơ Bản'; btnFree.style.cursor = 'default'; }
 
       if (currentTier === 'lifetime') {
         // All locked because already highest
@@ -48246,8 +48629,11 @@ Quy tắc phản hồi quan trọng:
         if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Nâng Cấp Lên Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
       }
     } else {
-      // Non-VIP: All open
+      // Non-VIP: All open, Free is current
       if (bannerEl) bannerEl.style.display = 'none';
+
+      if (cardFree) { cardFree.style.opacity = '1'; cardFree.style.filter = 'none'; cardFree.style.border = '1.5px solid rgba(16,185,129,0.5)'; }
+      if (btnFree) { btnFree.disabled = true; btnFree.textContent = '✓ Gói Hiện Tại'; btnFree.style.background = 'rgba(16,185,129,0.12)'; btnFree.style.color = '#34d399'; btnFree.style.borderColor = 'rgba(16,185,129,0.4)'; btnFree.style.cursor = 'default'; }
 
       if (cardMonthly) { cardMonthly.style.opacity = '1'; cardMonthly.style.filter = 'none'; cardMonthly.style.border = '1px solid var(--border)'; }
       if (btnMonthly) { btnMonthly.disabled = false; btnMonthly.textContent = 'Chọn Gói Tháng'; btnMonthly.style.cursor = 'pointer'; }
@@ -48659,7 +49045,11 @@ Quy tắc phản hồi quan trọng:
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
-    checkUrlProfileDeepLink();
+    if (typeof initSpaRouter === 'function') {
+      initSpaRouter();
+    } else {
+      checkUrlProfileDeepLink();
+    }
   });
 
 

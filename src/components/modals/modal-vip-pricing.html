@@ -1,5 +1,5 @@
   <div class="modal-overlay" id="modal-vip-pricing" style="z-index: 10008;">
-    <div class="modal vip-pricing-modal" style="max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
+    <div class="modal vip-pricing-modal" style="max-width: 1040px; max-height: 90vh; display: flex; flex-direction: column; background: var(--surface); border: 1.5px solid rgba(251, 191, 36, 0.45); box-shadow: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.2);">
       <div class="modal-title" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 28px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));">👑</span>
@@ -47,8 +47,11 @@
         <!-- EVENT DISCOUNT BANNER FOR VIP (v0.10.9-alpha-22) -->
         <div id="vip-sale-event-banner" style="display: none; background: linear-gradient(135deg, #ef4444, #f59e0b); color: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(239,68,68,0.4); animation: pulse-ad 2s infinite;"></div>
 
-        <!-- Segmented Tab Bar for Mobile & Compact Views (v0.10.8-alpha-10.3) -->
+        <!-- Segmented Tab Bar for Mobile & Compact Views (v0.10.9-45) -->
         <div class="vip-plan-segmented-switch" style="display: flex; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 16px;">
+          <button type="button" class="vip-plan-segment-btn tab-free" id="vip-tab-btn-free" onclick="switchVipPlanTab('free')">
+            <span>🌱</span> <span>MIỄN PHÍ</span>
+          </button>
           <button type="button" class="vip-plan-segment-btn tab-monthly" id="vip-tab-btn-monthly" onclick="switchVipPlanTab('monthly')">
             <span>🥉</span> <span>THÁNG</span>
           </button>
@@ -60,11 +63,36 @@
           </button>
         </div>
 
-        <!-- 3 Pricing Cards Grid Container -->
-        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 6px;">
+        <!-- 4 Pricing Cards Grid Container (v0.10.9-45) -->
+        <div class="vip-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; margin-top: 6px;">
           
+          <!-- GÓI MIỄN PHÍ (FLOWER FREE) -->
+          <div id="vip-card-free" class="vip-plan-card tier-free" style="background: var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; border: 1px solid var(--border); transition: all 0.2s;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span id="vip-badge-free" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🌱 GÓI CƠ BẢN</span>
+                <span style="font-size: 22px;">🌱</span>
+              </div>
+              <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">Flower Free</h3>
+              <div style="margin: 12px 0 16px 0;">
+                <span id="vip-price-display-free" style="font-size: 26px; font-weight: 900; color: #34d399;">0đ</span>
+                <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>5 lượt VocaMentor AI</strong>/ngày (cố định)</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Tự do tạo & quản lý <strong>VocaDeck</strong> cá nhân</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎮</span><span>Học trọn 4 chế độ: Flashcard, Quiz, Spelling, Speaking</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎡</span><span>1 lượt quay <strong>Vòng Quay May Mắn</strong> miễn phí/ngày</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">☁️</span><span>Lưu trữ tiến độ Cloud Realtime an toàn</span></li>
+              </ul>
+            </div>
+            <button id="btn-plan-free" class="btn btn-outline" disabled style="width: 100%; justify-content: center; font-weight: 700; border-color: var(--border); color: var(--text-muted); background: rgba(255, 255, 255, 0.04); padding: 10px; cursor: default;">
+              ✓ Gói Mặc Định
+            </button>
+          </div>
+
           <!-- GÓI 1 THÁNG -->
-          <div id="vip-card-monthly" class="vip-plan-card tier-monthly" style="background: var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-monthly" class="vip-plan-card tier-monthly" style="background: var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span id="vip-badge-monthly" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 800; font-size: 11px; padding: 3px 8px; border: 1px solid rgba(245, 158, 11, 0.3);">🌟 GÓI THÁNG</span>
@@ -72,15 +100,15 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">VocaVIP 1 Tháng</h3>
               <div style="margin: 12px 0 16px 0;">
-                <span id="vip-price-display-monthly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">39.000đ</span>
+                <span id="vip-price-display-monthly" style="font-size: 26px; font-weight: 900; color: #fbbf24;">39.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ tháng</span>
               </div>
-                <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
+              <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">✨</span><span>Tên phát sáng neon ánh kim</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">👑</span><span>Vương miện VocaVIP độc quyền</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⚖️</span><span><strong>Balance VIP</strong>: +125% điểm thuộc từ, +150% VoCoin, giảm phạt 125%</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Mở khóa toàn bộ kho <strong>VocaLib</strong> (THPT, IELTS, v.v.)</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span>50 lượt tạo VocaDeck AI & <strong>VocaMentor AI</strong>/tháng</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">📚</span><span>Mở khóa toàn bộ kho <strong>VocaLib</strong> VIP (THPT, IELTS)</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>VocaMentor AI</strong> & tạo VocaDeck AI không giới hạn</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">☁️</span><span>Đồng bộ Cloud Realtime 2 chiều</span></li>
               </ul>
             </div>
@@ -90,7 +118,7 @@
           </div>
 
           <!-- GÓI 1 NĂM (POPULAR) -->
-          <div id="vip-card-yearly" class="vip-plan-card active-tab-card tier-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
+          <div id="vip-card-yearly" class="vip-plan-card active-tab-card tier-yearly" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.06)), var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); transition: all 0.2s;">
             <div id="vip-ribbon-yearly" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);">
               🔥 TIẾT KIỆM 36% • PHỔ BIẾN
             </div>
@@ -101,13 +129,13 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #fbbf24; margin: 0 0 4px 0;">VocaVIP 1 Năm</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span id="vip-price-display-yearly" style="font-size: 28px; font-weight: 900; color: #fbbf24;">299.000đ</span>
+                <span id="vip-price-display-yearly" style="font-size: 26px; font-weight: 900; color: #fbbf24;">299.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ năm</span>
               </div>
               <div id="vip-monthly-equiv-yearly" style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 14px;">Chỉ ~25.000đ / tháng</div>
               <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 12px; color: var(--text); line-height: 1.8;">
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⭐</span><span><strong>Tất cả đặc quyền Gói Tháng</strong> (gồm Balance VIP)</span></li>
-                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>Không giới hạn</strong> tạo VocaDeck AI & VocaMentor AI</span></li>
+                <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🤖</span><span><strong>Không giới hạn</strong> VocaMentor AI & VocaDeck AI suốt 365 ngày</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">⚡</span><span>Ưu tiên đồng bộ Cloud Realtime 2 chiều siêu tốc</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🥈</span><span>Huy hiệu VocaVIP 1 Năm lấp lánh</span></li>
                 <li style="display: flex; align-items: flex-start; gap: 8px;"><span style="flex-shrink: 0;">🎁</span><span>Tặng ngay <strong>100 VoCoin</strong> vào Ví</span></li>
@@ -119,7 +147,7 @@
           </div>
 
           <!-- GÓI TRỌN ĐỜI (LIFETIME) -->
-          <div id="vip-card-lifetime" class="vip-plan-card tier-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
+          <div id="vip-card-lifetime" class="vip-plan-card tier-lifetime" style="background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(236, 72, 153, 0.08)), var(--surface-elevated); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: all 0.2s;">
             <div id="vip-ribbon-lifetime" style="position: absolute; top: 12px; right: 14px; z-index: 3; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);">
               👑 ĐẲNG CẤP HOÀNG GIA
             </div>
@@ -130,7 +158,7 @@
               </div>
               <h3 style="font-size: 17px; font-weight: 800; color: #c084fc; margin: 0 0 4px 0;">VocaVIP Trọn Đời</h3>
               <div style="margin: 12px 0 4px 0;">
-                <span id="vip-price-display-lifetime" style="font-size: 28px; font-weight: 900; color: #c084fc;">599.000đ</span>
+                <span id="vip-price-display-lifetime" style="font-size: 26px; font-weight: 900; color: #c084fc;">599.000đ</span>
                 <span style="font-size: 12px; color: var(--text-muted);">/ vĩnh viễn</span>
               </div>
               <div style="font-size: 11px; color: #a855f7; font-weight: 700; margin-bottom: 14px;">Thanh toán 1 lần duy nhất</div>
@@ -220,31 +248,53 @@
           </div>
         </div>
 
-        <!-- VIP FAQ / HELP SECTION (v0.10.8-alpha-10.3) -->
+        <!-- VIP FAQ / HELP SECTION (v0.10.9-46) -->
         <div style="margin-top: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
-          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-            <span>❓</span> Câu Hỏi Thường Gặp Khi Nâng Cấp VocaVIP
+          <div style="font-size: 13.5px; font-weight: 800; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>❓</span> <span>Câu Hỏi Thường Gặp Khi Nâng Cấp VocaVIP</span>
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted);">
+            <div style="background: rgba(99,102,241,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.25);">
+              <strong style="color: #a5b4fc;">🌱 1. Sự khác biệt cốt lõi giữa gói Flower Free (0đ) và gói VocaVIP là gì?</strong>
+              <p style="margin: 3px 0 0 0; color: #e2e8f0; font-size: 11.5px;">
+                Gói <strong>Flower Free (0đ)</strong> phục vụ học tập cơ bản với <strong>5 tin nhắn/ngày cùng Trợ lý AI VocaMentor</strong>, 4 chế độ học và quay thưởng may mắn. 
+                Khi nâng cấp <strong>VocaVIP</strong>, bạn được <strong>mở khóa VÔ HẠN</strong> trò chuyện cùng Gia sư AI VocaMentor, luyện phát âm chuẩn ELSA trong Speaking Lab, sở hữu <strong>Huy hiệu Vương miện vàng 👑</strong> danh giá và nhận gói quà tặng VocaSpin &amp; Flow Freeze cực lớn.
+              </p>
+            </div>
+
             <div style="background: rgba(245,158,11,0.08); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);">
-              <strong style="color: #fbbf24;">❓ Nếu sau 5 - 10 phút chưa được kích hoạt VocaVIP hoặc VocaSpin thì sao?</strong>
-              <p style="margin: 2px 0 0 0; color: #ffd700; font-size: 11.5px;">Bạn <u style="font-weight: 800;">KHÔNG CẦN CHUYỂN TIỀN LẠI LẦN 2</u>! Chỉ cần bấm nút <strong>"💬 Hỗ trợ Zalo"</strong> hoặc nhắn tin hotline <strong>0876048326</strong> kèm ảnh biên lai chuyển khoản, Admin sẽ hỗ trợ kiểm tra và kích hoạt ngay tức thì.</p>
+              <strong style="color: #fbbf24;">🤖 2. Khi dùng hết 5 lượt AI VocaMentor trong ngày ở gói Free thì có thể dùng VoCoin để chat tiếp không?</strong>
+              <p style="margin: 3px 0 0 0; color: #ffd700; font-size: 11.5px;">
+                <strong>Không thể dùng VoCoin để mua thêm lượt chat lẻ!</strong> Nhằm đảm bảo trải nghiệm AI chất lượng cao nhất, khi hết 5 tin nhắn miễn phí trong ngày (0/5), hệ thống sẽ tạm khóa chat đến 00:00 ngày hôm sau hoặc bạn có thể nâng cấp VocaVIP để mở khóa trò chuyện không giới hạn ngay lập tức.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">⏱️ Thời gian xử lý giao dịch chuyển khoản là bao lâu?</strong>
-              <p style="margin: 2px 0 0 0;">Thông thường hệ thống xử lý đối soát tự động từ <strong>1 - 5 phút</strong>. Nếu ngân hàng bảo trì hoặc ngoài giờ cao điểm, tối đa từ <strong>10 - 15 phút</strong>.</p>
+              <strong style="color: var(--text);">📱 3. Nâng cấp VocaVIP có sử dụng được trên nhiều thiết bị (Web, Điện thoại, App Windows) không?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Được 100%!</strong> Đặc quyền VocaVIP được lưu trữ trực tiếp trên Firebase Cloud theo tài khoản đăng nhập của bạn. Khi đăng nhập trên điện thoại, máy tính bảng hay máy tính Windows, toàn bộ trạng thái VIP, bộ từ vựng và lịch sử chuỗi Flow đều được đồng bộ tự động 2 chiều.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">📱 Quét mã VietQR có cần gõ lại nội dung chuyển khoản không?</strong>
-              <p style="margin: 2px 0 0 0;"><strong>Không cần gõ!</strong> Khi quét mã QR bằng app ngân hàng hoặc ví điện tử, hệ thống đã tự động điền chuẩn 100% STK (0916541813), Chủ tài khoản (NONG DUC HAO), số tiền và cú pháp chuẩn.</p>
+              <strong style="color: var(--text);">⏱️ 4. Thời gian kích hoạt sau khi quét mã VietQR và chuyển khoản là bao lâu?</strong>
+              <p style="margin: 2px 0 0 0;">
+                Thông thường hệ thống xử lý đối soát và kích hoạt trong vòng <strong>1 - 5 phút</strong>. Khi quét mã VietQR, hệ thống đã tự động điền sẵn STK (0916541813 - MB Bank), Tên người nhận (NONG DUC HAO), số tiền và cú pháp chuẩn <code style="color: #ffd700; font-weight: 700;">VOCA &lt;UID_16&gt; &lt;MÃ_GÓI&gt;</code>.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">💸 Nếu chuyển khoản mà quên ghi cú pháp thì có bị mất tiền không?</strong>
-              <p style="margin: 2px 0 0 0;"><strong>Hoàn toàn không mất tiền!</strong> Bạn chỉ cần chụp lại biên lai chuyển khoản và liên hệ Admin <strong>NONG DUC HAO (SĐT/Zalo: 0876048326)</strong> để được hỗ trợ đối soát và kích hoạt VocaVIP trong 1 phút.</p>
+              <strong style="color: var(--text);">💸 5. Nếu chuyển khoản mà quên ghi cú pháp hoặc sau 5 - 10 phút chưa thấy lên VIP thì sao?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Bạn hoàn toàn yên tâm, tiền không bị mất!</strong> Bạn chỉ cần bấm nút <strong>"💬 Hỗ Trợ Zalo"</strong> hoặc nhắn tin Zalo/Hotline: <strong style="color: #38bdf8;">0876048326 (NONG DUC HAO)</strong> kèm ảnh chụp biên lai chuyển khoản, Admin sẽ hỗ trợ kích hoạt thủ công cho bạn trong vòng 1 phút.
+              </p>
             </div>
+
             <div>
-              <strong style="color: var(--text);">⚠️ Chưa chuyển tiền mà bấm "Tôi Đã Chuyển Khoản" thì sao?</strong>
-              <p style="margin: 2px 0 0 0;">Hệ thống sẽ ghi nhận yêu cầu và tự động đối soát với tài khoản MB Bank. Sau 2 - 5 phút nếu không tìm thấy giao dịch chuyển tiền thực tế, hệ thống sẽ gửi thông báo <em>"Đối soát chưa thành công"</em> vào Trung Tâm Thông Báo và không kích hoạt VocaVIP.</p>
+              <strong style="color: var(--text);">👑 6. Gói VocaVIP Trọn Đời (Lifetime) có phải trả thêm bất kỳ khoản phí nào sau này không?</strong>
+              <p style="margin: 2px 0 0 0;">
+                <strong>Hoàn toàn không!</strong> Bạn chỉ thanh toán 1 lần duy nhất 599.000đ và sở hữu vĩnh viễn toàn bộ đặc quyền VIP, bao gồm quyền truy cập không giới hạn mọi tính năng mới và các bản cập nhật trong tương lai của VocaFlow.
+              </p>
             </div>
           </div>
         </div>

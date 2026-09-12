@@ -1,4 +1,54 @@
 ================================================================================
+Phiên bản: v0.10.9-46 (Build 278) - Tinh Gọn Cổng Quản Trị Publisher, Nhật Ký Kích Hoạt VocaVIP Thành Công, Cập Nhật VIP FAQ, Nâng Cấp Hồ Sơ @official Chuẩn & Hỗ Trợ Đa Nét Nghĩa Auto Flashcard
+================================================================================
+1. [Thu Gọn Header Cổng Quản Trị Publisher Portal]:
+   - Tái cấu trúc bố cục header và 3 thẻ chỉ số thống kê thành thanh pill metrics nhỏ gọn (~42px) nhằm triệt tiêu thanh cuộn lồng nhau (nested double scrollbar).
+   - Mở rộng chiều cao và độ rộng modal, tối ưu hóa vùng hiển thị danh sách học viên chiếm trọn không gian (flex: 1; overflow-y: auto).
+
+2. [Tái Cấu Trúc Cổng VocaVIP & Nhật Ký Kích Hoạt Thành Công]:
+   - Loại bỏ các thành phần không còn phù hợp: Bóc tách SMS MB Bank thủ công và MacroDroid feed.
+   - Bổ sung bảng "Danh Sách Các Lần Kích Hoạt Thành Công (Successful Activations Log)" đồng bộ Realtime Firebase Cloud và Local Storage kèm phân loại nhãn màu sắc (1M, 1Y, LT, S5, S15, S40).
+
+3. [Hiện Đại Hóa Bộ Câu Hỏi Thường Gặp (VIP FAQ)]:
+   - Cập nhật 6 câu hỏi đáp mới nhất khớp 100% chính sách: Khóa cứng 5 tin AI/ngày gói Free, không bù VoCoin, mở khóa trọn vẹn Speaking Lab & VocaMentor AI cho VIP, đồng bộ đa nền tảng và chính sách trọn đời 1 lần dùng mãi mãi.
+
+4. [Nâng Cấp Hồ Sơ @official Chuẩn & Logo VocaFlow]:
+   - Khắc phục lỗi avatar chữ "I" mặc định bằng việc nâng cấp hàm renderAvatarHtml nhận diện đường dẫn ảnh tương đối.
+   - Nhúng logo chính thức từ save/VocaFLow_icon.png sang icons/vocaflow_official_avatar.png.
+   - Trang hoàng hồ sơ @official với viền sáng hào quang Glowing Aura Frame, huy hiệu ⭐ VocaFlow Official và vương miện 👑 Đội Ngũ Phát Triển.
+
+5. [Hỗ Trợ Toàn Diện Đa Nét Nghĩa Cho Chế Độ Auto Flashcard]:
+   - Hiển thị đầy đủ danh sách các nét nghĩa (senses), từ loại, cấp độ CEFR và câu ví dụ trên mặt sau thẻ và Mini PiP Player.
+   - Vòng lặp Auto Flashcard phát âm tuần tự từng nét nghĩa ("Nét nghĩa 1: ... Nét nghĩa 2: ...") với cơ chế preload âm thanh mượt mà không độ trễ.
+
+================================================================================
+Phiên bản: v0.10.9-45 (Build 277) - Hệ Thống Định Tuyến URL Thân Thiện, Bảng Giá VIP Thêm Gói Free, Sửa Lỗi Xem Quảng Cáo & Khóa Lượt VocaMentor AI
+================================================================================
+1. [Hệ Thống Định Tuyến URL Thân Thiện & GitHub Pages SPA Router]:
+   - Hỗ trợ các đường dẫn đẹp trực tiếp: /homepage, /decks, /me, /@<username>, /shop, /vip, /mentor, /wallet, /mistakes, /wheel, /settings.
+   - Hỗ trợ file 404.html tự động chuyển hướng mượt mà trên GitHub Pages.
+   - Cập nhật URL qua history.pushState / popstate hỗ trợ nút Back/Forward của trình duyệt.
+
+2. [Bổ Sung Gói Thường (Flower Free) Vào Bảng Giá VocaVIP]:
+   - Tích hợp thẻ so sánh chi tiết cho Gói Miễn Phí (0đ/vĩnh viễn) bên cạnh các gói Tháng, Năm, Trọn Đời.
+   - Chuẩn hóa toàn bộ mô tả đặc quyền từng gói chính xác nhất theo tính năng thực tế.
+
+3. [Sửa Lỗi Xem Quảng Cáo Thưởng]:
+   - Khắc phục cơ chế dọn dẹp click blocker không xóa nhầm các phần tử quảng cáo hợp lệ khi đang xem video nhận thưởng.
+   - Tích hợp bộ mô phỏng quảng cáo phong phú, sống động đảm bảo trải nghiệm luôn mượt mà.
+
+4. [Tinh Chỉnh Giới Hạn VocaMentor AI]:
+   - Giới hạn người dùng thường đúng 5 lượt hỏi AI miễn phí mỗi ngày (5/5).
+   - Khi hết 5 lượt: Khóa gửi tin nhắn và không cho dùng VoCoin để tiếp tục, khuyến khích nâng cấp VIP hoặc quay lại hôm sau.
+
+5. [Sửa Lỗi Theo Dõi Bản Thân & Khắc Phục Tra Cứu Profile Deep Link]:
+   - Ẩn hoàn toàn nút "+ Theo dõi" khi xem hồ sơ của chính mình.
+   - Khắc phục lỗi tra cứu tài khoản thật khi mở liên kết ?user=@nglinh_k8 từ Cloud RTDB.
+
+6. [Xóa Chức Năng 5-Click Mở Cổng Quản Trị]:
+   - Loại bỏ hoàn toàn easter egg nhấp 5 lần vào số phiên bản để tránh thao tác nhầm lẫn.
+
+================================================================================
 Phiên bản: v0.10.9-44 (Build 276) - Bộ Lọc Trung Tâm Thông Báo Đa Dạng, Công Cụ Cắt Avatar Tương Tác, Chuẩn Hóa Link Chia Sẻ, Định Dạng Số Hàng Nghìn & Mở Rộng Widescreen Desktop
 ================================================================================
 1. [Nâng Cấp Toàn Diện Bộ Lọc Trung Tâm Thông Báo]:

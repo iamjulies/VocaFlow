@@ -1,8 +1,8 @@
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-44)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-46)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-44';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-44 (Build 276)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-46';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-46 (Build 278)';
 
 
     // =========================================================================
@@ -1991,8 +1991,11 @@
     let editingStudentUid = null;
 
     function renderAvatarHtml(avatarVal, size = 28, fontSize = 14) {
-      if (typeof avatarVal === 'string' && (avatarVal.startsWith('data:image') || avatarVal.startsWith('http'))) {
-        return '<img src="' + avatarVal + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto;" alt="Avatar" />';
+      if (typeof avatarVal === 'string') {
+        const clean = avatarVal.trim();
+        if (clean.startsWith('data:image') || clean.startsWith('http') || clean.startsWith('icons/') || clean.startsWith('save/') || clean.endsWith('.png') || clean.endsWith('.jpg') || clean.endsWith('.webp') || clean.endsWith('.svg') || clean.includes('/')) {
+          return '<img src="' + escapeHtml(clean) + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto;" alt="Avatar" onerror="this.onerror=null; this.src=\'icons/Icon-192.png\';" />';
+        }
       }
       const rawText = (typeof avatarVal === 'string' && avatarVal.trim()) ? avatarVal.trim()[0].toUpperCase() : '👤';
       return '<span style="font-size: ' + fontSize + 'px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: ' + size + 'px; height: ' + size + 'px; font-weight: 800; color: white;">' + escapeHtml(rawText) + '</span>';
@@ -2587,25 +2590,8 @@
     }
     window.openPublisherPortal = openPublisherPortal;
 
-    let versionBadgeClickCount = 0;
-    let versionBadgeClickTimer = null;
-    function handleVersionBadgeMultiClick(e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      versionBadgeClickCount++;
-      if (versionBadgeClickTimer) clearTimeout(versionBadgeClickTimer);
-      versionBadgeClickTimer = setTimeout(() => {
-        versionBadgeClickCount = 0;
-      }, 3000);
-
-      if (versionBadgeClickCount >= 5) {
-        versionBadgeClickCount = 0;
-        clearTimeout(versionBadgeClickTimer);
-        showToast('👑 Chế độ Nhà Phát Hành: Đang mở Cổng Quản Trị & God Mode...');
-        openPublisherModal('students');
-      } else if (versionBadgeClickCount >= 3) {
-        showToast(`👑 Chạm thêm ${5 - versionBadgeClickCount} lần để mở Cổng Quản Trị!`);
-      }
-    }
+    // v0.10.9-45: Removed 5-click easter egg for Admin Portal (accessible via Settings if configured)
+    function handleVersionBadgeMultiClick(e) {}
     window.handleVersionBadgeMultiClick = handleVersionBadgeMultiClick;
 
     // =========================================================================
@@ -3804,6 +3790,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (typeof refreshAdminVipUI === 'function') refreshAdminVipUI();
         }
 
+        // v0.10.9-46: Record to Successful Activations Log (Cloud & Local)
+        const activationRecord = {
+          key: 'act_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+          timestamp: Date.now(),
+          uid: student.uid,
+          shortUid: student.shortUid || getShortUidUpper(student.uid),
+          displayName: student.displayName || 'Flower ' + getShortUidUpper(student.uid),
+          email: student.email || '',
+          actionType: act,
+          actionLabel: actionLabel,
+          status: 'success'
+        };
+        saveAdminVipActivationRecord(activationRecord);
+
         showToast(`🎉 ${actionLabel} thành công cho ${student.displayName}!`);
         lookupVipStudentByInput(document.getElementById('admin-vip-lookup-input')?.value || student.uid);
         if (typeof renderAdminStudentsTable === 'function') renderAdminStudentsTable();
@@ -3815,151 +3815,119 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.quickApplyStudentVipOrSpin = quickApplyStudentVipOrSpin;
 
-    async function fetchAdminBankTransactions() {
-      const listEl = document.getElementById('admin-bank-transactions-list');
-      if (!listEl) return;
-      listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải nhật ký giao dịch từ Firebase...</div>';
+    // =========================================================================
+    // VIP ACTIVATIONS AUDIT LOG ENGINE (v0.10.9-46)
+    // =========================================================================
+    let adminVipActivations = [];
+
+    async function saveAdminVipActivationRecord(record) {
+      if (!record || !record.key) return;
+      if (!Array.isArray(adminVipActivations)) adminVipActivations = [];
+      adminVipActivations.unshift(record);
 
       try {
-        if (!adminStudentsData || adminStudentsData.length === 0) {
-          await fetchAdminStudentsList();
+        localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100)));
+      } catch (e) {}
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
+        const authParam = token ? '?auth=' + token : '';
+        await fetch(`${rtdbUrl}/vip_activations/${record.key}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+      } catch (e) {
+        console.warn('Failed to push vip activation record to Cloud:', e);
+      }
+      renderAdminVipActivationsListUI();
+    }
+
+    async function fetchAdminVipActivations() {
+      const listEl = document.getElementById('admin-vip-activations-list');
+      if (!listEl) return;
+      listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">⏳ Đang tải lịch sử kích hoạt từ Firebase Cloud...</div>';
+
+      try {
+        const savedLocal = localStorage.getItem('vocaflow_admin_vip_activations');
+        if (savedLocal) {
+          try { adminVipActivations = JSON.parse(savedLocal) || []; } catch(e) {}
         }
 
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        
-        let res = await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`);
-        if (!res.ok) {
-          res = await fetch(`${rtdbUrl}/bankTransactions.json${authParam}`);
-        }
 
-        if (!res.ok) {
-          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào trong cơ sở dữ liệu.</div>';
-          return;
-        }
-
-        const data = await res.json();
-        if (!data || typeof data !== 'object') {
-          listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
-          return;
-        }
-
-        const items = [];
-        for (const [key, val] of Object.entries(data)) {
-          if (val && typeof val === 'object') {
-            const rawContent = val.text || val.content || val.syntax || val.message || '';
-            const parsed = parseBankTransactionMultiLayer(rawContent, adminStudentsData);
-
-            let sUid = val.shortUid || (parsed ? parsed.shortUid : '');
-            let pCode = val.code || (parsed ? parsed.code : '');
-            let amount = val.amount || (parsed ? parsed.amount : 0);
-            let matchedStudent = (parsed && parsed.matchedStudent) ? parsed.matchedStudent : adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === sUid.toUpperCase());
-
-            items.push({
-              key,
-              ...val,
-              shortUid: sUid,
-              code: pCode,
-              amount: amount,
-              matchedStudent: matchedStudent,
-              matchMethod: parsed ? parsed.matchMethod : 'manual'
-            });
+        const res = await fetch(`${rtdbUrl}/vip_activations.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            const cloudItems = [];
+            for (const [key, val] of Object.entries(data)) {
+              if (val && typeof val === 'object') {
+                cloudItems.push({ key, ...val });
+              }
+            }
+            cloudItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            adminVipActivations = cloudItems;
+            try { localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100))); } catch(e) {}
           }
         }
-
-        items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        adminBankTransactions = items;
-        renderAdminBankTransactionsListUI();
-        showToast('🔄 Đã làm mới nhật ký giao dịch Macro Feed!');
-
+        renderAdminVipActivationsListUI();
+        showToast('🔄 Đã cập nhật danh sách kích hoạt thành công!');
       } catch (e) {
-        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: #f87171;">Lỗi nạp logs: ' + e.message + '</div>';
+        renderAdminVipActivationsListUI();
       }
     }
-    window.fetchAdminBankTransactions = fetchAdminBankTransactions;
+    window.fetchAdminVipActivations = fetchAdminVipActivations;
 
-    function renderAdminBankTransactionsListUI() {
-      const listEl = document.getElementById('admin-bank-transactions-list');
+    function renderAdminVipActivationsListUI() {
+      const listEl = document.getElementById('admin-vip-activations-list');
       if (!listEl) return;
 
-      if (!adminBankTransactions || adminBankTransactions.length === 0) {
-        listEl.innerHTML = '<div style="text-align: center; padding: 16px; color: var(--text-muted);">Chưa có giao dịch mới nào được gửi về từ MacroDroid.</div>';
+      if (!adminVipActivations || adminVipActivations.length === 0) {
+        listEl.innerHTML = '<div style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 12px;"><em>Chưa có bản ghi kích hoạt nào trên hệ thống.</em></div>';
         return;
       }
 
-      const packageNames = {
-        '1M': '👑 VocaVIP Tháng (39k)',
-        '1Y': '🟡 VocaVIP Năm (299k)',
-        'LT': '👑 VocaVIP Trọn Đời (599k)',
-        'S5': '🎡 5 VocaSpin (10k)',
-        'S15': '🎡 15 VocaSpin (25k)',
-        'S40': '🎡 40 VocaSpin (50k)'
+      const pkgColors = {
+        '1M': { bg: 'rgba(16,185,129,0.15)', text: '#34d399', border: 'rgba(16,185,129,0.4)', title: '👑 VocaVIP Tháng (39k)' },
+        '1Y': { bg: 'rgba(56,189,248,0.15)', text: '#38bdf8', border: 'rgba(56,189,248,0.4)', title: '🟡 VocaVIP Năm (299k)' },
+        'LT': { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24', border: 'rgba(245,158,11,0.4)', title: '👑 VocaVIP Trọn Đời (599k)' },
+        'S5': { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24', border: 'rgba(245,158,11,0.4)', title: '🎡 +5 VocaSpin (10k)' },
+        'S15': { bg: 'rgba(236,72,153,0.15)', text: '#f472b6', border: 'rgba(236,72,153,0.4)', title: '🎡 +15 VocaSpin (25k)' },
+        'S40': { bg: 'rgba(168,85,247,0.15)', text: '#c084fc', border: 'rgba(168,85,247,0.4)', title: '🎡 +40 VocaSpin (50k)' },
+        'CANCEL_VIP': { bg: 'rgba(239,68,68,0.15)', text: '#f87171', border: 'rgba(239,68,68,0.4)', title: '❌ Hủy VIP' }
       };
 
       let html = '';
-      adminBankTransactions.forEach(tx => {
-        const timeStr = tx.timestamp ? formatDateTime(new Date(tx.timestamp).toISOString()) : 'Vừa xong';
-        const shortUid = (tx.shortUid || '').toUpperCase();
-        const code = (tx.code || '').toUpperCase();
-        const status = tx.status || 'pending';
-        const matchedStudent = tx.matchedStudent || adminStudentsData.find(s => (s.shortUid || getShortUidUpper(s.uid)).toUpperCase() === shortUid);
-        const pkgTitle = packageNames[code] || (code ? `Gói ${code}` : 'Chưa nhận diện gói');
-
-        const isCompleted = status === 'completed' || status === 'auto_processed';
-        const statusBadge = isCompleted
-          ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight:700;">✅ Đã Xử Lý</span>'
-          : '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10px; font-weight:700;">⏳ Chờ Duyệt</span>';
-
-        const aiBadge = tx.aiAnalyzed 
-          ? `<span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 9.5px;" title="Đã phân tích bởi AI Gemini">🤖 AI (${Math.round((tx.aiConfidence || 1) * 100)}%)</span>`
-          : '';
+      adminVipActivations.forEach(item => {
+        const timeStr = item.timestamp ? formatDateTime(new Date(item.timestamp).toISOString()) : 'Vừa xong';
+        const code = (item.actionType || '').toUpperCase();
+        const pkgInfo = pkgColors[code] || { bg: 'rgba(99,102,241,0.15)', text: '#818cf8', border: 'rgba(99,102,241,0.4)', title: item.actionLabel || code };
+        const sUid = (item.shortUid || getShortUidUpper(item.uid || '')).toUpperCase();
 
         html += `
-          <div style="background: var(--surface-elevated); border: 1.5px solid ${isCompleted ? 'rgba(16,185,129,0.3)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-            <!-- Row 1: Status, Package & Actions -->
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div style="background: var(--surface-elevated); border: 1px solid rgba(255,255,255,0.08); border-left: 4px solid ${pkgInfo.text}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;">
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <strong style="font-size: 13.5px; color: #38bdf8; font-family: monospace;">${escapeHtml(code ? pkgTitle : 'Giao dịch MB Bank')}</strong>
-                ${statusBadge}
-                ${aiBadge}
-                ${tx.amount ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; font-size: 11px;">+${tx.amount.toLocaleString('vi-VN')} đ</span>` : ''}
+                <span class="badge" style="background: ${pkgInfo.bg}; color: ${pkgInfo.text}; border: 1px solid ${pkgInfo.border}; font-weight: 800; font-size: 11px; padding: 2px 8px;">${escapeHtml(pkgInfo.title)}</span>
+                <strong style="font-size: 13px; color: var(--text); cursor: pointer; text-decoration: underline;" onclick="lookupVipStudentByInput('${escapeHtml(item.uid)}')" title="Bấm để tra cứu Flower này">${escapeHtml(item.displayName || 'Flower')}</strong>
+                ${item.email ? `<span style="font-size: 11.5px; color: var(--text-muted);">(${escapeHtml(item.email)})</span>` : ''}
               </div>
-
-              <!-- Action buttons -->
-              <div style="display: flex; gap: 6px; align-items: center;">
-                ${matchedStudent && code && !isCompleted ? `
-                  <button type="button" class="btn btn-primary btn-sm" onclick="processAdminBankTransactionAction('${tx.key}', '${matchedStudent.uid}', '${code}')" style="font-size: 11.5px; padding: 4px 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
-                    ⚡ Kích Hoạt ${code}
-                  </button>
-                ` : ''}
-                ${(!matchedStudent || !code) && !isCompleted ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="analyzeBankTransactionWithAi('${tx.key}')" style="font-size: 11px; padding: 4px 10px; border-color: rgba(99,102,241,0.5); color: #a5b4fc; background: rgba(99,102,241,0.1); font-weight: 700;" title="Nhờ AI Gemini đọc và bóc tách tự động">
-                    🤖 AI Đối Soát
-                  </button>
-                ` : ''}
-                <button type="button" class="btn btn-outline btn-sm" onclick="deleteAdminBankTransaction('${tx.key}')" style="font-size: 11px; padding: 4px 8px; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Xóa giao dịch này">
-                  🗑️
-                </button>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                <span>🆔 <code>${escapeHtml(sUid)}</code></span>
+                <span>•</span>
+                <span>⏱️ ${timeStr}</span>
+                <span>•</span>
+                <span style="color: #34d399; font-weight: 700;">✅ Thành công</span>
               </div>
             </div>
-
-            <!-- Row 2: Raw Banking Content -->
-            <div style="font-size: 11.5px; background: rgba(0,0,0,0.35); border-radius: 6px; padding: 6px 10px; color: #cbd5e1; font-family: monospace; word-break: break-all; border-left: 3px solid #38bdf8;">
-              ${escapeHtml(tx.content || tx.syntax || 'Nội dung trống')}
-            </div>
-
-            <!-- Row 3: Matching & Student Profile Bar -->
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
-              <div>
-                ⏱️ ${timeStr} • Khớp Flower: 
-                ${matchedStudent ? `
-                  <strong style="color: #ffd700; text-decoration: underline; cursor: pointer;" onclick="lookupVipStudentByInput('${escapeHtml(matchedStudent.uid)}')" title="Bấm để tra cứu Flower này">
-                    ${escapeHtml(matchedStudent.displayName)} (${escapeHtml(matchedStudent.email)}) - [${shortUid}]
-                  </strong>
-                ` : `<span style="color: #f87171;">${shortUid ? 'Mã 16 ký tự: ' + shortUid + ' (Chưa có trên hệ thống)' : 'Chưa nhận diện UID'}</span>`}
-              </div>
-              ${tx.aiExplanation ? `<div style="font-size: 10.5px; color: #a5b4fc; font-style: italic;">💡 ${escapeHtml(tx.aiExplanation)}</div>` : ''}
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="btn btn-outline btn-icon btn-sm" onclick="deleteAdminVipActivation('${escapeHtml(item.key)}')" style="color: #f87171; border-color: rgba(239,68,68,0.3); padding: 4px 6px;" title="Xóa bản ghi này">
+                <svg class="icon icon-sm"><use href="#i-close"/></svg>
+              </button>
             </div>
           </div>
         `;
@@ -3968,56 +3936,41 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       listEl.innerHTML = html;
     }
 
-    async function processAdminBankTransactionAction(txKey, uid, code) {
-      await quickApplyStudentVipOrSpin(uid, code);
+    async function deleteAdminVipActivation(actKey) {
+      if (!confirm('Xóa bản ghi lịch sử kích hoạt này?')) return;
+      adminVipActivations = adminVipActivations.filter(a => a.key !== actKey);
       try {
-        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
-        const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'completed', processedAt: Date.now() })
-        });
-        const tx = adminBankTransactions.find(t => t.key === txKey);
-        if (tx) tx.status = 'completed';
-        renderAdminBankTransactionsListUI();
-      } catch (e) {}
-    }
-    window.processAdminBankTransactionAction = processAdminBankTransactionAction;
+        localStorage.setItem('vocaflow_admin_vip_activations', JSON.stringify(adminVipActivations.slice(0, 100)));
+      } catch(e) {}
+      renderAdminVipActivationsListUI();
 
-    async function deleteAdminBankTransaction(txKey) {
-      if (!confirm('Bạn có chắc muốn xóa bản ghi giao dịch này khỏi hệ thống?')) return;
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions/${txKey}.json${authParam}`, { method: 'DELETE' });
-        adminBankTransactions = adminBankTransactions.filter(t => t.key !== txKey);
-        renderAdminBankTransactionsListUI();
-        showToast('🗑️ Đã xóa bản ghi giao dịch!');
-      } catch (e) {
-        showToast('Lỗi xóa giao dịch: ' + e.message);
-      }
+        await fetch(`${rtdbUrl}/vip_activations/${actKey}.json${authParam}`, { method: 'DELETE' });
+      } catch(e) {}
+      showToast('🗑️ Đã xóa bản ghi!');
     }
-    window.deleteAdminBankTransaction = deleteAdminBankTransaction;
+    window.deleteAdminVipActivation = deleteAdminVipActivation;
 
-    async function clearAdminBankTransactionsLog() {
-      if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử giao dịch MacroDroid trên Cloud?')) return;
+    async function clearAdminVipActivationsLog() {
+      if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử kích hoạt thành công trên Cloud & Local?')) return;
+      adminVipActivations = [];
+      try { localStorage.removeItem('vocaflow_admin_vip_activations'); } catch(e) {}
+      renderAdminVipActivationsListUI();
+
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
         const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
         const authParam = token ? '?auth=' + token : '';
-        await fetch(`${rtdbUrl}/bank_transactions.json${authParam}`, { method: 'DELETE' });
-        adminBankTransactions = [];
-        renderAdminBankTransactionsListUI();
-        showToast('🗑️ Đã xóa sạch lịch sử giao dịch!');
-      } catch (e) {
-        showToast('Lỗi xóa: ' + e.message);
-      }
+        await fetch(`${rtdbUrl}/vip_activations.json${authParam}`, { method: 'DELETE' });
+      } catch(e) {}
+      showToast('🗑️ Đã xóa toàn bộ lịch sử kích hoạt!');
     }
-    window.clearAdminBankTransactionsLog = clearAdminBankTransactionsLog;
-function switchPublisherTab(tab) {
+    window.clearAdminVipActivationsLog = clearAdminVipActivationsLog;
+
+    function switchPublisherTab(tab) {
       const isStudents = tab === 'students';
       const isCodes = tab === 'codes';
       const isWallet = tab === 'wallet';
@@ -4030,7 +3983,7 @@ function switchPublisherTab(tab) {
       const bContent = document.getElementById('pub-tab-content-bugs');
       const vContent = document.getElementById('pub-tab-content-vip-gateway');
 
-      if (sContent) sContent.style.display = isStudents ? 'block' : 'none';
+      if (sContent) sContent.style.display = isStudents ? 'flex' : 'none';
       if (cContent) cContent.style.display = isCodes ? 'block' : 'none';
       if (wContent) wContent.style.display = isWallet ? 'block' : 'none';
       if (bContent) bContent.style.display = isBugs ? 'block' : 'none';
@@ -4059,7 +4012,7 @@ function switchPublisherTab(tab) {
       }
       if (isVipGateway) {
         if (adminStudentsData.length === 0) fetchAdminStudentsList();
-        fetchAdminBankTransactions();
+        fetchAdminVipActivations();
       }
     }
 
@@ -5845,7 +5798,13 @@ function switchPublisherTab(tab) {
       const btn = document.getElementById('btn-pub-follow');
       if (!btn) return;
 
-      if (!targetUid || (currentUser && targetUid === currentUser.uid) || targetUid === 'official' || targetUid === 'undefined') {
+      const authorClean = (currentPublicProfileAuthor?.resolvedHandle || '').replace(/^@/, '').trim().toLowerCase();
+      const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      const isSelf = (currentUser && targetUid && targetUid === currentUser.uid) ||
+                     (currentPublicProfileAuthor && currentPublicProfileAuthor.isCurrentUser) ||
+                     (authorClean && currentHandle && authorClean === currentHandle);
+
+      if (!targetUid || isSelf || targetUid === 'official' || targetUid === 'undefined') {
         btn.style.display = 'none';
         return;
       }
@@ -7566,11 +7525,21 @@ function switchPublisherTab(tab) {
         }
       }
 
-      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
+      const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
 
-      // STRICT USER MATCH: Only true if author identity matches current logged in user (v0.10.6c)
-      const isCurrentUser = (authorUid && currentUser && authorUid === currentUser.uid) ||
-                            (authorName && currentUser && currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase());
+      // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-45)
+      const authorClean = (authorName || '').replace(/^@/, '').trim().toLowerCase();
+      const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      const currentEmailPrefix = (currentUser?.email ? currentUser.email.split('@')[0] : '').toLowerCase();
+      const currentDisplayName = (currentUser?.displayName || '').trim().toLowerCase();
+      const currentUid = currentUser?.uid || '';
+
+      const isCurrentUser = (authorUid && currentUid && authorUid === currentUid) ||
+                            (targetDeck?.authorUid && currentUid && targetDeck.authorUid === currentUid) ||
+                            (authorClean && currentHandle && authorClean === currentHandle) ||
+                            (authorClean && currentEmailPrefix && authorClean === currentEmailPrefix) ||
+                            (authorClean && currentDisplayName && authorClean === currentDisplayName) ||
+                            (authorName && currentDisplayName && authorName.trim().toLowerCase() === currentDisplayName);
 
       let resolvedName = authorName;
       let resolvedHandle = '';
@@ -7587,13 +7556,14 @@ function switchPublisherTab(tab) {
       if (isVocaFlowOfficial) {
         resolvedName = 'VocaFlow Chuẩn';
         resolvedHandle = 'official';
-        resolvedAvatar = 'icons/Icon-192.png';
+        resolvedAvatar = 'icons/vocaflow_official_avatar.png';
         resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
         authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
         targetPoints = 999999;
         targetFlowDays = 365;
         targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
       } else if (isCurrentUser) {
+        targetUid = currentUid;
         resolvedName = currentUser.displayName || authorName;
         resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
         resolvedAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || currentUser.displayName || authorName;
@@ -7605,12 +7575,45 @@ function switchPublisherTab(tab) {
       } else {
         // Find targetUid from all available registries if not provided
         if (!targetUid) {
-          const studentMatch = adminStudentsData.find(s => s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase());
+          const studentMatch = adminStudentsData.find(s => 
+            (s.username && s.username.toLowerCase() === authorClean) ||
+            (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
+            (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
+          );
           if (studentMatch && studentMatch.uid) targetUid = studentMatch.uid;
           else if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorName.trim().toLowerCase()]?.uid) targetUid = globalVipRegistryNameMap[authorName.trim().toLowerCase()].uid;
           else {
-            const deckMatch = allDecks.find(d => (d.author || '').trim().toLowerCase() === authorName.trim().toLowerCase() && d.authorUid);
+            const deckMatch = allDecks.find(d => 
+              (d.authorUsername && d.authorUsername.toLowerCase() === authorClean) ||
+              (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
+              (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
+            );
             if (deckMatch && deckMatch.authorUid) targetUid = deckMatch.authorUid;
+          }
+
+          // v0.10.9-45: If still not found, fetch users list from Cloud RTDB to resolve authentic user UID
+          if (!targetUid) {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            try {
+              const uListRes = await fetch(`${rtdbUrl}/users.json`);
+              if (uListRes.ok) {
+                const allUsers = await uListRes.json();
+                if (allUsers && typeof allUsers === 'object') {
+                  for (const [uid, uData] of Object.entries(allUsers)) {
+                    if (!uData) continue;
+                    const uHandle = (uData.profile?.username || (uData.email ? uData.email.split('@')[0] : '')).toLowerCase();
+                    const uDisplay = (uData.profile?.displayName || uData.displayName || '').trim().toLowerCase();
+                    const uEmailPrefix = (uData.email ? uData.email.split('@')[0] : '').toLowerCase();
+                    if (uHandle === authorClean || uEmailPrefix === authorClean || uDisplay === authorClean || uid === authorClean) {
+                      targetUid = uid;
+                      break;
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Failed to resolve targetUid from RTDB:', e);
+            }
           }
         }
 
@@ -7745,6 +7748,7 @@ function switchPublisherTab(tab) {
 
       const nameEl = document.getElementById('pub-view-name');
       const avEl = document.getElementById('pub-view-avatar');
+      const pubSubBadgeEl = document.getElementById('pub-view-sub-badge');
       const bioEl = document.getElementById('pub-view-bio-text');
       const statDecksEl = document.getElementById('pub-view-stat-decks');
       const statWordsEl = document.getElementById('pub-view-stat-words');
@@ -7765,6 +7769,7 @@ function switchPublisherTab(tab) {
         targetUid: targetUid,
         resolvedName: resolvedName,
         resolvedHandle: resolvedHandle,
+        isCurrentUser: isCurrentUser,
         targetFollowerCount: targetFollowerCount,
         targetFollowingCount: targetFollowingCount
       };
@@ -7781,7 +7786,9 @@ function switchPublisherTab(tab) {
       const cleanResolvedName = stripVipAffixes(resolvedName);
 
       if (nameEl) {
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+        } else if (isAuthorVip) {
           nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
         } else {
           nameEl.textContent = cleanResolvedName;
@@ -7789,7 +7796,10 @@ function switchPublisherTab(tab) {
       }
       if (avEl) {
         avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 72, 28);
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          avEl.style.boxShadow = '0 0 0 3px #8b5cf6, 0 0 30px rgba(139, 92, 246, 0.8), 0 0 12px rgba(236, 72, 153, 0.6)';
+          avEl.style.borderColor = '#c084fc';
+        } else if (isAuthorVip) {
           avEl.style.boxShadow = '0 0 0 3px #fbbf24, 0 0 25px rgba(251,191,36,0.65)';
           avEl.style.borderColor = '#fbbf24';
         } else {
@@ -7797,9 +7807,37 @@ function switchPublisherTab(tab) {
           avEl.style.borderColor = 'rgba(255,255,255,0.3)';
         }
       }
+      if (pubSubBadgeEl) {
+        if (isVocaFlowOfficial) {
+          pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
+          pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
+          pubSubBadgeEl.style.color = '#fbbf24';
+          pubSubBadgeEl.style.fontWeight = '800';
+          pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
+        } else if (isAuthorVip) {
+          pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
+          pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
+          pubSubBadgeEl.style.color = '#fbbf24';
+          pubSubBadgeEl.style.fontWeight = '700';
+          pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+        } else {
+          pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+          pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+          pubSubBadgeEl.style.color = '#34d399';
+          pubSubBadgeEl.style.fontWeight = '700';
+          pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        }
+      }
       const pubBadgeEl = document.getElementById('pub-view-badge');
       if (pubBadgeEl) {
-        if (isAuthorVip) {
+        if (isVocaFlowOfficial) {
+          pubBadgeEl.innerHTML = '⭐ VocaFlow Official';
+          pubBadgeEl.style.background = 'linear-gradient(135deg, #6366f1, #a855f7, #ec4899)';
+          pubBadgeEl.style.color = '#ffffff';
+          pubBadgeEl.style.fontWeight = '800';
+          pubBadgeEl.style.border = '1px solid rgba(255,255,255,0.4)';
+          pubBadgeEl.style.boxShadow = '0 2px 14px rgba(168,85,247,0.5)';
+        } else if (isAuthorVip) {
           const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
           if (durationLabel !== 'Hết hạn') {
             pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
@@ -7903,6 +7941,9 @@ function switchPublisherTab(tab) {
 
       if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks');
       openModal('modal-public-profile');
+      if (typeof updateAppUrlRoute === 'function' && resolvedHandle) {
+        updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
+      }
     }
 
     async function openPublicProfileByStudent(uid) {
@@ -10470,6 +10511,11 @@ function switchPublisherTab(tab) {
         btnAdd.style.display = 'none';
       }
 
+      // v0.10.9-45: SPA URL Routing
+      if (screenId === 'screen-decks') {
+        if (typeof updateAppUrlRoute === 'function') updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+      }
+
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
       const fab = document.getElementById('btn-ai-mentor-fab');
       if (fab) {
@@ -11447,6 +11493,25 @@ function switchPublisherTab(tab) {
       if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       }
+
+      // v0.10.9-45: SPA URL Routing on modal open
+      if (typeof updateAppUrlRoute === 'function') {
+        const modalRouteMap = {
+          'modal-profile': '/me',
+          'modal-shop': '/shop',
+          'modal-vip-pricing': '/vip',
+          'modal-ai-mentor': '/mentor',
+          'modal-wallet-studio': '/wallet',
+          'modal-mistake-notebook': '/mistakes',
+          'modal-lucky-wheel': '/wheel',
+          'modal-settings': '/settings',
+          'modal-achievements': '/achievements',
+          'modal-user-guide': '/guide'
+        };
+        if (modalRouteMap[id]) {
+          updateAppUrlRoute(modalRouteMap[id]);
+        }
+      }
     }
     function closeModal(id) {
       const el = document.getElementById(id);
@@ -11476,6 +11541,14 @@ function switchPublisherTab(tab) {
             openUserGuideModal(ctx.category, ctx.starterStep, ctx.scrollTop);
           }
         }, 60);
+      }
+
+      // v0.10.9-45: Restore homepage route if no other modal is active
+      if (typeof updateAppUrlRoute === 'function') {
+        const anyActiveModal = document.querySelector('.modal-overlay.active');
+        if (!anyActiveModal) {
+          updateAppUrlRoute('/homepage');
+        }
       }
     }
 
@@ -13757,6 +13830,12 @@ function switchPublisherTab(tab) {
 
     function cleanForeignClickBlockers() {
       try {
+        const rewardedAdModal = document.getElementById('modal-rewarded-ad');
+        if (rewardedAdModal && rewardedAdModal.classList.contains('active')) {
+          // Do not delete active ad frames while user is watching rewarded video
+          return;
+        }
+
         const parents = [document.body, document.documentElement];
         parents.forEach(parent => {
           if (!parent) return;
@@ -13926,20 +14005,39 @@ function switchPublisherTab(tab) {
     // =========================================================================
     const AD_FEATURE_SLIDES = [
       {
-        title: 'VocaFlow Pro - AI English Mentor',
-        desc: 'Trợ lý học thuật và luyện phản xạ giao tiếp tiếng Anh 24/7 không giới hạn.'
+        icon: '👑',
+        sponsor: 'VocaVIP Hoàng Gia',
+        title: 'VocaFlow Pro - AI English Mentor 24/7',
+        desc: 'Trợ lý học thuật và luyện phản xạ giao tiếp tiếng Anh 24/7 không giới hạn, kèm vương miện neon độc quyền.',
+        tags: ['✓ VIP Unlimited', '✓ Realtime Sync', '✓ 0đ Phí AI']
       },
       {
-        title: 'Spaced Repetition System (SRS)',
-        desc: 'Phương pháp lặp lại ngắt quãng dựa trên đường cong quên lãng Ebbinghaus chuẩn quốc tế.'
+        icon: '🎙️',
+        sponsor: 'ELSA Speak Phonetics AI',
+        title: 'ELSA Speak AI - Chuẩn Hóa Phát Âm Bản Xứ',
+        desc: 'Công nghệ AI chấm điểm khẩu hình, nối âm, nuốt âm và trọng âm ngữ điệu chuẩn kỳ thi quốc tế.',
+        tags: ['✓ AI Phonetics', '✓ Chuẩn Bản Xứ', '✓ IELTS 8.0+']
       },
       {
-        title: 'Đồng Bộ Cloud Realtime Siêu Tốc',
-        desc: 'Học tập liên tục mọi lúc mọi nơi trên cả Web Online và Windows Desktop App.'
+        icon: '🧠',
+        sponsor: 'Oxford & Cambridge E-Learning',
+        title: 'Spaced Repetition System (SRS Ebbinghaus)',
+        desc: 'Phương pháp lặp lại ngắt quãng dựa trên đường cong quên lãng Ebbinghaus giúp nhớ 3.000 từ vựng cốt lõi.',
+        tags: ['✓ Chuẩn Quốc Tế', '✓ Nhớ Lâu x5', '✓ Flashcards 3D']
       },
       {
-        title: 'Kho Thư Viện THPT & IELTS Khổng Lồ',
-        desc: 'Hơn 50+ VocaDeck tuyển chọn chuẩn SGK Global Success và đề thi THPT Quốc Gia.'
+        icon: '⚡',
+        sponsor: 'Google Cloud Asia-Southeast1',
+        title: 'Hạ Tầng Cloud Realtime Siêu Tốc',
+        desc: 'Đồng bộ học tập tức thì giữa Web Online và Windows Desktop App mà không lo mất tiến độ.',
+        tags: ['✓ Offline-First', '✓ Auto Backup', '✓ Bảo Mật 100%']
+      },
+      {
+        icon: '📚',
+        sponsor: 'Global Success & IELTS Cambridge',
+        title: 'Kho Thư Viện THPT Quốc Gia & IELTS 8.0+',
+        desc: 'Hơn 50+ VocaDeck tuyển chọn chuẩn SGK Global Success và bộ đề thi trọng tâm mới nhất.',
+        tags: ['✓ Chuẩn SGK Mới', '✓ 100% Miễn Phí', '✓ Audio HD']
       }
     ];
 
@@ -13963,7 +14061,7 @@ function switchPublisherTab(tab) {
       const progressFill = document.getElementById('ad-player-progress-fill');
       const claimBtn = document.getElementById('btn-ad-claim-reward');
 
-      if (titleEl) titleEl.textContent = currentAdActiveSlide.title;
+      if (titleEl) titleEl.textContent = `${currentAdActiveSlide.icon} ${currentAdActiveSlide.title}`;
       if (descEl) descEl.textContent = currentAdActiveSlide.desc;
       if (progressFill) progressFill.style.width = '0%';
 
@@ -23862,28 +23960,54 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         hintEl.textContent = isAutoPlaying ? '⏳ Tự động lật và đọc tiếng Việt sau khi phát âm' : '👆 Chạm vào thẻ để lật xem mặt trước / sau';
       }
 
+      const senses = (typeof getWordSenses === 'function') ? getWordSenses(word) : [];
+      const isMultiSense = senses.length > 1;
+
       // Front
       const cefrEl = document.getElementById('autofc-front-cefr');
-      if (word.cefrLevel) {
-        cefrEl.textContent = word.cefrLevel;
+      if (word.cefrLevel || (senses[0] && senses[0].cefrLevel)) {
+        cefrEl.textContent = word.cefrLevel || senses[0].cefrLevel;
         cefrEl.style.display = 'inline-block';
       } else {
         cefrEl.style.display = 'none';
       }
-      document.getElementById('autofc-front-pos').textContent = (word.partOfSpeech || 'WORD').toUpperCase();
+      document.getElementById('autofc-front-pos').textContent = (word.partOfSpeech || (senses[0] && senses[0].partOfSpeech) || 'WORD').toUpperCase();
       document.getElementById('autofc-front-term').textContent = word.term;
-      document.getElementById('autofc-front-phonetic').textContent = word.phonetic || '';
+      document.getElementById('autofc-front-phonetic').textContent = word.phonetic || (senses[0] && senses[0].phonetic) || '';
 
       // Back
       document.getElementById('autofc-back-term').textContent = word.term;
-      document.getElementById('autofc-back-def').textContent = word.definitionVi;
-      document.getElementById('autofc-back-example').textContent = word.exampleSentence ? `“${word.exampleSentence}”` : '';
+      const backDefEl = document.getElementById('autofc-back-def');
+      const backExEl = document.getElementById('autofc-back-example');
+
+      if (isMultiSense) {
+        let sensesHtml = '<div style="display: flex; flex-direction: column; gap: 8px; text-align: left; max-height: 190px; overflow-y: auto; padding-right: 4px; margin-top: 4px;">';
+        senses.forEach((s, sIdx) => {
+          sensesHtml += `
+            <div style="background: var(--surface-elevated, rgba(255,255,255,0.06)); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 13px;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+                <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 10px; font-weight: 700;">Nghĩa ${sIdx + 1}</span>
+                <span class="badge badge-pos" style="font-size: 9.5px;">${escapeHtml(s.partOfSpeech || 'noun')}</span>
+                <span class="badge badge-level-${(s.cefrLevel || 'b1').toLowerCase()}" style="font-size: 9.5px;">${escapeHtml(s.cefrLevel || 'B1')}</span>
+              </div>
+              <div style="font-weight: 700; color: var(--text);">${escapeHtml(s.definitionVi)}</div>
+              ${s.exampleSentence ? `<div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; margin-top: 2px;">“${escapeHtml(s.exampleSentence)}”</div>` : ''}
+            </div>
+          `;
+        });
+        sensesHtml += '</div>';
+        if (backDefEl) backDefEl.innerHTML = sensesHtml;
+        if (backExEl) backExEl.textContent = '';
+      } else {
+        if (backDefEl) backDefEl.textContent = word.definitionVi || senses[0]?.definitionVi || '';
+        if (backExEl) backExEl.textContent = (word.exampleSentence || senses[0]?.exampleSentence) ? `“${word.exampleSentence || senses[0]?.exampleSentence}”` : '';
+      }
 
       const metaEl = document.getElementById('autofc-back-meta');
       let metaHtml = '';
-      if (word.synonyms && word.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(word.synonyms.join(', '))}</div>`;
-      if (word.antonyms && word.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(word.antonyms.join(', '))}</div>`;
-      if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(word.collocations.join(', '))}</div>`;
+      if (word.synonyms && word.synonyms.length) metaHtml += `<div><strong>Đồng nghĩa:</strong> ${escapeHtml(Array.isArray(word.synonyms) ? word.synonyms.join(', ') : word.synonyms)}</div>`;
+      if (word.antonyms && word.antonyms.length) metaHtml += `<div><strong>Trái nghĩa:</strong> ${escapeHtml(Array.isArray(word.antonyms) ? word.antonyms.join(', ') : word.antonyms)}</div>`;
+      if (word.collocations && word.collocations.length) metaHtml += `<div><strong>Cụm từ:</strong> ${escapeHtml(Array.isArray(word.collocations) ? word.collocations.join(', ') : word.collocations)}</div>`;
       if (word.note) metaHtml += `<div><strong>Ghi chú:</strong> ${escapeHtml(word.note)}</div>`;
       metaEl.innerHTML = metaHtml || '<div style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu mở rộng</div>';
 
@@ -23900,11 +24024,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       if (miniTitle) miniTitle.textContent = `Auto FC (${index + 1}/${total})`;
       if (miniProg) miniProg.style.width = `${Math.round(((index + 1) / total) * 100)}%`;
-      if (miniPos) miniPos.textContent = (word.partOfSpeech || 'WORD').toLowerCase();
+      if (miniPos) miniPos.textContent = (word.partOfSpeech || (senses[0] && senses[0].partOfSpeech) || 'WORD').toLowerCase();
       if (miniFrontTerm) miniFrontTerm.textContent = word.term;
-      if (miniFrontPhonetic) miniFrontPhonetic.textContent = word.phonetic || '';
+      if (miniFrontPhonetic) miniFrontPhonetic.textContent = word.phonetic || (senses[0] && senses[0].phonetic) || '';
       if (miniBackTerm) miniBackTerm.textContent = word.term;
-      if (miniBackDef) miniBackDef.textContent = word.definitionVi;
+      if (miniBackDef) {
+        if (isMultiSense) {
+          miniBackDef.textContent = senses.map((s, i) => `${i + 1}. ${s.definitionVi}`).join(' | ');
+        } else {
+          miniBackDef.textContent = word.definitionVi || senses[0]?.definitionVi || '';
+        }
+      }
       if (miniCardEl) miniCardEl.classList.remove('flipped');
       if (miniStatus) {
         miniStatus.textContent = '🔊 EN';
@@ -23976,13 +24106,35 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         await new Promise(r => setTimeout(r, 850));
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // 6. Speak Vietnamese Definition completely
-        if (word.definitionVi) {
+        // 6. Speak Vietnamese Definition completely (Multi-sense sequential support)
+        const senses = (typeof getWordSenses === 'function') ? getWordSenses(word) : [];
+        if (senses.length > 1) {
+          for (let sIdx = 0; sIdx < senses.length; sIdx++) {
+            const s = senses[sIdx];
+            if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+            if (s.definitionVi) {
+              if (statusEl) {
+                statusEl.textContent = `🇻🇳 Đang đọc nghĩa ${sIdx + 1}/${senses.length}...`;
+                statusEl.style.color = '#34d399';
+              }
+              if (miniStatusEl) {
+                miniStatusEl.textContent = `🔊 VI (${sIdx + 1}/${senses.length})`;
+              }
+              const senseSpeech = `Nét nghĩa ${sIdx + 1}: ${s.definitionVi}`;
+              await playAudioAsync(senseSpeech, 'vi', currentSpeechRateVi);
+              if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+              if (sIdx < senses.length - 1) {
+                await new Promise(r => setTimeout(r, 450));
+              }
+            }
+          }
+        } else if (word.definitionVi || (senses[0] && senses[0].definitionVi)) {
+          const singleDef = word.definitionVi || senses[0].definitionVi;
           if (statusEl) {
             statusEl.textContent = '🇻🇳 Đang đọc tiếng Việt...';
             statusEl.style.color = '#34d399';
           }
-          await playAudioAsync(word.definitionVi, 'vi', currentSpeechRateVi);
+          await playAudioAsync(singleDef, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
@@ -24029,7 +24181,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const nextWord = autoFlashcardList[nextIdx];
         if (nextWord) {
           if (nextWord.term) preloadAudioBlob(nextWord.term, 'en-US');
-          if (nextWord.definitionVi) preloadAudioBlob(nextWord.definitionVi, 'vi');
+          const senses = (typeof getWordSenses === 'function') ? getWordSenses(nextWord) : [];
+          if (senses.length > 1) {
+            senses.forEach((s, sIdx) => {
+              if (s.definitionVi) {
+                preloadAudioBlob(`Nét nghĩa ${sIdx + 1}: ${s.definitionVi}`, 'vi');
+              }
+            });
+          } else if (nextWord.definitionVi || (senses[0] && senses[0].definitionVi)) {
+            preloadAudioBlob(nextWord.definitionVi || senses[0].definitionVi, 'vi');
+          }
         }
       }
     }
@@ -37712,6 +37873,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           usedToday: aiChatDailyCount,
           remainingFree: 999999,
           isFree: true,
+          canSend: true,
           costXu: 0
         };
       }
@@ -37723,7 +37885,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         usedToday: aiChatDailyCount,
         remainingFree,
         isFree: remainingFree > 0,
-        costXu: 10
+        canSend: remainingFree > 0,
+        costXu: 0
       };
     }
 
@@ -37746,12 +37909,12 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
         }
         if (feeNotice) {
-          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Trò chuyện không giới hạn lượt & 0 VoCoin!';
+          feeNotice.innerHTML = '<span style="color: #fbbf24; font-weight: 700;">👑 Đặc quyền VocaVIP:</span> Trò chuyện AI không giới hạn 24/7!';
         }
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
-      } else if (status.isFree) {
+      } else if (status.canSend) {
         if (badge) {
-          badge.textContent = `${status.remainingFree} lượt free`;
+          badge.textContent = `${status.remainingFree}/5 lượt free`;
           badge.style.background = 'rgba(16,185,129,0.15)';
           badge.style.color = '#34d399';
           badge.style.border = '1px solid rgba(16,185,129,0.3)';
@@ -37760,21 +37923,21 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
           fabBadge.textContent = status.remainingFree;
           fabBadge.style.background = '#10b981';
         }
-        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt: 10 VoCoin/lượt`;
+        if (feeNotice) feeNotice.textContent = `Miễn phí hôm nay: còn ${status.remainingFree}/5 lượt • Hết lượt sẽ không thể dùng xu để tiếp tục`;
         if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi';
       } else {
         if (badge) {
-          badge.textContent = `10 VoCoin / tin`;
-          badge.style.background = 'rgba(245,158,11,0.15)';
-          badge.style.color = '#fbbf24';
-          badge.style.border = '1px solid rgba(245,158,11,0.3)';
+          badge.textContent = `0/5 lượt hôm nay`;
+          badge.style.background = 'rgba(239,68,68,0.15)';
+          badge.style.color = '#f87171';
+          badge.style.border = '1px solid rgba(239,68,68,0.3)';
         }
         if (fabBadge) {
-          fabBadge.textContent = '🪙';
-          fabBadge.style.background = '#f59e0b';
+          fabBadge.textContent = '0';
+          fabBadge.style.background = '#ef4444';
         }
-        if (feeNotice) feeNotice.textContent = `Đã dùng hết 5 lượt miễn phí hôm nay • Phí: 10 VoCoin / lượt gửi`;
-        if (sendBtnLabel) sendBtnLabel.textContent = 'Gửi (10 VoCoin)';
+        if (feeNotice) feeNotice.innerHTML = '<span style="color: #f87171; font-weight: 700;">⚠️ Đã dùng hết 5/5 lượt hôm nay:</span> Nâng cấp VocaVIP để mở khóa vô hạn!';
+        if (sendBtnLabel) sendBtnLabel.textContent = 'Hết lượt (0/5)';
       }
     }
 
@@ -38494,9 +38657,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
     async function handleSendAiChatMessage(e = null) {
       if (e) e.preventDefault();
       
-      // Requirement 5: VIP-exclusive lock
-      if (typeof isUserVip === 'function' && !isUserVip()) {
-        alert('🔒 Tính năng VocaMentor AI chỉ dành riêng cho thành viên VIP (VocaVIP)!\n\nHãy nâng cấp VIP để trải nghiệm Gia Sư Gemini 3.8 Flash Vision và đính kèm ảnh không giới hạn.');
+      const quota = getAiChatQuotaStatus();
+      if (!quota.isVip && !quota.canSend) {
+        alert('🔒 Bạn đã sử dụng hết 5/5 lượt VocaMentor AI miễn phí hôm nay!\n\nTheo quy định mới, tài khoản thường không thể dùng VoCoin để tiếp tục. Hãy nâng cấp VocaVIP để trò chuyện không giới hạn hoặc quay lại vào ngày mai nhé!');
         openVipPricingModal();
         return;
       }
@@ -38701,19 +38864,23 @@ Quy tắc phản hồi quan trọng:
     currentActiveVipTab = tier;
     
     // Update tab buttons
+    const btnFree = document.getElementById('vip-tab-btn-free');
     const btnMonthly = document.getElementById('vip-tab-btn-monthly');
     const btnYearly = document.getElementById('vip-tab-btn-yearly');
     const btnLifetime = document.getElementById('vip-tab-btn-lifetime');
 
+    if (btnFree) btnFree.classList.toggle('active', tier === 'free');
     if (btnMonthly) btnMonthly.classList.toggle('active', tier === 'monthly');
     if (btnYearly) btnYearly.classList.toggle('active', tier === 'yearly');
     if (btnLifetime) btnLifetime.classList.toggle('active', tier === 'lifetime');
 
     // Update active-tab-card class on cards (for mobile display)
+    const cardFree = document.getElementById('vip-card-free');
     const cardMonthly = document.getElementById('vip-card-monthly');
     const cardYearly = document.getElementById('vip-card-yearly');
     const cardLifetime = document.getElementById('vip-card-lifetime');
 
+    if (cardFree) cardFree.classList.toggle('active-tab-card', tier === 'free');
     if (cardMonthly) cardMonthly.classList.toggle('active-tab-card', tier === 'monthly');
     if (cardYearly) cardYearly.classList.toggle('active-tab-card', tier === 'yearly');
     if (cardLifetime) cardLifetime.classList.toggle('active-tab-card', tier === 'lifetime');
@@ -38784,6 +38951,9 @@ Quy tắc phản hồi quan trọng:
     const bannerExpiryEl = document.getElementById('vip-banner-expiry-info');
 
     // Cards & Buttons
+    const cardFree = document.getElementById('vip-card-free');
+    const btnFree = document.getElementById('btn-plan-free');
+
     const cardMonthly = document.getElementById('vip-card-monthly');
     const btnMonthly = document.getElementById('btn-plan-monthly');
 
@@ -38802,6 +38972,9 @@ Quy tắc phản hồi quan trọng:
           ? 'Đặc quyền sở hữu: <strong>Vĩnh Viễn (Không bao giờ hết hạn)</strong>'
           : `Thời hạn hiện tại đến: <strong style="color: #fbbf24;">${expiryDateStr}</strong> (${durationLabel})`;
       }
+
+      if (cardFree) { cardFree.style.opacity = '0.5'; cardFree.style.filter = 'grayscale(0.6)'; }
+      if (btnFree) { btnFree.disabled = true; btnFree.textContent = '🌱 Gói Cơ Bản'; btnFree.style.cursor = 'default'; }
 
       if (currentTier === 'lifetime') {
         // All locked because already highest
@@ -38837,8 +39010,11 @@ Quy tắc phản hồi quan trọng:
         if (btnLifetime) { btnLifetime.disabled = false; btnLifetime.textContent = '👑 Nâng Cấp Lên Trọn Đời'; btnLifetime.style.cursor = 'pointer'; }
       }
     } else {
-      // Non-VIP: All open
+      // Non-VIP: All open, Free is current
       if (bannerEl) bannerEl.style.display = 'none';
+
+      if (cardFree) { cardFree.style.opacity = '1'; cardFree.style.filter = 'none'; cardFree.style.border = '1.5px solid rgba(16,185,129,0.5)'; }
+      if (btnFree) { btnFree.disabled = true; btnFree.textContent = '✓ Gói Hiện Tại'; btnFree.style.background = 'rgba(16,185,129,0.12)'; btnFree.style.color = '#34d399'; btnFree.style.borderColor = 'rgba(16,185,129,0.4)'; btnFree.style.cursor = 'default'; }
 
       if (cardMonthly) { cardMonthly.style.opacity = '1'; cardMonthly.style.filter = 'none'; cardMonthly.style.border = '1px solid var(--border)'; }
       if (btnMonthly) { btnMonthly.disabled = false; btnMonthly.textContent = 'Chọn Gói Tháng'; btnMonthly.style.cursor = 'pointer'; }
@@ -39250,6 +39426,10 @@ Quy tắc phản hồi quan trọng:
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
-    checkUrlProfileDeepLink();
+    if (typeof initSpaRouter === 'function') {
+      initSpaRouter();
+    } else {
+      checkUrlProfileDeepLink();
+    }
   });
 

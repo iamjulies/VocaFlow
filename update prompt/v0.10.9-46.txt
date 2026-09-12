@@ -6,4 +6,6 @@ v0.10.9-46
 5. hiện tại khi học ở chế độ auto flashcard chưa hiện và đọc tất cả các nét nghĩa cho những từ nhiều nghĩa -> hãy sửa đi
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
 
-nhiệm vụ bổ sung (nếu phát sinh): 
+nhiệm vụ bổ sung (nếu phát sinh):
+- tiến hành chia nhỏ app.js
+- web chưa được update lên v0.10.9-45 -> up lên v46 luôn

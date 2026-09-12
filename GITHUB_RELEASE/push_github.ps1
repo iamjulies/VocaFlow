@@ -65,8 +65,8 @@ Copy-Item "$root\vocaflow.html" "$root\GITHUB_RELEASE\vocaflow_web_single_file.h
 # 2. Cập nhật bản ZIP phát hành mới nhất
 Write-Host "[1/4] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
 $stage = Join-Path $root "VocaFlow_Windows_Portable"
-$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-44_Windows_Portable.zip"
-$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-44_Windows_Portable.zip"
+$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-46_Windows_Portable.zip"
+$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-46_Windows_Portable.zip"
 $releaseDir = Join-Path $root "Release_App"
 
 if (Test-Path $releaseDir) {
@@ -78,7 +78,7 @@ if (Test-Path $releaseDir) {
     [System.IO.Compression.ZipFile]::CreateFromDirectory($releaseDir, $zipPath)
     Copy-Item $zipPath $rootZipPath -Force
     
-    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-44_Windows_Portable.zip" -ForegroundColor Green
+    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-46_Windows_Portable.zip" -ForegroundColor Green
 }
 Write-Host ""
 
@@ -89,7 +89,7 @@ Write-Host "[2/4] Đang lưu và đẩy lên iamjulies/VocaFlow (main)..." -Fore
 & $git -C $root remote add origin $vocaFlowRemote
 & $git -C $root branch -M main
 & $git -C $root add .
-$commitMsg = "feat: Release v0.10.9-44 $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+$commitMsg = "feat: Release v0.10.9-46 $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 & $git -C $root commit -m $commitMsg 2>$null
 & $git -C $root push -u origin main --force
 
@@ -106,6 +106,7 @@ Copy-Item "$root\sw.js" "$ghPagesDir\sw.js" -Force
 Copy-Item "$root\manifest.json" "$ghPagesDir\manifest.json" -Force
 Copy-Item "$root\xlsx.full.min.js" "$ghPagesDir\xlsx.full.min.js" -Force
 Copy-Item "$root\ads.txt" "$ghPagesDir\ads.txt" -Force
+if (Test-Path "$root\404.html") { Copy-Item "$root\404.html" "$ghPagesDir\404.html" -Force }
 if (Test-Path "$root\icons") { Copy-Item "$root\icons" "$ghPagesDir\icons" -Recurse -Force }
 if (Test-Path "$root\audio") { Copy-Item "$root\audio" "$ghPagesDir\audio" -Recurse -Force }
 New-Item -ItemType File -Path "$ghPagesDir\.nojekyll" -Force | Out-Null
@@ -132,6 +133,7 @@ Copy-Item "$root\sw.js" "$ioDir\sw.js" -Force
 Copy-Item "$root\manifest.json" "$ioDir\manifest.json" -Force
 Copy-Item "$root\xlsx.full.min.js" "$ioDir\xlsx.full.min.js" -Force
 Copy-Item "$root\ads.txt" "$ioDir\ads.txt" -Force
+if (Test-Path "$root\404.html") { Copy-Item "$root\404.html" "$ioDir\404.html" -Force }
 if (Test-Path "$root\icons") { Copy-Item "$root\icons" "$ioDir\icons" -Recurse -Force }
 if (Test-Path "$root\audio") { Copy-Item "$root\audio" "$ioDir\audio" -Recurse -Force }
 New-Item -ItemType File -Path "$ioDir\.nojekyll" -Force | Out-Null

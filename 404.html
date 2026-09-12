@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>VocaFlow - Chuyển Hướng...</title>
+  <script>
+    // GitHub Pages SPA Single-Page-App redirect handler (v0.10.9-45)
+    var pathSegmentsToKeep = 1; // 1 for repo path e.g. /VocaFlow/
+    var l = window.location;
+    var pathname = l.pathname;
+    if (l.hostname === 'localhost' || l.hostname === '127.0.0.1' || !pathname.toLowerCase().startsWith('/vocaflow')) {
+      pathSegmentsToKeep = 0;
+    }
+    var repoPath = pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/');
+    var targetPath = pathname.slice(repoPath.length) + l.search + l.hash;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      repoPath + '/?p=' + encodeURIComponent(targetPath)
+    );
+  </script>
+</head>
+<body style="background: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+  <div style="text-align: center;">
+    <h2 style="color: #fbbf24;">⚡ Đang chuyển hướng đến VocaFlow...</h2>
+    <p style="color: #94a3b8;">Vui lòng đợi trong giây lát.</p>
+  </div>
+</body>
+</html>

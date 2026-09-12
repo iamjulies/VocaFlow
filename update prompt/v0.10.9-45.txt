@@ -1,9 +1,13 @@
 v0.10.9-45
 1. lỗi quảng cáo không xuất hiện trên app ở trên web (khi xem quảng cáo)
 2. xóa chức năng mở cổng quản trị bằng cách nhấp 5 lần vào số chỉ phiên bản
-3. đối với mỗi cửa sổ thì nên có 1 cái link khác nhau chứ nhỉ. ví dụ trang chủ nên là "https://iamjulies.github.io/VocaFlow/homepage", còn trang profile cá nhân nên là "https://iamjulies.github.io/VocaFlow/me", trang profile người dùng khác nên là "https://iamjulies.github.io/VocaFlow/@<username>",..v.v. t kh biết nếu quy hoạch lại kiểu này có sao không nhưng mong là được vì nếu được, có thể truy cập vào từng trang 1 cách trực diện hơn chứ kh cần phải chỉ dẫn thao tác để mở từng trang nữa
+3. đối với mỗi cửa sổ thì nên có 1 cái link khác nhau chứ nhỉ. ví dụ trang chủ nên là "https://iamjulies.github.io/VocaFlow/homepage", còn trang profile cá nhân nên là "https://iamjulies.github.io/VocaFlow/me", trang profile người dùng khác nên là "https://iamjulies.github.io/VocaFlow/@<username>",..v.v. t kh biết nếu quy hoạch lại kiểu này có sao không nhưng mong là được vì nếu được, có thể truy cập vào từng trang 1 cách trực diện hơn chứ kh cần phải chỉ dẫn thao tác để mở từng trang nữa. (u know me?)
 4. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 235350.png", thêm cả ô plan thường vào đây. sửa lại các mô tả các plan cho đúng và chuẩn nhất so với hiện tại. 
 5. hiện tại thì mỗi ngày user thường có 5 lượt dùng vocamentor ai miễn phí, sau đó thì tốn xu để dùng tiếp -> tinh chỉnh: chỉ cho phép dùng đúng 5 lượt/ngày và khi dùng hết thì kh thể dùng xu để tiếp tục nữa
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"
 
-nhiệm vụ bổ sung (nếu phát sinh): 
+nhiệm vụ bổ sung (nếu phát sinh):
+- "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 122521.png" hiện tại đang lỗi có thể nhấn theo dõi bản thân
+- link https://iamjulies.github.io/VocaFlow/?user=@nglinh_k8 kh mở đúng người ở đây "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 122712.png" mà mở "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 122651.png"
+- vẫn chưa trả lời t câu hỏi: liệu có chia nhỏ app.js được hay kh? vì hiện tại nó đang quá dài đến gần 40k dòng, việc tìm kiếm và quản lí rất khó.
+thực hiện tất cả các yêu cầu trên và báo cáo lại khi hoàn tất.

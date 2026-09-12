@@ -122,15 +122,27 @@ foreach ($mf in $allModalFiles) {
 $modalsContent = $modalsBuilder.ToString()
 Write-Host "  [+] Da tai $loadedModals Modals popup doc lap" -ForegroundColor Green
 
-# 6. Scripts
+# 6. Scripts (Modules + Core Scripts)
 $scriptsBuilder = [System.Text.StringBuilder]::new()
 $scriptsDir = Join-Path $srcDir "scripts"
-$scriptFiles = Get-ChildItem $scriptsDir -Filter "*.js" | Sort-Object Name
-foreach ($sf in $scriptFiles) {
+$modulesDir = Join-Path $scriptsDir "modules"
+$loadedScriptCount = 0
+
+if (Test-Path $modulesDir) {
+    $moduleFiles = Get-ChildItem $modulesDir -Filter "*.js" | Sort-Object Name
+    foreach ($mf in $moduleFiles) {
+        $scriptsBuilder.AppendLine([System.IO.File]::ReadAllText($mf.FullName, [System.Text.Encoding]::UTF8)) | Out-Null
+        $loadedScriptCount++
+    }
+}
+
+$coreFiles = Get-ChildItem $scriptsDir -Filter "*.js" | Sort-Object Name
+foreach ($sf in $coreFiles) {
     $scriptsBuilder.AppendLine([System.IO.File]::ReadAllText($sf.FullName, [System.Text.Encoding]::UTF8)) | Out-Null
+    $loadedScriptCount++
 }
 $scriptsContent = $scriptsBuilder.ToString()
-Write-Host "  [+] Da tai $($scriptFiles.Count) Modules JavaScript" -ForegroundColor Green
+Write-Host "  [+] Da tai $loadedScriptCount Modules/Scripts JavaScript" -ForegroundColor Green
 
 # 7. Assembling into template
 $out = $template
