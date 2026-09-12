@@ -3603,6 +3603,263 @@
       }
     }
 
+    /* ========================================================================= */
+    /* COMMUNITY RICH TEXT TOOLBAR & POST EDITOR (v0.10.9-53)                    */
+    /* ========================================================================= */
+    .rich-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      border-bottom: none;
+      flex-wrap: wrap;
+      user-select: none;
+    }
+    .rich-tool-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 4px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      transition: all 0.15s ease;
+    }
+    .rich-tool-btn:hover {
+      background: var(--surface-elevated);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .rich-tool-btn.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+    .rich-tool-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+      margin: 0 3px;
+    }
+    .rich-tool-select {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      height: 26px;
+      outline: none;
+      cursor: pointer;
+    }
+    .rich-post-editor {
+      min-height: 90px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.55;
+      outline: none;
+      word-break: break-word;
+      white-space: pre-wrap;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .rich-post-editor:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    .rich-post-editor:empty:before {
+      content: attr(data-placeholder);
+      color: var(--text-muted);
+      cursor: text;
+    }
+
+    /* Popover for Colors & Emojis */
+    .rich-popover {
+      position: absolute;
+      z-index: 10020;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      padding: 8px;
+      display: none;
+    }
+    .rich-color-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+    .rich-color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .rich-color-dot:hover {
+      transform: scale(1.2);
+      border-color: #fff;
+    }
+    .rich-emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .rich-emoji-btn {
+      font-size: 18px;
+      padding: 4px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .rich-emoji-btn:hover {
+      background: var(--surface);
+      transform: scale(1.2);
+    }
+
+    /* ========================================================================= */
+    /* IMAGE LIGHTBOX VIEWER MODAL (v0.10.9-53)                                  */
+    /* ========================================================================= */
+    .image-viewer-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 10050;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      user-select: none;
+      touch-action: none;
+    }
+    .image-viewer-modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .image-viewer-header {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10052;
+      color: #fff;
+    }
+    .image-viewer-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(0,0,0,0.5);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.15);
+      max-width: 60%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .image-viewer-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      cursor: grab;
+    }
+    .image-viewer-stage.dragging {
+      cursor: grabbing;
+    }
+    .image-viewer-img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      transition: transform 0.15s ease-out;
+      transform-origin: center center;
+    }
+    .image-viewer-bottom-bar {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 30px;
+      padding: 6px 14px;
+      z-index: 10052;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .image-viewer-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .image-viewer-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .image-viewer-btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border: none;
+    }
+    .image-viewer-btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      box-shadow: 0 0 14px rgba(99, 102, 241, 0.6);
+    }
+
+    /* Post image click indicator */
+    .community-post-image-clickable {
+      cursor: zoom-in;
+      transition: filter 0.2s, transform 0.2s;
+    }
+    .community-post-image-clickable:hover {
+      filter: brightness(1.06);
+    }
+
+
 
 
   </style>
@@ -3897,7 +4154,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-52 (Build 284)</span>
+            <span class="mini-footer-version">v0.10.9-53 (Build 285)</span>
           </div>
           <div class="mini-footer-right">
             <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
@@ -4092,7 +4349,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-52 (Build 284)</span>
+            <span class="mini-footer-version">v0.10.9-53 (Build 285)</span>
           </div>
           <div class="mini-footer-right">
             <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
@@ -8129,12 +8386,90 @@
 
         <!-- TAB PANEL 4: COMMUNITY FEED & SOCIAL (v0.10.9-49) -->
         <div id="profile-tab-panel-community" style="display: none;">
-          <!-- POST COMPOSER -->
+          <!-- POST COMPOSER (v0.10.9-53 Rich Editor) -->
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
             <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;">
               <div id="community-composer-avatar" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
-              <div style="flex: 1;">
-                <textarea id="community-post-content" class="form-textarea" rows="3" placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..." style="font-size: 13px; width: 100%; border-radius: 10px; resize: vertical;"></textarea>
+              <div style="flex: 1; min-width: 0; position: relative;">
+                
+                <!-- RICH TEXT TOOLBAR -->
+                <div class="rich-toolbar" id="community-post-rich-toolbar">
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'community-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'community-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'community-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'community-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+                  
+                  <div class="rich-tool-sep"></div>
+
+                  <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'community-post-rich-content')" title="Cỡ chữ">
+                    <option value="">Cỡ chữ</option>
+                    <option value="12px">Nhỏ (12px)</option>
+                    <option value="14px">Vừa (14px)</option>
+                    <option value="18px">Lớn (18px)</option>
+                    <option value="22px">Tiêu đề (22px)</option>
+                  </select>
+
+                  <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'community-post-rich-content')" title="Phông chữ">
+                    <option value="">Phông chữ</option>
+                    <option value="sans-serif">Mặc định</option>
+                    <option value="Georgia, serif">Cổ điển (Serif)</option>
+                    <option value="monospace">Lập trình (Monospace)</option>
+                    <option value="'Comic Sans MS', cursive">Viết tay</option>
+                  </select>
+
+                  <div class="rich-tool-sep"></div>
+
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'community-post-rich-content')" title="Căn trái">⇤</button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'community-post-rich-content')" title="Căn giữa">≡</button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'community-post-rich-content')" title="Căn phải">⇥</button>
+
+                  <div class="rich-tool-sep"></div>
+
+                  <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('composer-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+                  <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('composer-post-emoji-popover')" title="Chèn Emoji">😀</button>
+                  <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('community-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+                </div>
+
+                <!-- COLOR POPOVER -->
+                <div id="composer-post-color-popover" class="rich-popover">
+                  <div class="rich-color-grid">
+                    <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'community-post-rich-content')" title="Trắng"></div>
+                    <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'community-post-rich-content')" title="Đỏ"></div>
+                    <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'community-post-rich-content')" title="Vàng / Cam"></div>
+                    <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'community-post-rich-content')" title="Xanh lá"></div>
+                    <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'community-post-rich-content')" title="Xanh dương"></div>
+                    <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'community-post-rich-content')" title="Tím"></div>
+                    <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'community-post-rich-content')" title="Hồng"></div>
+                  </div>
+                </div>
+
+                <!-- EMOJI POPOVER -->
+                <div id="composer-post-emoji-popover" class="rich-popover">
+                  <div class="rich-emoji-grid">
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'community-post-rich-content')">🔥</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'community-post-rich-content')">💡</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'community-post-rich-content')">🏆</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'community-post-rich-content')">✨</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'community-post-rich-content')">🚀</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'community-post-rich-content')">❤️</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'community-post-rich-content')">👏</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'community-post-rich-content')">💯</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'community-post-rich-content')">📚</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'community-post-rich-content')">🎯</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'community-post-rich-content')">🎉</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'community-post-rich-content')">🌊</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'community-post-rich-content')">👑</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'community-post-rich-content')">💪</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'community-post-rich-content')">🌟</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'community-post-rich-content')">🥳</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'community-post-rich-content')">😎</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'community-post-rich-content')">⭐</button>
+                  </div>
+                </div>
+
+                <!-- RICH CONTENT EDITABLE -->
+                <div id="community-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..."></div>
+                <textarea id="community-post-content" style="display: none;"></textarea>
                 
                 <!-- ATTACHMENT PREVIEWS -->
                 <div id="community-post-image-preview-container" style="display: none; position: relative; margin-top: 8px; border-radius: 8px; overflow: hidden; max-height: 180px; border: 1px solid var(--border);">
@@ -8142,7 +8477,7 @@
                   <button type="button" onclick="clearCommunityPostImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                 </div>
 
-                <div id="community-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; justify-content: space-between;">
+                <div id="community-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span id="community-post-badge-icon" style="font-size: 20px;">🏆</span>
                     <div>
@@ -8988,7 +9323,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-52 (Build 284)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-53 (Build 285)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9727,11 +10062,223 @@
     </div>
   </div>
 
+  <!-- MODAL: EDIT COMMUNITY POST (v0.10.9-53) -->
+  <div class="modal-overlay sub-modal-overlay" id="modal-edit-community-post" style="z-index: 10015;">
+    <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
+      
+      <!-- MODAL TITLE -->
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">✏️</span>
+          <div>
+            <strong style="font-size: 15px; color: var(--text);">Chỉnh Sửa Bài Viết</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Cập nhật nội dung, định dạng văn bản, hình ảnh và danh hiệu đính kèm</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-edit-community-post')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- SCROLLABLE BODY -->
+      <div style="flex: 1; overflow-y: auto; padding: 4px 2px 10px 2px; display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="edit-post-id-hidden" value="">
+
+        <!-- RICH TEXT COMPOSER -->
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: block;">Nội dung bài viết:</label>
+          
+          <!-- TOOLBAR -->
+          <div class="rich-toolbar" id="edit-post-rich-toolbar">
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'edit-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'edit-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'edit-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'edit-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+            
+            <div class="rich-tool-sep"></div>
+
+            <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'edit-post-rich-content')" title="Cỡ chữ">
+              <option value="">Cỡ chữ</option>
+              <option value="12px">Nhỏ (12px)</option>
+              <option value="14px">Vừa (14px)</option>
+              <option value="18px">Lớn (18px)</option>
+              <option value="22px">Tiêu đề (22px)</option>
+            </select>
+
+            <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'edit-post-rich-content')" title="Phông chữ">
+              <option value="">Phông chữ</option>
+              <option value="sans-serif">Mặc định</option>
+              <option value="Georgia, serif">Cổ điển (Serif)</option>
+              <option value="monospace">Lập trình (Monospace)</option>
+              <option value="'Comic Sans MS', cursive">Viết tay</option>
+            </select>
+
+            <div class="rich-tool-sep"></div>
+
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'edit-post-rich-content')" title="Căn trái">⇤</button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'edit-post-rich-content')" title="Căn giữa">≡</button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'edit-post-rich-content')" title="Căn phải">⇥</button>
+
+            <div class="rich-tool-sep"></div>
+
+            <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('edit-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+            <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('edit-post-emoji-popover')" title="Chèn Emoji">😀</button>
+            <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('edit-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+          </div>
+
+          <!-- COLOR POPOVER -->
+          <div id="edit-post-color-popover" class="rich-popover">
+            <div class="rich-color-grid">
+              <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'edit-post-rich-content')" title="Trắng"></div>
+              <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'edit-post-rich-content')" title="Đỏ"></div>
+              <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'edit-post-rich-content')" title="Vàng / Cam"></div>
+              <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'edit-post-rich-content')" title="Xanh lá"></div>
+              <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'edit-post-rich-content')" title="Xanh dương"></div>
+              <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'edit-post-rich-content')" title="Tím"></div>
+              <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'edit-post-rich-content')" title="Hồng"></div>
+            </div>
+          </div>
+
+          <!-- EMOJI POPOVER -->
+          <div id="edit-post-emoji-popover" class="rich-popover">
+            <div class="rich-emoji-grid">
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'edit-post-rich-content')">🔥</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'edit-post-rich-content')">💡</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'edit-post-rich-content')">🏆</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'edit-post-rich-content')">✨</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'edit-post-rich-content')">🚀</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'edit-post-rich-content')">❤️</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'edit-post-rich-content')">👏</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'edit-post-rich-content')">💯</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'edit-post-rich-content')">📚</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'edit-post-rich-content')">🎯</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'edit-post-rich-content')">🎉</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'edit-post-rich-content')">🌊</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'edit-post-rich-content')">👑</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'edit-post-rich-content')">💪</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'edit-post-rich-content')">🌟</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'edit-post-rich-content')">🥳</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'edit-post-rich-content')">😎</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'edit-post-rich-content')">⭐</button>
+            </div>
+          </div>
+
+          <!-- RICH EDITOR CONTENT -->
+          <div id="edit-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Nhập nội dung bài viết..."></div>
+        </div>
+
+        <!-- ATTACHED IMAGE SECTION -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 4px;">
+              <span>🖼️</span> <span>Hình ảnh đính kèm:</span>
+            </label>
+            <div style="display: flex; gap: 6px;">
+              <input type="file" id="edit-post-image-file-input" accept="image/*" style="display: none;" onchange="handleEditPostImageUpload(event)">
+              <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('edit-post-image-file-input').click()" style="font-size: 11px;">
+                📤 Chọn / Đổi ảnh
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" id="btn-remove-edit-post-image" onclick="removeEditPostImage()" style="font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
+                🗑️ Gỡ ảnh
+              </button>
+            </div>
+          </div>
+          
+          <div id="edit-post-image-preview-container" style="display: none; border-radius: 8px; overflow: hidden; max-height: 200px; background: #000; border: 1px solid var(--border); text-align: center;">
+            <img id="edit-post-image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; object-fit: contain;">
+          </div>
+          <div id="edit-post-no-image-hint" style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">
+            Bài viết hiện không đính kèm hình ảnh nào.
+          </div>
+        </div>
+
+        <!-- ATTACHED BADGE SECTION -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 4px;">
+              <span>🎖️</span> <span>Danh hiệu / Huy hiệu:</span>
+            </label>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" class="btn btn-outline btn-xs" onclick="openEditPostBadgePicker()" style="font-size: 11px;">
+                🏆 Đổi danh hiệu
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" id="btn-remove-edit-post-badge" onclick="removeEditPostBadge()" style="font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
+                🗑️ Gỡ danh hiệu
+              </button>
+            </div>
+          </div>
+
+          <div id="edit-post-badge-preview-container" style="display: none; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="edit-post-badge-icon" style="font-size: 20px;">🏆</span>
+              <div>
+                <strong id="edit-post-badge-name" style="font-size: 12.5px; color: #fbbf24;">Danh hiệu</strong>
+                <div id="edit-post-badge-desc" style="font-size: 11px; color: var(--text-muted);">Mô tả danh hiệu</div>
+              </div>
+            </div>
+          </div>
+          <div id="edit-post-no-badge-hint" style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">
+            Bài viết hiện không gắn danh hiệu nào.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL ACTIONS -->
+      <div style="display: flex; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); margin-top: 4px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-edit-community-post')">Hủy</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-save-edited-post" onclick="saveEditedCommunityPost()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 6px 16px;">
+          💾 Lưu Cập Nhật
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: FULLSCREEN IMAGE VIEWER / LIGHTBOX (v0.10.9-53) -->
+  <div class="image-viewer-modal-overlay" id="modal-image-viewer" onclick="handleImageViewerBackdropClick(event)">
+    <!-- TOP HEADER BAR -->
+    <div class="image-viewer-header">
+      <div class="image-viewer-title" id="image-viewer-title">Ảnh bài viết VocaCommunity</div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button type="button" class="image-viewer-btn" onclick="copyImageViewerLink()" title="Sao chép liên kết ảnh">
+          <span>📋</span> Sao chép link
+        </button>
+        <button type="button" class="image-viewer-btn" onclick="downloadImageViewerImage()" title="Tải ảnh về máy" style="color: #38bdf8; border-color: rgba(56,189,248,0.4);">
+          <span>💾</span> Tải về
+        </button>
+        <button type="button" class="btn btn-outline btn-icon" onclick="closeImageViewerModal()" style="border-radius: 50%; width: 36px; height: 36px; color: #fff; border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5);">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN IMAGE STAGE (ZOOM & PAN) -->
+    <div class="image-viewer-stage" id="image-viewer-stage" onmousedown="startImageViewerDrag(event)" onmousemove="onImageViewerDrag(event)" onmouseup="endImageViewerDrag()" onmouseleave="endImageViewerDrag()" onwheel="onImageViewerWheel(event)">
+      <img id="image-viewer-img" class="image-viewer-img" src="" alt="VocaFlow Post Image" draggable="false">
+    </div>
+
+    <!-- BOTTOM FLOATING CONTROLS BAR -->
+    <div class="image-viewer-bottom-bar">
+      <button type="button" class="image-viewer-btn" onclick="zoomImageViewer(0.25)" title="Phóng to (+)">
+        <span>➕</span> Phóng to
+      </button>
+      <span id="image-viewer-zoom-level" style="font-size: 11.5px; font-weight: 700; color: #38bdf8; min-width: 45px; text-align: center;">100%</span>
+      <button type="button" class="image-viewer-btn" onclick="zoomImageViewer(-0.25)" title="Thu nhỏ (-)">
+        <span>➖</span> Thu nhỏ
+      </button>
+      <button type="button" class="image-viewer-btn" onclick="rotateImageViewer(90)" title="Xoay ảnh 90°">
+        <span>🔄</span> Xoay
+      </button>
+      <button type="button" class="image-viewer-btn" onclick="resetImageViewer()" title="Khôi phục kích thước gốc">
+        <span>⏪</span> Khôi phục
+      </button>
+    </div>
+  </div>
+
 
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-52)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-53 Build 285)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -9740,7 +10287,11 @@ let isRouterNavigating = false;
 function getAppBasePath() {
   if (window.location.protocol === 'file:') return '';
   const pathname = window.location.pathname;
-  if (pathname.includes('/VocaFlow')) return '/VocaFlow';
+  const lower = pathname.toLowerCase();
+  const idx = lower.indexOf('/vocaflow');
+  if (idx !== -1) {
+    return pathname.slice(idx, idx + '/vocaflow'.length);
+  }
   return '';
 }
 window.getAppBasePath = getAppBasePath;
@@ -9804,7 +10355,7 @@ function resolveRouteFromUrl() {
   // 4. Check direct pathname
   const basePath = getAppBasePath();
   let path = l.pathname;
-  if (basePath && path.startsWith(basePath)) {
+  if (basePath && path.toLowerCase().startsWith(basePath.toLowerCase())) {
     path = path.slice(basePath.length);
   }
   if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
@@ -10091,15 +10642,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-52 Build 284)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-53 Build 285)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-52 Build 284)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-53 Build 285)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-52';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-52 (Build 284)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-53';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-53 (Build 285)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -10875,18 +11426,66 @@ window.initSpaRouter = initSpaRouter;
       try {
         const date = (isoStringOrDate instanceof Date) ? isoStringOrDate : new Date(isoStringOrDate);
         if (isNaN(date.getTime())) return 'Vừa xong';
-        const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-        if (diff < 60) return 'Vừa xong';
-        if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-        if (diff < 259200) return `${Math.floor(diff / 86400)} ngày trước`;
-        return date.toLocaleDateString('vi-VN');
+        const now = new Date();
+        const diffSec = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+        if (diffSec < 0 || diffSec < 60) return 'Vừa xong';
+        if (diffSec < 3600) {
+          const m = Math.floor(diffSec / 60);
+          return `${m} phút trước`;
+        }
+
+        const isSameDay = date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        if (isSameDay) {
+          const h = Math.floor(diffSec / 3600);
+          return `${h} giờ trước`;
+        }
+
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isYesterday = date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear();
+        
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        if (isYesterday) {
+          return `Hôm qua lúc ${hours}:${minutes}`;
+        }
+
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        if (year === now.getFullYear()) {
+          return `${day} tháng ${month} lúc ${hours}:${minutes}`;
+        }
+        return `${day} tháng ${month}, ${year} lúc ${hours}:${minutes}`;
       } catch (e) {
         return 'Vừa xong';
       }
     }
     window.formatTimeAgo = formatTimeAgo;
     window.formatRelativeTime = formatTimeAgo;
+
+    function formatFullExactDateTime(isoStringOrDate) {
+      if (!isoStringOrDate) return '';
+      try {
+        const date = (isoStringOrDate instanceof Date) ? isoStringOrDate : new Date(isoStringOrDate);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleString('vi-VN', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+    window.formatFullExactDateTime = formatFullExactDateTime;
 
 
     // =========================================================================
@@ -17885,6 +18484,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
         if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
+        const statDecksCardEl = document.getElementById('pub-view-stat-decks');
+        if (statDecksCardEl) statDecksCardEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
         const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
         if (statPointsCardEl) statPointsCardEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
         const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
@@ -18028,7 +18629,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.switchProfileTab = switchProfileTab;
 
     // =========================================================================
-    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-49 - ZERO-BUDGET CLOUD STRATEGY)
+    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-53)
     // =========================================================================
     let communityPosts = [];
     let communityCurrentFilter = 'all';
@@ -18037,20 +18638,575 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     let communityReplyingToComment = null; // { postId, commentId, authorHandle }
     let communityActiveCommentsPostId = null;
 
+    // =========================================================================
+    // COMMUNITY RICH TEXT & POST FORMATTING ENGINE (v0.10.9-53)
+    // =========================================================================
+    function sanitizePostHtml(raw) {
+      if (!raw) return '';
+      if (typeof raw !== 'string') return String(raw);
+
+      // If it doesn't contain HTML tags, escape and replace newlines with <br>
+      if (!/<[a-z][\s\S]*>/i.test(raw)) {
+        return escapeHtml(raw).replace(/\n/g, '<br>');
+      }
+
+      // Safe HTML sanitizer: Parse in detached document and sanitize
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(raw, 'text/html');
+        const allowedTags = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'S', 'STRIKE', 'SPAN', 'DIV', 'P', 'BR', 'FONT']);
+        const allowedStyles = new Set(['color', 'background-color', 'font-size', 'font-family', 'font-weight', 'font-style', 'text-decoration', 'text-align']);
+
+        function sanitizeNode(node) {
+          const children = Array.from(node.childNodes);
+          for (const child of children) {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+              const tag = child.tagName.toUpperCase();
+              if (!allowedTags.has(tag)) {
+                const textNode = doc.createTextNode(child.textContent);
+                node.replaceChild(textNode, child);
+                continue;
+              }
+
+              const attrs = Array.from(child.attributes);
+              for (const attr of attrs) {
+                const name = attr.name.toLowerCase();
+                if (name === 'style') {
+                  const styleVal = child.getAttribute('style') || '';
+                  const safeStyleRules = [];
+                  styleVal.split(';').forEach(rule => {
+                    const parts = rule.split(':');
+                    if (parts.length === 2) {
+                      const prop = parts[0].trim().toLowerCase();
+                      const val = parts[1].trim();
+                      if (allowedStyles.has(prop) && !/javascript:|url\(|expression\(/i.test(val)) {
+                        safeStyleRules.push(`${prop}: ${val}`);
+                      }
+                    }
+                  });
+                  child.setAttribute('style', safeStyleRules.join('; '));
+                } else if (name === 'color' || name === 'face' || name === 'size') {
+                  // Keep font tag attributes
+                } else {
+                  child.removeAttribute(attr.name);
+                }
+              }
+
+              sanitizeNode(child);
+            }
+          }
+        }
+
+        sanitizeNode(doc.body);
+        return doc.body.innerHTML;
+      } catch (e) {
+        return escapeHtml(raw).replace(/\n/g, '<br>');
+      }
+    }
+    window.sanitizePostHtml = sanitizePostHtml;
+
+    function getEditorElement(targetEditorId) {
+      if (typeof targetEditorId === 'string') {
+        return document.getElementById(targetEditorId);
+      }
+      return document.getElementById('community-post-rich-content') || document.getElementById('edit-post-rich-content');
+    }
+
+    function execRichPostCommand(cmd, val = null, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand(cmd, false, val);
+      if (editor) editor.focus();
+    }
+    window.execRichPostCommand = execRichPostCommand;
+
+    function setRichPostFontSize(size, targetEditorId = 'community-post-rich-content') {
+      if (!size) return;
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('fontSize', false, '7');
+      const fontEls = editor ? editor.querySelectorAll('font[size="7"]') : [];
+      fontEls.forEach(el => {
+        el.removeAttribute('size');
+        el.style.fontSize = size;
+      });
+      if (editor) editor.focus();
+    }
+    window.setRichPostFontSize = setRichPostFontSize;
+
+    function setRichPostFontFamily(font, targetEditorId = 'community-post-rich-content') {
+      if (!font) return;
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('fontName', false, font);
+      if (editor) editor.focus();
+    }
+    window.setRichPostFontFamily = setRichPostFontFamily;
+
+    function setRichPostColor(color, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('foreColor', false, color);
+      closeAllRichPopovers();
+      if (editor) editor.focus();
+    }
+    window.setRichPostColor = setRichPostColor;
+
+    function insertRichPostEmoji(emoji, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) {
+        editor.focus();
+        document.execCommand('insertText', false, emoji);
+        closeAllRichPopovers();
+        editor.focus();
+      }
+    }
+    window.insertRichPostEmoji = insertRichPostEmoji;
+
+    function clearRichPostFormatting(targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) {
+        editor.focus();
+        document.execCommand('removeFormat', false, null);
+        editor.focus();
+      }
+    }
+    window.clearRichPostFormatting = clearRichPostFormatting;
+
+    function toggleRichColorPopover(popoverId) {
+      const p = document.getElementById(popoverId);
+      if (!p) return;
+      const isVisible = p.style.display === 'block';
+      closeAllRichPopovers();
+      if (!isVisible) p.style.display = 'block';
+    }
+    window.toggleRichColorPopover = toggleRichColorPopover;
+
+    function toggleRichEmojiPopover(popoverId) {
+      const p = document.getElementById(popoverId);
+      if (!p) return;
+      const isVisible = p.style.display === 'block';
+      closeAllRichPopovers();
+      if (!isVisible) p.style.display = 'block';
+    }
+    window.toggleRichEmojiPopover = toggleRichEmojiPopover;
+
+    function closeAllRichPopovers() {
+      document.querySelectorAll('.rich-popover').forEach(p => p.style.display = 'none');
+    }
+    window.closeAllRichPopovers = closeAllRichPopovers;
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.rich-popover') && !e.target.closest('.rich-tool-btn')) {
+        closeAllRichPopovers();
+      }
+    });
+
+    // =========================================================================
+    // IMAGE LIGHTBOX VIEWER ENGINE (v0.10.9-53)
+    // =========================================================================
+    let imageViewerCurrentSrc = '';
+    let imageViewerCurrentScale = 1.0;
+    let imageViewerCurrentRotation = 0;
+    let imageViewerTranslateX = 0;
+    let imageViewerTranslateY = 0;
+    let isImageViewerDragging = false;
+    let imageViewerDragStartX = 0;
+    let imageViewerDragStartY = 0;
+
+    function openImageViewerModal(imgSrc, title = 'Ảnh bài viết VocaCommunity') {
+      if (!imgSrc) return;
+      imageViewerCurrentSrc = imgSrc;
+      imageViewerCurrentScale = 1.0;
+      imageViewerCurrentRotation = 0;
+      imageViewerTranslateX = 0;
+      imageViewerTranslateY = 0;
+
+      const modal = document.getElementById('modal-image-viewer');
+      const imgEl = document.getElementById('image-viewer-img');
+      const titleEl = document.getElementById('image-viewer-title');
+      const zoomEl = document.getElementById('image-viewer-zoom-level');
+
+      if (imgEl) {
+        imgEl.src = imgSrc;
+        imgEl.style.transform = 'translate(0px, 0px) scale(1) rotate(0deg)';
+      }
+      if (titleEl) titleEl.textContent = title || 'Ảnh bài viết VocaCommunity';
+      if (zoomEl) zoomEl.textContent = '100%';
+
+      if (modal) modal.classList.add('active');
+    }
+    window.openImageViewerModal = openImageViewerModal;
+
+    function closeImageViewerModal() {
+      const modal = document.getElementById('modal-image-viewer');
+      if (modal) modal.classList.remove('active');
+      imageViewerCurrentSrc = '';
+    }
+    window.closeImageViewerModal = closeImageViewerModal;
+
+    function updateImageViewerTransform() {
+      const imgEl = document.getElementById('image-viewer-img');
+      const zoomEl = document.getElementById('image-viewer-zoom-level');
+      if (imgEl) {
+        imgEl.style.transform = `translate(${imageViewerTranslateX}px, ${imageViewerTranslateY}px) scale(${imageViewerCurrentScale}) rotate(${imageViewerCurrentRotation}deg)`;
+      }
+      if (zoomEl) {
+        zoomEl.textContent = `${Math.round(imageViewerCurrentScale * 100)}%`;
+      }
+    }
+
+    function zoomImageViewer(delta) {
+      imageViewerCurrentScale = Math.min(4.0, Math.max(0.4, Math.round((imageViewerCurrentScale + delta) * 100) / 100));
+      updateImageViewerTransform();
+    }
+    window.zoomImageViewer = zoomImageViewer;
+
+    function rotateImageViewer(deg = 90) {
+      imageViewerCurrentRotation = (imageViewerCurrentRotation + deg) % 360;
+      updateImageViewerTransform();
+    }
+    window.rotateImageViewer = rotateImageViewer;
+
+    function resetImageViewer() {
+      imageViewerCurrentScale = 1.0;
+      imageViewerCurrentRotation = 0;
+      imageViewerTranslateX = 0;
+      imageViewerTranslateY = 0;
+      updateImageViewerTransform();
+    }
+    window.resetImageViewer = resetImageViewer;
+
+    function onImageViewerWheel(e) {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.15 : -0.15;
+      zoomImageViewer(delta);
+    }
+    window.onImageViewerWheel = onImageViewerWheel;
+
+    function startImageViewerDrag(e) {
+      if (e.target.closest('.image-viewer-bottom-bar') || e.target.closest('.image-viewer-header')) return;
+      isImageViewerDragging = true;
+      imageViewerDragStartX = e.clientX - imageViewerTranslateX;
+      imageViewerDragStartY = e.clientY - imageViewerTranslateY;
+      const stage = document.getElementById('image-viewer-stage');
+      if (stage) stage.classList.add('dragging');
+    }
+    window.startImageViewerDrag = startImageViewerDrag;
+
+    function onImageViewerDrag(e) {
+      if (!isImageViewerDragging) return;
+      e.preventDefault();
+      imageViewerTranslateX = e.clientX - imageViewerDragStartX;
+      imageViewerTranslateY = e.clientY - imageViewerDragStartY;
+      updateImageViewerTransform();
+    }
+    window.onImageViewerDrag = onImageViewerDrag;
+
+    function endImageViewerDrag() {
+      isImageViewerDragging = false;
+      const stage = document.getElementById('image-viewer-stage');
+      if (stage) stage.classList.remove('dragging');
+    }
+    window.endImageViewerDrag = endImageViewerDrag;
+
+    function handleImageViewerBackdropClick(e) {
+      if (e.target.id === 'modal-image-viewer' || e.target.id === 'image-viewer-stage') {
+        if (!isImageViewerDragging && Math.abs(imageViewerTranslateX) < 5 && Math.abs(imageViewerTranslateY) < 5) {
+          closeImageViewerModal();
+        }
+      }
+    }
+    window.handleImageViewerBackdropClick = handleImageViewerBackdropClick;
+
+    function downloadImageViewerImage() {
+      if (!imageViewerCurrentSrc) return;
+      try {
+        const link = document.createElement('a');
+        link.href = imageViewerCurrentSrc;
+        link.download = `VocaFlow_Post_Image_${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('💾 Đang tải ảnh xuống máy...');
+      } catch (e) {
+        window.open(imageViewerCurrentSrc, '_blank');
+      }
+    }
+    window.downloadImageViewerImage = downloadImageViewerImage;
+
+    function copyImageViewerLink() {
+      if (!imageViewerCurrentSrc) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(imageViewerCurrentSrc).then(() => {
+          showToast('📋 Đã sao chép liên kết ảnh!');
+        }).catch(() => {
+          prompt('Liên kết ảnh:', imageViewerCurrentSrc);
+        });
+      } else {
+        prompt('Liên kết ảnh:', imageViewerCurrentSrc);
+      }
+    }
+    window.copyImageViewerLink = copyImageViewerLink;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('modal-image-viewer');
+        if (modal && modal.classList.contains('active')) {
+          closeImageViewerModal();
+        }
+      }
+    });
+
+    // =========================================================================
+    // COMPREHENSIVE POST EDITING CONTROLLER (v0.10.9-53)
+    // =========================================================================
+    let activeEditingPostId = null;
+    let editingPostAttachedImage = null;
+    let editingPostAttachedBadge = null;
+    let isEditingPostBadgePickerActive = false;
+
+    function openEditCommunityPostModal(postId) {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập để chỉnh sửa bài viết!');
+        openAuthModal('login');
+        return;
+      }
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || post.authorUid !== currentUser?.uid) {
+        showToast('⚠️ Bạn không có quyền chỉnh sửa bài viết này!');
+        return;
+      }
+
+      activeEditingPostId = postId;
+      editingPostAttachedImage = post.image || post.imageUrl || null;
+      editingPostAttachedBadge = post.badge ? JSON.parse(JSON.stringify(post.badge)) : null;
+
+      const hiddenId = document.getElementById('edit-post-id-hidden');
+      const richEditor = document.getElementById('edit-post-rich-content');
+      if (hiddenId) hiddenId.value = postId;
+      if (richEditor) richEditor.innerHTML = sanitizePostHtml(post.content || '');
+
+      // Image preview
+      const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+      const imgPrev = document.getElementById('edit-post-image-preview');
+      const noImgHint = document.getElementById('edit-post-no-image-hint');
+      const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+      if (editingPostAttachedImage) {
+        if (imgPrev) imgPrev.src = editingPostAttachedImage;
+        if (imgPrevCont) imgPrevCont.style.display = 'block';
+        if (noImgHint) noImgHint.style.display = 'none';
+        if (btnRemoveImg) btnRemoveImg.style.display = 'inline-flex';
+      } else {
+        if (imgPrev) imgPrev.src = '';
+        if (imgPrevCont) imgPrevCont.style.display = 'none';
+        if (noImgHint) noImgHint.style.display = 'block';
+        if (btnRemoveImg) btnRemoveImg.style.display = 'none';
+      }
+
+      // Badge preview
+      const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+      const badgeIcon = document.getElementById('edit-post-badge-icon');
+      const badgeName = document.getElementById('edit-post-badge-name');
+      const badgeDesc = document.getElementById('edit-post-badge-desc');
+      const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+      const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+      if (editingPostAttachedBadge) {
+        if (badgeIcon) badgeIcon.textContent = editingPostAttachedBadge.icon || '🏆';
+        if (badgeName) badgeName.textContent = editingPostAttachedBadge.name || editingPostAttachedBadge.title || 'Danh hiệu';
+        if (badgeDesc) badgeDesc.textContent = editingPostAttachedBadge.desc || '';
+        if (badgePrevCont) badgePrevCont.style.display = 'flex';
+        if (noBadgeHint) noBadgeHint.style.display = 'none';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'inline-flex';
+      } else {
+        if (badgePrevCont) badgePrevCont.style.display = 'none';
+        if (noBadgeHint) noBadgeHint.style.display = 'block';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'none';
+      }
+
+      openModal('modal-edit-community-post');
+    }
+    window.openEditCommunityPostModal = openEditCommunityPostModal;
+    window.editCommunityPost = openEditCommunityPostModal;
+
+    function handleEditPostImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('⚠️ Vui lòng chỉ chọn tệp hình ảnh!');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const rawBase64 = evt.target.result;
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          editingPostAttachedImage = canvas.toDataURL('image/jpeg', 0.85);
+
+          const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+          const imgPrev = document.getElementById('edit-post-image-preview');
+          const noImgHint = document.getElementById('edit-post-no-image-hint');
+          const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+          if (imgPrev) imgPrev.src = editingPostAttachedImage;
+          if (imgPrevCont) imgPrevCont.style.display = 'block';
+          if (noImgHint) noImgHint.style.display = 'none';
+          if (btnRemoveImg) btnRemoveImg.style.display = 'inline-flex';
+          showToast('🖼️ Đã chọn ảnh mới cho bài viết!');
+        };
+        img.src = rawBase64;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+    window.handleEditPostImageUpload = handleEditPostImageUpload;
+
+    function removeEditPostImage() {
+      editingPostAttachedImage = null;
+      const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+      const imgPrev = document.getElementById('edit-post-image-preview');
+      const noImgHint = document.getElementById('edit-post-no-image-hint');
+      const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+      if (imgPrev) imgPrev.src = '';
+      if (imgPrevCont) imgPrevCont.style.display = 'none';
+      if (noImgHint) noImgHint.style.display = 'block';
+      if (btnRemoveImg) btnRemoveImg.style.display = 'none';
+      showToast('🗑️ Đã gỡ hình ảnh khỏi bài viết!');
+    }
+    window.removeEditPostImage = removeEditPostImage;
+
+    function openEditPostBadgePicker() {
+      isEditingPostBadgePickerActive = true;
+      openCommunityBadgePicker();
+    }
+    window.openEditPostBadgePicker = openEditPostBadgePicker;
+
+    function removeEditPostBadge() {
+      editingPostAttachedBadge = null;
+      const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+      const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+      const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+      if (badgePrevCont) badgePrevCont.style.display = 'none';
+      if (noBadgeHint) noBadgeHint.style.display = 'block';
+      if (btnRemoveBadge) btnRemoveBadge.style.display = 'none';
+      showToast('🗑️ Đã gỡ danh hiệu khỏi bài viết!');
+    }
+    window.removeEditPostBadge = removeEditPostBadge;
+
+    async function saveEditedCommunityPost() {
+      if (!activeEditingPostId) return;
+      const post = communityPosts.find(p => p.id === activeEditingPostId);
+      if (!post || post.authorUid !== currentUser?.uid) return;
+
+      const richEditor = document.getElementById('edit-post-rich-content');
+      const newHtml = (richEditor?.innerHTML || '').trim();
+      const plainText = (richEditor?.textContent || '').trim();
+
+      if (!plainText && !newHtml && !editingPostAttachedImage && !editingPostAttachedBadge) {
+        showToast('⚠️ Bài viết không thể để trống hoàn toàn!');
+        return;
+      }
+
+      const saveBtn = document.getElementById('btn-save-edited-post');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Đang lưu...'; }
+
+      post.content = sanitizePostHtml(newHtml);
+      post.image = editingPostAttachedImage;
+      post.imageUrl = editingPostAttachedImage;
+      post.badge = editingPostAttachedBadge;
+      post.updatedAt = new Date().toISOString();
+
+      renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
+      closeModal('modal-edit-community-post');
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${post.id}.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: post.content,
+            image: post.image,
+            imageUrl: post.image,
+            badge: post.badge,
+            updatedAt: post.updatedAt
+          })
+        });
+
+        localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        showToast('🎉 Đã cập nhật toàn diện bài viết thành công!');
+      } catch (err) {
+        console.warn('Edit post sync error:', err);
+        showToast('⚠️ Đã lưu tại máy, kiểm tra lại kết nối cloud!');
+      } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Lưu Cập Nhật'; }
+      }
+    }
+    window.saveEditedCommunityPost = saveEditedCommunityPost;
+
     function handleCommunityImageUpload(event) {
       const file = event.target?.files?.[0];
       if (!file) return;
-      if (file.size > 1.5 * 1024 * 1024) {
-        alert('⚠️ Kích thước ảnh tối đa là 1.5MB!');
+      if (file.size > 2.5 * 1024 * 1024) {
+        alert('⚠️ Kích thước ảnh tối đa là 2.5MB!');
         return;
       }
       const reader = new FileReader();
       reader.onload = (e) => {
-        communityActiveAttachedImage = e.target.result;
-        const prevContainer = document.getElementById('community-post-image-preview-container');
-        const prevImg = document.getElementById('community-post-image-preview');
-        if (prevImg) prevImg.src = communityActiveAttachedImage;
-        if (prevContainer) prevContainer.style.display = 'block';
+        const rawBase64 = e.target.result;
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          communityActiveAttachedImage = canvas.toDataURL('image/jpeg', 0.85);
+          const prevContainer = document.getElementById('community-post-image-preview-container');
+          const prevImg = document.getElementById('community-post-image-preview');
+          if (prevImg) prevImg.src = communityActiveAttachedImage;
+          if (prevContainer) prevContainer.style.display = 'block';
+        };
+        img.src = rawBase64;
       };
       reader.readAsDataURL(file);
     }
@@ -18111,7 +19267,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const tier = b.tier || 'bronze';
           const tColor = tierColors[tier] || '#fbbf24';
           const tName = tierNames[tier] || 'Danh hiệu';
-          const isCurrentlySelected = communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId;
+          const isCurrentlySelected = (isEditingPostBadgePickerActive && editingPostAttachedBadge && editingPostAttachedBadge.id === b.badgeId) || (!isEditingPostBadgePickerActive && communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId);
 
           html += `
             <div onclick="selectCommunityPostBadge('${b.badgeId}')" style="cursor: pointer; background: var(--surface-elevated); border: 2px solid ${isCurrentlySelected ? '#6366f1' : 'var(--border)'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='${isCurrentlySelected ? '#6366f1' : 'var(--border)'}'">
@@ -18136,13 +19292,37 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function selectCommunityPostBadge(badgeId) {
       const bDef = (typeof ACHIEVEMENTS_REGISTRY !== 'undefined') ? ACHIEVEMENTS_REGISTRY[badgeId] : null;
       if (!bDef) return;
-      communityActiveAttachedBadge = {
+      const badgeData = {
         id: badgeId,
         name: bDef.name,
         icon: bDef.icon || '🏆',
         desc: bDef.desc || '',
         tier: bDef.tier || 'bronze'
       };
+
+      if (isEditingPostBadgePickerActive) {
+        editingPostAttachedBadge = badgeData;
+        const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+        const badgeIcon = document.getElementById('edit-post-badge-icon');
+        const badgeName = document.getElementById('edit-post-badge-name');
+        const badgeDesc = document.getElementById('edit-post-badge-desc');
+        const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+        const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+        if (badgeIcon) badgeIcon.textContent = bDef.icon || '🏆';
+        if (badgeName) badgeName.textContent = bDef.name;
+        if (badgeDesc) badgeDesc.textContent = bDef.desc || '';
+        if (badgePrevCont) badgePrevCont.style.display = 'flex';
+        if (noBadgeHint) noBadgeHint.style.display = 'none';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'inline-flex';
+
+        isEditingPostBadgePickerActive = false;
+        closeModal('modal-community-badge-picker');
+        showToast(`🎖️ Đã đổi sang danh hiệu "${bDef.name}"!`);
+        return;
+      }
+
+      communityActiveAttachedBadge = badgeData;
       const prevCont = document.getElementById('community-post-badge-preview-container');
       const iconEl = document.getElementById('community-post-badge-icon');
       const nameEl = document.getElementById('community-post-badge-name');
@@ -18169,9 +19349,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         openAuthModal('login');
         return;
       }
+      const richEditor = document.getElementById('community-post-rich-content');
       const contentEl = document.getElementById('community-post-content');
-      const text = (contentEl?.value || '').trim();
-      if (!text && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
+      const htmlContent = richEditor ? richEditor.innerHTML.trim() : (contentEl?.value || '').trim();
+      const plainText = richEditor ? richEditor.textContent.trim() : (contentEl?.value || '').trim();
+
+      if (!plainText && !htmlContent && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
         showToast('⚠️ Vui lòng nhập nội dung hoặc đính kèm ảnh/danh hiệu trước khi đăng!');
         return;
       }
@@ -18188,8 +19371,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
         isVip: isUserVip(),
         vipTier: getUserVipTier(),
-        content: text,
+        content: sanitizePostHtml(htmlContent),
         image: communityActiveAttachedImage || null,
+        imageUrl: communityActiveAttachedImage || null,
         badge: communityActiveAttachedBadge || null,
         likes: {},
         comments: {},
@@ -18217,6 +19401,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           message: `${postObj.authorName} vừa đăng một bài viết mới trên Cộng Đồng!`
         });
 
+        if (richEditor) richEditor.innerHTML = '';
         if (contentEl) contentEl.value = '';
         clearCommunityPostImage();
         clearCommunityPostBadge();
@@ -18466,8 +19651,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
         const commentsCount = commentsList.length;
 
-        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const postDate = new Date(post.createdAt || Date.now());
+        const timeAgo = formatTimeAgo(postDate);
+        const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+
+        const postImg = post.image || post.imageUrl || '';
 
         html += `
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -18485,7 +19674,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                     <span>@${escapeHtml(post.authorHandle || 'user')}</span>
                     <span>•</span>
-                    <span>${timeAgo}</span>
+                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
                 </div>
               </div>
@@ -18493,16 +19682,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <!-- AUTHOR ACTION MENU -->
               ${isAuthor ? `
                 <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
                   <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
                 </div>
               ` : ''}
             </div>
 
-            <!-- POST CONTENT -->
+            <!-- POST CONTENT (Rich Text Render) -->
             ${post.content ? `
-              <div id="post-content-text-${post.id}" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">
-                ${escapeHtml(post.content)}
+              <div id="post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; word-break: break-word;">
+                ${sanitizePostHtml(post.content)}
               </div>
             ` : ''}
 
@@ -18517,10 +19706,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               </div>
             ` : ''}
 
-            <!-- ATTACHED IMAGE -->
-            ${(post.image || post.imageUrl) ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
-                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Post image" style="width: 100%; height: auto; max-height: 320px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
+            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
+            ${postImg ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+                <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
+                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
+                  <span>🔍 Phóng to</span>
+                </div>
               </div>
             ` : ''}
 
@@ -18553,19 +19745,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <div id="post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
                 ${commentsList.length === 0 ? `
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => `
+                ` : commentsList.map(c => {
+                  const commentDate = new Date(c.timestamp || Date.now());
+                  return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                       <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
                       <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
                   </div>
-                `).join('')}
+                `;}).join('')}
               </div>
 
               <!-- COMMENT INPUT -->
@@ -18946,8 +20140,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
         const commentsCount = commentsList.length;
 
-        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const postDate = new Date(post.createdAt || Date.now());
+        const timeAgo = formatTimeAgo(postDate);
+        const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+
+        const postImg = post.image || post.imageUrl || '';
 
         html += `
           <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -18965,7 +20163,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                     <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
                     <span>•</span>
-                    <span>${timeAgo}</span>
+                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
                 </div>
               </div>
@@ -18973,15 +20171,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <!-- AUTHOR ACTION MENU -->
               ${isAuthor ? `
                 <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
                   <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
                 </div>
               ` : ''}
             </div>
 
-            <!-- POST CONTENT -->
+            <!-- POST CONTENT (Rich Text Render) -->
             ${post.content ? `
-              <div id="pub-post-content-text-${post.id}" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+              <div id="pub-post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; word-break: break-word;">${sanitizePostHtml(post.content || '')}</div>
             ` : ''}
 
             <!-- ATTACHED BADGE BRAG -->
@@ -18995,10 +20193,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               </div>
             ` : ''}
 
-            <!-- ATTACHED IMAGE -->
-            ${(post.image || post.imageUrl) ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
-                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
+            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
+            ${postImg ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+                <img src="${escapeHtml(postImg)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 360px; display: block;" onerror="this.parentElement.style.display='none';">
+                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
+                  <span>🔍 Phóng to</span>
+                </div>
               </div>
             ` : ''}
 
@@ -19024,19 +20225,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <div id="pub-post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
                 ${commentsList.length === 0 ? `
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => `
+                ` : commentsList.map(c => {
+                  const commentDate = new Date(c.timestamp || Date.now());
+                  return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                       <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
                       <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
                   </div>
-                `).join('')}
+                `;}).join('')}
               </div>
 
               <!-- COMMENT INPUT -->
@@ -31056,6 +32259,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       renderFlowCalendar();
       openModal('modal-flow-calendar');
     }
+    window.openFlowCalendarModal = openFlowCalendarModal;
 
     function changeFlowCalendarMonth(delta) {
       currentFlowCalendarMonthOffset += delta;
@@ -32586,6 +33790,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       switchVipPlanTab('yearly');
     }
   }
+  window.openVipPricingModal = openVipPricingModal;
 
   function getShortUidUpper(uid) {
     if (!uid) return 'GUEST';
@@ -48192,6 +49397,7 @@ Quy tắc phản hồi quan trọng:
       renderNotificationsList();
       openModal('modal-notifications');
     }
+    window.openNotificationsModal = openNotificationsModal;
 
     function setNotificationFilter(filter) {
       currentNotificationFilter = filter;
@@ -48580,7 +49786,7 @@ Quy tắc phản hồi quan trọng:
       const ua = navigator.userAgent || 'Unknown';
       const screenRes = `${window.innerWidth}x${window.innerHeight} (Màn hình: ${screen.width}x${screen.height})`;
       const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
-      const version = 'v0.10.8-alpha-10.3 (Build 208)';
+      const version = (typeof VOCAFLOW_APP_FULL_TITLE !== 'undefined') ? VOCAFLOW_APP_FULL_TITLE : 'v0.10.9-53 (Build 285)';
       const user = currentUser ? `${currentUser.displayName || currentUser.email || 'Khách'} (${currentUser.uid})` : 'Chưa đăng nhập';
       const isVip = (typeof isUserVip === 'function' && isUserVip()) ? `VIP (${typeof getUserVipTier === 'function' ? getUserVipTier() : 'Active'})` : 'Free';
       const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'Không có lỗi JS nào';
@@ -48650,6 +49856,8 @@ Quy tắc phản hồi quan trọng:
 
       openModal('modal-bug-report');
     }
+    window.openBugReportModal = openBugReportModal;
+    window.openBugBountyModal = openBugReportModal;
 
     function updateBugSeverityUI() {
       const sev = document.querySelector('input[name="bug-severity"]:checked')?.value || 'low';

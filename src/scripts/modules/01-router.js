@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-52)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-53 Build 285)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -8,7 +8,11 @@ let isRouterNavigating = false;
 function getAppBasePath() {
   if (window.location.protocol === 'file:') return '';
   const pathname = window.location.pathname;
-  if (pathname.includes('/VocaFlow')) return '/VocaFlow';
+  const lower = pathname.toLowerCase();
+  const idx = lower.indexOf('/vocaflow');
+  if (idx !== -1) {
+    return pathname.slice(idx, idx + '/vocaflow'.length);
+  }
   return '';
 }
 window.getAppBasePath = getAppBasePath;
@@ -72,7 +76,7 @@ function resolveRouteFromUrl() {
   // 4. Check direct pathname
   const basePath = getAppBasePath();
   let path = l.pathname;
-  if (basePath && path.startsWith(basePath)) {
+  if (basePath && path.toLowerCase().startsWith(basePath.toLowerCase())) {
     path = path.slice(basePath.length);
   }
   if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {

@@ -4,4 +4,11 @@ v0.10.9-53
 3. khi sửa/viết văn bản cho bài đăng thì t muốn nó có đủ công cụ tinh chỉnh ấy, ví dụ như đổi font, đổi cỡ, đổi màu, căn lề,.... có làm đc kh? (có gây nổ bộ nhớ kh?)
 4. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181149.png" ở pub prf kh nhấn tim hay nhấn comment được và cũng kh nhấn vào xem ảnh được (ý là muốn nhấn vào để xem để zoom chẳng hạn, hoặc lưu về.. bla bla)
 5. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181855.png" mấy cái chỉ số ở pub prf chưa chuẩn lắm thì phải
+6. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 182036.png" bỏ cái này đi tại vì nếu muốn thì có thể nhấn vào để chọn thành tựu để gắn chứ kh cần phải bày ra cái trống trơn đấy
+7. thêm Direct URLs cho mấy trang sau (yêu cầu lần 3 rồi)
+- Bảng Giá Nâng Cấp VocaVIP: https://iamjulies.github.io/VocaFlow/vocavip
+- FlowStreak Học Tập: https://iamjulies.github.io/VocaFlow/flowtreak
+- Trung Tâm Thông Báo:  https://iamjulies.github.io/VocaFlow/notifications
+- VocaMail - Nhắn Tin & Hỏi Đáp Admin: https://iamjulies.github.io/VocaFlow/vocamail
+- Báo Cáo Sự Cố & Đóng Góp Ý Kiến: https://iamjulies.github.io/VocaFlow/report
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -1,0 +1,170 @@
+  <!-- MODAL: EDIT COMMUNITY POST (v0.10.9-53) -->
+  <div class="modal-overlay sub-modal-overlay" id="modal-edit-community-post" style="z-index: 10015;">
+    <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
+      
+      <!-- MODAL TITLE -->
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">✏️</span>
+          <div>
+            <strong style="font-size: 15px; color: var(--text);">Chỉnh Sửa Bài Viết</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Cập nhật nội dung, định dạng văn bản, hình ảnh và danh hiệu đính kèm</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-edit-community-post')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- SCROLLABLE BODY -->
+      <div style="flex: 1; overflow-y: auto; padding: 4px 2px 10px 2px; display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="edit-post-id-hidden" value="">
+
+        <!-- RICH TEXT COMPOSER -->
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: block;">Nội dung bài viết:</label>
+          
+          <!-- TOOLBAR -->
+          <div class="rich-toolbar" id="edit-post-rich-toolbar">
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'edit-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'edit-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'edit-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'edit-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+            
+            <div class="rich-tool-sep"></div>
+
+            <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'edit-post-rich-content')" title="Cỡ chữ">
+              <option value="">Cỡ chữ</option>
+              <option value="12px">Nhỏ (12px)</option>
+              <option value="14px">Vừa (14px)</option>
+              <option value="18px">Lớn (18px)</option>
+              <option value="22px">Tiêu đề (22px)</option>
+            </select>
+
+            <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'edit-post-rich-content')" title="Phông chữ">
+              <option value="">Phông chữ</option>
+              <option value="sans-serif">Mặc định</option>
+              <option value="Georgia, serif">Cổ điển (Serif)</option>
+              <option value="monospace">Lập trình (Monospace)</option>
+              <option value="'Comic Sans MS', cursive">Viết tay</option>
+            </select>
+
+            <div class="rich-tool-sep"></div>
+
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'edit-post-rich-content')" title="Căn trái">⇤</button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'edit-post-rich-content')" title="Căn giữa">≡</button>
+            <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'edit-post-rich-content')" title="Căn phải">⇥</button>
+
+            <div class="rich-tool-sep"></div>
+
+            <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('edit-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+            <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('edit-post-emoji-popover')" title="Chèn Emoji">😀</button>
+            <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('edit-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+          </div>
+
+          <!-- COLOR POPOVER -->
+          <div id="edit-post-color-popover" class="rich-popover">
+            <div class="rich-color-grid">
+              <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'edit-post-rich-content')" title="Trắng"></div>
+              <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'edit-post-rich-content')" title="Đỏ"></div>
+              <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'edit-post-rich-content')" title="Vàng / Cam"></div>
+              <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'edit-post-rich-content')" title="Xanh lá"></div>
+              <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'edit-post-rich-content')" title="Xanh dương"></div>
+              <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'edit-post-rich-content')" title="Tím"></div>
+              <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'edit-post-rich-content')" title="Hồng"></div>
+            </div>
+          </div>
+
+          <!-- EMOJI POPOVER -->
+          <div id="edit-post-emoji-popover" class="rich-popover">
+            <div class="rich-emoji-grid">
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'edit-post-rich-content')">🔥</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'edit-post-rich-content')">💡</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'edit-post-rich-content')">🏆</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'edit-post-rich-content')">✨</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'edit-post-rich-content')">🚀</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'edit-post-rich-content')">❤️</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'edit-post-rich-content')">👏</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'edit-post-rich-content')">💯</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'edit-post-rich-content')">📚</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'edit-post-rich-content')">🎯</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'edit-post-rich-content')">🎉</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'edit-post-rich-content')">🌊</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'edit-post-rich-content')">👑</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'edit-post-rich-content')">💪</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'edit-post-rich-content')">🌟</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'edit-post-rich-content')">🥳</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'edit-post-rich-content')">😎</button>
+              <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'edit-post-rich-content')">⭐</button>
+            </div>
+          </div>
+
+          <!-- RICH EDITOR CONTENT -->
+          <div id="edit-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Nhập nội dung bài viết..."></div>
+        </div>
+
+        <!-- ATTACHED IMAGE SECTION -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 4px;">
+              <span>🖼️</span> <span>Hình ảnh đính kèm:</span>
+            </label>
+            <div style="display: flex; gap: 6px;">
+              <input type="file" id="edit-post-image-file-input" accept="image/*" style="display: none;" onchange="handleEditPostImageUpload(event)">
+              <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('edit-post-image-file-input').click()" style="font-size: 11px;">
+                📤 Chọn / Đổi ảnh
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" id="btn-remove-edit-post-image" onclick="removeEditPostImage()" style="font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
+                🗑️ Gỡ ảnh
+              </button>
+            </div>
+          </div>
+          
+          <div id="edit-post-image-preview-container" style="display: none; border-radius: 8px; overflow: hidden; max-height: 200px; background: #000; border: 1px solid var(--border); text-align: center;">
+            <img id="edit-post-image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; object-fit: contain;">
+          </div>
+          <div id="edit-post-no-image-hint" style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">
+            Bài viết hiện không đính kèm hình ảnh nào.
+          </div>
+        </div>
+
+        <!-- ATTACHED BADGE SECTION -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 4px;">
+              <span>🎖️</span> <span>Danh hiệu / Huy hiệu:</span>
+            </label>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" class="btn btn-outline btn-xs" onclick="openEditPostBadgePicker()" style="font-size: 11px;">
+                🏆 Đổi danh hiệu
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" id="btn-remove-edit-post-badge" onclick="removeEditPostBadge()" style="font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3); display: none;">
+                🗑️ Gỡ danh hiệu
+              </button>
+            </div>
+          </div>
+
+          <div id="edit-post-badge-preview-container" style="display: none; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="edit-post-badge-icon" style="font-size: 20px;">🏆</span>
+              <div>
+                <strong id="edit-post-badge-name" style="font-size: 12.5px; color: #fbbf24;">Danh hiệu</strong>
+                <div id="edit-post-badge-desc" style="font-size: 11px; color: var(--text-muted);">Mô tả danh hiệu</div>
+              </div>
+            </div>
+          </div>
+          <div id="edit-post-no-badge-hint" style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">
+            Bài viết hiện không gắn danh hiệu nào.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL ACTIONS -->
+      <div style="display: flex; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); margin-top: 4px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-edit-community-post')">Hủy</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-save-edited-post" onclick="saveEditedCommunityPost()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 6px 16px;">
+          💾 Lưu Cập Nhật
+        </button>
+      </div>
+
+    </div>
+  </div>

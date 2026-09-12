@@ -596,6 +596,7 @@
       renderFlowCalendar();
       openModal('modal-flow-calendar');
     }
+    window.openFlowCalendarModal = openFlowCalendarModal;
 
     function changeFlowCalendarMonth(delta) {
       currentFlowCalendarMonthOffset += delta;
@@ -2126,6 +2127,7 @@
       switchVipPlanTab('yearly');
     }
   }
+  window.openVipPricingModal = openVipPricingModal;
 
   function getShortUidUpper(uid) {
     if (!uid) return 'GUEST';

@@ -1,4 +1,42 @@
 ================================================================================
+Phiên bản: v0.10.9-53 (Build 285) - Chỉnh Sửa Bài Viết Toàn Diện, Thanh Công Cụ Soạn Thảo Phong Phú (Rich Text), Thời Gian Tương Đối Kiểu Facebook, Trình Xem Ảnh Phóng To (Lightbox Modal), Đồng Bộ Chỉ Số Hồ Sơ & Chuẩn Hóa Deep Link
+================================================================================
+1. [Chỉnh Sửa Bài Viết Toàn Diện & Modal Chuyên Nghiệp (Full Post Editing)]:
+   - Bổ sung Modal Chỉnh Sửa Toàn Diện (`modal-edit-community-post`): Cho phép tác giả cập nhật trọn vẹn cả nội dung văn bản đa định dạng, thay đổi/xóa hình ảnh đính kèm (hỗ trợ nén ảnh Canvas mượt mà), và chọn lại/gỡ bỏ danh hiệu thành tích đính kèm.
+   - Cơ chế lưu trữ thông minh: Đồng bộ dữ liệu cập nhật tức thì lên Firebase RTDB `/community_posts` và bộ nhớ cục bộ, tự động hiển thị nhãn "(đã chỉnh sửa)" minh bạch.
+
+2. [Thanh Công Cụ Soạn Thảo Phong Phú (Rich Text Formatting Toolbar)]:
+   - Tích hợp thanh công cụ soạn thảo trực quan cho cả khung đăng bài mới và modal chỉnh sửa:
+     + Định dạng cơ bản: In đậm (**B**), In nghiêng (*I*), Gạch chân (<u>U</u>), Gạch ngang (<s>S</s>).
+     + Cỡ chữ tùy chỉnh: Nhỏ (12px), Vừa (14px), Lớn (16px), Tiêu đề (20px).
+     + Phông chữ: Inter / Hệ thống, Tròn trịa (Quicksand), Đơn cách (Monospace), Cổ điển (Serif).
+     + Bảng chọn màu sắc chữ đa dạng (Color Palette) với các tông màu chuẩn VocaFlow.
+     + Canh lề văn bản: Canh trái, Canh giữa, Canh phải.
+     + Bảng chọn Emoji cảm xúc nhanh & Nút Xóa định dạng.
+   - Bộ lọc và làm sạch mã an toàn `sanitizePostHtml()` chống XSS toàn diện mà vẫn giữ trọn vẹn kiểu dáng chữ viết.
+
+3. [Định Dạng Thời Gian Phong Cách Facebook & Tooltip Ngày Giờ Chuẩn Xác]:
+   - Nâng cấp `formatTimeAgo()` theo chuẩn mạng xã hội: "Vừa xong", "X phút trước", "X giờ trước", "Hôm qua lúc HH:mm", "D tháng M lúc HH:mm".
+   - Bổ sung thuộc tính `title` với hàm `formatFullExactDateTime()`: Rê chuột hoặc chạm giữ vào thời gian sẽ hiển thị chính xác Thứ, Ngày Tháng Năm và Giờ Phút Giây.
+
+4. [Trình Phóng To Xem Ảnh Toàn Màn Hình (Image Lightbox Viewer Modal)]:
+   - Thiết kế Modal Xem Ảnh Độc Lập Chuyên Nghiệp (`modal-image-viewer`):
+     + Nhấp vào bất kỳ hình ảnh nào trong bài viết (trên Bảng tin chung hoặc Hồ sơ công khai) để mở trình xem ảnh độ nét cao.
+     + Bộ điều khiển mạnh mẽ: Phóng to (Zoom In), Thu nhỏ (Zoom Out), Xoay ảnh 90° (Rotate), Đặt lại kích thước (Reset), Tải ảnh về máy (Download), Sao chép liên kết ảnh (Copy Link).
+     + Hỗ trợ cuộn chuột (Mouse Wheel) để zoom mượt và kéo rê (Drag to Pan) khi đang phóng to ảnh.
+
+5. [Đồng Bộ Chỉ Số Hồ Sơ Công Khai & Loại Bỏ Khung Rỗng Danh Hiệu]:
+   - Khắc phục triệt để lỗi bất đồng bộ ID DOM (`pub-view-stat-decks-num` và `pub-view-stat-decks`) khi xem hồ sơ công khai, đảm bảo số bộ từ và số từ chia sẻ luôn nhảy số chuẩn xác theo thời gian thực.
+   - Loại bỏ khung placeholder danh hiệu rỗng trên khung tạo bài viết khi chưa chọn đính kèm danh hiệu.
+
+6. [Bảo Đảm Tuyệt Đối Định Tuyến Deep Links Không Phân Biệt Hoa Thường]:
+   - Chuẩn hóa điều hướng trực tiếp cho các route: `/vocavip` (bảng giá VIP), `/flowtreak` & `/flowstreak` (dòng chảy học tập), `/notifications` (thông báo), `/vocamail` (hòm thư), `/report` & `/feedback` (báo lỗi).
+   - Xuất khẩu toàn bộ các hàm mở modal tương ứng ra phạm vi toàn cục `window.*` để router gọi an toàn mọi lúc mọi nơi.
+
+7. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-53 Build 285)]:
+   - Đồng bộ hoàn tất 7 điểm chuẩn hóa phiên bản trên toàn bộ hệ sinh thái tệp tin.
+
+================================================================================
 Phiên bản: v0.10.9-52 (Build 284) - Mở Rộng Deep Linking (/invite & /ads), Chuẩn Hóa Link Giới Thiệu Cá Nhân Hóa, Đồng Bộ Avatar Toàn Diện, Hoàn Thiện Tương Tác & Ánh Xạ Bài Viết Public Profile
 ================================================================================
 1. [Mở Rộng Deep Linking Toàn Diện & Tự Động Điền Mã Giới Thiệu]:

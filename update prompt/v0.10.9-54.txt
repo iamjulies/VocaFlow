@@ -1,0 +1,3 @@
+v0.10.9-54
+1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 182706.png" mở rộng trang này theo chiều ngang và thêm 1 ô biểu đồ này bên phải còn ô lịch này vẫn giữ nguyên kích thước và để bên trái. biểu đồ đó là gì? là biểu đồ kết hợp cột + đường. với cột là thể hiện thời gian truy cập app trong ngày (từ 00h ngày hôm nay đến 00h ngày hôm sau ấy), 1 đường thể hiện số xu kiếm được trong ngày và 1 đường còn lại là thể hiện số điểm rèn luyện kiếm được (ý là điểm học thuộc bài ấy). nó sẽ thể hiện 7 ngày gần nhất với ngày hôm nay là ngày cuối cùng trong biểu đồ. t nói thế m hiểu chưa?
+2. thêm cái biểu đồ này vào tab chỉ số ở cả trang pub prf và trang me

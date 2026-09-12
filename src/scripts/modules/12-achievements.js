@@ -404,6 +404,7 @@
       renderNotificationsList();
       openModal('modal-notifications');
     }
+    window.openNotificationsModal = openNotificationsModal;
 
     function setNotificationFilter(filter) {
       currentNotificationFilter = filter;
@@ -792,7 +793,7 @@
       const ua = navigator.userAgent || 'Unknown';
       const screenRes = `${window.innerWidth}x${window.innerHeight} (Màn hình: ${screen.width}x${screen.height})`;
       const memoryUsage = (performance && performance.memory) ? `${Math.round(performance.memory.usedJSHeapSize / (1024 * 1024))}MB` : 'N/A';
-      const version = 'v0.10.8-alpha-10.3 (Build 208)';
+      const version = (typeof VOCAFLOW_APP_FULL_TITLE !== 'undefined') ? VOCAFLOW_APP_FULL_TITLE : 'v0.10.9-53 (Build 285)';
       const user = currentUser ? `${currentUser.displayName || currentUser.email || 'Khách'} (${currentUser.uid})` : 'Chưa đăng nhập';
       const isVip = (typeof isUserVip === 'function' && isUserVip()) ? `VIP (${typeof getUserVipTier === 'function' ? getUserVipTier() : 'Active'})` : 'Free';
       const lastError = recentJsErrorsList.length > 0 ? JSON.stringify(recentJsErrorsList[recentJsErrorsList.length - 1]) : 'Không có lỗi JS nào';
@@ -862,6 +863,8 @@
 
       openModal('modal-bug-report');
     }
+    window.openBugReportModal = openBugReportModal;
+    window.openBugBountyModal = openBugReportModal;
 
     function updateBugSeverityUI() {
       const sev = document.querySelector('input[name="bug-severity"]:checked')?.value || 'low';

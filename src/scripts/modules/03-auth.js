@@ -4736,6 +4736,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
         if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
+        const statDecksCardEl = document.getElementById('pub-view-stat-decks');
+        if (statDecksCardEl) statDecksCardEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
         const statPointsCardEl = document.getElementById('pub-view-stat-points-card');
         if (statPointsCardEl) statPointsCardEl.textContent = `${formatNumber(targetPoints)} VoCoin`;
         const statFlowCardEl = document.getElementById('pub-view-stat-flow-card');
@@ -4879,7 +4881,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.switchProfileTab = switchProfileTab;
 
     // =========================================================================
-    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-49 - ZERO-BUDGET CLOUD STRATEGY)
+    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-53)
     // =========================================================================
     let communityPosts = [];
     let communityCurrentFilter = 'all';
@@ -4888,20 +4890,575 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     let communityReplyingToComment = null; // { postId, commentId, authorHandle }
     let communityActiveCommentsPostId = null;
 
+    // =========================================================================
+    // COMMUNITY RICH TEXT & POST FORMATTING ENGINE (v0.10.9-53)
+    // =========================================================================
+    function sanitizePostHtml(raw) {
+      if (!raw) return '';
+      if (typeof raw !== 'string') return String(raw);
+
+      // If it doesn't contain HTML tags, escape and replace newlines with <br>
+      if (!/<[a-z][\s\S]*>/i.test(raw)) {
+        return escapeHtml(raw).replace(/\n/g, '<br>');
+      }
+
+      // Safe HTML sanitizer: Parse in detached document and sanitize
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(raw, 'text/html');
+        const allowedTags = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'S', 'STRIKE', 'SPAN', 'DIV', 'P', 'BR', 'FONT']);
+        const allowedStyles = new Set(['color', 'background-color', 'font-size', 'font-family', 'font-weight', 'font-style', 'text-decoration', 'text-align']);
+
+        function sanitizeNode(node) {
+          const children = Array.from(node.childNodes);
+          for (const child of children) {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+              const tag = child.tagName.toUpperCase();
+              if (!allowedTags.has(tag)) {
+                const textNode = doc.createTextNode(child.textContent);
+                node.replaceChild(textNode, child);
+                continue;
+              }
+
+              const attrs = Array.from(child.attributes);
+              for (const attr of attrs) {
+                const name = attr.name.toLowerCase();
+                if (name === 'style') {
+                  const styleVal = child.getAttribute('style') || '';
+                  const safeStyleRules = [];
+                  styleVal.split(';').forEach(rule => {
+                    const parts = rule.split(':');
+                    if (parts.length === 2) {
+                      const prop = parts[0].trim().toLowerCase();
+                      const val = parts[1].trim();
+                      if (allowedStyles.has(prop) && !/javascript:|url\(|expression\(/i.test(val)) {
+                        safeStyleRules.push(`${prop}: ${val}`);
+                      }
+                    }
+                  });
+                  child.setAttribute('style', safeStyleRules.join('; '));
+                } else if (name === 'color' || name === 'face' || name === 'size') {
+                  // Keep font tag attributes
+                } else {
+                  child.removeAttribute(attr.name);
+                }
+              }
+
+              sanitizeNode(child);
+            }
+          }
+        }
+
+        sanitizeNode(doc.body);
+        return doc.body.innerHTML;
+      } catch (e) {
+        return escapeHtml(raw).replace(/\n/g, '<br>');
+      }
+    }
+    window.sanitizePostHtml = sanitizePostHtml;
+
+    function getEditorElement(targetEditorId) {
+      if (typeof targetEditorId === 'string') {
+        return document.getElementById(targetEditorId);
+      }
+      return document.getElementById('community-post-rich-content') || document.getElementById('edit-post-rich-content');
+    }
+
+    function execRichPostCommand(cmd, val = null, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand(cmd, false, val);
+      if (editor) editor.focus();
+    }
+    window.execRichPostCommand = execRichPostCommand;
+
+    function setRichPostFontSize(size, targetEditorId = 'community-post-rich-content') {
+      if (!size) return;
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('fontSize', false, '7');
+      const fontEls = editor ? editor.querySelectorAll('font[size="7"]') : [];
+      fontEls.forEach(el => {
+        el.removeAttribute('size');
+        el.style.fontSize = size;
+      });
+      if (editor) editor.focus();
+    }
+    window.setRichPostFontSize = setRichPostFontSize;
+
+    function setRichPostFontFamily(font, targetEditorId = 'community-post-rich-content') {
+      if (!font) return;
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('fontName', false, font);
+      if (editor) editor.focus();
+    }
+    window.setRichPostFontFamily = setRichPostFontFamily;
+
+    function setRichPostColor(color, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) editor.focus();
+      document.execCommand('foreColor', false, color);
+      closeAllRichPopovers();
+      if (editor) editor.focus();
+    }
+    window.setRichPostColor = setRichPostColor;
+
+    function insertRichPostEmoji(emoji, targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) {
+        editor.focus();
+        document.execCommand('insertText', false, emoji);
+        closeAllRichPopovers();
+        editor.focus();
+      }
+    }
+    window.insertRichPostEmoji = insertRichPostEmoji;
+
+    function clearRichPostFormatting(targetEditorId = 'community-post-rich-content') {
+      const editor = getEditorElement(targetEditorId);
+      if (editor) {
+        editor.focus();
+        document.execCommand('removeFormat', false, null);
+        editor.focus();
+      }
+    }
+    window.clearRichPostFormatting = clearRichPostFormatting;
+
+    function toggleRichColorPopover(popoverId) {
+      const p = document.getElementById(popoverId);
+      if (!p) return;
+      const isVisible = p.style.display === 'block';
+      closeAllRichPopovers();
+      if (!isVisible) p.style.display = 'block';
+    }
+    window.toggleRichColorPopover = toggleRichColorPopover;
+
+    function toggleRichEmojiPopover(popoverId) {
+      const p = document.getElementById(popoverId);
+      if (!p) return;
+      const isVisible = p.style.display === 'block';
+      closeAllRichPopovers();
+      if (!isVisible) p.style.display = 'block';
+    }
+    window.toggleRichEmojiPopover = toggleRichEmojiPopover;
+
+    function closeAllRichPopovers() {
+      document.querySelectorAll('.rich-popover').forEach(p => p.style.display = 'none');
+    }
+    window.closeAllRichPopovers = closeAllRichPopovers;
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.rich-popover') && !e.target.closest('.rich-tool-btn')) {
+        closeAllRichPopovers();
+      }
+    });
+
+    // =========================================================================
+    // IMAGE LIGHTBOX VIEWER ENGINE (v0.10.9-53)
+    // =========================================================================
+    let imageViewerCurrentSrc = '';
+    let imageViewerCurrentScale = 1.0;
+    let imageViewerCurrentRotation = 0;
+    let imageViewerTranslateX = 0;
+    let imageViewerTranslateY = 0;
+    let isImageViewerDragging = false;
+    let imageViewerDragStartX = 0;
+    let imageViewerDragStartY = 0;
+
+    function openImageViewerModal(imgSrc, title = 'Ảnh bài viết VocaCommunity') {
+      if (!imgSrc) return;
+      imageViewerCurrentSrc = imgSrc;
+      imageViewerCurrentScale = 1.0;
+      imageViewerCurrentRotation = 0;
+      imageViewerTranslateX = 0;
+      imageViewerTranslateY = 0;
+
+      const modal = document.getElementById('modal-image-viewer');
+      const imgEl = document.getElementById('image-viewer-img');
+      const titleEl = document.getElementById('image-viewer-title');
+      const zoomEl = document.getElementById('image-viewer-zoom-level');
+
+      if (imgEl) {
+        imgEl.src = imgSrc;
+        imgEl.style.transform = 'translate(0px, 0px) scale(1) rotate(0deg)';
+      }
+      if (titleEl) titleEl.textContent = title || 'Ảnh bài viết VocaCommunity';
+      if (zoomEl) zoomEl.textContent = '100%';
+
+      if (modal) modal.classList.add('active');
+    }
+    window.openImageViewerModal = openImageViewerModal;
+
+    function closeImageViewerModal() {
+      const modal = document.getElementById('modal-image-viewer');
+      if (modal) modal.classList.remove('active');
+      imageViewerCurrentSrc = '';
+    }
+    window.closeImageViewerModal = closeImageViewerModal;
+
+    function updateImageViewerTransform() {
+      const imgEl = document.getElementById('image-viewer-img');
+      const zoomEl = document.getElementById('image-viewer-zoom-level');
+      if (imgEl) {
+        imgEl.style.transform = `translate(${imageViewerTranslateX}px, ${imageViewerTranslateY}px) scale(${imageViewerCurrentScale}) rotate(${imageViewerCurrentRotation}deg)`;
+      }
+      if (zoomEl) {
+        zoomEl.textContent = `${Math.round(imageViewerCurrentScale * 100)}%`;
+      }
+    }
+
+    function zoomImageViewer(delta) {
+      imageViewerCurrentScale = Math.min(4.0, Math.max(0.4, Math.round((imageViewerCurrentScale + delta) * 100) / 100));
+      updateImageViewerTransform();
+    }
+    window.zoomImageViewer = zoomImageViewer;
+
+    function rotateImageViewer(deg = 90) {
+      imageViewerCurrentRotation = (imageViewerCurrentRotation + deg) % 360;
+      updateImageViewerTransform();
+    }
+    window.rotateImageViewer = rotateImageViewer;
+
+    function resetImageViewer() {
+      imageViewerCurrentScale = 1.0;
+      imageViewerCurrentRotation = 0;
+      imageViewerTranslateX = 0;
+      imageViewerTranslateY = 0;
+      updateImageViewerTransform();
+    }
+    window.resetImageViewer = resetImageViewer;
+
+    function onImageViewerWheel(e) {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.15 : -0.15;
+      zoomImageViewer(delta);
+    }
+    window.onImageViewerWheel = onImageViewerWheel;
+
+    function startImageViewerDrag(e) {
+      if (e.target.closest('.image-viewer-bottom-bar') || e.target.closest('.image-viewer-header')) return;
+      isImageViewerDragging = true;
+      imageViewerDragStartX = e.clientX - imageViewerTranslateX;
+      imageViewerDragStartY = e.clientY - imageViewerTranslateY;
+      const stage = document.getElementById('image-viewer-stage');
+      if (stage) stage.classList.add('dragging');
+    }
+    window.startImageViewerDrag = startImageViewerDrag;
+
+    function onImageViewerDrag(e) {
+      if (!isImageViewerDragging) return;
+      e.preventDefault();
+      imageViewerTranslateX = e.clientX - imageViewerDragStartX;
+      imageViewerTranslateY = e.clientY - imageViewerDragStartY;
+      updateImageViewerTransform();
+    }
+    window.onImageViewerDrag = onImageViewerDrag;
+
+    function endImageViewerDrag() {
+      isImageViewerDragging = false;
+      const stage = document.getElementById('image-viewer-stage');
+      if (stage) stage.classList.remove('dragging');
+    }
+    window.endImageViewerDrag = endImageViewerDrag;
+
+    function handleImageViewerBackdropClick(e) {
+      if (e.target.id === 'modal-image-viewer' || e.target.id === 'image-viewer-stage') {
+        if (!isImageViewerDragging && Math.abs(imageViewerTranslateX) < 5 && Math.abs(imageViewerTranslateY) < 5) {
+          closeImageViewerModal();
+        }
+      }
+    }
+    window.handleImageViewerBackdropClick = handleImageViewerBackdropClick;
+
+    function downloadImageViewerImage() {
+      if (!imageViewerCurrentSrc) return;
+      try {
+        const link = document.createElement('a');
+        link.href = imageViewerCurrentSrc;
+        link.download = `VocaFlow_Post_Image_${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('💾 Đang tải ảnh xuống máy...');
+      } catch (e) {
+        window.open(imageViewerCurrentSrc, '_blank');
+      }
+    }
+    window.downloadImageViewerImage = downloadImageViewerImage;
+
+    function copyImageViewerLink() {
+      if (!imageViewerCurrentSrc) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(imageViewerCurrentSrc).then(() => {
+          showToast('📋 Đã sao chép liên kết ảnh!');
+        }).catch(() => {
+          prompt('Liên kết ảnh:', imageViewerCurrentSrc);
+        });
+      } else {
+        prompt('Liên kết ảnh:', imageViewerCurrentSrc);
+      }
+    }
+    window.copyImageViewerLink = copyImageViewerLink;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('modal-image-viewer');
+        if (modal && modal.classList.contains('active')) {
+          closeImageViewerModal();
+        }
+      }
+    });
+
+    // =========================================================================
+    // COMPREHENSIVE POST EDITING CONTROLLER (v0.10.9-53)
+    // =========================================================================
+    let activeEditingPostId = null;
+    let editingPostAttachedImage = null;
+    let editingPostAttachedBadge = null;
+    let isEditingPostBadgePickerActive = false;
+
+    function openEditCommunityPostModal(postId) {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập để chỉnh sửa bài viết!');
+        openAuthModal('login');
+        return;
+      }
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || post.authorUid !== currentUser?.uid) {
+        showToast('⚠️ Bạn không có quyền chỉnh sửa bài viết này!');
+        return;
+      }
+
+      activeEditingPostId = postId;
+      editingPostAttachedImage = post.image || post.imageUrl || null;
+      editingPostAttachedBadge = post.badge ? JSON.parse(JSON.stringify(post.badge)) : null;
+
+      const hiddenId = document.getElementById('edit-post-id-hidden');
+      const richEditor = document.getElementById('edit-post-rich-content');
+      if (hiddenId) hiddenId.value = postId;
+      if (richEditor) richEditor.innerHTML = sanitizePostHtml(post.content || '');
+
+      // Image preview
+      const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+      const imgPrev = document.getElementById('edit-post-image-preview');
+      const noImgHint = document.getElementById('edit-post-no-image-hint');
+      const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+      if (editingPostAttachedImage) {
+        if (imgPrev) imgPrev.src = editingPostAttachedImage;
+        if (imgPrevCont) imgPrevCont.style.display = 'block';
+        if (noImgHint) noImgHint.style.display = 'none';
+        if (btnRemoveImg) btnRemoveImg.style.display = 'inline-flex';
+      } else {
+        if (imgPrev) imgPrev.src = '';
+        if (imgPrevCont) imgPrevCont.style.display = 'none';
+        if (noImgHint) noImgHint.style.display = 'block';
+        if (btnRemoveImg) btnRemoveImg.style.display = 'none';
+      }
+
+      // Badge preview
+      const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+      const badgeIcon = document.getElementById('edit-post-badge-icon');
+      const badgeName = document.getElementById('edit-post-badge-name');
+      const badgeDesc = document.getElementById('edit-post-badge-desc');
+      const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+      const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+      if (editingPostAttachedBadge) {
+        if (badgeIcon) badgeIcon.textContent = editingPostAttachedBadge.icon || '🏆';
+        if (badgeName) badgeName.textContent = editingPostAttachedBadge.name || editingPostAttachedBadge.title || 'Danh hiệu';
+        if (badgeDesc) badgeDesc.textContent = editingPostAttachedBadge.desc || '';
+        if (badgePrevCont) badgePrevCont.style.display = 'flex';
+        if (noBadgeHint) noBadgeHint.style.display = 'none';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'inline-flex';
+      } else {
+        if (badgePrevCont) badgePrevCont.style.display = 'none';
+        if (noBadgeHint) noBadgeHint.style.display = 'block';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'none';
+      }
+
+      openModal('modal-edit-community-post');
+    }
+    window.openEditCommunityPostModal = openEditCommunityPostModal;
+    window.editCommunityPost = openEditCommunityPostModal;
+
+    function handleEditPostImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('⚠️ Vui lòng chỉ chọn tệp hình ảnh!');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const rawBase64 = evt.target.result;
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          editingPostAttachedImage = canvas.toDataURL('image/jpeg', 0.85);
+
+          const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+          const imgPrev = document.getElementById('edit-post-image-preview');
+          const noImgHint = document.getElementById('edit-post-no-image-hint');
+          const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+          if (imgPrev) imgPrev.src = editingPostAttachedImage;
+          if (imgPrevCont) imgPrevCont.style.display = 'block';
+          if (noImgHint) noImgHint.style.display = 'none';
+          if (btnRemoveImg) btnRemoveImg.style.display = 'inline-flex';
+          showToast('🖼️ Đã chọn ảnh mới cho bài viết!');
+        };
+        img.src = rawBase64;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+    window.handleEditPostImageUpload = handleEditPostImageUpload;
+
+    function removeEditPostImage() {
+      editingPostAttachedImage = null;
+      const imgPrevCont = document.getElementById('edit-post-image-preview-container');
+      const imgPrev = document.getElementById('edit-post-image-preview');
+      const noImgHint = document.getElementById('edit-post-no-image-hint');
+      const btnRemoveImg = document.getElementById('btn-remove-edit-post-image');
+
+      if (imgPrev) imgPrev.src = '';
+      if (imgPrevCont) imgPrevCont.style.display = 'none';
+      if (noImgHint) noImgHint.style.display = 'block';
+      if (btnRemoveImg) btnRemoveImg.style.display = 'none';
+      showToast('🗑️ Đã gỡ hình ảnh khỏi bài viết!');
+    }
+    window.removeEditPostImage = removeEditPostImage;
+
+    function openEditPostBadgePicker() {
+      isEditingPostBadgePickerActive = true;
+      openCommunityBadgePicker();
+    }
+    window.openEditPostBadgePicker = openEditPostBadgePicker;
+
+    function removeEditPostBadge() {
+      editingPostAttachedBadge = null;
+      const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+      const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+      const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+      if (badgePrevCont) badgePrevCont.style.display = 'none';
+      if (noBadgeHint) noBadgeHint.style.display = 'block';
+      if (btnRemoveBadge) btnRemoveBadge.style.display = 'none';
+      showToast('🗑️ Đã gỡ danh hiệu khỏi bài viết!');
+    }
+    window.removeEditPostBadge = removeEditPostBadge;
+
+    async function saveEditedCommunityPost() {
+      if (!activeEditingPostId) return;
+      const post = communityPosts.find(p => p.id === activeEditingPostId);
+      if (!post || post.authorUid !== currentUser?.uid) return;
+
+      const richEditor = document.getElementById('edit-post-rich-content');
+      const newHtml = (richEditor?.innerHTML || '').trim();
+      const plainText = (richEditor?.textContent || '').trim();
+
+      if (!plainText && !newHtml && !editingPostAttachedImage && !editingPostAttachedBadge) {
+        showToast('⚠️ Bài viết không thể để trống hoàn toàn!');
+        return;
+      }
+
+      const saveBtn = document.getElementById('btn-save-edited-post');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Đang lưu...'; }
+
+      post.content = sanitizePostHtml(newHtml);
+      post.image = editingPostAttachedImage;
+      post.imageUrl = editingPostAttachedImage;
+      post.badge = editingPostAttachedBadge;
+      post.updatedAt = new Date().toISOString();
+
+      renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
+      closeModal('modal-edit-community-post');
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${post.id}.json${authParam}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: post.content,
+            image: post.image,
+            imageUrl: post.image,
+            badge: post.badge,
+            updatedAt: post.updatedAt
+          })
+        });
+
+        localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        showToast('🎉 Đã cập nhật toàn diện bài viết thành công!');
+      } catch (err) {
+        console.warn('Edit post sync error:', err);
+        showToast('⚠️ Đã lưu tại máy, kiểm tra lại kết nối cloud!');
+      } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Lưu Cập Nhật'; }
+      }
+    }
+    window.saveEditedCommunityPost = saveEditedCommunityPost;
+
     function handleCommunityImageUpload(event) {
       const file = event.target?.files?.[0];
       if (!file) return;
-      if (file.size > 1.5 * 1024 * 1024) {
-        alert('⚠️ Kích thước ảnh tối đa là 1.5MB!');
+      if (file.size > 2.5 * 1024 * 1024) {
+        alert('⚠️ Kích thước ảnh tối đa là 2.5MB!');
         return;
       }
       const reader = new FileReader();
       reader.onload = (e) => {
-        communityActiveAttachedImage = e.target.result;
-        const prevContainer = document.getElementById('community-post-image-preview-container');
-        const prevImg = document.getElementById('community-post-image-preview');
-        if (prevImg) prevImg.src = communityActiveAttachedImage;
-        if (prevContainer) prevContainer.style.display = 'block';
+        const rawBase64 = e.target.result;
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          communityActiveAttachedImage = canvas.toDataURL('image/jpeg', 0.85);
+          const prevContainer = document.getElementById('community-post-image-preview-container');
+          const prevImg = document.getElementById('community-post-image-preview');
+          if (prevImg) prevImg.src = communityActiveAttachedImage;
+          if (prevContainer) prevContainer.style.display = 'block';
+        };
+        img.src = rawBase64;
       };
       reader.readAsDataURL(file);
     }
@@ -4962,7 +5519,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const tier = b.tier || 'bronze';
           const tColor = tierColors[tier] || '#fbbf24';
           const tName = tierNames[tier] || 'Danh hiệu';
-          const isCurrentlySelected = communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId;
+          const isCurrentlySelected = (isEditingPostBadgePickerActive && editingPostAttachedBadge && editingPostAttachedBadge.id === b.badgeId) || (!isEditingPostBadgePickerActive && communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId);
 
           html += `
             <div onclick="selectCommunityPostBadge('${b.badgeId}')" style="cursor: pointer; background: var(--surface-elevated); border: 2px solid ${isCurrentlySelected ? '#6366f1' : 'var(--border)'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='${isCurrentlySelected ? '#6366f1' : 'var(--border)'}'">
@@ -4987,13 +5544,37 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function selectCommunityPostBadge(badgeId) {
       const bDef = (typeof ACHIEVEMENTS_REGISTRY !== 'undefined') ? ACHIEVEMENTS_REGISTRY[badgeId] : null;
       if (!bDef) return;
-      communityActiveAttachedBadge = {
+      const badgeData = {
         id: badgeId,
         name: bDef.name,
         icon: bDef.icon || '🏆',
         desc: bDef.desc || '',
         tier: bDef.tier || 'bronze'
       };
+
+      if (isEditingPostBadgePickerActive) {
+        editingPostAttachedBadge = badgeData;
+        const badgePrevCont = document.getElementById('edit-post-badge-preview-container');
+        const badgeIcon = document.getElementById('edit-post-badge-icon');
+        const badgeName = document.getElementById('edit-post-badge-name');
+        const badgeDesc = document.getElementById('edit-post-badge-desc');
+        const noBadgeHint = document.getElementById('edit-post-no-badge-hint');
+        const btnRemoveBadge = document.getElementById('btn-remove-edit-post-badge');
+
+        if (badgeIcon) badgeIcon.textContent = bDef.icon || '🏆';
+        if (badgeName) badgeName.textContent = bDef.name;
+        if (badgeDesc) badgeDesc.textContent = bDef.desc || '';
+        if (badgePrevCont) badgePrevCont.style.display = 'flex';
+        if (noBadgeHint) noBadgeHint.style.display = 'none';
+        if (btnRemoveBadge) btnRemoveBadge.style.display = 'inline-flex';
+
+        isEditingPostBadgePickerActive = false;
+        closeModal('modal-community-badge-picker');
+        showToast(`🎖️ Đã đổi sang danh hiệu "${bDef.name}"!`);
+        return;
+      }
+
+      communityActiveAttachedBadge = badgeData;
       const prevCont = document.getElementById('community-post-badge-preview-container');
       const iconEl = document.getElementById('community-post-badge-icon');
       const nameEl = document.getElementById('community-post-badge-name');
@@ -5020,9 +5601,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         openAuthModal('login');
         return;
       }
+      const richEditor = document.getElementById('community-post-rich-content');
       const contentEl = document.getElementById('community-post-content');
-      const text = (contentEl?.value || '').trim();
-      if (!text && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
+      const htmlContent = richEditor ? richEditor.innerHTML.trim() : (contentEl?.value || '').trim();
+      const plainText = richEditor ? richEditor.textContent.trim() : (contentEl?.value || '').trim();
+
+      if (!plainText && !htmlContent && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
         showToast('⚠️ Vui lòng nhập nội dung hoặc đính kèm ảnh/danh hiệu trước khi đăng!');
         return;
       }
@@ -5039,8 +5623,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
         isVip: isUserVip(),
         vipTier: getUserVipTier(),
-        content: text,
+        content: sanitizePostHtml(htmlContent),
         image: communityActiveAttachedImage || null,
+        imageUrl: communityActiveAttachedImage || null,
         badge: communityActiveAttachedBadge || null,
         likes: {},
         comments: {},
@@ -5068,6 +5653,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           message: `${postObj.authorName} vừa đăng một bài viết mới trên Cộng Đồng!`
         });
 
+        if (richEditor) richEditor.innerHTML = '';
         if (contentEl) contentEl.value = '';
         clearCommunityPostImage();
         clearCommunityPostBadge();
@@ -5317,8 +5903,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
         const commentsCount = commentsList.length;
 
-        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const postDate = new Date(post.createdAt || Date.now());
+        const timeAgo = formatTimeAgo(postDate);
+        const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+
+        const postImg = post.image || post.imageUrl || '';
 
         html += `
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -5336,7 +5926,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                     <span>@${escapeHtml(post.authorHandle || 'user')}</span>
                     <span>•</span>
-                    <span>${timeAgo}</span>
+                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
                 </div>
               </div>
@@ -5344,16 +5934,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <!-- AUTHOR ACTION MENU -->
               ${isAuthor ? `
                 <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
                   <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
                 </div>
               ` : ''}
             </div>
 
-            <!-- POST CONTENT -->
+            <!-- POST CONTENT (Rich Text Render) -->
             ${post.content ? `
-              <div id="post-content-text-${post.id}" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">
-                ${escapeHtml(post.content)}
+              <div id="post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; word-break: break-word;">
+                ${sanitizePostHtml(post.content)}
               </div>
             ` : ''}
 
@@ -5368,10 +5958,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               </div>
             ` : ''}
 
-            <!-- ATTACHED IMAGE -->
-            ${(post.image || post.imageUrl) ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
-                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Post image" style="width: 100%; height: auto; max-height: 320px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
+            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
+            ${postImg ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+                <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
+                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
+                  <span>🔍 Phóng to</span>
+                </div>
               </div>
             ` : ''}
 
@@ -5404,19 +5997,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <div id="post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
                 ${commentsList.length === 0 ? `
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => `
+                ` : commentsList.map(c => {
+                  const commentDate = new Date(c.timestamp || Date.now());
+                  return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                       <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
                       <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
                   </div>
-                `).join('')}
+                `;}).join('')}
               </div>
 
               <!-- COMMENT INPUT -->
@@ -5797,8 +6392,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
         const commentsCount = commentsList.length;
 
-        const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const postDate = new Date(post.createdAt || Date.now());
+        const timeAgo = formatTimeAgo(postDate);
+        const fullTimeStr = formatFullExactDateTime(postDate);
         const authorAvatar = getCommunityAuthorAvatar(post);
+
+        const postImg = post.image || post.imageUrl || '';
 
         html += `
           <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -5816,7 +6415,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                     <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
                     <span>•</span>
-                    <span>${timeAgo}</span>
+                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
                   </div>
                 </div>
               </div>
@@ -5824,15 +6423,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <!-- AUTHOR ACTION MENU -->
               ${isAuthor ? `
                 <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
                   <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
                 </div>
               ` : ''}
             </div>
 
-            <!-- POST CONTENT -->
+            <!-- POST CONTENT (Rich Text Render) -->
             ${post.content ? `
-              <div id="pub-post-content-text-${post.id}" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+              <div id="pub-post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; word-break: break-word;">${sanitizePostHtml(post.content || '')}</div>
             ` : ''}
 
             <!-- ATTACHED BADGE BRAG -->
@@ -5846,10 +6445,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               </div>
             ` : ''}
 
-            <!-- ATTACHED IMAGE -->
-            ${(post.image || post.imageUrl) ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
-                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
+            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
+            ${postImg ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(post.authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+                <img src="${escapeHtml(postImg)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 360px; display: block;" onerror="this.parentElement.style.display='none';">
+                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
+                  <span>🔍 Phóng to</span>
+                </div>
               </div>
             ` : ''}
 
@@ -5875,19 +6477,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <div id="pub-post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
                 ${commentsList.length === 0 ? `
                   <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => `
+                ` : commentsList.map(c => {
+                  const commentDate = new Date(c.timestamp || Date.now());
+                  return `
                   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                       <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
                         <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                       </div>
                       <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
                     </div>
                     ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
                     <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
                   </div>
-                `).join('')}
+                `;}).join('')}
               </div>
 
               <!-- COMMENT INPUT -->

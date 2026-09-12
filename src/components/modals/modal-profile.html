@@ -170,12 +170,90 @@
 
         <!-- TAB PANEL 4: COMMUNITY FEED & SOCIAL (v0.10.9-49) -->
         <div id="profile-tab-panel-community" style="display: none;">
-          <!-- POST COMPOSER -->
+          <!-- POST COMPOSER (v0.10.9-53 Rich Editor) -->
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
             <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;">
               <div id="community-composer-avatar" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
-              <div style="flex: 1;">
-                <textarea id="community-post-content" class="form-textarea" rows="3" placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..." style="font-size: 13px; width: 100%; border-radius: 10px; resize: vertical;"></textarea>
+              <div style="flex: 1; min-width: 0; position: relative;">
+                
+                <!-- RICH TEXT TOOLBAR -->
+                <div class="rich-toolbar" id="community-post-rich-toolbar">
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'community-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'community-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'community-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'community-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+                  
+                  <div class="rich-tool-sep"></div>
+
+                  <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'community-post-rich-content')" title="Cỡ chữ">
+                    <option value="">Cỡ chữ</option>
+                    <option value="12px">Nhỏ (12px)</option>
+                    <option value="14px">Vừa (14px)</option>
+                    <option value="18px">Lớn (18px)</option>
+                    <option value="22px">Tiêu đề (22px)</option>
+                  </select>
+
+                  <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'community-post-rich-content')" title="Phông chữ">
+                    <option value="">Phông chữ</option>
+                    <option value="sans-serif">Mặc định</option>
+                    <option value="Georgia, serif">Cổ điển (Serif)</option>
+                    <option value="monospace">Lập trình (Monospace)</option>
+                    <option value="'Comic Sans MS', cursive">Viết tay</option>
+                  </select>
+
+                  <div class="rich-tool-sep"></div>
+
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'community-post-rich-content')" title="Căn trái">⇤</button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'community-post-rich-content')" title="Căn giữa">≡</button>
+                  <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'community-post-rich-content')" title="Căn phải">⇥</button>
+
+                  <div class="rich-tool-sep"></div>
+
+                  <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('composer-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+                  <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('composer-post-emoji-popover')" title="Chèn Emoji">😀</button>
+                  <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('community-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+                </div>
+
+                <!-- COLOR POPOVER -->
+                <div id="composer-post-color-popover" class="rich-popover">
+                  <div class="rich-color-grid">
+                    <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'community-post-rich-content')" title="Trắng"></div>
+                    <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'community-post-rich-content')" title="Đỏ"></div>
+                    <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'community-post-rich-content')" title="Vàng / Cam"></div>
+                    <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'community-post-rich-content')" title="Xanh lá"></div>
+                    <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'community-post-rich-content')" title="Xanh dương"></div>
+                    <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'community-post-rich-content')" title="Tím"></div>
+                    <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'community-post-rich-content')" title="Hồng"></div>
+                  </div>
+                </div>
+
+                <!-- EMOJI POPOVER -->
+                <div id="composer-post-emoji-popover" class="rich-popover">
+                  <div class="rich-emoji-grid">
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'community-post-rich-content')">🔥</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'community-post-rich-content')">💡</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'community-post-rich-content')">🏆</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'community-post-rich-content')">✨</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'community-post-rich-content')">🚀</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'community-post-rich-content')">❤️</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'community-post-rich-content')">👏</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'community-post-rich-content')">💯</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'community-post-rich-content')">📚</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'community-post-rich-content')">🎯</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'community-post-rich-content')">🎉</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'community-post-rich-content')">🌊</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'community-post-rich-content')">👑</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'community-post-rich-content')">💪</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'community-post-rich-content')">🌟</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'community-post-rich-content')">🥳</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'community-post-rich-content')">😎</button>
+                    <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'community-post-rich-content')">⭐</button>
+                  </div>
+                </div>
+
+                <!-- RICH CONTENT EDITABLE -->
+                <div id="community-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..."></div>
+                <textarea id="community-post-content" style="display: none;"></textarea>
                 
                 <!-- ATTACHMENT PREVIEWS -->
                 <div id="community-post-image-preview-container" style="display: none; position: relative; margin-top: 8px; border-radius: 8px; overflow: hidden; max-height: 180px; border: 1px solid var(--border);">
@@ -183,7 +261,7 @@
                   <button type="button" onclick="clearCommunityPostImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                 </div>
 
-                <div id="community-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; justify-content: space-between;">
+                <div id="community-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span id="community-post-badge-icon" style="font-size: 20px;">🏆</span>
                     <div>

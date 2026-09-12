@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-52 Build 284)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-53 Build 285)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-52 Build 284)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-53 Build 285)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-52';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-52 (Build 284)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-53';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-53 (Build 285)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -782,18 +782,66 @@
       try {
         const date = (isoStringOrDate instanceof Date) ? isoStringOrDate : new Date(isoStringOrDate);
         if (isNaN(date.getTime())) return 'Vừa xong';
-        const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-        if (diff < 60) return 'Vừa xong';
-        if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-        if (diff < 259200) return `${Math.floor(diff / 86400)} ngày trước`;
-        return date.toLocaleDateString('vi-VN');
+        const now = new Date();
+        const diffSec = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+        if (diffSec < 0 || diffSec < 60) return 'Vừa xong';
+        if (diffSec < 3600) {
+          const m = Math.floor(diffSec / 60);
+          return `${m} phút trước`;
+        }
+
+        const isSameDay = date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        if (isSameDay) {
+          const h = Math.floor(diffSec / 3600);
+          return `${h} giờ trước`;
+        }
+
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isYesterday = date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear();
+        
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        if (isYesterday) {
+          return `Hôm qua lúc ${hours}:${minutes}`;
+        }
+
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        if (year === now.getFullYear()) {
+          return `${day} tháng ${month} lúc ${hours}:${minutes}`;
+        }
+        return `${day} tháng ${month}, ${year} lúc ${hours}:${minutes}`;
       } catch (e) {
         return 'Vừa xong';
       }
     }
     window.formatTimeAgo = formatTimeAgo;
     window.formatRelativeTime = formatTimeAgo;
+
+    function formatFullExactDateTime(isoStringOrDate) {
+      if (!isoStringOrDate) return '';
+      try {
+        const date = (isoStringOrDate instanceof Date) ? isoStringOrDate : new Date(isoStringOrDate);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleString('vi-VN', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+    window.formatFullExactDateTime = formatFullExactDateTime;
 
 
     // =========================================================================
