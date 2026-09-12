@@ -3279,56 +3279,62 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
       try {
         let rawResponseText = '';
-        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
         let fetchSuccess = false;
         let lastErrorMsg = '';
 
-        for (const m of modelsToTry) {
-          try {
-            aiStudioGenStatus = `🧠 Đang sáng tạo VocaDeck với mô hình ${m}...`;
-            aiStudioGenProgress = 65;
-            if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
-            if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
+        for (const k of keys) {
+          if (fetchSuccess) break;
+          for (const m of modelsToTry) {
+            try {
+              aiStudioGenStatus = `🧠 Đang sáng tạo VocaDeck với mô hình ${m}...`;
+              aiStudioGenProgress = 65;
+              if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
+              if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
-            const res = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                  responseMimeType: "application/json",
-                  temperature: 0.7,
-                  maxOutputTokens: 4096
-                },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+              const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                    maxOutputTokens: 4096
+                  },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                  ]
+                })
+              });
 
-            if (res.ok) {
-              const resData = await res.json();
-              rawResponseText = resData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-              if (rawResponseText) {
-                localStorage.setItem('vocaflow_gemini_working_model', m);
-                fetchSuccess = true;
-                break;
+              if (res.ok) {
+                const resData = await res.json();
+                rawResponseText = resData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (rawResponseText) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'deep');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  fetchSuccess = true;
+                  break;
+                }
+              } else {
+                const errJson = await res.json().catch(() => ({}));
+                lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
+                console.warn(`Model ${m} error:`, lastErrorMsg);
               }
-            } else {
-              const errJson = await res.json().catch(() => ({}));
-              lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
-              console.warn(`Model ${m} error:`, lastErrorMsg);
+            } catch (e) {
+              lastErrorMsg = e.message;
+              console.warn(`Model ${m} failed:`, e);
             }
-          } catch (e) {
-            lastErrorMsg = e.message;
-            console.warn(`Model ${m} failed:`, e);
           }
         }
 

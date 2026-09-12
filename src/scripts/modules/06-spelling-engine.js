@@ -1598,13 +1598,21 @@
 
       try {
         let result = null;
+        const apiKeys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+        if (apiKeys.length === 0) {
+          const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
+          if (single.trim()) apiKeys.push(single.trim());
+        }
 
-        // 1. Try Google Gemini API with user context
-        if (geminiApiKey) {
-          try {
-            result = await fetchWordFromGemini(rawTerm, geminiApiKey, userContext);
-          } catch (geminiErr) {
-            console.warn('Gemini AI API note, fallback to Dictionary Engine:', geminiErr);
+        // 1. Try Google Gemini API with multi-key pool & fast micro-task model tier
+        if (apiKeys.length > 0) {
+          for (const k of apiKeys) {
+            try {
+              result = await fetchWordFromGemini(rawTerm, k, userContext);
+              if (result) break;
+            } catch (geminiErr) {
+              console.warn('Gemini AI API key attempt note:', geminiErr);
+            }
           }
         }
 
@@ -1651,7 +1659,7 @@
           currentActiveSenseTab = 0;
           renderWordModalSenses(formattedSenses);
           const sensesCount = formattedSenses.length;
-          showToast(`✨ AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
+          showToast(`✨ VocaFill AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
         } else {
           alert('Không thể kết nối AI hoặc Từ điển (mạng gián đoạn hoặc chưa có API Key). Bạn vui lòng kiểm tra Cài đặt API Key hoặc nhập thủ công nhé!');
         }
@@ -1730,9 +1738,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
   ]
 }`;
 
-      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
       for (const m of models) {
         try {
@@ -1761,7 +1767,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           clearTimeout(timeoutId);
 
           if (!res.ok) {
-            console.warn(`Model ${m} returned HTTP status ${res.status}`);
+            console.warn(`VocaFill Model ${m} returned HTTP status ${res.status}`);
             continue;
           }
 
@@ -1769,15 +1775,32 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (!rawText) continue;
 
-          localStorage.setItem('vocaflow_gemini_working_model', m);
-          const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-          const parsedData = JSON.parse(cleanJson);
-          if (parsedData && parsedData.definition) {
-            parsedData.definition = cleanVietnameseDefinition(parsedData.definition);
+          if (typeof saveWorkingGeminiModel === 'function') {
+            saveWorkingGeminiModel(m, 'fast');
+          } else {
+            localStorage.setItem('vocaflow_gemini_working_model', m);
           }
-          return parsedData;
+
+          const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          let parsedData = null;
+          try {
+            parsedData = JSON.parse(cleanJson);
+          } catch (pe) {
+            const sIdx = cleanJson.indexOf('{');
+            const eIdx = cleanJson.lastIndexOf('}');
+            if (sIdx !== -1 && eIdx > sIdx) {
+              try { parsedData = JSON.parse(cleanJson.substring(sIdx, eIdx + 1)); } catch (e) {}
+            }
+          }
+
+          if (parsedData) {
+            if (parsedData.definition) {
+              parsedData.definition = cleanVietnameseDefinition(parsedData.definition);
+            }
+            return parsedData;
+          }
         } catch (err) {
-          console.warn(`Model ${m} failed:`, err);
+          console.warn(`VocaFill Model ${m} failed:`, err);
         }
       }
       return null;

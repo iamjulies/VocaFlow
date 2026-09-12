@@ -1,18 +1,89 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-56 Build 288)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-57 Build 289)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-56 Build 288)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-57 Build 289)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-56';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-56 (Build 288)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-57';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-57 (Build 289)';
 
-    // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
-    const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+    // =========================================================================
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
+    // =========================================================================
+    // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
+    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
+    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
     const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+
+    const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
+    window.GEMINI_MODELS_DEEP = GEMINI_MODELS_DEEP;
+    window.GEMINI_MODELS_FAST = GEMINI_MODELS_FAST;
     window.GEMINI_STANDARD_MODELS = GEMINI_STANDARD_MODELS;
     window.GEMINI_VISION_MODELS = GEMINI_VISION_MODELS;
+
+    function getGeminiModelsForTier(tier = 'deep') {
+      const isFast = (tier === 'fast' || tier === 'lite' || tier === 'micro');
+      const baseModels = isFast ? GEMINI_MODELS_FAST : GEMINI_MODELS_DEEP;
+      const cacheKey = isFast ? 'vocaflow_gemini_working_model_fast' : 'vocaflow_gemini_working_model_deep';
+      const cached = localStorage.getItem(cacheKey) || localStorage.getItem('vocaflow_gemini_working_model');
+      if (cached && baseModels.includes(cached)) {
+        return [cached, ...baseModels.filter(m => m !== cached)];
+      }
+      return [...baseModels];
+    }
+    window.getGeminiModelsForTier = getGeminiModelsForTier;
+
+    function saveWorkingGeminiModel(model, tier = 'deep') {
+      if (!model) return;
+      localStorage.setItem('vocaflow_gemini_working_model', model);
+      if (tier === 'fast' || tier === 'lite' || tier === 'micro') {
+        localStorage.setItem('vocaflow_gemini_working_model_fast', model);
+      } else {
+        localStorage.setItem('vocaflow_gemini_working_model_deep', model);
+      }
+    }
+    window.saveWorkingGeminiModel = saveWorkingGeminiModel;
+
+    function purgeInvalidGeminiModelCache() {
+      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro'];
+      ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
+        const val = localStorage.getItem(k);
+        if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {
+          localStorage.removeItem(k);
+        }
+      });
+    }
+    purgeInvalidGeminiModelCache();
+    window.purgeInvalidGeminiModelCache = purgeInvalidGeminiModelCache;
+
+    function getStoredApiKeys(allowBlank = false) {
+      try {
+        const raw = localStorage.getItem('vocaflow_gemini_api_keys');
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            return allowBlank ? arr : arr.filter(k => k && typeof k === 'string' && k.trim().length > 5);
+          }
+        }
+      } catch (e) {}
+      const single = (localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+      return (single.length > 5) ? [single] : [];
+    }
+    window.getStoredApiKeys = getStoredApiKeys;
+
+    function getEffectiveGeminiApiKey() {
+      const keys = getStoredApiKeys();
+      return keys.length > 0 ? keys[0] : (localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+    }
+    window.getEffectiveGeminiApiKey = getEffectiveGeminiApiKey;
+
+    function hasAtLeastOneApiKey() {
+      return getStoredApiKeys().length > 0 || !!(localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+    }
+    window.hasAtLeastOneApiKey = hasAtLeastOneApiKey;
 
     // =========================================================================
     // GLOBAL APP LOADING SPINNER CONTROLLER (v0.10.9-47)

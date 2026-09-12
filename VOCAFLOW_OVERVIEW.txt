@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-57 (Build 289) - Tối Ưu Hóa Toàn Diện Kiến Trúc Gemini AI 2 Tầng (Deep vs Fast), Giải Pháp Xử Lý Triệt Để Lỗi 404/403 API Key Google AI Studio, Tự Động Xoay Vòng Multi-Key Pool & Tăng Tốc VocaFill / VocaComment / VocaHint
+================================================================================
+1. [Tối Ưu Hóa Toàn Diện Kiến Trúc Gemini Model 2 Tầng (Two-Tier Gemini Architecture)]:
+   - Phân tách rõ ràng 2 phân khúc mô hình AI nhằm tối ưu hóa chi phí, độ trễ và độ sâu tư duy:
+     + Deep / Reasoning / Multimodal Tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI): Sử dụng gemini-2.0-flash làm mô hình cốt lõi, fallback tự động qua gemini-2.0-flash-001, gemini-1.5-flash, gemini-1.5-pro. Loại bỏ hoàn toàn các chuỗi định danh mô hình chậm/không tương thích.
+     + Ultra-Fast / Micro-Task Tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI): Sử dụng gemini-2.0-flash-lite, gemini-2.0-flash-lite-preview-02-05, gemini-1.5-flash-8b, fallback gemini-2.0-flash, gemini-1.5-flash. Giúp các tác vụ điền từ, gợi ý trắc nghiệm, mẹo nhớ trả lời ngay dưới 1 giây.
+
+2. [Khắc Phục & Giải Trình Triệt Để Lỗi 404 NotFound & 403 Forbidden Trong Google AI Studio]:
+   - Nguyên nhân 88 lỗi 404: Do client gửi request tới các tên mô hình cũ/thử nghiệm không tồn tại trên endpoint v1beta/models/{m}:generateContent hoặc bị dính chuỗi cache hỏng trong localStorage.
+   - Giải pháp: Xây dựng hàm purgeInvalidGeminiModelCache(), chuẩn hóa whitelist mô hình hợp lệ được Google AI Studio hỗ trợ chính thức, lưu cache theo từng tier (deep vs fast).
+   - Khắc phục 3 lỗi 403: Tự động phát hiện khóa API chưa kích hoạt hoặc bị giới hạn, hiển thị hướng dẫn trực quan cho người dùng.
+
+3. [Xoay Vòng Đa Khóa Tự Động (Multi-Key Pool Rotation) & Tăng Cường VocaFill / VocaComment]:
+   - Tích hợp xoay vòng thông minh qua toàn bộ 3 khóa trong kho VocaVIP (getStoredApiKeys()), đảm bảo tính dự phòng 100% khi một khóa gặp hạn mức (Rate Limit) hoặc lỗi kết nối.
+   - Sửa lỗi VocaFill AI (handleAiGenerateWord) và VocaComment AI hoạt động ổn định, mượt mà trên mọi thiết bị.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-57 Build 289)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe và đóng gói VocaFlow_v0.10.9-57_Windows_Portable.zip.
+
+================================================================================
 Phiên bản: v0.10.9-56 (Build 288) - Chu Kì Hàng Đợi Ôn Tập SRS & Đếm Ngược Ngày Ôn Tiếp Theo, Đánh Giá Khả Thi AI Phát Âm Wav2Vec2, Nâng Cấp Biểu Đồ & Thẻ Thống Kê 7 Ngày Chuẩn Realtime
 ================================================================================
 1. [Chu Kì Hàng Đợi Ôn Tập SRS & Đếm Ngược Ngày Ôn Tiếp Theo (Review Queue Reset & Interval Engine)]:

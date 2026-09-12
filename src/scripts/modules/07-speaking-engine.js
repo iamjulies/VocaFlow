@@ -1364,55 +1364,60 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 }`;
 
       try {
-        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
         let evalSuccess = false;
         let evalData = null;
 
-        for (const m of modelsToTry) {
-          try {
-            const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + key;
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+        for (const k of keys) {
+          if (evalSuccess) break;
+          for (const m of modelsToTry) {
+            try {
+              const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim();
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-            const res = await fetch(url, {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{
-                  parts: [
-                    { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: pendingAudioBase64 } },
-                    { text: prompt }
+              const res = await fetch(url, {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{
+                    parts: [
+                      { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: pendingAudioBase64 } },
+                      { text: prompt }
+                    ]
+                  }],
+                  generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.15,
+                    maxOutputTokens: 1024
+                  },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
                   ]
-                }],
-                generationConfig: {
-                  responseMimeType: "application/json",
-                  temperature: 0.15,
-                  maxOutputTokens: 1024
-                },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
-            clearTimeout(timeoutId);
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const resJson = await res.json();
-              const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (rawText) {
-                evalData = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
-                localStorage.setItem('vocaflow_gemini_working_model', m);
-                evalSuccess = true;
-                break;
-              }
-            } else if (res.status === 429 || res.status >= 500) {
+              if (res.ok) {
+                const resJson = await res.json();
+                const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (rawText) {
+                  evalData = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'deep');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  evalSuccess = true;
+                  break;
+                }
+              } else if (res.status === 429 || res.status >= 500) {
               continue;
             }
           } catch (modelErr) {

@@ -287,9 +287,7 @@
         '4. ĐỊNH DẠNG TRẢ VỀ: DUY NHẤT một JSON Array chuỗi tiếng Việt chứa đúng ' + count + ' phương án:\n' +
         '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
-      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
       for (const k of keys) {
         for (const m of models) {
@@ -350,7 +348,11 @@
                     .filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
 
                   if (cleanDistractors.length >= count) {
-                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                    if (typeof saveWorkingGeminiModel === 'function') {
+                      saveWorkingGeminiModel(m, 'fast');
+                    } else {
+                      localStorage.setItem('vocaflow_gemini_working_model', m);
+                    }
                     quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
                     saveAiDistractorCache();
                     return quizAiDistractorCache[cacheKey];
@@ -554,12 +556,14 @@
       expText.innerHTML = generateSmartMnemonicFallback(term, pos, def);
 
       // If Gemini API is available, fetch live custom mnemonic & etymology
-      const key = (typeof geminiApiKey !== 'undefined' && geminiApiKey) ? geminiApiKey : (localStorage.getItem('vocaflow_gemini_api_key') || '');
-      const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+      let keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+      if (keys.length === 0) {
+        const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
+        if (single.trim()) keys.push(single.trim());
+      }
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
-      if (key && key.trim()) {
+      if (keys.length > 0) {
         const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
 Định nghĩa: "${def}".
 ${example ? `Ví dụ: "${example}"` : ''}
@@ -575,33 +579,43 @@ Yêu cầu nghiêm ngặt:
 💡 Mẹo nhớ: [nội dung]
 🏛️ Nguồn gốc: [nội dung]`;
 
-        for (const m of modelsToTry) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+        let expFetched = false;
+        for (const k of keys) {
+          if (expFetched) break;
+          for (const m of models) {
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + key.trim(), {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
-              })
-            });
-            clearTimeout(timeoutId);
+              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const data = await res.json();
-              const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-              if (rawExp) {
-                const formatted = formatAiMarkdownText(rawExp);
-                expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
-                break;
+              if (res.ok) {
+                const data = await res.json();
+                const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (rawExp) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'fast');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  const formatted = formatAiMarkdownText(rawExp);
+                  expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
+                  expFetched = true;
+                  break;
+                }
               }
+            } catch (e) {
+              console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
             }
-          } catch (e) {
-            console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
           }
         }
       }
@@ -1435,45 +1449,51 @@ Yêu cầu nghiêm ngặt:
       hintText.innerHTML = '✨ <em>VocaAI đang tạo VocaHint ngữ cảnh...</em>';
 
       try {
-        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [geminiApiKey];
+        const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
         const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
-        for (const m of modelsToTry) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+        for (const k of keys) {
+          for (const m of models) {
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + geminiApiKey.trim(), {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
-            clearTimeout(timeoutId);
+              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                  ]
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const data = await res.json();
-              const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-              if (rawHint) {
-                setUserHints(currentHints - 1);
-                hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
-                showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
-                return;
+              if (res.ok) {
+                const data = await res.json();
+                const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (rawHint) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'fast');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  setUserHints(currentHints - 1);
+                  hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
+                  showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
+                  return;
+                }
               }
+            } catch (modelErr) {
+              console.warn('AI Hint model try error for ' + m + ':', modelErr);
             }
-          } catch (modelErr) {
-            console.warn('AI Hint model try error for ' + m + ':', modelErr);
           }
         }
       } catch (err) {

@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-56 (Build 288)</span>
+            <span class="mini-footer-version">v0.10.9-57 (Build 289)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-56 (Build 288)</span>
+            <span class="mini-footer-version">v0.10.9-57 (Build 289)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9875,7 +9875,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-56 (Build 288)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-57 (Build 289)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10830,7 +10830,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-56 Build 288)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-57 Build 289)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11260,21 +11260,92 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-56 Build 288)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-57 Build 289)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-56 Build 288)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-57 Build 289)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-56';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-56 (Build 288)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-57';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-57 (Build 289)';
 
-    // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
-    const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+    // =========================================================================
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
+    // =========================================================================
+    // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
+    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
+    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
     const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+
+    const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
+    window.GEMINI_MODELS_DEEP = GEMINI_MODELS_DEEP;
+    window.GEMINI_MODELS_FAST = GEMINI_MODELS_FAST;
     window.GEMINI_STANDARD_MODELS = GEMINI_STANDARD_MODELS;
     window.GEMINI_VISION_MODELS = GEMINI_VISION_MODELS;
+
+    function getGeminiModelsForTier(tier = 'deep') {
+      const isFast = (tier === 'fast' || tier === 'lite' || tier === 'micro');
+      const baseModels = isFast ? GEMINI_MODELS_FAST : GEMINI_MODELS_DEEP;
+      const cacheKey = isFast ? 'vocaflow_gemini_working_model_fast' : 'vocaflow_gemini_working_model_deep';
+      const cached = localStorage.getItem(cacheKey) || localStorage.getItem('vocaflow_gemini_working_model');
+      if (cached && baseModels.includes(cached)) {
+        return [cached, ...baseModels.filter(m => m !== cached)];
+      }
+      return [...baseModels];
+    }
+    window.getGeminiModelsForTier = getGeminiModelsForTier;
+
+    function saveWorkingGeminiModel(model, tier = 'deep') {
+      if (!model) return;
+      localStorage.setItem('vocaflow_gemini_working_model', model);
+      if (tier === 'fast' || tier === 'lite' || tier === 'micro') {
+        localStorage.setItem('vocaflow_gemini_working_model_fast', model);
+      } else {
+        localStorage.setItem('vocaflow_gemini_working_model_deep', model);
+      }
+    }
+    window.saveWorkingGeminiModel = saveWorkingGeminiModel;
+
+    function purgeInvalidGeminiModelCache() {
+      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro'];
+      ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
+        const val = localStorage.getItem(k);
+        if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {
+          localStorage.removeItem(k);
+        }
+      });
+    }
+    purgeInvalidGeminiModelCache();
+    window.purgeInvalidGeminiModelCache = purgeInvalidGeminiModelCache;
+
+    function getStoredApiKeys(allowBlank = false) {
+      try {
+        const raw = localStorage.getItem('vocaflow_gemini_api_keys');
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            return allowBlank ? arr : arr.filter(k => k && typeof k === 'string' && k.trim().length > 5);
+          }
+        }
+      } catch (e) {}
+      const single = (localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+      return (single.length > 5) ? [single] : [];
+    }
+    window.getStoredApiKeys = getStoredApiKeys;
+
+    function getEffectiveGeminiApiKey() {
+      const keys = getStoredApiKeys();
+      return keys.length > 0 ? keys[0] : (localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+    }
+    window.getEffectiveGeminiApiKey = getEffectiveGeminiApiKey;
+
+    function hasAtLeastOneApiKey() {
+      return getStoredApiKeys().length > 0 || !!(localStorage.getItem('vocaflow_gemini_api_key') || '').trim();
+    }
+    window.hasAtLeastOneApiKey = hasAtLeastOneApiKey;
 
     // =========================================================================
     // GLOBAL APP LOADING SPINNER CONTROLLER (v0.10.9-47)
@@ -26394,56 +26465,62 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
 
       try {
         let rawResponseText = '';
-        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
         let fetchSuccess = false;
         let lastErrorMsg = '';
 
-        for (const m of modelsToTry) {
-          try {
-            aiStudioGenStatus = `🧠 Đang sáng tạo VocaDeck với mô hình ${m}...`;
-            aiStudioGenProgress = 65;
-            if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
-            if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
+        for (const k of keys) {
+          if (fetchSuccess) break;
+          for (const m of modelsToTry) {
+            try {
+              aiStudioGenStatus = `🧠 Đang sáng tạo VocaDeck với mô hình ${m}...`;
+              aiStudioGenProgress = 65;
+              if (loadStatus) loadStatus.textContent = aiStudioGenStatus;
+              if (loadProgress) loadProgress.style.width = aiStudioGenProgress + '%';
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
-            const res = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                  responseMimeType: "application/json",
-                  temperature: 0.7,
-                  maxOutputTokens: 4096
-                },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+              const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                    maxOutputTokens: 4096
+                  },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                  ]
+                })
+              });
 
-            if (res.ok) {
-              const resData = await res.json();
-              rawResponseText = resData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-              if (rawResponseText) {
-                localStorage.setItem('vocaflow_gemini_working_model', m);
-                fetchSuccess = true;
-                break;
+              if (res.ok) {
+                const resData = await res.json();
+                rawResponseText = resData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (rawResponseText) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'deep');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  fetchSuccess = true;
+                  break;
+                }
+              } else {
+                const errJson = await res.json().catch(() => ({}));
+                lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
+                console.warn(`Model ${m} error:`, lastErrorMsg);
               }
-            } else {
-              const errJson = await res.json().catch(() => ({}));
-              lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
-              console.warn(`Model ${m} error:`, lastErrorMsg);
+            } catch (e) {
+              lastErrorMsg = e.message;
+              console.warn(`Model ${m} failed:`, e);
             }
-          } catch (e) {
-            lastErrorMsg = e.message;
-            console.warn(`Model ${m} failed:`, e);
           }
         }
 
@@ -27109,9 +27186,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         '4. ĐỊNH DẠNG TRẢ VỀ: DUY NHẤT một JSON Array chuỗi tiếng Việt chứa đúng ' + count + ' phương án:\n' +
         '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
-      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
       for (const k of keys) {
         for (const m of models) {
@@ -27172,7 +27247,11 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
                     .filter(s => s.length > 0 && s.toLowerCase() !== correctDef.toLowerCase());
 
                   if (cleanDistractors.length >= count) {
-                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                    if (typeof saveWorkingGeminiModel === 'function') {
+                      saveWorkingGeminiModel(m, 'fast');
+                    } else {
+                      localStorage.setItem('vocaflow_gemini_working_model', m);
+                    }
                     quizAiDistractorCache[cacheKey] = cleanDistractors.slice(0, count);
                     saveAiDistractorCache();
                     return quizAiDistractorCache[cacheKey];
@@ -27376,12 +27455,14 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       expText.innerHTML = generateSmartMnemonicFallback(term, pos, def);
 
       // If Gemini API is available, fetch live custom mnemonic & etymology
-      const key = (typeof geminiApiKey !== 'undefined' && geminiApiKey) ? geminiApiKey : (localStorage.getItem('vocaflow_gemini_api_key') || '');
-      const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+      let keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+      if (keys.length === 0) {
+        const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
+        if (single.trim()) keys.push(single.trim());
+      }
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
-      if (key && key.trim()) {
+      if (keys.length > 0) {
         const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
 Định nghĩa: "${def}".
 ${example ? `Ví dụ: "${example}"` : ''}
@@ -27397,33 +27478,43 @@ Yêu cầu nghiêm ngặt:
 💡 Mẹo nhớ: [nội dung]
 🏛️ Nguồn gốc: [nội dung]`;
 
-        for (const m of modelsToTry) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+        let expFetched = false;
+        for (const k of keys) {
+          if (expFetched) break;
+          for (const m of models) {
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + key.trim(), {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
-              })
-            });
-            clearTimeout(timeoutId);
+              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const data = await res.json();
-              const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-              if (rawExp) {
-                const formatted = formatAiMarkdownText(rawExp);
-                expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
-                break;
+              if (res.ok) {
+                const data = await res.json();
+                const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (rawExp) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'fast');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  const formatted = formatAiMarkdownText(rawExp);
+                  expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
+                  expFetched = true;
+                  break;
+                }
               }
+            } catch (e) {
+              console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
             }
-          } catch (e) {
-            console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
           }
         }
       }
@@ -28257,45 +28348,51 @@ Yêu cầu nghiêm ngặt:
       hintText.innerHTML = '✨ <em>VocaAI đang tạo VocaHint ngữ cảnh...</em>';
 
       try {
-        const cachedModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = (cachedModel && standardModels.includes(cachedModel)) ? [cachedModel, ...standardModels.filter(m => m !== cachedModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [geminiApiKey];
+        const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
         const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
-        for (const m of modelsToTry) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+        for (const k of keys) {
+          for (const m of models) {
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + geminiApiKey.trim(), {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
-            clearTimeout(timeoutId);
+              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: { maxOutputTokens: 60, temperature: 0.3 },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                  ]
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const data = await res.json();
-              const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-              if (rawHint) {
-                setUserHints(currentHints - 1);
-                hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
-                showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
-                return;
+              if (res.ok) {
+                const data = await res.json();
+                const rawHint = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (rawHint) {
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'fast');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  setUserHints(currentHints - 1);
+                  hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
+                  showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
+                  return;
+                }
               }
+            } catch (modelErr) {
+              console.warn('AI Hint model try error for ' + m + ':', modelErr);
             }
-          } catch (modelErr) {
-            console.warn('AI Hint model try error for ' + m + ':', modelErr);
           }
         }
       } catch (err) {
@@ -30429,13 +30526,21 @@ Yêu cầu nghiêm ngặt:
 
       try {
         let result = null;
+        const apiKeys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+        if (apiKeys.length === 0) {
+          const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
+          if (single.trim()) apiKeys.push(single.trim());
+        }
 
-        // 1. Try Google Gemini API with user context
-        if (geminiApiKey) {
-          try {
-            result = await fetchWordFromGemini(rawTerm, geminiApiKey, userContext);
-          } catch (geminiErr) {
-            console.warn('Gemini AI API note, fallback to Dictionary Engine:', geminiErr);
+        // 1. Try Google Gemini API with multi-key pool & fast micro-task model tier
+        if (apiKeys.length > 0) {
+          for (const k of apiKeys) {
+            try {
+              result = await fetchWordFromGemini(rawTerm, k, userContext);
+              if (result) break;
+            } catch (geminiErr) {
+              console.warn('Gemini AI API key attempt note:', geminiErr);
+            }
           }
         }
 
@@ -30482,7 +30587,7 @@ Yêu cầu nghiêm ngặt:
           currentActiveSenseTab = 0;
           renderWordModalSenses(formattedSenses);
           const sensesCount = formattedSenses.length;
-          showToast(`✨ AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
+          showToast(`✨ VocaFill AI đã hoàn thiện ${sensesCount} nét nghĩa cho từ "${result.term || rawTerm}"!`);
         } else {
           alert('Không thể kết nối AI hoặc Từ điển (mạng gián đoạn hoặc chưa có API Key). Bạn vui lòng kiểm tra Cài đặt API Key hoặc nhập thủ công nhé!');
         }
@@ -30561,9 +30666,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
   ]
 }`;
 
-      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const models = (cachedWorkingModel && standardModels.includes(cachedWorkingModel)) ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
       for (const m of models) {
         try {
@@ -30592,7 +30695,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           clearTimeout(timeoutId);
 
           if (!res.ok) {
-            console.warn(`Model ${m} returned HTTP status ${res.status}`);
+            console.warn(`VocaFill Model ${m} returned HTTP status ${res.status}`);
             continue;
           }
 
@@ -30600,15 +30703,32 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (!rawText) continue;
 
-          localStorage.setItem('vocaflow_gemini_working_model', m);
-          const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-          const parsedData = JSON.parse(cleanJson);
-          if (parsedData && parsedData.definition) {
-            parsedData.definition = cleanVietnameseDefinition(parsedData.definition);
+          if (typeof saveWorkingGeminiModel === 'function') {
+            saveWorkingGeminiModel(m, 'fast');
+          } else {
+            localStorage.setItem('vocaflow_gemini_working_model', m);
           }
-          return parsedData;
+
+          const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          let parsedData = null;
+          try {
+            parsedData = JSON.parse(cleanJson);
+          } catch (pe) {
+            const sIdx = cleanJson.indexOf('{');
+            const eIdx = cleanJson.lastIndexOf('}');
+            if (sIdx !== -1 && eIdx > sIdx) {
+              try { parsedData = JSON.parse(cleanJson.substring(sIdx, eIdx + 1)); } catch (e) {}
+            }
+          }
+
+          if (parsedData) {
+            if (parsedData.definition) {
+              parsedData.definition = cleanVietnameseDefinition(parsedData.definition);
+            }
+            return parsedData;
+          }
         } catch (err) {
-          console.warn(`Model ${m} failed:`, err);
+          console.warn(`VocaFill Model ${m} failed:`, err);
         }
       }
       return null;
@@ -32099,55 +32219,60 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 }`;
 
       try {
-        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
         let evalSuccess = false;
         let evalData = null;
 
-        for (const m of modelsToTry) {
-          try {
-            const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + key;
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+        for (const k of keys) {
+          if (evalSuccess) break;
+          for (const m of modelsToTry) {
+            try {
+              const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim();
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-            const res = await fetch(url, {
-              method: 'POST',
-              signal: controller.signal,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{
-                  parts: [
-                    { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: pendingAudioBase64 } },
-                    { text: prompt }
+              const res = await fetch(url, {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{
+                    parts: [
+                      { inlineData: { mimeType: mimeType.split(';')[0] || 'audio/webm', data: pendingAudioBase64 } },
+                      { text: prompt }
+                    ]
+                  }],
+                  generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.15,
+                    maxOutputTokens: 1024
+                  },
+                  safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
                   ]
-                }],
-                generationConfig: {
-                  responseMimeType: "application/json",
-                  temperature: 0.15,
-                  maxOutputTokens: 1024
-                },
-                safetySettings: [
-                  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
-              })
-            });
-            clearTimeout(timeoutId);
+                })
+              });
+              clearTimeout(timeoutId);
 
-            if (res.ok) {
-              const resJson = await res.json();
-              const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (rawText) {
-                evalData = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
-                localStorage.setItem('vocaflow_gemini_working_model', m);
-                evalSuccess = true;
-                break;
-              }
-            } else if (res.status === 429 || res.status >= 500) {
+              if (res.ok) {
+                const resJson = await res.json();
+                const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (rawText) {
+                  evalData = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'deep');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  evalSuccess = true;
+                  break;
+                }
+              } else if (res.status === 429 || res.status >= 500) {
               continue;
             }
           } catch (modelErr) {
@@ -35555,7 +35680,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
 
       if (btn) btn.textContent = '⏳ Đang thử toàn bộ khóa...';
-      const models = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
       const results = [];
       for (let i = 0; i < keys.length; i++) {
@@ -35564,7 +35689,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         for (const m of models) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3500);
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
             const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -35577,7 +35702,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             clearTimeout(timeoutId);
             if (testRes.ok) {
               keyOk = true;
-              localStorage.setItem('vocaflow_gemini_working_model', m);
+              if (typeof saveWorkingGeminiModel === 'function') {
+                saveWorkingGeminiModel(m, 'deep');
+              } else {
+                localStorage.setItem('vocaflow_gemini_working_model', m);
+              }
               break;
             }
           } catch (e) {}
@@ -36425,9 +36554,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           return;
         }
 
-        const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-        const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-        const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+        const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
         const isSentence = targetText.trim().includes(' ');
         const promptInstruction = isSentence
@@ -36439,23 +36567,23 @@ Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-5 câu nh�
 Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
 {
   "score": 85,
-  "detected": "Câu hoặc các từ nghe được từ audio",
-  "feedbackVi": "Đoạn phân tích chi tiết 3-5 câu bằng tiếng Việt về phát âm, ngữ điệu, nối âm và mẹo khẩu hình",
-  "strengths": "Điểm Flower đã làm tốt (ví dụ: ngữ điệu tự nhiên, từ X đọc rất chuẩn)",
-  "improvements": "Điểm cần khắc phục cụ thể (ví dụ: cần bật rõ âm đuôi /s/ ở từ Y, nối âm giữa A và B)"
+  "detected": "Câu phát hiện được",
+  "feedbackVi": "Nhận xét ngữ điệu, nối âm và ngữ pháp câu súc tích, tự nhiên và chỉ dẫn cụ thể",
+  "strengths": "Điểm Flower làm tốt",
+  "improvements": "Điểm Flower cần khắc phục để nói tự nhiên hơn"
 }`
-          : `Bạn là chuyên gia thẩm âm và sửa phát âm tiếng Anh chuẩn quốc tế. Flower vừa thu âm phát âm TỪ: "${targetText}".
-Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-4 câu nhận xét bằng tiếng Việt) về:
-1. Độ chính xác của âm đầu (onset), nguyên âm chính (nucleus vowel) và đặc biệt là âm đuôi/âm cuối (coda/ending sound).
-2. Trọng âm từ và độ rung thanh quản/bật hơi.
-3. Hướng dẫn cụ thể vị trí đặt đầu lưỡi, khẩu hình môi để phát âm chuẩn xác nhất.
+          : `Bạn là chuyên gia thẩm âm và phát âm tiếng Anh bản xứ hàng đầu. Flower vừa thu âm đọc TỪ VỰNG: "${targetText}".
+Hãy lắng nghe và phân tích cực kỳ chi tiết, sâu sắc (3-5 câu nhận xét bằng tiếng Việt) về:
+1. Độ chuẩn của nguyên âm (vowels), phụ âm đầu (onset), và đặc biệt là ÂM ĐUÔI (ending sounds / coda).
+2. Trọng âm của từ (word stress) đã rơi đúng âm tiết chưa.
+3. Hướng dẫn cụ thể cách mở khẩu hình, đặt vị trí lưỡi để khắc phục triệt để lỗi người Việt hay gặp khi phát âm từ này.
 Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, không giải thích ngoài JSON):
 {
   "score": 85,
-  "detected": "Từ nghe được từ audio",
-  "feedbackVi": "Đoạn phân tích chi tiết 3-4 câu bằng tiếng Việt phân tích chi tiết âm đầu, âm giữa, âm đuôi và hướng dẫn khẩu hình",
-  "strengths": "Điểm phát âm tốt",
-  "improvements": "Lỗi âm cụ thể cần sửa và cách sửa"
+  "detected": "Từ phát hiện được",
+  "feedbackVi": "Nhận xét phát âm chi tiết, súc tích và chỉ dẫn cụ thể khẩu hình",
+  "strengths": "Điểm Flower làm tốt",
+  "improvements": "Điểm Flower cần khắc phục"
 }`;
 
         const payload = {
@@ -36474,29 +36602,36 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
         let parsed = null;
 
-        for (const m of modelsToTry) {
-          try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
-            const res = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
+        for (const k of keys) {
+          if (parsed) break;
+          for (const m of modelsToTry) {
+            try {
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+              const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
 
-            if (res.ok) {
-              const data = await res.json();
-              const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-              try {
-                parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
-                localStorage.setItem('vocaflow_gemini_working_model', m);
-                break;
-              } catch (e) {
-                parsed = { score: 80, feedbackVi: rawText, detected: targetText };
-                break;
+              if (res.ok) {
+                const data = await res.json();
+                const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+                try {
+                  parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+                  if (typeof saveWorkingGeminiModel === 'function') {
+                    saveWorkingGeminiModel(m, 'deep');
+                  } else {
+                    localStorage.setItem('vocaflow_gemini_working_model', m);
+                  }
+                  break;
+                } catch (e) {
+                  parsed = { score: 80, feedbackVi: rawText, detected: targetText };
+                  break;
+                }
               }
+            } catch (e) {
+              console.warn(`Mini Voice model ${m} error:`, e);
             }
-          } catch (e) {
-            console.warn(`Mini Voice model ${m} error:`, e);
           }
         }
 
@@ -36596,8 +36731,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
       renderAiChatMessages();
 
       // Check API Key
-      const key = getEffectiveGeminiApiKey();
-      if (!key) {
+      let keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+      if (keys.length === 0) {
+        const single = typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '';
+        if (single) keys = [single];
+      }
+      if (keys.length === 0) {
         const errorMsg = {
           id: 'msg_' + Date.now(),
           role: 'model',
@@ -36620,7 +36759,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
         contextInfo = `Ngữ cảnh học: Người dùng đang xem VocaDeck "${ctx.deck.title}" (${ctx.deck.description || ''}).`;
       }
 
-      const systemInstruction = `Bạn là VocaMentor AI - Cố vấn học tập tiếng Anh kiêm chuyên gia phân tích hình ảnh/ngữ liệu của ứng dụng VocaFlow, vận hành trên mô hình Gemini 3.8 Flash Vision.
+      const systemInstruction = `Bạn là VocaMentor AI - Cố vấn học tập tiếng Anh kiêm chuyên gia phân tích hình ảnh/ngữ liệu của ứng dụng VocaFlow, vận hành trên mô hình Gemini 2.0 Flash Multimodal.
 ${contextInfo}
 Quy tắc phản hồi quan trọng:
 1. Nếu người dùng đính kèm ảnh (ảnh chụp bài tập, trang sách, đề thi, bảng từ vựng...): Hãy phân tích kỹ nội dung trong ảnh, giải thích các câu hỏi/từ vựng liên quan, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết bằng tiếng Việt.
@@ -36662,9 +36801,7 @@ Quy tắc phản hồi quan trọng:
         }
       });
 
-      const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
-      const standardModels = (typeof GEMINI_STANDARD_MODELS !== 'undefined' && GEMINI_STANDARD_MODELS.length > 0) ? GEMINI_STANDARD_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-      const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
+      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
       let fetchSuccess = false;
       let replyText = '';
@@ -36675,32 +36812,38 @@ Quy tắc phản hồi quan trọng:
         contents: contentsPayload
       };
 
-      for (const m of modelsToTry) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+      for (const k of keys) {
+        if (fetchSuccess) break;
+        for (const m of modelsToTry) {
+          try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
 
-          if (res.ok) {
-            const data = await res.json();
-            replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-            if (replyText) {
-              localStorage.setItem('vocaflow_gemini_working_model', m);
-              fetchSuccess = true;
-              break;
+            if (res.ok) {
+              const data = await res.json();
+              replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              if (replyText) {
+                if (typeof saveWorkingGeminiModel === 'function') {
+                  saveWorkingGeminiModel(m, 'deep');
+                } else {
+                  localStorage.setItem('vocaflow_gemini_working_model', m);
+                }
+                fetchSuccess = true;
+                break;
+              }
+            } else {
+              const errJson = await res.json().catch(() => ({}));
+              lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
+              console.warn(`Model ${m} with key ending in ...${k.slice(-4)} error:`, lastErrorMsg);
             }
-          } else {
-            const errJson = await res.json().catch(() => ({}));
-            lastErrorMsg = errJson?.error?.message || `HTTP ${res.status}`;
-            console.warn(`Model ${m} error:`, lastErrorMsg);
+          } catch (e) {
+            lastErrorMsg = e.message;
+            console.warn(`Model ${m} network failed:`, e);
           }
-        } catch (e) {
-          lastErrorMsg = e.message;
-          console.warn(`Model ${m} network failed:`, e);
-        }
       }
 
       if (fetchSuccess && replyText) {
