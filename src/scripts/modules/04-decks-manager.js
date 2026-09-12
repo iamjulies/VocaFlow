@@ -1946,7 +1946,7 @@
     }
 
     // =========================================================================
-    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-alpha-14)
+    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-56)
     // =========================================================================
     let reviewQueueMasterList = [];
     let reviewQueueFilteredList = [];
@@ -1955,6 +1955,41 @@
     let reviewQueueDeckFilter = 'all';
     let reviewQueueSearchQuery = '';
     let reviewQueueActivePreset = null;
+
+    function recordStudySessionWordReviews(wordsList) {
+      if (!wordsList || !Array.isArray(wordsList) || wordsList.length === 0) return;
+      const nowIso = new Date().toISOString();
+      let updatedCount = 0;
+
+      wordsList.forEach(w => {
+        if (!w || !w.id) return;
+        w.lastReviewedAt = nowIso;
+        w.updatedAt = nowIso;
+
+        const mainIdx = words.findIndex(item => item.id === w.id);
+        if (mainIdx !== -1) {
+          words[mainIdx].lastReviewedAt = nowIso;
+          words[mainIdx].updatedAt = nowIso;
+          if (typeof words[mainIdx].masteryScore !== 'number' || words[mainIdx].masteryScore <= 0) {
+            words[mainIdx].masteryScore = 20;
+            words[mainIdx].status = 'learning';
+          }
+          updatedCount++;
+        }
+      });
+
+      if (updatedCount > 0) {
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
+      }
+
+      if (typeof renderDailyReviewBanner === 'function') {
+        renderDailyReviewBanner();
+      }
+    }
+    window.recordStudySessionWordReviews = recordStudySessionWordReviews;
 
     function getDueReviewWords() {
       const now = Date.now();
@@ -1967,7 +2002,7 @@
         const score = getWordScore(w);
         if (score <= 0) return false; // Words with 0% mastery have not been learned yet, exclude from review queue
         const intervalDays = getReviewIntervalDays(score);
-        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         if (!lastTime) return false;
         const diffDays = (now - lastTime) / msPerDay;
         return diffDays >= intervalDays;
@@ -2276,7 +2311,7 @@
       reviewQueueFilteredList.forEach((w, idx) => {
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
-        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         const diffDays = Math.floor((now - lastTime) / msPerDay);
         const interval = getReviewIntervalDays(score);
         const isOverdue = diffDays >= interval;
@@ -2284,6 +2319,24 @@
 
         const deckObj = decks.find(d => d.id === w.deckId);
         const deckName = deckObj ? deckObj.title : 'VocaDeck';
+
+        let dueStatusText = '';
+        let dueStatusColor = 'var(--text-muted)';
+        let dueStatusWeight = '400';
+        if (diffDays === 0) {
+          dueStatusText = `🌱 Đã ôn hôm nay (lần tới: ${interval} ngày)`;
+          dueStatusColor = '#34d399';
+          dueStatusWeight = '600';
+        } else if (isOverdue) {
+          const overdueDays = Math.max(1, diffDays - interval);
+          dueStatusText = `⚠️ Trễ ${overdueDays} ngày (chu kỳ ${interval} ngày)`;
+          dueStatusColor = '#f87171';
+          dueStatusWeight = '700';
+        } else {
+          const remainingDays = Math.max(1, interval - diffDays);
+          dueStatusText = `🌱 Ôn tiếp sau ${remainingDays} ngày (chu kỳ ${interval} ngày)`;
+          dueStatusColor = '#34d399';
+        }
 
         htmlRows += `
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: ${isChecked ? 'rgba(99, 102, 241, 0.08)' : 'var(--surface)'}; border: 1px solid ${isChecked ? 'rgba(99, 102, 241, 0.35)' : 'var(--border)'}; gap: 10px; transition: all 0.2s ease;">
@@ -2306,8 +2359,8 @@
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
               <div style="text-align: right;">
                 <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 10px; font-weight: 700;">${score}%</span>
-                <div style="font-size: 10.5px; margin-top: 2px; color: ${isOverdue ? '#f87171' : 'var(--text-muted)'}; font-weight: ${isOverdue ? '700' : '400'};">
-                  ${isOverdue ? '⚠️ Trễ ' + diffDays + ' ngày' : 'Đã học ' + diffDays + ' ngày trước'}
+                <div style="font-size: 10.5px; margin-top: 2px; color: ${dueStatusColor}; font-weight: ${dueStatusWeight};">
+                  ${dueStatusText}
                 </div>
               </div>
               <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Nghe phát âm" style="margin: 0;">

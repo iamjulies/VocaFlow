@@ -64,8 +64,8 @@ Copy-Item "$root\vocaflow.html" "$root\GITHUB_RELEASE\vocaflow_web_single_file.h
 
 # 2. Cập nhật bản ZIP phát hành mới nhất
 Write-Host "[1/4] Đang cập nhật gói ZIP phát hành mới nhất..." -ForegroundColor Cyan
-$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-55_Windows_Portable.zip"
-$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-55_Windows_Portable.zip"
+$zipPath = Join-Path $PSScriptRoot "VocaFlow_v0.10.9-56_Windows_Portable.zip"
+$rootZipPath = Join-Path $root "VocaFlow_v0.10.9-56_Windows_Portable.zip"
 $releaseDir = Join-Path $root "Release_App"
 
 if (Test-Path $releaseDir) {
@@ -77,7 +77,7 @@ if (Test-Path $releaseDir) {
     [System.IO.Compression.ZipFile]::CreateFromDirectory($releaseDir, $zipPath)
     Copy-Item $zipPath $rootZipPath -Force
     
-    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-55_Windows_Portable.zip" -ForegroundColor Green
+    Write-Host "  -> Đã tạo gói: VocaFlow_v0.10.9-56_Windows_Portable.zip" -ForegroundColor Green
 }
 Write-Host ""
 
@@ -88,7 +88,7 @@ Write-Host "[2/4] Đang lưu và đẩy lên iamjulies/VocaFlow (main)..." -Fore
 & $git -C $root remote add origin $vocaFlowRemote
 & $git -C $root branch -M main
 & $git -C $root add .
-$commitMsg = "feat: Release v0.10.9-55 (Build 287) $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+$commitMsg = "feat: Release v0.10.9-56 (Build 288) $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 & $git -C $root commit -m $commitMsg 2>$null
 & $git -C $root push -u origin main --force
 

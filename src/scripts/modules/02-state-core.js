@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-55 Build 287)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-56 Build 288)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-55 Build 287)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-56 Build 288)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-55';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-55 (Build 287)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-56';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-56 (Build 288)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -3167,7 +3167,8 @@
     }
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-54)
+    // =========================================================================
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-56)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
@@ -3185,7 +3186,7 @@
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Screen time in minutes
+        // Screen time in minutes (Real recorded data only)
         let screenMinutes = screenTimeMap[dateStr] || 0;
 
         // VoCoins earned & study points
@@ -3213,12 +3214,10 @@
             });
           }
         } else {
-          // Public profile author
-          // Approximate or estimate from author stats if not local
-          const hashVal = (dateStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + (targetAuthor.targetUid || '').length) % 100;
-          screenMinutes = Math.min(240, Math.max(15, Math.round(hashVal * 2.2)));
-          vocoinsEarned = Math.round(hashVal * 1.5);
-          studyPoints = Math.round(hashVal * 1.8);
+          // Public profile author - Real data only: if author has no ledger/stats, leave at 0
+          vocoinsEarned = 0;
+          studyPoints = 0;
+          screenMinutes = 0;
         }
 
         days.push({
@@ -3237,12 +3236,15 @@
       const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
-      // Best day
+      // Best days
       let bestDay = days[0];
+      let bestCoinsDay = days[0];
+      let bestStudyDay = days[0];
+
       days.forEach(d => {
-        if (d.screenMinutes > (bestDay ? bestDay.screenMinutes : 0)) {
-          bestDay = d;
-        }
+        if (d.screenMinutes > (bestDay ? bestDay.screenMinutes : 0)) bestDay = d;
+        if (d.vocoinsEarned > (bestCoinsDay ? bestCoinsDay.vocoinsEarned : 0)) bestCoinsDay = d;
+        if (d.studyPoints > (bestStudyDay ? bestStudyDay.studyPoints : 0)) bestStudyDay = d;
       });
 
       return {
@@ -3250,7 +3252,9 @@
         totalScreenMinutes,
         totalVoCoins,
         totalStudyPoints,
-        bestDay
+        bestDay,
+        bestCoinsDay,
+        bestStudyDay
       };
     }
     window.get7DayPerformanceData = get7DayPerformanceData;
@@ -3330,6 +3334,7 @@
           <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#fbbf24" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
                   onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   onmouseleave="hideVocaChartTooltip()"
+                  onclick="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.5));" />
         `;
       });
@@ -3346,6 +3351,7 @@
           <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#34d399" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
                   onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   onmouseleave="hideVocaChartTooltip()"
+                  onclick="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(52,211,153,0.5));" />
         `;
       });
@@ -3375,7 +3381,7 @@
         <div class="voca-7day-chart-wrapper">
           <div class="voca-7day-chart-header">
             <div>
-              <strong style="font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <strong style="font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px;">
                 <span>📊</span> Hoạt Động & Hiệu Suất 7 Ngày
               </strong>
               <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
@@ -3418,17 +3424,29 @@
             </svg>
           </div>
 
-          <!-- Summary Mini Cards Row -->
+          <!-- Summary Mini Cards Row with Interactive Tooltips -->
           <div class="voca-chart-summary-row">
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'time')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'time')" 
+                 title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
               <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'coins')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'coins')" 
+                 title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'points')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'points')" 
+                 title="Bấm để xem chi tiết điểm rèn luyện 7 ngày qua">
               <div class="voca-stat-label">🎯 Điểm Rèn Luyện</div>
               <div class="voca-stat-val" style="color: #34d399;">+${data.totalStudyPoints} đ</div>
             </div>
@@ -3441,7 +3459,7 @@
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART TOOLTIP CONTROLLER (v0.10.9-54)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-56)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -3485,6 +3503,99 @@
       tooltip.style.opacity = '1';
     }
     window.showVocaChartTooltip = showVocaChartTooltip;
+
+    function showVocaStatCardTooltip(evt, type) {
+      let tooltip = document.getElementById('voca-chart-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'voca-chart-tooltip';
+        tooltip.className = 'voca-chart-tooltip';
+        document.body.appendChild(tooltip);
+      }
+
+      const data = get7DayPerformanceData();
+      let headerTitle = '';
+      let rowsHtml = '';
+
+      if (type === 'time') {
+        headerTitle = '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        const totalHours = Math.floor(data.totalScreenMinutes / 60);
+        const totalMins = data.totalScreenMinutes % 60;
+        const avgMins = Math.round(data.totalScreenMinutes / 7);
+        const activeDays = data.days.filter(d => d.screenMinutes > 0).length;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng thời lượng:</span>
+            <strong style="color: #818cf8;">${totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">${avgMins} phút/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Số ngày có vào học:</span>
+            <strong style="color: #34d399;">${activeDays} / 7 ngày</strong>
+          </div>
+        `;
+      } else if (type === 'coins') {
+        headerTitle = '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        const avgCoins = Math.round(data.totalVoCoins / 7);
+        const best = data.bestCoinsDay;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng Xu kiếm được:</span>
+            <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">+${avgCoins} Xu/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Ngày cao điểm nhất:</span>
+            <strong style="color: #fbbf24;">${best ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Hôm nay'}</strong>
+          </div>
+        `;
+      } else if (type === 'points') {
+        headerTitle = '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
+        const avgPts = Math.round(data.totalStudyPoints / 7);
+        const best = data.bestStudyDay;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng điểm rèn luyện:</span>
+            <strong style="color: #34d399;">+${data.totalStudyPoints} đ</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">+${avgPts} đ/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
+            <strong style="color: #34d399;">${best ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Hôm nay'}</strong>
+          </div>
+        `;
+      }
+
+      tooltip.innerHTML = `
+        <div style="font-weight: 800; font-size: 12px; color: var(--text); margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+          ${headerTitle}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11.5px;">
+          ${rowsHtml}
+        </div>
+      `;
+
+      const x = evt.clientX || (evt.touches && evt.touches[0] ? evt.touches[0].clientX : 0);
+      const y = evt.clientY || (evt.touches && evt.touches[0] ? evt.touches[0].clientY : 0);
+
+      tooltip.style.left = `${Math.min(window.innerWidth - 240, Math.max(10, x - 120))}px`;
+      tooltip.style.top = `${Math.max(10, y - 120)}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+    }
+    window.showVocaStatCardTooltip = showVocaStatCardTooltip;
 
     function hideVocaChartTooltip() {
       const tooltip = document.getElementById('voca-chart-tooltip');

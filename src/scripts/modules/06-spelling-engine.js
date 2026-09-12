@@ -1244,6 +1244,10 @@
       openModal('modal-spelling-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling'); } catch (e) {}
+      if (typeof recordStudySessionWordReviews === 'function' && spellingList) {
+        recordStudySessionWordReviews(spellingList);
+      }
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {

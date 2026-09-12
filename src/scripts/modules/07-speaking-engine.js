@@ -852,7 +852,9 @@
           accuracy: floorRatePct
         });
       }
-      if (studySourceContext === 'review-queue' && typeof renderDailyReviewBanner === 'function') {
+      if (typeof recordStudySessionWordReviews === 'function' && speakingWordsList) {
+        recordStudySessionWordReviews(speakingWordsList);
+      } else if (studySourceContext === 'review-queue' && typeof renderDailyReviewBanner === 'function') {
         renderDailyReviewBanner();
       }
 
@@ -2002,6 +2004,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       stopAllAudio();
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
+      if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
+        recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
+      }
       try {
         if (studySourceContext === 'review-queue' || !currentDeckId) {
           showScreen('screen-decks');

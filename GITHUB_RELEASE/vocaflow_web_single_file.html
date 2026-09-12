@@ -4217,6 +4217,140 @@
       color: #fff;
     }
 
+    /* ========================================================================= */
+    /* 7-DAY ACTIVITY & PERFORMANCE COMBO CHART & STAT CARDS (v0.10.9-56)        */
+    /* ========================================================================= */
+    .voca-7day-chart-wrapper {
+      background: var(--surface-elevated, #1e293b);
+      border: 1px solid var(--border, #334155);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .voca-7day-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .voca-chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-muted, #94a3b8);
+      flex-wrap: wrap;
+    }
+
+    .voca-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+    }
+
+    .voca-legend-bullet {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .voca-chart-svg-container {
+      position: relative;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      padding: 6px 4px;
+      box-sizing: border-box;
+    }
+
+    .voca-chart-summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .voca-chart-stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border, #334155);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .voca-chart-stat-card:hover {
+      background: rgba(99, 102, 241, 0.08);
+      border-color: rgba(99, 102, 241, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .voca-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted, #94a3b8);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .voca-stat-val {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .voca-chart-tooltip {
+      position: fixed;
+      z-index: 100000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      max-width: 280px;
+      font-size: 12px;
+      color: var(--text, #f8fafc);
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .voca-chart-summary-row {
+        gap: 6px;
+      }
+      .voca-chart-stat-card {
+        padding: 8px 4px;
+      }
+      .voca-stat-label {
+        font-size: 10px;
+      }
+      .voca-stat-val {
+        font-size: 13px;
+      }
+      .voca-chart-legend {
+        font-size: 10px;
+        gap: 8px;
+      }
+    }
+
 
 
 
@@ -4527,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-55 (Build 287)</span>
+            <span class="mini-footer-version">v0.10.9-56 (Build 288)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4726,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-55 (Build 287)</span>
+            <span class="mini-footer-version">v0.10.9-56 (Build 288)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9741,7 +9875,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-55 (Build 287)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-56 (Build 288)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10696,7 +10830,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-55 Build 287)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-56 Build 288)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11126,15 +11260,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-55 Build 287)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-56 Build 288)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-55 Build 287)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-56 Build 288)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-55';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-55 (Build 287)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-56';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-56 (Build 288)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -14295,7 +14429,8 @@ window.initSpaRouter = initSpaRouter;
     }
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-54)
+    // =========================================================================
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-56)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
@@ -14313,7 +14448,7 @@ window.initSpaRouter = initSpaRouter;
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Screen time in minutes
+        // Screen time in minutes (Real recorded data only)
         let screenMinutes = screenTimeMap[dateStr] || 0;
 
         // VoCoins earned & study points
@@ -14341,12 +14476,10 @@ window.initSpaRouter = initSpaRouter;
             });
           }
         } else {
-          // Public profile author
-          // Approximate or estimate from author stats if not local
-          const hashVal = (dateStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + (targetAuthor.targetUid || '').length) % 100;
-          screenMinutes = Math.min(240, Math.max(15, Math.round(hashVal * 2.2)));
-          vocoinsEarned = Math.round(hashVal * 1.5);
-          studyPoints = Math.round(hashVal * 1.8);
+          // Public profile author - Real data only: if author has no ledger/stats, leave at 0
+          vocoinsEarned = 0;
+          studyPoints = 0;
+          screenMinutes = 0;
         }
 
         days.push({
@@ -14365,12 +14498,15 @@ window.initSpaRouter = initSpaRouter;
       const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
-      // Best day
+      // Best days
       let bestDay = days[0];
+      let bestCoinsDay = days[0];
+      let bestStudyDay = days[0];
+
       days.forEach(d => {
-        if (d.screenMinutes > (bestDay ? bestDay.screenMinutes : 0)) {
-          bestDay = d;
-        }
+        if (d.screenMinutes > (bestDay ? bestDay.screenMinutes : 0)) bestDay = d;
+        if (d.vocoinsEarned > (bestCoinsDay ? bestCoinsDay.vocoinsEarned : 0)) bestCoinsDay = d;
+        if (d.studyPoints > (bestStudyDay ? bestStudyDay.studyPoints : 0)) bestStudyDay = d;
       });
 
       return {
@@ -14378,7 +14514,9 @@ window.initSpaRouter = initSpaRouter;
         totalScreenMinutes,
         totalVoCoins,
         totalStudyPoints,
-        bestDay
+        bestDay,
+        bestCoinsDay,
+        bestStudyDay
       };
     }
     window.get7DayPerformanceData = get7DayPerformanceData;
@@ -14458,6 +14596,7 @@ window.initSpaRouter = initSpaRouter;
           <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#fbbf24" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
                   onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   onmouseleave="hideVocaChartTooltip()"
+                  onclick="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(245,158,11,0.5));" />
         `;
       });
@@ -14474,6 +14613,7 @@ window.initSpaRouter = initSpaRouter;
           <circle cx="${cx}" cy="${cy}" r="${d.isToday ? '5.5' : '4'}" fill="#34d399" stroke="#ffffff" stroke-width="2" class="voca-chart-dot"
                   onmouseenter="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   onmouseleave="hideVocaChartTooltip()"
+                  onclick="showVocaChartTooltip(event, '${escapeHtml(d.fullDayName)}', ${d.screenMinutes}, ${d.vocoinsEarned}, ${d.studyPoints})"
                   style="cursor: pointer; filter: drop-shadow(0 2px 4px rgba(52,211,153,0.5));" />
         `;
       });
@@ -14503,7 +14643,7 @@ window.initSpaRouter = initSpaRouter;
         <div class="voca-7day-chart-wrapper">
           <div class="voca-7day-chart-header">
             <div>
-              <strong style="font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <strong style="font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px;">
                 <span>📊</span> Hoạt Động & Hiệu Suất 7 Ngày
               </strong>
               <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
@@ -14546,17 +14686,29 @@ window.initSpaRouter = initSpaRouter;
             </svg>
           </div>
 
-          <!-- Summary Mini Cards Row -->
+          <!-- Summary Mini Cards Row with Interactive Tooltips -->
           <div class="voca-chart-summary-row">
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'time')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'time')" 
+                 title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
               <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'coins')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'coins')" 
+                 title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
-            <div class="voca-chart-stat-card">
+            <div class="voca-chart-stat-card" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'points')" 
+                 onmouseleave="hideVocaChartTooltip()" 
+                 onclick="showVocaStatCardTooltip(event, 'points')" 
+                 title="Bấm để xem chi tiết điểm rèn luyện 7 ngày qua">
               <div class="voca-stat-label">🎯 Điểm Rèn Luyện</div>
               <div class="voca-stat-val" style="color: #34d399;">+${data.totalStudyPoints} đ</div>
             </div>
@@ -14569,7 +14721,7 @@ window.initSpaRouter = initSpaRouter;
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART TOOLTIP CONTROLLER (v0.10.9-54)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-56)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -14613,6 +14765,99 @@ window.initSpaRouter = initSpaRouter;
       tooltip.style.opacity = '1';
     }
     window.showVocaChartTooltip = showVocaChartTooltip;
+
+    function showVocaStatCardTooltip(evt, type) {
+      let tooltip = document.getElementById('voca-chart-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'voca-chart-tooltip';
+        tooltip.className = 'voca-chart-tooltip';
+        document.body.appendChild(tooltip);
+      }
+
+      const data = get7DayPerformanceData();
+      let headerTitle = '';
+      let rowsHtml = '';
+
+      if (type === 'time') {
+        headerTitle = '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        const totalHours = Math.floor(data.totalScreenMinutes / 60);
+        const totalMins = data.totalScreenMinutes % 60;
+        const avgMins = Math.round(data.totalScreenMinutes / 7);
+        const activeDays = data.days.filter(d => d.screenMinutes > 0).length;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng thời lượng:</span>
+            <strong style="color: #818cf8;">${totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">${avgMins} phút/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Số ngày có vào học:</span>
+            <strong style="color: #34d399;">${activeDays} / 7 ngày</strong>
+          </div>
+        `;
+      } else if (type === 'coins') {
+        headerTitle = '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        const avgCoins = Math.round(data.totalVoCoins / 7);
+        const best = data.bestCoinsDay;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng Xu kiếm được:</span>
+            <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">+${avgCoins} Xu/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Ngày cao điểm nhất:</span>
+            <strong style="color: #fbbf24;">${best ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Hôm nay'}</strong>
+          </div>
+        `;
+      } else if (type === 'points') {
+        headerTitle = '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
+        const avgPts = Math.round(data.totalStudyPoints / 7);
+        const best = data.bestStudyDay;
+
+        rowsHtml = `
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Tổng điểm rèn luyện:</span>
+            <strong style="color: #34d399;">+${data.totalStudyPoints} đ</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Trung bình mỗi ngày:</span>
+            <strong style="color: var(--text);">+${avgPts} đ/ngày</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
+            <strong style="color: #34d399;">${best ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Hôm nay'}</strong>
+          </div>
+        `;
+      }
+
+      tooltip.innerHTML = `
+        <div style="font-weight: 800; font-size: 12px; color: var(--text); margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+          ${headerTitle}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11.5px;">
+          ${rowsHtml}
+        </div>
+      `;
+
+      const x = evt.clientX || (evt.touches && evt.touches[0] ? evt.touches[0].clientX : 0);
+      const y = evt.clientY || (evt.touches && evt.touches[0] ? evt.touches[0].clientY : 0);
+
+      tooltip.style.left = `${Math.min(window.innerWidth - 240, Math.max(10, x - 120))}px`;
+      tooltip.style.top = `${Math.max(10, y - 120)}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+    }
+    window.showVocaStatCardTooltip = showVocaStatCardTooltip;
 
     function hideVocaChartTooltip() {
       const tooltip = document.getElementById('voca-chart-tooltip');
@@ -24816,7 +25061,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-alpha-14)
+    // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-56)
     // =========================================================================
     let reviewQueueMasterList = [];
     let reviewQueueFilteredList = [];
@@ -24825,6 +25070,41 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     let reviewQueueDeckFilter = 'all';
     let reviewQueueSearchQuery = '';
     let reviewQueueActivePreset = null;
+
+    function recordStudySessionWordReviews(wordsList) {
+      if (!wordsList || !Array.isArray(wordsList) || wordsList.length === 0) return;
+      const nowIso = new Date().toISOString();
+      let updatedCount = 0;
+
+      wordsList.forEach(w => {
+        if (!w || !w.id) return;
+        w.lastReviewedAt = nowIso;
+        w.updatedAt = nowIso;
+
+        const mainIdx = words.findIndex(item => item.id === w.id);
+        if (mainIdx !== -1) {
+          words[mainIdx].lastReviewedAt = nowIso;
+          words[mainIdx].updatedAt = nowIso;
+          if (typeof words[mainIdx].masteryScore !== 'number' || words[mainIdx].masteryScore <= 0) {
+            words[mainIdx].masteryScore = 20;
+            words[mainIdx].status = 'learning';
+          }
+          updatedCount++;
+        }
+      });
+
+      if (updatedCount > 0) {
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') {
+          pushCurrentDatabaseToCloud();
+        }
+      }
+
+      if (typeof renderDailyReviewBanner === 'function') {
+        renderDailyReviewBanner();
+      }
+    }
+    window.recordStudySessionWordReviews = recordStudySessionWordReviews;
 
     function getDueReviewWords() {
       const now = Date.now();
@@ -24837,7 +25117,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const score = getWordScore(w);
         if (score <= 0) return false; // Words with 0% mastery have not been learned yet, exclude from review queue
         const intervalDays = getReviewIntervalDays(score);
-        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         if (!lastTime) return false;
         const diffDays = (now - lastTime) / msPerDay;
         return diffDays >= intervalDays;
@@ -25146,7 +25426,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       reviewQueueFilteredList.forEach((w, idx) => {
         const score = getWordScore(w);
         const masteryInfo = getWordMasteryInfo(score);
-        const lastTime = new Date(w.updatedAt || w.createdAt || 0).getTime();
+        const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         const diffDays = Math.floor((now - lastTime) / msPerDay);
         const interval = getReviewIntervalDays(score);
         const isOverdue = diffDays >= interval;
@@ -25154,6 +25434,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         const deckObj = decks.find(d => d.id === w.deckId);
         const deckName = deckObj ? deckObj.title : 'VocaDeck';
+
+        let dueStatusText = '';
+        let dueStatusColor = 'var(--text-muted)';
+        let dueStatusWeight = '400';
+        if (diffDays === 0) {
+          dueStatusText = `🌱 Đã ôn hôm nay (lần tới: ${interval} ngày)`;
+          dueStatusColor = '#34d399';
+          dueStatusWeight = '600';
+        } else if (isOverdue) {
+          const overdueDays = Math.max(1, diffDays - interval);
+          dueStatusText = `⚠️ Trễ ${overdueDays} ngày (chu kỳ ${interval} ngày)`;
+          dueStatusColor = '#f87171';
+          dueStatusWeight = '700';
+        } else {
+          const remainingDays = Math.max(1, interval - diffDays);
+          dueStatusText = `🌱 Ôn tiếp sau ${remainingDays} ngày (chu kỳ ${interval} ngày)`;
+          dueStatusColor = '#34d399';
+        }
 
         htmlRows += `
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; background: ${isChecked ? 'rgba(99, 102, 241, 0.08)' : 'var(--surface)'}; border: 1px solid ${isChecked ? 'rgba(99, 102, 241, 0.35)' : 'var(--border)'}; gap: 10px; transition: all 0.2s ease;">
@@ -25176,8 +25474,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
               <div style="text-align: right;">
                 <span class="badge" style="${masteryInfo.badgeStyle}; font-size: 10px; font-weight: 700;">${score}%</span>
-                <div style="font-size: 10.5px; margin-top: 2px; color: ${isOverdue ? '#f87171' : 'var(--text-muted)'}; font-weight: ${isOverdue ? '700' : '400'};">
-                  ${isOverdue ? '⚠️ Trễ ' + diffDays + ' ngày' : 'Đã học ' + diffDays + ' ngày trước'}
+                <div style="font-size: 10.5px; margin-top: 2px; color: ${dueStatusColor}; font-weight: ${dueStatusWeight};">
+                  ${dueStatusText}
                 </div>
               </div>
               <button class="btn-speaker" onclick="speakWordById('${w.id}')" title="Nghe phát âm" style="margin: 0;">
@@ -28331,6 +28629,9 @@ Yêu cầu nghiêm ngặt:
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+      if (typeof recordStudySessionWordReviews === 'function' && quizList) {
+        recordStudySessionWordReviews(quizList);
+      }
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -29774,6 +30075,10 @@ Yêu cầu nghiêm ngặt:
       openModal('modal-spelling-result');
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling'); } catch (e) {}
+      if (typeof recordStudySessionWordReviews === 'function' && spellingList) {
+        recordStudySessionWordReviews(spellingList);
+      }
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
@@ -31282,7 +31587,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           accuracy: floorRatePct
         });
       }
-      if (studySourceContext === 'review-queue' && typeof renderDailyReviewBanner === 'function') {
+      if (typeof recordStudySessionWordReviews === 'function' && speakingWordsList) {
+        recordStudySessionWordReviews(speakingWordsList);
+      } else if (studySourceContext === 'review-queue' && typeof renderDailyReviewBanner === 'function') {
         renderDailyReviewBanner();
       }
 
@@ -32432,6 +32739,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       stopAllAudio();
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
+      if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
+        recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
+      }
       try {
         if (studySourceContext === 'review-queue' || !currentDeckId) {
           showScreen('screen-decks');

@@ -1,4 +1,27 @@
 ================================================================================
+Phiên bản: v0.10.9-56 (Build 288) - Chu Kì Hàng Đợi Ôn Tập SRS & Đếm Ngược Ngày Ôn Tiếp Theo, Đánh Giá Khả Thi AI Phát Âm Wav2Vec2, Nâng Cấp Biểu Đồ & Thẻ Thống Kê 7 Ngày Chuẩn Realtime
+================================================================================
+1. [Chu Kì Hàng Đợi Ôn Tập SRS & Đếm Ngược Ngày Ôn Tiếp Theo (Review Queue Reset & Interval Engine)]:
+   - Khi hoàn thành buổi học hoặc ôn tập các từ quá hạn (SRS Review Queue) qua bất kỳ chế độ học tập nào (Quiz, Spelling, Speaking, Auto Flashcard):
+     + Hệ thống tự động ghi nhận mốc thời gian `lastReviewedAt = new Date().toISOString()`.
+     + Cập nhật đồng bộ vào kho từ vựng tổng thể `words`, lưu trữ cục bộ và đồng bộ lên Firebase Cloud Database.
+     + Tính toán lại chu kì ôn tập tiếp theo theo thuật toán ngắt quãng SRS (1 ngày -> 3 ngày -> 7 ngày -> 14 ngày -> 30 ngày).
+     + Tự động đưa các từ đã học ra khỏi danh sách cần ôn trong ngày hôm nay kèm chỉ số đếm ngược trực quan (`🌱 Đã ôn hôm nay (lần tới: X ngày)`).
+
+2. [Đánh Giá Khả Thi Tích Hợp AI Chấm Điểm Phát Âm Sâu (Wav2Vec2 Pronunciation Assessment)]:
+   - Nghiên cứu và hoàn thành báo cáo khả thi chuyên sâu về mô hình `moxeeeem/wav2vec2-finetuned-pronunciation-correction`:
+     + Đánh giá kích thước mô hình (90MB - 360MB) so với mục tiêu ứng dụng siêu nhẹ 3MB Offline-First Web PWA / Windows WebView2.
+     + Đề xuất kiến trúc Hybrid: Giữ vững Core Engine hiện tại (Gemini 2.0 Flash + Phonetic Confusion Set đa ngôn ngữ offline) làm mặc định mượt mà, sẵn sàng mở rộng tích hợp Hugging Face Serverless Inference API cho phân tích CTC Phoneme Alignment nâng cao.
+
+3. [Hoàn Thiện Giao Diện Biểu Đồ 7 Ngày & 3 Thẻ Thống Kê (7-Day Performance Combo Chart & Stat Cards)]:
+   - Sửa lỗi 3 dòng thống kê không đồng bộ CSS thành 3 thẻ chỉ số (Tổng Thời Gian, VoCoin Thu Được, Điểm Rèn Luyện) dạng lưới 3 cột hiện đại, sắc nét.
+   - Thêm tooltip tương tác chi tiết khi di chuột / nhấp chuột vào từng thẻ (chi tiết ngày học nhiều nhất, phân tích số phút, tổng xu, tỷ lệ tiến độ).
+   - Xóa bỏ triệt để dữ liệu mẫu giả lập (mock data) cho các ngày quá khứ chưa có hoạt động (giữ chuẩn 0 thay vì sinh số ngẫu nhiên).
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-56 Build 288)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe và đóng gói VocaFlow_v0.10.9-56_Windows_Portable.zip.
+
+================================================================================
 Phiên bản: v0.10.9-55 (Build 287) - Định Tuyến URL Đa Tầng Cho Toàn Bộ Modal & Màn Hình, Hệ Thống Sub-Links Hồ Sơ 2 Chiều (/me/mydeck, /me/stats, /me/achievements, /me/community, /me/sync, /me/followers, /me/following), Chuẩn Hóa Màn Hình Tổng Kết & Chỉ Số Học Tập (Quiz, Spelling, Speaking)
 ================================================================================
 1. [Định Tuyến URL Tức Thì Cho Toàn Bộ Modal & Màn Hình (Universal Modal & Screen SPA Routing)]:

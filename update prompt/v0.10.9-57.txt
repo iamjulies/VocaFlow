@@ -3,7 +3,7 @@ v0.10.9-57
 - gemini 3.7 flash: vocamentor ai, vocadeck ai, vocaspeaking ai (ai chấm speaking)
 - gemini 3.5 flashlite: vocafill ai (ai tự động điền từ), vocahint ai (ai gợi ý trong chế độ trắc nghiệm), vocaoption ai (ai tạo các phương án cho chế độ trắc nghiệm), vocacomment ai (ai tạo nhận xét ở chế độ trắc nghiệm và luyện viết, "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-10 232117.png")
 hiện tại t để ý vocautofill ai bị lỗi 
-2.
-3.
+2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 213647.png" là của API Key số 1, Total API Requests = 93; Success Rates = 3,19%; Total API Errors = 88 -> sửa (nếu được) và giải thích. còn 2 keys còn lại cũng tương tự
+3. lỗi: kh dùng được AI (gemini 3.5 flash ấy)
 
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

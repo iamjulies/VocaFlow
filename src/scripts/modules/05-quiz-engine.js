@@ -1807,6 +1807,9 @@ Yêu cầu nghiêm ngặt:
       playVocaSfx('fireworks', true);
       if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
       try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
+      if (typeof recordStudySessionWordReviews === 'function' && quizList) {
+        recordStudySessionWordReviews(quizList);
+      }
 
       const intensity = accuracyPct / 100;
       setTimeout(() => {
