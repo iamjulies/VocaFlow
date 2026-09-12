@@ -12,11 +12,43 @@
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-59)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
-    const GEMINI_MODELS_DEEP = ['gemini-2.0-flash', 'gemini-2.0-flash-001', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+    const GEMINI_MODELS_DEEP = [
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-2.5-flash-lite',
+      'gemini-2.0-flash-lite'
+    ];
     // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
-    const GEMINI_MODELS_FAST = ['gemini-2.0-flash-lite', 'gemini-2.0-flash-lite-preview-02-05', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+    const GEMINI_MODELS_FAST = [
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-2.5-flash-lite',
+      'gemini-2.0-flash-lite',
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash'
+    ];
     // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
-    const GEMINI_VISION_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+    const GEMINI_VISION_MODELS = [
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-2.5-flash-lite',
+      'gemini-2.0-flash-lite'
+    ];
 
     const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
     window.GEMINI_MODELS_DEEP = GEMINI_MODELS_DEEP;
@@ -48,7 +80,7 @@
     window.saveWorkingGeminiModel = saveWorkingGeminiModel;
 
     function purgeInvalidGeminiModelCache() {
-      const invalidKeywords = ['3.8', 'gemini-pro', '1.0-pro', '1.5-pro'];
+      const invalidKeywords = ['gemini-pro', '1.0-pro', '1.5-pro', 'text-bison', 'chat-bison'];
       ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
         const val = localStorage.getItem(k);
         if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {

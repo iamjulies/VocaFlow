@@ -1379,7 +1379,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         let evalSuccess = false;
         let evalData = null;

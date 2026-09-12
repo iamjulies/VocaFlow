@@ -1758,7 +1758,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
   ]
 }`;
 
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
 
       for (const m of models) {
         try {

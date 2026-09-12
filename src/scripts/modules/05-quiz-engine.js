@@ -287,7 +287,7 @@
         '4. ĐỊNH DẠNG TRẢ VỀ: DUY NHẤT một JSON Array chuỗi tiếng Việt chứa đúng ' + count + ' phương án:\n' +
         '[\"phương án bẫy 1\"' + (count > 1 ? ', \"phương án bẫy 2\"' : '') + (count > 2 ? ', \"phương án bẫy 3\"' : '') + ']';
 
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
 
       for (const k of keys) {
         for (const m of models) {
@@ -561,7 +561,7 @@
         const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
         if (single.trim()) keys.push(single.trim());
       }
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
 
       if (keys.length > 0) {
         const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
@@ -1450,7 +1450,7 @@ Yêu cầu nghiêm ngặt:
 
       try {
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [geminiApiKey];
-        const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+        const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
         const prompt = 'Từ vựng tiếng Anh: "' + questionWord.term + '". Nghĩa tiếng Việt: "' + (questionWord.definitionVi || questionWord.definition) + '".\nHãy viết 1 câu gợi ý ngữ cảnh siêu ngắn gọn (dưới 15 từ, bằng tiếng Việt) giúp Flower đoán được nghĩa mà TUYỆT ĐỐI KHÔNG chứa từ "' + (questionWord.definitionVi || questionWord.definition) + '" hay từ "' + questionWord.term + '".\nVí dụ từ "wicked": "Gợi ý: Thường miêu tả tính cách nhân vật phản diện trong truyện cổ tích."\nChỉ trả về DUY NHẤT 1 câu gợi ý đó.';
 
         for (const k of keys) {

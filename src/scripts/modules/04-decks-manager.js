@@ -3280,7 +3280,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         let rawResponseText = '';
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         let fetchSuccess = false;
         let lastErrorMsg = '';

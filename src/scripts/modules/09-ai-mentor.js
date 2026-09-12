@@ -262,7 +262,7 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử toàn bộ khóa...';
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
       const results = [];
       for (let i = 0; i < keys.length; i++) {
@@ -1137,7 +1137,7 @@
         }
 
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         const isSentence = targetText.trim().includes(' ');
         const promptInstruction = isSentence
@@ -1383,7 +1383,7 @@ Quy tắc phản hồi quan trọng:
         }
       });
 
-      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
       let fetchSuccess = false;
       let replyText = '';

@@ -897,7 +897,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
   "code": "S40"
 }`;
 
-            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
+            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemini-2.0-flash'];
             for (const vModel of visionModels) {
               try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${vModel}:generateContent?key=${apiKey}`, {
