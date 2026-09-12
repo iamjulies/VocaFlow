@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-51 Build 283)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-52 Build 284)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-51 Build 283)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-52 Build 284)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-51';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-51 (Build 283)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-52';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-52 (Build 284)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];

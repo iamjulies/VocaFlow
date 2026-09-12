@@ -1,41 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-51 (Build 283)`  
+> **Phiên bản mục tiêu:** `v0.10.9-52 (Build 284)`  
 > **Cập nhật lần cuối:** 2026-09-12  
 > **Trạng thái:** 🚀 **ĐANG KIỂM THỬ XUẤT BẢN & ĐỒNG BỘ GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-51 Build 283)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-52 Build 284)
 
-- [x] **Bổ Sung Chân Trang Mini Footer & Tối Giản Logo Header**:
-  - Tích hợp Chân trang Mini Footer (`vocaflow-mini-footer`) đồng bộ tại Trang chủ (`screen-decks.html`) và Chi tiết bộ từ (`screen-deck-detail.html`).
-  - Hiển thị đầy đủ: Bản quyền `© 2026 VocaFlow by iamjulies`, Nhãn phiên bản `v0.10.9-51 (Build 283)`, Nút `🐞 Báo Lỗi` (mở modal báo cáo sự cố) và Liên kết `💬 Liên hệ (Facebook)` dẫn thẳng tới `https://www.facebook.com/iamjulies.artist`.
-  - Bỏ huy hiệu phiên bản cạnh logo thương hiệu VocaFlow trên Header giúp logo tinh tế và gọn gàng.
+- [x] **Mở Rộng Deep Linking Toàn Diện & Tự Động Điền Mã Giới Thiệu**:
+  - Hỗ trợ định tuyến liên kết trực tiếp:
+    + Giới Thiệu Bạn Bè - Nhận VocaVIP Hoàng Gia: `/invite` hoặc `/invite/@<username>/<mã giới thiệu>` hoặc `/invite/<mã giới thiệu>`.
+    + Video Giới Thiệu & Nhận Thưởng (+1 VocaSpin): `/ads` (hoặc `/ad`, `/rewarded-ad`).
+    + Ánh xạ bài viết trực tiếp: `/@<username>/post/<postId>` và `/community/post/<postId>`.
+  - Khi truy cập link giới thiệu có mã, ứng dụng tự động mở Modal Giới Thiệu và điền sẵn mã giới thiệu vào ô input, tân thủ chỉ cần 1 cú nhấp "Nhận Quà" để nhận ngay phần thưởng tân thủ.
 
-- [x] **Bổ Sung Tab "💬 Cộng Đồng" Khi Soi Hồ Sơ Người Dùng Khác (Public Profile Community Tab)**:
-  - Bổ sung nút tab `💬 Cộng Đồng` và Tab Panel hiển thị bài viết cộng đồng của tác giả trong `modal-public-profile.html`.
-  - Lọc và hiển thị toàn bộ bài viết, chiến tích, hình ảnh và danh hiệu đính kèm của người dùng tương ứng trên VocaCommunity.
-  - Khi tác giả chưa đăng bài, hiển thị giao diện thông báo trạng thái trống lịch thiệp: `📭 [Tên Flower] chưa đăng bài viết nào trên VocaCommunity.`
+- [x] **Chuẩn Hóa Link Mời Bạn Bè Định Dạng Cá Nhân Hóa**:
+  - Nâng cấp link tạo ra trong Modal Giới Thiệu Bạn Bè (`modal-referral`):
+    + Định dạng: `https://iamjulies.github.io/VocaFlow/invite/@<username>/<mã giới thiệu>` (hoặc `/invite/<mã giới thiệu>` nếu chưa đặt username).
+    + Đồng bộ cập nhật cả ô input hiển thị và hàm sao chép link `copyMyReferralLink()`.
 
-- [x] **Hệ Thống Đường Dẫn Trực Tiếp Deep Linking & Xác Thực Bảo Mật Cổng Quản Trị Dev**:
-  - Mở rộng bộ định tuyến SPA (`01-router.js`) hỗ trợ truy cập trực tiếp các đường link tĩnh tiện lợi (`/vocavip`, `/flowtreak`, `/notifications`, `/vocamail`, `/report`, `/queue`, `/vocalib`, `/vocadeckai`).
-  - Cổng Quản Trị Developer (`/dev`): Tích hợp cổng kiểm tra bảo mật (Passcode Gate), yêu cầu nhập đúng mật khẩu xác thực developer (`/gamemode creative`, `/gamemode 1`, `/gamemode c`...) trước khi cho phép mở Cổng Quản Trị Publisher Portal.
+- [x] **Đồng Bộ Hóa Avatar Tác Giả Thời Gian Thực Trên Toàn Bộ Bài Viết (Avatar Sync Fix)**:
+  - Xây dựng cơ chế giải quyết avatar động `getCommunityAuthorAvatar(post)`: Đảm bảo bài viết luôn ưu tiên lấy avatar mới nhất của tác giả (từ `currentUser`, `adminStudentsData` hoặc cache hồ sơ) thay vì giữ cứng chuỗi avatar tĩnh lúc tạo bài.
+  - Thêm cơ chế Cascade Update: Khi người dùng đổi ảnh đại diện mới trong phần Hồ sơ cá nhân, hệ thống tự động cập nhật avatar mới cho tất cả các bài viết mà người dùng đã đăng trên Firebase RTDB `/community_posts`.
 
-- [x] **Gom Gọn Nút Header Vào Menu 3 Chấm Cho Mọi Kích Thước Màn Hình**:
-  - Tinh gọn thanh điều hướng Header: Gom các nút VocaVIP, Hướng dẫn, Cài đặt ứng dụng, Sao lưu (.json), Đồng bộ Cloud vào trong nút 3 chấm `#header-more-dropdown`.
-  - Nút 3 chấm luôn hiển thị linh hoạt trên cả màn hình máy tính (Desktop) và điện thoại (Mobile).
+- [x] **Hoàn Thiện Tương Tác Like, Bình Luận & Độ Trung Thực Đa Phương Tiện Trong Public Profile**:
+  - Sửa lỗi tương tác: Gắn đúng hàm `togglePostLike()` và bổ sung hệ thống bình luận có thể đóng/mở (`togglePubPostCommentsSection()`), cho phép người xem thả tim, đọc bình luận, trả lời bình luận và đăng bình luận mới ngay trong tab Cộng Đồng của Hồ Sơ Công Khai.
+  - Hiển thị đầy đủ hình ảnh đính kèm (`post.image || post.imageUrl`), danh hiệu thành tích (`post.badge`), thẻ từ vựng và nút Chỉnh sửa/Xóa (nếu xem bài của chính mình).
+  - Nút Chia Sẻ bài viết sinh URL định dạng chuẩn `/@<username>/post/<postId>`, giúp người nhận điều hướng chính xác đến bài viết với hiệu ứng cuộn mượt và highlight nổi bật.
 
-- [x] **Loại Bỏ Vòng Tròn Đỏ / Gradient Quanh Avatar Hồ Sơ Công Khai**:
-  - Xóa bỏ viền đỏ Instagram gradient xung quanh ảnh đại diện trong `modal-public-profile.html` và `app.css`.
-  - Tăng kích thước ảnh đại diện lên 96px sắc nét, hiển thị trọn vẹn, viền kính mờ tinh tế và đồng bộ.
-
-- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-51 Build 283)**:
-  - `src/components/header.html` (`v0.10.9-51`)
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-51 (Build 283)`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-51'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-51 (Build 283)'`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.9-51`)
-  - `pubspec.yaml` (`version: 0.10.9+283`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-51`)
-  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-51_Windows_Portable.zip`, commit `v0.10.9-51`)
-  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-51 (Build 283)`)
+- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-52 Build 284)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-52 (Build 284)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.9-52 (Build 284)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.9-52 (Build 284)`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-52'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-52 (Build 284)'`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.9-52`)
+  - `pubspec.yaml` (`version: 0.10.9+284`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-52`)
+  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-52_Windows_Portable.zip`, commit `v0.10.9-52`)
+  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-52 (Build 284)`)

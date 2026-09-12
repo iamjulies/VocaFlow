@@ -1,4 +1,31 @@
 ================================================================================
+Phiên bản: v0.10.9-52 (Build 284) - Mở Rộng Deep Linking (/invite & /ads), Chuẩn Hóa Link Giới Thiệu Cá Nhân Hóa, Đồng Bộ Avatar Toàn Diện, Hoàn Thiện Tương Tác & Ánh Xạ Bài Viết Public Profile
+================================================================================
+1. [Mở Rộng Deep Linking Toàn Diện & Tự Động Điền Mã Giới Thiệu]:
+   - Hỗ trợ định tuyến liên kết trực tiếp tiện lợi:
+     + Giới Thiệu Bạn Bè - Nhận VocaVIP Hoàng Gia: `/invite` hoặc `/invite/@<username>/<mã giới thiệu>` hoặc `/invite/<mã giới thiệu>`.
+     + Video Giới Thiệu & Nhận Thưởng (+1 VocaSpin): `/ads` (hoặc `/ad`, `/rewarded-ad`).
+     + Ánh xạ bài viết trực tiếp: `/@<username>/post/<postId>` và `/community/post/<postId>`.
+   - Khi truy cập link giới thiệu có mã, ứng dụng tự động mở Modal Giới Thiệu và điền sẵn mã giới thiệu vào ô input, tân thủ chỉ cần 1 cú nhấp "Nhận Quà" để nhận ngay phần thưởng tân thủ.
+
+2. [Chuẩn Hóa Link Mời Bạn Bè Định Dạng Cá Nhân Hóa]:
+   - Nâng cấp link tạo ra trong Modal Giới Thiệu Bạn Bè (`modal-referral`):
+     + Định dạng: `https://iamjulies.github.io/VocaFlow/invite/@<username>/<mã giới thiệu>` (hoặc `/invite/<mã giới thiệu>` nếu chưa đặt username).
+     + Đồng bộ cập nhật cả ô input hiển thị và hàm sao chép link `copyMyReferralLink()`.
+
+3. [Đồng Bộ Hóa Avatar Tác Giả Thời Gian Thực Trên Toàn Bộ Bài Viết (Avatar Sync Fix)]:
+   - Xây dựng cơ chế giải quyết avatar động `getCommunityAuthorAvatar(post)`: Đảm bảo bài viết luôn ưu tiên lấy avatar mới nhất của tác giả (từ `currentUser`, `adminStudentsData` hoặc cache hồ sơ) thay vì giữ cứng chuỗi avatar tĩnh lúc tạo bài.
+   - Thêm cơ chế Cascade Update: Khi người dùng đổi ảnh đại diện mới trong phần Hồ sơ cá nhân, hệ thống tự động cập nhật avatar mới cho tất cả các bài viết mà người dùng đã đăng trên Firebase RTDB `/community_posts`.
+
+4. [Hoàn Thiện Tương Tác Like, Bình Luận & Độ Trung Thực Đa Phương Tiện Trong Public Profile]:
+   - Sửa lỗi tương tác: Gắn đúng hàm `togglePostLike()` và bổ sung hệ thống bình luận có thể đóng/mở (`togglePubPostCommentsSection()`), cho phép người xem thả tim, đọc bình luận, trả lời bình luận và đăng bình luận mới ngay trong tab Cộng Đồng của Hồ Sơ Công Khai.
+   - Hiển thị đầy đủ hình ảnh đính kèm (`post.image || post.imageUrl`), danh hiệu thành tích (`post.badge`), thẻ từ vựng và nút Chỉnh sửa/Xóa (nếu xem bài của chính mình).
+   - Nút Chia Sẻ bài viết sinh URL định dạng chuẩn `/@<username>/post/<postId>`, giúp người nhận điều hướng chính xác đến bài viết với hiệu ứng cuộn mượt và highlight nổi bật.
+
+5. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-52 Build 284)]:
+   - Hoàn tất đồng bộ 7 điểm chuẩn hóa phiên bản trên toàn bộ hệ thống file.
+
+================================================================================
 Phiên bản: v0.10.9-51 (Build 283) - Bổ Sung Chân Trang Mini Footer, Tab Cộng Đồng Hồ Sơ Công Khai, Hệ Thống Deep Linking Toàn Diện, Gom Nút Header Vào Menu 3 Chấm & Xóa Vòng Tròn Đỏ Avatar
 ================================================================================
 1. [Bổ Sung Chân Trang Mini Footer & Tối Giản Logo Header]:

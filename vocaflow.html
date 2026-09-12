@@ -3897,7 +3897,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-51 (Build 283)</span>
+            <span class="mini-footer-version">v0.10.9-52 (Build 284)</span>
           </div>
           <div class="mini-footer-right">
             <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
@@ -4092,7 +4092,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-51 (Build 283)</span>
+            <span class="mini-footer-version">v0.10.9-52 (Build 284)</span>
           </div>
           <div class="mini-footer-right">
             <button type="button" class="mini-footer-btn" onclick="openBugReportModal()">
@@ -8988,7 +8988,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-51 (Build 283)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-52 (Build 284)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -9731,7 +9731,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-48)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-52)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -9772,27 +9772,43 @@ function resolveRouteFromUrl() {
   const l = window.location;
   const searchParams = new URLSearchParams(l.search);
 
-  // 1. Check GitHub Pages 404 SPA redirect param ?p=...
+  // 1. Check referral code param ?ref=... / ?invite=...
+  const refParam = searchParams.get('ref') || searchParams.get('invite');
+  if (refParam) {
+    const cleanRef = refParam.trim().toUpperCase();
+    if (cleanRef) sessionStorage.setItem('vocaflow_pending_ref_code', cleanRef);
+  }
+
+  // 2. Check GitHub Pages 404 SPA redirect param ?p=...
   const pParam = searchParams.get('p');
   if (pParam) {
     let decoded = decodeURIComponent(pParam);
     return decoded.split('?')[0].trim();
   }
 
-  // 2. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
+  // 3. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
   const userParam = searchParams.get('user') || searchParams.get('u') || searchParams.get('profile');
+  const postParam = searchParams.get('post') || searchParams.get('p_id');
   if (userParam) {
     const cleanUser = userParam.replace(/^@+/, '').split('?')[0].replace(/\/+$/, '').trim();
+    if (postParam) {
+      return `/@${cleanUser}/post/${postParam.trim()}`;
+    }
     return cleanUser ? '/@' + cleanUser : '';
   }
 
-  // 3. Check direct pathname
+  if (postParam) {
+    return `/community/post/${postParam.trim()}`;
+  }
+
+  // 4. Check direct pathname
   const basePath = getAppBasePath();
   let path = l.pathname;
   if (basePath && path.startsWith(basePath)) {
     path = path.slice(basePath.length);
   }
   if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
+    if (refParam) return `/invite/${refParam.trim().toUpperCase()}`;
     return '/homepage';
   }
   return path.split('?')[0].trim();
@@ -9808,7 +9824,64 @@ function navigateToRoute(route, isPopState = false) {
     if (clean.startsWith('/')) clean = clean.slice(1);
     clean = clean.split('?')[0].split('#')[0].replace(/\/+$/, '').trim();
 
-    // Handle @username or user/@username or u/username
+    // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId
+    if (clean.includes('/post/')) {
+      const parts = clean.split('/post/');
+      const authorPart = parts[0].replace(/^(user\/@?|u\/|@+)/, '').trim();
+      const postId = (parts[1] || '').trim();
+
+      if (authorPart && authorPart !== 'community') {
+        // Open user public profile on community tab and highlight post
+        if (typeof openPublicProfileModal === 'function') {
+          openPublicProfileModal('@' + authorPart, '', authorPart);
+        } else if (typeof openPublicProfileByAuthor === 'function') {
+          openPublicProfileByAuthor('@' + authorPart, '', authorPart);
+        }
+        setTimeout(() => {
+          if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community');
+          if (postId && typeof highlightAndScrollToPost === 'function') {
+            highlightAndScrollToPost(postId, true);
+          }
+        }, 300);
+        return;
+      } else if (postId) {
+        // Open main community feed, expand comments and highlight post
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        setTimeout(() => {
+          if (typeof togglePostCommentsSection === 'function') {
+            communityActiveCommentsPostId = postId;
+            if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+          }
+          if (typeof highlightAndScrollToPost === 'function') {
+            highlightAndScrollToPost(postId, false);
+          }
+        }, 300);
+        return;
+      }
+    }
+
+    // 2. Handle /invite/@username/code or /invite/code or /referral/...
+    if (clean.startsWith('invite') || clean.startsWith('referral')) {
+      const parts = clean.split('/').filter(Boolean);
+      let refCode = '';
+      if (parts.length >= 3) {
+        // invite/@username/code
+        refCode = parts[2].trim().toUpperCase();
+      } else if (parts.length === 2) {
+        // invite/code or invite/@username
+        const seg = parts[1].trim();
+        if (!seg.startsWith('@')) {
+          refCode = seg.toUpperCase();
+        }
+      }
+      if (refCode) {
+        sessionStorage.setItem('vocaflow_pending_ref_code', refCode);
+      }
+      if (typeof openReferralModal === 'function') openReferralModal();
+      return;
+    }
+
+    // 3. Handle @username or user/@username or u/username
     if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
       let handle = clean.replace(/^(user\/@?|u\/|@+)/, '').trim();
       handle = handle.replace(/^@+/, '').trim();
@@ -9829,7 +9902,6 @@ function navigateToRoute(route, isPopState = false) {
       case 'decks':
       case 'home':
         if (typeof showScreen === 'function') showScreen('screen-decks');
-        // Close modal overlays if open
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
         break;
 
@@ -9877,6 +9949,13 @@ function navigateToRoute(route, isPopState = false) {
       case 'bug':
       case 'feedback':
         if (typeof openBugReportModal === 'function') openBugReportModal();
+        break;
+
+      case 'ads':
+      case 'ad':
+      case 'rewarded-ad':
+      case 'video-ads':
+        if (typeof openRewardedAdModal === 'function') openRewardedAdModal();
         break;
 
       case 'queue':
@@ -10011,15 +10090,16 @@ function initSpaRouter() {
 }
 window.initSpaRouter = initSpaRouter;
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-51 Build 283)
+
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-52 Build 284)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-51 Build 283)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-52 Build 284)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-51';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-51 (Build 283)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-52';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-52 (Build 284)';
 
     // Standard verified Google Gemini API model fallback tiers (Eliminating 404s)
     const GEMINI_STANDARD_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
@@ -13401,6 +13481,21 @@ window.initSpaRouter = initSpaRouter;
               }).catch(() => {});
             }
           });
+        }
+
+        // Cascade update avatar in communityPosts (v0.10.9-52)
+        if (Array.isArray(communityPosts)) {
+          communityPosts.forEach(p => {
+            if (p && p.authorUid === currentUser.uid) {
+              p.authorAvatar = avatarDataUrl || '';
+              fetch(rtdbUrl + '/community_posts/' + p.id + '/authorAvatar.json' + authParam, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(avatarDataUrl || '')
+              }).catch(() => {});
+            }
+          });
+          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
         }
 
         pushCurrentDatabaseToCloud();
@@ -18297,6 +18392,46 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityFeed = filterCommunityFeed;
 
+    // Global state for comments and avatar resolution (v0.10.9-52)
+    let pubCommunityActiveCommentsPostId = null;
+    let pubCommunityReplyingToComment = null;
+
+    function getCommunityAuthorAvatar(post) {
+      if (!post) return '👤';
+      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
+        const liveAvt = (typeof getUserAvatar === 'function' ? getUserAvatar() : null) || currentUser.avatar || currentUser.photoURL;
+        if (liveAvt) return liveAvt;
+      }
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
+        const student = adminStudentsData.find(s => s.uid === post.authorUid);
+        if (student && (student.avatar || student.avatarUrl || student.photoURL)) {
+          return student.avatar || student.avatarUrl || student.photoURL;
+        }
+      }
+      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === post.authorUid) {
+        if (currentPublicProfileAuthor.resolvedAvatar) return currentPublicProfileAuthor.resolvedAvatar;
+      }
+      return post.authorAvatar || post.authorName || '👤';
+    }
+    window.getCommunityAuthorAvatar = getCommunityAuthorAvatar;
+
+    function highlightAndScrollToPost(postId, isPublicProfile = false) {
+      setTimeout(() => {
+        const targetId = isPublicProfile ? `pub-post-card-${postId}` : `post-card-${postId}`;
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.transition = 'all 0.5s ease';
+        el.style.borderColor = '#6366f1';
+        el.style.boxShadow = '0 0 24px rgba(99, 102, 241, 0.6)';
+        setTimeout(() => {
+          el.style.borderColor = 'var(--border)';
+          el.style.boxShadow = '0 4px 14px rgba(0,0,0,0.06)';
+        }, 3500);
+      }, 350);
+    }
+    window.highlightAndScrollToPost = highlightAndScrollToPost;
+
     function renderCommunityFeed() {
       const container = document.getElementById('community-posts-container');
       if (!container) return;
@@ -18332,6 +18467,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsCount = commentsList.length;
 
         const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const authorAvatar = getCommunityAuthorAvatar(post);
 
         html += `
           <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -18339,7 +18475,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(post.authorName)}', '', '${post.authorUid}')">
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                  ${renderAvatarHtml(post.authorAvatar || post.authorName, 40, 16)}
+                  ${renderAvatarHtml(authorAvatar, 40, 16)}
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
@@ -18375,16 +18511,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               <div style="margin-bottom: 10px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.15)); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 26px;">${post.badge.icon || '🏆'}</span>
                 <div>
-                  <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">${escapeHtml(post.badge.name)}</div>
+                  <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">${escapeHtml(post.badge.name || post.badge.title || 'Danh Hiệu VocaFlow')}</div>
                   <div style="font-size: 11.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || '')}</div>
                 </div>
               </div>
             ` : ''}
 
             <!-- ATTACHED IMAGE -->
-            ${post.image ? `
+            ${(post.image || post.imageUrl) ? `
               <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
-                <img src="${post.image}" alt="Post image" style="width: 100%; height: auto; max-height: 320px; object-fit: contain; display: block;">
+                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Post image" style="width: 100%; height: auto; max-height: 320px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
               </div>
             ` : ''}
 
@@ -18451,6 +18587,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       container.innerHTML = html;
     }
+    window.renderCommunityFeed = renderCommunityFeed;
 
     async function togglePostLike(postId) {
       if (isGuest()) {
@@ -18500,11 +18637,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
         renderCommunityFeed();
+        if (typeof renderPubProfileCommunityPosts === 'function') {
+          renderPubProfileCommunityPosts();
+        }
       } catch (err) {
         console.warn('Like toggle sync error:', err);
       }
     }
     window.togglePostLike = togglePostLike;
+    window.toggleLikeCommunityPost = togglePostLike;
 
     function togglePostCommentsSection(postId) {
       communityActiveCommentsPostId = (communityActiveCommentsPostId === postId) ? null : postId;
@@ -18540,13 +18681,47 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.cancelReplyingToComment = cancelReplyingToComment;
 
+    function togglePubPostCommentsSection(postId) {
+      pubCommunityActiveCommentsPostId = (pubCommunityActiveCommentsPostId === postId) ? null : postId;
+      renderPubProfileCommunityPosts();
+      if (pubCommunityActiveCommentsPostId === postId) {
+        setTimeout(() => {
+          document.getElementById(`pub-post-comment-input-${postId}`)?.focus();
+        }, 100);
+      }
+    }
+    window.togglePubPostCommentsSection = togglePubPostCommentsSection;
+
+    function setPubReplyingToComment(postId, commentId, authorHandle) {
+      pubCommunityReplyingToComment = { postId, commentId, authorHandle };
+      const ind = document.getElementById(`pub-reply-indicator-${postId}`);
+      const txt = document.getElementById(`pub-reply-indicator-text-${postId}`);
+      const inp = document.getElementById(`pub-post-comment-input-${postId}`);
+      if (ind) ind.style.display = 'flex';
+      if (txt) txt.textContent = `Đang trả lời @${authorHandle}`;
+      if (inp) {
+        inp.value = `@${authorHandle} `;
+        inp.focus();
+      }
+    }
+    window.setPubReplyingToComment = setPubReplyingToComment;
+
+    function cancelPubReplyingToComment(postId) {
+      pubCommunityReplyingToComment = null;
+      const ind = document.getElementById(`pub-reply-indicator-${postId}`);
+      if (ind) ind.style.display = 'none';
+      const inp = document.getElementById(`pub-post-comment-input-${postId}`);
+      if (inp) inp.value = '';
+    }
+    window.cancelPubReplyingToComment = cancelPubReplyingToComment;
+
     async function submitPostComment(postId) {
       if (isGuest()) {
         alert('🔒 Vui lòng đăng nhập để bình luận!');
         openAuthModal('login');
         return;
       }
-      const inp = document.getElementById(`post-comment-input-${postId}`);
+      const inp = document.getElementById(`post-comment-input-${postId}`) || document.getElementById(`pub-post-comment-input-${postId}`);
       const text = (inp?.value || '').trim();
       if (!text) return;
 
@@ -18555,8 +18730,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!post.comments) post.comments = {};
 
       const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-      const replyHandle = communityReplyingToComment?.postId === postId ? communityReplyingToComment.authorHandle : null;
-      const replyCommentId = communityReplyingToComment?.postId === postId ? communityReplyingToComment.commentId : null;
+      const replyHandle = communityReplyingToComment?.postId === postId ? communityReplyingToComment.authorHandle : (pubCommunityReplyingToComment?.postId === postId ? pubCommunityReplyingToComment.authorHandle : null);
+      const replyCommentId = communityReplyingToComment?.postId === postId ? communityReplyingToComment.commentId : (pubCommunityReplyingToComment?.postId === postId ? pubCommunityReplyingToComment.commentId : null);
 
       const commentObj = {
         id: commentId,
@@ -18573,7 +18748,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       post.comments[commentId] = commentObj;
       if (inp) inp.value = '';
       cancelReplyingToComment(postId);
+      cancelPubReplyingToComment(postId);
       renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') {
+        renderPubProfileCommunityPosts();
+      }
 
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -18616,6 +18795,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       post.content = newText.trim();
       post.updatedAt = new Date().toISOString();
       renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
 
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -18641,6 +18821,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       communityPosts = communityPosts.filter(p => p.id !== postId);
       renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
 
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -18658,7 +18839,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function shareCommunityPost(postId) {
       const post = communityPosts.find(p => p.id === postId);
       if (!post) return;
-      const url = getStandardProfileUrl(post.authorHandle) + `&post=${postId}`;
+      const handle = (post.authorHandle || 'user').replace(/^@/, '').trim();
+      let baseUrl = 'https://iamjulies.github.io/VocaFlow';
+      try {
+        if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) {
+          baseUrl = window.location.origin + (typeof getAppBasePath === 'function' ? getAppBasePath() : (window.location.pathname.includes('/VocaFlow') ? '/VocaFlow' : ''));
+          baseUrl = baseUrl.replace(/\/+$/, '');
+        }
+      } catch (e) {}
+      const url = `${baseUrl}/@${handle}/post/${postId}`;
       navigator.clipboard.writeText(url).then(() => {
         showToast('🔗 Đã sao chép liên kết bài viết vào bộ nhớ tạm!');
       }).catch(() => {
@@ -18758,63 +18947,110 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const commentsCount = commentsList.length;
 
         const timeAgo = formatTimeAgo(new Date(post.createdAt || Date.now()));
+        const authorAvatar = getCommunityAuthorAvatar(post);
 
         html += `
-          <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 10px;">
+          <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
             <!-- AUTHOR HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                  ${renderAvatarHtml(post.authorAvatar || post.authorName, 38, 16)}
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                  ${renderAvatarHtml(authorAvatar, 40, 16)}
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
+                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(post.authorName)}</strong>
                     ${post.isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                   </div>
-                  <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                  <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                     <span>@${escapeHtml((post.authorHandle || post.authorName || '').replace(/^@/, ''))}</span>
                     <span>•</span>
                     <span>${timeAgo}</span>
                   </div>
                 </div>
               </div>
+
+              <!-- AUTHOR ACTION MENU -->
+              ${isAuthor ? `
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPost('${post.id}')" title="Chỉnh sửa bài viết" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                  <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
+                </div>
+              ` : ''}
             </div>
 
             <!-- POST CONTENT -->
-            <div style="font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+            ${post.content ? `
+              <div id="pub-post-content-text-${post.id}" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; white-space: pre-wrap; word-break: break-word;">${escapeHtml(post.content || '')}</div>
+            ` : ''}
 
             <!-- ATTACHED BADGE BRAG -->
             ${post.badge ? `
               <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 6px 12px; margin-bottom: 10px;">
                 <span style="font-size: 20px;">${post.badge.icon || '🏅'}</span>
                 <div>
-                  <div style="font-size: 12px; font-weight: 700; color: #fbbf24;">${escapeHtml(post.badge.title || 'Danh Hiệu VocaFlow')}</div>
+                  <div style="font-size: 12px; font-weight: 700; color: #fbbf24;">${escapeHtml(post.badge.title || post.badge.name || 'Danh Hiệu VocaFlow')}</div>
                   <div style="font-size: 10.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || 'Thành tích đạt được trong quá trình học tập')}</div>
                 </div>
               </div>
             ` : ''}
 
             <!-- ATTACHED IMAGE -->
-            ${post.imageUrl ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; max-height: 320px; background: #000;">
-                <img src="${escapeHtml(post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
+            ${(post.image || post.imageUrl) ? `
+              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 320px; background: #000;">
+                <img src="${escapeHtml(post.image || post.imageUrl)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 320px; display: block;" onerror="this.parentElement.style.display='none';">
               </div>
             ` : ''}
 
             <!-- INTERACTIONS ROW -->
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; font-size: 12px;">
-              <div style="display: flex; gap: 14px; align-items: center;">
-                <button type="button" class="btn-like-post" onclick="toggleLikeCommunityPost('${post.id}')" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; color: ${isLiked ? '#ef4444' : 'var(--text-muted)'}; font-size: 12.5px; font-weight: 700; padding: 4px 6px; border-radius: 6px;">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button type="button" class="btn btn-xs ${isLiked ? 'btn-primary' : 'btn-outline'}" onclick="togglePostLike('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px; ${isLiked ? 'background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.5);' : ''}">
                   <span>${isLiked ? '❤️' : '🤍'}</span> <span>${likesCount}</span>
                 </button>
-                <div style="display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 12px;">
+                <button type="button" class="btn btn-xs btn-outline" onclick="togglePubPostCommentsSection('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
                   <span>💬</span> <span>${commentsCount} bình luận</span>
-                </div>
+                </button>
               </div>
               <button type="button" class="btn btn-outline btn-xs" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ bài viết" style="font-size: 11px; padding: 3px 8px;">
                 <span>🔗</span> Chia Sẻ
               </button>
+            </div>
+
+            <!-- COMMENTS SECTION (Collapsible) -->
+            <div id="pub-post-comments-section-${post.id}" style="display: ${pubCommunityActiveCommentsPostId === post.id ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+              
+              <!-- COMMENTS LIST -->
+              <div id="pub-post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                ${commentsList.length === 0 ? `
+                  <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
+                ` : commentsList.map(c => `
+                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.authorName)}', '', '${c.authorUid}')">
+                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(c.authorHandle || 'user')}</strong>
+                        <span style="font-size: 10.5px; color: var(--text-muted);">${formatTimeAgo(new Date(c.timestamp || Date.now()))}</span>
+                      </div>
+                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(c.authorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                    </div>
+                    ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
+                    <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- COMMENT INPUT -->
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div id="pub-reply-indicator-${post.id}" style="display: none; font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 3px 8px; border-radius: 6px; justify-content: space-between; align-items: center;">
+                  <span id="pub-reply-indicator-text-${post.id}">Đang trả lời @user</span>
+                  <button type="button" onclick="cancelPubReplyingToComment('${post.id}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <input type="text" id="pub-post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitPostComment('${post.id}')">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="submitPostComment('${post.id}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
+                </div>
+              </div>
+
             </div>
           </div>
         `;
@@ -31669,7 +31905,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const inputCode = document.getElementById('ref-input-code');
 
       if (codeDisplay) codeDisplay.textContent = myCode;
-      if (linkInput) linkInput.value = `https://iamjulies.github.io/VocaFlow/?ref=${myCode}`;
+      const cleanRefLink = getMyReferralCleanLink();
+      if (linkInput) linkInput.value = cleanRefLink;
 
       // Check if user has already claimed a referrer
       const claimedReferrer = localStorage.getItem('vocaflow_referred_by') || (currentUser && currentUser.referredBy) || '';
@@ -31684,8 +31921,12 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (statusMsg) statusMsg.style.display = 'none';
         // Auto-fill pending ref code if present from URL
         const pendingRef = sessionStorage.getItem('vocaflow_pending_ref_code') || '';
-        if (pendingRef && inputCode && !inputCode.value) {
+        if (pendingRef && inputCode) {
           inputCode.value = pendingRef;
+          setTimeout(() => {
+            inputCode.style.borderColor = '#10b981';
+            inputCode.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.4)';
+          }, 150);
         }
       }
 
@@ -31807,6 +32048,22 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
     }
 
+    function getMyReferralCleanLink() {
+      const code = getUserReferralCode(currentUser);
+      if (!code || code === 'GUEST') return 'https://iamjulies.github.io/VocaFlow/invite';
+      const myHandle = (currentUser && (currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : '')) || '').replace(/^@+/, '').trim();
+      const cleanHandle = myHandle || (currentUser && currentUser.displayName ? currentUser.displayName.replace(/\s+/g, '').toLowerCase() : '');
+      let baseUrl = 'https://iamjulies.github.io/VocaFlow';
+      try {
+        if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) {
+          baseUrl = window.location.origin + (typeof getAppBasePath === 'function' ? getAppBasePath() : (window.location.pathname.includes('/VocaFlow') ? '/VocaFlow' : ''));
+          baseUrl = baseUrl.replace(/\/+$/, '');
+        }
+      } catch (e) {}
+      return cleanHandle ? `${baseUrl}/invite/@${cleanHandle}/${code}` : `${baseUrl}/invite/${code}`;
+    }
+    window.getMyReferralCleanLink = getMyReferralCleanLink;
+
     function copyMyReferralCode() {
       const code = getUserReferralCode(currentUser);
       if (!code || code === 'GUEST') return;
@@ -31820,7 +32077,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function copyMyReferralLink() {
       const code = getUserReferralCode(currentUser);
       if (!code || code === 'GUEST') return;
-      const link = `https://iamjulies.github.io/VocaFlow/?ref=${code}`;
+      const link = getMyReferralCleanLink();
       navigator.clipboard.writeText(link).then(() => {
         showToast('🔗 Đã sao chép link mời bạn bè!');
       }).catch(() => {

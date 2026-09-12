@@ -1,0 +1,7 @@
+v0.10.9-53
+1. khi nhấn sửa bài đăng thì chỉ sửa được văn bản mà kh sửa được mọi thứ -> t muốn sửa đc cả ảnh/huy hiệu đính kèm nữa
+2. thời gian đăng vẫn chưa được ghi đúng trên bài đăng thì phải -> t muốn đúng giống kiểu facebook ấy
+3. khi sửa/viết văn bản cho bài đăng thì t muốn nó có đủ công cụ tinh chỉnh ấy, ví dụ như đổi font, đổi cỡ, đổi màu, căn lề,.... có làm đc kh? (có gây nổ bộ nhớ kh?)
+4. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181149.png" ở pub prf kh nhấn tim hay nhấn comment được và cũng kh nhấn vào xem ảnh được (ý là muốn nhấn vào để xem để zoom chẳng hạn, hoặc lưu về.. bla bla)
+5. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181855.png" mấy cái chỉ số ở pub prf chưa chuẩn lắm thì phải
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

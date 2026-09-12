@@ -1445,7 +1445,8 @@
       const inputCode = document.getElementById('ref-input-code');
 
       if (codeDisplay) codeDisplay.textContent = myCode;
-      if (linkInput) linkInput.value = `https://iamjulies.github.io/VocaFlow/?ref=${myCode}`;
+      const cleanRefLink = getMyReferralCleanLink();
+      if (linkInput) linkInput.value = cleanRefLink;
 
       // Check if user has already claimed a referrer
       const claimedReferrer = localStorage.getItem('vocaflow_referred_by') || (currentUser && currentUser.referredBy) || '';
@@ -1460,8 +1461,12 @@
         if (statusMsg) statusMsg.style.display = 'none';
         // Auto-fill pending ref code if present from URL
         const pendingRef = sessionStorage.getItem('vocaflow_pending_ref_code') || '';
-        if (pendingRef && inputCode && !inputCode.value) {
+        if (pendingRef && inputCode) {
           inputCode.value = pendingRef;
+          setTimeout(() => {
+            inputCode.style.borderColor = '#10b981';
+            inputCode.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.4)';
+          }, 150);
         }
       }
 
@@ -1583,6 +1588,22 @@
       }
     }
 
+    function getMyReferralCleanLink() {
+      const code = getUserReferralCode(currentUser);
+      if (!code || code === 'GUEST') return 'https://iamjulies.github.io/VocaFlow/invite';
+      const myHandle = (currentUser && (currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : '')) || '').replace(/^@+/, '').trim();
+      const cleanHandle = myHandle || (currentUser && currentUser.displayName ? currentUser.displayName.replace(/\s+/g, '').toLowerCase() : '');
+      let baseUrl = 'https://iamjulies.github.io/VocaFlow';
+      try {
+        if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) {
+          baseUrl = window.location.origin + (typeof getAppBasePath === 'function' ? getAppBasePath() : (window.location.pathname.includes('/VocaFlow') ? '/VocaFlow' : ''));
+          baseUrl = baseUrl.replace(/\/+$/, '');
+        }
+      } catch (e) {}
+      return cleanHandle ? `${baseUrl}/invite/@${cleanHandle}/${code}` : `${baseUrl}/invite/${code}`;
+    }
+    window.getMyReferralCleanLink = getMyReferralCleanLink;
+
     function copyMyReferralCode() {
       const code = getUserReferralCode(currentUser);
       if (!code || code === 'GUEST') return;
@@ -1596,7 +1617,7 @@
     function copyMyReferralLink() {
       const code = getUserReferralCode(currentUser);
       if (!code || code === 'GUEST') return;
-      const link = `https://iamjulies.github.io/VocaFlow/?ref=${code}`;
+      const link = getMyReferralCleanLink();
       navigator.clipboard.writeText(link).then(() => {
         showToast('🔗 Đã sao chép link mời bạn bè!');
       }).catch(() => {

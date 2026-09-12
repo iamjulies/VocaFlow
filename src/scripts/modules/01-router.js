@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-48)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-52)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -40,27 +40,43 @@ function resolveRouteFromUrl() {
   const l = window.location;
   const searchParams = new URLSearchParams(l.search);
 
-  // 1. Check GitHub Pages 404 SPA redirect param ?p=...
+  // 1. Check referral code param ?ref=... / ?invite=...
+  const refParam = searchParams.get('ref') || searchParams.get('invite');
+  if (refParam) {
+    const cleanRef = refParam.trim().toUpperCase();
+    if (cleanRef) sessionStorage.setItem('vocaflow_pending_ref_code', cleanRef);
+  }
+
+  // 2. Check GitHub Pages 404 SPA redirect param ?p=...
   const pParam = searchParams.get('p');
   if (pParam) {
     let decoded = decodeURIComponent(pParam);
     return decoded.split('?')[0].trim();
   }
 
-  // 2. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
+  // 3. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
   const userParam = searchParams.get('user') || searchParams.get('u') || searchParams.get('profile');
+  const postParam = searchParams.get('post') || searchParams.get('p_id');
   if (userParam) {
     const cleanUser = userParam.replace(/^@+/, '').split('?')[0].replace(/\/+$/, '').trim();
+    if (postParam) {
+      return `/@${cleanUser}/post/${postParam.trim()}`;
+    }
     return cleanUser ? '/@' + cleanUser : '';
   }
 
-  // 3. Check direct pathname
+  if (postParam) {
+    return `/community/post/${postParam.trim()}`;
+  }
+
+  // 4. Check direct pathname
   const basePath = getAppBasePath();
   let path = l.pathname;
   if (basePath && path.startsWith(basePath)) {
     path = path.slice(basePath.length);
   }
   if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
+    if (refParam) return `/invite/${refParam.trim().toUpperCase()}`;
     return '/homepage';
   }
   return path.split('?')[0].trim();
@@ -76,7 +92,64 @@ function navigateToRoute(route, isPopState = false) {
     if (clean.startsWith('/')) clean = clean.slice(1);
     clean = clean.split('?')[0].split('#')[0].replace(/\/+$/, '').trim();
 
-    // Handle @username or user/@username or u/username
+    // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId
+    if (clean.includes('/post/')) {
+      const parts = clean.split('/post/');
+      const authorPart = parts[0].replace(/^(user\/@?|u\/|@+)/, '').trim();
+      const postId = (parts[1] || '').trim();
+
+      if (authorPart && authorPart !== 'community') {
+        // Open user public profile on community tab and highlight post
+        if (typeof openPublicProfileModal === 'function') {
+          openPublicProfileModal('@' + authorPart, '', authorPart);
+        } else if (typeof openPublicProfileByAuthor === 'function') {
+          openPublicProfileByAuthor('@' + authorPart, '', authorPart);
+        }
+        setTimeout(() => {
+          if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community');
+          if (postId && typeof highlightAndScrollToPost === 'function') {
+            highlightAndScrollToPost(postId, true);
+          }
+        }, 300);
+        return;
+      } else if (postId) {
+        // Open main community feed, expand comments and highlight post
+        if (typeof openProfileModal === 'function') openProfileModal('community');
+        setTimeout(() => {
+          if (typeof togglePostCommentsSection === 'function') {
+            communityActiveCommentsPostId = postId;
+            if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+          }
+          if (typeof highlightAndScrollToPost === 'function') {
+            highlightAndScrollToPost(postId, false);
+          }
+        }, 300);
+        return;
+      }
+    }
+
+    // 2. Handle /invite/@username/code or /invite/code or /referral/...
+    if (clean.startsWith('invite') || clean.startsWith('referral')) {
+      const parts = clean.split('/').filter(Boolean);
+      let refCode = '';
+      if (parts.length >= 3) {
+        // invite/@username/code
+        refCode = parts[2].trim().toUpperCase();
+      } else if (parts.length === 2) {
+        // invite/code or invite/@username
+        const seg = parts[1].trim();
+        if (!seg.startsWith('@')) {
+          refCode = seg.toUpperCase();
+        }
+      }
+      if (refCode) {
+        sessionStorage.setItem('vocaflow_pending_ref_code', refCode);
+      }
+      if (typeof openReferralModal === 'function') openReferralModal();
+      return;
+    }
+
+    // 3. Handle @username or user/@username or u/username
     if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
       let handle = clean.replace(/^(user\/@?|u\/|@+)/, '').trim();
       handle = handle.replace(/^@+/, '').trim();
@@ -97,7 +170,6 @@ function navigateToRoute(route, isPopState = false) {
       case 'decks':
       case 'home':
         if (typeof showScreen === 'function') showScreen('screen-decks');
-        // Close modal overlays if open
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
         break;
 
@@ -145,6 +217,13 @@ function navigateToRoute(route, isPopState = false) {
       case 'bug':
       case 'feedback':
         if (typeof openBugReportModal === 'function') openBugReportModal();
+        break;
+
+      case 'ads':
+      case 'ad':
+      case 'rewarded-ad':
+      case 'video-ads':
+        if (typeof openRewardedAdModal === 'function') openRewardedAdModal();
         break;
 
       case 'queue':
@@ -278,3 +357,4 @@ function initSpaRouter() {
   });
 }
 window.initSpaRouter = initSpaRouter;
+

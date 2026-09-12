@@ -1,0 +1,16 @@
+v0.10.9-52
+1. thêm link trực tiếp cho các trang này:
+- Giới Thiệu Bạn Bè - Nhận VocaVIP Hoàng Gia: https://iamjulies.github.io/VocaFlow/invite
+- Video Giới Thiệu & Nhận Thưởng: https://iamjulies.github.io/VocaFlow/ads
+- Bảng Giá Nâng Cấp VocaVIP: https://iamjulies.github.io/VocaFlow/vocavip
+- FlowStreak Học Tập: https://iamjulies.github.io/VocaFlow/flowtreak
+- Trung Tâm Thông Báo:  https://iamjulies.github.io/VocaFlow/notifications
+- VocaMail - Nhắn Tin & Hỏi Đáp Admin: https://iamjulies.github.io/VocaFlow/vocamail
+- Báo Cáo Sự Cố & Đóng Góp Ý Kiến: https://iamjulies.github.io/VocaFlow/report
+2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 175627.png" sửa lại link giới thiệu này cho đúng với link hiện tại. 
+-> gợi ý: https://iamjulies.github.io/VocaFlow/invite/@<username>/<mã giới thiệu> -> khi truy cập link thì mở thẳng cái trang giới thiệu và điền sẵn mã giới thiệu cho luôn và chỉ cần nhấn nhận quà thôi.
+3. khi xem public-profile thì kh nhấn thả tương tác, comment được. và khi nhấn share thì nó ra link nhưng khi truy cập thì chỉ ra public profile của user đó chứ kh có map trúng bài đăng đúng đó
+4. avt ở bài đăng "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181005.png" chưa đồng bộ với avt ở me "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181048.png"
+5. bài đăng ở trang me "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181005.png" khác với bài đăng ở trang public-profile "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 181149.png"
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
