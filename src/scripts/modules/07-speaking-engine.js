@@ -820,14 +820,19 @@
       if (avgScoreEl) avgScoreEl.textContent = avgScore + ' / 100';
 
       if (diffBadgeEl) {
-        const labels = { easy: '🟢 Cấp độ: Dễ (x1.0)', medium: '🟡 Cấp độ: Trung Bình (x1.5)', hard: '🔴 Cấp độ: Khó (x2.0)' };
-        diffBadgeEl.textContent = labels[currentSpeakingDifficulty] || '🟢 Cấp độ: Dễ (x1.0)';
+        const totalMult = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+        const labels = { easy: '🟢 Cấp độ: Dễ', medium: '🟡 Cấp độ: Trung Bình', hard: '🔴 Cấp độ: Khó' };
+        diffBadgeEl.textContent = (labels[currentSpeakingDifficulty] || '🟢 Cấp độ: Dễ') + ' (x' + totalMult + ')';
       }
 
       if (bonusBoxEl) {
-        const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-        bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
-        bonusBoxEl.style.display = 'block';
+        try {
+          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
+          bonusBoxEl.style.display = 'block';
+        } catch (e) {
+          bonusBoxEl.style.display = 'none';
+        }
       }
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)

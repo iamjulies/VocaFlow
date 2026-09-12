@@ -19,10 +19,10 @@
         btnAdd.style.display = 'none';
       }
 
-      // v0.10.9-55: SPA URL Routing for Screens
+      // v0.10.9-58: SPA URL Routing for Screens
       if (typeof updateAppUrlRoute === 'function') {
         if (screenId === 'screen-decks') {
-          updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+          updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
         } else if (screenId === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
           updateAppUrlRoute(`/deck/${currentDeckId}`);
         } else if (screenId === 'screen-quiz') {
@@ -135,7 +135,7 @@
           } else if (activeScreen && activeScreen.id === 'screen-autofc') {
             updateAppUrlRoute('/study/autofc');
           } else {
-            updateAppUrlRoute('/homepage');
+            updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
           }
         }
       }

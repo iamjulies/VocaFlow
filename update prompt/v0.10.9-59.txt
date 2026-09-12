@@ -1,3 +1,6 @@
 v0.10.9-59
 1. tên ở ME "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 220506.png", tên ở COMMUNITY "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 220534.png" nó khác nhau -> đồng bộ lại cho giống tên ở ME (tên hiện hành ấy)
-2. 
+2. mấy chỉ số ở biểu đồ stats chưa được đồng bộ 2 chiều như những thông số khác, nhất là thông số thời gian... -> sửa thông số thời gian thành: tổng thời gian học tập trong ngày (tức là tổng thời gian học 4 chế độ học) chứ kh chỉ là truy cập vào app không.
+3. lấy đúng các stats học tập của user để trình bày lên biểu đồ. hiện tại một số user có chuỗi flow 4 nhưng mà nhìn biểu đồ lại kh có gì (rất kì cục đúng không). với stat xu thì lấy từ ví xu -> phải có thông số đúng. stat điểm rèn luyện với stat thời gian học thì cứ để tạm 0 cũng được, và cập nhật như ngay bây giờ (khi update xong)
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

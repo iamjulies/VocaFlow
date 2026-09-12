@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-57 Build 289)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-58 Build 290)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -23,16 +23,21 @@ function updateAppUrlRoute(routePath, title = 'VocaFlow', replace = false) {
 
   const basePath = getAppBasePath();
   let cleanRoute = routePath.startsWith('/') ? routePath : '/' + routePath;
-  const fullTarget = basePath ? (basePath + cleanRoute) : cleanRoute;
+  let fullTarget = '';
+  if (cleanRoute === '/' || cleanRoute === '/homepage') {
+    fullTarget = basePath ? (basePath + '/') : '/';
+  } else {
+    fullTarget = basePath ? (basePath + cleanRoute) : cleanRoute;
+  }
 
   try {
     const currentUrl = window.location.pathname + window.location.search;
     if (currentUrl === fullTarget) return;
 
     if (replace) {
-      window.history.replaceState({ route: routePath }, title, fullTarget);
+      window.history.replaceState({ route: cleanRoute }, title, fullTarget);
     } else {
-      window.history.pushState({ route: routePath }, title, fullTarget);
+      window.history.pushState({ route: cleanRoute }, title, fullTarget);
     }
   } catch (e) {
     console.warn('Router pushState failed:', e);
@@ -79,9 +84,9 @@ function resolveRouteFromUrl() {
   if (basePath && path.toLowerCase().startsWith(basePath.toLowerCase())) {
     path = path.slice(basePath.length);
   }
-  if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
+  if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html' || path === '/homepage') {
     if (refParam) return `/invite/${refParam.trim().toUpperCase()}`;
-    return '/homepage';
+    return '/';
   }
   return path.split('?')[0].trim();
 }
@@ -410,8 +415,9 @@ function initSpaRouter() {
   if (searchParams.has('p') || searchParams.has('user') || searchParams.has('u') || searchParams.has('profile')) {
     const basePath = getAppBasePath();
     const cleanPath = (targetRoute.startsWith('/') ? targetRoute : '/' + targetRoute);
+    const fullTarget = (cleanPath === '/' || cleanPath === '/homepage') ? (basePath ? (basePath + '/') : '/') : (basePath ? (basePath + cleanPath) : cleanPath);
     try {
-      window.history.replaceState({ route: cleanPath }, 'VocaFlow', basePath ? basePath + cleanPath : cleanPath);
+      window.history.replaceState({ route: cleanPath }, 'VocaFlow', fullTarget);
     } catch (e) {}
   }
 

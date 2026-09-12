@@ -1,22 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="utf-8">
   <title>VocaFlow - Chuyển Hướng...</title>
   <script>
-    // GitHub Pages SPA Single-Page-App redirect handler (v0.10.9-45)
-    var pathSegmentsToKeep = 1; // 1 for repo path e.g. /VocaFlow/
-    var l = window.location;
-    var pathname = l.pathname;
-    if (l.hostname === 'localhost' || l.hostname === '127.0.0.1' || !pathname.toLowerCase().startsWith('/vocaflow')) {
-      pathSegmentsToKeep = 0;
-    }
-    var repoPath = pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/');
-    var targetPath = pathname.slice(repoPath.length) + l.search + l.hash;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      repoPath + '/?p=' + encodeURIComponent(targetPath)
-    );
+    // GitHub Pages SPA Single-Page-App redirect handler (v0.10.9-58)
+    (function() {
+      var l = window.location;
+      var pathname = l.pathname;
+      var pathSegmentsToKeep = (l.hostname === 'localhost' || l.hostname === '127.0.0.1' || !pathname.toLowerCase().startsWith('/vocaflow')) ? 0 : 1;
+      var repoPath = pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/');
+      var targetPath = pathname.slice(repoPath.length) + l.search + l.hash;
+
+      // Clean root mapping: if targetPath is /homepage, redirect directly to repo root
+      if (targetPath === '/homepage' || targetPath === '/homepage/') {
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + repoPath + '/');
+        return;
+      }
+
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        repoPath + '/?p=' + encodeURIComponent(targetPath)
+      );
+    })();
   </script>
 </head>
 <body style="background: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">

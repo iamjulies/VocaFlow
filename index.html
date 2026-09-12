@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-57 (Build 289)</span>
+            <span class="mini-footer-version">v0.10.9-58 (Build 290)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-57 (Build 289)</span>
+            <span class="mini-footer-version">v0.10.9-58 (Build 290)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9875,7 +9875,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-57 (Build 289)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-58 (Build 290)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10830,7 +10830,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-57 Build 289)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-58 Build 290)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -10854,16 +10854,21 @@ function updateAppUrlRoute(routePath, title = 'VocaFlow', replace = false) {
 
   const basePath = getAppBasePath();
   let cleanRoute = routePath.startsWith('/') ? routePath : '/' + routePath;
-  const fullTarget = basePath ? (basePath + cleanRoute) : cleanRoute;
+  let fullTarget = '';
+  if (cleanRoute === '/' || cleanRoute === '/homepage') {
+    fullTarget = basePath ? (basePath + '/') : '/';
+  } else {
+    fullTarget = basePath ? (basePath + cleanRoute) : cleanRoute;
+  }
 
   try {
     const currentUrl = window.location.pathname + window.location.search;
     if (currentUrl === fullTarget) return;
 
     if (replace) {
-      window.history.replaceState({ route: routePath }, title, fullTarget);
+      window.history.replaceState({ route: cleanRoute }, title, fullTarget);
     } else {
-      window.history.pushState({ route: routePath }, title, fullTarget);
+      window.history.pushState({ route: cleanRoute }, title, fullTarget);
     }
   } catch (e) {
     console.warn('Router pushState failed:', e);
@@ -10910,9 +10915,9 @@ function resolveRouteFromUrl() {
   if (basePath && path.toLowerCase().startsWith(basePath.toLowerCase())) {
     path = path.slice(basePath.length);
   }
-  if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
+  if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html' || path === '/homepage') {
     if (refParam) return `/invite/${refParam.trim().toUpperCase()}`;
-    return '/homepage';
+    return '/';
   }
   return path.split('?')[0].trim();
 }
@@ -11241,8 +11246,9 @@ function initSpaRouter() {
   if (searchParams.has('p') || searchParams.has('user') || searchParams.has('u') || searchParams.has('profile')) {
     const basePath = getAppBasePath();
     const cleanPath = (targetRoute.startsWith('/') ? targetRoute : '/' + targetRoute);
+    const fullTarget = (cleanPath === '/' || cleanPath === '/homepage') ? (basePath ? (basePath + '/') : '/') : (basePath ? (basePath + cleanPath) : cleanPath);
     try {
-      window.history.replaceState({ route: cleanPath }, 'VocaFlow', basePath ? basePath + cleanPath : cleanPath);
+      window.history.replaceState({ route: cleanPath }, 'VocaFlow', fullTarget);
     } catch (e) {}
   }
 
@@ -11260,15 +11266,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-57 Build 289)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-58 Build 290)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-57 Build 289)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-58 Build 290)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-57';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-57 (Build 289)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-58';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-58 (Build 290)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
@@ -14709,6 +14715,13 @@ window.initSpaRouter = initSpaRouter;
       const totalMins = data.totalScreenMinutes % 60;
       const totalScreenStr = totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`;
 
+      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
+      if (targetAuthor) {
+        window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
+        window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+      }
+      const safeAuthorKey = escapeHtml(authorKey);
+
       // Complete Component HTML
       const html = `
         <div class="voca-7day-chart-wrapper">
@@ -14760,25 +14773,25 @@ window.initSpaRouter = initSpaRouter;
           <!-- Summary Mini Cards Row with Interactive Tooltips -->
           <div class="voca-chart-summary-row">
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'time')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'time')" 
+                 onclick="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
               <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'coins')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'coins')" 
+                 onclick="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'points')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'points', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'points')" 
+                 onclick="showVocaStatCardTooltip(event, 'points', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết điểm rèn luyện 7 ngày qua">
               <div class="voca-stat-label">🎯 Điểm Rèn Luyện</div>
               <div class="voca-stat-val" style="color: #34d399;">+${data.totalStudyPoints} đ</div>
@@ -14792,7 +14805,7 @@ window.initSpaRouter = initSpaRouter;
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-56)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-58)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -14837,7 +14850,7 @@ window.initSpaRouter = initSpaRouter;
     }
     window.showVocaChartTooltip = showVocaChartTooltip;
 
-    function showVocaStatCardTooltip(evt, type) {
+    function showVocaStatCardTooltip(evt, type, targetAuthorUid = '') {
       let tooltip = document.getElementById('voca-chart-tooltip');
       if (!tooltip) {
         tooltip = document.createElement('div');
@@ -14846,12 +14859,20 @@ window.initSpaRouter = initSpaRouter;
         document.body.appendChild(tooltip);
       }
 
-      const data = get7DayPerformanceData();
+      let resolvedAuthor = null;
+      if (targetAuthorUid && window.__vocaChartAuthorRegistry && window.__vocaChartAuthorRegistry[targetAuthorUid]) {
+        resolvedAuthor = window.__vocaChartAuthorRegistry[targetAuthorUid];
+      } else if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && document.getElementById('modal-public-profile')?.classList.contains('active')) {
+        resolvedAuthor = currentPublicProfileAuthor;
+      }
+
+      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
+      const data = get7DayPerformanceData(resolvedAuthor);
       let headerTitle = '';
       let rowsHtml = '';
 
       if (type === 'time') {
-        headerTitle = '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        headerTitle = isOtherUser ? '⏱️ Thời Gian Hoạt Động (7 Ngày)' : '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
         const totalHours = Math.floor(data.totalScreenMinutes / 60);
         const totalMins = data.totalScreenMinutes % 60;
         const avgMins = Math.round(data.totalScreenMinutes / 7);
@@ -14867,18 +14888,18 @@ window.initSpaRouter = initSpaRouter;
             <strong style="color: var(--text);">${avgMins} phút/ngày</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Số ngày có vào học:</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Số ngày vào học:' : 'Số ngày có vào học:'}</span>
             <strong style="color: #34d399;">${activeDays} / 7 ngày</strong>
           </div>
         `;
       } else if (type === 'coins') {
-        headerTitle = '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy (7 Ngày)' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
         const avgCoins = Math.round(data.totalVoCoins / 7);
         const best = data.bestCoinsDay;
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Tổng Xu kiếm được:</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu tích lũy:' : 'Tổng Xu kiếm được:'}</span>
             <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -14887,11 +14908,11 @@ window.initSpaRouter = initSpaRouter;
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
             <span style="color: var(--text-muted);">Ngày cao điểm nhất:</span>
-            <strong style="color: #fbbf24;">${best ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Hôm nay'}</strong>
+            <strong style="color: #fbbf24;">${best && best.vocoinsEarned > 0 ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Chưa có'}</strong>
           </div>
         `;
       } else if (type === 'points') {
-        headerTitle = '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
+        headerTitle = isOtherUser ? '🎯 Điểm Rèn Luyện (7 Ngày)' : '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
         const avgPts = Math.round(data.totalStudyPoints / 7);
         const best = data.bestStudyDay;
 
@@ -14906,7 +14927,7 @@ window.initSpaRouter = initSpaRouter;
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
             <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
-            <strong style="color: #34d399;">${best ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Hôm nay'}</strong>
+            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Chưa có'}</strong>
           </div>
         `;
       }
@@ -28385,6 +28406,7 @@ Yêu cầu nghiêm ngặt:
                     localStorage.setItem('vocaflow_gemini_working_model', m);
                   }
                   setUserHints(currentHints - 1);
+                  quizHintsUsed++;
                   hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
                   showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
                   return;
@@ -28412,6 +28434,7 @@ Yêu cầu nghiêm ngặt:
       }
 
       setUserHints(currentHints - 1);
+      quizHintsUsed++;
       hintText.innerHTML = localHint || ('💡 Từ này thuộc loại: <strong>' + (questionWord.partOfSpeech || 'từ vựng').toUpperCase() + '</strong> (Cấp độ: ' + (questionWord.cefrLevel || 'Chung') + ')');
       showToast('💡 Đã dùng 1 gợi ý (còn ' + getUserHints() + ' lượt).');
     }
@@ -28628,10 +28651,6 @@ Yêu cầu nghiêm ngặt:
         quizQuestionStartTime = null;
       }
 
-      if (quizIsCompleted) {
-        openModal('modal-quiz-result');
-        return;
-      }
       quizIsCompleted = true;
 
       const totalSeconds = Math.max(1, Math.round((Date.now() - (quizStartTime || Date.now())) / 1000));
@@ -28639,32 +28658,42 @@ Yêu cầu nghiêm ngặt:
       const secs = totalSeconds % 60;
       const durationText = mins > 0 ? (mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's') : (secs + ' giây');
 
-      const total = quizTotalQuestions || quizList.length || 1;
+      const total = quizTotalQuestions || (quizList ? quizList.length : 1);
       const accuracyPct = Math.round((quizCorrectCount / total) * 100);
       const spq = (totalSeconds / total).toFixed(1);
 
-      const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
-      quizPointsEarned = res.finalPts;
-      if (quizPointsEarned !== 0) {
-        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
-        const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
-        setUserPoints(newBalance);
-        addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
-        saveDatabase(true);
-        pushCurrentDatabaseToCloud();
-      }
-
-      if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
-      }
-
-      // Auto-publish community milestone on long / perfect study sessions
-      if (typeof autoPublishCommunityMilestone === 'function') {
-        if (total >= 50 && accuracyPct >= 100) {
-          autoPublishCommunityMilestone('study_perfect', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
-        } else if (total >= 30) {
-          autoPublishCommunityMilestone('study_marathon', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+      let finalDeckMult = 1.0;
+      try {
+        const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        quizPointsEarned = res.finalPts;
+        finalDeckMult = res.deckLengthMult || 1.0;
+        if (quizPointsEarned !== 0) {
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
+          const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
+          setUserPoints(newBalance);
+          addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
         }
+      } catch (errPoints) {
+        console.warn('Quiz settlement error:', errPoints);
+      }
+
+      try {
+        if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
+        }
+
+        // Auto-publish community milestone on long / perfect study sessions
+        if (typeof autoPublishCommunityMilestone === 'function') {
+          if (total >= 50 && accuracyPct >= 100) {
+            autoPublishCommunityMilestone('study_perfect', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+          } else if (total >= 30) {
+            autoPublishCommunityMilestone('study_marathon', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+          }
+        }
+      } catch (errMilestone) {
+        console.warn('Quiz milestone error:', errMilestone);
       }
 
       const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
@@ -28683,12 +28712,12 @@ Yêu cầu nghiêm ngặt:
         diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty);
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
-      if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
-      if (skipsEl) skipsEl.textContent = quizSkipCount + ' câu';
-      if (wrongsEl) wrongsEl.textContent = quizWrongCount + ' câu';
+      if (hintsEl) hintsEl.textContent = (quizHintsUsed || 0) + ' lượt';
+      if (skipsEl) skipsEl.textContent = (quizSkipCount || 0) + ' câu';
+      if (wrongsEl) wrongsEl.textContent = (quizWrongCount || 0) + ' câu';
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');
@@ -30063,10 +30092,6 @@ Yêu cầu nghiêm ngặt:
         spellingQuestionStartTime = null;
       }
 
-      if (spellingIsCompleted) {
-        openModal('modal-spelling-result');
-        return;
-      }
       spellingIsCompleted = true;
 
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
@@ -30080,30 +30105,40 @@ Yêu cầu nghiêm ngặt:
       const correctWordsCount = Math.max(0, totalWords - wrongWordsCount);
       const accuracyPct = Math.round((correctWordsCount / totalWords) * 100);
 
-      if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
-      }
-      if (currentSpellingDifficulty === 'hard' && totalWords >= 50 && accuracyPct >= 100 && (spellingWrongCount || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
-      }
-
-      // Auto-publish community milestone
-      if (typeof autoPublishCommunityMilestone === 'function') {
-        if (totalWords >= 50 && accuracyPct >= 100) {
-          autoPublishCommunityMilestone('study_perfect', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
-        } else if (totalWords >= 30) {
-          autoPublishCommunityMilestone('study_marathon', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+      try {
+        if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
         }
+        if (currentSpellingDifficulty === 'hard' && totalWords >= 50 && accuracyPct >= 100 && (spellingWrongCount || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
+        }
+
+        // Auto-publish community milestone
+        if (typeof autoPublishCommunityMilestone === 'function') {
+          if (totalWords >= 50 && accuracyPct >= 100) {
+            autoPublishCommunityMilestone('study_perfect', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+          } else if (totalWords >= 30) {
+            autoPublishCommunityMilestone('study_marathon', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+          }
+        }
+      } catch (errMilestone) {
+        console.warn('Spelling milestone error:', errMilestone);
       }
 
-      const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
-      spellingPointsEarned = res.finalPts;
-      if (spellingPointsEarned !== 0) {
-        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
-        const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
-        setUserPoints(newBalance);
-        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
-        saveDatabase(true);
+      let finalDeckMult = 1.0;
+      try {
+        const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        spellingPointsEarned = res.finalPts;
+        finalDeckMult = res.deckLengthMult || 1.0;
+        if (spellingPointsEarned !== 0) {
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
+          setUserPoints(newBalance);
+          addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
+          saveDatabase(true);
+        }
+      } catch (errPoints) {
+        console.warn('Spelling settlement error:', errPoints);
       }
 
       const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
@@ -30119,18 +30154,22 @@ Yêu cầu nghiêm ngặt:
       const diffBadgeEl = document.getElementById('spelling-res-difficulty-badge');
 
       if (diffBadgeEl) {
-        const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
-        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
-        diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
+        try {
+          const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
+          const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
+          diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
+        } catch (e) {
+          diffBadgeEl.textContent = '✍️ Cấp độ: ' + currentSpellingDifficulty;
+        }
       }
 
       if (scoreRatioEl) scoreRatioEl.textContent = correctWordsCount + '/' + totalWords + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
-      if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
-      if (skipsEl) skipsEl.textContent = spellingSkipCount + ' từ';
-      if (wrongsEl) wrongsEl.textContent = spellingWrongCount + ' lần';
+      if (hintsEl) hintsEl.textContent = (spellingHintsUsed || 0) + ' lượt';
+      if (skipsEl) skipsEl.textContent = (spellingSkipCount || 0) + ' từ';
+      if (wrongsEl) wrongsEl.textContent = (spellingWrongCount || 0) + ' lần';
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('spelling-res-wrong-banner');
@@ -31675,14 +31714,19 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       if (avgScoreEl) avgScoreEl.textContent = avgScore + ' / 100';
 
       if (diffBadgeEl) {
-        const labels = { easy: '🟢 Cấp độ: Dễ (x1.0)', medium: '🟡 Cấp độ: Trung Bình (x1.5)', hard: '🔴 Cấp độ: Khó (x2.0)' };
-        diffBadgeEl.textContent = labels[currentSpeakingDifficulty] || '🟢 Cấp độ: Dễ (x1.0)';
+        const totalMult = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+        const labels = { easy: '🟢 Cấp độ: Dễ', medium: '🟡 Cấp độ: Trung Bình', hard: '🔴 Cấp độ: Khó' };
+        diffBadgeEl.textContent = (labels[currentSpeakingDifficulty] || '🟢 Cấp độ: Dễ') + ' (x' + totalMult + ')';
       }
 
       if (bonusBoxEl) {
-        const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-        bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
-        bonusBoxEl.style.display = 'block';
+        try {
+          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
+          bonusBoxEl.style.display = 'block';
+        } catch (e) {
+          bonusBoxEl.style.display = 'none';
+        }
       }
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)
@@ -53202,10 +53246,10 @@ Quy tắc phản hồi quan trọng:
         btnAdd.style.display = 'none';
       }
 
-      // v0.10.9-55: SPA URL Routing for Screens
+      // v0.10.9-58: SPA URL Routing for Screens
       if (typeof updateAppUrlRoute === 'function') {
         if (screenId === 'screen-decks') {
-          updateAppUrlRoute('/homepage', 'VocaFlow - Trang Chủ');
+          updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
         } else if (screenId === 'screen-deck-detail' && typeof currentDeckId !== 'undefined' && currentDeckId) {
           updateAppUrlRoute(`/deck/${currentDeckId}`);
         } else if (screenId === 'screen-quiz') {
@@ -53318,7 +53362,7 @@ Quy tắc phản hồi quan trọng:
           } else if (activeScreen && activeScreen.id === 'screen-autofc') {
             updateAppUrlRoute('/study/autofc');
           } else {
-            updateAppUrlRoute('/homepage');
+            updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
           }
         }
       }

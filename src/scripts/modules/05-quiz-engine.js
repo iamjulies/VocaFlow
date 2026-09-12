@@ -1486,6 +1486,7 @@ Yêu cầu nghiêm ngặt:
                     localStorage.setItem('vocaflow_gemini_working_model', m);
                   }
                   setUserHints(currentHints - 1);
+                  quizHintsUsed++;
                   hintText.innerHTML = '✨ <strong>VocaHint:</strong> ' + escapeHtml(rawHint);
                   showToast('💡 Đã dùng 1 VocaHint (còn ' + getUserHints() + ' lượt).');
                   return;
@@ -1513,6 +1514,7 @@ Yêu cầu nghiêm ngặt:
       }
 
       setUserHints(currentHints - 1);
+      quizHintsUsed++;
       hintText.innerHTML = localHint || ('💡 Từ này thuộc loại: <strong>' + (questionWord.partOfSpeech || 'từ vựng').toUpperCase() + '</strong> (Cấp độ: ' + (questionWord.cefrLevel || 'Chung') + ')');
       showToast('💡 Đã dùng 1 gợi ý (còn ' + getUserHints() + ' lượt).');
     }
@@ -1729,10 +1731,6 @@ Yêu cầu nghiêm ngặt:
         quizQuestionStartTime = null;
       }
 
-      if (quizIsCompleted) {
-        openModal('modal-quiz-result');
-        return;
-      }
       quizIsCompleted = true;
 
       const totalSeconds = Math.max(1, Math.round((Date.now() - (quizStartTime || Date.now())) / 1000));
@@ -1740,32 +1738,42 @@ Yêu cầu nghiêm ngặt:
       const secs = totalSeconds % 60;
       const durationText = mins > 0 ? (mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's') : (secs + ' giây');
 
-      const total = quizTotalQuestions || quizList.length || 1;
+      const total = quizTotalQuestions || (quizList ? quizList.length : 1);
       const accuracyPct = Math.round((quizCorrectCount / total) * 100);
       const spq = (totalSeconds / total).toFixed(1);
 
-      const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
-      quizPointsEarned = res.finalPts;
-      if (quizPointsEarned !== 0) {
-        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
-        const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
-        setUserPoints(newBalance);
-        addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
-        saveDatabase(true);
-        pushCurrentDatabaseToCloud();
-      }
-
-      if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
-      }
-
-      // Auto-publish community milestone on long / perfect study sessions
-      if (typeof autoPublishCommunityMilestone === 'function') {
-        if (total >= 50 && accuracyPct >= 100) {
-          autoPublishCommunityMilestone('study_perfect', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
-        } else if (total >= 30) {
-          autoPublishCommunityMilestone('study_marathon', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+      let finalDeckMult = 1.0;
+      try {
+        const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        quizPointsEarned = res.finalPts;
+        finalDeckMult = res.deckLengthMult || 1.0;
+        if (quizPointsEarned !== 0) {
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
+          const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
+          setUserPoints(newBalance);
+          addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
+          saveDatabase(true);
+          pushCurrentDatabaseToCloud();
         }
+      } catch (errPoints) {
+        console.warn('Quiz settlement error:', errPoints);
+      }
+
+      try {
+        if (total >= 50 && accuracyPct >= 100 && (quizHintsUsed || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
+        }
+
+        // Auto-publish community milestone on long / perfect study sessions
+        if (typeof autoPublishCommunityMilestone === 'function') {
+          if (total >= 50 && accuracyPct >= 100) {
+            autoPublishCommunityMilestone('study_perfect', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+          } else if (total >= 30) {
+            autoPublishCommunityMilestone('study_marathon', { mode: 'quiz', total, accuracyPct, difficulty: currentQuizDifficulty, points: quizPointsEarned });
+          }
+        }
+      } catch (errMilestone) {
+        console.warn('Quiz milestone error:', errMilestone);
       }
 
       const scoreRatioEl = document.getElementById('quiz-res-score-ratio');
@@ -1784,12 +1792,12 @@ Yêu cầu nghiêm ngặt:
         diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty);
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
-      if (hintsEl) hintsEl.textContent = quizHintsUsed + ' lượt';
-      if (skipsEl) skipsEl.textContent = quizSkipCount + ' câu';
-      if (wrongsEl) wrongsEl.textContent = quizWrongCount + ' câu';
+      if (hintsEl) hintsEl.textContent = (quizHintsUsed || 0) + ' lượt';
+      if (skipsEl) skipsEl.textContent = (quizSkipCount || 0) + ' câu';
+      if (wrongsEl) wrongsEl.textContent = (quizWrongCount || 0) + ' câu';
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');

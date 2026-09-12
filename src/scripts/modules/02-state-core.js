@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-57 Build 289)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-58 Build 290)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-57 Build 289)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-58 Build 290)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-57';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-57 (Build 289)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-58';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-58 (Build 290)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-57)
@@ -3447,6 +3447,13 @@
       const totalMins = data.totalScreenMinutes % 60;
       const totalScreenStr = totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`;
 
+      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
+      if (targetAuthor) {
+        window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
+        window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+      }
+      const safeAuthorKey = escapeHtml(authorKey);
+
       // Complete Component HTML
       const html = `
         <div class="voca-7day-chart-wrapper">
@@ -3498,25 +3505,25 @@
           <!-- Summary Mini Cards Row with Interactive Tooltips -->
           <div class="voca-chart-summary-row">
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'time')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'time')" 
+                 onclick="showVocaStatCardTooltip(event, 'time', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết thời gian truy cập 7 ngày qua">
               <div class="voca-stat-label">⏱️ Tổng Thời Gian</div>
               <div class="voca-stat-val" style="color: #818cf8;">${totalScreenStr}</div>
             </div>
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'coins')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'coins')" 
+                 onclick="showVocaStatCardTooltip(event, 'coins', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết VoCoin kiếm được 7 ngày qua">
               <div class="voca-stat-label">💰 VoCoin Thu Được</div>
               <div class="voca-stat-val" style="color: #fbbf24;">+${data.totalVoCoins} Xu</div>
             </div>
             <div class="voca-chart-stat-card" 
-                 onmouseenter="showVocaStatCardTooltip(event, 'points')" 
+                 onmouseenter="showVocaStatCardTooltip(event, 'points', '${safeAuthorKey}')" 
                  onmouseleave="hideVocaChartTooltip()" 
-                 onclick="showVocaStatCardTooltip(event, 'points')" 
+                 onclick="showVocaStatCardTooltip(event, 'points', '${safeAuthorKey}')" 
                  title="Bấm để xem chi tiết điểm rèn luyện 7 ngày qua">
               <div class="voca-stat-label">🎯 Điểm Rèn Luyện</div>
               <div class="voca-stat-val" style="color: #34d399;">+${data.totalStudyPoints} đ</div>
@@ -3530,7 +3537,7 @@
     window.render7DayPerformanceChart = render7DayPerformanceChart;
 
     // =========================================================================
-    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-56)
+    // CHART & STAT CARDS TOOLTIP CONTROLLER (v0.10.9-58)
     // =========================================================================
     function showVocaChartTooltip(evt, dayName, screenMins, vocoins, studyPts) {
       let tooltip = document.getElementById('voca-chart-tooltip');
@@ -3575,7 +3582,7 @@
     }
     window.showVocaChartTooltip = showVocaChartTooltip;
 
-    function showVocaStatCardTooltip(evt, type) {
+    function showVocaStatCardTooltip(evt, type, targetAuthorUid = '') {
       let tooltip = document.getElementById('voca-chart-tooltip');
       if (!tooltip) {
         tooltip = document.createElement('div');
@@ -3584,12 +3591,20 @@
         document.body.appendChild(tooltip);
       }
 
-      const data = get7DayPerformanceData();
+      let resolvedAuthor = null;
+      if (targetAuthorUid && window.__vocaChartAuthorRegistry && window.__vocaChartAuthorRegistry[targetAuthorUid]) {
+        resolvedAuthor = window.__vocaChartAuthorRegistry[targetAuthorUid];
+      } else if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && document.getElementById('modal-public-profile')?.classList.contains('active')) {
+        resolvedAuthor = currentPublicProfileAuthor;
+      }
+
+      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
+      const data = get7DayPerformanceData(resolvedAuthor);
       let headerTitle = '';
       let rowsHtml = '';
 
       if (type === 'time') {
-        headerTitle = '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
+        headerTitle = isOtherUser ? '⏱️ Thời Gian Hoạt Động (7 Ngày)' : '⏱️ Tổng Thời Gian Hoạt Động (7 Ngày)';
         const totalHours = Math.floor(data.totalScreenMinutes / 60);
         const totalMins = data.totalScreenMinutes % 60;
         const avgMins = Math.round(data.totalScreenMinutes / 7);
@@ -3605,18 +3620,18 @@
             <strong style="color: var(--text);">${avgMins} phút/ngày</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Số ngày có vào học:</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Số ngày vào học:' : 'Số ngày có vào học:'}</span>
             <strong style="color: #34d399;">${activeDays} / 7 ngày</strong>
           </div>
         `;
       } else if (type === 'coins') {
-        headerTitle = '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
+        headerTitle = isOtherUser ? '💰 Tổng VoCoin Tích Lũy (7 Ngày)' : '💰 Tổng VoCoin Tích Lũy (7 Ngày)';
         const avgCoins = Math.round(data.totalVoCoins / 7);
         const best = data.bestCoinsDay;
 
         rowsHtml = `
           <div style="display: flex; justify-content: space-between; gap: 12px;">
-            <span style="color: var(--text-muted);">Tổng Xu kiếm được:</span>
+            <span style="color: var(--text-muted);">${isOtherUser ? 'Tổng Xu tích lũy:' : 'Tổng Xu kiếm được:'}</span>
             <strong style="color: #fbbf24;">+${data.totalVoCoins} Xu</strong>
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
@@ -3625,11 +3640,11 @@
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
             <span style="color: var(--text-muted);">Ngày cao điểm nhất:</span>
-            <strong style="color: #fbbf24;">${best ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Hôm nay'}</strong>
+            <strong style="color: #fbbf24;">${best && best.vocoinsEarned > 0 ? `${best.dayOfWeek} (+${best.vocoinsEarned})` : 'Chưa có'}</strong>
           </div>
         `;
       } else if (type === 'points') {
-        headerTitle = '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
+        headerTitle = isOtherUser ? '🎯 Điểm Rèn Luyện (7 Ngày)' : '🎯 Điểm Rèn Luyện Học Tập (7 Ngày)';
         const avgPts = Math.round(data.totalStudyPoints / 7);
         const best = data.bestStudyDay;
 
@@ -3644,7 +3659,7 @@
           </div>
           <div style="display: flex; justify-content: space-between; gap: 12px;">
             <span style="color: var(--text-muted);">Ngày chăm học nhất:</span>
-            <strong style="color: #34d399;">${best ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Hôm nay'}</strong>
+            <strong style="color: #34d399;">${best && best.studyPoints > 0 ? `${best.dayOfWeek} (+${best.studyPoints}đ)` : 'Chưa có'}</strong>
           </div>
         `;
       }

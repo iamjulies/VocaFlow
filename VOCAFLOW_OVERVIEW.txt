@@ -1,4 +1,27 @@
 ================================================================================
+Phiên bản: v0.10.9-58 (Build 290) - Sửa Lỗi Thông Số Modal Tổng Kết Các Chế Độ Học (Quiz/Spelling/Speaking), Khắc Phục Tải Chậm Subpath GitHub Pages (/homepage), Sửa Lỗi Tooltip Thẻ Thống Kê 7 Ngày Profile
+================================================================================
+1. [Khắc Phục Toàn Diện Thông Số Bảng Tổng Kết (Study Summary Modals Overhaul)]:
+   - Khắc phục triệt để lỗi hiển thị số liệu tĩnh / sai lệch trên modal kết quả khi hoàn thành bài học (Trắc nghiệm Quiz, Luyện viết Spelling, Luyện nói Speaking):
+     + Chế độ Quiz (05-quiz-engine.js): Sửa lỗi không tăng biến đếm `quizHintsUsed` khi gọi `useQuizHint()`, loại bỏ rào cản return sớm `quizIsCompleted` để các lần làm lại / retry luôn tính toán và cập nhật chính xác 100% DOM elements (`quiz-res-difficulty-badge`, `quiz-res-score-ratio`, `quiz-res-points`, `quiz-res-duration`, `quiz-res-spq`, `quiz-res-hints`, `quiz-res-skips`, `quiz-res-wrongs`, `quiz-res-wrong-banner`).
+     + Chế độ Luyện Viết Spelling (06-spelling-engine.js): Loại bỏ return sớm `spellingIsCompleted`, đảm bảo cập nhật đầy đủ các thông số cấp độ độ khó, tỷ lệ gõ đúng, số lần gõ sai, số lần dùng gợi ý, tốc độ gõ SPW, tổng thời gian.
+     + Chế độ Luyện Nói Speaking (07-speaking-engine.js): Cập nhật huy hiệu độ khó và hệ số điểm thực tế `spk-res-difficulty-badge`, tỷ lệ đạt điểm sàn `spk-res-floor-ratio`, điểm phát âm trung bình `spk-res-avg-score`, số lượt bỏ qua, thời lượng.
+
+2. [Tối Ưu Tốc Độ Tải Subpath URL GitHub Pages & Làm Sạch Định Tuyến Trang Chủ]:
+   - Nguyên nhân tải chậm: Trước đây `showScreen('screen-decks')` tự động push `/homepage` vào thanh địa chỉ trình duyệt, khiến người dùng reload trang phải chịu độ trễ 1.5 - 3 giây do GitHub Pages phản hồi mã 404 trước khi nạp `404.html` và chạy JS chuyển hướng.
+   - Giải pháp:
+     + Chuyển đường dẫn của màn hình chính `screen-decks` về root sạch `/` (hoặc `/VocaFlow/`), không còn push `/homepage`.
+     + Cập nhật `01-router.js` map `/homepage` trực tiếp về root không sinh vòng lặp.
+     + Nâng cấp `404.html` với cơ chế chuyển hướng tức thì (Zero-delay execution) trong `<head>`, loại bỏ độ trễ khi truy cập trực tiếp các deep link.
+
+3. [Sửa Lỗi Tooltip Thẻ Thống Kê 7 Ngày Khi Xem Profile Người Dùng Khác]:
+   - Khắc phục lỗi `showVocaStatCardTooltip` luôn gọi `get7DayPerformanceData()` không truyền tác giả, dẫn đến việc lấy nhầm dữ liệu cục bộ của tài khoản người xem thay vì dữ liệu của profile đang duyệt.
+   - Bổ sung định danh `targetAuthor` vào các hàm gọi tooltip của thẻ thống kê (`time`, `coins`, `points`), hiển thị văn phong và số liệu chính xác theo từng hồ sơ người dùng.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Windows Native (v0.10.9-58 Build 290)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe và đóng gói VocaFlow_v0.10.9-58_Windows_Portable.zip.
+
+================================================================================
 Phiên bản: v0.10.9-57 (Build 289) - Tối Ưu Hóa Toàn Diện Kiến Trúc Gemini AI 2 Tầng (Deep vs Fast), Giải Pháp Xử Lý Triệt Để Lỗi 404/403 API Key Google AI Studio, Tự Động Xoay Vòng Multi-Key Pool & Tăng Tốc VocaFill / VocaComment / VocaHint
 ================================================================================
 1. [Tối Ưu Hóa Toàn Diện Kiến Trúc Gemini Model 2 Tầng (Two-Tier Gemini Architecture)]:

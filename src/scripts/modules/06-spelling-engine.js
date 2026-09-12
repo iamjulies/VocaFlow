@@ -1135,10 +1135,6 @@
         spellingQuestionStartTime = null;
       }
 
-      if (spellingIsCompleted) {
-        openModal('modal-spelling-result');
-        return;
-      }
       spellingIsCompleted = true;
 
       const totalWords = (spellingList && spellingList.length) ? spellingList.length : (spellingTotalQuestions || 1);
@@ -1152,30 +1148,40 @@
       const correctWordsCount = Math.max(0, totalWords - wrongWordsCount);
       const accuracyPct = Math.round((correctWordsCount / totalWords) * 100);
 
-      if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
-      }
-      if (currentSpellingDifficulty === 'hard' && totalWords >= 50 && accuracyPct >= 100 && (spellingWrongCount || 0) === 0) {
-        if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
-      }
-
-      // Auto-publish community milestone
-      if (typeof autoPublishCommunityMilestone === 'function') {
-        if (totalWords >= 50 && accuracyPct >= 100) {
-          autoPublishCommunityMilestone('study_perfect', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
-        } else if (totalWords >= 30) {
-          autoPublishCommunityMilestone('study_marathon', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+      try {
+        if (currentSpellingDifficulty === 'hard' && accuracyPct >= 100 && (spellingWrongCount || 0) === 0 && (spellingHintsUsed || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_spelling_flawless_insane');
         }
+        if (currentSpellingDifficulty === 'hard' && totalWords >= 50 && accuracyPct >= 100 && (spellingWrongCount || 0) === 0) {
+          if (typeof checkAndUnlockAchievement === 'function') checkAndUnlockAchievement('skill_perfect_session_50_hard');
+        }
+
+        // Auto-publish community milestone
+        if (typeof autoPublishCommunityMilestone === 'function') {
+          if (totalWords >= 50 && accuracyPct >= 100) {
+            autoPublishCommunityMilestone('study_perfect', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+          } else if (totalWords >= 30) {
+            autoPublishCommunityMilestone('study_marathon', { mode: 'spelling', total: totalWords, accuracyPct, difficulty: currentSpellingDifficulty, points: spellingPointsEarned });
+          }
+        }
+      } catch (errMilestone) {
+        console.warn('Spelling milestone error:', errMilestone);
       }
 
-      const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
-      spellingPointsEarned = res.finalPts;
-      if (spellingPointsEarned !== 0) {
-        const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
-        const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
-        setUserPoints(newBalance);
-        addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
-        saveDatabase(true);
+      let finalDeckMult = 1.0;
+      try {
+        const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        spellingPointsEarned = res.finalPts;
+        finalDeckMult = res.deckLengthMult || 1.0;
+        if (spellingPointsEarned !== 0) {
+          const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
+          const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
+          setUserPoints(newBalance);
+          addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
+          saveDatabase(true);
+        }
+      } catch (errPoints) {
+        console.warn('Spelling settlement error:', errPoints);
       }
 
       const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
@@ -1191,18 +1197,22 @@
       const diffBadgeEl = document.getElementById('spelling-res-difficulty-badge');
 
       if (diffBadgeEl) {
-        const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
-        const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
-        diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
+        try {
+          const { diffMult, clueMult, totalMult, diffLabel } = getSpellingMultipliers();
+          const diffEmoji = currentSpellingDifficulty === 'hard' ? '🔴' : (currentSpellingDifficulty === 'extreme' ? '🟣' : (currentSpellingDifficulty === 'medium' ? '🟡' : '🟢'));
+          diffBadgeEl.textContent = '✍️ Cấp độ: ' + diffEmoji + ' ' + diffLabel + ' (x' + diffMult + ') • Hệ số Tổng: x' + totalMult + ' Điểm';
+        } catch (e) {
+          diffBadgeEl.textContent = '✍️ Cấp độ: ' + currentSpellingDifficulty;
+        }
       }
 
       if (scoreRatioEl) scoreRatioEl.textContent = correctWordsCount + '/' + totalWords + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + res.deckLengthMult + ')';
+      if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
-      if (hintsEl) hintsEl.textContent = spellingHintsUsed + ' lượt';
-      if (skipsEl) skipsEl.textContent = spellingSkipCount + ' từ';
-      if (wrongsEl) wrongsEl.textContent = spellingWrongCount + ' lần';
+      if (hintsEl) hintsEl.textContent = (spellingHintsUsed || 0) + ' lượt';
+      if (skipsEl) skipsEl.textContent = (spellingSkipCount || 0) + ' từ';
+      if (wrongsEl) wrongsEl.textContent = (spellingWrongCount || 0) + ' lần';
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('spelling-res-wrong-banner');
