@@ -1418,10 +1418,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                   break;
                 }
               } else if (res.status === 429 || res.status >= 500) {
-              continue;
+                continue;
+              }
+            } catch (modelErr) {
+              console.warn('Model ' + m + ' speaking eval failed:', modelErr);
             }
-          } catch (modelErr) {
-            console.warn('Model ' + m + ' speaking eval failed:', modelErr);
           }
         }
 

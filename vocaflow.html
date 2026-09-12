@@ -32273,10 +32273,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
                   break;
                 }
               } else if (res.status === 429 || res.status >= 500) {
-              continue;
+                continue;
+              }
+            } catch (modelErr) {
+              console.warn('Model ' + m + ' speaking eval failed:', modelErr);
             }
-          } catch (modelErr) {
-            console.warn('Model ' + m + ' speaking eval failed:', modelErr);
           }
         }
 
@@ -36844,6 +36845,7 @@ Quy tắc phản hồi quan trọng:
             lastErrorMsg = e.message;
             console.warn(`Model ${m} network failed:`, e);
           }
+        }
       }
 
       if (fetchSuccess && replyText) {

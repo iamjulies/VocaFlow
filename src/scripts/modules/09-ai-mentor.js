@@ -1426,6 +1426,7 @@ Quy tắc phản hồi quan trọng:
             lastErrorMsg = e.message;
             console.warn(`Model ${m} network failed:`, e);
           }
+        }
       }
 
       if (fetchSuccess && replyText) {
