@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-59 Build 291)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-60 Build 292)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -104,13 +104,13 @@ function navigateToRoute(route, isPopState = false) {
     const firstSegment = segments[0] || '';
     const secondSegment = segments[1] || '';
 
-    // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId
+    // 1. Handle deep link to specific post: /@username/post/postId or user/@username/post/postId or /community/post/postId
     if (clean.includes('/post/')) {
       const parts = clean.split('/post/');
       const authorPart = parts[0].replace(/^(user\/@?|u\/|@+)/, '').trim();
       const postId = (parts[1] || '').trim();
 
-      if (authorPart && authorPart !== 'community') {
+      if (authorPart && authorPart !== 'community' && authorPart !== 'feed' && authorPart !== 'communitycenter') {
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + authorPart, '', authorPart);
         } else if (typeof openPublicProfileByAuthor === 'function') {
@@ -124,16 +124,17 @@ function navigateToRoute(route, isPopState = false) {
         }, 300);
         return;
       } else if (postId) {
-        if (typeof openProfileModal === 'function') openProfileModal('community');
-        setTimeout(() => {
-          if (typeof togglePostCommentsSection === 'function') {
-            communityActiveCommentsPostId = postId;
-            if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
-          }
-          if (typeof highlightAndScrollToPost === 'function') {
-            highlightAndScrollToPost(postId, false);
-          }
-        }, 300);
+        if (typeof navigateToCommunityPost === 'function') {
+          navigateToCommunityPost(postId);
+        } else {
+          if (typeof openCommunityCenter === 'function') openCommunityCenter('all');
+          else if (typeof openProfileModal === 'function') openProfileModal('community', 'all');
+          setTimeout(() => {
+            if (typeof highlightAndScrollToPost === 'function') {
+              highlightAndScrollToPost(postId, false);
+            }
+          }, 300);
+        }
         return;
       }
     }
@@ -181,8 +182,8 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openProfileModal === 'function') openProfileModal('achievements');
         return;
       }
-      if (secondSegment === 'community' || secondSegment === 'congdong' || secondSegment === 'feed') {
-        if (typeof openProfileModal === 'function') openProfileModal('community');
+      if (secondSegment === 'community' || secondSegment === 'congdong' || secondSegment === 'mycommunity') {
+        if (typeof openProfileModal === 'function') openProfileModal('community', 'mine');
         return;
       }
       if (secondSegment === 'sync' || secondSegment === 'cloud' || secondSegment === 'dongbo') {
@@ -258,9 +259,12 @@ function navigateToRoute(route, isPopState = false) {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
         break;
 
+      case 'communitycenter':
       case 'community':
       case 'feed':
-        if (typeof openProfileModal === 'function') openProfileModal('community');
+      case 'congdong':
+        if (typeof openCommunityCenter === 'function') openCommunityCenter('feed');
+        else if (typeof openProfileModal === 'function') openProfileModal('community', 'feed');
         break;
 
       case 'shop':

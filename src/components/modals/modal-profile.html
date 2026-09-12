@@ -313,12 +313,15 @@
 
           <!-- FEED FILTER & REFRESH -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <button type="button" class="btn btn-xs active-pill" id="community-filter-all" onclick="filterCommunityFeed('all')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
-                🌍 Tất Cả
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-xs active-pill" id="community-filter-feed" onclick="filterCommunityFeed('feed')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+                👥 Đang Theo Dõi
               </button>
               <button type="button" class="btn btn-xs" id="community-filter-mine" onclick="filterCommunityFeed('mine')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
                 👤 Bài Của Tôi
+              </button>
+              <button type="button" class="btn btn-xs" id="community-filter-all" onclick="filterCommunityFeed('all')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+                🌍 Khám Phá
               </button>
               <button type="button" class="btn btn-xs" id="community-filter-milestone" onclick="filterCommunityFeed('milestone')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
                 🌟 Thành Tích

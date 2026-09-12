@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-60 (Build 292) - Khắc Phục Lỗi Phông Chữ & Bảng Màu Rich Editor, Thông Báo Tương Tác Thả Tim / Bình Luận Thời Gian Thực & Phân Tách 3 Không Gian Cộng Đồng
+================================================================================
+1. [Khắc Phục Lỗi Phông Chữ & Bảng Màu Soạn Thảo (Rich Editor Toolbar Fix)]:
+   - Khắc phục triệt để lỗi mất vùng chọn (selection blur) khi nhấn vào thanh công cụ, chọn phông chữ dropdown hoặc bảng màu làm mất định dạng văn bản trong khung soạn bài viết (Ảnh chụp màn hình 2026-09-12 230246.png).
+   - Tích hợp bộ theo dõi vùng chọn liên tục saveRichEditorSelection / restoreRichEditorSelection trên mọi sự kiện chuột, bàn phím và bộ lắng nghe mousedown ngăn chặn mất focus.
+   - Nâng cấp setRichPostFontFamily và setRichPostColor tự động chuyển đổi thẻ cũ thành <span style="..."> chuẩn CSS, hỗ trợ áp dụng định dạng toàn khung khi chưa chọn text và áp dụng đúng đoạn văn bản khi có vùng chọn.
+
+2. [Hệ Thống Thông Báo Tương Tác Thả Tim & Bình Luận Thời Gian Thực]:
+   - Tự động tạo và gửi thông báo thời gian thực lên Firebase RTDB (/users/{authorUid}/notifications) ngay khi thành viên khác thả tim (like) hoặc gửi bình luận/trả lời bình luận trên bài viết.
+   - Khi nhấp vào thông báo từ Trung Tâm Thông Báo (modal-notifications), tự động chuyển thẳng tới đúng bài viết, tự động mở phần bình luận nếu có, cuộn mượt mà và làm nổi bật (glow highlight) thẻ bài viết.
+
+3. [Phân Tách Triệt Để 3 Không Gian Cộng Đồng (3 Community Spaces)]:
+   - Không gian 1: communitycenter (/communitycenter, /community, /feed, dropdown Header): Hiển thị bảng tin bài viết của chính người dùng và các tác giả đang theo dõi (post.authorUid === myUid || myFollowingMap[post.authorUid]).
+   - Không gian 2: me/community (/me/community, Hồ sơ ME -> Tab Cộng đồng): Chỉ hiển thị bài viết do chính người dùng đăng (post.authorUid === myUid).
+   - Không gian 3: @<username>/community (/@<username>/community, Hồ sơ tác giả công khai): Chỉ hiển thị bài viết của tác giả đó với đầy đủ khả năng thả tim, xem/gửi bình luận và phản hồi.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-60 Build 292)]:
+   - Hoàn tất đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-60_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-59 (Build 291) - Đồng Bộ Display Name ME & Community Feed, Thống Kê Hiệu Suất 7 Ngày 2 Chiều & Thời Gian Học Thực Tế 4 Chế Độ, Tối Ưu Hóa Bộ Nhận Diện Mô Hình Gemini AI & Triệt Tiêu Độ Trễ Subpath
 ================================================================================
 1. [Đồng Bộ Display Name Thời Gian Thực Giữa ME & Community Feed]:

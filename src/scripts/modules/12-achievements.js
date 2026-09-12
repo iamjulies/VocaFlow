@@ -466,7 +466,10 @@
             return type === 'NEW_DECK' || (actionType === 'PREVIEW_DECK' && !title.includes('mua'));
           }
           if (currentNotificationFilter === 'NEW_FOLLOWER') {
-            return type === 'NEW_FOLLOWER' || type === 'VOCAMAIL' || actionType === 'VIEW_PROFILE' || title.includes('theo dõi');
+            return type === 'NEW_FOLLOWER' || type === 'VOCAMAIL' || actionType === 'VIEW_PROFILE' ||
+                   type === 'post_like' || type === 'post_comment' || type === 'like' || type === 'comment' ||
+                   actionType === 'VIEW_COMMUNITY_POST' || title.includes('theo dõi') ||
+                   title.includes('thích bài viết') || title.includes('bình luận');
           }
           if (currentNotificationFilter === 'SYSTEM') {
             return type === 'SYSTEM' || type === 'BUG_REPORT' || title.includes('báo cáo') ||
@@ -496,7 +499,17 @@
         let typeBorder = 'rgba(56,189,248,0.3)';
 
         const tLower = (n.title || '').toLowerCase();
-        if (n.type === 'NEW_DECK' || (n.actionType === 'PREVIEW_DECK' && !tLower.includes('mua'))) {
+        if (n.type === 'post_like' || n.type === 'like' || tLower.includes('thích bài viết') || tLower.includes('thả tim')) {
+          typeIcon = '❤️';
+          typeColor = '#ec4899';
+          typeBg = 'rgba(236,72,153,0.12)';
+          typeBorder = 'rgba(236,72,153,0.35)';
+        } else if (n.type === 'post_comment' || n.type === 'comment' || tLower.includes('bình luận') || tLower.includes('trả lời')) {
+          typeIcon = '💬';
+          typeColor = '#38bdf8';
+          typeBg = 'rgba(56,189,248,0.12)';
+          typeBorder = 'rgba(56,189,248,0.35)';
+        } else if (n.type === 'NEW_DECK' || (n.actionType === 'PREVIEW_DECK' && !tLower.includes('mua'))) {
           typeIcon = '📘';
           typeColor = '#818cf8';
           typeBg = 'rgba(99,102,241,0.12)';
@@ -607,6 +620,23 @@
       const nType = notif.type || '';
       const title = (notif.title || '').toLowerCase();
       const message = (notif.message || notif.content || '').toLowerCase();
+
+      // 0. Community Post Interaction (Like / Comment / Reply)
+      const targetPostId = notif.postId || (notif.actionData && notif.actionData.postId) || notif.targetPostId;
+      if (aType === 'VIEW_COMMUNITY_POST' || nType === 'post_like' || nType === 'post_comment' || nType === 'like' || nType === 'comment' || (targetPostId && (title.includes('bài viết') || title.includes('bình luận') || title.includes('thích')))) {
+        if (typeof navigateToCommunityPost === 'function' && targetPostId) {
+          navigateToCommunityPost(targetPostId);
+          return;
+        }
+        if (typeof openCommunityCenter === 'function') {
+          openCommunityCenter('all');
+          return;
+        }
+        if (typeof openProfileModal === 'function') {
+          openProfileModal('community');
+          return;
+        }
+      }
 
       // 1. Deck preview / Deck details
       if ((aType === 'PREVIEW_DECK' || nType === 'NEW_DECK' || title.includes('vocadeck') || title.includes('bộ từ')) && notif.actionData && notif.actionData.deckId) {

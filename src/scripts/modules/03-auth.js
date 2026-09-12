@@ -4872,7 +4872,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.renderProfileDecksList = renderProfileDecksList;
 
-    function switchProfileTab(tabName = 'decks') {
+    function switchProfileTab(tabName = 'decks', communityFilter = null) {
       let cleanTab = tabName;
       if (cleanTab === 'mydeck') cleanTab = 'decks';
       if (cleanTab === 'sync') cleanTab = 'cloud';
@@ -4903,20 +4903,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowCardEl.textContent = `${calculateCurrentFlow().currentFlow} Ngày`;
         }
       } else if (cleanTab === 'community') {
+        if (communityFilter) {
+          communityCurrentFilter = communityFilter;
+        } else if (communityCurrentFilter !== 'feed' && communityCurrentFilter !== 'mine' && communityCurrentFilter !== 'all' && communityCurrentFilter !== 'milestone') {
+          communityCurrentFilter = 'mine';
+        }
+        if (typeof updateCommunityFilterPillsUI === 'function') updateCommunityFilterPillsUI();
         fetchAndRenderCommunityFeed();
       }
 
-      // v0.10.9-55: Synchronize Sub-URL for ME Profile
+      // v0.10.9-60: Synchronize Sub-URL for ME Profile / Community Center
       if (typeof updateAppUrlRoute === 'function') {
-        const routeMap = {
-          'decks': '/me/mydeck',
-          'stats': '/me/stats',
-          'achievements': '/me/achievements',
-          'community': '/me/community',
-          'cloud': '/me/sync'
-        };
-        const targetRoute = routeMap[cleanTab] || '/me/mydeck';
-        updateAppUrlRoute(targetRoute, `Hồ sơ cá nhân - VocaFlow`);
+        if (cleanTab === 'community') {
+          if (communityCurrentFilter === 'feed' || communityFilter === 'feed') {
+            updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
+          } else {
+            updateAppUrlRoute('/me/community', 'Bài Viết Của Tôi - VocaFlow');
+          }
+        } else {
+          const routeMap = {
+            'decks': '/me/mydeck',
+            'stats': '/me/stats',
+            'achievements': '/me/achievements',
+            'cloud': '/me/sync'
+          };
+          const targetRoute = routeMap[cleanTab] || '/me/mydeck';
+          updateAppUrlRoute(targetRoute, `Hồ sơ cá nhân - VocaFlow`);
+        }
       }
     }
     window.switchProfileTab = switchProfileTab;
@@ -4932,8 +4945,45 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     let communityActiveCommentsPostId = null;
 
     // =========================================================================
-    // COMMUNITY RICH TEXT & POST FORMATTING ENGINE (v0.10.9-53)
     // =========================================================================
+    // COMMUNITY RICH TEXT & POST FORMATTING ENGINE (v0.10.9-60)
+    // =========================================================================
+    let richEditorSavedRanges = {}; // { editorId: Range }
+    let lastActiveRichEditorId = 'community-post-rich-content';
+
+    function saveRichEditorSelection(editorId = null) {
+      const id = editorId || lastActiveRichEditorId || 'community-post-rich-content';
+      const editor = document.getElementById(id);
+      if (!editor) return;
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        const range = sel.getRangeAt(0);
+        if (editor.contains(range.commonAncestorContainer) || editor === range.commonAncestorContainer) {
+          richEditorSavedRanges[id] = range.cloneRange();
+          lastActiveRichEditorId = id;
+        }
+      }
+    }
+    window.saveRichEditorSelection = saveRichEditorSelection;
+
+    function restoreRichEditorSelection(editorId = null) {
+      const id = editorId || lastActiveRichEditorId || 'community-post-rich-content';
+      const editor = document.getElementById(id);
+      if (!editor) return;
+      editor.focus();
+      const savedRange = richEditorSavedRanges[id];
+      if (savedRange) {
+        try {
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(savedRange);
+        } catch (e) {
+          console.warn('Selection restore fallback:', e);
+        }
+      }
+    }
+    window.restoreRichEditorSelection = restoreRichEditorSelection;
+
     function sanitizePostHtml(raw) {
       if (!raw) return '';
       if (typeof raw !== 'string') return String(raw);
@@ -4968,10 +5018,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   const styleVal = child.getAttribute('style') || '';
                   const safeStyleRules = [];
                   styleVal.split(';').forEach(rule => {
-                    const parts = rule.split(':');
-                    if (parts.length === 2) {
-                      const prop = parts[0].trim().toLowerCase();
-                      const val = parts[1].trim();
+                    const colonIdx = rule.indexOf(':');
+                    if (colonIdx > 0) {
+                      const prop = rule.slice(0, colonIdx).trim().toLowerCase();
+                      const val = rule.slice(colonIdx + 1).trim();
                       if (allowedStyles.has(prop) && !/javascript:|url\(|expression\(/i.test(val)) {
                         safeStyleRules.push(`${prop}: ${val}`);
                       }
@@ -5007,8 +5057,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     function execRichPostCommand(cmd, val = null, targetEditorId = 'community-post-rich-content') {
       const editor = getEditorElement(targetEditorId);
-      if (editor) editor.focus();
+      restoreRichEditorSelection(targetEditorId);
+      try {
+        document.execCommand('styleWithCSS', false, true);
+      } catch (e) {}
       document.execCommand(cmd, false, val);
+      saveRichEditorSelection(targetEditorId);
       if (editor) editor.focus();
     }
     window.execRichPostCommand = execRichPostCommand;
@@ -5016,13 +5070,32 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function setRichPostFontSize(size, targetEditorId = 'community-post-rich-content') {
       if (!size) return;
       const editor = getEditorElement(targetEditorId);
-      if (editor) editor.focus();
-      document.execCommand('fontSize', false, '7');
-      const fontEls = editor ? editor.querySelectorAll('font[size="7"]') : [];
-      fontEls.forEach(el => {
-        el.removeAttribute('size');
-        el.style.fontSize = size;
-      });
+      if (!editor) return;
+      restoreRichEditorSelection(targetEditorId);
+
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().length > 0) {
+        try {
+          document.execCommand('styleWithCSS', false, true);
+          document.execCommand('fontSize', false, '7');
+          const fontEls = editor.querySelectorAll('font[size="7"]');
+          fontEls.forEach(el => {
+            const span = document.createElement('span');
+            span.style.fontSize = size;
+            span.innerHTML = el.innerHTML;
+            el.parentNode.replaceChild(span, el);
+          });
+        } catch (e) {
+          const range = sel.getRangeAt(0);
+          const span = document.createElement('span');
+          span.style.fontSize = size;
+          span.appendChild(range.extractContents());
+          range.insertNode(span);
+        }
+      } else {
+        editor.style.fontSize = size;
+      }
+      saveRichEditorSelection(targetEditorId);
       if (editor) editor.focus();
     }
     window.setRichPostFontSize = setRichPostFontSize;
@@ -5030,17 +5103,68 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function setRichPostFontFamily(font, targetEditorId = 'community-post-rich-content') {
       if (!font) return;
       const editor = getEditorElement(targetEditorId);
-      if (editor) editor.focus();
-      document.execCommand('fontName', false, font);
+      if (!editor) return;
+      restoreRichEditorSelection(targetEditorId);
+
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().length > 0) {
+        try {
+          document.execCommand('styleWithCSS', false, true);
+          document.execCommand('fontName', false, font);
+          // Convert any <font face> created by execCommand into <span style="font-family: ...">
+          editor.querySelectorAll('font[face]').forEach(el => {
+            const faceVal = el.getAttribute('face') || font;
+            const span = document.createElement('span');
+            span.style.fontFamily = faceVal;
+            span.innerHTML = el.innerHTML;
+            el.parentNode.replaceChild(span, el);
+          });
+        } catch (e) {
+          const range = sel.getRangeAt(0);
+          const span = document.createElement('span');
+          span.style.fontFamily = font;
+          span.appendChild(range.extractContents());
+          range.insertNode(span);
+        }
+      } else {
+        editor.style.fontFamily = font;
+      }
+      saveRichEditorSelection(targetEditorId);
       if (editor) editor.focus();
     }
     window.setRichPostFontFamily = setRichPostFontFamily;
 
     function setRichPostColor(color, targetEditorId = 'community-post-rich-content') {
+      if (!color) return;
       const editor = getEditorElement(targetEditorId);
-      if (editor) editor.focus();
-      document.execCommand('foreColor', false, color);
+      if (!editor) return;
+      restoreRichEditorSelection(targetEditorId);
+
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().length > 0) {
+        try {
+          document.execCommand('styleWithCSS', false, true);
+          document.execCommand('foreColor', false, color);
+          // Convert any <font color> created by execCommand into <span style="color: ...">
+          editor.querySelectorAll('font[color]').forEach(el => {
+            const colorVal = el.getAttribute('color') || color;
+            const span = document.createElement('span');
+            span.style.color = colorVal;
+            span.innerHTML = el.innerHTML;
+            el.parentNode.replaceChild(span, el);
+          });
+        } catch (e) {
+          const range = sel.getRangeAt(0);
+          const span = document.createElement('span');
+          span.style.color = color;
+          span.appendChild(range.extractContents());
+          range.insertNode(span);
+        }
+      } else {
+        editor.style.color = color;
+      }
       closeAllRichPopovers();
+      saveRichEditorSelection(targetEditorId);
       if (editor) editor.focus();
     }
     window.setRichPostColor = setRichPostColor;
@@ -5048,9 +5172,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function insertRichPostEmoji(emoji, targetEditorId = 'community-post-rich-content') {
       const editor = getEditorElement(targetEditorId);
       if (editor) {
-        editor.focus();
+        restoreRichEditorSelection(targetEditorId);
         document.execCommand('insertText', false, emoji);
         closeAllRichPopovers();
+        saveRichEditorSelection(targetEditorId);
         editor.focus();
       }
     }
@@ -5059,8 +5184,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     function clearRichPostFormatting(targetEditorId = 'community-post-rich-content') {
       const editor = getEditorElement(targetEditorId);
       if (editor) {
-        editor.focus();
+        restoreRichEditorSelection(targetEditorId);
         document.execCommand('removeFormat', false, null);
+        editor.style.fontFamily = '';
+        editor.style.color = '';
+        editor.style.fontSize = '';
+        saveRichEditorSelection(targetEditorId);
         editor.focus();
       }
     }
@@ -5089,10 +5218,32 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.closeAllRichPopovers = closeAllRichPopovers;
 
+    // Prevent focus drop and auto-track selections
+    document.addEventListener('mousedown', (e) => {
+      const toolbarBtn = e.target.closest('.rich-tool-btn, .rich-color-dot, .rich-emoji-btn');
+      if (toolbarBtn) {
+        saveRichEditorSelection();
+        e.preventDefault();
+      }
+      const selectEl = e.target.closest('.rich-tool-select');
+      if (selectEl) {
+        saveRichEditorSelection();
+      }
+    });
+
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.rich-popover') && !e.target.closest('.rich-tool-btn')) {
         closeAllRichPopovers();
       }
+    });
+
+    // Auto-bind selection change events to editors
+    ['keyup', 'mouseup', 'focus', 'input', 'select'].forEach(evt => {
+      document.addEventListener(evt, (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('rich-post-editor')) {
+          saveRichEditorSelection(e.target.id);
+        }
+      });
     });
 
     // =========================================================================
@@ -5415,12 +5566,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!post || post.authorUid !== currentUser?.uid) return;
 
       const richEditor = document.getElementById('edit-post-rich-content');
-      const newHtml = (richEditor?.innerHTML || '').trim();
+      let newHtml = (richEditor?.innerHTML || '').trim();
       const plainText = (richEditor?.textContent || '').trim();
 
       if (!plainText && !newHtml && !editingPostAttachedImage && !editingPostAttachedBadge) {
         showToast('⚠️ Bài viết không thể để trống hoàn toàn!');
         return;
+      }
+
+      // Preserve container styles if set on editor element
+      if (richEditor && (richEditor.style.fontFamily || richEditor.style.color || richEditor.style.fontSize)) {
+        const styles = [];
+        if (richEditor.style.fontFamily) styles.push(`font-family: ${richEditor.style.fontFamily}`);
+        if (richEditor.style.color) styles.push(`color: ${richEditor.style.color}`);
+        if (richEditor.style.fontSize) styles.push(`font-size: ${richEditor.style.fontSize}`);
+        newHtml = `<div style="${styles.join('; ')}">${newHtml}</div>`;
       }
 
       const saveBtn = document.getElementById('btn-save-edited-post');
@@ -5644,12 +5804,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
       const richEditor = document.getElementById('community-post-rich-content');
       const contentEl = document.getElementById('community-post-content');
-      const htmlContent = richEditor ? richEditor.innerHTML.trim() : (contentEl?.value || '').trim();
+      let htmlContent = richEditor ? richEditor.innerHTML.trim() : (contentEl?.value || '').trim();
       const plainText = richEditor ? richEditor.textContent.trim() : (contentEl?.value || '').trim();
 
       if (!plainText && !htmlContent && !communityActiveAttachedImage && !communityActiveAttachedBadge) {
         showToast('⚠️ Vui lòng nhập nội dung hoặc đính kèm ảnh/danh hiệu trước khi đăng!');
         return;
+      }
+
+      // Preserve container styles if set on editor element
+      if (richEditor && (richEditor.style.fontFamily || richEditor.style.color || richEditor.style.fontSize)) {
+        const styles = [];
+        if (richEditor.style.fontFamily) styles.push(`font-family: ${richEditor.style.fontFamily}`);
+        if (richEditor.style.color) styles.push(`color: ${richEditor.style.color}`);
+        if (richEditor.style.fontSize) styles.push(`font-size: ${richEditor.style.fontSize}`);
+        htmlContent = `<div style="${styles.join('; ')}">${htmlContent}</div>`;
       }
 
       const submitBtn = document.getElementById('btn-submit-community-post');
@@ -5694,7 +5863,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           message: `${postObj.authorName} vừa đăng một bài viết mới trên Cộng Đồng!`
         });
 
-        if (richEditor) richEditor.innerHTML = '';
+        if (richEditor) {
+          richEditor.innerHTML = '';
+          richEditor.style.fontFamily = '';
+          richEditor.style.color = '';
+          richEditor.style.fontSize = '';
+        }
         if (contentEl) contentEl.value = '';
         clearCommunityPostImage();
         clearCommunityPostBadge();
@@ -5850,12 +6024,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.fetchAndRenderCommunityFeed = fetchAndRenderCommunityFeed;
 
-    function filterCommunityFeed(filter) {
-      communityCurrentFilter = filter;
-      ['all', 'mine', 'milestone'].forEach(f => {
+    function updateCommunityFilterPillsUI() {
+      ['feed', 'mine', 'all', 'milestone'].forEach(f => {
         const btn = document.getElementById('community-filter-' + f);
         if (btn) {
-          if (f === filter) {
+          if (f === communityCurrentFilter) {
             btn.classList.add('active-pill');
             btn.style.background = '#6366f1';
             btn.style.color = '#fff';
@@ -5866,6 +6039,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
       });
+    }
+    window.updateCommunityFilterPillsUI = updateCommunityFilterPillsUI;
+
+    function filterCommunityFeed(filter) {
+      communityCurrentFilter = filter;
+      updateCommunityFilterPillsUI();
+      if (typeof updateAppUrlRoute === 'function') {
+        if (filter === 'feed') updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
+        else if (filter === 'mine') updateAppUrlRoute('/me/community', 'Bài Viết Của Tôi - VocaFlow');
+        else if (filter === 'all') updateAppUrlRoute('/community/explore', 'Khám Phá Cộng Đồng - VocaFlow');
+      }
       renderCommunityFeed();
     }
     window.filterCommunityFeed = filterCommunityFeed;
@@ -5996,20 +6180,52 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       const myUid = currentUser?.uid;
       let filtered = communityPosts;
+
       if (communityCurrentFilter === 'mine') {
-        filtered = communityPosts.filter(p => p.authorUid === myUid);
+        filtered = communityPosts.filter(p => myUid && p.authorUid === myUid);
+      } else if (communityCurrentFilter === 'feed') {
+        filtered = communityPosts.filter(p => {
+          if (!myUid) return true;
+          if (p.authorUid === myUid) return true;
+          if (typeof myFollowingMap !== 'undefined' && myFollowingMap && !!myFollowingMap[p.authorUid]) return true;
+          return false;
+        });
       } else if (communityCurrentFilter === 'milestone') {
         filtered = communityPosts.filter(p => p.type === 'milestone' || p.badge);
+      } else {
+        // 'all'
+        filtered = communityPosts;
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
-            <div style="font-size: 36px; margin-bottom: 8px;">💬✨</div>
-            <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy là người đầu tiên chia sẻ cảm nghĩ hoặc chiến tích học tập!</p>
-          </div>
-        `;
+        if (communityCurrentFilter === 'mine') {
+          container.innerHTML = `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">📝✨</div>
+              <strong style="font-size: 14px; color: var(--text);">Bạn chưa có bài viết nào</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy chia sẻ suy nghĩ hoặc chiến tích học tập đầu tiên của bạn ở khung soạn thảo phía trên!</p>
+            </div>
+          `;
+        } else if (communityCurrentFilter === 'feed') {
+          container.innerHTML = `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">👥🌱</div>
+              <strong style="font-size: 14px; color: var(--text);">Bảng tin theo dõi đang trống</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Hãy theo dõi thêm tác giả hoặc chuyển sang tab Khám Phá để xem tất cả bài viết.</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="filterCommunityFeed('all')" style="font-size: 12px; font-weight: 700;">
+                🌍 Khám Phá Cộng Đồng
+              </button>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">💬✨</div>
+              <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy là người đầu tiên chia sẻ cảm nghĩ hoặc chiến tích học tập!</p>
+            </div>
+          `;
+        }
         return;
       }
 
@@ -6192,17 +6408,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           });
 
           if (post.authorUid && post.authorUid !== myUid) {
-            const notifId = 'notif_like_' + Date.now();
+            const notifId = 'notif_like_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
             fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 id: notifId,
-                type: 'like',
+                type: 'post_like',
+                actionType: 'VIEW_COMMUNITY_POST',
                 title: '❤️ Lượt thích mới',
-                message: `@${currentUser.username || 'user'} đã thích bài viết của bạn!`,
+                message: `@${currentUser.username || currentUser.displayName || 'user'} đã thích bài viết của bạn!`,
                 postId: postId,
+                authorUid: currentUser.uid,
+                authorName: currentUser.displayName || 'Flower',
+                authorHandle: currentUser.username || 'user',
                 timestamp: new Date().toISOString(),
+                isRead: false,
                 read: false
               })
             }).catch(e => console.warn(e));
@@ -6338,26 +6559,110 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         });
 
         if (post.authorUid && post.authorUid !== currentUser.uid) {
-          const notifId = 'notif_comment_' + Date.now();
+          const notifId = 'notif_comment_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
           fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               id: notifId,
-              type: 'comment',
+              type: 'post_comment',
+              actionType: 'VIEW_COMMUNITY_POST',
               title: '💬 Bình luận mới',
               message: `@${commentObj.authorHandle} đã bình luận: "${text.slice(0, 60)}"`,
               postId: postId,
+              commentId: commentId,
+              authorUid: currentUser.uid,
+              authorName: commentObj.authorName,
+              authorHandle: commentObj.authorHandle,
               timestamp: new Date().toISOString(),
+              isRead: false,
               read: false
             })
           }).catch(e => console.warn(e));
+        }
+
+        // Notify replied user if replying to someone else's comment
+        if (replyCommentId && post.comments && post.comments[replyCommentId]) {
+          const targetComment = post.comments[replyCommentId];
+          if (targetComment && targetComment.authorUid && targetComment.authorUid !== currentUser.uid && targetComment.authorUid !== post.authorUid) {
+            const replyNotifId = 'notif_reply_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            fetch(`${rtdbUrl}/users/${targetComment.authorUid}/notifications/${replyNotifId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: replyNotifId,
+                type: 'post_comment',
+                actionType: 'VIEW_COMMUNITY_POST',
+                title: '💬 Phản hồi bình luận mới',
+                message: `@${commentObj.authorHandle} đã trả lời bình luận của bạn: "${text.slice(0, 60)}"`,
+                postId: postId,
+                commentId: commentId,
+                authorUid: currentUser.uid,
+                authorName: commentObj.authorName,
+                authorHandle: commentObj.authorHandle,
+                timestamp: new Date().toISOString(),
+                isRead: false,
+                read: false
+              })
+            }).catch(e => console.warn(e));
+          }
         }
       } catch (err) {
         console.warn('Comment sync error:', err);
       }
     }
     window.submitPostComment = submitPostComment;
+
+    function navigateToCommunityPost(postId) {
+      if (!postId) return;
+      if (typeof closeModal === 'function') closeModal('modal-notifications');
+
+      let post = (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) ? communityPosts.find(p => p.id === postId) : null;
+      const myUid = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.uid : '';
+
+      if (post) {
+        if (myUid && post.authorUid && post.authorUid !== myUid) {
+          const aName = (typeof getCommunityAuthorName === 'function') ? getCommunityAuthorName(post) : (post.authorName || 'Flower');
+          if (typeof openPublicProfileByAuthor === 'function') {
+            openPublicProfileByAuthor(aName, post.authorUid);
+          } else if (typeof openPublicProfileModal === 'function') {
+            openPublicProfileModal(aName, post.authorUid);
+          }
+          setTimeout(() => {
+            if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community');
+            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, true);
+          }, 300);
+        } else {
+          if (typeof openProfileModal === 'function') {
+            openProfileModal('community', 'all');
+          }
+          setTimeout(() => {
+            if (typeof filterCommunityFeed === 'function') {
+              if (myUid && post.authorUid === myUid) {
+                filterCommunityFeed('mine');
+              } else {
+                filterCommunityFeed('all');
+              }
+            }
+            if (typeof togglePostCommentsSection === 'function') {
+              communityActiveCommentsPostId = postId;
+              if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+            }
+            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, false);
+          }, 300);
+        }
+      } else {
+        if (typeof openProfileModal === 'function') openProfileModal('community', 'all');
+        if (typeof fetchAndRenderCommunityFeed === 'function') {
+          fetchAndRenderCommunityFeed(true).then(() => {
+            setTimeout(() => {
+              if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, false);
+            }, 400);
+          });
+        }
+      }
+    }
+    window.navigateToCommunityPost = navigateToCommunityPost;
 
     async function editCommunityPost(postId) {
       const post = communityPosts.find(p => p.id === postId);
@@ -6734,19 +7039,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
 
-    function openProfileModal(initialTab = 'decks') {
+    function openProfileModal(initialTab = 'decks', communityFilter = null) {
       updateAuthUI();
       if (typeof checkMasteryAchievements === 'function') checkMasteryAchievements();
       if (typeof renderProfilePinnedBadges === 'function') renderProfilePinnedBadges();
-      if (typeof switchProfileTab === 'function') switchProfileTab(initialTab);
+      if (typeof switchProfileTab === 'function') switchProfileTab(initialTab, communityFilter);
       openModal('modal-profile');
     }
     window.openProfileModal = openProfileModal;
 
-    function openCommunityFeed() {
-      openProfileModal('community');
+    function openCommunityCenter(filter = 'feed') {
+      openProfileModal('community', filter);
     }
-    window.openCommunityFeed = openCommunityFeed;
+    window.openCommunityCenter = openCommunityCenter;
+    window.openCommunityFeed = openCommunityCenter;
 
     function openAuthModal(defaultTab = 'login') {
       openModal('modal-auth');
