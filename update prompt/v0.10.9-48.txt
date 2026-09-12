@@ -1,11 +1,21 @@
-v0.10.9-48
-1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-11 010743.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-11 010759.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-11 010813.png" lần lượt là API Key số 1,2,3 của t. theo m thấy đó, tỉ lệ request thành công chỉ là từ 59.32% đến 67,19% và lượng lỗi 404 NotFound là rất lớn, kèm theo một lượng đáng kể các lỗi khác nữa. và t cần lời giải thích và nếu có lỗi gì thì phải sửa ngay ở đây!
-2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-11 004659.png", thêm tab "Cộng đồng" vào cùng 3 tabs này. ở đây sẽ cho phép ng dùng chia sẻ bài viết văn bản, hình ảnh,.. hoặc đăng khoe các thành thích, danh hiệu... đồng thời có cơ chế tự động đăng bài khi ng chơi đạt được những danh hiệu hạng kim cương/ huyền thoại, hoàn thành các buổi học dài, chia sẻ flow dài (7, 30, 100, 200, 365,...), mới mua vocavip,... những thông tin này được đồng bộ như những thông tin khác. ngoài ra còn phải có thêm cơ chế thương tác thả tim, comment. do thường thì mấy bài đăng này khá nặng nên kh cần đồng bộ cả đống dữ liệu của cả bài đăng mà chỉ cần đồng bộ 1 lần cái đó, từ sau đó thì chỉ cần động bộ lượt tương tác, comments,... để đỡ tối ưu hóa thời gian đồng bộ. ng theo dõi sẽ nhận thông báo khi ng được theo dõi đăng bài gì đó. ng đăng bải có khả năng tinh chỉnh thoải mái, sửa/thêm/xóa bài. có tính năng reply chính xác các comment chứ kh phải chỉ đăng lên bình thường.
-hơn nữa, do app đang dần mở rộng và rất nhiều thông tin cần được đồng bộ 2 chiều qua cloud nên chúng ta cần thảo luận và tìm ra cách giải quyết tối ưu nhất cho nhà phát triển phi ngân sách (tức là miễn phí, kh tốn tiền đó). và thử tìm hiểu xem các nền tảng lớn như facebook, instagram hay tiktok đang làm điều này như thế nào.
-3. hiện tại, khi làm các chế độ học (trắc nghiệm, luyện viết, luyện nói), khi đến màn hình tổng kết, thông tin đều bị sai hết. lỗi: 1 là cấp độ siêu khó -> dễ, 2 là kết quả đúng <100% -> 100%, 3 là tổng thời gian, 4 là tốc độ spq, 5 là số lượt dùng vocahint, vocaskip, 6 là số lượt chọn sai, 7 là vocoin... còn nhiều nữa... à kh, sai hết mọi thông số luôn ấy chứ -> sửa lại để hoạt động trơn tru như trước kia.
-4. tốc độ đồng bộ hiện tại bị chậm quá... nó kh nhanh như mình tưởng mà nó vẫn bị lâu tầm trên dưới 10 giây đấy.
-5. hiện tại, khi học xong 1 lần các từ trong hàng đợi ôn tập đã quá hạn ấy, nó kh tạm thời loại mấy từ đã học ra khỏi danh sách ấy, tức là nó kh đếm lại số ngày để đến lần học tiếp theo -> sửa nhé.
+v0.10.9-47
+1. tiến hành chia nhỏ app.js như sau: (nếu chia được nhỏ hơn nữa thì càng tốt)
+src/scripts/
+├── modules/
+│   ├── 01-router.js             # SPA routing & history management (Đã triển khai)
+│   ├── 02-state-core.js         # Khai báo biến toàn cục, LocalStorage, config
+│   ├── 03-auth.js               # Firebase Auth, đăng nhập/đăng ký, sync profile
+│   ├── 04-decks-manager.js      # CRUD bộ từ, import/export, flashcard state
+│   ├── 05-quiz-engine.js        # Logic trắc nghiệm, tính điểm, âm thanh
+│   ├── 06-spelling-engine.js    # Logic gõ chính tả, phím ảo, gợi ý
+│   ├── 07-speaking-engine.js    # AI Pronunciation Lab, MediaRecorder, VAD, Gemini Audio
+│   ├── 08-wallet-economy.js     # Hệ thống Xu, Ledger, Bảng xếp hạng, Điểm danh Flow
+│   ├── 09-ai-mentor.js          # Chatbot gia sư AI VocaMentor, quota, stream
+│   ├── 10-lucky-wheel.js        # Vòng quay may mắn, phần thưởng, tỉ lệ trúng
+│   ├── 11-publisher-studio.js   # Quản lý kho VocaStore, duyệt bộ từ cộng đồng
+│   └── 12-achievements.js       # Hệ thống huy hiệu, nhiệm vụ ngày
+└── app.js                       # Entry point, DOMContentLoaded & event bindings
 
-đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+2. đây là profile đúng "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 161927.png" của user, còn đây là profile lỗi "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-12 162024.png" của user khi truy cập vào link chia sẻ profile -> sửa lại link trong phần chia sẻ cho giống với link của profile ng dùng
 
-nhiệm vụ bổ sung (nếu phát sinh): 
+!!!! đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser"

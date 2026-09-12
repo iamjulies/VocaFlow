@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-45)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-48)
 // Enables direct clean URLs & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -43,13 +43,14 @@ function resolveRouteFromUrl() {
   // 1. Check GitHub Pages 404 SPA redirect param ?p=...
   const pParam = searchParams.get('p');
   if (pParam) {
-    return decodeURIComponent(pParam);
+    let decoded = decodeURIComponent(pParam);
+    return decoded.split('?')[0].trim();
   }
 
   // 2. Check legacy deep-link params ?user=... / ?u=... / ?profile=...
   const userParam = searchParams.get('user') || searchParams.get('u') || searchParams.get('profile');
   if (userParam) {
-    const cleanUser = userParam.replace(/^@/, '').trim();
+    const cleanUser = userParam.replace(/^@+/, '').split('?')[0].replace(/\/+$/, '').trim();
     return cleanUser ? '/@' + cleanUser : '';
   }
 
@@ -62,7 +63,7 @@ function resolveRouteFromUrl() {
   if (!path || path === '/' || path === '/index.html' || path === '/vocaflow.html') {
     return '/homepage';
   }
-  return path;
+  return path.split('?')[0].trim();
 }
 window.resolveRouteFromUrl = resolveRouteFromUrl;
 
@@ -73,10 +74,12 @@ function navigateToRoute(route, isPopState = false) {
   try {
     let clean = route.trim();
     if (clean.startsWith('/')) clean = clean.slice(1);
+    clean = clean.split('?')[0].split('#')[0].replace(/\/+$/, '').trim();
 
     // Handle @username or user/@username or u/username
     if (clean.startsWith('@') || clean.startsWith('user/@') || clean.startsWith('user/') || clean.startsWith('u/')) {
-      let handle = clean.replace(/^(user\/@?|u\/|@)/, '').trim();
+      let handle = clean.replace(/^(user\/@?|u\/|@+)/, '').trim();
+      handle = handle.replace(/^@+/, '').trim();
       if (handle) {
         if (typeof openPublicProfileModal === 'function') {
           openPublicProfileModal('@' + handle, '', handle);
@@ -159,7 +162,7 @@ window.navigateToRoute = navigateToRoute;
 function initSpaRouter() {
   const targetRoute = resolveRouteFromUrl();
 
-  // Restore clean URL in address bar if ?p= was used
+  // Restore clean URL in address bar if ?p= or legacy ?user= was used
   const searchParams = new URLSearchParams(window.location.search);
   if (searchParams.has('p') || searchParams.has('user') || searchParams.has('u') || searchParams.has('profile')) {
     const basePath = getAppBasePath();

@@ -1,0 +1,12529 @@
+﻿// =========================================================================
+
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.9-48)
+
+// VocaLib Community Library, VocaStudio publisher portal, deck sharing
+
+// =========================================================================
+
+    // =========================================================================
+    // PUBLISHER / ADMIN PORTAL LOGIC (v0.0.8)
+    // =========================================================================
+    // =========================================================================
+    // PUBLISHER & STUDENT MANAGEMENT PORTAL (v0.0.9.0 MANAGEMENT UPDATE)
+    // =========================================================================
+    let adminStudentsData = [];
+    let editingStudentUid = null;
+
+    function renderAvatarHtml(avatarVal, size = 28, fontSize = 14) {
+      if (typeof avatarVal === 'string') {
+        const clean = avatarVal.trim();
+        if (clean.startsWith('data:image') || clean.startsWith('http') || clean.startsWith('icons/') || clean.startsWith('save/') || clean.endsWith('.png') || clean.endsWith('.jpg') || clean.endsWith('.webp') || clean.endsWith('.svg') || clean.includes('/')) {
+          return '<img src="' + escapeHtml(clean) + '" style="width: ' + size + 'px; height: ' + size + 'px; min-width: ' + size + 'px; min-height: ' + size + 'px; max-width: ' + size + 'px; max-height: ' + size + 'px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto;" alt="Avatar" onerror="this.onerror=null; this.src=\'icons/Icon-192.png\';" />';
+        }
+      }
+      const rawText = (typeof avatarVal === 'string' && avatarVal.trim()) ? avatarVal.trim()[0].toUpperCase() : '👤';
+      return '<span style="font-size: ' + fontSize + 'px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: ' + size + 'px; height: ' + size + 'px; font-weight: 800; color: white;">' + escapeHtml(rawText) + '</span>';
+    }
+
+    function getUserAvatar(userObj = null) {
+      const target = userObj || currentUser;
+      if (target && target.avatar && (target.avatar.startsWith('data:image') || target.avatar.startsWith('http'))) {
+        return target.avatar;
+      }
+      if (target && target.profile && target.profile.avatar && (target.profile.avatar.startsWith('data:image') || target.profile.avatar.startsWith('http'))) {
+        return target.profile.avatar;
+      }
+      const saved = localStorage.getItem('vocaflow_user_avatar');
+      if (saved && (saved.startsWith('data:image') || saved.startsWith('http'))) {
+        return saved;
+      }
+      const name = (target && (target.displayName || target.email)) || 'VocaFlow';
+      return name.trim()[0].toUpperCase();
+    }
+
+
+    // =========================================================================
+    // ADMIN BUG REPORTS MANAGEMENT (PUBLISHER PORTAL TAB 4)
+    // =========================================================================
+    async function fetchAdminBugReportsList() {
+      const container = document.getElementById('admin-bug-reports-list');
+      if (!container) return;
+      container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);"><span style="font-size: 24px; display: block; margin-bottom: 8px;">⏳</span>Đang tải danh sách báo cáo lỗi từ Firebase Cloud...</div>';
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+      try {
+        const token = await getFreshCloudAuthToken();
+        let res = null;
+
+        if (token) {
+          try {
+            res = await fetch(`${rtdbUrl}/bug_reports.json?auth=${token}`);
+          } catch (e1) {
+            console.warn('Authenticated fetch failed, trying unauthenticated fallback...', e1);
+          }
+        }
+
+        if (!res || !res.ok) {
+          res = await fetch(`${rtdbUrl}/bug_reports.json`);
+        }
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (!data || typeof data !== 'object') {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">🎉 Hiện không có báo cáo lỗi nào đang chờ xử lý!</div>';
+          adminBugReportsData = [];
+          updateAdminBugBadge(0);
+          return;
+        }
+
+        adminBugReportsData = Object.values(data).filter(b => b && b.id).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        const openCount = adminBugReportsData.filter(b => b.status === 'open').length;
+        updateAdminBugBadge(openCount);
+        renderAdminBugReportsList();
+
+      } catch (err) {
+        console.warn('Fetch bugs error:', err);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: #f87171;">
+            <div style="font-size: 24px; margin-bottom: 6px;">⚠️</div>
+            <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">Không thể tải danh sách báo cáo lỗi từ Cloud</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Chi tiết: ${escapeHtml(err.message || 'Lỗi mạng hoặc kết nối máy chủ')}</div>
+            <button class="btn btn-outline btn-sm" onclick="fetchAdminBugReportsList()" style="padding: 5px 16px; font-size: 12px; font-weight: 700; color: var(--text);">🔄 Thử lại ngay</button>
+          </div>
+        `;
+      }
+    }
+
+    function updateAdminBugBadge(count) {
+      const badge = document.getElementById('pub-bugs-badge');
+      if (badge) {
+        badge.textContent = count.toString();
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function filterAdminBugReports(status) {
+      currentAdminBugFilter = status;
+      ['all', 'open', 'in_progress', 'resolved', 'rejected'].forEach(s => {
+        const btn = document.getElementById('btn-bug-filter-' + s);
+        if (btn) {
+          btn.className = s === status ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+        }
+      });
+      renderAdminBugReportsList();
+    }
+
+    function renderAdminBugReportsList() {
+      const container = document.getElementById('admin-bug-reports-list');
+      if (!container) return;
+
+      let filtered = adminBugReportsData;
+      if (currentAdminBugFilter !== 'all') {
+        filtered = adminBugReportsData.filter(b => b.status === currentAdminBugFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 12.5px;">Không có báo cáo nào trong mục này.</div>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(b => {
+        const statusColors = { open: '#fbbf24', in_progress: '#38bdf8', resolved: '#34d399', rejected: '#94a3b8' };
+        const statusLabels = { open: '🟡 Chờ xử lý', in_progress: '🔵 Đang xử lý', resolved: '🟢 Đã fix xong', rejected: '⚪ Đã từ chối' };
+        const sevColors = { low: '#34d399', medium: '#fbbf24', high: '#ef4444' };
+        const sevLabels = { low: '🟢 Nhẹ', medium: '🟡 Vừa', high: '🔴 Nghiêm trọng' };
+        const catLabels = {
+          ui_ux: '🎨 UI/UX',
+          speaking: '🎙️ Speaking',
+          ai: '🤖 AI Studio',
+          wheel_ad: '🎡 Vòng Quay / QC',
+          wallet_vip: '💳 Ví / VIP',
+          cloud_sync: '🔄 Cloud Sync',
+          feature_request: '💡 Tính Năng Mới',
+          other: '❓ Khác'
+        };
+
+        const timeStr = new Date(b.createdAt || Date.now()).toLocaleString('vi-VN');
+        
+        // Multi-image support (v0.10.8-alpha-10.3)
+        const screenshots = (Array.isArray(b.screenshots) && b.screenshots.length > 0) 
+          ? b.screenshots 
+          : (b.screenshot ? [b.screenshot] : []);
+        const hasScreenshots = screenshots.length > 0;
+
+        // Reporter VIP styling & clickable profile (v0.10.8-alpha-10.3)
+        const authorName = b.user?.displayName || b.user?.email || 'Ẩn danh';
+        const authorUid = b.user?.uid || '';
+        const isVip = !!(b.user?.isVip || (authorUid && typeof isAuthorVipUser === 'function' && isAuthorVipUser(authorUid, authorName)));
+
+        const reporterHtml = isVip ? `
+          <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower VocaVIP">
+              <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
+              <strong class="vip-glowing-name" style="font-size: 12px;">${escapeHtml(authorName)}</strong>
+            </span>
+            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VocaVIP</span>
+            <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
+          </div>
+        ` : `
+          <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower">
+              👤 <strong>${escapeHtml(authorName)}</strong>
+            </span>
+            <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
+          </div>
+        `;
+
+        html += `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-left: 4px solid ${statusColors[b.status] || '#94a3b8'}; border-radius: 10px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10px;">${catLabels[b.category] || b.category}</span>
+                <span class="badge" style="background: rgba(0,0,0,0.2); color: ${sevColors[b.severity] || '#34d399'}; font-size: 10px;">${sevLabels[b.severity] || b.severity}</span>
+                <span class="badge" style="background: rgba(0,0,0,0.2); color: ${statusColors[b.status]}; font-weight: 700; font-size: 10px;">${statusLabels[b.status]}</span>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted);">${timeStr}</span>
+            </div>
+
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;">${escapeHtml(b.title || 'Không có tiêu đề')}</div>
+            <div style="font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap; background: rgba(0,0,0,0.15); padding: 8px 10px; border-radius: 6px;">${escapeHtml(b.description || '')}</div>
+
+            <!-- SCREENSHOTS MINI-GALLERY (v0.10.8-alpha-10.3) -->
+            ${hasScreenshots ? `
+              <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📷 Ảnh đính kèm (${screenshots.length}):</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  ${screenshots.map((s, sIdx) => `
+                    <div onclick="openBugScreenshotViewer('${b.id}', ${sIdx})" style="width: 42px; height: 42px; border-radius: 6px; overflow: hidden; border: 1.5px solid rgba(56,189,248,0.4); cursor: pointer; background: rgba(0,0,0,0.3); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" title="Nhấn để xem ảnh phóng to #${sIdx + 1}">
+                      <img src="${s}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+              <div>
+                ${reporterHtml}
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${hasScreenshots ? `<button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="openBugScreenshotViewer('${b.id}', 0)">📷 Xem ${screenshots.length} ảnh lỗi</button>` : ''}
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS: STATUS & BOUNTY -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px;" onclick="updateAdminBugStatus('${b.id}', 'in_progress')">🔵 Đang xử lý</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: #34d399;" onclick="updateAdminBugStatus('${b.id}', 'resolved')">🟢 Đã fix xong</button>
+                <button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 10.5px; color: var(--text-muted);" onclick="updateAdminBugStatus('${b.id}', 'rejected')">⚪ Từ chối</button>
+              </div>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-primary btn-sm" style="padding: 3px 10px; font-size: 11px; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; box-shadow: 0 2px 8px rgba(245,158,11,0.3);" onclick="openBugBountyPickerModal('${b.id}')">🎁 Trao Thưởng Bug Bounty</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // IN-APP LIGHTBOX VIEWER FOR BUG SCREENSHOTS (v0.10.8-alpha-10.3)
+    function openBugScreenshotViewer(reportId, startIndex = 0) {
+      const report = adminBugReportsData.find(b => b.id === reportId);
+      if (!report) {
+        showToast('⚠️ Không tìm thấy thông tin báo cáo lỗi!');
+        return;
+      }
+      const screenshots = (Array.isArray(report.screenshots) && report.screenshots.length > 0)
+        ? report.screenshots
+        : (report.screenshot ? [report.screenshot] : []);
+
+      if (screenshots.length === 0) {
+        showToast('⚠️ Không có ảnh đính kèm trong báo cáo này!');
+        return;
+      }
+
+      currentBugViewerReport = report;
+      activeBugViewerImages = screenshots;
+      currentBugViewerIndex = Math.max(0, Math.min(startIndex, screenshots.length - 1));
+
+      openModal('modal-bug-screenshot-viewer');
+      renderBugViewerImage();
+    }
+
+    function openBugScreenshotViewerFromList(imagesList, startIndex = 0) {
+      if (!imagesList || imagesList.length === 0) return;
+      currentBugViewerReport = null;
+      activeBugViewerImages = imagesList;
+      currentBugViewerIndex = Math.max(0, Math.min(startIndex, imagesList.length - 1));
+
+      openModal('modal-bug-screenshot-viewer');
+      renderBugViewerImage();
+    }
+
+    function renderBugViewerImage() {
+      const imgEl = document.getElementById('bug-viewer-img');
+      const titleEl = document.getElementById('bug-viewer-title');
+      const subEl = document.getElementById('bug-viewer-subtitle');
+      const thumbsEl = document.getElementById('bug-viewer-thumbnails');
+      const infoEl = document.getElementById('bug-viewer-report-info');
+      const prevBtn = document.getElementById('btn-bug-viewer-prev');
+      const nextBtn = document.getElementById('btn-bug-viewer-next');
+
+      if (!imgEl || activeBugViewerImages.length === 0) return;
+
+      const currentSrc = activeBugViewerImages[currentBugViewerIndex];
+      imgEl.src = currentSrc;
+
+      if (titleEl) {
+        titleEl.textContent = currentBugViewerReport ? `Ảnh Báo Cáo: "${currentBugViewerReport.title}"` : 'Xem Ảnh Chụp Màn Hình';
+      }
+      if (subEl) {
+        subEl.textContent = `Ảnh ${currentBugViewerIndex + 1} / ${activeBugViewerImages.length}`;
+      }
+      if (infoEl && currentBugViewerReport) {
+        infoEl.textContent = `Người gửi: ${currentBugViewerReport.user?.displayName || 'Ẩn danh'} • ${new Date(currentBugViewerReport.createdAt || Date.now()).toLocaleString('vi-VN')}`;
+      }
+
+      // Arrows visibility
+      if (prevBtn) prevBtn.style.display = activeBugViewerImages.length > 1 ? 'flex' : 'none';
+      if (nextBtn) nextBtn.style.display = activeBugViewerImages.length > 1 ? 'flex' : 'none';
+
+      // Thumbnails
+      if (thumbsEl) {
+        if (activeBugViewerImages.length <= 1) {
+          thumbsEl.innerHTML = '';
+        } else {
+          let html = '';
+          activeBugViewerImages.forEach((src, idx) => {
+            const isAct = idx === currentBugViewerIndex;
+            html += `
+              <div onclick="selectBugViewerImage(${idx})" style="width: 50px; height: 50px; border-radius: 6px; overflow: hidden; border: 2px solid ${isAct ? '#38bdf8' : 'rgba(255,255,255,0.2)'}; opacity: ${isAct ? '1' : '0.6'}; cursor: pointer; flex-shrink: 0; transition: all 0.15s;">
+                <img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+            `;
+          });
+          thumbsEl.innerHTML = html;
+        }
+      }
+    }
+
+    function selectBugViewerImage(idx) {
+      if (idx >= 0 && idx < activeBugViewerImages.length) {
+        currentBugViewerIndex = idx;
+        renderBugViewerImage();
+      }
+    }
+
+    function nextBugViewerImage() {
+      if (activeBugViewerImages.length <= 1) return;
+      currentBugViewerIndex = (currentBugViewerIndex + 1) % activeBugViewerImages.length;
+      renderBugViewerImage();
+    }
+
+    function prevBugViewerImage() {
+      if (activeBugViewerImages.length <= 1) return;
+      currentBugViewerIndex = (currentBugViewerIndex - 1 + activeBugViewerImages.length) % activeBugViewerImages.length;
+      renderBugViewerImage();
+    }
+
+    // Keyboard navigation for lightbox
+    window.addEventListener('keydown', (e) => {
+      const viewerModal = document.getElementById('modal-bug-screenshot-viewer');
+      if (viewerModal && viewerModal.classList.contains('active')) {
+        if (e.key === 'ArrowRight') nextBugViewerImage();
+        if (e.key === 'ArrowLeft') prevBugViewerImage();
+        if (e.key === 'Escape') closeModal('modal-bug-screenshot-viewer');
+      }
+    });
+
+    async function updateAdminBugStatus(reportId, newStatus) {
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const token = await getFreshCloudAuthToken();
+      const authParam = token ? `?auth=${token}` : '';
+
+      try {
+        let res = await fetch(`${rtdbUrl}/bug_reports/${reportId}/status.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newStatus)
+        });
+
+        if (!res.ok && authParam) {
+          res = await fetch(`${rtdbUrl}/bug_reports/${reportId}/status.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newStatus)
+          });
+        }
+
+        const r = adminBugReportsData.find(b => b.id === reportId);
+        if (r) r.status = newStatus;
+        renderAdminBugReportsList();
+        showToast(`✅ Đã cập nhật trạng thái sự cố: ${newStatus}!`);
+
+      } catch (err) {
+        showToast('⚠️ Lỗi khi cập nhật trạng thái lên Cloud!');
+      }
+    }
+
+
+    // =========================================================================
+    // VOCAFLOW LIBRARY & COMMUNITY ENGINE (v0.0.8.7)
+    // =========================================================================
+    const BUILTIN_LIBRARY_DECKS = [
+    {
+        "id":  "lib_deck_10",
+        "color":  "#3b82f6",
+        "category":  "THPT",
+        "description":  "Trọn bộ 60 từ vựng trọng tâm từ Unit 1 đến Unit 10 theo chương trình GDPT Mới.",
+        "icon":  "📘",
+        "totalWords":  60,
+        "grade":  10,
+        "title":  "Tiếng Anh Lớp 10 Trọng Tâm (Global Success)",
+        "words":  [
+                      {
+                          "level":  "B2",
+                          "antonyms":  "dependent, dependent child",
+                          "collocations":  "sole breadwinner, main breadwinner, act as the breadwinner",
+                          "example":  "In many modern families, both the husband and wife are equal breadwinners.",
+                          "definition":  "Trụ cột gia đình (người kiếm tiền chính nuôi sống gia đình)",
+                          "term":  "breadwinner",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈbredˌwɪn.ər/",
+                          "synonyms":  "primary earner, sole provider",
+                          "note":  "Ghép từ \u0027bread\u0027 (bánh mì/kế sinh nhai) + \u0027winner\u0027 (người kiếm về)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "breadwinner, office worker",
+                          "collocations":  "full-time homemaker, skilled homemaker, work as a homemaker",
+                          "example":  "Being a full-time homemaker requires patience, organization, and dedication.",
+                          "definition":  "Người nội trợ (người quán xuyến việc nhà và chăm sóc con cái)",
+                          "term":  "homemaker",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈhəʊmˌmeɪ.kər/",
+                          "synonyms":  "housewife, househusband, caregiver",
+                          "note":  "Từ trung tính giới, thay thế cho từ \u0027housewife\u0027 truyền thống."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "light duty, easy chore",
+                          "collocations":  "do the heavy lifting, assist with heavy lifting",
+                          "example":  "My brother often helps my parents with the heavy lifting around the house.",
+                          "definition":  "Công việc nặng nhọc, mang vác đồ nặng trong gia đình",
+                          "term":  "heavy lifting",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌhev.i ˈlɪf.tɪŋ/",
+                          "synonyms":  "strenuous work, hard physical labor",
+                          "note":  "Nghĩa bóng: giải quyết phần công việc gian nan nhất trong một dự án."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "financial freedom, financial ease",
+                          "collocations":  "ease the financial burden, shoulder the financial burden, heavy financial burden",
+                          "example":  "Sharing living expenses helps ease the financial burden on parents.",
+                          "definition":  "Gánh nặng tài chính, áp lực tiền bạc nuôi sống gia đình",
+                          "term":  "financial burden",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/faɪˈnæn.ʃəl ˈbɜː.dən/",
+                          "synonyms":  "economic pressure, monetary strain",
+                          "note":  "Động từ đi kèm: ease / relieve (giảm bớt), shoulder / bear (gánh vác)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "leave all chores to one person",
+                          "collocations":  "split chores equally, agree to split chores, chore allocation",
+                          "example":  "Happy families often split household chores equally between all members.",
+                          "definition":  "Phân chia công việc nhà đều đặn giữa các thành viên",
+                          "term":  "split chores",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "verb phrase",
+                          "phonetic":  "/splɪt tʃɔːz/",
+                          "synonyms":  "divide household chores, share domestic duties",
+                          "note":  "\u0027Split\u0027 có quá khứ và phân từ hai đều là \u0027split\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "ingratitude, ungratefulness",
+                          "collocations":  "express gratitude, show gratitude, deep gratitude, feeling of gratitude",
+                          "example":  "Children should express their heartfelt gratitude to parents for their unconditional care.",
+                          "definition":  "Lòng biết ơn, sự tri ân sâu sắc đối với cha mẹ và người thân",
+                          "term":  "gratitude",
+                          "topic":  "Unit 1: Family Life",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈɡræt.ɪ.tʃuːd/",
+                          "synonyms":  "thankfulness, appreciation, gratefulness",
+                          "note":  "Tính từ là \u0027grateful\u0027 (grateful to someone for something)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "zero emission",
+                          "collocations":  "reduce carbon footprint, calculate carbon footprint, zero carbon footprint",
+                          "example":  "Commuting by public transport is an effective way to minimize your carbon footprint.",
+                          "definition":  "Dấu chân carbon (tổng lượng khí nhà kính sinh ra từ hoạt động con người)",
+                          "term":  "carbon footprint",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkɑː.bən ˈfʊt.prɪnt/",
+                          "synonyms":  "greenhouse gas emission, carbon output",
+                          "note":  "Thuật ngữ sinh thái trọng tâm trong kỳ thi tốt nghiệp và kiểm tra 10."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "polluting, harmful to the environment",
+                          "collocations":  "eco-friendly lifestyle, eco-friendly packaging, eco-friendly materials",
+                          "example":  "More consumers are turning to eco-friendly products to reduce plastic pollution.",
+                          "definition":  "Thân thiện với môi trường, không gây tổn hại hệ sinh thái",
+                          "term":  "eco-friendly",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌiː.kəʊˈfrend.li/",
+                          "synonyms":  "environmentally friendly, green, sustainable",
+                          "note":  "Tính từ ghép có gạch nối, thường đứng trước danh từ."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "non-biodegradable, indestructible",
+                          "collocations":  "biodegradable waste, biodegradable plastic, 100% biodegradable",
+                          "example":  "Supermarkets should replace nylon bags with biodegradable paper containers.",
+                          "definition":  "Có thể tự phân hủy sinh học một cách tự nhiên",
+                          "term":  "biodegradable",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌbaɪ.əʊ.dɪˈɡreɪ.də.bəl/",
+                          "synonyms":  "decomposable, compostable",
+                          "note":  "Tiền tố bio- (sinh học) + degrade (phân hủy) + -able (có thể)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "N/A",
+                          "collocations":  "intensify the greenhouse effect, greenhouse effect gases, cause the greenhouse effect",
+                          "example":  "Excessive burning of fossil fuels intensifies the greenhouse effect globally.",
+                          "definition":  "Hiệu ứng nhà kính (hiện tượng làm Trái Đất ấm dần lên)",
+                          "term":  "greenhouse effect",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈɡriːn.haʊs ɪˌfekt/",
+                          "synonyms":  "global warming phenomenon, thermal entrapment",
+                          "note":  "Phân biệt \u0027greenhouse effect\u0027 (hiệu ứng) và \u0027greenhouse gases\u0027 (khí nhà kính)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "energy-wasting, inefficient",
+                          "collocations":  "energy-efficient appliances, energy-efficient building, energy-efficient technology",
+                          "example":  "Installing energy-efficient LED bulbs cuts down electricity bills significantly.",
+                          "definition":  "Tiết kiệm năng lượng, hiệu suất năng lượng cao",
+                          "term":  "energy-efficient",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌen.ə.dʒi.ɪˈfɪʃ.ənt/",
+                          "synonyms":  "power-saving, energy-saving, low-consumption",
+                          "note":  "Danh từ tương ứng: \u0027energy efficiency\u0027 (hiệu quả sử dụng năng lượng)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unsustainable, wasteful, destructive",
+                          "collocations":  "sustainable development, sustainable lifestyle, sustainable energy",
+                          "example":  "We need to promote sustainable agricultural practices to protect the topsoil.",
+                          "definition":  "Bền vững (phát triển không làm cạn kiệt tài nguyên tương lai)",
+                          "term":  "sustainable",
+                          "topic":  "Unit 2: Humans \u0026 Environment",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/səˈsteɪ.nə.bəl/",
+                          "synonyms":  "renewable, eco-friendly, maintainable",
+                          "note":  "Danh từ là \u0027sustainability\u0027. Khái niệm then chốt của thế kỷ 21."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "plagiarize, destroy",
+                          "collocations":  "compose music, compose a song, compose a symphony",
+                          "example":  "Trinh Cong Son composed many immortal love songs and anti-war ballads.",
+                          "definition":  "Sáng tác (bản nhạc, ca khúc, tác phẩm nghệ thuật)",
+                          "term":  "compose",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/kəmˈpəʊz/",
+                          "synonyms":  "create, write, produce, orchestrate",
+                          "note":  "Danh từ: composer (nhạc sĩ sáng tác), composition (tác phẩm)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "N/A",
+                          "collocations":  "pass the audition, hold an audition, audition for a role",
+                          "example":  "Hundreds of young singers queued up to audition for the singing reality show.",
+                          "definition":  "Buổi thử giọng, thi tuyển năng khiếu / Thử giọng thi tuyển",
+                          "term":  "audition",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/ɔːˈdɪʃ.ən/",
+                          "synonyms":  "tryout, trial performance, screen test",
+                          "note":  "Trọng âm 2: au-DI-tion."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "untalented, clumsy, amateur",
+                          "collocations":  "talented musician, highly talented, exceptionally talented",
+                          "example":  "She is a exceptionally talented pianist who won international competitions at age 12.",
+                          "definition":  "Có tài năng, năng khiếu xuất sắc trong lĩnh vực nào đó",
+                          "term":  "talented",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈtæl.ən.tɪd/",
+                          "synonyms":  "gifted, skilled, accomplished, genius",
+                          "note":  "Cấu trúc: be talented at / in something."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "commonplace, standard",
+                          "collocations":  "global phenomenon, cultural phenomenon, musical phenomenon",
+                          "example":  "The band became a global cultural phenomenon almost overnight.",
+                          "definition":  "Hiện tượng đặc biệt, người/sự kiện nổi bật gây chấn động",
+                          "term":  "phenomenon",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/fəˈnɒm.ɪ.nən/",
+                          "synonyms":  "sensation, marvel, trend, wonder",
+                          "note":  "Số nhiều là \u0027phenomena\u0027 /fəˈnɒm.ɪ.nə/. Tính từ: phenomenal."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "recorded broadcast, studio playback",
+                          "collocations":  "give a live performance, watch a live performance, captivating live performance",
+                          "example":  "Attending a live performance of your favorite band is an unforgettable experience.",
+                          "definition":  "Buổi biểu diễn trực tiếp (trên sân khấu, trước khán giả)",
+                          "term":  "live performance",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/laɪv pəˈfɔː.məns/",
+                          "synonyms":  "live show, concert, stage gig",
+                          "note":  "\u0027Live\u0027 ở đây phát âm là /laɪv/ (tính từ/trạng từ)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "contestant, participant",
+                          "collocations":  "panel of judges, judge fairly, judge a competition",
+                          "example":  "The panel of judges gave constructive feedback to all contestants.",
+                          "definition":  "Giám khảo, người chấm giải / Đánh giá, thẩm định chất lượng",
+                          "term":  "judge",
+                          "topic":  "Unit 3: Music",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/dʒʌdʒ/",
+                          "synonyms":  "evaluator, referee, assessor; evaluate, assess",
+                          "note":  "Danh từ \u0027judgment\u0027 / \u0027judgement\u0027 (sự phán đoán, đánh giá)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "privileged, wealthy, affluent",
+                          "collocations":  "underprivileged children, underprivileged background, support underprivileged families",
+                          "example":  "Volunteers organized free evening classes for underprivileged children in rural areas.",
+                          "definition":  "Thiệt thòi, có hoàn cảnh khó khăn về kinh tế - xã hội",
+                          "term":  "underprivileged",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌʌn.dəˈprɪv.əl.ɪdʒd/",
+                          "synonyms":  "disadvantaged, deprived, needy, impoverished",
+                          "note":  "Trọng âm rơi vào âm tiết 3: un-der-PRIV-i-leged."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "receive, keep, withhold",
+                          "collocations":  "donate money to charity, donate blood, generous donation",
+                          "example":  "Students decided to donate their old textbooks and clothes to flood victims.",
+                          "definition":  "Quyên góp, hiến tặng tiền của, vật phẩm hoặc máu",
+                          "term":  "donate",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/dəʊˈneɪt/",
+                          "synonyms":  "contribute, give away, grant, bestow",
+                          "note":  "Danh từ là \u0027donation\u0027 /dəʊˈneɪ.ʃən/. Người quyên góp: \u0027donor\u0027."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "selfish behavior",
+                          "collocations":  "do community service, perform community service, community service project",
+                          "example":  "Participating in community service helps students develop leadership and empathy.",
+                          "definition":  "Dịch vụ cộng đồng, hoạt động lao động công ích tình nguyện",
+                          "term":  "community service",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/kəˈmjuː.nə.ti ˌsɜː.vɪs/",
+                          "synonyms":  "voluntary work, public service, civic engagement",
+                          "note":  "Hoạt động ngoại khóa quan trọng trong hồ sơ du học và học bổng."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "for-profit corporation, commercial enterprise",
+                          "collocations":  "run a non-profit organization, work for a non-profit organization",
+                          "example":  "The non-profit organization provides clean drinking water to remote villages.",
+                          "definition":  "Tổ chức phi lợi nhuận (hoạt động vì mục đích từ thiện/xã hội)",
+                          "term":  "non-profit organization",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌnɒnˈprɒf.ɪt ˌɔː.ɡən.aɪˈzeɪ.ʃən/",
+                          "synonyms":  "NGO, charitable organization, NGO group",
+                          "note":  "Viết tắt là NPO. Có thể viết nối: non-profit hoặc nonprofit."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "ability, fitness",
+                          "collocations":  "people with disabilities, learning disability, overcome a disability",
+                          "example":  "Public buildings should have ramps to improve accessibility for people with disabilities.",
+                          "definition":  "Sự khuyết tật, khiếm khuyết về thể chất hoặc tinh thần",
+                          "term":  "disability",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌdɪs.əˈbɪl.ə.ti/",
+                          "synonyms":  "impairment, handicap, physical limitation",
+                          "note":  "Tính từ: \u0027disabled\u0027 (người khuyết tật: the disabled / people with disabilities)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "urban center, metropolitan area",
+                          "collocations":  "live in a remote area, access remote areas, remote mountainous area",
+                          "example":  "Volunteer doctors traveled to remote areas to provide free health check-ups.",
+                          "definition":  "Vùng sâu vùng xa, khu vực hẻo lánh cách biệt",
+                          "term":  "remote area",
+                          "topic":  "Unit 4: For a Better Community",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/rɪˈməʊt ˈeə.ri.ə/",
+                          "synonyms":  "isolated region, distant village, hinterland",
+                          "note":  "\u0027Remote\u0027 mang nghĩa xa xôi (remote control = điều khiển từ xa)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "human intelligence, biological mind",
+                          "collocations":  "apply artificial intelligence, develop artificial intelligence, AI chatbot",
+                          "example":  "Artificial intelligence applications are transforming modern diagnostics and tutoring.",
+                          "definition":  "Trí tuệ nhân tạo (công nghệ mô phỏng nhận thức thông minh của con người)",
+                          "term":  "artificial intelligence",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌɑː.tɪˈfɪʃ.əl ɪnˈtel.ɪ.dʒəns/",
+                          "synonyms":  "AI, machine intelligence, smart algorithm",
+                          "note":  "Thuật ngữ công nghệ bắt buộc trong chương trình tiếng Anh 10 mới."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "public domain",
+                          "collocations":  "apply for a patent, grant a patent, patent infringement, patent pending",
+                          "example":  "The young inventor was granted a patent for his innovative solar-powered boat.",
+                          "definition":  "Bằng sáng chế độc quyền / Đăng ký bằng độc quyền sáng chế",
+                          "term":  "patent",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/ˈpeɪ.tənt/",
+                          "synonyms":  "copyright, registered invention, license",
+                          "note":  "Phát âm tiếng Anh-Anh là /ˈpeɪ.tənt/ hoặc /ˈpæt.ənt/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "single-purpose, rigid, limited",
+                          "collocations":  "versatile tool, versatile device, highly versatile, versatile actor",
+                          "example":  "Smartphones have become the most versatile gadgets in modern human life.",
+                          "definition":  "Đa năng, linh hoạt, thích ứng với nhiều mục đích sử dụng khác nhau",
+                          "term":  "versatile",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈvɜː.sə.taɪl/",
+                          "synonyms":  "all-purpose, flexible, adaptable, multifunctional",
+                          "note":  "Danh từ: \u0027versatility\u0027 (tính đa năng, tính linh hoạt)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "stationary, bulky, immovable",
+                          "collocations":  "portable device, portable speaker, portable charger, highly portable",
+                          "example":  "Laptops and portable chargers allow students to study anywhere comfortably.",
+                          "definition":  "Xách tay, dễ dàng di chuyển và mang theo bên mình",
+                          "term":  "portable",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈpɔː.tə.bəl/",
+                          "synonyms":  "mobile, transportable, compact, handy",
+                          "note":  "Gốc từ tiếng Latin \u0027portare\u0027 nghĩa là mang, vác."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "stagnate, preserve status quo",
+                          "collocations":  "revolutionize an industry, revolutionize education, completely revolutionize",
+                          "example":  "The invention of the Internet completely revolutionized how we communicate.",
+                          "definition":  "Cách mạng hóa, tạo nên sự thay đổi căn bản và toàn diện",
+                          "term":  "revolutionize",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ˌrev.əˈluː.ʃən.aɪz/",
+                          "synonyms":  "transform, overhaul, reform, modernize",
+                          "note":  "Danh từ: \u0027revolution\u0027 (cuộc cách mạng). Tính từ: \u0027revolutionary\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "conventional, traditional, outdated",
+                          "collocations":  "innovative idea, innovative technology, innovative solution",
+                          "example":  "Engineers developed an innovative water purification filter from coconut shells.",
+                          "definition":  "Có tính đổi mới sáng tạo, mang tính đột phá",
+                          "term":  "innovative",
+                          "topic":  "Unit 5: Inventions",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈɪn.ə.və.tɪv/",
+                          "synonyms":  "creative, inventive, pioneering, state-of-the-art",
+                          "note":  "Động từ: \u0027innovate\u0027 (đổi mới). Danh từ: \u0027innovation\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "gender equality, gender fairness",
+                          "collocations":  "face gender discrimination, combat gender discrimination, prohibit gender discrimination",
+                          "example":  "Strict laws were enacted to eliminate gender discrimination in the workplace.",
+                          "definition":  "Sự phân biệt đối xử dựa trên giới tính (nam/nữ)",
+                          "term":  "gender discrimination",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈdʒen.dər dɪˌskrɪm.ɪˈneɪ.ʃən/",
+                          "synonyms":  "sex discrimination, sexism, gender bias",
+                          "note":  "Động từ là \u0027discriminate against someone on the grounds of gender\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "inequality, prejudice, bias",
+                          "collocations":  "provide equal opportunity, ensure equal opportunity, equal opportunity employer",
+                          "example":  "Every child deserves equal opportunity to pursue higher education regardless of gender.",
+                          "definition":  "Cơ hội bình đẳng (trong giáo dục, việc làm, thăng tiến)",
+                          "term":  "equal opportunity",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌiː.kwəl ˌɒp.əˈtʃuː.nə.ti/",
+                          "synonyms":  "equal rights, fair access, level playing field",
+                          "note":  "Khẩu hiệu quốc tế: Equal opportunities for all."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "retain, maintain, establish",
+                          "collocations":  "eliminate poverty, eliminate barriers, completely eliminate",
+                          "example":  "International programs aim to eliminate illiteracy and poverty in developing nations.",
+                          "definition":  "Xóa bỏ hoàn toàn, bài trừ, loại trừ triệt để",
+                          "term":  "eliminate",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ɪˈlɪm.ɪ.neɪt/",
+                          "synonyms":  "eradicate, get rid of, wipe out, remove",
+                          "note":  "Danh từ: \u0027elimination\u0027 (sự loại trừ / vòng loại thể thao)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "suppress, restrict, disempower",
+                          "collocations":  "empower women, empower youth, economic empowerment",
+                          "example":  "Educating young girls empowers them to become independent community leaders.",
+                          "definition":  "Trao quyền, trao cơ hội và sự tự tin để tự quyết định cuộc sống",
+                          "term":  "empower",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ɪmˈpaʊ.ər/",
+                          "synonyms":  "enable, authorize, liberate, equip",
+                          "note":  "Danh từ: \u0027empowerment\u0027 (sự trao quyền, sự tự chủ)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "pay equity, equal pay",
+                          "collocations":  "gender wage gap, close the wage gap, narrow the wage gap, widen the wage gap",
+                          "example":  "Governments are taking active steps to close the gender wage gap across industries.",
+                          "definition":  "Khoảng cách chênh lệch tiền lương (thường giữa nam và nữ)",
+                          "term":  "wage gap",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈweɪdʒ ˌɡæp/",
+                          "synonyms":  "pay gap, income disparity",
+                          "note":  "Động từ hay đi cùng: \u0027narrow\u0027 (thu hẹp) hoặc \u0027close\u0027 (xóa bỏ) the gap."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "individuality, open-mindedness",
+                          "collocations":  "gender stereotype, break stereotypes, cultural stereotype, stereotype someone",
+                          "example":  "We must challenge the traditional stereotype that technical careers are only for men.",
+                          "definition":  "Định kiến, khuôn mẫu rập khuôn thiếu cơ sở về một nhóm người",
+                          "term":  "stereotype",
+                          "topic":  "Unit 6: Gender Equality",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/ˈster.i.ə.taɪp/",
+                          "synonyms":  "preconception, cliché, bias, generalized belief",
+                          "note":  "Cụm từ rất hay gặp: \u0027break / shatter gender stereotypes\u0027 (phá vỡ định kiến giới)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "warfare, conflict",
+                          "collocations":  "peacekeeping mission, peacekeeping force, UN peacekeeper",
+                          "example":  "Vietnamese military officers participate actively in United Nations peacekeeping missions.",
+                          "definition":  "Hoạt động gìn giữ hòa bình (của Liên Hợp Quốc)",
+                          "term":  "peacekeeping",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "noun/adjective",
+                          "phonetic":  "/ˈpiːsˌkiː.pɪŋ/",
+                          "synonyms":  "peace maintenance, peace protection",
+                          "note":  "Việt Nam cử lực lượng gìn giữ hòa bình tới Nam Sudan và Abyei."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "isolate, segregate, separate",
+                          "collocations":  "integrate into the global economy, international integration, regional integration",
+                          "example":  "Vietnam continues to integrate deeply into the global economy through trade pacts.",
+                          "definition":  "Hội nhập, hòa nhập vào nền kinh tế và cộng đồng quốc tế",
+                          "term":  "integrate",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ˈɪn.tɪ.ɡreɪt/",
+                          "synonyms":  "assimilate, incorporate, blend in, cooperate",
+                          "note":  "Danh từ: \u0027integration\u0027 (international integration = hội nhập quốc tế)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "hinder, discourage, suppress",
+                          "collocations":  "promote peace, promote economic growth, promote cultural exchange",
+                          "example":  "UNICEF works tirelessly to promote children\u0027s rights and education worldwide.",
+                          "definition":  "Thúc đẩy, khuyến khích, quảng bá mối quan hệ hữu nghị và thương mại",
+                          "term":  "promote",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/prəˈməʊt/",
+                          "synonyms":  "foster, encourage, boost, advance",
+                          "note":  "Danh từ: \u0027promotion\u0027 (sự thăng tiến / sự xúc tiến quảng bá)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "compete, oppose, work alone",
+                          "collocations":  "collaborate with international partners, collaborate on a project, closely collaborate",
+                          "example":  "Vietnamese medical scientists collaborate with WHO experts to prevent pandemics.",
+                          "definition":  "Hợp tác, cộng tác cùng nhau để đạt mục tiêu chung",
+                          "term":  "collaborate",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/kəˈlæb.ə.reɪt/",
+                          "synonyms":  "cooperate, partner with, work together",
+                          "note":  "Cấu trúc: collaborate with someone on / in something. Danh từ: collaboration."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unilateral (đơn phương), multilateral (đa phương)",
+                          "collocations":  "bilateral relations, bilateral agreement, bilateral trade, bilateral cooperation",
+                          "example":  "The two countries signed a bilateral trade agreement to lower import tariffs.",
+                          "definition":  "Song phương, liên quan đến thỏa thuận giữa hai quốc gia",
+                          "term":  "bilateral",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/baɪˈlæt.ər.əl/",
+                          "synonyms":  "two-sided, two-party, mutual",
+                          "note":  "Tiền tố \u0027bi-\u0027 = hai (như bilingual: song ngữ, bicycle: xe đạp)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unilateral, bilateral",
+                          "collocations":  "multilateral diplomacy, multilateral trade organization, multilateral forum",
+                          "example":  "Multilateral diplomacy plays a crucial role in resolving transnational climate disputes.",
+                          "definition":  "Đa phương, có sự tham gia của nhiều quốc gia (như UN, WTO, ASEAN)",
+                          "term":  "multilateral",
+                          "topic":  "Unit 7: VN \u0026 International Orgs",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌmʌl.tiˈlæt.ər.əl/",
+                          "synonyms":  "many-sided, international, collective",
+                          "note":  "Tiền tố \u0027multi-\u0027 = nhiều (như multimedia, multilingual)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "purely traditional classroom learning",
+                          "collocations":  "adopt blended learning, blended learning model, benefits of blended learning",
+                          "example":  "Blended learning gives high school students greater flexibility and autonomy.",
+                          "definition":  "Phương pháp học tập kết hợp (kết hợp giữa học trực tiếp và học online)",
+                          "term":  "blended learning",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌblen.dɪd ˈlɜː.nɪŋ/",
+                          "synonyms":  "hybrid learning, integrated learning",
+                          "note":  "\u0027Blend\u0027 là pha trộn, hòa quyện."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "analogue tool, paper resource",
+                          "collocations":  "use digital devices, modern digital devices, screen time on digital devices",
+                          "example":  "Using digital devices wisely turns the classroom into an interactive learning hub.",
+                          "definition":  "Thiết bị kỹ thuật số (laptop, tablet, smartphone phục vụ học tập)",
+                          "term":  "digital device",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈdɪdʒ.ɪ.təl dɪˈvaɪs/",
+                          "synonyms":  "electronic gadget, smart device",
+                          "note":  "Phân biệt \u0027device\u0027 (đếm được) và \u0027equipment\u0027 (không đếm được)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "passive, one-way, non-interactive",
+                          "collocations":  "interactive whiteboard, interactive game, interactive software, interactive display",
+                          "example":  "Teachers design interactive quizzes to make English grammar lessons engaging.",
+                          "definition":  "Có tính tương tác cao (giữa người dùng và phần mềm hoặc giữa người học)",
+                          "term":  "interactive",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌɪn.təˈræk.tɪv/",
+                          "synonyms":  "participatory, two-way, collaborative",
+                          "note":  "Động từ là \u0027interact with\u0027 (tương tác với)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "restrict, block, deny",
+                          "collocations":  "access information, gain access to, free access, internet access",
+                          "example":  "The high-speed school Wi-Fi allows students to access digital libraries instantly.",
+                          "definition":  "Truy cập, tiếp cận thông tin, tài liệu / Quyền tiếp cận",
+                          "term":  "access",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "verb/noun",
+                          "phonetic":  "/ˈæk.ses/",
+                          "synonyms":  "reach, enter, retrieve, gain entrance to",
+                          "note":  "Động từ \u0027access something\u0027 (không có giới từ \u0027to\u0027), nhưng danh từ \u0027have access to something\u0027."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "teacher-led instruction",
+                          "collocations":  "self-study materials, develop self-study habits, self-study course",
+                          "example":  "Effective self-study skills help Grade 10 students prepare thoroughly for national exams.",
+                          "definition":  "Tự học, quá trình chủ động nghiên cứu mà không cần giám sát trực tiếp",
+                          "term":  "self-study",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/ˌselfˈstʌd.i/",
+                          "synonyms":  "independent learning, self-instruction, autonomous study",
+                          "note":  "Tương đương với cụm \u0027autonomous learning\u0027."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "physical classroom, brick-and-mortar school",
+                          "collocations":  "attend a virtual classroom, set up a virtual classroom, interactive virtual classroom",
+                          "example":  "During severe weather conditions, students attended lessons in a virtual classroom.",
+                          "definition":  "Lớp học ảo (môi trường học tập trực tuyến thông qua máy tính và mạng Internet)",
+                          "term":  "virtual classroom",
+                          "topic":  "Unit 8: New Ways to Learn",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌvɜː.tʃu.əl ˈklɑːs.ruːm/",
+                          "synonyms":  "online classroom, cyber class, digital classroom",
+                          "note":  "\u0027Virtual\u0027 có nghĩa là ảo / mô phỏng trên không gian mạng số."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "monoculture, ecological homogeneity",
+                          "collocations":  "preserve biodiversity, loss of biodiversity, rich biodiversity, protect biodiversity",
+                          "example":  "Protecting national parks is vital to preserve the rich biodiversity of Vietnam.",
+                          "definition":  "Sự đa dạng sinh học (sự phong phú của các loài động, thực vật trong tự nhiên)",
+                          "term":  "biodiversity",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/",
+                          "synonyms":  "biological diversity, ecological variety",
+                          "note":  "Ghép từ \u0027bio-\u0027 (sinh học) và \u0027diversity\u0027 (tính đa dạng). Trọng âm 4."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "abundant species, thriving species",
+                          "collocations":  "critically endangered species, save endangered species, red list of endangered species",
+                          "example":  "The Javan rhino and the saola are critically endangered species in Southeast Asia.",
+                          "definition":  "Các loài có nguy cơ tuyệt chủng (động thực vật đứng trước nguy cơ biến mất)",
+                          "term":  "endangered species",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪnˌdeɪn.dʒəd ˈspiː.ʃiːz/",
+                          "synonyms":  "threatened species, species at risk",
+                          "note":  "\u0027Species\u0027 có dạng số ít và số nhiều giống nhau: one species, many species."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "habitat restoration, habitat conservation",
+                          "collocations":  "cause habitat loss, suffer from habitat loss, prevent habitat loss",
+                          "example":  "Deforestation and urban expansion are the primary drivers of habitat loss worldwide.",
+                          "definition":  "Mất môi trường sống (do nạn phá rừng, đô thị hóa, biến đổi khí hậu)",
+                          "term":  "habitat loss",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈhæb.ɪ.tæt lɒs/",
+                          "synonyms":  "habitat destruction, habitat fragmentation",
+                          "note":  "\u0027Habitat\u0027 là môi trường sống tự nhiên của một loài sinh vật cụ thể."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "wildlife protection, lawful conservation",
+                          "collocations":  "anti-poaching patrol, combat poaching, illegal poaching activities",
+                          "example":  "Illegal poaching threatens the survival of elephants and rhinos for their horns and tusks.",
+                          "definition":  "Nạn săn bắt trộm động vật hoang dã trái phép",
+                          "term":  "poaching",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈpəʊ.tʃɪŋ/",
+                          "synonyms":  "illegal hunting, wildlife trafficking",
+                          "note":  "Người đi săn trộm gọi là \u0027poacher\u0027. Động từ: \u0027poach\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "destruction, exploitation, depletion",
+                          "collocations":  "wildlife conservation, environmental conservation, energy conservation, conservation area",
+                          "example":  "The local community participated actively in sea turtle conservation projects.",
+                          "definition":  "Công tác bảo tồn, gìn giữ tài nguyên thiên nhiên và động vật hoang dã",
+                          "term":  "conservation",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌkɒn.səˈveɪ.ʃən/",
+                          "synonyms":  "preservation, protection, safeguarding, stewardship",
+                          "note":  "Nhà bảo tồn là \u0027conservationist\u0027. Động từ: \u0027conserve\u0027."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "N/A",
+                          "collocations":  "marine ecosystem, forest ecosystem, disrupt the ecosystem, fragile ecosystem",
+                          "example":  "Coral reefs are among the most delicate and diverse ecosystems on our planet.",
+                          "definition":  "Hệ sinh thái (cộng đồng sinh vật tương tác với môi trường vật lý xung quanh)",
+                          "term":  "ecosystem",
+                          "topic":  "Unit 9: Protecting Environment",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈiː.kəʊˌsɪs.təm/",
+                          "synonyms":  "ecological system, natural biome",
+                          "note":  "Eco- (thuộc môi trường) + system (hệ thống)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "mass tourism, commercial sightseeing",
+                          "collocations":  "develop ecotourism, ecotourism destination, ecotourism tour, ecotourist",
+                          "example":  "Ecotourism generates income for local ethnic residents while protecting virgin forests.",
+                          "definition":  "Du lịch sinh thái (hình thức du lịch có trách nhiệm với thiên nhiên và văn hóa bản địa)",
+                          "term":  "ecotourism",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈiː.kəʊˌtʊə.rɪ.zəm/",
+                          "synonyms":  "green tourism, ecological travel, sustainable tourism",
+                          "note":  "Ghép từ \u0027ecology\u0027 (sinh thái học) + \u0027tourism\u0027 (du lịch)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "native flora and fauna, unique flora and fauna, protect local flora and fauna",
+                          "example":  "Cuc Phuong National Park boasts an extraordinarily rich diversity of flora and fauna.",
+                          "definition":  "Hệ thực vật và hệ động vật (toàn bộ cây cối và muôn thú trong một khu vực)",
+                          "term":  "flora and fauna",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌflɔː.rə ænd ˈfɔː.nə/",
+                          "synonyms":  "plants and animals, wildlife and vegetation",
+                          "note":  "\u0027Flora\u0027 chỉ hoa cỏ / thực vật; \u0027Fauna\u0027 chỉ muông thú / động vật."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "destructive tourism, reckless travel",
+                          "collocations":  "practice responsible travel, principles of responsible travel",
+                          "example":  "Responsible travel involves minimizing waste, respecting local customs, and buying local goods.",
+                          "definition":  "Du lịch có trách nhiệm (tôn trọng môi trường tự nhiên và phong tục cộng đồng)",
+                          "term":  "responsible travel",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/rɪˈspɒn.sə.bəl ˈtræv.əl/",
+                          "synonyms":  "ethical tourism, mindful traveling",
+                          "note":  "Phương châm: \u0027Take nothing but memories, leave nothing but footprints\u0027."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "point of departure, origin",
+                          "collocations":  "popular destination, tourist destination, travel destination, holiday destination",
+                          "example":  "Phu Quoc Island has emerged as one of the most attractive beach destinations in Asia.",
+                          "definition":  "Điểm đến, đích đến, địa danh du lịch thu hút du khách",
+                          "term":  "destination",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌdes.tɪˈneɪ.ʃən/",
+                          "synonyms":  "tourist spot, holiday location, arrival point",
+                          "note":  "Trọng âm 3: des-ti-NA-tion."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "familiar, native, ordinary, commonplace",
+                          "collocations":  "exotic plants, exotic wildlife, exotic island, exotic flavor",
+                          "example":  "The botanical garden is home to thousands of exotic orchid species and butterflies.",
+                          "definition":  "Kỳ lạ, độc đáo, mang vẻ đẹp quyến rũ từ xứ sở xa xôi",
+                          "term":  "exotic",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ɪɡˈzɒt.ɪk/",
+                          "synonyms":  "unusual, foreign, striking, alluring",
+                          "note":  "Trọng âm 2. Âm đầu đọc là /ɪɡˈzɒt.ɪk/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "minimize environmental impact, negative environmental impact, assess environmental impact",
+                          "example":  "Before building new resorts, developers must conduct a comprehensive environmental impact assessment.",
+                          "definition":  "Tác động môi trường (ảnh hưởng của các hoạt động của con người lên thiên nhiên)",
+                          "term":  "environmental impact",
+                          "topic":  "Unit 10: Ecotourism",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪnˌvaɪ.rənˈmen.təl ˈɪm.pækt/",
+                          "synonyms":  "ecological footprint, environmental effect",
+                          "note":  "Cụm từ EIA: Environmental Impact Assessment (Đánh giá tác động môi trường)."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_11",
+        "color":  "#8b5cf6",
+        "category":  "THPT",
+        "description":  "Trọn bộ 60 từ vựng cốt lõi Unit 1 - Unit 10 bám sát đề kiểm tra và thi học kỳ.",
+        "icon":  "📙",
+        "totalWords":  60,
+        "grade":  11,
+        "title":  "Tiếng Anh Lớp 11 Trọng Tâm (Global Success)",
+        "words":  [
+                      {
+                          "level":  "B2",
+                          "antonyms":  "immunodeficiency",
+                          "collocations":  "boost the immune system, weaken the immune system, strong immune system",
+                          "example":  "A balanced diet rich in vitamins and regular exercise significantly strengthen the immune system.",
+                          "definition":  "Hệ miễn dịch (hệ thống phòng thủ sinh học chống lại mầm bệnh)",
+                          "term":  "immune system",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪˈmjuːn ˌsɪs.təm/",
+                          "synonyms":  "body defense system, immunity",
+                          "note":  "Tính từ \u0027immune\u0027 (immune to disease = miễn dịch với bệnh tật)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "short lifespan, early death",
+                          "collocations":  "promote longevity, secret to longevity, exceptional longevity",
+                          "example":  "Japanese people are renowned worldwide for their exceptional longevity and healthy eating habits.",
+                          "definition":  "Tuổi thọ cao, sự sống lâu",
+                          "term":  "longevity",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/lɒnˈdʒev.ə.ti/",
+                          "synonyms":  "long life, lifespan, life expectancy",
+                          "note":  "Gốc từ \u0027long\u0027 -\u003e tính từ \u0027long-lived\u0027 -\u003e danh từ \u0027longevity\u0027. Trọng âm 2."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "antibiotic sensitivity",
+                          "collocations":  "combat antibiotic resistance, cause antibiotic resistance, rise of antibiotic resistance",
+                          "example":  "Overusing prescription drugs can lead to dangerous antibiotic resistance in patients.",
+                          "definition":  "Sự kháng thuốc kháng sinh (vi khuẩn biến đổi không còn bị tiêu diệt bởi thuốc)",
+                          "term":  "antibiotic resistance",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌæn.ti.baɪˈɒt.ɪk rɪˌzɪs.təns/",
+                          "synonyms":  "drug resistance, antimicrobial resistance",
+                          "note":  "Vấn đề y tế toàn cầu then chốt được thảo luận trong bài học Unit 1."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "unhealthy, unwholesome, junk food",
+                          "collocations":  "nutritious meal, highly nutritious, nutritious diet",
+                          "example":  "A nutritious breakfast provides teenagers with the vital energy needed for active school days.",
+                          "definition":  "Bổ dưỡng, giàu chất dinh dưỡng tốt cho cơ thể",
+                          "term":  "nutritious",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/njuːˈtrɪʃ.əs/",
+                          "synonyms":  "nourishing, wholesome, nutrient-dense",
+                          "note":  "Danh từ: nutrition (dinh dưỡng), nutrient (chất dinh dưỡng), nutritionist (chuyên gia dinh dưỡng)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "non-communicable disease, chronic condition",
+                          "collocations":  "spread of infectious disease, fight infectious diseases, outbreak of an infectious disease",
+                          "example":  "Vaccination is one of the most effective measures to prevent the spread of infectious diseases.",
+                          "definition":  "Bệnh truyền nhiễm (bệnh lây lan do virus, vi khuẩn)",
+                          "term":  "infectious disease",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪnˈfek.ʃəs dɪˌziːz/",
+                          "synonyms":  "contagious disease, communicable disease",
+                          "note":  "Động từ: infect (lây nhiễm), infection (sự nhiễm trùng), disinfect (khử trùng)."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "lead a sedentary lifestyle",
+                          "collocations":  "work out regularly, gym workout, intense workout routine",
+                          "example":  "He makes it a habit to work out at the fitness center three times a week.",
+                          "definition":  "Tập thể dục, rèn luyện thể chất",
+                          "term":  "work out",
+                          "topic":  "Unit 1: A Long \u0026 Healthy Life",
+                          "partOfSpeech":  "phrasal verb",
+                          "phonetic":  "/wɜːk aʊt/",
+                          "synonyms":  "exercise, do physical training, keep fit",
+                          "note":  "Danh từ viết liền: a workout (buổi tập luyện)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "generational harmony, mutual understanding",
+                          "collocations":  "bridge the generation gap, narrow the generation gap, experience a generation gap",
+                          "example":  "Open family communication is essential to bridge the generation gap between parents and teenagers.",
+                          "definition":  "Khoảng cách thế hệ (sự khác biệt về tư tưởng, lối sống giữa các thế hệ)",
+                          "term":  "generation gap",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌdʒen.əˈreɪ.ʃən ɡæp/",
+                          "synonyms":  "generational divide, age divide",
+                          "note":  "Động từ hay đi kèm: bridge / narrow (thu hẹp khoảng cách)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "nuclear family, single-parent family",
+                          "collocations":  "live in an extended family, extended family members, traditional extended family",
+                          "example":  "Living in an extended family allows children to receive abundant care and love from grandparents.",
+                          "definition":  "Gia đình nhiều thế hệ (gồm ông bà, cha mẹ, con cháu cùng chung sống)",
+                          "term":  "extended family",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪkˌsten.dɪd ˈfæm.əl.i/",
+                          "synonyms":  "multi-generational family, joint family",
+                          "note":  "Trái nghĩa với \u0027nuclear family\u0027 (gia đình hạt nhân chỉ gồm bố mẹ và con cái)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "freedom of movement",
+                          "collocations":  "set a curfew, break the curfew, impose a curfew, strict curfew",
+                          "example":  "My parents set a strict 10 PM curfew on weekdays to ensure I get enough rest.",
+                          "definition":  "Giờ giới nghiêm (giờ quy định phải có mặt ở nhà vào buổi tối)",
+                          "term":  "curfew",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈkɜː.fjuː/",
+                          "synonyms":  "closing hour, home-coming deadline",
+                          "note":  "Cụm từ: \u0027impose a curfew on someone\u0027 (áp đặt giờ giới nghiêm)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "narrow-minded, conservative, rigid, dogmatic",
+                          "collocations":  "be open-minded about, open-minded attitude, remain open-minded",
+                          "example":  "Modern parents tend to be more open-minded regarding their children\u0027s career choices.",
+                          "definition":  "Cởi mở, sẵn sàng lắng nghe và tiếp nhận ý kiến, quan điểm mới",
+                          "term":  "open-minded",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌəʊ.pənˈmaɪn.dɪd/",
+                          "synonyms":  "receptive, broad-minded, progressive, tolerant",
+                          "note":  "Trái nghĩa là \u0027narrow-minded\u0027 hoặc \u0027conservative\u0027 (bảo thủ)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "harmony, consensus, agreement, peace",
+                          "collocations":  "resolve a conflict, family conflict, generate conflict, conflict with parents",
+                          "example":  "Disagreements over table manners and screen time often cause family conflicts.",
+                          "definition":  "Xung đột, mâu thuẫn / Xảy ra va chạm, bất đồng quan điểm",
+                          "term":  "conflict",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "noun/verb",
+                          "phonetic":  "/ˈkɒn.flɪkt/",
+                          "synonyms":  "dispute, discord, clash, friction",
+                          "note":  "Danh từ nhấn âm 1 /ˈkɒn.flɪkt/, động từ nhấn âm 2 /kənˈflɪkt/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "financial dependence, reliance on parents",
+                          "collocations":  "achieve financial independence, gain financial independence, strive for financial independence",
+                          "example":  "Achieving financial independence allows young adults to make their own life choices freely.",
+                          "definition":  "Sự tự chủ tài chính, khả năng tự kiếm tiền và trang trải cuộc sống",
+                          "term":  "financial independence",
+                          "topic":  "Unit 2: The Generation Gap",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/faɪˈnæn.ʃəl ˌɪn.dɪˈpen.dəns/",
+                          "synonyms":  "economic self-reliance, financial autonomy",
+                          "note":  "Động từ \u0027achieve / gain / attain financial independence\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "conventional city, unplanned metropolis",
+                          "collocations":  "build a smart city, smart city technology, smart city infrastructure",
+                          "example":  "Smart cities utilize sensor networks to optimize traffic flow and reduce power consumption.",
+                          "definition":  "Đô thị thông minh (thành phố ứng dụng công nghệ IoT và AI để quản lý)",
+                          "term":  "smart city",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈsmɑːt ˌsɪt.i/",
+                          "synonyms":  "digital city, intelligent city, cyber city",
+                          "note":  "Khái niệm đô thị hóa hiện đại xuyên suốt Unit 3."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "superstructure",
+                          "collocations":  "transport infrastructure, modern infrastructure, upgrade infrastructure, green infrastructure",
+                          "example":  "The government is investing billions of dollars in upgrading urban transport infrastructure.",
+                          "definition":  "Cơ sở hạ tầng (hệ thống giao thông, điện nước, viễn thông công cộng)",
+                          "term":  "infrastructure",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈɪn.frəˌstrʌk.tʃər/",
+                          "synonyms":  "basic framework, public amenities, municipal facilities",
+                          "note":  "Trọng âm 1: IN-fra-struc-ture. Danh từ không đếm được."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unlivable, inhospitable, uninhabitable",
+                          "collocations":  "most livable city, livable environment, create a livable community",
+                          "example":  "Da Nang is consistently voted as one of the most livable cities in Vietnam.",
+                          "definition":  "Đáng sống, có môi trường sống trong lành và tiện nghi",
+                          "term":  "livable",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈlɪv.ə.bəl/",
+                          "synonyms":  "habitable, comfortable, pleasant, hospitable",
+                          "note":  "Có 2 cách viết: livable hoặc liveable. Danh từ: livability."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "consult an urban planner, urban planner team, vision of urban planners",
+                          "example":  "Urban planners are designing more pedestrian streets and rooftop gardens to counter heat.",
+                          "definition":  "Chuyên gia quy hoạch đô thị",
+                          "term":  "urban planner",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌɜː.bən ˈplæn.ər/",
+                          "synonyms":  "city planner, municipal designer",
+                          "note":  "Urban (thuộc đô thị) \u003e\u003c Rural (thuộc nông thôn). Urbanization = sự đô thị hóa."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "motorway, highway",
+                          "collocations":  "create a pedestrian zone, walk in a pedestrian zone, designated pedestrian zone",
+                          "example":  "The pedestrian zone around Hoan Kiem Lake attracts massive crowds on weekends.",
+                          "definition":  "Phố đi bộ, khu vực dành riêng cho người đi bộ cấm xe cơ giới",
+                          "term":  "pedestrian zone",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/pəˈdes.tri.ən zəʊn/",
+                          "synonyms":  "car-free zone, walking street, pedestrian precinct",
+                          "note":  "\u0027Pedestrian\u0027 là người đi bộ (noun) hoặc thuộc người đi bộ (adj)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "temperature sensor, motion sensor, smart sensor, sensor network",
+                          "example":  "Automated streetlights with motion sensors only turn on when vehicles or pedestrians approach.",
+                          "definition":  "Cảm biến, thiết bị cảm ứng thông minh",
+                          "term":  "sensor",
+                          "topic":  "Unit 3: Cities of the Future",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈsen.sər/",
+                          "synonyms":  "detector, sensing device, transducer",
+                          "note":  "Động từ là \u0027sense\u0027 (cảm nhận, nhận biết)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "individual state, faction",
+                          "collocations":  "regional bloc, trading bloc, ASEAN bloc, economic bloc",
+                          "example":  "ASEAN is a dynamic regional bloc comprising ten Southeast Asian nations.",
+                          "definition":  "Khối liên minh các quốc gia có chung lợi ích chính trị, kinh tế",
+                          "term":  "bloc",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/blɒk/",
+                          "synonyms":  "alliance, coalition, union, confederation",
+                          "note":  "Phân biệt với \u0027block\u0027 (khối nhà/chặn). Cùng phát âm /blɒk/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "sign a charter, ASEAN Charter, UN Charter, constitutional charter",
+                          "example":  "The ASEAN Charter entered into force in 2008 to provide a legal framework for the bloc.",
+                          "definition":  "Hiến chương, văn kiện mang tính pháp lý quy định mục tiêu và nguyên tắc hoạt động",
+                          "term":  "charter",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈtʃɑː.tər/",
+                          "synonyms":  "constitution, formal covenant, founding treaty",
+                          "note":  "Trọng âm 1. Cụm từ: \u0027charter member\u0027 (thành viên sáng lập)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "division, discord, disunity, antagonism",
+                          "collocations":  "show solidarity with, ASEAN solidarity, international solidarity, promote solidarity",
+                          "example":  "ASEAN member states consistently demonstrate strong solidarity during natural disasters.",
+                          "definition":  "Sự đoàn kết, tinh thần tương thân tương ái giữa các thành viên",
+                          "term":  "solidarity",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌsɒl.ɪˈdær.ə.ti/",
+                          "synonyms":  "unity, cohesion, harmony, mutual support",
+                          "note":  "Trọng âm 3: sol-i-DAR-i-ty."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "cultural isolation, ethnocentrism",
+                          "collocations":  "organize cultural exchange, participate in cultural exchange, student cultural exchange",
+                          "example":  "The ASEAN Youth Camp promotes cultural exchange and mutual respect among young delegates.",
+                          "definition":  "Giao lưu văn hóa (chương trình chia sẻ truyền thống, nghệ thuật giữa các nước)",
+                          "term":  "cultural exchange",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkʌl.tʃər.əl ɪksˈtʃeɪndʒ/",
+                          "synonyms":  "cross-cultural sharing, intercultural dialogue",
+                          "note":  "Cụm từ rất hay gặp trong bài thi nói về hội nhập quốc tế."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "compulsory worker, forced laborer",
+                          "collocations":  "youth volunteer, volunteer for a mission, international volunteer, voluntary work",
+                          "example":  "Many Vietnamese youths volunteer to teach English to underprivileged children across ASEAN.",
+                          "definition":  "Tình nguyện làm việc gì / Tình nguyện viên",
+                          "term":  "volunteer",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "verb/noun",
+                          "phonetic":  "/ˌvɒl.ənˈtɪər/",
+                          "synonyms":  "offer services, unpaid worker, humanitarian helper",
+                          "note":  "Tính từ: \u0027voluntary\u0027 /ˈvɒl.ən.tri/ (tự nguyện)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "official motto, adopt a motto, live by a motto",
+                          "example":  "\u0027One Vision, One Identity, One Community\u0027 is the official motto of ASEAN.",
+                          "definition":  "Khẩu hiệu, phương châm hành động",
+                          "term":  "motto",
+                          "topic":  "Unit 4: ASEAN and Viet Nam",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈmɒt.əʊ/",
+                          "synonyms":  "slogan, maxim, watchword, guiding principle",
+                          "note":  "Số nhiều: mottos hoặc mottoes."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "emission reduction, carbon absorption",
+                          "collocations":  "cut greenhouse gas emissions, reduce emissions, major source of emissions",
+                          "example":  "Governments have pledged to cut greenhouse gas emissions to achieve net-zero targets.",
+                          "definition":  "Lượng khí thải nhà kính (CO2, Methane làm thủng tầng ozone và nóng lên toàn cầu)",
+                          "term":  "greenhouse gas emission",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈɡriːn.haʊs ɡæs ɪˈmɪʃ.ən/",
+                          "synonyms":  "carbon emission, atmospheric pollution",
+                          "note":  "Động từ là \u0027emit\u0027 /iˈmɪt/ (phát thải, tỏa ra)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "beneficial, harmless, fortunate",
+                          "collocations":  "catastrophic impact, catastrophic consequences, catastrophic flood",
+                          "example":  "Unchecked global warming could have catastrophic consequences for low-lying delta regions.",
+                          "definition":  "Thảm khốc, gây thảm họa tàn phá nặng nề",
+                          "term":  "catastrophic",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌkæt.əˈstrɒf.ɪk/",
+                          "synonyms":  "disastrous, devastating, calamitous, ruinous",
+                          "note":  "Danh từ là \u0027catastrophe\u0027 /kəˈtæs.trə.fi/ (thảm họa). Trọng âm rơi vào /strɒf/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "afforestation (trồng rừng mới), reforestation (tái trồng rừng)",
+                          "collocations":  "combat deforestation, halt deforestation, rate of deforestation",
+                          "example":  "Deforestation in the Amazon rainforest releases millions of tons of trapped carbon dioxide.",
+                          "definition":  "Nạn phá rừng, sự tàn phá rừng quy mô lớn",
+                          "term":  "deforestation",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/diːˌfɒr.ɪˈsteɪ.ʃən/",
+                          "synonyms":  "forest clearance, tree-felling, forest devastation",
+                          "note":  "Tiền tố de- (hủy bỏ/làm giảm) + forest (rừng) + -ation (danh từ)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "cold snap, freeze",
+                          "collocations":  "severe heatwave, endure a heatwave, record-breaking heatwave",
+                          "example":  "Prolonged heatwaves during summer months pose serious health risks to elderly citizens.",
+                          "definition":  "Đợt nắng nóng gay gắt kéo dài bất thường",
+                          "term":  "heatwave",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈhiːt.weɪv/",
+                          "synonyms":  "prolonged hot spell, thermal wave",
+                          "note":  "Viết liền một từ: heatwave (hoặc heat wave)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "renewable energy, green energy, solar/wind power",
+                          "collocations":  "burn fossil fuels, reliance on fossil fuels, phase out fossil fuels",
+                          "example":  "Transitioning from fossil fuels to clean renewable energy is vital to halt climate change.",
+                          "definition":  "Nhiên liệu hóa thạch (than đá, dầu mỏ, khí đốt tự nhiên hình thành từ xác sinh vật)",
+                          "term":  "fossil fuel",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈfɒs.əl ˌfjuː.əl/",
+                          "synonyms":  "conventional energy, non-renewable energy",
+                          "note":  "Cụm từ \u0027phase out fossil fuels\u0027 = loại bỏ dần nhiên liệu hóa thạch."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "freeze, solidify",
+                          "collocations":  "ice melts, glaciers melt, melting point, melting ice cap",
+                          "example":  "Polar ice caps are melting at an alarming rate, causing global sea levels to rise.",
+                          "definition":  "Tan chảy (băng tuyết, sông băng do nhiệt độ tăng)",
+                          "term":  "melt",
+                          "topic":  "Unit 5: Global Warming",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/melt/",
+                          "synonyms":  "thaw, dissolve, liquefy",
+                          "note":  "Phân từ tính từ: \u0027molten\u0027 (nóng chảy: molten lava) hoặc \u0027melted\u0027 (melted butter)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "modern innovation",
+                          "collocations":  "tangible cultural heritage, intangible cultural heritage, preserve cultural heritage",
+                          "example":  "Hoi An Ancient Town is celebrated as a UNESCO World Cultural Heritage site.",
+                          "definition":  "Di sản văn hóa (truyền thống, kiến trúc, nghệ thuật truyền lại qua các thế hệ)",
+                          "term":  "cultural heritage",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkʌl.tʃər.əl ˈher.ɪ.tɪdʒ/",
+                          "synonyms":  "cultural legacy, historical patrimony",
+                          "note":  "Phân biệt: tangible heritage (di sản hữu thể/vật thể) \u0026 intangible heritage (phi vật thể)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "demolish, destroy, ruin",
+                          "collocations":  "restore a monument, restore ancient paintings, restoration project",
+                          "example":  "Artisans worked painstakingly for years to restore the ancient pagoda after the fire.",
+                          "definition":  "Phục chế, trùng tu, khôi phục lại hiện trạng ban đầu của di tích",
+                          "term":  "restore",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/rɪˈstɔːr/",
+                          "synonyms":  "renovate, rehabilitate, reconstruct, repair",
+                          "note":  "Danh từ: \u0027restoration\u0027 /ˌres.tərˈeɪ.ʃən/ (công tác trùng tu, phục dựng)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "damaged, broken, ruined, ruined",
+                          "collocations":  "remain intact, keep intact, leave something intact",
+                          "example":  "Remarkably, the 500-year-old stone temple remained intact throughout the earthquake.",
+                          "definition":  "Còn nguyên vẹn, không bị hư hại qua biến cố thời gian và chiến tranh",
+                          "term":  "intact",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ɪnˈtækt/",
+                          "synonyms":  "undamaged, unbroken, whole, pristine, preserved",
+                          "note":  "Trọng âm 2: in-TACT. Thường đi sau động từ nối: remain intact."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "N/A",
+                          "collocations":  "historical monument, ancient monument, national monument",
+                          "example":  "Hue Citadel contains numerous historical monuments, royal tombs, and palaces.",
+                          "definition":  "Tượng đài, đài kỷ niệm, công trình kiến trúc lịch sử",
+                          "term":  "monument",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈmɒn.jə.mənt/",
+                          "synonyms":  "memorial, historic landmark, shrine",
+                          "note":  "Tính từ: \u0027monumental\u0027 /ˌmɒn.jəˈmen.təl/ (vĩ đại, to lớn)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "fake, imitation, counterfeit, artificial",
+                          "collocations":  "authentic experience, authentic recipe, authentic artifact, prove authentic",
+                          "example":  "Tourists flock to Bat Trang pottery village to purchase authentic handmade ceramics.",
+                          "definition":  "Đích thực, nguyên bản, chuẩn xác theo truyền thống gốc",
+                          "term":  "authentic",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ɔːˈθen.tɪk/",
+                          "synonyms":  "genuine, original, real, bona fide",
+                          "note":  "Danh từ: \u0027authenticity\u0027 /ˌɔː.θenˈtɪs.ə.ti/ (tính chân thực, tính xác thực)."
+                      },
+                      {
+                          "level":  "A2",
+                          "antonyms":  "modern pop music",
+                          "collocations":  "traditional folk music, folk music performance, folk music preservation",
+                          "example":  "Quan Ho folk music was recognized by UNESCO as an Intangible Cultural Heritage of Humanity.",
+                          "definition":  "Âm nhạc dân gian, làn điệu dân ca truyền thống (như Quan họ, Đờn ca tài tử)",
+                          "term":  "folk music",
+                          "topic":  "Unit 6: Preserving Heritage",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈfəʊk ˌmjuː.zɪk/",
+                          "synonyms":  "traditional music, ethnic songs",
+                          "note":  "\u0027Folk\u0027 là danh từ/tính từ chỉ những nét văn hóa dân gian bắt nguồn từ nhân dân."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "purely academic education",
+                          "collocations":  "attend vocational training, vocational training school, vocational qualification",
+                          "example":  "Vocational training offers a direct route into skilled technical careers like automotive engineering.",
+                          "definition":  "Đào tạo nghề, học nghề thực hành kỹ năng kỹ thuật",
+                          "term":  "vocational training",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/vəʊˈkeɪ.ʃən.əl ˈtreɪ.nɪŋ/",
+                          "synonyms":  "career training, technical education, trade school",
+                          "note":  "Gốc từ: \u0027vocation\u0027 (nghề nghiệp phù hợp thiên hướng cá nhân)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "full-time classroom study",
+                          "collocations":  "complete an apprenticeship, serve an apprenticeship, degree apprenticeship",
+                          "example":  "Doing an apprenticeship gives school-leavers practical on-the-job experience and certification.",
+                          "definition":  "Chế độ vừa học việc vừa làm có lương tại các doanh nghiệp",
+                          "term":  "apprenticeship",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/əˈpren.tɪs.ʃɪp/",
+                          "synonyms":  "traineeship, internship, on-the-job training",
+                          "note":  "Người học việc là \u0027apprentice\u0027. Trọng âm 2: ap-PREN-tice-ship."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "secondary education, primary education",
+                          "collocations":  "pursue higher education, higher education institution, higher education degree",
+                          "example":  "Many high school seniors aspire to pursue higher education at prestigious universities.",
+                          "definition":  "Giáo dục bậc cao (bậc đại học và sau đại học)",
+                          "term":  "higher education",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌhaɪ.ər edʒ.uˈkeɪ.ʃən/",
+                          "synonyms":  "tertiary education, university education",
+                          "note":  "Tertiary education là thuật ngữ học thuật đồng nghĩa của higher education."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "master\u0027s degree (thạc sĩ), doctorate (tiến sĩ)",
+                          "collocations":  "earn a bachelor\u0027s degree, bachelor\u0027s degree in economics, hold a bachelor\u0027s degree",
+                          "example":  "Holding a bachelor\u0027s degree in computer science opens up numerous lucrative job opportunities.",
+                          "definition":  "Bằng cử nhân đại học (hoàn thành chương trình 3-4 năm)",
+                          "term":  "bachelor\u0027s degree",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈbætʃ.əl.əz dɪˌɡriː/",
+                          "synonyms":  "undergraduate degree, BA / BSc",
+                          "note":  "BA: Bachelor of Arts (Cử nhân KH Xã hội), BSc: Bachelor of Science (Cử nhân KH Tự nhiên)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "scholarship, grant, financial aid",
+                          "collocations":  "pay tuition fees, affordable tuition fees, exempt from tuition fees",
+                          "example":  "Scholarships assist talented students in covering expensive university tuition fees.",
+                          "definition":  "Học phí (khoản tiền phải trả cho việc học tại trường)",
+                          "term":  "tuition fee",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/tjuːˈɪʃ.ən fiː/",
+                          "synonyms":  "tuition costs, school fees",
+                          "note":  "Thường dùng ở dạng số nhiều: \u0027tuition fees\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "incompetence, lack of credentials",
+                          "collocations":  "gain qualifications, formal qualifications, professional qualification",
+                          "example":  "Employers value candidates who possess strong practical skills alongside academic qualifications.",
+                          "definition":  "Bằng cấp, chứng chỉ, trình độ chuyên môn đạt chuẩn",
+                          "term":  "qualification",
+                          "topic":  "Unit 7: Education for Leavers",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌkwɒl.ɪ.fɪˈkeɪ.ʃən/",
+                          "synonyms":  "credential, certificate, degree, diploma",
+                          "note":  "Động từ là \u0027qualify\u0027 (qualify for a job = đủ điều kiện làm việc)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "dependent, reliant, helpless",
+                          "collocations":  "become self-reliant, self-reliant person, cultivate self-reliant habits",
+                          "example":  "Living away from home in a dormitory teaches college students to become self-reliant.",
+                          "definition":  "Tự lực cánh sinh, tự dựa vào sức mình mà không phụ thuộc người khác",
+                          "term":  "self-reliant",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌself.rɪˈlaɪ.ənt/",
+                          "synonyms":  "independent, autonomous, self-sufficient",
+                          "note":  "Danh từ: \u0027self-reliance\u0027 (sự tự lực, lòng tự chủ)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "procrastination, time-wasting",
+                          "collocations":  "time management skills, poor time management, effective time management",
+                          "example":  "Mastering time management skills helps students balance exam revision and personal relaxation.",
+                          "definition":  "Kỹ năng quản lý thời gian hiệu quả",
+                          "term":  "time management",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈtaɪm ˌmæn.ɪdʒ.mənt/",
+                          "synonyms":  "scheduling efficiency, task prioritization",
+                          "note":  "Kỹ năng mềm hàng đầu được rèn luyện trong Unit 8."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "give up, collapse under pressure, surrender",
+                          "collocations":  "cope with stress, cope with difficulties, ability to cope with change",
+                          "example":  "Counselors guide teenagers on how to cope with academic stress and peer pressure.",
+                          "definition":  "Đối phó, đương đầu và xử lý thành công áp lực hoặc khó khăn",
+                          "term":  "cope with",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "phrasal verb",
+                          "phonetic":  "/kəʊp wɪð/",
+                          "synonyms":  "deal with, manage, tackle, handle",
+                          "note":  "Không dùng \u0027cope up with\u0027 (đây là lỗi ngữ pháp rất phổ biến của học sinh!). Luôn là \u0027cope with\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "social awkwardness",
+                          "collocations":  "develop interpersonal skills, excellent interpersonal skills, interpersonal communication",
+                          "example":  "Strong interpersonal skills enable leaders to build trustworthy relationships with team members.",
+                          "definition":  "Kỹ năng giao tiếp và ứng xử giữa người với người",
+                          "term":  "interpersonal skills",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌɪn.təˈpɜː.sən.əl skɪlz/",
+                          "synonyms":  "social skills, people skills, communication skills",
+                          "note":  "Tiền tố inter- (giữa) + personal (cá nhân). Luôn dùng ở số nhiều."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "demotivated, passive, lazy",
+                          "collocations":  "self-motivated student, highly self-motivated, self-motivated worker",
+                          "example":  "Self-motivated learners often achieve higher academic results through independent research.",
+                          "definition":  "Tự có động lực, chủ động làm việc mà không cần ai thúc giục",
+                          "term":  "self-motivated",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌselfˈməʊ.tɪ.veɪ.tɪd/",
+                          "synonyms":  "driven, ambitious, proactive, self-starting",
+                          "note":  "Danh từ: \u0027self-motivation\u0027 (động lực nội tại)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "indecision, hesitation",
+                          "collocations":  "decision-making process, decision-making skills, rational decision-making",
+                          "example":  "Critical thinking is the foundation of sound, rational decision-making.",
+                          "definition":  "Kỹ năng ra quyết định / Quá trình đưa ra quyết định",
+                          "term":  "decision-making",
+                          "topic":  "Unit 8: Becoming Independent",
+                          "partOfSpeech":  "noun/adjective",
+                          "phonetic":  "/dɪˈsɪʒ.ənˌmeɪ.kɪŋ/",
+                          "synonyms":  "judgment, resolution, determination",
+                          "note":  "Động từ là \u0027make a decision\u0027 (đưa ra quyết định)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "online support, digital empathy",
+                          "collocations":  "victim of cyberbullying, combat cyberbullying, stop cyberbullying",
+                          "example":  "Schools must run awareness campaigns to educate students on preventing cyberbullying.",
+                          "definition":  "Bắt nạt qua mạng (hành vi xúc phạm, đe dọa người khác trên môi trường Internet)",
+                          "term":  "cyberbullying",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈsaɪ.bəˌbʊl.i.ɪŋ/",
+                          "synonyms":  "online harassment, digital bullying, cyber harassment",
+                          "note":  "Kẻ bắt nạt qua mạng là \u0027cyberbully\u0027. Động từ: \u0027cyberbully\u0027."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "independent judgment, individuality",
+                          "collocations":  "succumb to peer pressure, resist peer pressure, negative peer pressure",
+                          "example":  "Teenagers may pick up bad habits like smoking due to intense peer pressure.",
+                          "definition":  "Áp lực đồng trang lứa (áp lực phải làm theo bạn bè cùng tuổi để hòa nhập)",
+                          "term":  "peer pressure",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈpɪə ˌpreʃ.ər/",
+                          "synonyms":  "social pressure, classmate influence",
+                          "note":  "Động từ hay đi cùng: \u0027succumb to\u0027 (nhượng bộ) hoặc \u0027resist\u0027 (chống lại) peer pressure."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "wealth, affluence, prosperity, richness",
+                          "collocations":  "eradicate poverty, live in poverty, poverty line, trap of poverty",
+                          "example":  "Education is the most powerful sustainable weapon to break the cycle of poverty.",
+                          "definition":  "Sự nghèo đói, tình trạng thiếu thốn điều kiện sống tối thiểu",
+                          "term":  "poverty",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈpɒv.ə.ti/",
+                          "synonyms":  "deprivation, destitution, indigence, hardship",
+                          "note":  "Tính từ: \u0027poor\u0027. Thành ngữ: \u0027live below the poverty line\u0027 (sống dưới mức nghèo khổ)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "family harmony, peaceful home",
+                          "collocations":  "suffer from domestic violence, prevent domestic violence, domestic violence hotline",
+                          "example":  "Victims of domestic violence need immediate shelter and psychological counseling.",
+                          "definition":  "Bạo lực gia đình (hành vi bạo hành thể xác hoặc tinh thần giữa các thành viên)",
+                          "term":  "domestic violence",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/dəˌmes.tɪk ˈvaɪə.ləns/",
+                          "synonyms":  "family abuse, spousal abuse, domestic abuse",
+                          "note":  "Domestic (thuộc gia đình/nội địa) + violence (bạo lực)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "body positivity, self-acceptance",
+                          "collocations":  "stop body shaming, target of body shaming, fight against body shaming",
+                          "example":  "Body shaming on social networks causes severe anxiety and low self-esteem in young girls.",
+                          "definition":  "Miệt thị ngoại hình (hành vi chê bai, chế giễu vóc dáng của người khác)",
+                          "term":  "body shaming",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈbɒd.i ˌʃeɪ.mɪŋ/",
+                          "synonyms":  "appearance mocking, physical criticism",
+                          "note":  "Thuật ngữ xã hội học rất thịnh hành trong các đề thi nói/viết hiện nay."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "ignore, conceal information",
+                          "collocations":  "raise public awareness, raise awareness of social issues, campaign to raise awareness",
+                          "example":  "Youth organizations launched a campaign to raise public awareness about mental health.",
+                          "definition":  "Nâng cao nhận thức của cộng đồng về một vấn đề quan trọng",
+                          "term":  "raise awareness",
+                          "topic":  "Unit 9: Social Issues",
+                          "partOfSpeech":  "verb phrase",
+                          "phonetic":  "/reɪz əˈweə.nəs/",
+                          "synonyms":  "heighten consciousness, spread awareness, educate the public",
+                          "note":  "Cấu trúc: raise awareness of / about something."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "monoculture, biological uniformity",
+                          "collocations":  "preserve biodiversity, threat to biodiversity, rich biodiversity, loss of biodiversity",
+                          "example":  "Tropical rainforests harbor more than half of the world\u0027s plant and animal biodiversity.",
+                          "definition":  "Đa dạng sinh học (sự phong phú và đa dạng của các dạng sống trong một hệ sinh thái)",
+                          "term":  "biodiversity",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/",
+                          "synonyms":  "biological diversity, ecological variety",
+                          "note":  "Trọng âm 4: bi-o-di-VER-si-ty."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "N/A",
+                          "collocations":  "top of the food chain, disrupt the food chain, link in the food chain",
+                          "example":  "Apex predators like tigers and eagles play a pivotal role at the top of the food chain.",
+                          "definition":  "Chuỗi thức ăn (trật tự dinh dưỡng giữa các sinh vật trong tự nhiên)",
+                          "term":  "food chain",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈfuːd ˌtʃeɪn/",
+                          "synonyms":  "food web, ecological pyramid, trophic chain",
+                          "note":  "Mở rộng: \u0027food web\u0027 (lưới thức ăn gồm nhiều chuỗi thức ăn đan xen)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "habitat restoration, habitat conservation",
+                          "collocations":  "suffer habitat loss, cause habitat loss, lead to habitat loss",
+                          "example":  "Agricultural expansion and illegal logging are primary causes of severe habitat loss.",
+                          "definition":  "Mất môi trường sống tự nhiên của muông thú do con người tác động",
+                          "term":  "habitat loss",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈhæb.ɪ.tæt lɒs/",
+                          "synonyms":  "habitat destruction, habitat degradation",
+                          "note":  "Habitat = môi trường sống tự nhiên của động/thực vật."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "poacher, exploiter",
+                          "collocations":  "dedicated conservationist, team of conservationists, wildlife conservationist",
+                          "example":  "Conservationists are working around the clock to establish marine protected zones for coral.",
+                          "definition":  "Nhà bảo tồn thiên nhiên, người hoạt động bảo vệ môi trường và động vật",
+                          "term":  "conservationist",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌkɒn.səˈveɪ.ʃən.ɪst/",
+                          "synonyms":  "environmentalist, wildlife protector, ecologist",
+                          "note":  "Phân biệt: conservation (sự bảo tồn), conserve (bảo tồn), conservationist (nhà bảo tồn)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "alive, extant, thriving, surviving",
+                          "collocations":  "become extinct, go extinct, on the brink of extinction, functionally extinct",
+                          "example":  "The Javan rhinoceros in Cat Tien National Park was officially declared extinct in 2010.",
+                          "definition":  "Tuyệt chủng (loài sinh vật đã chết hết và không còn tồn tại trên Trái Đất)",
+                          "term":  "extinct",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ɪkˈstɪŋkt/",
+                          "synonyms":  "died out, wiped out, non-existent",
+                          "note":  "Danh từ: \u0027extinction\u0027 (sự tuyệt chủng). Cụm: \u0027threatened with extinction\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "common species, abundant animals",
+                          "collocations":  "protect endangered species, list of endangered species, critically endangered species",
+                          "example":  "The World Wildlife Fund works relentlessly to safeguard critically endangered species worldwide.",
+                          "definition":  "Loài có nguy cơ tuyệt chủng (sinh vật nằm trong Sách Đỏ cần bảo vệ khẩn cấp)",
+                          "term":  "endangered species",
+                          "topic":  "Unit 10: The Ecosystem",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɪnˌdeɪn.dʒəd ˈspiː.ʃiːz/",
+                          "synonyms":  "threatened species, species at risk",
+                          "note":  "Từ \u0027species\u0027 giữ nguyên hình thức ở cả số ít và số nhiều (one species, many species)."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_12",
+        "color":  "#ec4899",
+        "category":  "THPT",
+        "description":  "Bộ 60 từ vựng phân hóa cao Unit 1 - Unit 10 trọng tâm ôn thi tốt nghiệp THPT và ĐGNL.",
+        "icon":  "📕",
+        "totalWords":  60,
+        "grade":  12,
+        "title":  "Tiếng Anh Lớp 12 Trọng Tâm (Ôn Thi THPT Quốc Gia)",
+        "words":  [
+                      {
+                          "level":  "B2",
+                          "antonyms":  "giving up, surrender, apathy",
+                          "collocations":  "show perseverance, through sheer perseverance, perseverance in the face of obstacles",
+                          "example":  "Through extraordinary perseverance and dedication, Marie Curie made historic breakthroughs in radioactivity.",
+                          "definition":  "Sự kiên trì, bền bỉ vượt qua muôn vàn gian nan thử thách",
+                          "term":  "perseverance",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌpɜː.sɪˈvɪə.rəns/",
+                          "synonyms":  "persistence, tenacity, endurance, determination",
+                          "note":  "Động từ là \u0027persevere\u0027 /ˌpɜː.sɪˈvɪər/ (persevere in/with something)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unknown, obscure, ordinary, undistinguished",
+                          "collocations":  "distinguished career, distinguished scholar, distinguished guest, highly distinguished",
+                          "example":  "General Vo Nguyen Giap was a distinguished military strategist admired across the globe.",
+                          "definition":  "Kiệt xuất, lỗi lạc, được kính trọng bởi sự nghiệp vĩ đại",
+                          "term":  "distinguished",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/dɪˈstɪŋ.ɡwɪʃt/",
+                          "synonyms":  "eminent, illustrious, celebrated, renowned",
+                          "note":  "Phân biệt: \u0027distinguished\u0027 (lỗi lạc) và \u0027distinguishable\u0027 (có thể phân biệt được)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "miser, misanthrope",
+                          "collocations":  "generous philanthropist, billionaire philanthropist, noted philanthropist",
+                          "example":  "The tech billionaire became a full-time philanthropist dedicated to eradicating infectious diseases.",
+                          "definition":  "Nhà từ thiện, người giàu lòng nhân ái hiến tặng tài sản giúp đời",
+                          "term":  "philanthropist",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/fɪˈlæn.θrə.pɪst/",
+                          "synonyms":  "benefactor, humanitarian, patron, donor",
+                          "note":  "Danh từ trừu tượng: \u0027philanthropy\u0027 (hoạt động nhân đạo từ thiện). Trọng âm 2."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "leave a legacy, enduring legacy, lasting legacy, rich legacy",
+                          "example":  "President Ho Chi Minh left an enduring legacy of patriotism and moral integrity for the nation.",
+                          "definition":  "Di sản tinh thần hoặc vật chất để lại cho thế hệ sau",
+                          "term":  "legacy",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈleɡ.ə.si/",
+                          "synonyms":  "heritage, bequest, inheritance, endowment",
+                          "note":  "Số nhiều: legacies. Thành ngữ: \u0027legacy of something\u0027."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "succumb to hardship, yield to despair",
+                          "collocations":  "courage to overcome adversity, overcome severe adversity, resilience in adversity",
+                          "example":  "Nick Vujicic inspired millions by demonstrating how courage helps individuals overcome adversity.",
+                          "definition":  "Vượt qua nghịch cảnh, chiến thắng những hoàn cảnh ngặt nghèo nhất",
+                          "term":  "overcome adversity",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "verb phrase",
+                          "phonetic":  "/ˌəʊ.vəˈkʌm ədˈvɜː.sə.ti/",
+                          "synonyms":  "triumph over hardship, conquer difficulties",
+                          "note":  "\u0027Adversity\u0027 (nghịch cảnh) khác với \u0027adversary\u0027 (kẻ thù/đối thủ)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "disreputable, obscure, insignificant",
+                          "collocations":  "prestigious award, prestigious university, prestigious scholarship",
+                          "example":  "Professor Ngo Bao Chau was awarded the prestigious Fields Medal in mathematics in 2010.",
+                          "definition":  "Danh giá, có uy tín và thanh thế lẫy lừng",
+                          "term":  "prestigious",
+                          "topic":  "Unit 1: Life Stories",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/presˈtɪdʒ.əs/",
+                          "synonyms":  "reputable, esteemed, distinguished, high-status",
+                          "note":  "Danh từ là \u0027prestige\u0027 /presˈtiːʒ/ (uy tín, thanh thế). Trọng âm 2."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "cultural preservation, cultural segregation",
+                          "collocations":  "force cultural assimilation, process of cultural assimilation, rapid assimilation",
+                          "example":  "Immigrants often experience pressure toward cultural assimilation while trying to maintain their mother tongue.",
+                          "definition":  "Sự đồng hóa văn hóa (quá trình tiếp thu hoàn toàn văn hóa của cộng đồng đa số)",
+                          "term":  "cultural assimilation",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkʌl.tʃər.əl əˌsɪm.ɪˈleɪ.ʃən/",
+                          "synonyms":  "cultural absorption, cultural integration",
+                          "note":  "Động từ: \u0027assimilate into\u0027 (đồng hóa, hòa nhập vào)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "cultural alienation, ethnocentrism",
+                          "collocations":  "process of acculturation, levels of acculturation, cross-cultural acculturation",
+                          "example":  "Acculturation allows individuals to adopt values from a new host society while preserving native traditions.",
+                          "definition":  "Sự tiếp biến văn hóa (sự biến đổi văn hóa khi hai nền văn hóa tiếp xúc lâu dài)",
+                          "term":  "acculturation",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/əˌkʌl.tʃəˈreɪ.ʃən/",
+                          "synonyms":  "cultural adaptation, intercultural exchange",
+                          "note":  "Thuật ngữ nhân học văn hóa nâng cao xuất hiện trong các bài đọc hiểu chuyên sâu."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "cultural homogenization",
+                          "collocations":  "preserve cultural identity, retain cultural identity, shape cultural identity, loss of identity",
+                          "example":  "Traditional festivals and the national costume Ao Dai play an essential role in safeguarding our cultural identity.",
+                          "definition":  "Bản sắc văn hóa (những nét đặc trưng định hình nên một dân tộc/cộng đồng)",
+                          "term":  "cultural identity",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkʌl.tʃər.əl aɪˈden.tə.ti/",
+                          "synonyms":  "cultural distinctiveness, national identity",
+                          "note":  "Động từ: \u0027identify with\u0027 (đồng nhất, nhận diện với)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "monocultural society, homogeneous community",
+                          "collocations":  "cultural melting pot, dynamic melting pot, urban melting pot",
+                          "example":  "New York City is often referred to as a vibrant melting pot of global cultures and cuisines.",
+                          "definition":  "Nồi lẩu văn hóa (nơi giao thoa và hòa trộn nhiều sắc tộc, nền văn hóa khác nhau)",
+                          "term":  "melting pot",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈmel.tɪŋ ˌpɒt/",
+                          "synonyms":  "cultural mosaic, multicultural society, cosmopolitan center",
+                          "note":  "Phân biệt với mô hình \u0027salad bowl\u0027 (các nền văn hóa cùng tồn tại nhưng giữ nguyên bản sắc riêng)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "cultural relativism, cosmopolitanism, open-mindedness",
+                          "collocations":  "overcome ethnocentrism, danger of ethnocentrism, ethnocentric attitude",
+                          "example":  "Education must combat ethnocentrism by teaching empathy and cross-cultural appreciation.",
+                          "definition":  "Chủ nghĩa vị chủng (thái độ cho rằng văn hóa dân tộc mình là ưu việt hơn tất cả)",
+                          "term":  "ethnocentrism",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌeθ.nəʊˈsen.trɪ.zəm/",
+                          "synonyms":  "cultural superiority, cultural chauvinism, xenophobia",
+                          "note":  "Tính từ: \u0027ethnocentric\u0027 /ˌeθ.nəʊˈsen.trɪk/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "uniformity, monotony, homogeneity",
+                          "collocations":  "cultural diversity, ethnic diversity, embrace diversity, promote diversity",
+                          "example":  "Modern corporations celebrate workforce diversity as a key catalyst for innovation.",
+                          "definition":  "Sự đa dạng phong phú về văn hóa, chủng tộc hoặc quan điểm",
+                          "term":  "diversity",
+                          "topic":  "Unit 2: A Multicultural World",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/daɪˈvɜː.sə.ti/",
+                          "synonyms":  "variety, heterogeneity, multiplicity, richness",
+                          "note":  "Tính từ: \u0027diverse\u0027 /daɪˈvɜːs/. Động từ: \u0027diversify\u0027 (đa dạng hóa)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "linear economy, take-make-dispose model",
+                          "collocations":  "adopt a circular economy, circular economy framework, principles of circular economy",
+                          "example":  "Transitioning to a circular economy helps businesses reuse raw materials and eliminate toxic waste.",
+                          "definition":  "Kinh tế tuần hoàn (mô hình kinh tế tái sinh, giảm thiểu tối đa rác thải bằng tái chế)",
+                          "term":  "circular economy",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌsɜː.kjə.lər iˈkɒn.ə.mi/",
+                          "synonyms":  "closed-loop economy, regenerative economic model",
+                          "note":  "Mô hình tương phản với \u0027linear economy\u0027 (kinh tế tuyến tính)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "carbon-intensive, high-emission",
+                          "collocations":  "carbon neutral pledge, achieve carbon neutrality, carbon neutral lifestyle",
+                          "example":  "Vietnam has committed to achieving net-zero emissions and becoming carbon neutral by 2050.",
+                          "definition":  "Trung hòa carbon (đạt mức cân bằng giữa lượng phát thải và lượng hấp thụ CO2)",
+                          "term":  "carbon neutral",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˌkɑː.bən ˈnjuː.trəl/",
+                          "synonyms":  "net-zero, climate neutral, zero-carbon",
+                          "note":  "Danh từ: \u0027carbon neutrality\u0027 /ˌkɑː.bən njuːˈtræl.ə.ti/."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "reusable containers, biodegradable packaging",
+                          "collocations":  "ban single-use plastic, phase out single-use plastic, reliance on single-use plastic",
+                          "example":  "Many urban cafes have completely banned single-use plastic straws and cutlery.",
+                          "definition":  "Nhựa dùng một lần (vật dụng nhựa sử dụng một lần rồi vứt bỏ gây hại môi trường)",
+                          "term":  "single-use plastic",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌsɪŋ.ɡəl juːs ˈplæs.tɪk/",
+                          "synonyms":  "disposable plastic, throwaway plastic",
+                          "note":  "Tính từ ghép \u0027single-use\u0027 = disposable."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "replenish, restore, regenerate, renew",
+                          "collocations":  "deplete natural resources, deplete the ozone layer, severely deplete",
+                          "example":  "Overexploitation of underground water sources will rapidly deplete natural freshwater reserves.",
+                          "definition":  "Làm cạn kiệt, làm suy giảm nghiêm trọng nguồn tài nguyên",
+                          "term":  "deplete",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/dɪˈpliːt/",
+                          "synonyms":  "exhaust, drain, consume, use up",
+                          "note":  "Danh từ: \u0027depletion\u0027 (resource depletion = sự cạn kiệt tài nguyên)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "fossil fuels, exhaustible energy",
+                          "collocations":  "source of renewable energy, harness renewable energy, switch to renewable energy",
+                          "example":  "Investing in renewable energy infrastructure creates green jobs and stabilizes power grids.",
+                          "definition":  "Năng lượng tái tạo (năng lượng vô tận từ gió, mặt trời, địa nhiệt)",
+                          "term":  "renewable energy",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/rɪˈnjuː.ə.bəl ˈen.ə.dʒi/",
+                          "synonyms":  "green energy, sustainable power, clean energy",
+                          "note":  "Tính từ \u0027renewable\u0027 bắt nguồn từ re- (lại) + new (mới) + -able (có thể)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unsustainability, ecocide",
+                          "collocations":  "environmental sustainability, long-term sustainability, achieve sustainability",
+                          "example":  "Environmental sustainability must be integrated into every stage of urban architectural design.",
+                          "definition":  "Tính bền vững, khả năng duy trì lâu dài mà không phá hủy hệ sinh thái",
+                          "term":  "sustainability",
+                          "topic":  "Unit 3: Green Living",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/səˌsteɪ.nəˈbɪl.ə.ti/",
+                          "synonyms":  "viability, eco-friendly maintenance, ecological balance",
+                          "note":  "Trọng âm 4: sus-tain-a-BIL-i-ty. Tính từ: sustainable."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "compact city, controlled urban growth",
+                          "collocations":  "combat urban sprawl, consequences of urban sprawl, rapid urban sprawl",
+                          "example":  "Unchecked urban sprawl consumes fertile agricultural lands and exacerbates traffic gridlock.",
+                          "definition":  "Sự mở rộng đô thị tự phát, tràn lan thiếu quy hoạch ra vùng ven",
+                          "term":  "urban sprawl",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌɜː.bən ˈsprɔːl/",
+                          "synonyms":  "uncontrolled suburbanization, metropolitan spread",
+                          "note":  "\u0027Sprawl\u0027 (noun/verb) chỉ sự lan rộng, ngổn ngang không kiểm soát."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "counter-urbanization, urban-to-rural migration",
+                          "collocations":  "wave of rural-to-urban migration, drivers of rural-to-urban migration, handle migration",
+                          "example":  "Massive rural-to-urban migration puts severe pressure on housing, healthcare, and electricity in megacities.",
+                          "definition":  "Sự di cư từ nông thôn ra thành thị tìm kiếm cơ hội sinh kế",
+                          "term":  "rural-to-urban migration",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌrʊə.rəl tu ˈɜː.bən maɪˈɡreɪ.ʃən/",
+                          "synonyms":  "urban drift, rural exodus, urbanization flow",
+                          "note":  "Người di cư là \u0027migrant\u0027 /ˈmaɪ.ɡrənt/. Động từ: \u0027migrate\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "adequate infrastructure capacity",
+                          "collocations":  "lead to infrastructure overload, suffer from infrastructure overload, ease overload",
+                          "example":  "Rapid population boom in metropolitan areas frequently results in acute infrastructure overload.",
+                          "definition":  "Sự quá tải cơ sở hạ tầng (cầu đường, trường học, bệnh viện quá tải người dùng)",
+                          "term":  "infrastructure overload",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈɪn.frəˌstrʌk.tʃər ˌəʊ.vəˈləʊd/",
+                          "synonyms":  "infrastructure strain, municipal congestion",
+                          "note":  "Overload vừa là danh từ vừa là động từ (làm quá tải)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "upscale neighborhood, affluent residential area",
+                          "collocations":  "slum clearance, slum dweller, live in a slum, urban slum",
+                          "example":  "City municipal programs aim to upgrade slum areas by constructing affordable social housing.",
+                          "definition":  "Khu nhà ổ chuột, khu ổ chuột lụp xụp thiếu thốn điều kiện vệ sinh",
+                          "term":  "slum",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/slʌm/",
+                          "synonyms":  "shantytown, ghetto, squatter settlement",
+                          "note":  "Cụm từ: \u0027slum dwellers\u0027 (cư dân sinh sống tại các khu ổ chuột)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "insanitation, pollution, filth",
+                          "collocations":  "improve sanitation, basic sanitation facilities, access to clean sanitation",
+                          "example":  "Poor sanitation in densely populated quarters increases the risk of waterborne disease outbreaks.",
+                          "definition":  "Hệ thống vệ sinh môi trường công cộng và xử lý nước thải",
+                          "term":  "sanitation",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌsæn.ɪˈteɪ.ʃən/",
+                          "synonyms":  "public hygiene, sewage disposal, clean water facilities",
+                          "note":  "Tính từ: \u0027sanitary\u0027 /ˈsæn.ɪ.tri/ (hợp vệ sinh). Trái nghĩa: unsanitary."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "sparse, thinly populated, scattered",
+                          "collocations":  "densely populated, dense forest, dense traffic, dense smog",
+                          "example":  "Hanoi and Ho Chi Minh City feature some of the most dense urban population centers in Southeast Asia.",
+                          "definition":  "Dày đặc, đông đúc (mật độ dân số cao)",
+                          "term":  "dense",
+                          "topic":  "Unit 4: Urbanisation",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/dens/",
+                          "synonyms":  "crowded, congested, packed, highly concentrated",
+                          "note":  "Trạng từ: \u0027densely\u0027. Danh từ: \u0027density\u0027 (population density = mật độ dân số)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "rigidity, inflexibility, obstinacy",
+                          "collocations":  "show high adaptability, demonstrate adaptability, career adaptability",
+                          "example":  "In an ever-evolving digital job market, adaptability is considered the most critical professional skill.",
+                          "definition":  "Khả năng thích ứng linh hoạt trước những thay đổi nhanh chóng của thị trường",
+                          "term":  "adaptability",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/əˌdæp.təˈbɪl.ə.ti/",
+                          "synonyms":  "flexibility, resilience, versatility, agility",
+                          "note":  "Động từ: \u0027adapt to\u0027 (thích nghi với). Tính từ: adaptable."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "traditional permanent employment, nine-to-five job",
+                          "collocations":  "rise of the gig economy, gig economy workers, participate in the gig economy",
+                          "example":  "The gig economy enables millions of freelance workers to choose flexible working hours via digital apps.",
+                          "definition":  "Nền kinh tế việc làm tự do (nền kinh tế dựa trên các công việc thời vụ, tự do ngắn hạn)",
+                          "term":  "gig economy",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈɡɪɡ ɪˌkɒn.ə.mi/",
+                          "synonyms":  "freelance economy, on-demand labor market",
+                          "note":  "\u0027Gig\u0027 ban đầu là buổi diễn ca nhạc, nay mang nghĩa công việc hợp đồng ngắn hạn."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "job insecurity, precarity, risk of layoff",
+                          "collocations":  "high job security, lack of job security, seek job security, guarantee job security",
+                          "example":  "Many graduates prioritize civil service careers because they offer high job security and solid pensions.",
+                          "definition":  "Sự bảo đảm việc làm, tính ổn định không lo bị sa thải",
+                          "term":  "job security",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈdʒɒb sɪˌkjʊə.rə.ti/",
+                          "synonyms":  "employment stability, career certainty",
+                          "note":  "Trái nghĩa: \u0027job insecurity\u0027 (sự bấp bênh trong công việc)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "stagnate, deskill",
+                          "collocations":  "upskill the workforce, upskill employees, opportunities to upskill",
+                          "example":  "Employees must continuously upskill in data analysis and AI tools to remain competitive.",
+                          "definition":  "Nâng cao tay nghề, học thêm các kỹ năng mới cao cấp hơn",
+                          "term":  "upskill",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ˌʌpˈskɪl/",
+                          "synonyms":  "enhance skills, reskill, upgrade qualifications, retrain",
+                          "note":  "Đi kèm cặp với \u0027reskill\u0027 (đào tạo lại kỹ năng để chuyển đổi nghề)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "on-site work, office-based work",
+                          "collocations":  "embrace telecommuting, telecommuting arrangement, telecommuting policy",
+                          "example":  "Telecommuting reduces daily commuting stress and enables a healthier work-life balance for parents.",
+                          "definition":  "Làm việc từ xa (làm việc tại nhà qua máy tính kết nối Internet)",
+                          "term":  "telecommuting",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌtel.ɪ.kəˈmjuː.tɪŋ/",
+                          "synonyms":  "remote work, working from home (WFH), telework",
+                          "note":  "Người làm việc từ xa là \u0027telecommuter\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "sloth, unreliability, unprofessionalism",
+                          "collocations":  "strong work ethic, admirable work ethic, instill a work ethic",
+                          "example":  "Recruiters praise Vietnamese engineers for their exceptional work ethic and rapid learning capability.",
+                          "definition":  "Đạo đức nghề nghiệp, thái độ làm việc chăm chỉ, kỷ luật và trách nhiệm",
+                          "term":  "work ethic",
+                          "topic":  "Unit 5: The World of Work",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈwɜːk ˌeθ.ɪk/",
+                          "synonyms":  "professional diligence, conscientious attitude",
+                          "note":  "Dùng tính từ: \u0027strong work ethic\u0027 (tinh thần trách nhiệm cao độ trong công việc)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "search algorithm, complex algorithm, machine learning algorithm, design an algorithm",
+                          "example":  "Social media platforms utilize sophisticated algorithms to recommend personalized video content.",
+                          "definition":  "Thuật toán (tập hợp các quy tắc tính toán logic để xử lý dữ liệu và giải quyết bài toán)",
+                          "term":  "algorithm",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈæl.ɡə.rɪ.ðəm/",
+                          "synonyms":  "computational rule, mathematical procedure, coded formula",
+                          "note":  "Trọng âm 1: AL-go-rithm. Tính từ: algorithmic."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "manual labor, handcrafting",
+                          "collocations":  "industrial automation, workplace automation, process automation",
+                          "example":  "Factory automation has dramatically boosted manufacturing productivity while reducing workplace hazards.",
+                          "definition":  "Sự tự động hóa (ứng dụng máy móc và robot thay thế thao tác thủ công của con người)",
+                          "term":  "automation",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌɔː.təˈmeɪ.ʃən/",
+                          "synonyms":  "mechanization, computerized operation, robotic control",
+                          "note":  "Động từ: \u0027automate\u0027. Tính từ: \u0027automated\u0027 (automated system)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "N/A",
+                          "collocations":  "machine learning model, apply machine learning, machine learning techniques",
+                          "example":  "Machine learning algorithms can detect early stages of cancerous tumors on X-ray scans with high accuracy.",
+                          "definition":  "Học máy (phân ngành của AI cho phép máy tính tự học hỏi và cải thiện từ dữ liệu)",
+                          "term":  "machine learning",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/məˈʃiːn ˌlɜː.nɪŋ/",
+                          "synonyms":  "deep learning, computational intelligence, neural networks",
+                          "note":  "Viết tắt là ML. Nhánh con của AI."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "ethical consensus, moral certainty",
+                          "collocations":  "raise ethical concerns, address ethical concerns, spark ethical concerns",
+                          "example":  "The use of autonomous weapons and facial recognition raises profound ethical concerns worldwide.",
+                          "definition":  "Mối lo ngại về mặt đạo đức, chuẩn mực luân lý trong ứng dụng công nghệ",
+                          "term":  "ethical concern",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈeθ.ɪ.kəl kənˌsɜːn/",
+                          "synonyms":  "moral dilemma, ethical issue, moral implication",
+                          "note":  "Tính từ: \u0027ethical\u0027 (thuộc về đạo đức) \u003e\u003c \u0027unethical\u0027 (vô đạo đức/phi đạo đức)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "human-driven vehicle",
+                          "collocations":  "test autonomous vehicles, safety of autonomous vehicles, fleet of autonomous vehicles",
+                          "example":  "Autonomous vehicles are anticipated to minimize traffic accidents caused by human errors.",
+                          "definition":  "Xe tự hành (phương tiện giao thông tự lái hoàn toàn bằng AI và cảm biến)",
+                          "term":  "autonomous vehicle",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɔːˈtɒn.ə.məs ˈvɪə.kəl/",
+                          "synonyms":  "self-driving car, driverless vehicle, robotic car",
+                          "note":  "\u0027Autonomous\u0027 mang nghĩa tự chủ, tự hành. \u0027Vehicle\u0027 phát âm là /ˈvɪə.kəl/ hoặc /ˈviː.ə.kəl/."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "data breach, privacy invasion",
+                          "collocations":  "protect data privacy, violate data privacy, data privacy laws",
+                          "example":  "Stringent data privacy regulations prevent technology giants from trading personal information without consent.",
+                          "definition":  "Quyền riêng tư dữ liệu cá nhân trên không gian mạng số",
+                          "term":  "data privacy",
+                          "topic":  "Unit 6: Artificial Intelligence",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈdeɪ.tə ˈprɪv.ə.si/",
+                          "synonyms":  "information privacy, digital privacy, data confidentiality",
+                          "note":  "Cụm từ liên quan: \u0027data breach\u0027 (rò rỉ dữ liệu), \u0027data leak\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "fact, accurate information, verified truth",
+                          "collocations":  "spread misinformation, combat misinformation, rampant misinformation",
+                          "example":  "Users should verify news sources carefully to avoid spreading medical misinformation online.",
+                          "definition":  "Thông tin sai lệch (thông tin không đúng sự thật do sơ suất hoặc lan truyền sai)",
+                          "term":  "misinformation",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌmɪs.ɪn.fəˈmeɪ.ʃən/",
+                          "synonyms":  "fake news, false info, inaccurate reporting",
+                          "note":  "Phân biệt: \u0027misinformation\u0027 (tin sai vô ý) \u0026 \u0027disinformation\u0027 (tin giả cố tình bịa đặt để lừa đảo)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "media gullibility, digital illiteracy",
+                          "collocations":  "improve media literacy, media literacy curriculum, lack of media literacy",
+                          "example":  "Teaching media literacy in high schools empowers students to distinguish credible news from clickbait.",
+                          "definition":  "Năng lực hiểu biết truyền thông (kỹ năng tiếp nhận, phân tích và đánh giá phản biện tin tức)",
+                          "term":  "media literacy",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈmiː.di.ə ˈlɪt.ər.ə.si/",
+                          "synonyms":  "critical media awareness, digital information literacy",
+                          "note":  "\u0027Literacy\u0027 là khả năng đọc viết / năng lực hiểu biết một lĩnh vực."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "free press, uncensored media, freedom of speech",
+                          "collocations":  "strict censorship, impose censorship, evade censorship, media censorship",
+                          "example":  "Online platforms face heated debates over the boundaries between content censorship and free expression.",
+                          "definition":  "Sự kiểm duyệt (hành động thẩm định và cắt bỏ nội dung nhạy cảm, độc hại trong xuất bản/truyền thông)",
+                          "term":  "censorship",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈsen.sə.ʃɪp/",
+                          "synonyms":  "editorial control, information filtering, suppression",
+                          "note":  "Động từ: \u0027censor\u0027 (kiểm duyệt). Người kiểm duyệt: \u0027censor\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "accurate headline, factual reporting",
+                          "collocations":  "clickbait headline, clickbait article, falling for clickbait",
+                          "example":  "Many unscrupulous websites rely on deceptive clickbait headlines to generate online advertising revenue.",
+                          "definition":  "Mồi câu nhấp chuột (tiêu đề giật gân, phóng đại nhằm lôi kéo người dùng bấm vào xem)",
+                          "term":  "clickbait",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈklɪk.beɪt/",
+                          "synonyms":  "sensational headline, lure, trap link",
+                          "note":  "Ghép từ \u0027click\u0027 (nhấp chuột) + \u0027bait\u0027 (mồi câu)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "objective journalism, factual accuracy",
+                          "collocations":  "media sensationalism, resort to sensationalism, accused of sensationalism",
+                          "example":  "Serious journalists criticize tabloids for prioritizing cheap sensationalism over journalistic integrity.",
+                          "definition":  "Khuynh hướng giật gân (thủ pháp thổi phồng scandal, bạo lực để câu khách trên báo chí)",
+                          "term":  "sensationalism",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/senˈseɪ.ʃən.əl.ɪ.zəm/",
+                          "synonyms":  "yellow journalism, melodrama, exaggeration",
+                          "note":  "Tính từ: \u0027sensational\u0027 (giật gân, gây chấn động)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "unreliable source, questionable rumor, dubious blog",
+                          "collocations":  "cite credible sources, verify a credible source, reliable and credible source",
+                          "example":  "Students must cite credible sources from peer-reviewed journals when writing research papers.",
+                          "definition":  "Nguồn thông tin đáng tin cậy, có căn cứ khoa học hoặc chứng thực rõ ràng",
+                          "term":  "credible source",
+                          "topic":  "Unit 7: World of Mass Media",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈkred.ə.bəl sɔːs/",
+                          "synonyms":  "reliable source, trustworthy authority, verified reference",
+                          "note":  "Danh từ: \u0027credibility\u0027 (sự uy tín, độ tin cậy)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "wildlife protection, legal hunting",
+                          "collocations":  "anti-poaching patrol, combat poaching, rampant poaching, victims of poaching",
+                          "example":  "Rangers in national parks risk their lives daily on anti-poaching patrols to save wild rhinos.",
+                          "definition":  "Nạn săn bắt trộm động vật quý hiếm trái phép",
+                          "term":  "poaching",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˈpəʊ.tʃɪŋ/",
+                          "synonyms":  "illegal hunting, wildlife trafficking, illicit game capture",
+                          "note":  "Kẻ săn trộm là \u0027poacher\u0027. Động từ: \u0027poach\u0027."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "habitat connectivity, ecological corridor",
+                          "collocations":  "cause habitat fragmentation, reduce habitat fragmentation, threat of fragmentation",
+                          "example":  "Highway construction across virgin forests causes severe habitat fragmentation, isolating animal herds.",
+                          "definition":  "Sự phân mảnh sinh cảnh (môi trường sống bị chia cắt thành từng mảnh nhỏ do đường sá, đô thị)",
+                          "term":  "habitat fragmentation",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˈhæb.ɪ.tæt ˌfræɡ.menˈteɪ.ʃən/",
+                          "synonyms":  "habitat division, ecological fracturing",
+                          "note":  "Động từ: \u0027fragment\u0027 (phân mảnh). Danh từ: \u0027fragment\u0027 (mảnh vỡ)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "abundant, thriving, least concern",
+                          "collocations":  "critically endangered species, critically endangered animal, red list status",
+                          "example":  "The Delacour\u0027s langur in Van Long Wetland Nature Reserve is listed as critically endangered.",
+                          "definition":  "Cực kỳ nguy cấp, đứng trước bờ vực tuyệt chủng cao nhất trong tự nhiên",
+                          "term":  "critically endangered",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "adjective phrase",
+                          "phonetic":  "/ˈkrɪt.ɪ.kəl.i ɪnˈdeɪn.dʒəd/",
+                          "synonyms":  "on the verge of extinction, severely threatened, facing extinction",
+                          "note":  "Cấp độ bảo tồn cao nhất của IUCN trước khi bị tuyên bố tuyệt chủng (Extinct in the Wild)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "ecological desert, degraded wasteland",
+                          "collocations":  "global biodiversity hotspot, designate a biodiversity hotspot, preserve hotspots",
+                          "example":  "The Annamite Range in Vietnam is recognized globally as a vital biodiversity hotspot harboring unique endemic species.",
+                          "definition":  "Điểm nóng đa dạng sinh học (vùng địa lý có độ đa dạng loài cực cao nhưng đang bị đe dọa nghiêm trọng)",
+                          "term":  "biodiversity hotspot",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti ˈhɒt.spɒt/",
+                          "synonyms":  "ecological treasure trove, vital bio-region",
+                          "note":  "Thế giới có khoảng 36 điểm nóng đa dạng sinh học trọng điểm."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "in the wild, free-roaming, natural habitat",
+                          "collocations":  "breed in captivity, held in captivity, born in captivity",
+                          "example":  "Breeding giant pandas in captivity has succeeded in pulling the iconic species back from extinction.",
+                          "definition":  "Trong môi trường nuôi nhốt (trong vườn thú, trung tâm cứu hộ bảo tồn)",
+                          "term":  "in captivity",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "prepositional phrase",
+                          "phonetic":  "/ɪn kæpˈtɪv.ə.ti/",
+                          "synonyms":  "in confinement, caged, zoo-bred",
+                          "note":  "Trái nghĩa với \u0027in the wild\u0027 (ngoài tự nhiên)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "capture, remove, eradicate",
+                          "collocations":  "reintroduce into the wild, reintroduce native species, reintroduction program",
+                          "example":  "Scientists successfully reintroduced rescued pangolins back into protected national parks.",
+                          "definition":  "Tái thả, đưa một loài động thực vật trở lại sinh sống trong môi trường tự nhiên bản địa",
+                          "term":  "reintroduce",
+                          "topic":  "Unit 8: Wildlife Conservation",
+                          "partOfSpeech":  "verb",
+                          "phonetic":  "/ˌriː.ɪn.trəˈdjuːs/",
+                          "synonyms":  "release back, restore, re-establish",
+                          "note":  "Danh từ: \u0027reintroduction\u0027 (reintroduction program = chương trình tái thả động vật)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "submit a curriculum vitae, polish your CV, tailor your curriculum vitae",
+                          "example":  "Ensure your curriculum vitae is professionally formatted and highlights relevant internship experience.",
+                          "definition":  "Sơ yếu lý lịch nghề nghiệp, hồ sơ năng lực cá nhân xin việc (viết tắt CV)",
+                          "term":  "curriculum vitae",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/kəˌrɪk.jə.ləm ˈviː.taɪ/",
+                          "synonyms":  "CV, resume, professional portfolio",
+                          "note":  "Gốc Latin: \u0027dòng chảy cuộc đời\u0027. Tiếng Anh-Mỹ thường dùng từ \u0027resume\u0027 /ˈrez.juː.meɪ/."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "permanent tenure, regular employment",
+                          "collocations":  "pass the probationary period, serve a probationary period, 3-month probation",
+                          "example":  "New recruits must pass a rigorous two-month probationary period before receiving full company benefits.",
+                          "definition":  "Thời gian thử việc (thời gian làm thử để đánh giá năng lực trước khi ký hợp đồng chính thức)",
+                          "term":  "probationary period",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/prəˈbeɪ.ʃən.ər.i ˌpɪə.ri.əd/",
+                          "synonyms":  "trial period, probation phase, evaluation stage",
+                          "note":  "\u0027Probation\u0027 là thời gian thử việc hoặc quản chế."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "niche technical skills, job-specific skills",
+                          "collocations":  "develop transferable skills, acquire transferable skills, possess transferable skills",
+                          "example":  "Leadership, teamwork, and critical problem-solving are valuable transferable skills sought by all employers.",
+                          "definition":  "Kỹ năng chuyển giao (kỹ năng mềm như giao tiếp, đàm phán, giải quyết vấn đề áp dụng được cho mọi ngành nghề)",
+                          "term":  "transferable skills",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/trænsˈfɜː.rə.bəl skɪlz/",
+                          "synonyms":  "portable skills, universal competencies, soft skills",
+                          "note":  "Tính từ: \u0027transferable\u0027 (có thể chuyển giao/mang theo được)."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "unprofitable, low-paying, poorly rewarded",
+                          "collocations":  "lucrative career, lucrative business contract, lucrative market",
+                          "example":  "Artificial intelligence engineering is currently one of the most lucrative careers in the technology sector.",
+                          "definition":  "Béo bở, sinh lợi cao, mang lại thu nhập lớn",
+                          "term":  "lucrative",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "adjective",
+                          "phonetic":  "/ˈluː.krə.tɪv/",
+                          "synonyms":  "profitable, highly-paying, remunerative, rewarding",
+                          "note":  "Trọng âm 1: LU-cra-tive. Từ vựng ăn điểm cao trong bài thi Viết."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "career stagnation, dead-end job",
+                          "collocations":  "opportunities for career progression, rapid career progression, career progression ladder",
+                          "example":  "Ambitious young professionals look for companies that offer clear opportunities for career progression.",
+                          "definition":  "Sự thăng tiến trong sự nghiệp, lộ trình phát triển vị trí nghề nghiệp",
+                          "term":  "career progression",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/kəˈrɪər prəˌɡreʃ.ən/",
+                          "synonyms":  "career advancement, professional promotion, upward mobility",
+                          "note":  "Đồng nghĩa với \u0027career advancement\u0027."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "N/A",
+                          "collocations":  "seek vocational guidance, vocational guidance counselor, effective vocational guidance",
+                          "example":  "High schools should provide professional vocational guidance to help Grade 12 students make informed university choices.",
+                          "definition":  "Hướng nghiệp (sự tư vấn định hướng ngành nghề phù hợp năng lực học sinh)",
+                          "term":  "vocational guidance",
+                          "topic":  "Unit 9: Career Paths",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/vəʊˈkeɪ.ʃən.əl ˈɡaɪ.dəns/",
+                          "synonyms":  "career counseling, occupational advising",
+                          "note":  "Vocation (nghề nghiệp) + guidance (sự chỉ dẫn)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "intellectual stagnation",
+                          "collocations":  "commit to lifelong learning, lifelong learning mindset, cultivate lifelong learning",
+                          "example":  "In an era of relentless technological disruption, lifelong learning is the key to maintaining professional relevance.",
+                          "definition":  "Học tập suốt đời (tinh thần liên tục trau dồi tri thức và hoàn thiện bản thân trong suốt cuộc đời)",
+                          "term":  "lifelong learning",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌlaɪf.lɒŋ ˈlɜː.nɪŋ/",
+                          "synonyms":  "continuous education, ongoing self-development, perpetual learning",
+                          "note":  "Chủ đề đinh của Unit 10 lớp 12, thường xuyên ra trong đề thi Đọc hiểu và Viết luận."
+                      },
+                      {
+                          "level":  "C1",
+                          "antonyms":  "passive learner, spoon-fed student",
+                          "collocations":  "become an autonomous learner, foster autonomous learners, autonomous learning habits",
+                          "example":  "Successful university students are autonomous learners who proactively seek knowledge beyond lectures.",
+                          "definition":  "Người học tự chủ (người có khả năng tự đặt mục tiêu, tìm tài liệu và tự đánh giá kết quả học tập)",
+                          "term":  "autonomous learner",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ɔːˈtɒn.ə.məs ˈlɜː.nər/",
+                          "synonyms":  "independent learner, self-directed student",
+                          "note":  "Danh từ: \u0027learner autonomy\u0027 (tính tự chủ trong học tập)."
+                      },
+                      {
+                          "level":  "B1",
+                          "antonyms":  "in-person education, on-campus study",
+                          "collocations":  "enroll in distance learning, distance learning degree, distance learning platform",
+                          "example":  "Distance learning courses enable working adults to obtain accredited master\u0027s degrees flexibly.",
+                          "definition":  "Đào tạo từ xa (hình thức học qua mạng mà không cần đến trường trực tiếp)",
+                          "term":  "distance learning",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌdɪs.təns ˈlɜː.nɪŋ/",
+                          "synonyms":  "e-learning, online education, remote study",
+                          "note":  "Rất phổ biến trong thời kỳ chuyển đổi số giáo dục."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "narrow one\u0027s mind, limit perspective",
+                          "collocations":  "broaden one\u0027s horizons, broaden intellectual horizons, travel to broaden horizons",
+                          "example":  "Studying abroad and mastering foreign languages significantly broaden students\u0027 cultural horizons.",
+                          "definition":  "Mở rộng tầm mắt, mở mang chân trời tri thức và thế giới quan",
+                          "term":  "broaden horizons",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "verb phrase",
+                          "phonetic":  "/ˈbrɔː.dən həˈraɪ.zənz/",
+                          "synonyms":  "expand worldview, widen perspective, enrich knowledge",
+                          "note":  "Thành ngữ rất phổ biến trong đề thi học sinh giỏi và thi tốt nghiệp THPT."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "indiscipline, self-indulgence, procrastination",
+                          "collocations":  "exercise self-discipline, lack self-discipline, strict self-discipline",
+                          "example":  "Online learning requires strong self-discipline to avoid distractions and submit assignments on time.",
+                          "definition":  "Tính kỷ luật tự giác, năng lực tự kiểm soát hành vi và kiên định theo đuổi mục tiêu",
+                          "term":  "self-discipline",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "noun",
+                          "phonetic":  "/ˌselfˈdɪs.ə.plɪn/",
+                          "synonyms":  "self-control, willpower, self-restraint, determination",
+                          "note":  "Tính từ: \u0027self-disciplined\u0027 (có tính kỷ luật tự giác cao)."
+                      },
+                      {
+                          "level":  "B2",
+                          "antonyms":  "blind acceptance, irrational belief",
+                          "collocations":  "develop critical thinking, critical thinking skills, foster critical thinking",
+                          "example":  "Higher education places a heavy emphasis on developing students\u0027 critical thinking and analytical reasoning.",
+                          "definition":  "Tư duy phản biện (năng lực phân tích, đánh giá thông tin một cách khách quan và logic)",
+                          "term":  "critical thinking",
+                          "topic":  "Unit 10: Lifelong Learning",
+                          "partOfSpeech":  "noun phrase",
+                          "phonetic":  "/ˌkrɪt.ɪ.kəl ˈθɪŋ.kɪŋ/",
+                          "synonyms":  "analytical thinking, rational inquiry, objective reasoning",
+                          "note":  "Kỹ năng thế kỷ 21 hàng đầu dành cho học sinh chuẩn bị vào đại học."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_ielts_45_60",
+        "title":  "Từ Vựng IELTS 4.5 - 6.0 Trọng Tâm (VIP)",
+        "description":  "Trọn bộ 216 từ vựng trọng tâm IELTS Band 4.5 - 6.0 qua 12 chủ đề học thuật nền tảng và bứt phá chuẩn Cambridge & Oxford. Tri ân bà Lê Ngọc Linh.",
+        "category":  "IELTS",
+        "icon":  "🎯",
+        "color":  "#10b981",
+        "totalWords":  216,
+        "isVipOnly":  true,
+        "isVip":  true,
+        "price":  0,
+        "grade":  0,
+        "author":  "VocaFlow VocaVIP Official",
+        "authorAvatar":  "icons/Icon-192.png",
+        "authorBio":  "👑 VocaStore học thuật đỉnh cao biên soạn độc quyền cho thành viên VocaVIP VocaFlow. Tri ân bà Lê Ngọc Linh.",
+        "words":  [
+                      {
+                          "term":  "academic",
+                          "definition":  "Thuộc về học thuật, học tập tại trường viện",
+                          "definitionVi":  "Thuộc về học thuật, học tập tại trường viện",
+                          "phonetic":  "/ˌæk.əˈdem.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Students who possess strong academic performance often receive university scholarships.",
+                          "exampleSentence":  "Students who possess strong academic performance often receive university scholarships.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "scholarly, educational, theoretical",
+                          "antonyms":  "practical, non-academic, vocational",
+                          "collocations":  "academic performance, academic year, academic achievement",
+                          "note":  "Danh từ: academy (học viện), academician (viện sĩ)."
+                      },
+                      {
+                          "term":  "curriculum",
+                          "definition":  "Khung chương trình giảng dạy của nhà trường",
+                          "definitionVi":  "Khung chương trình giảng dạy của nhà trường",
+                          "phonetic":  "/kəˈrɪk.jə.ləm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The school curriculum includes basic mathematics, science, literature, and foreign languages.",
+                          "exampleSentence":  "The school curriculum includes basic mathematics, science, literature, and foreign languages.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "syllabus, study program, course of study",
+                          "antonyms":  "extracurricular activity",
+                          "collocations":  "national curriculum, school curriculum, core curriculum",
+                          "note":  "Số nhiều: curricula /kəˈrɪk.jə.lə/ hoặc curriculums."
+                      },
+                      {
+                          "term":  "extracurricular",
+                          "definition":  "Ngoại khóa, diễn ra ngoài giờ học chính khóa",
+                          "definitionVi":  "Ngoại khóa, diễn ra ngoài giờ học chính khóa",
+                          "phonetic":  "/ˌek.strə.kəˈrɪk.jə.lər/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Participating in extracurricular activities like sports helps teenagers develop soft skills.",
+                          "exampleSentence":  "Participating in extracurricular activities like sports helps teenagers develop soft skills.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "after-school, non-academic, co-curricular",
+                          "antonyms":  "curricular, academic, core",
+                          "collocations":  "extracurricular activities, extracurricular program, join clubs",
+                          "note":  "Extra- (bên ngoài) + curricular (thuộc chương trình học)."
+                      },
+                      {
+                          "term":  "discipline",
+                          "definition":  "Tính kỷ luật / Rèn luyện kỷ luật; một ngành học",
+                          "definitionVi":  "Tính kỷ luật / Rèn luyện kỷ luật; một ngành học",
+                          "phonetic":  "/ˈdɪs.ə.plɪn/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Self-discipline is essential for students who want to study independently at home.",
+                          "exampleSentence":  "Self-discipline is essential for students who want to study independently at home.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "self-control, orderliness, regulation",
+                          "antonyms":  "indiscipline, disorder, chaos",
+                          "collocations":  "maintain discipline, strict discipline, self-discipline",
+                          "note":  "Tính từ: disciplined. Trái nghĩa: undisciplined."
+                      },
+                      {
+                          "term":  "tuition fee",
+                          "definition":  "Học phí phải trả cho việc học tập tại trường",
+                          "definitionVi":  "Học phí phải trả cho việc học tập tại trường",
+                          "phonetic":  "/tjuːˈɪʃ.ən fiː/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Rising university tuition fees make higher education unaffordable for poor families.",
+                          "exampleSentence":  "Rising university tuition fees make higher education unaffordable for poor families.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "tuition costs, school fees, course costs",
+                          "antonyms":  "scholarship, grant, bursary",
+                          "collocations":  "pay tuition fees, affordable tuition fees, high tuition fees",
+                          "note":  "Thường dùng ở dạng số nhiều: tuition fees."
+                      },
+                      {
+                          "term":  "compulsory",
+                          "definition":  "Bắt buộc theo quy định hoặc luật lệ",
+                          "definitionVi":  "Bắt buộc theo quy định hoặc luật lệ",
+                          "phonetic":  "/kəmˈpʌl.sər.i/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Primary education is compulsory for all children aged six to eleven in Vietnam.",
+                          "exampleSentence":  "Primary education is compulsory for all children aged six to eleven in Vietnam.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "mandatory, obligatory, required, enforced",
+                          "antonyms":  "optional, voluntary, elective",
+                          "collocations":  "compulsory education, compulsory subject, compulsory military service",
+                          "note":  "Động từ: compel (bắt buộc). Danh từ: compulsion."
+                      },
+                      {
+                          "term":  "vocational",
+                          "definition":  "Thuộc về đào tạo nghề, hướng nghiệp thực hành",
+                          "definitionVi":  "Thuộc về đào tạo nghề, hướng nghiệp thực hành",
+                          "phonetic":  "/vəʊˈkeɪ.ʃən.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Vocational schools provide practical training in culinary arts, mechanics, and IT repair.",
+                          "exampleSentence":  "Vocational schools provide practical training in culinary arts, mechanics, and IT repair.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "career-oriented, technical, skill-based",
+                          "antonyms":  "purely academic, theoretical",
+                          "collocations":  "vocational training, vocational school, vocational qualification",
+                          "note":  "Danh từ: vocation (thiên hướng nghề nghiệp phù hợp)."
+                      },
+                      {
+                          "term":  "scholarship",
+                          "definition":  "Học bổng cấp cho học sinh giỏi hoặc khó khăn",
+                          "definitionVi":  "Học bổng cấp cho học sinh giỏi hoặc khó khăn",
+                          "phonetic":  "/ˈskɒl.ə.ʃɪp/",
+                          "partOfSpeech":  "noun",
+                          "example":  "She won a full scholarship to study environmental science in the United Kingdom.",
+                          "exampleSentence":  "She won a full scholarship to study environmental science in the United Kingdom.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "grant, financial aid, fellowship, bursary",
+                          "antonyms":  "tuition debt, student loan",
+                          "collocations":  "win a scholarship, apply for a scholarship, full scholarship",
+                          "note":  "Người nhận học bổng / học giả: scholar."
+                      },
+                      {
+                          "term":  "evaluate",
+                          "definition":  "Đánh giá, chấm điểm chất lượng hoặc tiến độ học tập",
+                          "definitionVi":  "Đánh giá, chấm điểm chất lượng hoặc tiến độ học tập",
+                          "phonetic":  "/ɪˈvæl.ju.eɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Teachers evaluate student progress through weekly presentations and semester exams.",
+                          "exampleSentence":  "Teachers evaluate student progress through weekly presentations and semester exams.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "assess, appraise, judge, rate, grade",
+                          "antonyms":  "neglect, disregard, ignore",
+                          "collocations":  "evaluate progress, evaluate performance, carefully evaluate",
+                          "note":  "Danh từ: evaluation /ɪˌvæl.juˈeɪ.ʃən/ (sự đánh giá)."
+                      },
+                      {
+                          "term":  "qualification",
+                          "definition":  "Bằng cấp, chứng chỉ chuyên môn hợp lệ",
+                          "definitionVi":  "Bằng cấp, chứng chỉ chuyên môn hợp lệ",
+                          "phonetic":  "/ˌkwɒl.ɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Having an internationally recognized English qualification improves job prospects.",
+                          "exampleSentence":  "Having an internationally recognized English qualification improves job prospects.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "certificate, diploma, credential, degree",
+                          "antonyms":  "incompetence, lack of skills",
+                          "collocations":  "gain a qualification, formal qualifications, academic qualification",
+                          "note":  "Động từ: qualify (qualify for a job)."
+                      },
+                      {
+                          "term":  "memorize",
+                          "definition":  "Ghi nhớ, học thuộc lòng thông tin hoặc từ vựng",
+                          "definitionVi":  "Ghi nhớ, học thuộc lòng thông tin hoặc từ vựng",
+                          "phonetic":  "/ˈmem.ə.raɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Instead of trying to memorize whole paragraphs, learn key concepts and keywords.",
+                          "exampleSentence":  "Instead of trying to memorize whole paragraphs, learn key concepts and keywords.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "learn by heart, commit to memory, remember",
+                          "antonyms":  "forget, overlook, unlearn",
+                          "collocations":  "memorize vocabulary, memorize formulas, memorize facts",
+                          "note":  "Danh từ: memory (trí nhớ / kỷ niệm)."
+                      },
+                      {
+                          "term":  "plagiarism",
+                          "definition":  "Hành vi đạo văn, sao chép ý tưởng không trích dẫn",
+                          "definitionVi":  "Hành vi đạo văn, sao chép ý tưởng không trích dẫn",
+                          "phonetic":  "/ˈpleɪ.dʒər.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Universities use specialized detection software to detect and penalize student plagiarism.",
+                          "exampleSentence":  "Universities use specialized detection software to detect and penalize student plagiarism.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "copying, intellectual theft, piracy",
+                          "antonyms":  "original work, authentic creation",
+                          "collocations":  "accused of plagiarism, commit plagiarism, prevent plagiarism",
+                          "note":  "Động từ: plagiarize /ˈpleɪ.dʒər.aɪz/. Kẻ đạo văn: plagiarist."
+                      },
+                      {
+                          "term":  "peer",
+                          "definition":  "Bạn đồng trang lứa, người cùng lứa tuổi hoặc địa vị",
+                          "definitionVi":  "Bạn đồng trang lứa, người cùng lứa tuổi hoặc địa vị",
+                          "phonetic":  "/pɪər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Working in groups allows teenagers to exchange creative ideas with their peers.",
+                          "exampleSentence":  "Working in groups allows teenagers to exchange creative ideas with their peers.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "classmate, contemporary, equal, companion",
+                          "antonyms":  "superior, elder, subordinate",
+                          "collocations":  "peer pressure, peer group, interact with peers, peer review",
+                          "note":  "Peer pressure = áp lực đồng trang lứa."
+                      },
+                      {
+                          "term":  "attendance",
+                          "definition":  "Sự hiện diện, sự có mặt và điểm danh trong lớp học",
+                          "definitionVi":  "Sự hiện diện, sự có mặt và điểm danh trong lớp học",
+                          "phonetic":  "/əˈten.dəns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Regular class attendance is required to be eligible for final examinations.",
+                          "exampleSentence":  "Regular class attendance is required to be eligible for final examinations.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "presence, participation, turnout",
+                          "antonyms":  "absence, truancy, non-attendance",
+                          "collocations":  "class attendance, poor attendance, check attendance",
+                          "note":  "Động từ: attend. Người tham dự: attendee."
+                      },
+                      {
+                          "term":  "assignment",
+                          "definition":  "Bài tập lớn, nhiệm vụ học tập được giao",
+                          "definitionVi":  "Bài tập lớn, nhiệm vụ học tập được giao",
+                          "phonetic":  "/əˈsaɪn.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Students must submit their written assignment by Friday midnight on the portal.",
+                          "exampleSentence":  "Students must submit their written assignment by Friday midnight on the portal.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "task, project, homework, coursework",
+                          "antonyms":  "free time, leisure",
+                          "collocations":  "submit an assignment, complete an assignment, assignment deadline",
+                          "note":  "Động từ: assign (giao nhiệm vụ)."
+                      },
+                      {
+                          "term":  "literacy",
+                          "definition":  "Năng lực đọc viết cơ bản; sự hiểu biết về một lĩnh vực",
+                          "definitionVi":  "Năng lực đọc viết cơ bản; sự hiểu biết về một lĩnh vực",
+                          "phonetic":  "/ˈlɪt.ər.ə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Financial literacy should be taught early to help young people manage money wisely.",
+                          "exampleSentence":  "Financial literacy should be taught early to help young people manage money wisely.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "ability to read and write, competence",
+                          "antonyms":  "illiteracy, ignorance",
+                          "collocations":  "literacy rate, computer literacy, financial literacy",
+                          "note":  "Tính từ: literate. Trái nghĩa: illiterate (mù chữ)."
+                      },
+                      {
+                          "term":  "distance learning",
+                          "definition":  "Hình thức học từ xa qua mạng Internet",
+                          "definitionVi":  "Hình thức học từ xa qua mạng Internet",
+                          "phonetic":  "/ˌdɪs.təns ˈlɜː.nɪŋ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Distance learning provides flexible schedules for people who work full-time jobs.",
+                          "exampleSentence":  "Distance learning provides flexible schedules for people who work full-time jobs.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "e-learning, online education, remote study",
+                          "antonyms":  "traditional classroom learning, in-person study",
+                          "collocations":  "enroll in distance learning, distance learning program",
+                          "note":  "Đồng nghĩa với online education / remote learning."
+                      },
+                      {
+                          "term":  "co-educational",
+                          "definition":  "Học chung cả nam và nữ (trường hỗn hợp hai giới)",
+                          "definitionVi":  "Học chung cả nam và nữ (trường hỗn hợp hai giới)",
+                          "phonetic":  "/ˌkəʊ.edʒ.uˈkeɪ.ʃən.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Most modern schools in Vietnam are co-educational institutions.",
+                          "exampleSentence":  "Most modern schools in Vietnam are co-educational institutions.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 School Life",
+                          "synonyms":  "mixed-gender, co-ed",
+                          "antonyms":  "single-sex, unisex",
+                          "collocations":  "co-educational school, co-educational system, co-ed university",
+                          "note":  "Viết tắt thân mật: co-ed /ˌkəʊˈed/."
+                      },
+                      {
+                          "term":  "contamination",
+                          "definition":  "Sự ô nhiễm, nhiễm độc do hóa chất",
+                          "definitionVi":  "Sự ô nhiễm, nhiễm độc do hóa chất",
+                          "phonetic":  "/kənˌtæm.ɪˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Chemical leakage from the factory caused severe groundwater contamination.",
+                          "exampleSentence":  "Chemical leakage from the factory caused severe groundwater contamination.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "pollution, poisoning, taint",
+                          "antonyms":  "purification, cleanliness",
+                          "collocations":  "water contamination, soil contamination, severe contamination",
+                          "note":  "Động từ: contaminate /kənˈtæm.ɪ.neɪt/."
+                      },
+                      {
+                          "term":  "deforestation",
+                          "definition":  "Nạn chặt phá rừng quy mô lớn",
+                          "definitionVi":  "Nạn chặt phá rừng quy mô lớn",
+                          "phonetic":  "/diːˌfɒr.ɪˈsteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Illegal deforestation in tropical regions threatens wildlife habitats.",
+                          "exampleSentence":  "Illegal deforestation in tropical regions threatens wildlife habitats.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "forest clearance, logging",
+                          "antonyms":  "afforestation, reforestation",
+                          "collocations":  "combat deforestation, cause deforestation, rapid deforestation",
+                          "note":  "De- (hủy bỏ) + forest (rừng)."
+                      },
+                      {
+                          "term":  "biodiversity",
+                          "definition":  "Sự đa dạng sinh học của động thực vật",
+                          "definitionVi":  "Sự đa dạng sinh học của động thực vật",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "National parks preserve the rich biodiversity of native plants and animals.",
+                          "exampleSentence":  "National parks preserve the rich biodiversity of native plants and animals.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "ecological diversity, species richness",
+                          "antonyms":  "monoculture, ecological uniformity",
+                          "collocations":  "preserve biodiversity, loss of biodiversity, rich biodiversity",
+                          "note":  "Trọng âm 4: bi-o-di-VER-si-ty."
+                      },
+                      {
+                          "term":  "endangered",
+                          "definition":  "Có nguy cơ tuyệt chủng trong tự nhiên",
+                          "definitionVi":  "Có nguy cơ tuyệt chủng trong tự nhiên",
+                          "phonetic":  "/ɪnˈdeɪn.dʒəd/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The giant panda is one of the most famous endangered animals in the world.",
+                          "exampleSentence":  "The giant panda is one of the most famous endangered animals in the world.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "threatened, at risk, vulnerable",
+                          "antonyms":  "abundant, thriving, common",
+                          "collocations":  "endangered species, critically endangered, endangered wildlife",
+                          "note":  "Động từ: endanger (gây nguy hiểm)."
+                      },
+                      {
+                          "term":  "renewable",
+                          "definition":  "Có thể tái tạo, không bị cạn kiệt",
+                          "definitionVi":  "Có thể tái tạo, không bị cạn kiệt",
+                          "phonetic":  "/rɪˈnjuː.ə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Solar and wind energy are clean, renewable sources of electricity.",
+                          "exampleSentence":  "Solar and wind energy are clean, renewable sources of electricity.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "sustainable, inexhaustible, green",
+                          "antonyms":  "non-renewable, exhaustible, finite",
+                          "collocations":  "renewable energy, renewable resources, renewable power",
+                          "note":  "Gốc từ: re- + new + -able."
+                      },
+                      {
+                          "term":  "fossil fuel",
+                          "definition":  "Nhiên liệu hóa thạch (than đá, dầu mỏ, khí đốt)",
+                          "definitionVi":  "Nhiên liệu hóa thạch (than đá, dầu mỏ, khí đốt)",
+                          "phonetic":  "/ˈfɒs.əl ˌfjuː.əl/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Burning fossil fuels releases immense amounts of carbon dioxide.",
+                          "exampleSentence":  "Burning fossil fuels releases immense amounts of carbon dioxide.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "conventional fuel, hydrocarbons",
+                          "antonyms":  "clean energy, solar power",
+                          "collocations":  "burn fossil fuels, reliance on fossil fuels, phase out fossil fuels",
+                          "note":  "Cụm \u0027phase out fossil fuels\u0027 = loại bỏ dần nhiên liệu hóa thạch."
+                      },
+                      {
+                          "term":  "extinct",
+                          "definition":  "Đã tuyệt chủng, không còn tồn tại",
+                          "definitionVi":  "Đã tuyệt chủng, không còn tồn tại",
+                          "phonetic":  "/ɪkˈstɪŋkt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Dinosaurs became extinct millions of years before humans appeared on Earth.",
+                          "exampleSentence":  "Dinosaurs became extinct millions of years before humans appeared on Earth.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "died out, wiped out, vanished",
+                          "antonyms":  "extant, alive, surviving",
+                          "collocations":  "become extinct, go extinct, on the verge of extinction",
+                          "note":  "Danh từ: extinction (sự tuyệt chủng)."
+                      },
+                      {
+                          "term":  "emission",
+                          "definition":  "Sự phát thải, lượng khí thải tỏa ra",
+                          "definitionVi":  "Sự phát thải, lượng khí thải tỏa ra",
+                          "phonetic":  "/iˈmɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Strict laws aim to cut carbon emissions produced by private vehicles.",
+                          "exampleSentence":  "Strict laws aim to cut carbon emissions produced by private vehicles.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "discharge, release, outflow",
+                          "antonyms":  "absorption, intake",
+                          "collocations":  "carbon emissions, cut emissions, greenhouse gas emissions",
+                          "note":  "Động từ: emit /iˈmɪt/."
+                      },
+                      {
+                          "term":  "drought",
+                          "definition":  "Hạn hán kéo dài do thiếu mưa",
+                          "definitionVi":  "Hạn hán kéo dài do thiếu mưa",
+                          "phonetic":  "/draʊt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "A severe drought ruined crops and caused water shortages in the province.",
+                          "exampleSentence":  "A severe drought ruined crops and caused water shortages in the province.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "dry spell, water shortage, aridity",
+                          "antonyms":  "flood, deluge, inundation",
+                          "collocations":  "severe drought, prolonged drought, suffer from drought",
+                          "note":  "Phát âm vần /aʊt/."
+                      },
+                      {
+                          "term":  "habitat",
+                          "definition":  "Môi trường sống tự nhiên của động thực vật",
+                          "definitionVi":  "Môi trường sống tự nhiên của động thực vật",
+                          "phonetic":  "/ˈhæb.ɪ.tæt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Urban expansion destroys the natural habitat of wild birds.",
+                          "exampleSentence":  "Urban expansion destroys the natural habitat of wild birds.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "natural environment, living territory",
+                          "antonyms":  "captivity, enclosure",
+                          "collocations":  "natural habitat, destroy habitat, habitat loss",
+                          "note":  "Phân biệt với habit (thói quen)."
+                      },
+                      {
+                          "term":  "ecosystem",
+                          "definition":  "Hệ sinh thái gồm sinh vật và môi trường sống",
+                          "definitionVi":  "Hệ sinh thái gồm sinh vật và môi trường sống",
+                          "phonetic":  "/ˈiː.kəʊˌsɪs.təm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Pollution in rivers can disrupt the balance of the aquatic ecosystem.",
+                          "exampleSentence":  "Pollution in rivers can disrupt the balance of the aquatic ecosystem.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "ecological system, natural community",
+                          "antonyms":  "N/A",
+                          "collocations":  "fragile ecosystem, marine ecosystem, protect the ecosystem",
+                          "note":  "Eco- + system."
+                      },
+                      {
+                          "term":  "greenhouse effect",
+                          "definition":  "Hiệu ứng nhà kính làm Trái Đất ấm lên",
+                          "definitionVi":  "Hiệu ứng nhà kính làm Trái Đất ấm lên",
+                          "phonetic":  "/ˈɡriːn.haʊs ɪˌfekt/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Gases like carbon dioxide and methane intensify the greenhouse effect.",
+                          "exampleSentence":  "Gases like carbon dioxide and methane intensify the greenhouse effect.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "global warming mechanism",
+                          "antonyms":  "N/A",
+                          "collocations":  "cause greenhouse effect, greenhouse gases, reduce greenhouse effect",
+                          "note":  "Phân biệt hiệu ứng và khí nhà kính."
+                      },
+                      {
+                          "term":  "reusable",
+                          "definition":  "Có thể tái sử dụng nhiều lần",
+                          "definitionVi":  "Có thể tái sử dụng nhiều lần",
+                          "phonetic":  "/ˌriːˈjuː.zə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Shoppers should bring reusable cloth bags instead of single-use plastic.",
+                          "exampleSentence":  "Shoppers should bring reusable cloth bags instead of single-use plastic.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "recyclable, sustainable, multi-use",
+                          "antonyms":  "disposable, single-use, throwaway",
+                          "collocations":  "reusable bag, reusable water bottle, reusable container",
+                          "note":  "Re- + use + -able."
+                      },
+                      {
+                          "term":  "landfill",
+                          "definition":  "Bãi chôn lấp rác thải tập trung",
+                          "definitionVi":  "Bãi chôn lấp rác thải tập trung",
+                          "phonetic":  "/ˈlænd.fɪl/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Most household waste ends up buried in huge landfills outside the city.",
+                          "exampleSentence":  "Most household waste ends up buried in huge landfills outside the city.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "dump, garbage dump, rubbish tip",
+                          "antonyms":  "recycling plant, compost facility",
+                          "collocations":  "landfill site, waste in landfill, reduce landfill waste",
+                          "note":  "Land (đất) + fill (lấp đầy)."
+                      },
+                      {
+                          "term":  "conserve",
+                          "definition":  "Bảo tồn, tiết kiệm năng lượng và tài nguyên",
+                          "definitionVi":  "Bảo tồn, tiết kiệm năng lượng và tài nguyên",
+                          "phonetic":  "/kənˈsɜːv/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Turning off lights is an easy way to conserve electricity at home.",
+                          "exampleSentence":  "Turning off lights is an easy way to conserve electricity at home.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "save, protect, preserve",
+                          "antonyms":  "waste, squander, deplete",
+                          "collocations":  "conserve energy, conserve water, conserve wildlife",
+                          "note":  "Danh từ: conservation. Nhà bảo tồn: conservationist."
+                      },
+                      {
+                          "term":  "pollutant",
+                          "definition":  "Chất gây ô nhiễm môi trường",
+                          "definitionVi":  "Chất gây ô nhiễm môi trường",
+                          "phonetic":  "/pəˈluː.tənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Vehicle exhaust fumes contain harmful air pollutants.",
+                          "exampleSentence":  "Vehicle exhaust fumes contain harmful air pollutants.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "contaminant, toxic agent",
+                          "antonyms":  "purifier, clean substance",
+                          "collocations":  "air pollutant, toxic pollutant, release pollutants",
+                          "note":  "Phân biệt pollute, pollution, pollutant."
+                      },
+                      {
+                          "term":  "glacier",
+                          "definition":  "Sông băng trên các đỉnh núi cao",
+                          "definitionVi":  "Sông băng trên các đỉnh núi cao",
+                          "phonetic":  "/ˈɡlæs.i.ər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Mountain glaciers are melting rapidly due to rising global temperatures.",
+                          "exampleSentence":  "Mountain glaciers are melting rapidly due to rising global temperatures.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "ice sheet, ice field",
+                          "antonyms":  "N/A",
+                          "collocations":  "melting glacier, retreat of glaciers, polar glaciers",
+                          "note":  "Tiếng Anh-Mỹ: /ˈɡleɪ.ʃər/."
+                      },
+                      {
+                          "term":  "sustainable",
+                          "definition":  "Bền vững, bảo vệ tài nguyên lâu dài",
+                          "definitionVi":  "Bền vững, bảo vệ tài nguyên lâu dài",
+                          "phonetic":  "/səˈsteɪ.nə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Sustainable agriculture focuses on organic fertilizers and soil care.",
+                          "exampleSentence":  "Sustainable agriculture focuses on organic fertilizers and soil care.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate",
+                          "synonyms":  "eco-friendly, renewable, viable",
+                          "antonyms":  "unsustainable, destructive",
+                          "collocations":  "sustainable development, sustainable lifestyle, sustainable farming",
+                          "note":  "Danh từ: sustainability."
+                      },
+                      {
+                          "term":  "device",
+                          "definition":  "Thiết bị điện tử nhỏ gọn",
+                          "definitionVi":  "Thiết bị điện tử nhỏ gọn",
+                          "phonetic":  "/dɪˈvaɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Students use electronic devices such as tablets to study online.",
+                          "exampleSentence":  "Students use electronic devices such as tablets to study online.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "gadget, appliance, tool",
+                          "antonyms":  "N/A",
+                          "collocations":  "digital device, electronic device, mobile device",
+                          "note":  "Device (đếm được), equipment (không đếm được)."
+                      },
+                      {
+                          "term":  "interactive",
+                          "definition":  "Có tính tương tác hai chiều",
+                          "definitionVi":  "Có tính tương tác hai chiều",
+                          "phonetic":  "/ˌɪn.təˈræk.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Interactive whiteboards allow teachers to engage students with learning games.",
+                          "exampleSentence":  "Interactive whiteboards allow teachers to engage students with learning games.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "two-way, participatory, collaborative",
+                          "antonyms":  "passive, one-way",
+                          "collocations":  "interactive software, interactive whiteboard, interactive display",
+                          "note":  "Động từ: interact with."
+                      },
+                      {
+                          "term":  "cybersecurity",
+                          "definition":  "An ninh mạng bảo vệ dữ liệu số",
+                          "definitionVi":  "An ninh mạng bảo vệ dữ liệu số",
+                          "phonetic":  "/ˈsaɪ.bə.sɪˌkjʊə.rə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Banks invest millions annually in cybersecurity to protect accounts.",
+                          "exampleSentence":  "Banks invest millions annually in cybersecurity to protect accounts.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "digital security, information security",
+                          "antonyms":  "cyber vulnerability, security breach",
+                          "collocations":  "cybersecurity breach, improve cybersecurity, cybersecurity threat",
+                          "note":  "Cyber- = thuộc không gian mạng."
+                      },
+                      {
+                          "term":  "algorithm",
+                          "definition":  "Thuật toán máy tính xử lý dữ liệu",
+                          "definitionVi":  "Thuật toán máy tính xử lý dữ liệu",
+                          "phonetic":  "/ˈæl.ɡə.rɪ.ðəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The search engine algorithm ranks web pages according to user relevance.",
+                          "exampleSentence":  "The search engine algorithm ranks web pages according to user relevance.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "computational rule, mathematical procedure",
+                          "antonyms":  "N/A",
+                          "collocations":  "search algorithm, complex algorithm, social media algorithm",
+                          "note":  "Trọng âm 1: AL-go-rithm."
+                      },
+                      {
+                          "term":  "artificial intelligence",
+                          "definition":  "Trí tuệ nhân tạo (AI)",
+                          "definitionVi":  "Trí tuệ nhân tạo (AI)",
+                          "phonetic":  "/ˌɑː.tɪˈfɪʃ.əl ɪnˈtel.ɪ.dʒəns/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Artificial intelligence is revolutionizing medical diagnostics and translations.",
+                          "exampleSentence":  "Artificial intelligence is revolutionizing medical diagnostics and translations.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "AI, machine intelligence, smart tech",
+                          "antonyms":  "human intelligence",
+                          "collocations":  "apply artificial intelligence, develop AI, AI chatbot",
+                          "note":  "Viết tắt: AI /ˌeɪˈaɪ/."
+                      },
+                      {
+                          "term":  "misinformation",
+                          "definition":  "Thông tin sai lệch trên mạng",
+                          "definitionVi":  "Thông tin sai lệch trên mạng",
+                          "phonetic":  "/ˌmɪs.ɪn.fəˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Social media users should verify sources to avoid sharing misinformation.",
+                          "exampleSentence":  "Social media users should verify sources to avoid sharing misinformation.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "fake news, false information",
+                          "antonyms":  "verified fact, accurate info",
+                          "collocations":  "spread misinformation, combat misinformation, rampant misinformation",
+                          "note":  "Phân biệt với disinformation (tin giả cố ý)."
+                      },
+                      {
+                          "term":  "broadband",
+                          "definition":  "Mạng Internet băng thông rộng",
+                          "definitionVi":  "Mạng Internet băng thông rộng",
+                          "phonetic":  "/ˈbrɔːd.bænd/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "Fast broadband connection is crucial for students who attend remote classes.",
+                          "exampleSentence":  "Fast broadband connection is crucial for students who attend remote classes.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "high-speed internet, fast connection",
+                          "antonyms":  "dial-up connection",
+                          "collocations":  "broadband access, high-speed broadband, broadband network",
+                          "note":  "Broad (rộng) + band (băng tần)."
+                      },
+                      {
+                          "term":  "automation",
+                          "definition":  "Sự tự động hóa trong sản xuất bằng máy",
+                          "definitionVi":  "Sự tự động hóa trong sản xuất bằng máy",
+                          "phonetic":  "/ˌɔː.təˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Factory automation increases manufacturing speed while lowering costs.",
+                          "exampleSentence":  "Factory automation increases manufacturing speed while lowering costs.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "mechanization, computerization, robotics",
+                          "antonyms":  "manual labor, handcraft",
+                          "collocations":  "workplace automation, factory automation, process automation",
+                          "note":  "Động từ: automate."
+                      },
+                      {
+                          "term":  "virtual",
+                          "definition":  "Ảo, mô phỏng qua không gian mạng",
+                          "definitionVi":  "Ảo, mô phỏng qua không gian mạng",
+                          "phonetic":  "/ˈvɜː.tʃu.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Many museums now offer free virtual tours for students.",
+                          "exampleSentence":  "Many museums now offer free virtual tours for students.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "digital, simulated, online, cyber",
+                          "antonyms":  "physical, real-world, in-person",
+                          "collocations":  "virtual reality, virtual tour, virtual classroom",
+                          "note":  "Trạng từ: virtually."
+                      },
+                      {
+                          "term":  "privacy",
+                          "definition":  "Quyền riêng tư cá nhân và dữ liệu",
+                          "definitionVi":  "Quyền riêng tư cá nhân và dữ liệu",
+                          "phonetic":  "/ˈprɪv.ə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Social media users are increasingly worried about data privacy.",
+                          "exampleSentence":  "Social media users are increasingly worried about data privacy.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "confidentiality, personal space",
+                          "antonyms":  "publicity, surveillance",
+                          "collocations":  "protect privacy, privacy settings, invade privacy, data privacy",
+                          "note":  "Tính từ: private."
+                      },
+                      {
+                          "term":  "stream",
+                          "definition":  "Phát trực tuyến video/nhạc qua mạng",
+                          "definitionVi":  "Phát trực tuyến video/nhạc qua mạng",
+                          "phonetic":  "/striːm/",
+                          "partOfSpeech":  "verb/noun",
+                          "example":  "Millions of people stream movies directly on their phones daily.",
+                          "exampleSentence":  "Millions of people stream movies directly on their phones daily.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "broadcast online, transmit, webcast",
+                          "antonyms":  "download offline",
+                          "collocations":  "stream music, live stream, stream movies, streaming service",
+                          "note":  "Streaming service = dịch vụ phát trực tuyến."
+                      },
+                      {
+                          "term":  "censor",
+                          "definition":  "Kiểm duyệt nội dung nhạy cảm / Người kiểm duyệt",
+                          "definitionVi":  "Kiểm duyệt nội dung nhạy cảm / Người kiểm duyệt",
+                          "phonetic":  "/ˈsen.sər/",
+                          "partOfSpeech":  "verb/noun",
+                          "example":  "Certain violent scenes were censored before the movie was released.",
+                          "exampleSentence":  "Certain violent scenes were censored before the movie was released.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "edit out, cut, suppress, filter",
+                          "antonyms":  "publish openly, uncensor",
+                          "collocations":  "censor content, heavily censored, state censors",
+                          "note":  "Danh từ: censorship."
+                      },
+                      {
+                          "term":  "wireless",
+                          "definition":  "Không dây (Wi-Fi, Bluetooth)",
+                          "definitionVi":  "Không dây (Wi-Fi, Bluetooth)",
+                          "phonetic":  "/ˈwaɪə.ləs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Wireless earbuds have made listening to music much more convenient.",
+                          "exampleSentence":  "Wireless earbuds have made listening to music much more convenient.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "cordless, Wi-Fi enabled, Bluetooth",
+                          "antonyms":  "wired, corded, cable",
+                          "collocations":  "wireless network, wireless charger, wireless connection",
+                          "note":  "Wire + -less."
+                      },
+                      {
+                          "term":  "obsolete",
+                          "definition":  "Lỗi thời, không còn được sử dụng nữa",
+                          "definitionVi":  "Lỗi thời, không còn được sử dụng nữa",
+                          "phonetic":  "/ˌɒb.səˈliːt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Smartphones have rendered cassette tapes completely obsolete.",
+                          "exampleSentence":  "Smartphones have rendered cassette tapes completely obsolete.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "outdated, outmoded, archaic",
+                          "antonyms":  "modern, state-of-the-art, current",
+                          "collocations":  "render something obsolete, become obsolete, obsolete technology",
+                          "note":  "Cụm \u0027render sth obsolete\u0027 rất hay gặp."
+                      },
+                      {
+                          "term":  "subscribe",
+                          "definition":  "Đăng ký theo dõi kênh/dịch vụ định kỳ",
+                          "definitionVi":  "Đăng ký theo dõi kênh/dịch vụ định kỳ",
+                          "phonetic":  "/səbˈskraɪb/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Many people subscribe to educational channels to learn English.",
+                          "exampleSentence":  "Many people subscribe to educational channels to learn English.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "sign up, follow, enroll, register",
+                          "antonyms":  "unsubscribe, cancel subscription",
+                          "collocations":  "subscribe to a channel, subscribe to a magazine, monthly subscription",
+                          "note":  "Đi kèm giới từ \u0027to\u0027. Danh từ: subscription."
+                      },
+                      {
+                          "term":  "viral",
+                          "definition":  "Lan truyền cực nhanh trên mạng xã hội",
+                          "definitionVi":  "Lan truyền cực nhanh trên mạng xã hội",
+                          "phonetic":  "/ˈvaɪə.rəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The funny animal video went viral on TikTok, reaching millions of views.",
+                          "exampleSentence":  "The funny animal video went viral on TikTok, reaching millions of views.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "widely circulated, trending, highly popular",
+                          "antonyms":  "unnoticed, obscure",
+                          "collocations":  "go viral, viral video, viral campaign, viral marketing",
+                          "note":  "Thành ngữ: go viral."
+                      },
+                      {
+                          "term":  "database",
+                          "definition":  "Cơ sở dữ liệu lưu trữ trên máy tính",
+                          "definitionVi":  "Cơ sở dữ liệu lưu trữ trên máy tính",
+                          "phonetic":  "/ˈdeɪ.tə.beɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The library maintains an online database of academic research papers.",
+                          "exampleSentence":  "The library maintains an online database of academic research papers.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "data bank, repository, digital archive",
+                          "antonyms":  "N/A",
+                          "collocations":  "search the database, database management, update database",
+                          "note":  "Data + base."
+                      },
+                      {
+                          "term":  "broadcasting",
+                          "definition":  "Ngành phát thanh truyền hình",
+                          "definitionVi":  "Ngành phát thanh truyền hình",
+                          "phonetic":  "/ˈbrɔːdˌkɑː.stɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Television broadcasting has shifted toward on-demand internet platforms.",
+                          "exampleSentence":  "Television broadcasting has shifted toward on-demand internet platforms.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 Media",
+                          "synonyms":  "telecasting, radio transmission, media airing",
+                          "antonyms":  "print media",
+                          "collocations":  "broadcasting station, live broadcasting, public broadcasting",
+                          "note":  "Động từ: broadcast."
+                      },
+                      {
+                          "term":  "applicant",
+                          "definition":  "Người nộp đơn ứng tuyển xin việc",
+                          "definitionVi":  "Người nộp đơn ứng tuyển xin việc",
+                          "phonetic":  "/ˈæp.lɪ.kənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Over one hundred applicants submitted their resumes for the position.",
+                          "exampleSentence":  "Over one hundred applicants submitted their resumes for the position.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "candidate, job seeker, claimant",
+                          "antonyms":  "employer, recruiter",
+                          "collocations":  "job applicant, successful applicant, qualified applicant",
+                          "note":  "Động từ: apply. Danh từ: application."
+                      },
+                      {
+                          "term":  "colleague",
+                          "definition":  "Đồng nghiệp cùng cơ quan",
+                          "definitionVi":  "Đồng nghiệp cùng cơ quan",
+                          "phonetic":  "/ˈkɒl.iːɡ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Maintaining friendly relationships with colleagues creates a pleasant office.",
+                          "exampleSentence":  "Maintaining friendly relationships with colleagues creates a pleasant office.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "coworker, workmate, associate",
+                          "antonyms":  "competitor, rival",
+                          "collocations":  "close colleague, former colleague, work colleague",
+                          "note":  "Phát âm đuôi /ɡ/, chữ \u0027ue\u0027 câm."
+                      },
+                      {
+                          "term":  "promotion",
+                          "definition":  "Sự thăng chức trong công việc",
+                          "definitionVi":  "Sự thăng chức trong công việc",
+                          "phonetic":  "/prəˈməʊ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Hard work and leadership earned him a well-deserved promotion to manager.",
+                          "exampleSentence":  "Hard work and leadership earned him a well-deserved promotion to manager.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "advancement, upgrade, elevation",
+                          "antonyms":  "demotion, dismissal",
+                          "collocations":  "get a promotion, career promotion, promotion opportunities",
+                          "note":  "Trái nghĩa: demotion (giáng chức)."
+                      },
+                      {
+                          "term":  "workload",
+                          "definition":  "Khối lượng công việc cần hoàn thành",
+                          "definitionVi":  "Khối lượng công việc cần hoàn thành",
+                          "phonetic":  "/ˈwɜːk.ləʊd/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Employees feel stressed when dealing with an excessive workload near deadlines.",
+                          "exampleSentence":  "Employees feel stressed when dealing with an excessive workload near deadlines.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "amount of work, task volume, duties",
+                          "antonyms":  "free time, light duty",
+                          "collocations":  "heavy workload, manage workload, reduce workload",
+                          "note":  "Work + load."
+                      },
+                      {
+                          "term":  "entrepreneur",
+                          "definition":  "Doanh nhân khởi nghiệp kinh doanh",
+                          "definitionVi":  "Doanh nhân khởi nghiệp kinh doanh",
+                          "phonetic":  "/ˌɒn.trə.prəˈnɜːr/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Young tech entrepreneurs in Vietnam are creating innovative apps.",
+                          "exampleSentence":  "Young tech entrepreneurs in Vietnam are creating innovative apps.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "business founder, business person, enterprise builder",
+                          "antonyms":  "employee, salaried worker",
+                          "collocations":  "successful entrepreneur, young entrepreneur, social entrepreneur",
+                          "note":  "Trọng âm cuối. Danh từ: entrepreneurship."
+                      },
+                      {
+                          "term":  "redundancy",
+                          "definition":  "Sự sa thải do cắt giảm biên chế",
+                          "definitionVi":  "Sự sa thải do cắt giảm biên chế",
+                          "phonetic":  "/rɪˈdʌn.dən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Economic downturn forced the airline to announce hundreds of redundancies.",
+                          "exampleSentence":  "Economic downturn forced the airline to announce hundreds of redundancies.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "layoff, dismissal, downsizing",
+                          "antonyms":  "recruitment, hiring",
+                          "collocations":  "face redundancy, voluntary redundancy, redundancy package",
+                          "note":  "Tính từ: redundant."
+                      },
+                      {
+                          "term":  "probation",
+                          "definition":  "Thời gian thử việc trước khi ký hợp đồng",
+                          "definitionVi":  "Thời gian thử việc trước khi ký hợp đồng",
+                          "phonetic":  "/prəˈbeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "New hires complete a two-month probation period before receiving full benefits.",
+                          "exampleSentence":  "New hires complete a two-month probation period before receiving full benefits.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "trial period, test phase, evaluation",
+                          "antonyms":  "tenure, permanent employment",
+                          "collocations":  "on probation, probation period, pass probation",
+                          "note":  "Tính từ: probationary."
+                      },
+                      {
+                          "term":  "telecommuting",
+                          "definition":  "Làm việc từ xa tại nhà qua mạng",
+                          "definitionVi":  "Làm việc từ xa tại nhà qua mạng",
+                          "phonetic":  "/ˌtel.ɪ.kəˈmjuː.tɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Telecommuting cuts down commuting hours and helps work-life balance.",
+                          "exampleSentence":  "Telecommuting cuts down commuting hours and helps work-life balance.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "remote work, working from home, telework",
+                          "antonyms":  "on-site work, office-based work",
+                          "collocations":  "adopt telecommuting, benefits of telecommuting",
+                          "note":  "Người làm từ xa: telecommuter."
+                      },
+                      {
+                          "term":  "turnover",
+                          "definition":  "Tỷ lệ luân chuyển nhân viên / Doanh số",
+                          "definitionVi":  "Tỷ lệ luân chuyển nhân viên / Doanh số",
+                          "phonetic":  "/ˈtɜːnˌəʊ.vər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "High staff turnover disrupts project continuity and costs money in recruiting.",
+                          "exampleSentence":  "High staff turnover disrupts project continuity and costs money in recruiting.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "staff churn, attrition rate; revenue",
+                          "antonyms":  "staff retention, loyalty",
+                          "collocations":  "high staff turnover, reduce employee turnover, annual turnover",
+                          "note":  "Staff turnover = tỷ lệ nhảy việc."
+                      },
+                      {
+                          "term":  "flexitime",
+                          "definition":  "Chế độ giờ làm việc linh hoạt",
+                          "definitionVi":  "Chế độ giờ làm việc linh hoạt",
+                          "phonetic":  "/ˈflek.si.taɪm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Offering flexitime allows working parents to manage childcare easily.",
+                          "exampleSentence":  "Offering flexitime allows working parents to manage childcare easily.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "flexible working hours, variable schedule",
+                          "antonyms":  "fixed hours, rigid 9-to-5",
+                          "collocations":  "work on flexitime, introduce flexitime, flexitime policy",
+                          "note":  "Flexible + time."
+                      },
+                      {
+                          "term":  "lucrative",
+                          "definition":  "Béo bở, sinh lợi nhuận cao, lương cao",
+                          "definitionVi":  "Béo bở, sinh lợi nhuận cao, lương cao",
+                          "phonetic":  "/ˈluː.krə.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Software development is a highly lucrative profession in the modern market.",
+                          "exampleSentence":  "Software development is a highly lucrative profession in the modern market.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "profitable, highly paid, remunerative",
+                          "antonyms":  "unprofitable, poorly paid",
+                          "collocations":  "lucrative career, lucrative business contract, lucrative deal",
+                          "note":  "Trọng âm 1: LU-cra-tive."
+                      },
+                      {
+                          "term":  "overtime",
+                          "definition":  "Giờ làm thêm, làm ngoài giờ",
+                          "definitionVi":  "Giờ làm thêm, làm ngoài giờ",
+                          "phonetic":  "/ˈəʊ.və.taɪm/",
+                          "partOfSpeech":  "noun/adverb",
+                          "example":  "Factory workers often work overtime during holidays to earn extra income.",
+                          "exampleSentence":  "Factory workers often work overtime during holidays to earn extra income.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "extra hours, additional duty",
+                          "antonyms":  "normal hours, regular shift",
+                          "collocations":  "work overtime, overtime pay, do overtime",
+                          "note":  "Overtime pay = lương làm thêm."
+                      },
+                      {
+                          "term":  "commute",
+                          "definition":  "Đi lại hàng ngày giữa nhà và chỗ làm",
+                          "definitionVi":  "Đi lại hàng ngày giữa nhà và chỗ làm",
+                          "phonetic":  "/kəˈmjuːt/",
+                          "partOfSpeech":  "verb/noun",
+                          "example":  "Many residents commute by train to avoid traffic jams in city center.",
+                          "exampleSentence":  "Many residents commute by train to avoid traffic jams in city center.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "travel to work, daily journey",
+                          "antonyms":  "stay at home, live on-site",
+                          "collocations":  "daily commute, long commute, commute by bus",
+                          "note":  "Người đi làm hàng ngày: commuter."
+                      },
+                      {
+                          "term":  "remuneration",
+                          "definition":  "Tiền thù lao, chế độ tiền lương đãi ngộ",
+                          "definitionVi":  "Tiền thù lao, chế độ tiền lương đãi ngộ",
+                          "phonetic":  "/rɪˌmjuː.nərˈeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Fair financial remuneration motivates employees to produce quality work.",
+                          "exampleSentence":  "Fair financial remuneration motivates employees to produce quality work.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "salary, wage, compensation, financial reward",
+                          "antonyms":  "N/A",
+                          "collocations":  "remuneration package, adequate remuneration, fair remuneration",
+                          "note":  "Tính từ: remunerative."
+                      },
+                      {
+                          "term":  "pension",
+                          "definition":  "Lương hưu sau khi nghỉ hưu",
+                          "definitionVi":  "Lương hưu sau khi nghỉ hưu",
+                          "phonetic":  "/ˈpen.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Retirees rely on their monthly state pension to cover living expenses.",
+                          "exampleSentence":  "Retirees rely on their monthly state pension to cover living expenses.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "retirement allowance, superannuation",
+                          "antonyms":  "active wage, salary",
+                          "collocations":  "state pension, retirement pension, receive a pension",
+                          "note":  "Người nhận lương hưu: pensioner."
+                      },
+                      {
+                          "term":  "resignation",
+                          "definition":  "Sự từ chức, nộp đơn thôi việc",
+                          "definitionVi":  "Sự từ chức, nộp đơn thôi việc",
+                          "phonetic":  "/ˌrez.ɪɡˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The chief executive tendered his resignation following the scandal.",
+                          "exampleSentence":  "The chief executive tendered his resignation following the scandal.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "quitting, stepping down, departure",
+                          "antonyms":  "appointment, hiring",
+                          "collocations":  "letter of resignation, tender one\u0027s resignation, hand in resignation",
+                          "note":  "Động từ: resign /rɪˈzaɪn/."
+                      },
+                      {
+                          "term":  "deadline",
+                          "definition":  "Hạn chót hoàn thành công việc",
+                          "definitionVi":  "Hạn chót hoàn thành công việc",
+                          "phonetic":  "/ˈded.laɪn/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The team worked through the weekend to meet the strict project deadline.",
+                          "exampleSentence":  "The team worked through the weekend to meet the strict project deadline.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "time limit, target date, due date",
+                          "antonyms":  "N/A",
+                          "collocations":  "meet a deadline, miss a deadline, tight deadline",
+                          "note":  "Meet a deadline \u003e\u003c miss a deadline."
+                      },
+                      {
+                          "term":  "competency",
+                          "definition":  "Năng lực chuyên môn hoàn thành tốt công việc",
+                          "definitionVi":  "Năng lực chuyên môn hoàn thành tốt công việc",
+                          "phonetic":  "/ˈkɒm.pɪ.tən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The job requires high technical competency in database administration.",
+                          "exampleSentence":  "The job requires high technical competency in database administration.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Business",
+                          "synonyms":  "capability, skill, proficiency, aptitude",
+                          "antonyms":  "incompetence, inability",
+                          "collocations":  "core competency, professional competency, demonstrate competency",
+                          "note":  "Tính từ: competent /ˈkɒm.pɪ.tənt/."
+                      },
+                      {
+                          "term":  "sedentary",
+                          "definition":  "Thụ động, ngồi nhiều một chỗ ít vận động",
+                          "definitionVi":  "Thụ động, ngồi nhiều một chỗ ít vận động",
+                          "phonetic":  "/ˈsed.ən.tər.i/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "A sedentary lifestyle combined with fast food increases the risk of obesity.",
+                          "exampleSentence":  "A sedentary lifestyle combined with fast food increases the risk of obesity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "inactive, seated, desk-bound",
+                          "antonyms":  "active, vigorous, dynamic",
+                          "collocations":  "sedentary lifestyle, sedentary job, sedentary behavior",
+                          "note":  "Rất hay gặp trong IELTS Task 2."
+                      },
+                      {
+                          "term":  "nutritious",
+                          "definition":  "Bổ dưỡng, giàu chất dinh dưỡng tốt cho cơ thể",
+                          "definitionVi":  "Bổ dưỡng, giàu chất dinh dưỡng tốt cho cơ thể",
+                          "phonetic":  "/njuːˈtrɪʃ.əs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "A nutritious breakfast gives you sustained energy throughout the morning.",
+                          "exampleSentence":  "A nutritious breakfast gives you sustained energy throughout the morning.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "nourishing, wholesome, nutrient-rich",
+                          "antonyms":  "unhealthy, junk, unwholesome",
+                          "collocations":  "nutritious meal, highly nutritious, nutritious diet",
+                          "note":  "Danh từ: nutrition, nutrient."
+                      },
+                      {
+                          "term":  "obesity",
+                          "definition":  "Bệnh béo phì thừa cân nghiêm trọng",
+                          "definitionVi":  "Bệnh béo phì thừa cân nghiêm trọng",
+                          "phonetic":  "/əʊˈbiː.sə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Childhood obesity has become a major public health concern globally.",
+                          "exampleSentence":  "Childhood obesity has become a major public health concern globally.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "extreme overweight, corpulence",
+                          "antonyms":  "underweight, slimness",
+                          "collocations":  "childhood obesity, combat obesity, obesity epidemic",
+                          "note":  "Tính từ: obese /əʊˈbiːs/."
+                      },
+                      {
+                          "term":  "chronic",
+                          "definition":  "Mãn tính, kinh niên kéo dài khó chữa",
+                          "definitionVi":  "Mãn tính, kinh niên kéo dài khó chữa",
+                          "phonetic":  "/ˈkrɒn.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Preventive healthcare focuses on reducing chronic illnesses like diabetes.",
+                          "exampleSentence":  "Preventive healthcare focuses on reducing chronic illnesses like diabetes.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "long-lasting, persistent, recurring",
+                          "antonyms":  "acute, temporary, short-lived",
+                          "collocations":  "chronic illness, chronic disease, chronic pain",
+                          "note":  "Trái nghĩa: acute (cấp tính)."
+                      },
+                      {
+                          "term":  "immune system",
+                          "definition":  "Hệ miễn dịch tự nhiên bảo vệ cơ thể",
+                          "definitionVi":  "Hệ miễn dịch tự nhiên bảo vệ cơ thể",
+                          "phonetic":  "/ɪˈmjuːn ˌsɪs.təm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Eating citrus fruits and getting sleep help strengthen your immune system.",
+                          "exampleSentence":  "Eating citrus fruits and getting sleep help strengthen your immune system.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "body defenses, natural immunity",
+                          "antonyms":  "immunodeficiency",
+                          "collocations":  "boost the immune system, weaken immune system",
+                          "note":  "Tính từ: immune to disease."
+                      },
+                      {
+                          "term":  "epidemic",
+                          "definition":  "Bệnh dịch lây lan nhanh trong cộng đồng",
+                          "definitionVi":  "Bệnh dịch lây lan nhanh trong cộng đồng",
+                          "phonetic":  "/ˌep.ɪˈdem.ɪk/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "Health workers worked around the clock to contain the flu epidemic.",
+                          "exampleSentence":  "Health workers worked around the clock to contain the flu epidemic.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "outbreak, widespread contagion",
+                          "antonyms":  "endemic, eradication",
+                          "collocations":  "epidemic outbreak, flu epidemic, contain an epidemic",
+                          "note":  "Dịch toàn cầu: pandemic."
+                      },
+                      {
+                          "term":  "longevity",
+                          "definition":  "Tuổi thọ cao, sự trường thọ",
+                          "definitionVi":  "Tuổi thọ cao, sự trường thọ",
+                          "phonetic":  "/lɒnˈdʒev.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "A healthy diet and active social life contribute to human longevity.",
+                          "exampleSentence":  "A healthy diet and active social life contribute to human longevity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "long life, lifespan, life expectancy",
+                          "antonyms":  "short lifespan, early death",
+                          "collocations":  "promote longevity, secret to longevity, exceptional longevity",
+                          "note":  "Trọng âm 2: lon-GEV-i-ty."
+                      },
+                      {
+                          "term":  "hygiene",
+                          "definition":  "Vệ sinh cá nhân hoặc ăn uống phòng bệnh",
+                          "definitionVi":  "Vệ sinh cá nhân hoặc ăn uống phòng bệnh",
+                          "phonetic":  "/ˈhaɪ.dʒiːn/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Washing hands thoroughly with soap is essential for good food hygiene.",
+                          "exampleSentence":  "Washing hands thoroughly with soap is essential for good food hygiene.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "cleanliness, sanitation, purity",
+                          "antonyms":  "filth, dirtiness",
+                          "collocations":  "personal hygiene, food hygiene, poor hygiene",
+                          "note":  "Tính từ: hygienic /haɪˈdʒen.ɪk/."
+                      },
+                      {
+                          "term":  "prescribe",
+                          "definition":  "Kê đơn thuốc, chỉ định điều trị y tế",
+                          "definitionVi":  "Kê đơn thuốc, chỉ định điều trị y tế",
+                          "phonetic":  "/prɪˈskraɪb/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The doctor prescribed a course of antibiotics to treat the throat infection.",
+                          "exampleSentence":  "The doctor prescribed a course of antibiotics to treat the throat infection.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "order medicine, recommend, write prescription",
+                          "antonyms":  "prohibit, forbid",
+                          "collocations":  "prescribe medication, prescribe antibiotics, doctor prescribes",
+                          "note":  "Danh từ: prescription (đơn thuốc)."
+                      },
+                      {
+                          "term":  "symptom",
+                          "definition":  "Triệu chứng báo hiệu bệnh tật",
+                          "definitionVi":  "Triệu chứng báo hiệu bệnh tật",
+                          "phonetic":  "/ˈsɪmp.təm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Common symptoms of flu include fever, headache, and muscle fatigue.",
+                          "exampleSentence":  "Common symptoms of flu include fever, headache, and muscle fatigue.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "sign, indication, manifestation",
+                          "antonyms":  "cure, recovery",
+                          "collocations":  "show symptoms, develop symptoms, relieve symptoms",
+                          "note":  "Tính từ: symptomatic."
+                      },
+                      {
+                          "term":  "rehabilitation",
+                          "definition":  "Quá trình phục hồi chức năng sau chấn thương",
+                          "definitionVi":  "Quá trình phục hồi chức năng sau chấn thương",
+                          "phonetic":  "/ˌriː.həˌbɪl.ɪˈteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "After the surgery, the athlete spent three months in physical rehabilitation.",
+                          "exampleSentence":  "After the surgery, the athlete spent three months in physical rehabilitation.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "recovery, recuperation, physical therapy",
+                          "antonyms":  "relapse, decline",
+                          "collocations":  "undergo rehabilitation, rehabilitation center, post-surgery rehabilitation",
+                          "note":  "Động từ: rehabilitate. Viết tắt: rehab."
+                      },
+                      {
+                          "term":  "contagious",
+                          "definition":  "Dễ lây nhiễm qua tiếp xúc trực tiếp",
+                          "definitionVi":  "Dễ lây nhiễm qua tiếp xúc trực tiếp",
+                          "phonetic":  "/kənˈteɪ.dʒəs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Chickenpox and the common cold are highly contagious infectious diseases.",
+                          "exampleSentence":  "Chickenpox and the common cold are highly contagious infectious diseases.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "infectious, transmissible, catching",
+                          "antonyms":  "non-contagious, non-infectious",
+                          "collocations":  "highly contagious, contagious disease, contagious illness",
+                          "note":  "Danh từ: contagion."
+                      },
+                      {
+                          "term":  "allergy",
+                          "definition":  "Sự dị ứng thức ăn hoặc thời tiết",
+                          "definitionVi":  "Sự dị ứng thức ăn hoặc thời tiết",
+                          "phonetic":  "/ˈæl.ə.dʒi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Some children have a severe peanut allergy requiring immediate care.",
+                          "exampleSentence":  "Some children have a severe peanut allergy requiring immediate care.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "hypersensitivity, allergic reaction",
+                          "antonyms":  "immunity, tolerance",
+                          "collocations":  "food allergy, severe allergy, allergic to",
+                          "note":  "Tính từ: allergic to sth."
+                      },
+                      {
+                          "term":  "fatigue",
+                          "definition":  "Tình trạng mệt mỏi kiệt sức kéo dài",
+                          "definitionVi":  "Tình trạng mệt mỏi kiệt sức kéo dài",
+                          "phonetic":  "/fəˈtiːɡ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Working sixty hours a week can lead to chronic mental fatigue.",
+                          "exampleSentence":  "Working sixty hours a week can lead to chronic mental fatigue.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "exhaustion, tiredness, weariness",
+                          "antonyms":  "energy, vitality, vigor",
+                          "collocations":  "suffer from fatigue, chronic fatigue, muscle fatigue",
+                          "note":  "Trọng âm 2: fa-TIGUE."
+                      },
+                      {
+                          "term":  "calorie",
+                          "definition":  "Đơn vị năng lượng trong thực phẩm",
+                          "definitionVi":  "Đơn vị năng lượng trong thực phẩm",
+                          "phonetic":  "/ˈkæl.ər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Drinking water instead of sodas helps reduce daily calorie intake.",
+                          "exampleSentence":  "Drinking water instead of sodas helps reduce daily calorie intake.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "energy unit, dietary energy",
+                          "antonyms":  "N/A",
+                          "collocations":  "burn calories, count calories, calorie intake",
+                          "note":  "Calorie intake = lượng calo nạp vào."
+                      },
+                      {
+                          "term":  "supplement",
+                          "definition":  "Thực phẩm chức năng bổ sung dinh dưỡng",
+                          "definitionVi":  "Thực phẩm chức năng bổ sung dinh dưỡng",
+                          "phonetic":  "/ˈsʌp.lɪ.mənt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Vegetarians often take vitamin B12 supplements for balanced nutrition.",
+                          "exampleSentence":  "Vegetarians often take vitamin B12 supplements for balanced nutrition.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "addition, booster, additive",
+                          "antonyms":  "reduction, deficit",
+                          "collocations":  "dietary supplement, vitamin supplement, take supplements",
+                          "note":  "Danh từ: /ˈsʌp.lɪ.mənt/."
+                      },
+                      {
+                          "term":  "sedative",
+                          "definition":  "Thuốc an thần gây ngủ làm dịu thần kinh",
+                          "definitionVi":  "Thuốc an thần gây ngủ làm dịu thần kinh",
+                          "phonetic":  "/ˈsed.ə.tɪv/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "The physician prescribed a mild sedative to help the patient sleep.",
+                          "exampleSentence":  "The physician prescribed a mild sedative to help the patient sleep.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "tranquilizer, sleeping pill, calming agent",
+                          "antonyms":  "stimulant, energizer",
+                          "collocations":  "mild sedative, take a sedative, sedative effect",
+                          "note":  "Động từ: sedate /sɪˈdeɪt/."
+                      },
+                      {
+                          "term":  "hydration",
+                          "definition":  "Sự cấp nước đầy đủ cho cơ thể",
+                          "definitionVi":  "Sự cấp nước đầy đủ cho cơ thể",
+                          "phonetic":  "/haɪˈdreɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Proper hydration is crucial when doing endurance exercises in hot weather.",
+                          "exampleSentence":  "Proper hydration is crucial when doing endurance exercises in hot weather.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Fitness",
+                          "synonyms":  "fluid intake, moisture replenishment",
+                          "antonyms":  "dehydration, water loss",
+                          "collocations":  "maintain hydration, stay hydrated, proper hydration",
+                          "note":  "Động từ: hydrate \u003e\u003c dehydrate."
+                      },
+                      {
+                          "term":  "nuclear family",
+                          "definition":  "Gia đình hạt nhân chỉ gồm cha mẹ và con cái",
+                          "definitionVi":  "Gia đình hạt nhân chỉ gồm cha mẹ và con cái",
+                          "phonetic":  "/ˌnjuː.kli.ə ˈfæm.əl.i/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "In modern cities, most households are nuclear families with one or two kids.",
+                          "exampleSentence":  "In modern cities, most households are nuclear families with one or two kids.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "small family, basic family unit",
+                          "antonyms":  "extended family",
+                          "collocations":  "live in a nuclear family, structure of nuclear family",
+                          "note":  "Đối lập với extended family."
+                      },
+                      {
+                          "term":  "extended family",
+                          "definition":  "Gia đình nhiều thế hệ (ông bà, cha mẹ, con cháu)",
+                          "definitionVi":  "Gia đình nhiều thế hệ (ông bà, cha mẹ, con cháu)",
+                          "phonetic":  "/ɪkˌsten.dɪd ˈfæm.əl.i/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Living in an extended family allows grandparents to assist with childcare.",
+                          "exampleSentence":  "Living in an extended family allows grandparents to assist with childcare.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "multi-generational family, joint family",
+                          "antonyms":  "nuclear family",
+                          "collocations":  "live with extended family, extended family members",
+                          "note":  "Văn hóa truyền thống Á Đông."
+                      },
+                      {
+                          "term":  "breadwinner",
+                          "definition":  "Trụ cột kiếm tiền chính nuôi sống gia đình",
+                          "definitionVi":  "Trụ cột kiếm tiền chính nuôi sống gia đình",
+                          "phonetic":  "/ˈbredˌwɪn.ər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "In many modern households, both spouses work as equal breadwinners.",
+                          "exampleSentence":  "In many modern households, both spouses work as equal breadwinners.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "primary earner, sole provider",
+                          "antonyms":  "dependent, homemaker",
+                          "collocations":  "sole breadwinner, main breadwinner, act as breadwinner",
+                          "note":  "Bread (bánh mì) + winner."
+                      },
+                      {
+                          "term":  "generation gap",
+                          "definition":  "Khoảng cách thế hệ về suy nghĩ lối sống",
+                          "definitionVi":  "Khoảng cách thế hệ về suy nghĩ lối sống",
+                          "phonetic":  "/ˌdʒen.əˈreɪ.ʃən ɡæp/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Open conversations at dinner help bridge the generation gap.",
+                          "exampleSentence":  "Open conversations at dinner help bridge the generation gap.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "age divide, generational difference",
+                          "antonyms":  "generational harmony",
+                          "collocations":  "bridge the generation gap, narrow generation gap",
+                          "note":  "Cụm: bridge / narrow the gap."
+                      },
+                      {
+                          "term":  "sibling",
+                          "definition":  "Anh chị em ruột trong một nhà",
+                          "definitionVi":  "Anh chị em ruột trong một nhà",
+                          "phonetic":  "/ˈsɪb.lɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Children who grow up with siblings learn to share and resolve conflicts.",
+                          "exampleSentence":  "Children who grow up with siblings learn to share and resolve conflicts.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "brother, sister",
+                          "antonyms":  "only child",
+                          "collocations":  "sibling rivalry, older sibling, younger sibling",
+                          "note":  "Sibling rivalry = sự ganh đua anh em."
+                      },
+                      {
+                          "term":  "upbringing",
+                          "definition":  "Sự nuôi nấng dạy dỗ từ nhỏ của cha mẹ",
+                          "definitionVi":  "Sự nuôi nấng dạy dỗ từ nhỏ của cha mẹ",
+                          "phonetic":  "/ˈʌpˌbrɪŋ.ɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "A strict religious upbringing shaped his strong moral values in life.",
+                          "exampleSentence":  "A strict religious upbringing shaped his strong moral values in life.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "rearing, parenting, childhood nurture",
+                          "antonyms":  "neglect, abandonment",
+                          "collocations":  "strict upbringing, happy upbringing, quality of upbringing",
+                          "note":  "Động từ: bring up children."
+                      },
+                      {
+                          "term":  "demographic",
+                          "definition":  "Thuộc nhân khẩu học / Số liệu dân cư",
+                          "definitionVi":  "Thuộc nhân khẩu học / Số liệu dân cư",
+                          "phonetic":  "/ˌdem.əˈɡræf.ɪk/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "The demographic shift toward an aging population strains pension funds.",
+                          "exampleSentence":  "The demographic shift toward an aging population strains pension funds.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "population-related, census-based",
+                          "antonyms":  "N/A",
+                          "collocations":  "demographic shift, demographic trends, demographic group",
+                          "note":  "Danh từ số nhiều: demographics."
+                      },
+                      {
+                          "term":  "conflict",
+                          "definition":  "Mâu thuẫn xung đột / Xảy ra xung đột",
+                          "definitionVi":  "Mâu thuẫn xung đột / Xảy ra xung đột",
+                          "phonetic":  "/ˈkɒn.flɪkt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Differences in career expectations often generate family conflicts.",
+                          "exampleSentence":  "Differences in career expectations often generate family conflicts.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "dispute, discord, clash, disagreement",
+                          "antonyms":  "harmony, peace, agreement",
+                          "collocations":  "resolve a conflict, family conflict, avoid conflict",
+                          "note":  "Danh từ âm 1, động từ âm 2."
+                      },
+                      {
+                          "term":  "empathy",
+                          "definition":  "Sự thấu cảm, đặt mình vào vị trí người khác",
+                          "definitionVi":  "Sự thấu cảm, đặt mình vào vị trí người khác",
+                          "phonetic":  "/ˈem.pə.θi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Practicing empathy helps friends resolve misunderstandings peacefully.",
+                          "exampleSentence":  "Practicing empathy helps friends resolve misunderstandings peacefully.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "compassion, emotional understanding",
+                          "antonyms":  "apathy, indifference, coldness",
+                          "collocations":  "show empathy, feel empathy for, cultivate empathy",
+                          "note":  "Tính từ: empathetic."
+                      },
+                      {
+                          "term":  "homemaker",
+                          "definition":  "Người nội trợ quán xuyến việc nhà",
+                          "definitionVi":  "Người nội trợ quán xuyến việc nhà",
+                          "phonetic":  "/ˈhəʊmˌmeɪ.kər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Being a full-time homemaker involves budgeting and looking after kids.",
+                          "exampleSentence":  "Being a full-time homemaker involves budgeting and looking after kids.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "housewife, househusband, caregiver",
+                          "antonyms":  "breadwinner, career person",
+                          "collocations":  "full-time homemaker, skilled homemaker, work as homemaker",
+                          "note":  "Từ trung tính giới hiện đại."
+                      },
+                      {
+                          "term":  "marginalize",
+                          "definition":  "Gạt ra bên lề xã hội, biến thành nhóm yếu thế",
+                          "definitionVi":  "Gạt ra bên lề xã hội, biến thành nhóm yếu thế",
+                          "phonetic":  "/ˈmɑː.dʒɪ.nəl.aɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Social welfare ensures that disabled people are not marginalized.",
+                          "exampleSentence":  "Social welfare ensures that disabled people are not marginalized.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "sidelined, isolate, exclude",
+                          "antonyms":  "integrate, include, empower",
+                          "collocations":  "marginalized groups, marginalized communities",
+                          "note":  "Tính từ: marginalized."
+                      },
+                      {
+                          "term":  "peer pressure",
+                          "definition":  "Áp lực từ bạn bè cùng trang lứa",
+                          "definitionVi":  "Áp lực từ bạn bè cùng trang lứa",
+                          "phonetic":  "/ˈpɪə ˌpreʃ.ər/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Teens should learn to say no when facing negative peer pressure.",
+                          "exampleSentence":  "Teens should learn to say no when facing negative peer pressure.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "social influence, classmate pressure",
+                          "antonyms":  "self-reliance, independent judgment",
+                          "collocations":  "succumb to peer pressure, resist peer pressure",
+                          "note":  "Cụm: resist / succumb to pressure."
+                      },
+                      {
+                          "term":  "inequality",
+                          "definition":  "Sự bất bình đẳng thu nhập, cơ hội",
+                          "definitionVi":  "Sự bất bình đẳng thu nhập, cơ hội",
+                          "phonetic":  "/ˌɪn.ɪˈkwɒl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Education is the most powerful tool to reduce wealth inequality.",
+                          "exampleSentence":  "Education is the most powerful tool to reduce wealth inequality.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "disparity, imbalance, unfairness",
+                          "antonyms":  "equality, fairness, parity",
+                          "collocations":  "income inequality, gender inequality, reduce inequality",
+                          "note":  "In- (không) + equality."
+                      },
+                      {
+                          "term":  "cohesion",
+                          "definition":  "Sự gắn kết, tinh thần đoàn kết cộng đồng",
+                          "definitionVi":  "Sự gắn kết, tinh thần đoàn kết cộng đồng",
+                          "phonetic":  "/kəʊˈhiː.ʒən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Community sports events foster social cohesion and neighborly bonds.",
+                          "exampleSentence":  "Community sports events foster social cohesion and neighborly bonds.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "unity, solidarity, harmony",
+                          "antonyms":  "division, discord, fragmentation",
+                          "collocations":  "social cohesion, community cohesion, promote cohesion",
+                          "note":  "Tính từ: cohesive."
+                      },
+                      {
+                          "term":  "mentor",
+                          "definition":  "Người cố vấn giàu kinh nghiệm / Hướng dẫn",
+                          "definitionVi":  "Người cố vấn giàu kinh nghiệm / Hướng dẫn",
+                          "phonetic":  "/ˈmen.tɔːr/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "A seasoned mentor can offer invaluable career advice to graduates.",
+                          "exampleSentence":  "A seasoned mentor can offer invaluable career advice to graduates.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "advisor, guide, tutor, counselor",
+                          "antonyms":  "mentee, novice, apprentice",
+                          "collocations":  "career mentor, find a mentor, mentor students",
+                          "note":  "Người được hướng dẫn: mentee."
+                      },
+                      {
+                          "term":  "infancy",
+                          "definition":  "Thời kỳ sơ sinh / Giai đoạn mới bắt đầu trứng nước",
+                          "definitionVi":  "Thời kỳ sơ sinh / Giai đoạn mới bắt đầu trứng nước",
+                          "phonetic":  "/ˈɪn.fən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Adequate nutrition during infancy is critical for healthy brain growth.",
+                          "exampleSentence":  "Adequate nutrition during infancy is critical for healthy brain growth.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "babyhood, early childhood; inception",
+                          "antonyms":  "adulthood, maturity",
+                          "collocations":  "in its infancy, early infancy, survive infancy",
+                          "note":  "Nghĩa bóng: \u0027in its infancy\u0027 = mới manh nha."
+                      },
+                      {
+                          "term":  "adopt",
+                          "definition":  "Nhận con nuôi / Áp dụng thói quen chính sách mới",
+                          "definitionVi":  "Nhận con nuôi / Áp dụng thói quen chính sách mới",
+                          "phonetic":  "/əˈdɒpt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The couple decided to adopt a baby girl from a local orphanage.",
+                          "exampleSentence":  "The couple decided to adopt a baby girl from a local orphanage.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "foster, take in; embrace, implement",
+                          "antonyms":  "abandon, reject",
+                          "collocations":  "adopt a child, adopt a lifestyle, adopt a policy",
+                          "note":  "Khác với adapt (thích nghi)."
+                      },
+                      {
+                          "term":  "custody",
+                          "definition":  "Quyền nuôi con giám hộ sau ly hôn",
+                          "definitionVi":  "Quyền nuôi con giám hộ sau ly hôn",
+                          "phonetic":  "/ˈkʌs.tə.di/",
+                          "partOfSpeech":  "noun",
+                          "example":  "After divorce, the court granted joint custody of the two children.",
+                          "exampleSentence":  "After divorce, the court granted joint custody of the two children.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Family",
+                          "synonyms":  "guardianship, protective care",
+                          "antonyms":  "release, freedom",
+                          "collocations":  "joint custody, grant custody, child custody",
+                          "note":  "Joint custody = quyền nuôi con chung."
+                      },
+                      {
+                          "term":  "ecotourism",
+                          "definition":  "Du lịch sinh thái bảo vệ môi trường",
+                          "definitionVi":  "Du lịch sinh thái bảo vệ môi trường",
+                          "phonetic":  "/ˈiː.kəʊˌtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Developing ecotourism provides local villagers with income.",
+                          "exampleSentence":  "Developing ecotourism provides local villagers with income.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "green tourism, sustainable travel",
+                          "antonyms":  "mass tourism, commercial travel",
+                          "collocations":  "promote ecotourism, ecotourism destination, ecotourism project",
+                          "note":  "Ecology + tourism."
+                      },
+                      {
+                          "term":  "congestion",
+                          "definition":  "Sự ùn tắc giao thông nghiêm trọng",
+                          "definitionVi":  "Sự ùn tắc giao thông nghiêm trọng",
+                          "phonetic":  "/kənˈdʒes.tʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Building an underground metro helps ease traffic congestion.",
+                          "exampleSentence":  "Building an underground metro helps ease traffic congestion.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "traffic jam, gridlock, bottleneck",
+                          "antonyms":  "clear flow, free movement",
+                          "collocations":  "traffic congestion, ease congestion, severe congestion",
+                          "note":  "Tính từ: congested streets."
+                      },
+                      {
+                          "term":  "itinerary",
+                          "definition":  "Lịch trình chi tiết chuyến đi du lịch",
+                          "definitionVi":  "Lịch trình chi tiết chuyến đi du lịch",
+                          "phonetic":  "/aɪˈtɪn.ər.ər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The travel agency provided a seven-day itinerary covering central Vietnam.",
+                          "exampleSentence":  "The travel agency provided a seven-day itinerary covering central Vietnam.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "travel schedule, tour plan, route",
+                          "antonyms":  "N/A",
+                          "collocations":  "travel itinerary, detailed itinerary, plan an itinerary",
+                          "note":  "Trọng âm 2: ai-TIN-er-a-ry."
+                      },
+                      {
+                          "term":  "destination",
+                          "definition":  "Điểm đến trong chuyến hành trình",
+                          "definitionVi":  "Điểm đến trong chuyến hành trình",
+                          "phonetic":  "/ˌdes.tɪˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Phu Quoc Island is a popular beach destination for travelers.",
+                          "exampleSentence":  "Phu Quoc Island is a popular beach destination for travelers.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "arrival point, holiday spot, resort",
+                          "antonyms":  "point of departure, origin",
+                          "collocations":  "tourist destination, holiday destination, popular destination",
+                          "note":  "Trọng âm 3: des-ti-NA-tion."
+                      },
+                      {
+                          "term":  "hospitality",
+                          "definition":  "Lòng hiếu khách / Ngành dịch vụ khách sạn",
+                          "definitionVi":  "Lòng hiếu khách / Ngành dịch vụ khách sạn",
+                          "phonetic":  "/ˌhɒs.pɪˈtæl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Foreign backpackers often praise the warmth and hospitality of locals.",
+                          "exampleSentence":  "Foreign backpackers often praise the warmth and hospitality of locals.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "friendliness, warm welcome, accommodation industry",
+                          "antonyms":  "inhospitality, coldness",
+                          "collocations":  "warm hospitality, famous for hospitality, hospitality industry",
+                          "note":  "Tính từ: hospitable /hɒsˈpɪt.ə.bəl/."
+                      },
+                      {
+                          "term":  "exotic",
+                          "definition":  "Kỳ lạ, độc đáo từ xứ sở xa xôi",
+                          "definitionVi":  "Kỳ lạ, độc đáo từ xứ sở xa xôi",
+                          "phonetic":  "/ɪɡˈzɒt.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Travelers love sampling exotic tropical fruits like mangosteen.",
+                          "exampleSentence":  "Travelers love sampling exotic tropical fruits like mangosteen.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "unusual, foreign, striking, alluring",
+                          "antonyms":  "ordinary, familiar, native",
+                          "collocations":  "exotic location, exotic wildlife, exotic food",
+                          "note":  "Trọng âm 2: ig-ZOT-ic."
+                      },
+                      {
+                          "term":  "commuter",
+                          "definition":  "Người đi lại hàng ngày giữa nhà và chỗ làm",
+                          "definitionVi":  "Người đi lại hàng ngày giữa nhà và chỗ làm",
+                          "phonetic":  "/kəˈmjuː.tər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Thousands of commuters pack onto the light rail during rush hours.",
+                          "exampleSentence":  "Thousands of commuters pack onto the light rail during rush hours.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "daily traveler, suburban passenger",
+                          "antonyms":  "resident worker",
+                          "collocations":  "daily commuter, commuter train, rush-hour commuters",
+                          "note":  "Động từ: commute."
+                      },
+                      {
+                          "term":  "pedestrian",
+                          "definition":  "Người đi bộ / Dành cho người đi bộ",
+                          "definitionVi":  "Người đi bộ / Dành cho người đi bộ",
+                          "phonetic":  "/pəˈdes.tri.ən/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "Walking streets create safe zones exclusively for pedestrians.",
+                          "exampleSentence":  "Walking streets create safe zones exclusively for pedestrians.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "walker, foot passenger",
+                          "antonyms":  "motorist, driver",
+                          "collocations":  "pedestrian zone, pedestrian crossing, pedestrian safety",
+                          "note":  "Pedestrian crossing = vạch qua đường."
+                      },
+                      {
+                          "term":  "overtourism",
+                          "definition":  "Quá tải khách du lịch gây hại môi trường",
+                          "definitionVi":  "Quá tải khách du lịch gây hại môi trường",
+                          "phonetic":  "/ˌəʊ.vəˈtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Ancient heritage towns struggle to cope with the effects of overtourism.",
+                          "exampleSentence":  "Ancient heritage towns struggle to cope with the effects of overtourism.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "tourist overcrowding, mass tourism influx",
+                          "antonyms":  "sustainable tourism, low-impact travel",
+                          "collocations":  "suffer from overtourism, combat overtourism",
+                          "note":  "Chủ đề thời sự IELTS Task 2."
+                      },
+                      {
+                          "term":  "infrastructure",
+                          "definition":  "Cơ sở hạ tầng kỹ thuật (cầu đường, sân bay)",
+                          "definitionVi":  "Cơ sở hạ tầng kỹ thuật (cầu đường, sân bay)",
+                          "phonetic":  "/ˈɪn.frəˌstrʌk.tʃər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Upgrading transport infrastructure is vital to facilitate regional trade.",
+                          "exampleSentence":  "Upgrading transport infrastructure is vital to facilitate regional trade.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "public facilities, basic framework",
+                          "antonyms":  "superstructure",
+                          "collocations":  "transport infrastructure, modern infrastructure, invest in infrastructure",
+                          "note":  "Trọng âm 1. Danh từ không đếm được."
+                      },
+                      {
+                          "term":  "pristine",
+                          "definition":  "Nguyên sơ, thuần khiết chưa bị ô nhiễm",
+                          "definitionVi":  "Nguyên sơ, thuần khiết chưa bị ô nhiễm",
+                          "phonetic":  "/ˈprɪs.tiːn/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The archipelago is renowned for its pristine white beaches.",
+                          "exampleSentence":  "The archipelago is renowned for its pristine white beaches.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "unspoiled, untouched, immaculate, pure",
+                          "antonyms":  "polluted, degraded, contaminated",
+                          "collocations":  "pristine beach, pristine rainforest, pristine wilderness",
+                          "note":  "Dùng thay cho clean / untouched."
+                      },
+                      {
+                          "term":  "souvenir",
+                          "definition":  "Đồ lưu niệm mua khi đi du lịch",
+                          "definitionVi":  "Đồ lưu niệm mua khi đi du lịch",
+                          "phonetic":  "/ˌsuː.vənˈɪər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "She bought a conical hat as a souvenir from her trip to Hanoi.",
+                          "exampleSentence":  "She bought a conical hat as a souvenir from her trip to Hanoi.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "keepsake, memento, reminder, token",
+                          "antonyms":  "N/A",
+                          "collocations":  "buy a souvenir, souvenir shop, keep as souvenir",
+                          "note":  "Từ mượn gốc Pháp."
+                      },
+                      {
+                          "term":  "accessible",
+                          "definition":  "Dễ dàng tiếp cận, thuận tiện đi lại",
+                          "definitionVi":  "Dễ dàng tiếp cận, thuận tiện đi lại",
+                          "phonetic":  "/əkˈses.ə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The island is easily accessible by a 45-minute ferry ride.",
+                          "exampleSentence":  "The island is easily accessible by a 45-minute ferry ride.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "reachable, available, approachable",
+                          "antonyms":  "inaccessible, remote, isolated",
+                          "collocations":  "easily accessible, wheelchair accessible, public access",
+                          "note":  "Danh từ: accessibility."
+                      },
+                      {
+                          "term":  "accommodation",
+                          "definition":  "Chỗ ở, phòng nghỉ khi đi du lịch",
+                          "definitionVi":  "Chỗ ở, phòng nghỉ khi đi du lịch",
+                          "phonetic":  "/əˌkɒm.əˈdeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Booking hotel accommodation in advance guarantees better rates.",
+                          "exampleSentence":  "Booking hotel accommodation in advance guarantees better rates.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "lodging, housing, shelter",
+                          "antonyms":  "homelessness",
+                          "collocations":  "hotel accommodation, book accommodation, temporary accommodation",
+                          "note":  "Không đếm được trong Anh-Anh (2 chữ c, 2 chữ m)."
+                      },
+                      {
+                          "term":  "customs",
+                          "definition":  "Cơ quan hải quan kiểm tra hành lý",
+                          "definitionVi":  "Cơ quan hải quan kiểm tra hành lý",
+                          "phonetic":  "/ˈkʌs.təmz/",
+                          "partOfSpeech":  "noun",
+                          "example":  "All international passengers must clear customs at the airport.",
+                          "exampleSentence":  "All international passengers must clear customs at the airport.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "border control, duty inspection",
+                          "antonyms":  "N/A",
+                          "collocations":  "pass through customs, customs officer, clear customs",
+                          "note":  "Luôn có s: customs (hải quan)."
+                      },
+                      {
+                          "term":  "delay",
+                          "definition":  "Sự chậm trễ hoãn lại giờ khởi hành",
+                          "definitionVi":  "Sự chậm trễ hoãn lại giờ khởi hành",
+                          "phonetic":  "/dɪˈleɪ/",
+                          "partOfSpeech":  "verb/noun",
+                          "example":  "Heavy thunderstorms caused a two-hour flight delay at the airport.",
+                          "exampleSentence":  "Heavy thunderstorms caused a two-hour flight delay at the airport.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "postponement, holdup, lag",
+                          "antonyms":  "punctuality, promptness",
+                          "collocations":  "flight delay, train delay, delayed departure",
+                          "note":  "Dạng bị động: be delayed."
+                      },
+                      {
+                          "term":  "expedition",
+                          "definition":  "Chuyến thám hiểm nghiên cứu khoa học",
+                          "definitionVi":  "Chuyến thám hiểm nghiên cứu khoa học",
+                          "phonetic":  "/ˌek.spəˈdɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Scientists organized an expedition to explore deep caves in Quang Binh.",
+                          "exampleSentence":  "Scientists organized an expedition to explore deep caves in Quang Binh.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "exploration, trek, mission, voyage",
+                          "antonyms":  "N/A",
+                          "collocations":  "scientific expedition, go on an expedition, cave expedition",
+                          "note":  "Người thám hiểm: explorer."
+                      },
+                      {
+                          "term":  "route",
+                          "definition":  "Tuyến đường, lộ trình di chuyển",
+                          "definitionVi":  "Tuyến đường, lộ trình di chuyển",
+                          "phonetic":  "/ruːt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Taking the coastal route offers breathtaking views of rocky cliffs.",
+                          "exampleSentence":  "Taking the coastal route offers breathtaking views of rocky cliffs.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Travel \u0026 Transport",
+                          "synonyms":  "course, path, direction, roadway",
+                          "antonyms":  "N/A",
+                          "collocations":  "bus route, direct route, scenic route",
+                          "note":  "Phát âm: /ruːt/ hoặc /raʊt/."
+                      },
+                      {
+                          "term":  "urbanization",
+                          "definition":  "Quá trình đô thị hóa dân cư",
+                          "definitionVi":  "Quá trình đô thị hóa dân cư",
+                          "phonetic":  "/ˌɜː.bən.aɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Rapid urbanization creates housing shortages in metropolitan centers.",
+                          "exampleSentence":  "Rapid urbanization creates housing shortages in metropolitan centers.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "city expansion, metropolitan growth",
+                          "antonyms":  "ruralization, depopulation",
+                          "collocations":  "rapid urbanization, rate of urbanization, process of urbanization",
+                          "note":  "Urban (thành thị) \u003e\u003c rural (nông thôn)."
+                      },
+                      {
+                          "term":  "skyscraper",
+                          "definition":  "Tòa nhà chọc trời cao tầng",
+                          "definitionVi":  "Tòa nhà chọc trời cao tầng",
+                          "phonetic":  "/ˈskaɪˌskreɪ.pər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Modern skyscrapers dominate the glittering skyline of the city.",
+                          "exampleSentence":  "Modern skyscrapers dominate the glittering skyline of the city.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "high-rise building, tower block",
+                          "antonyms":  "low-rise building, single-story house",
+                          "collocations":  "modern skyscraper, build a skyscraper, skyscraper skyline",
+                          "note":  "Sky + scraper."
+                      },
+                      {
+                          "term":  "suburb",
+                          "definition":  "Khu vực ngoại ô ven thành phố",
+                          "definitionVi":  "Khu vực ngoại ô ven thành phố",
+                          "phonetic":  "/ˈsʌb.ɜːb/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Families prefer living in the quiet suburbs where housing is cheaper.",
+                          "exampleSentence":  "Families prefer living in the quiet suburbs where housing is cheaper.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "outskirts, residential district",
+                          "antonyms":  "city center, downtown, inner city",
+                          "collocations":  "in the suburbs, quiet suburb, move to suburbs",
+                          "note":  "Tính từ: suburban."
+                      },
+                      {
+                          "term":  "amenity",
+                          "definition":  "Tiện ích công cộng (công viên, hồ bơi, trường)",
+                          "definitionVi":  "Tiện ích công cộng (công viên, hồ bơi, trường)",
+                          "phonetic":  "/əˈmiː.nə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The residential complex boasts excellent amenities including a gym and pool.",
+                          "exampleSentence":  "The residential complex boasts excellent amenities including a gym and pool.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "facility, convenience, public service",
+                          "antonyms":  "inconvenience, drawback",
+                          "collocations":  "local amenities, modern amenities, public amenities",
+                          "note":  "Thường dùng số nhiều: amenities."
+                      },
+                      {
+                          "term":  "residential",
+                          "definition":  "Thuộc khu dân cư sinh sống",
+                          "definitionVi":  "Thuộc khu dân cư sinh sống",
+                          "phonetic":  "/ˌrez.ɪˈden.ʃəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The council banned heavy trucks from quiet residential areas.",
+                          "exampleSentence":  "The council banned heavy trucks from quiet residential areas.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "housing, neighborhood-based",
+                          "antonyms":  "commercial, industrial",
+                          "collocations":  "residential area, residential building, residential neighborhood",
+                          "note":  "Cư dân: resident."
+                      },
+                      {
+                          "term":  "affordable",
+                          "definition":  "Có giá cả phải chăng vừa túi tiền",
+                          "definitionVi":  "Có giá cả phải chăng vừa túi tiền",
+                          "phonetic":  "/əˈfɔː.də.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Constructing affordable social housing helps young factory workers.",
+                          "exampleSentence":  "Constructing affordable social housing helps young factory workers.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "reasonably priced, low-cost, budget-friendly",
+                          "antonyms":  "unaffordable, exorbitant, overpriced",
+                          "collocations":  "affordable housing, affordable price, affordable rent",
+                          "note":  "Động từ: afford."
+                      },
+                      {
+                          "term":  "slum",
+                          "definition":  "Khu nhà ổ chuột lụp xụp thiếu thốn",
+                          "definitionVi":  "Khu nhà ổ chuột lụp xụp thiếu thốn",
+                          "phonetic":  "/slʌm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "City development programs aim to eliminate slums by relocating families.",
+                          "exampleSentence":  "City development programs aim to eliminate slums by relocating families.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "shantytown, squatter settlement",
+                          "antonyms":  "upscale neighborhood, wealthy district",
+                          "collocations":  "urban slum, live in a slum, slum clearance, slum dwellers",
+                          "note":  "Slum dwellers = cư dân khu ổ chuột."
+                      },
+                      {
+                          "term":  "heritage",
+                          "definition":  "Di sản lịch sử kiến trúc hoặc văn hóa",
+                          "definitionVi":  "Di sản lịch sử kiến trúc hoặc văn hóa",
+                          "phonetic":  "/ˈher.ɪ.tɪdʒ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Old colonial buildings in downtown are valuable architectural heritage.",
+                          "exampleSentence":  "Old colonial buildings in downtown are valuable architectural heritage.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "legacy, historical inheritance, tradition",
+                          "antonyms":  "modern construction",
+                          "collocations":  "architectural heritage, cultural heritage, heritage building",
+                          "note":  "UNESCO World Heritage Site."
+                      },
+                      {
+                          "term":  "renovate",
+                          "definition":  "Cải tạo sửa sang nâng cấp nhà cửa cũ",
+                          "definitionVi":  "Cải tạo sửa sang nâng cấp nhà cửa cũ",
+                          "phonetic":  "/ˈren.ə.veɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The family decided to renovate their kitchen with new cabinets.",
+                          "exampleSentence":  "The family decided to renovate their kitchen with new cabinets.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "refurbish, restore, remodel, modernize",
+                          "antonyms":  "demolish, neglect, ruin",
+                          "collocations":  "renovate a house, completely renovate, renovate building",
+                          "note":  "Danh từ: renovation."
+                      },
+                      {
+                          "term":  "overcrowded",
+                          "definition":  "Quá đông đúc, chật ních người",
+                          "definitionVi":  "Quá đông đúc, chật ních người",
+                          "phonetic":  "/ˌəʊ.vəˈkraʊ.dɪd/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Living in overcrowded apartments with poor ventilation causes illness.",
+                          "exampleSentence":  "Living in overcrowded apartments with poor ventilation causes illness.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "congested, packed, jam-packed",
+                          "antonyms":  "spacious, empty, roomy",
+                          "collocations":  "overcrowded city, overcrowded classrooms, overcrowded buses",
+                          "note":  "Over- + crowded."
+                      },
+                      {
+                          "term":  "sanitation",
+                          "definition":  "Hệ thống vệ sinh môi trường đô thị",
+                          "definitionVi":  "Hệ thống vệ sinh môi trường đô thị",
+                          "phonetic":  "/ˌsæn.ɪˈteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Access to clean water and adequate sanitation is a basic human right.",
+                          "exampleSentence":  "Access to clean water and adequate sanitation is a basic human right.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "public hygiene, sewage system",
+                          "antonyms":  "insanitation, pollution",
+                          "collocations":  "improve sanitation, poor sanitation, sanitation facilities",
+                          "note":  "Tính từ: sanitary."
+                      },
+                      {
+                          "term":  "pedestrianized",
+                          "definition":  "Được quy hoạch thành phố đi bộ cấm xe",
+                          "definitionVi":  "Được quy hoạch thành phố đi bộ cấm xe",
+                          "phonetic":  "/pəˈdes.tri.ə.naɪzd/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The pedestrianized zone around the lake is a vibrant cultural hub.",
+                          "exampleSentence":  "The pedestrianized zone around the lake is a vibrant cultural hub.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "car-free, walking-only",
+                          "antonyms":  "motorized, traffic-heavy",
+                          "collocations":  "pedestrianized street, pedestrianized area, pedestrianized center",
+                          "note":  "Động từ: pedestrianize."
+                      },
+                      {
+                          "term":  "metropolis",
+                          "definition":  "Đại đô thị sầm uất trung tâm đông dân",
+                          "definitionVi":  "Đại đô thị sầm uất trung tâm đông dân",
+                          "phonetic":  "/məˈtrɒp.əl.ɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Tokyo is a bustling global metropolis with efficient rail systems.",
+                          "exampleSentence":  "Tokyo is a bustling global metropolis with efficient rail systems.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "megacity, major city, capital",
+                          "antonyms":  "small town, rural village",
+                          "collocations":  "bustling metropolis, modern metropolis, global metropolis",
+                          "note":  "Tính từ: metropolitan."
+                      },
+                      {
+                          "term":  "demolish",
+                          "definition":  "Phá dỡ đánh sập tòa nhà cũ để xây mới",
+                          "definitionVi":  "Phá dỡ đánh sập tòa nhà cũ để xây mới",
+                          "phonetic":  "/dɪˈmɒl.ɪʃ/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The council decided to demolish the dilapidated factory for a park.",
+                          "exampleSentence":  "The council decided to demolish the dilapidated factory for a park.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "knock down, tear down, bulldoze",
+                          "antonyms":  "construct, build, erect",
+                          "collocations":  "demolish a building, completely demolish, schedule to demolish",
+                          "note":  "Danh từ: demolition."
+                      },
+                      {
+                          "term":  "high-rise",
+                          "definition":  "Nhà cao tầng nhiều tầng",
+                          "definitionVi":  "Nhà cao tầng nhiều tầng",
+                          "phonetic":  "/ˈhaɪ.raɪz/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "High-rise apartments maximize limited land space in cities.",
+                          "exampleSentence":  "High-rise apartments maximize limited land space in cities.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "tall building, tower block",
+                          "antonyms":  "low-rise, bungalow",
+                          "collocations":  "high-rise apartment, high-rise building, live in high-rise",
+                          "note":  "High-rise building."
+                      },
+                      {
+                          "term":  "layout",
+                          "definition":  "Bố cục mặt bằng sắp xếp không gian",
+                          "definitionVi":  "Bố cục mặt bằng sắp xếp không gian",
+                          "phonetic":  "/ˈleɪ.aʊt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The open-plan layout makes the apartment feel much more spacious.",
+                          "exampleSentence":  "The open-plan layout makes the apartment feel much more spacious.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "arrangement, design, floor plan",
+                          "antonyms":  "N/A",
+                          "collocations":  "room layout, open-plan layout, apartment layout",
+                          "note":  "Lay + out."
+                      },
+                      {
+                          "term":  "tenancy",
+                          "definition":  "Hợp đồng thuê nhà, thời hạn thuê mướn",
+                          "definitionVi":  "Hợp đồng thuê nhà, thời hạn thuê mướn",
+                          "phonetic":  "/ˈten.ən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The tenancy agreement states that the tenant must pay a deposit.",
+                          "exampleSentence":  "The tenancy agreement states that the tenant must pay a deposit.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "rental lease, occupancy, lease period",
+                          "antonyms":  "home ownership, freehold",
+                          "collocations":  "tenancy agreement, period of tenancy, joint tenancy",
+                          "note":  "Người thuê: tenant."
+                      },
+                      {
+                          "term":  "sustainable building",
+                          "definition":  "Tòa nhà xanh tiết kiệm năng lượng",
+                          "definitionVi":  "Tòa nhà xanh tiết kiệm năng lượng",
+                          "phonetic":  "/səˈsteɪ.nə.bəl ˈbɪl.dɪŋ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Sustainable buildings utilize rooftop solar panels and rainwater tanks.",
+                          "exampleSentence":  "Sustainable buildings utilize rooftop solar panels and rainwater tanks.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Cities \u0026 Architecture",
+                          "synonyms":  "green building, eco-friendly architecture",
+                          "antonyms":  "energy-wasting structure",
+                          "collocations":  "design sustainable buildings, sustainable building materials",
+                          "note":  "Chứng chỉ xanh LEED/Lotus."
+                      },
+                      {
+                          "term":  "exhibition",
+                          "definition":  "Triển lãm trưng bày tranh ảnh hiện vật",
+                          "definitionVi":  "Triển lãm trưng bày tranh ảnh hiện vật",
+                          "phonetic":  "/ˌek.sɪˈbɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The museum is hosting a special exhibition on lacquer painting.",
+                          "exampleSentence":  "The museum is hosting a special exhibition on lacquer painting.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "art show, display, presentation",
+                          "antonyms":  "N/A",
+                          "collocations":  "art exhibition, host an exhibition, visit exhibition",
+                          "note":  "Động từ: exhibit /ɪɡˈzɪb.ɪt/."
+                      },
+                      {
+                          "term":  "masterpiece",
+                          "definition":  "Kiệt tác nghệ thuật đỉnh cao để đời",
+                          "definitionVi":  "Kiệt tác nghệ thuật đỉnh cao để đời",
+                          "phonetic":  "/ˈmɑː.stə.piːs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The Mona Lisa is widely celebrated as an immortal masterpiece.",
+                          "exampleSentence":  "The Mona Lisa is widely celebrated as an immortal masterpiece.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "magnum opus, classic, great work",
+                          "antonyms":  "mediocre work, failure",
+                          "collocations":  "artistic masterpiece, literary masterpiece, timeless masterpiece",
+                          "note":  "Master + piece."
+                      },
+                      {
+                          "term":  "folklore",
+                          "definition":  "Văn hóa dân gian truyền miệng của nhân dân",
+                          "definitionVi":  "Văn hóa dân gian truyền miệng của nhân dân",
+                          "phonetic":  "/ˈfəʊk.lɔːr/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Vietnamese folklore is rich with humorous tales and inspiring legends.",
+                          "exampleSentence":  "Vietnamese folklore is rich with humorous tales and inspiring legends.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "mythology, oral tradition, folk tales",
+                          "antonyms":  "modern literature",
+                          "collocations":  "traditional folklore, local folklore, rich folklore",
+                          "note":  "Folk + lore."
+                      },
+                      {
+                          "term":  "costume",
+                          "definition":  "Trang phục truyền thống hoặc biểu diễn sân khấu",
+                          "definitionVi":  "Trang phục truyền thống hoặc biểu diễn sân khấu",
+                          "phonetic":  "/ˈkɒs.tʃuːm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Ethnic women wear colorful handmade traditional costumes during festival.",
+                          "exampleSentence":  "Ethnic women wear colorful handmade traditional costumes during festival.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "traditional attire, outfit, stage dress",
+                          "antonyms":  "casual wear, everyday clothing",
+                          "collocations":  "traditional costume, national costume, stage costume",
+                          "note":  "Áo dài là national costume."
+                      },
+                      {
+                          "term":  "genre",
+                          "definition":  "Thể loại phim, âm nhạc hoặc sách",
+                          "definitionVi":  "Thể loại phim, âm nhạc hoặc sách",
+                          "phonetic":  "/ˈʒɒn.rə/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Science fiction has become my favorite movie genre.",
+                          "exampleSentence":  "Science fiction has become my favorite movie genre.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "category, style, type, classification",
+                          "antonyms":  "N/A",
+                          "collocations":  "musical genre, literary genre, film genre",
+                          "note":  "Gốc Pháp, phát âm /ʒ/."
+                      },
+                      {
+                          "term":  "performance",
+                          "definition":  "Buổi biểu diễn nghệ thuật trước khán giả",
+                          "definitionVi":  "Buổi biểu diễn nghệ thuật trước khán giả",
+                          "phonetic":  "/pəˈfɔː.məns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The orchestra gave an outstanding live performance yesterday.",
+                          "exampleSentence":  "The orchestra gave an outstanding live performance yesterday.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "show, presentation, gig, recital",
+                          "antonyms":  "rehearsal, practice",
+                          "collocations":  "live performance, give a performance, theatrical performance",
+                          "note":  "Động từ: perform."
+                      },
+                      {
+                          "term":  "heritage",
+                          "definition":  "Di sản văn hóa truyền qua nhiều đời",
+                          "definitionVi":  "Di sản văn hóa truyền qua nhiều đời",
+                          "phonetic":  "/ˈher.ɪ.tɪdʒ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Preserving cultural heritage connects youth with historical roots.",
+                          "exampleSentence":  "Preserving cultural heritage connects youth with historical roots.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "legacy, tradition, cultural inheritance",
+                          "antonyms":  "modern innovation",
+                          "collocations":  "cultural heritage, tangible heritage, intangible heritage",
+                          "note":  "Di sản UNESCO."
+                      },
+                      {
+                          "term":  "audition",
+                          "definition":  "Buổi thử giọng, thử vai nghệ thuật",
+                          "definitionVi":  "Buổi thử giọng, thử vai nghệ thuật",
+                          "phonetic":  "/ɔːˈdɪʃ.ən/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Young actors queued outside the studio to audition for the lead role.",
+                          "exampleSentence":  "Young actors queued outside the studio to audition for the lead role.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "tryout, trial performance, screen test",
+                          "antonyms":  "N/A",
+                          "collocations":  "pass an audition, hold an audition, audition for a role",
+                          "note":  "Trọng âm 2: au-DI-tion."
+                      },
+                      {
+                          "term":  "contemporary",
+                          "definition":  "Đương đại, thuộc về thời đại ngày nay",
+                          "definitionVi":  "Đương đại, thuộc về thời đại ngày nay",
+                          "phonetic":  "/kənˈtem.pər.ər.i/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The gallery specializes in contemporary art by living artists.",
+                          "exampleSentence":  "The gallery specializes in contemporary art by living artists.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "modern, current, present-day",
+                          "antonyms":  "ancient, traditional, classical",
+                          "collocations":  "contemporary art, contemporary society, contemporary music",
+                          "note":  "Trọng âm 2."
+                      },
+                      {
+                          "term":  "compose",
+                          "definition":  "Sáng tác bản nhạc, ca khúc hoặc thơ",
+                          "definitionVi":  "Sáng tác bản nhạc, ca khúc hoặc thơ",
+                          "phonetic":  "/kəmˈpəʊz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Beethoven continued to compose symphonies after losing his hearing.",
+                          "exampleSentence":  "Beethoven continued to compose symphonies after losing his hearing.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "write, create, produce, orchestrate",
+                          "antonyms":  "plagiarize, copy",
+                          "collocations":  "compose music, compose a song, compose a symphony",
+                          "note":  "Nhạc sĩ: composer."
+                      },
+                      {
+                          "term":  "ritual",
+                          "definition":  "Nghi lễ phong tục trang trọng truyền thống",
+                          "definitionVi":  "Nghi lễ phong tục trang trọng truyền thống",
+                          "phonetic":  "/ˈrɪtʃ.u.əl/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Lighting incense at the altar is a solemn spiritual ritual at Tet.",
+                          "exampleSentence":  "Lighting incense at the altar is a solemn spiritual ritual at Tet.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "ceremony, rite, sacred custom",
+                          "antonyms":  "informality, casual habit",
+                          "collocations":  "religious ritual, traditional ritual, perform a ritual",
+                          "note":  "Tính từ: ritual dance."
+                      },
+                      {
+                          "term":  "audience",
+                          "definition":  "Khán thính giả xem biểu diễn nghệ thuật",
+                          "definitionVi":  "Khán thính giả xem biểu diễn nghệ thuật",
+                          "phonetic":  "/ˈɔː.di.əns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The enthusiastic audience applauded loudly at the end of the concert.",
+                          "exampleSentence":  "The enthusiastic audience applauded loudly at the end of the concert.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "spectators, viewers, listeners, crowd",
+                          "antonyms":  "performers, actors",
+                          "collocations":  "target audience, large audience, attract an audience",
+                          "note":  "Spectators = khán giả thể thao."
+                      },
+                      {
+                          "term":  "sculpture",
+                          "definition":  "Tác phẩm điêu khắc tượng tạc từ đá/gỗ",
+                          "definitionVi":  "Tác phẩm điêu khắc tượng tạc từ đá/gỗ",
+                          "phonetic":  "/ˈskʌlp.tʃər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Marble sculptures from ancient Rome are preserved in the gallery.",
+                          "exampleSentence":  "Marble sculptures from ancient Rome are preserved in the gallery.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "statue, carving, modeled figure",
+                          "antonyms":  "N/A",
+                          "collocations":  "marble sculpture, bronze sculpture, carve a sculpture",
+                          "note":  "Nhà điêu khắc: sculptor."
+                      },
+                      {
+                          "term":  "acclaimed",
+                          "definition":  "Được công chúng ca ngợi nhiệt liệt",
+                          "definitionVi":  "Được công chúng ca ngợi nhiệt liệt",
+                          "phonetic":  "/əˈkleɪmd/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The critically acclaimed film won multiple awards at festivals.",
+                          "exampleSentence":  "The critically acclaimed film won multiple awards at festivals.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "praised, celebrated, highly regarded",
+                          "antonyms":  "criticized, panned, unknown",
+                          "collocations":  "critically acclaimed, internationally acclaimed, widely acclaimed",
+                          "note":  "Động từ: acclaim."
+                      },
+                      {
+                          "term":  "tradition",
+                          "definition":  "Truyền thống văn hóa lưu truyền qua nhiều đời",
+                          "definitionVi":  "Truyền thống văn hóa lưu truyền qua nhiều đời",
+                          "phonetic":  "/trəˈdɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "It is a tradition to gather with family for reunion dinners at Tet.",
+                          "exampleSentence":  "It is a tradition to gather with family for reunion dinners at Tet.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "custom, heritage, long-standing practice",
+                          "antonyms":  "novelty, modern trend",
+                          "collocations":  "long-standing tradition, keep a tradition alive, rich tradition",
+                          "note":  "Tính từ: traditional."
+                      },
+                      {
+                          "term":  "lyrics",
+                          "definition":  "Lời bài hát, ca từ bài hát",
+                          "definitionVi":  "Lời bài hát, ca từ bài hát",
+                          "phonetic":  "/ˈlɪr.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The song\u0027s poetic lyrics convey a touching message about peace.",
+                          "exampleSentence":  "The song\u0027s poetic lyrics convey a touching message about peace.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "words, song text, verse",
+                          "antonyms":  "instrumental music",
+                          "collocations":  "song lyrics, write lyrics, poetic lyrics",
+                          "note":  "Người viết lời: lyricist."
+                      },
+                      {
+                          "term":  "craftsman",
+                          "definition":  "Nghệ nhân, thợ thủ công lành nghề",
+                          "definitionVi":  "Nghệ nhân, thợ thủ công lành nghề",
+                          "phonetic":  "/ˈkrɑːfts.mən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Skilled local craftsmen spent weeks hand-carving the temple doors.",
+                          "exampleSentence":  "Skilled local craftsmen spent weeks hand-carving the temple doors.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "artisan, handcrafter, skilled maker",
+                          "antonyms":  "unskilled laborer",
+                          "collocations":  "skilled craftsman, master craftsman, traditional craftsman",
+                          "note":  "Nghề thủ công: craftsmanship."
+                      },
+                      {
+                          "term":  "festival",
+                          "definition":  "Lễ hội văn hóa hoặc liên hoan nghệ thuật",
+                          "definitionVi":  "Lễ hội văn hóa hoặc liên hoan nghệ thuật",
+                          "phonetic":  "/ˈfes.tɪ.vəl/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The annual Mid-Autumn Festival is filled with lantern parades.",
+                          "exampleSentence":  "The annual Mid-Autumn Festival is filled with lantern parades.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Arts \u0026 Culture",
+                          "synonyms":  "celebration, carnival, gala",
+                          "antonyms":  "N/A",
+                          "collocations":  "traditional festival, music festival, celebrate festival",
+                          "note":  "Tính từ: festive."
+                      },
+                      {
+                          "term":  "offender",
+                          "definition":  "Người phạm tội, kẻ vi phạm pháp luật",
+                          "definitionVi":  "Người phạm tội, kẻ vi phạm pháp luật",
+                          "phonetic":  "/əˈfen.dər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "First-time young offenders are often sentenced to community service.",
+                          "exampleSentence":  "First-time young offenders are often sentenced to community service.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "criminal, lawbreaker, wrongdoer",
+                          "antonyms":  "victim, law-abiding citizen",
+                          "collocations":  "first-time offender, juvenile offender, repeat offender",
+                          "note":  "Động từ: offend. Danh từ: offense."
+                      },
+                      {
+                          "term":  "imprisonment",
+                          "definition":  "Hình phạt tù, sự giam giữ trong tù",
+                          "definitionVi":  "Hình phạt tù, sự giam giữ trong tù",
+                          "phonetic":  "/ɪmˈprɪz.ən.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The official was sentenced to ten years of imprisonment for fraud.",
+                          "exampleSentence":  "The official was sentenced to ten years of imprisonment for fraud.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "incarceration, custody, detention",
+                          "antonyms":  "freedom, release, acquittal",
+                          "collocations":  "life imprisonment, sentenced to imprisonment",
+                          "note":  "Động từ: imprison."
+                      },
+                      {
+                          "term":  "deterrent",
+                          "definition":  "Biện pháp răn đe ngăn chặn phạm pháp",
+                          "definitionVi":  "Biện pháp răn đe ngăn chặn phạm pháp",
+                          "phonetic":  "/dɪˈter.ənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Security cameras act as an effective deterrent against street crime.",
+                          "exampleSentence":  "Security cameras act as an effective deterrent against street crime.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "disincentive, curb, discouragement",
+                          "antonyms":  "incentive, encouragement",
+                          "collocations":  "effective deterrent, act as a deterrent, strong deterrent",
+                          "note":  "Động từ: deter from doing sth."
+                      },
+                      {
+                          "term":  "juvenile",
+                          "definition":  "Vị thành niên chưa đến tuổi trưởng thành",
+                          "definitionVi":  "Vị thành niên chưa đến tuổi trưởng thành",
+                          "phonetic":  "/ˈdʒuː.vən.aɪl/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "Counseling programs are designed specifically to handle juvenile crime.",
+                          "exampleSentence":  "Counseling programs are designed specifically to handle juvenile crime.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "underage, adolescent, youthful",
+                          "antonyms":  "adult, mature, grown-up",
+                          "collocations":  "juvenile delinquency, juvenile court, juvenile offender",
+                          "note":  "Juvenile delinquency = tội phạm tuổi trẻ."
+                      },
+                      {
+                          "term":  "rehabilitate",
+                          "definition":  "Cải tạo giáo dục phục hồi nhân phẩm phạm nhân",
+                          "definitionVi":  "Cải tạo giáo dục phục hồi nhân phẩm phạm nhân",
+                          "phonetic":  "/ˌriː.həˈbɪl.ɪ.teɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Prisons should aim to rehabilitate inmates through job training.",
+                          "exampleSentence":  "Prisons should aim to rehabilitate inmates through job training.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "reform, reintegrate, re-educate",
+                          "antonyms":  "punish purely, alienate",
+                          "collocations":  "rehabilitate criminals, rehabilitate offenders",
+                          "note":  "Danh từ: rehabilitation."
+                      },
+                      {
+                          "term":  "burglary",
+                          "definition":  "Tội đột nhập trộm cắp nhà ở",
+                          "definitionVi":  "Tội đột nhập trộm cắp nhà ở",
+                          "phonetic":  "/ˈbɜː.ɡlər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Homeowners installed alarm systems to protect against burglary.",
+                          "exampleSentence":  "Homeowners installed alarm systems to protect against burglary.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "break-in, housebreaking, theft",
+                          "antonyms":  "N/A",
+                          "collocations":  "commit a burglary, victim of burglary, report burglary",
+                          "note":  "Kẻ trộm: burglar. Động từ: burgle."
+                      },
+                      {
+                          "term":  "prosecute",
+                          "definition":  "Khởi tố, truy tố ra trước tòa án",
+                          "definitionVi":  "Khởi tố, truy tố ra trước tòa án",
+                          "phonetic":  "/ˈprɒs.ɪ.kjuːt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Shoplifters will be formally prosecuted to the full extent of the law.",
+                          "exampleSentence":  "Shoplifters will be formally prosecuted to the full extent of the law.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "bring to court, sue, put on trial",
+                          "antonyms":  "pardon, acquit, drop charges",
+                          "collocations":  "prosecute a case, threaten to prosecute, prosecute offenders",
+                          "note":  "Công tố viên: prosecutor."
+                      },
+                      {
+                          "term":  "poverty",
+                          "definition":  "Sự nghèo đói thiếu thốn điều kiện sống",
+                          "definitionVi":  "Sự nghèo đói thiếu thốn điều kiện sống",
+                          "phonetic":  "/ˈpɒv.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Free education is the most sustainable strategy to break poverty.",
+                          "exampleSentence":  "Free education is the most sustainable strategy to break poverty.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "deprivation, destitution, indigence",
+                          "antonyms":  "wealth, affluence, prosperity",
+                          "collocations":  "eradicate poverty, live in poverty, poverty line",
+                          "note":  "Tính từ: poor."
+                      },
+                      {
+                          "term":  "cyberbullying",
+                          "definition":  "Bắt nạt qua mạng xã hội",
+                          "definitionVi":  "Bắt nạt qua mạng xã hội",
+                          "phonetic":  "/ˈsaɪ.bəˌbʊl.i.ɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Schools must educate students on ethics to prevent cyberbullying.",
+                          "exampleSentence":  "Schools must educate students on ethics to prevent cyberbullying.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "online harassment, internet bullying",
+                          "antonyms":  "online empathy, digital kindness",
+                          "collocations":  "victim of cyberbullying, stop cyberbullying, combat cyberbullying",
+                          "note":  "Kẻ bắt nạt: cyberbully."
+                      },
+                      {
+                          "term":  "domestic violence",
+                          "definition":  "Bạo lực gia đình giữa các thành viên",
+                          "definitionVi":  "Bạo lực gia đình giữa các thành viên",
+                          "phonetic":  "/dəˌmes.tɪk ˈvaɪə.ləns/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Hotlines provide shelter for victims of domestic violence.",
+                          "exampleSentence":  "Hotlines provide shelter for victims of domestic violence.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "family abuse, spousal violence",
+                          "antonyms":  "family harmony, peaceful home",
+                          "collocations":  "suffer domestic violence, prevent domestic violence",
+                          "note":  "Domestic (gia đình) + violence."
+                      },
+                      {
+                          "term":  "legislation",
+                          "definition":  "Pháp luật được ban hành bởi quốc hội",
+                          "definitionVi":  "Pháp luật được ban hành bởi quốc hội",
+                          "phonetic":  "/ˌledʒ.ɪˈsleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "New legislation was enacted to impose heavy fines on polluters.",
+                          "exampleSentence":  "New legislation was enacted to impose heavy fines on polluters.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "law, statutes, legal regulations",
+                          "antonyms":  "lawlessness, anarchy",
+                          "collocations":  "pass legislation, introduce legislation, enforce legislation",
+                          "note":  "Động từ: legislate."
+                      },
+                      {
+                          "term":  "vandalism",
+                          "definition":  "Hành vi phá hoại tài sản công cộng",
+                          "definitionVi":  "Hành vi phá hoại tài sản công cộng",
+                          "phonetic":  "/ˈvæn.dəl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The local park suffered from vandalism, with smashed benches.",
+                          "exampleSentence":  "The local park suffered from vandalism, with smashed benches.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "property destruction, defacement",
+                          "antonyms":  "preservation, civic protection",
+                          "collocations":  "act of vandalism, combat vandalism, mindless vandalism",
+                          "note":  "Kẻ phá hoại: vandal."
+                      },
+                      {
+                          "term":  "witness",
+                          "definition":  "Nhân chứng nhìn thấy vụ việc / Chứng kiến",
+                          "definitionVi":  "Nhân chứng nhìn thấy vụ việc / Chứng kiến",
+                          "phonetic":  "/ˈwɪt.nəs/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Police appealed for eyewitnesses who saw the traffic accident.",
+                          "exampleSentence":  "Police appealed for eyewitnesses who saw the traffic accident.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "bystander, onlooker, observer",
+                          "antonyms":  "N/A",
+                          "collocations":  "eyewitness, witness a crime, call a witness",
+                          "note":  "Eyewitness = nhân chứng tận mắt."
+                      },
+                      {
+                          "term":  "guilty",
+                          "definition":  "Có tội theo phán quyết của tòa / Cảm giác tội lỗi",
+                          "definitionVi":  "Có tội theo phán quyết của tòa / Cảm giác tội lỗi",
+                          "phonetic":  "/ˈɡɪl.ti/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The jury found the defendant guilty of financial fraud.",
+                          "exampleSentence":  "The jury found the defendant guilty of financial fraud.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "culpable, blameworthy, convicted",
+                          "antonyms":  "innocent, blameless, acquitted",
+                          "collocations":  "plead guilty, found guilty, feel guilty about",
+                          "note":  "Danh từ: guilt /ɡɪlt/."
+                      },
+                      {
+                          "term":  "innocent",
+                          "definition":  "Vô tội, không phạm tội",
+                          "definitionVi":  "Vô tội, không phạm tội",
+                          "phonetic":  "/ˈɪn.ə.sənt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "A person is presumed innocent until proven guilty in court.",
+                          "exampleSentence":  "A person is presumed innocent until proven guilty in court.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "guiltless, blameless, clear",
+                          "antonyms":  "guilty, culpable, convicted",
+                          "collocations":  "presumed innocent, completely innocent, prove innocent",
+                          "note":  "Danh từ: innocence."
+                      },
+                      {
+                          "term":  "petty crime",
+                          "definition":  "Tội phạm vặt (móc túi, trộm nhỏ)",
+                          "definitionVi":  "Tội phạm vặt (móc túi, trộm nhỏ)",
+                          "phonetic":  "/ˈpet.i kraɪm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Tourists should watch bags in markets to avoid petty crime.",
+                          "exampleSentence":  "Tourists should watch bags in markets to avoid petty crime.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "minor offense, small theft",
+                          "antonyms":  "violent crime, major felony",
+                          "collocations":  "victim of petty crime, rise in petty crime, tackle petty crime",
+                          "note":  "Petty = nhỏ nhặt."
+                      },
+                      {
+                          "term":  "surveillance",
+                          "definition":  "Sự giám sát an ninh bằng camera",
+                          "definitionVi":  "Sự giám sát an ninh bằng camera",
+                          "phonetic":  "/sɜːˈveɪ.ləns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The mall is equipped with 24-hour CCTV surveillance.",
+                          "exampleSentence":  "The mall is equipped with 24-hour CCTV surveillance.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "monitoring, observation, watch",
+                          "antonyms":  "neglect, unobserved area",
+                          "collocations":  "CCTV surveillance, under surveillance, security surveillance",
+                          "note":  "Cụm: under surveillance."
+                      },
+                      {
+                          "term":  "community service",
+                          "definition":  "Hình phạt lao động công ích phục vụ xã hội",
+                          "definitionVi":  "Hình phạt lao động công ích phục vụ xã hội",
+                          "phonetic":  "/kəˈmjuː.nə.ti ˌsɜː.vɪs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Instead of jail, the teen was ordered to do community service.",
+                          "exampleSentence":  "Instead of jail, the teen was ordered to do community service.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Crime \u0026 Social Issues",
+                          "synonyms":  "unpaid public work, community penalty",
+                          "antonyms":  "prison sentence, incarceration",
+                          "collocations":  "sentence to community service, do community service",
+                          "note":  "Án phạt thay thế tù giam."
+                      },
+                      {
+                          "term":  "consumerism",
+                          "definition":  "Chủ nghĩa tiêu dùng mua sắm liên tục",
+                          "definitionVi":  "Chủ nghĩa tiêu dùng mua sắm liên tục",
+                          "phonetic":  "/kənˈsjuː.mə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Critics argue that advertising promotes consumerism and waste.",
+                          "exampleSentence":  "Critics argue that advertising promotes consumerism and waste.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "materialism, shopping culture, overconsumption",
+                          "antonyms":  "minimalism, frugality",
+                          "collocations":  "rampant consumerism, fuel consumerism, culture of consumerism",
+                          "note":  "Người tiêu dùng: consumer."
+                      },
+                      {
+                          "term":  "bargain",
+                          "definition":  "Món hời giá rẻ / Mặc cả trả giá",
+                          "definitionVi":  "Món hời giá rẻ / Mặc cả trả giá",
+                          "phonetic":  "/ˈbɑː.ɡɪn/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "You can find great bargains at traditional street markets.",
+                          "exampleSentence":  "You can find great bargains at traditional street markets.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "good deal, discount buy; haggle",
+                          "antonyms":  "rip-off, overpriced item",
+                          "collocations":  "bargain hunter, get a bargain, bargain for a price",
+                          "note":  "Phát âm đuôi: /-ɡɪn/."
+                      },
+                      {
+                          "term":  "discount",
+                          "definition":  "Mức giảm giá chiết khấu / Giảm giá",
+                          "definitionVi":  "Mức giảm giá chiết khấu / Giảm giá",
+                          "phonetic":  "/ˈdɪs.kaʊnt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "The bookstore offers a 15% student discount on textbooks.",
+                          "exampleSentence":  "The bookstore offers a 15% student discount on textbooks.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "price reduction, rebate, markdown",
+                          "antonyms":  "markup, price increase",
+                          "collocations":  "student discount, offer a discount, discount code",
+                          "note":  "Danh từ nhấn âm 1."
+                      },
+                      {
+                          "term":  "refund",
+                          "definition":  "Tiền hoàn trả lại khi hàng lỗi / Hoàn tiền",
+                          "definitionVi":  "Tiền hoàn trả lại khi hàng lỗi / Hoàn tiền",
+                          "phonetic":  "/ˈriː.fʌnd/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Unsatisfied customers can request a full refund within thirty days.",
+                          "exampleSentence":  "Unsatisfied customers can request a full refund within thirty days.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "reimbursement, repayment, money back",
+                          "antonyms":  "payment, charge",
+                          "collocations":  "full refund, ask for a refund, give a refund",
+                          "note":  "Danh từ âm 1, động từ âm 2."
+                      },
+                      {
+                          "term":  "receipt",
+                          "definition":  "Hóa đơn thanh toán, biên lai thu tiền",
+                          "definitionVi":  "Hóa đơn thanh toán, biên lai thu tiền",
+                          "phonetic":  "/rɪˈsiːt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Keep your sales receipt in case you need to exchange the item.",
+                          "exampleSentence":  "Keep your sales receipt in case you need to exchange the item.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "bill, proof of purchase, sales slip",
+                          "antonyms":  "N/A",
+                          "collocations":  "keep the receipt, sales receipt, payment receipt",
+                          "note":  "Chữ \u0027p\u0027 hoàn toàn câm: /rɪˈsiːt/."
+                      },
+                      {
+                          "term":  "budget",
+                          "definition":  "Ngân sách chi tiêu / Lên kế hoạch chi tiêu",
+                          "definitionVi":  "Ngân sách chi tiêu / Lên kế hoạch chi tiêu",
+                          "phonetic":  "/ˈbʌdʒ.ɪt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Students living away from home must learn to budget their money.",
+                          "exampleSentence":  "Students living away from home must learn to budget their money.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "financial plan, allowance, spending limit",
+                          "antonyms":  "reckless spending, extravagance",
+                          "collocations":  "tight budget, on a budget, annual budget",
+                          "note":  "Cụm: \u0027on a tight budget\u0027."
+                      },
+                      {
+                          "term":  "extravagant",
+                          "definition":  "Xa hoa hoang phí tiêu xài quá mức",
+                          "definitionVi":  "Xa hoa hoang phí tiêu xài quá mức",
+                          "phonetic":  "/ɪkˈstræv.ə.ɡənt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Spending thousands on luxury bags is considered extravagant.",
+                          "exampleSentence":  "Spending thousands on luxury bags is considered extravagant.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "wasteful, lavish, prodigal, costly",
+                          "antonyms":  "frugal, economical, thrifty",
+                          "collocations":  "extravagant lifestyle, extravagant spending, extravagant gift",
+                          "note":  "Danh từ: extravagance."
+                      },
+                      {
+                          "term":  "e-commerce",
+                          "definition":  "Thương mại điện tử mua bán trực tuyến",
+                          "definitionVi":  "Thương mại điện tử mua bán trực tuyến",
+                          "phonetic":  "/ˈiːˌkɒm.ɜːs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The expansion of e-commerce has made online shopping convenient.",
+                          "exampleSentence":  "The expansion of e-commerce has made online shopping convenient.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "online shopping, internet commerce, digital trade",
+                          "antonyms":  "brick-and-mortar retail",
+                          "collocations":  "e-commerce platform, boom in e-commerce",
+                          "note":  "Electronic + commerce."
+                      },
+                      {
+                          "term":  "impulse buying",
+                          "definition":  "Mua sắm bốc đồng theo cảm hứng tức thời",
+                          "definitionVi":  "Mua sắm bốc đồng theo cảm hứng tức thời",
+                          "phonetic":  "/ˈɪm.pʌls ˌbaɪ.ɪŋ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Supermarkets place treats near checkouts to encourage impulse buying.",
+                          "exampleSentence":  "Supermarkets place treats near checkouts to encourage impulse buying.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "unplanned shopping, spontaneous purchase",
+                          "antonyms":  "planned purchasing, conscious budgeting",
+                          "collocations":  "avoid impulse buying, prone to impulse buying",
+                          "note":  "Tính từ: impulsive."
+                      },
+                      {
+                          "term":  "transaction",
+                          "definition":  "Giao dịch thanh toán chuyển tiền",
+                          "definitionVi":  "Giao dịch thanh toán chuyển tiền",
+                          "phonetic":  "/trænˈzæk.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Mobile apps send notifications for every financial transaction.",
+                          "exampleSentence":  "Mobile apps send notifications for every financial transaction.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "deal, financial payment, transfer",
+                          "antonyms":  "N/A",
+                          "collocations":  "financial transaction, online transaction, cashless transaction",
+                          "note":  "Động từ: transact."
+                      },
+                      {
+                          "term":  "counterfeit",
+                          "definition":  "Hàng giả, tiền giả sao chép bất hợp pháp",
+                          "definitionVi":  "Hàng giả, tiền giả sao chép bất hợp pháp",
+                          "phonetic":  "/ˈkaʊn.tə.fɪt/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "Customs officers seized thousands of counterfeit designer watches.",
+                          "exampleSentence":  "Customs officers seized thousands of counterfeit designer watches.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "fake, imitation, forged, sham",
+                          "antonyms":  "genuine, authentic, real",
+                          "collocations":  "counterfeit goods, counterfeit money, counterfeit products",
+                          "note":  "Động từ: counterfeit."
+                      },
+                      {
+                          "term":  "cashless",
+                          "definition":  "Không dùng tiền mặt, quét mã thẻ",
+                          "definitionVi":  "Không dùng tiền mặt, quét mã thẻ",
+                          "phonetic":  "/ˈkæʃ.ləs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Vietnam is moving toward a cashless society with QR code payments.",
+                          "exampleSentence":  "Vietnam is moving toward a cashless society with QR code payments.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "digital payment, electronic payment",
+                          "antonyms":  "cash-based, cash-only",
+                          "collocations":  "cashless society, cashless payment, cashless economy",
+                          "note":  "Cash + -less."
+                      },
+                      {
+                          "term":  "installment",
+                          "definition":  "Khoản trả góp định kỳ hàng tháng",
+                          "definitionVi":  "Khoản trả góp định kỳ hàng tháng",
+                          "phonetic":  "/ɪnˈstɔːl.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Consumers can buy high-end laptops in twelve monthly installments.",
+                          "exampleSentence":  "Consumers can buy high-end laptops in twelve monthly installments.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "periodic payment, part payment",
+                          "antonyms":  "lump-sum payment, upfront cash",
+                          "collocations":  "pay in installments, monthly installment, interest-free installment",
+                          "note":  "Pay by installments = trả góp."
+                      },
+                      {
+                          "term":  "guarantee",
+                          "definition":  "Bảo hành sản phẩm / Bảo đảm chất lượng",
+                          "definitionVi":  "Bảo hành sản phẩm / Bảo đảm chất lượng",
+                          "phonetic":  "/ˌɡær.ənˈtiː/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "The washing machine comes with a two-year manufacturer guarantee.",
+                          "exampleSentence":  "The washing machine comes with a two-year manufacturer guarantee.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "warranty, assurance, pledge",
+                          "antonyms":  "N/A",
+                          "collocations":  "money-back guarantee, under guarantee, guarantee quality",
+                          "note":  "Đồng nghĩa: warranty."
+                      },
+                      {
+                          "term":  "retailer",
+                          "definition":  "Nhà bán lẻ trực tiếp tới người tiêu dùng",
+                          "definitionVi":  "Nhà bán lẻ trực tiếp tới người tiêu dùng",
+                          "phonetic":  "/ˈriː.teɪ.lər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Major online retailers offer free shipping on larger orders.",
+                          "exampleSentence":  "Major online retailers offer free shipping on larger orders.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "shopkeeper, merchant, vendor",
+                          "antonyms":  "wholesaler (nhà bán buôn), manufacturer",
+                          "collocations":  "online retailer, major retailer, clothing retailer",
+                          "note":  "Retailer (bán lẻ) \u003e\u003c wholesaler (bán buôn)."
+                      },
+                      {
+                          "term":  "loyalty program",
+                          "definition":  "Chương trình khách hàng thân thiết tích điểm",
+                          "definitionVi":  "Chương trình khách hàng thân thiết tích điểm",
+                          "phonetic":  "/ˈlɔɪ.əl.ti ˌprəʊ.ɡræm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Supermarket loyalty programs reward regular shoppers with points.",
+                          "exampleSentence":  "Supermarket loyalty programs reward regular shoppers with points.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "rewards scheme, customer reward program",
+                          "antonyms":  "N/A",
+                          "collocations":  "join a loyalty program, loyalty program points",
+                          "note":  "Loyalty + program."
+                      },
+                      {
+                          "term":  "overpriced",
+                          "definition":  "Bị đội giá quá đắt so với giá trị thực",
+                          "definitionVi":  "Bị đội giá quá đắt so với giá trị thực",
+                          "phonetic":  "/ˌəʊ.vəˈpraɪst/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Food in airport departure terminals is notoriously overpriced.",
+                          "exampleSentence":  "Food in airport departure terminals is notoriously overpriced.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "expensive, exorbitant, inflated",
+                          "antonyms":  "cheap, affordable, reasonably priced",
+                          "collocations":  "ridiculously overpriced, overpriced goods",
+                          "note":  "Over- + priced."
+                      },
+                      {
+                          "term":  "frugal",
+                          "definition":  "Tiết kiệm, chắt chiu không phung phí",
+                          "definitionVi":  "Tiết kiệm, chắt chiu không phung phí",
+                          "phonetic":  "/ˈfruː.ɡəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "By leading a frugal lifestyle, she saved enough to buy a flat.",
+                          "exampleSentence":  "By leading a frugal lifestyle, she saved enough to buy a flat.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Shopping \u0026 Money",
+                          "synonyms":  "thrifty, economical, careful",
+                          "antonyms":  "extravagant, wasteful, lavish",
+                          "collocations":  "frugal lifestyle, frugal living, frugal habits",
+                          "note":  "Danh từ: frugality."
+                      },
+                      {
+                          "term":  "breakthrough",
+                          "definition":  "Bước đột phá khoa học mang tính cách mạng",
+                          "definitionVi":  "Bước đột phá khoa học mang tính cách mạng",
+                          "phonetic":  "/ˈbreɪk.θruː/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Scientists achieved a major medical breakthrough in vaccine development.",
+                          "exampleSentence":  "Scientists achieved a major medical breakthrough in vaccine development.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "advancement, discovery, leap forward",
+                          "antonyms":  "setback, stagnation, failure",
+                          "collocations":  "scientific breakthrough, major breakthrough, achieve a breakthrough",
+                          "note":  "Break + through."
+                      },
+                      {
+                          "term":  "patent",
+                          "definition":  "Bằng sáng chế độc quyền bảo hộ phát minh",
+                          "definitionVi":  "Bằng sáng chế độc quyền bảo hộ phát minh",
+                          "phonetic":  "/ˈpeɪ.tənt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "The inventor applied for a patent to protect her water filter design.",
+                          "exampleSentence":  "The inventor applied for a patent to protect her water filter design.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "copyright, intellectual property license",
+                          "antonyms":  "public domain",
+                          "collocations":  "apply for a patent, grant a patent, patent pending",
+                          "note":  "Phát âm /ˈpeɪ.tənt/ hoặc /ˈpæt.ənt/."
+                      },
+                      {
+                          "term":  "revolutionize",
+                          "definition":  "Cách mạng hóa, làm biến đổi sâu sắc lĩnh vực",
+                          "definitionVi":  "Cách mạng hóa, làm biến đổi sâu sắc lĩnh vực",
+                          "phonetic":  "/ˌrev.əˈluː.ʃən.aɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The steam engine revolutionized manufacturing and transport in Europe.",
+                          "exampleSentence":  "The steam engine revolutionized manufacturing and transport in Europe.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "transform, overhaul, modernize",
+                          "antonyms":  "preserve status quo, stagnate",
+                          "collocations":  "revolutionize an industry, revolutionize healthcare",
+                          "note":  "Danh từ: revolution."
+                      },
+                      {
+                          "term":  "versatile",
+                          "definition":  "Đa năng, linh hoạt thích ứng nhiều công dụng",
+                          "definitionVi":  "Đa năng, linh hoạt thích ứng nhiều công dụng",
+                          "phonetic":  "/ˈvɜː.sə.taɪl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Bamboo is a versatile natural material used for flooring and fabrics.",
+                          "exampleSentence":  "Bamboo is a versatile natural material used for flooring and fabrics.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "multi-purpose, adaptable, flexible",
+                          "antonyms":  "single-purpose, rigid, inflexible",
+                          "collocations":  "versatile material, versatile tool, highly versatile",
+                          "note":  "Danh từ: versatility."
+                      },
+                      {
+                          "term":  "hypothesis",
+                          "definition":  "Giả thuyết khoa học đưa ra để kiểm chứng",
+                          "definitionVi":  "Giả thuyết khoa học đưa ra để kiểm chứng",
+                          "phonetic":  "/haɪˈpɒθ.ə.sɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Researchers designed lab experiments to test their biological hypothesis.",
+                          "exampleSentence":  "Researchers designed lab experiments to test their biological hypothesis.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "theory, proposition, assumption",
+                          "antonyms":  "proven fact, certainty",
+                          "collocations":  "test a hypothesis, form a hypothesis, support hypothesis",
+                          "note":  "Số nhiều: hypotheses."
+                      },
+                      {
+                          "term":  "laboratory",
+                          "definition":  "Phòng thí nghiệm khoa học",
+                          "definitionVi":  "Phòng thí nghiệm khoa học",
+                          "phonetic":  "/ləˈbɒr.ə.tri/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Students conduct chemistry experiments in the school laboratory.",
+                          "exampleSentence":  "Students conduct chemistry experiments in the school laboratory.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "lab, research facility, testing room",
+                          "antonyms":  "N/A",
+                          "collocations":  "science laboratory, laboratory equipment, lab test",
+                          "note":  "Viết tắt: lab."
+                      },
+                      {
+                          "term":  "portable",
+                          "definition":  "Xách tay gọn nhẹ dễ dàng mang theo",
+                          "definitionVi":  "Xách tay gọn nhẹ dễ dàng mang theo",
+                          "phonetic":  "/ˈpɔː.tə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Laptops and portable chargers enable people to work from anywhere.",
+                          "exampleSentence":  "Laptops and portable chargers enable people to work from anywhere.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "mobile, transportable, compact",
+                          "antonyms":  "stationary, bulky, immovable",
+                          "collocations":  "portable device, portable speaker, portable charger",
+                          "note":  "Gốc Latin: portare = mang vác."
+                      },
+                      {
+                          "term":  "genetics",
+                          "definition":  "Di truyền học nghiên cứu về gen",
+                          "definitionVi":  "Di truyền học nghiên cứu về gen",
+                          "phonetic":  "/dʒəˈnet.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Advancements in genetics help scientists develop drought-resistant rice.",
+                          "exampleSentence":  "Advancements in genetics help scientists develop drought-resistant rice.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "heredity study, genomic science",
+                          "antonyms":  "N/A",
+                          "collocations":  "human genetics, plant genetics, genetic engineering",
+                          "note":  "Tính từ: genetic."
+                      },
+                      {
+                          "term":  "innovative",
+                          "definition":  "Có tính đổi mới sáng tạo hữu ích",
+                          "definitionVi":  "Có tính đổi mới sáng tạo hữu ích",
+                          "phonetic":  "/ˈɪn.ə.və.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Engineers developed an innovative purifier powered by solar batteries.",
+                          "exampleSentence":  "Engineers developed an innovative purifier powered by solar batteries.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "creative, inventive, pioneering",
+                          "antonyms":  "conventional, traditional, outdated",
+                          "collocations":  "innovative solution, innovative technology, innovative design",
+                          "note":  "Động từ: innovate."
+                      },
+                      {
+                          "term":  "experiment",
+                          "definition":  "Cuộc thí nghiệm thực nghiệm / Thí nghiệm",
+                          "definitionVi":  "Cuộc thí nghiệm thực nghiệm / Thí nghiệm",
+                          "phonetic":  "/ɪkˈsper.ɪ.mənt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Scientists carried out experiments to verify the safety of the compound.",
+                          "exampleSentence":  "Scientists carried out experiments to verify the safety of the compound.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "scientific test, trial, pilot test",
+                          "antonyms":  "N/A",
+                          "collocations":  "conduct an experiment, lab experiment, scientific experiment",
+                          "note":  "Tính từ: experimental."
+                      },
+                      {
+                          "term":  "solar system",
+                          "definition":  "Hệ Mặt Trời gồm Mặt Trời và 8 hành tinh",
+                          "definitionVi":  "Hệ Mặt Trời gồm Mặt Trời và 8 hành tinh",
+                          "phonetic":  "/ˈsəʊ.lə ˌsɪs.təm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Earth and Mars are planets located in our solar system.",
+                          "exampleSentence":  "Earth and Mars are planets located in our solar system.",
+                          "level":  "A2",
+                          "cefrLevel":  "A2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "planetary system, heliocentric system",
+                          "antonyms":  "N/A",
+                          "collocations":  "planets in solar system, explore solar system",
+                          "note":  "Solar (thuộc Mặt Trời) + system."
+                      },
+                      {
+                          "term":  "orbit",
+                          "definition":  "Quỹ đạo chuyển động / Quay quanh thiên thể",
+                          "definitionVi":  "Quỹ đạo chuyển động / Quay quanh thiên thể",
+                          "phonetic":  "/ˈɔː.bɪt/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Communications satellites orbit the Earth at thousands of kilometers high.",
+                          "exampleSentence":  "Communications satellites orbit the Earth at thousands of kilometers high.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "revolve around, circle, trajectory",
+                          "antonyms":  "remain stationary",
+                          "collocations":  "in orbit, orbit the Earth, enter orbit",
+                          "note":  "Cụm: in orbit."
+                      },
+                      {
+                          "term":  "telepathy",
+                          "definition":  "Thần giao cách cảm truyền suy nghĩ trực tiếp",
+                          "definitionVi":  "Thần giao cách cảm truyền suy nghĩ trực tiếp",
+                          "phonetic":  "/təˈlep.ə.θi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "In science fiction stories, aliens often communicate via telepathy.",
+                          "exampleSentence":  "In science fiction stories, aliens often communicate via telepathy.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "mind-reading, thought transference",
+                          "antonyms":  "verbal speech, writing",
+                          "collocations":  "communicate by telepathy, power of telepathy",
+                          "note":  "Tính từ: telepathic."
+                      },
+                      {
+                          "term":  "robotics",
+                          "definition":  "Ngành chế tạo và điều khiển người máy robot",
+                          "definitionVi":  "Ngành chế tạo và điều khiển người máy robot",
+                          "phonetic":  "/rəʊˈbɒt.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Advancements in robotics enable surgeons to perform delicate operations.",
+                          "exampleSentence":  "Advancements in robotics enable surgeons to perform delicate operations.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "robot engineering, cybernetics, automation",
+                          "antonyms":  "N/A",
+                          "collocations":  "field of robotics, medical robotics, industrial robotics",
+                          "note":  "Người máy: robot."
+                      },
+                      {
+                          "term":  "nanotechnology",
+                          "definition":  "Công nghệ nano siêu vi quy mô nguyên tử",
+                          "definitionVi":  "Công nghệ nano siêu vi quy mô nguyên tử",
+                          "phonetic":  "/ˌnæn.əʊ.tekˈnɒl.ə.dʒi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Nanotechnology allows researchers to deliver cancer drugs directly into cells.",
+                          "exampleSentence":  "Nanotechnology allows researchers to deliver cancer drugs directly into cells.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "nanoscience, molecular engineering",
+                          "antonyms":  "macro-technology",
+                          "collocations":  "applications of nanotechnology, field of nanotechnology",
+                          "note":  "Nano- (siêu vi, một phần tỷ mét)."
+                      },
+                      {
+                          "term":  "pioneer",
+                          "definition":  "Người tiên phong mở đường / Đi đầu lĩnh vực",
+                          "definitionVi":  "Người tiên phong mở đường / Đi đầu lĩnh vực",
+                          "phonetic":  "/ˌpaɪəˈnɪər/",
+                          "partOfSpeech":  "noun/verb",
+                          "example":  "Marie Curie was a scientific pioneer who conducted research on radioactivity.",
+                          "exampleSentence":  "Marie Curie was a scientific pioneer who conducted research on radioactivity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "trailblazer, innovator, groundbreaker",
+                          "antonyms":  "follower, imitator",
+                          "collocations":  "scientific pioneer, pioneer in medicine, pioneer research",
+                          "note":  "Trọng âm 3: pi-o-NEER."
+                      },
+                      {
+                          "term":  "analyze",
+                          "definition":  "Phân tích số liệu hoặc hiện tượng chi tiết",
+                          "definitionVi":  "Phân tích số liệu hoặc hiện tượng chi tiết",
+                          "phonetic":  "/ˈæn.əl.aɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Astronomers analyze data collected by deep-space optical telescopes.",
+                          "exampleSentence":  "Astronomers analyze data collected by deep-space optical telescopes.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "examine, inspect, evaluate, study",
+                          "antonyms":  "synthesize, combine",
+                          "collocations":  "analyze data, analyze results, carefully analyze",
+                          "note":  "Danh từ: analysis. Số nhiều: analyses."
+                      },
+                      {
+                          "term":  "sensor",
+                          "definition":  "Thiết bị cảm biến nhận biết nhiệt độ, chuyển động",
+                          "definitionVi":  "Thiết bị cảm biến nhận biết nhiệt độ, chuyển động",
+                          "phonetic":  "/ˈsen.sər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Streetlights with motion sensors turn on only when pedestrians approach.",
+                          "exampleSentence":  "Streetlights with motion sensors turn on only when pedestrians approach.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Science \u0026 Innovation",
+                          "synonyms":  "detector, sensing device, transducer",
+                          "antonyms":  "N/A",
+                          "collocations":  "motion sensor, temperature sensor, smart sensor",
+                          "note":  "Động từ: sense."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_ielts_6_7",
+        "title":  "Từ Vựng IELTS 6.0 - 7.0 Trọng Tâm (B2-C1 Academic)",
+        "description":  "Trọn bộ 108 từ vựng học thuật tinh hoa và phân tích trọng tâm nâng band từ 6.0 lên 7.0+ theo chuẩn Cambridge \u0026 Oxford.",
+        "category":  "IELTS",
+        "icon":  "🎯",
+        "color":  "#0ea5e9",
+        "totalWords":  108,
+        "isVipOnly":  true,
+        "isVip":  true,
+        "price":  0,
+        "words":  [
+                      {
+                          "term":  "pedagogy",
+                          "definition":  "Phương pháp sư phạm, nghệ thuật và khoa học giảng dạy",
+                          "definitionVi":  "Phương pháp sư phạm, nghệ thuật và khoa học giảng dạy",
+                          "phonetic":  "/ˈped.ə.ɡɒdʒ.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Modern pedagogy emphasizes student-centered learning and interactive problem-solving over rote memorization.",
+                          "exampleSentence":  "Modern pedagogy emphasizes student-centered learning and interactive problem-solving over rote memorization.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "teaching methodology, instructional strategy, educational theory",
+                          "antonyms":  "N/A",
+                          "collocations":  "innovative pedagogy, pedagogical approach, modern pedagogy",
+                          "note":  "Tính từ: pedagogical /ˌped.əˈɡɒdʒ.ɪ.kəl/. Thường dùng trong Writing Task 2 về giáo dục."
+                      },
+                      {
+                          "term":  "curriculum",
+                          "definition":  "Chương trình giảng dạy chính khóa của một cơ sở giáo dục",
+                          "definitionVi":  "Chương trình giảng dạy chính khóa của một cơ sở giáo dục",
+                          "phonetic":  "/kəˈrɪk.jə.ləm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Educational authorities ought to integrate financial literacy and digital skills into the national school curriculum.",
+                          "exampleSentence":  "Educational authorities ought to integrate financial literacy and digital skills into the national school curriculum.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "syllabus, academic program, course of study",
+                          "antonyms":  "extracurricular activity",
+                          "collocations":  "core curriculum, school curriculum, design a curriculum, reform the curriculum",
+                          "note":  "Số nhiều: curricula /kəˈrɪk.jə.lə/ hoặc curriculums. Phân biệt với syllabus (đề cương môn học)."
+                      },
+                      {
+                          "term":  "comprehensive",
+                          "definition":  "Toàn diện, bao quát và đầy đủ mọi khía cạnh",
+                          "definitionVi":  "Toàn diện, bao quát và đầy đủ mọi khía cạnh",
+                          "phonetic":  "/ˌkɒm.prɪˈhen.sɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The university provides a comprehensive range of academic disciplines and specialized vocational training.",
+                          "exampleSentence":  "The university provides a comprehensive range of academic disciplines and specialized vocational training.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "all-inclusive, thorough, exhaustive, extensive",
+                          "antonyms":  "limited, incomplete, superficial, partial",
+                          "collocations":  "comprehensive study, comprehensive review, comprehensive education",
+                          "note":  "Tránh nhầm với \u0027comprehensible\u0027 (dễ hiểu). Comprehensive = toàn diện."
+                      },
+                      {
+                          "term":  "autonomous",
+                          "definition":  "Tự chủ, độc lập tự quản lý việc học tập và nghiên cứu",
+                          "definitionVi":  "Tự chủ, độc lập tự quản lý việc học tập và nghiên cứu",
+                          "phonetic":  "/ɔːˈtɒn.ə.məs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Tertiary education aims to produce autonomous learners capable of critical inquiry and independent thought.",
+                          "exampleSentence":  "Tertiary education aims to produce autonomous learners capable of critical inquiry and independent thought.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "self-directed, independent, self-governing",
+                          "antonyms":  "dependent, subordinate, reliant",
+                          "collocations":  "autonomous learner, autonomous learning, foster learner autonomy",
+                          "note":  "Danh từ: learner autonomy (tính tự chủ trong học tập). Cụm ăn điểm rất cao trong Task 2."
+                      },
+                      {
+                          "term":  "cognitive",
+                          "definition":  "Thuộc về nhận thức, tư duy và khả năng xử lý thông tin",
+                          "definitionVi":  "Thuộc về nhận thức, tư duy và khả năng xử lý thông tin",
+                          "phonetic":  "/ˈkɒɡ.nə.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Early childhood reading substantially accelerates cognitive development and linguistic proficiency.",
+                          "exampleSentence":  "Early childhood reading substantially accelerates cognitive development and linguistic proficiency.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "intellectual, mental, perceptual, rational",
+                          "antonyms":  "physical, emotional",
+                          "collocations":  "cognitive development, cognitive ability, cognitive impairment, cognitive skills",
+                          "note":  "Danh từ: cognition /kɒɡˈnɪʃ.ən/ (quá trình nhận thức)."
+                      },
+                      {
+                          "term":  "tertiary education",
+                          "definition":  "Giáo dục bậc ba (bậc đại học, cao đẳng và sau đại học)",
+                          "definitionVi":  "Giáo dục bậc ba (bậc đại học, cao đẳng và sau đại học)",
+                          "phonetic":  "/ˈtɜː.ʃər.i edʒ.uˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Government tuition subsidies allow low-income students to access tertiary education without heavy debts.",
+                          "exampleSentence":  "Government tuition subsidies allow low-income students to access tertiary education without heavy debts.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "higher education, post-secondary education, university level",
+                          "antonyms":  "primary education, secondary education",
+                          "collocations":  "pursue tertiary education, access to tertiary education, tertiary education institutions",
+                          "note":  "Thuật ngữ học thuật chuẩn mực thay thế cho \u0027university education\u0027 trong IELTS Writing."
+                      },
+                      {
+                          "term":  "illiteracy",
+                          "definition":  "Nạn mù chữ, tình trạng thiếu khả năng đọc viết cơ bản",
+                          "definitionVi":  "Nạn mù chữ, tình trạng thiếu khả năng đọc viết cơ bản",
+                          "phonetic":  "/ɪˈlɪt.ər.ə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Targeted educational initiatives in impoverished rural areas have contributed to eradicating adult illiteracy.",
+                          "exampleSentence":  "Targeted educational initiatives in impoverished rural areas have contributed to eradicating adult illiteracy.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "inability to read, analphabetism",
+                          "antonyms":  "literacy, erudition",
+                          "collocations":  "eradicate illiteracy, illiteracy rate, combat illiteracy",
+                          "note":  "Tính từ: illiterate /ɪˈlɪt.ər.ət/ (mù chữ). Mở rộng: digital illiteracy (mù công nghệ)."
+                      },
+                      {
+                          "term":  "rote learning",
+                          "definition":  "Học vẹt, học thuộc lòng máy móc không qua thấu hiểu bản chất",
+                          "definitionVi":  "Học vẹt, học thuộc lòng máy móc không qua thấu hiểu bản chất",
+                          "phonetic":  "/ˈrəʊt ˌlɜː.nɪŋ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Educational reformers argue that heavy reliance on rote learning suppresses analytical inquiry and creativity.",
+                          "exampleSentence":  "Educational reformers argue that heavy reliance on rote learning suppresses analytical inquiry and creativity.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "memorization by repetition, mechanical learning",
+                          "antonyms":  "meaningful learning, experiential learning, critical inquiry",
+                          "collocations":  "rely on rote learning, rote learning methods, discourage rote learning",
+                          "note":  "Thành ngữ: learn something by rote (học vẹt cái gì)."
+                      },
+                      {
+                          "term":  "holistic",
+                          "definition":  "Toàn diện, tổng thể (xem xét mọi mặt gắn kết thay vì từng phần riêng lẻ)",
+                          "definitionVi":  "Toàn diện, tổng thể (xem xét mọi mặt gắn kết thay vì từng phần riêng lẻ)",
+                          "phonetic":  "/həʊˈlɪs.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Schools should adopt a holistic approach to child assessment rather than relying solely on standardized exam scores.",
+                          "exampleSentence":  "Schools should adopt a holistic approach to child assessment rather than relying solely on standardized exam scores.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Academic",
+                          "synonyms":  "comprehensive, integrated, all-encompassing, well-rounded",
+                          "antonyms":  "atomistic, fragmented, piecemeal",
+                          "collocations":  "holistic approach, holistic education, holistic view, holistic assessment",
+                          "note":  "Cụm từ rất hay dùng trong phần đề xuất giải pháp bài Writing Task 2: \u0027adopt a holistic approach\u0027."
+                      },
+                      {
+                          "term":  "biodiversity",
+                          "definition":  "Đa dạng sinh học (sự phong phú của các loài động thực vật và hệ sinh thái)",
+                          "definitionVi":  "Đa dạng sinh học (sự phong phú của các loài động thực vật và hệ sinh thái)",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Uncontrolled deforestation and habitat destruction pose an existential threat to global biodiversity.",
+                          "exampleSentence":  "Uncontrolled deforestation and habitat destruction pose an existential threat to global biodiversity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "biological diversity, ecological variety",
+                          "antonyms":  "monoculture, ecological uniformity",
+                          "collocations":  "loss of biodiversity, preserve biodiversity, rich biodiversity, biodiversity hotspot",
+                          "note":  "Trọng âm 4: bi-o-di-VER-si-ty. Thuật ngữ cốt lõi trong Writing Task 2 về môi trường."
+                      },
+                      {
+                          "term":  "degradation",
+                          "definition":  "Sự suy thoái, xuống cấp nghiêm trọng về chất lượng môi trường/đất đai",
+                          "definitionVi":  "Sự suy thoái, xuống cấp nghiêm trọng về chất lượng môi trường/đất đai",
+                          "phonetic":  "/ˌdeɡ.rəˈdeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Unregulated industrial discharge accelerates environmental degradation and contaminates local river basins.",
+                          "exampleSentence":  "Unregulated industrial discharge accelerates environmental degradation and contaminates local river basins.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "deterioration, degeneration, decline, decay",
+                          "antonyms":  "restoration, regeneration, enhancement",
+                          "collocations":  "environmental degradation, land degradation, soil degradation, reverse degradation",
+                          "note":  "Động từ: degrade (làm suy thoái). Tính từ: degraded."
+                      },
+                      {
+                          "term":  "carbon footprint",
+                          "definition":  "Dấu chân carbon (tổng lượng khí thải nhà kính từ hoạt động của cá nhân/tổ chức)",
+                          "definitionVi":  "Dấu chân carbon (tổng lượng khí thải nhà kính từ hoạt động của cá nhân/tổ chức)",
+                          "phonetic":  "/ˌkɑː.bən ˈfʊt.prɪnt/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Transitioning to solar power and commuting via bicycle allows households to shrink their carbon footprint.",
+                          "exampleSentence":  "Transitioning to solar power and commuting via bicycle allows households to shrink their carbon footprint.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "greenhouse gas emission, carbon output",
+                          "antonyms":  "carbon neutrality",
+                          "collocations":  "reduce carbon footprint, calculate carbon footprint, minimize carbon footprint",
+                          "note":  "Động từ đi kèm: reduce / minimize / offset one\u0027s carbon footprint."
+                      },
+                      {
+                          "term":  "mitigate",
+                          "definition":  "Làm giảm nhẹ, xoa dịu tính nghiêm trọng hoặc tác hại của một vấn đề",
+                          "definitionVi":  "Làm giảm nhẹ, xoa dịu tính nghiêm trọng hoặc tác hại của một vấn đề",
+                          "phonetic":  "/ˈmɪt.ɪ.ɡeɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Prompt international cooperation is imperative to mitigate the catastrophic impacts of rising sea levels.",
+                          "exampleSentence":  "Prompt international cooperation is imperative to mitigate the catastrophic impacts of rising sea levels.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "alleviate, lessen, attenuate, diminish, reduce",
+                          "antonyms":  "aggravate, exacerbate, intensify, worsen",
+                          "collocations":  "mitigate climate change, mitigate the impact, mitigate risks, mitigation measures",
+                          "note":  "Danh từ: mitigation. Trái nghĩa cực hay trong Writing: exacerbate (làm trầm trọng thêm)."
+                      },
+                      {
+                          "term":  "sustainable",
+                          "definition":  "Bền vững (phát triển không làm tổn hại đến tài nguyên của thế hệ mai sau)",
+                          "definitionVi":  "Bền vững (phát triển không làm tổn hại đến tài nguyên của thế hệ mai sau)",
+                          "phonetic":  "/səˈsteɪ.nə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Governments must enforce sustainable practices in agriculture and fisheries to ensure food security.",
+                          "exampleSentence":  "Governments must enforce sustainable practices in agriculture and fisheries to ensure food security.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "viable, renewable, eco-friendly, maintainable",
+                          "antonyms":  "unsustainable, wasteful, destructive",
+                          "collocations":  "sustainable development, sustainable energy, sustainable lifestyle, sustainable agriculture",
+                          "note":  "Danh từ: sustainability. Trọng tâm của 17 Mục tiêu Phát triển Bền vững của Liên Hợp Quốc (UN SDGs)."
+                      },
+                      {
+                          "term":  "deplete",
+                          "definition":  "Làm cạn kiệt, rút cạn nguồn cung hoặc tài nguyên thiên nhiên",
+                          "definitionVi":  "Làm cạn kiệt, rút cạn nguồn cung hoặc tài nguyên thiên nhiên",
+                          "phonetic":  "/dɪˈpliːt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Overexploitation of marine fisheries threatens to deplete fish stocks beyond natural recovery.",
+                          "exampleSentence":  "Overexploitation of marine fisheries threatens to deplete fish stocks beyond natural recovery.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "exhaust, drain, consume, use up",
+                          "antonyms":  "replenish, restore, regenerate",
+                          "collocations":  "deplete natural resources, deplete energy reserves, deplete the ozone layer",
+                          "note":  "Danh từ: resource depletion (sự cạn kiệt tài nguyên)."
+                      },
+                      {
+                          "term":  "renewable",
+                          "definition":  "Có thể tái tạo, vô tận và không bị cạn kiệt (năng lượng mặt trời, gió)",
+                          "definitionVi":  "Có thể tái tạo, vô tận và không bị cạn kiệt (năng lượng mặt trời, gió)",
+                          "phonetic":  "/rɪˈnjuː.ə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Substantial investment in renewable sources of energy will facilitate the transition away from fossil fuels.",
+                          "exampleSentence":  "Substantial investment in renewable sources of energy will facilitate the transition away from fossil fuels.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "sustainable, inexhaustible, green",
+                          "antonyms":  "non-renewable, exhaustible, finite",
+                          "collocations":  "renewable energy, renewable resources, renewable power",
+                          "note":  "Gốc từ: re- (lại) + new (mới) + -able (có thể)."
+                      },
+                      {
+                          "term":  "contaminate",
+                          "definition":  "Làm ô nhiễm, làm nhiễm độc bởi hóa chất hoặc chất độc hại",
+                          "definitionVi":  "Làm ô nhiễm, làm nhiễm độc bởi hóa chất hoặc chất độc hại",
+                          "phonetic":  "/kənˈtæm.ɪ.neɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Untreated industrial wastewater can contaminate underground aquifers and endanger public health.",
+                          "exampleSentence":  "Untreated industrial wastewater can contaminate underground aquifers and endanger public health.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "pollute, taint, poison, infect, adulterate",
+                          "antonyms":  "purify, decontaminate, cleanse",
+                          "collocations":  "contaminate drinking water, contaminate soil, severely contaminated",
+                          "note":  "Danh từ: contamination / contaminant (chất gây ô nhiễm)."
+                      },
+                      {
+                          "term":  "ecosystem",
+                          "definition":  "Hệ sinh thái (quần xã sinh vật tương tác gắn kết với môi trường xung quanh)",
+                          "definitionVi":  "Hệ sinh thái (quần xã sinh vật tương tác gắn kết với môi trường xung quanh)",
+                          "phonetic":  "/ˈiː.kəʊˌsɪs.təm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Mangrove forests serve as a vital ecosystem that buffers coastal communities against severe storm surges.",
+                          "exampleSentence":  "Mangrove forests serve as a vital ecosystem that buffers coastal communities against severe storm surges.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Sustainability",
+                          "synonyms":  "ecological system, natural environment, biome",
+                          "antonyms":  "N/A",
+                          "collocations":  "fragile ecosystem, marine ecosystem, disrupt the ecosystem, preserve the ecosystem",
+                          "note":  "Ghép từ eco- (thuộc môi trường) + system (hệ thống)."
+                      },
+                      {
+                          "term":  "automation",
+                          "definition":  "Sự tự động hóa (dùng máy móc, thuật toán thay thế thao tác thủ công)",
+                          "definitionVi":  "Sự tự động hóa (dùng máy móc, thuật toán thay thế thao tác thủ công)",
+                          "phonetic":  "/ˌɔː.təˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Workplace automation enhances productivity but sparks concerns regarding structural unemployment.",
+                          "exampleSentence":  "Workplace automation enhances productivity but sparks concerns regarding structural unemployment.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "mechanization, computerization, robotic control",
+                          "antonyms":  "manual labor, handcrafting",
+                          "collocations":  "workplace automation, process automation, fear of automation",
+                          "note":  "Động từ: automate. Tính từ: automated (an automated system)."
+                      },
+                      {
+                          "term":  "ubiquitous",
+                          "definition":  "Phổ biến ở khắp mọi nơi cùng một lúc, có mặt tại mọi ngóc ngách",
+                          "definitionVi":  "Phổ biến ở khắp mọi nơi cùng một lúc, có mặt tại mọi ngóc ngách",
+                          "phonetic":  "/juːˈbɪk.wə.təs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Smartphones and high-speed wireless connectivity have become ubiquitous features of contemporary society.",
+                          "exampleSentence":  "Smartphones and high-speed wireless connectivity have become ubiquitous features of contemporary society.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "omnipresent, pervasive, universal, widespread",
+                          "antonyms":  "rare, scarce, exceptional, uncommon",
+                          "collocations":  "ubiquitous presence, become ubiquitous, ubiquitous technology",
+                          "note":  "Từ vựng C1 kinh điển giúp nâng điểm Lexical Resource mạnh mẽ trong Speaking \u0026 Writing."
+                      },
+                      {
+                          "term":  "cybersecurity",
+                          "definition":  "An ninh mạng (biện pháp bảo vệ hệ thống dữ liệu khỏi các cuộc tấn công số)",
+                          "definitionVi":  "An ninh mạng (biện pháp bảo vệ hệ thống dữ liệu khỏi các cuộc tấn công số)",
+                          "phonetic":  "/ˈsaɪ.bə.sɪˌkjʊə.rə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Multinational corporations are allocating huge budgets to reinforce their cybersecurity infrastructure.",
+                          "exampleSentence":  "Multinational corporations are allocating huge budgets to reinforce their cybersecurity infrastructure.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "information security, digital defense, IT security",
+                          "antonyms":  "cyber vulnerability, security breach",
+                          "collocations":  "cybersecurity breach, enhance cybersecurity, cybersecurity threat",
+                          "note":  "Tiền tố cyber- (liên quan đến không gian mạng, máy tính)."
+                      },
+                      {
+                          "term":  "disruptive",
+                          "definition":  "Mang tính đột phá làm thay đổi hoàn toàn cục diện/ngành nghề truyền thống",
+                          "definitionVi":  "Mang tính đột phá làm thay đổi hoàn toàn cục diện/ngành nghề truyền thống",
+                          "phonetic":  "/dɪsˈrʌp.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Generative AI is a disruptive technology that poses unprecedented challenges to traditional creative sectors.",
+                          "exampleSentence":  "Generative AI is a disruptive technology that poses unprecedented challenges to traditional creative sectors.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "revolutionary, groundbreaking, radical, transformative",
+                          "antonyms":  "conservative, traditional, incremental",
+                          "collocations":  "disruptive technology, disruptive innovation, disruptive force",
+                          "note":  "Động từ: disrupt (làm gián đoạn/thay đổi căn bản). Danh từ: disruption."
+                      },
+                      {
+                          "term":  "algorithm",
+                          "definition":  "Thuật toán (tập hợp các quy tắc tính toán tuần tự để xử lý dữ liệu)",
+                          "definitionVi":  "Thuật toán (tập hợp các quy tắc tính toán tuần tự để xử lý dữ liệu)",
+                          "phonetic":  "/ˈæl.ɡə.rɪ.ðəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Social media platforms utilize sophisticated algorithms to predict user engagement and curate newsfeeds.",
+                          "exampleSentence":  "Social media platforms utilize sophisticated algorithms to predict user engagement and curate newsfeeds.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "computational rule, mathematical formula, program procedure",
+                          "antonyms":  "N/A",
+                          "collocations":  "search algorithm, complex algorithm, algorithmic bias, machine learning algorithm",
+                          "note":  "Trọng âm 1: AL-go-rithm. Tính từ: algorithmic."
+                      },
+                      {
+                          "term":  "obsolete",
+                          "definition":  "Lỗi thời, cổ lỗ sĩ và không còn được sử dụng nữa",
+                          "definitionVi":  "Lỗi thời, cổ lỗ sĩ và không còn được sử dụng nữa",
+                          "phonetic":  "/ˌɒb.səˈliːt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Rapid advancements in digital cloud storage have rendered physical floppy disks utterly obsolete.",
+                          "exampleSentence":  "Rapid advancements in digital cloud storage have rendered physical floppy disks utterly obsolete.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "outdated, outmoded, archaic, superseded, defunct",
+                          "antonyms":  "cutting-edge, modern, state-of-the-art, contemporary",
+                          "collocations":  "render something obsolete, become obsolete, obsolete technology",
+                          "note":  "Cụm từ rất hay trong Task 2: \u0027render something obsolete\u0027 (khiến cái gì trở nên lỗi thời)."
+                      },
+                      {
+                          "term":  "digital literacy",
+                          "definition":  "Năng lực công nghệ số (kỹ năng sử dụng, đánh giá thông tin trên môi trường số)",
+                          "definitionVi":  "Năng lực công nghệ số (kỹ năng sử dụng, đánh giá thông tin trên môi trường số)",
+                          "phonetic":  "/ˈdɪdʒ.ɪ.təl ˈlɪt.ər.ə.si/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Improving digital literacy among senior citizens prevents them from falling victim to sophisticated phishing scams.",
+                          "exampleSentence":  "Improving digital literacy among senior citizens prevents them from falling victim to sophisticated phishing scams.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "computer literacy, technological competency",
+                          "antonyms":  "digital illiteracy",
+                          "collocations":  "enhance digital literacy, lack of digital literacy, digital literacy skills",
+                          "note":  "Literacy = năng lực hiểu biết, khả năng đọc viết một lĩnh vực."
+                      },
+                      {
+                          "term":  "virtual",
+                          "definition":  "Ảo (được tạo ra bởi phần mềm máy tính, mô phỏng qua không gian mạng)",
+                          "definitionVi":  "Ảo (được tạo ra bởi phần mềm máy tính, mô phỏng qua không gian mạng)",
+                          "phonetic":  "/ˈvɜː.tʃu.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Virtual reality simulations allow aviation students to practice flight maneuvers in highly realistic conditions.",
+                          "exampleSentence":  "Virtual reality simulations allow aviation students to practice flight maneuvers in highly realistic conditions.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "simulated, computer-generated, digital, cyber",
+                          "antonyms":  "physical, tangible, real-world, in-person",
+                          "collocations":  "virtual reality, virtual classroom, virtual assistant, virtual meeting",
+                          "note":  "Trạng từ: virtually (hầu như, gần như = almost; hoặc theo hình thức ảo)."
+                      },
+                      {
+                          "term":  "autonomous vehicle",
+                          "definition":  "Xe tự hành (phương tiện di chuyển tự động lái hoàn toàn bằng AI)",
+                          "definitionVi":  "Xe tự hành (phương tiện di chuyển tự động lái hoàn toàn bằng AI)",
+                          "phonetic":  "/ɔːˈtɒn.ə.məs ˈvɪə.kəl/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Advocates argue that autonomous vehicles could drastically reduce traffic fatalities caused by human error.",
+                          "exampleSentence":  "Advocates argue that autonomous vehicles could drastically reduce traffic fatalities caused by human error.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "self-driving car, driverless vehicle, robotic car",
+                          "antonyms":  "human-operated vehicle, conventional car",
+                          "collocations":  "deploy autonomous vehicles, safety of autonomous vehicles, fleet of autonomous vehicles",
+                          "note":  "\u0027Vehicle\u0027 phát âm là /ˈvɪə.kəl/ hoặc /ˈviː.ə.kəl/ (chữ \u0027h\u0027 câm)."
+                      },
+                      {
+                          "term":  "urban sprawl",
+                          "definition":  "Sự mở rộng đô thị tự phát, tràn lan thiếu quy hoạch ra vùng ngoại ô",
+                          "definitionVi":  "Sự mở rộng đô thị tự phát, tràn lan thiếu quy hoạch ra vùng ngoại ô",
+                          "phonetic":  "/ˌɜː.bən ˈsprɔːl/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Unchecked urban sprawl encroaches upon fertile agricultural land and exacerbates traffic congestion.",
+                          "exampleSentence":  "Unchecked urban sprawl encroaches upon fertile agricultural land and exacerbates traffic congestion.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "uncontrolled suburbanization, metropolitan expansion",
+                          "antonyms":  "compact city, urban densification",
+                          "collocations":  "combat urban sprawl, consequences of urban sprawl, rapid urban sprawl",
+                          "note":  "\u0027Sprawl\u0027 (noun/verb) chỉ sự lan rộng, ngổn ngang mất kiểm soát."
+                      },
+                      {
+                          "term":  "gentrification",
+                          "definition":  "Quá trình chỉnh trang đô thị (cải tạo khu nghèo khiến giá nhà tăng, đẩy người nghèo đi nơi khác)",
+                          "definitionVi":  "Quá trình chỉnh trang đô thị (cải tạo khu nghèo khiến giá nhà tăng, đẩy người nghèo đi nơi khác)",
+                          "phonetic":  "/ˌdʒen.trɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "While gentrification revitalizes deteriorated neighborhoods, it often leads to the displacement of working-class residents.",
+                          "exampleSentence":  "While gentrification revitalizes deteriorated neighborhoods, it often leads to the displacement of working-class residents.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "urban renewal, urban upgrading, neighborhood redevelopment",
+                          "antonyms":  "urban decay, neighborhood decline",
+                          "collocations":  "process of gentrification, rapid gentrification, victims of gentrification",
+                          "note":  "Động từ: gentrify. Chủ đề chuyên sâu thường gặp trong IELTS Reading \u0026 Writing Task 2."
+                      },
+                      {
+                          "term":  "demographic shift",
+                          "definition":  "Sự chuyển dịch nhân khẩu học (thay đổi về cơ cấu tuổi tác, sinh đẻ trong dân số)",
+                          "definitionVi":  "Sự chuyển dịch nhân khẩu học (thay đổi về cơ cấu tuổi tác, sinh đẻ trong dân số)",
+                          "phonetic":  "/ˌdem.əˈɡræf.ɪk ʃɪft/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The demographic shift towards an aging population creates an acute shortage of labor in developed nations.",
+                          "exampleSentence":  "The demographic shift towards an aging population creates an acute shortage of labor in developed nations.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "population transition, demographic change",
+                          "antonyms":  "demographic stability",
+                          "collocations":  "major demographic shift, experience a demographic shift, demographic trends",
+                          "note":  "\u0027Demographics\u0027 là số liệu thống kê dân số. Tính từ: demographic."
+                      },
+                      {
+                          "term":  "infrastructure",
+                          "definition":  "Cơ sở hạ tầng (hệ thống giao thông, điện nước, thông tin liên lạc công cộng)",
+                          "definitionVi":  "Cơ sở hạ tầng (hệ thống giao thông, điện nước, thông tin liên lạc công cộng)",
+                          "phonetic":  "/ˈɪn.frəˌstrʌk.tʃər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Metropolitan authorities must invest heavily in transport infrastructure to alleviate severe traffic gridlock.",
+                          "exampleSentence":  "Metropolitan authorities must invest heavily in transport infrastructure to alleviate severe traffic gridlock.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "public amenities, basic framework, municipal facilities",
+                          "antonyms":  "superstructure",
+                          "collocations":  "transport infrastructure, modern infrastructure, upgrade infrastructure, green infrastructure",
+                          "note":  "Trọng âm 1: IN-fra-struc-ture. Danh từ không đếm được."
+                      },
+                      {
+                          "term":  "marginalize",
+                          "definition":  "Gạt ra ngoài lề xã hội, đẩy vào thế yếu và không được coi trọng",
+                          "definitionVi":  "Gạt ra ngoài lề xã hội, đẩy vào thế yếu và không được coi trọng",
+                          "phonetic":  "/ˈmɑː.dʒɪ.nəl.aɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Social welfare programs are designed to prevent low-income households from being marginalized in society.",
+                          "exampleSentence":  "Social welfare programs are designed to prevent low-income households from being marginalized in society.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "isolate, disenfranchise, sideline, alienate",
+                          "antonyms":  "integrate, empower, include",
+                          "collocations":  "marginalized groups, marginalized communities, economically marginalized",
+                          "note":  "Tính từ: marginalized (marginalized groups = các nhóm yếu thế trong xã hội)."
+                      },
+                      {
+                          "term":  "stratification",
+                          "definition":  "Sự phân tầng xã hội (sự phân chia giai cấp dựa trên tài sản và quyền lực)",
+                          "definitionVi":  "Sự phân tầng xã hội (sự phân chia giai cấp dựa trên tài sản và quyền lực)",
+                          "phonetic":  "/ˌstræt.ɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Widening income inequality deepens social stratification and reduces upward mobility for the youth.",
+                          "exampleSentence":  "Widening income inequality deepens social stratification and reduces upward mobility for the youth.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "social division, class hierarchy, social grading",
+                          "antonyms":  "egalitarianism, social equality",
+                          "collocations":  "social stratification, class stratification, degree of stratification",
+                          "note":  "Động từ: stratify / tính từ: stratified society (xã hội phân tầng)."
+                      },
+                      {
+                          "term":  "cohesion",
+                          "definition":  "Sự gắn kết xã hội, tinh thần đoàn kết keo sơn trong cộng đồng",
+                          "definitionVi":  "Sự gắn kết xã hội, tinh thần đoàn kết keo sơn trong cộng đồng",
+                          "phonetic":  "/kəʊˈhiː.ʒən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Community cultural activities and public spaces foster social cohesion among diverse ethnic groups.",
+                          "exampleSentence":  "Community cultural activities and public spaces foster social cohesion among diverse ethnic groups.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "unity, solidarity, harmony, togetherness",
+                          "antonyms":  "division, fragmentation, discord",
+                          "collocations":  "social cohesion, community cohesion, promote cohesion, lack of cohesion",
+                          "note":  "Tính từ: cohesive (a cohesive community). Dùng rất nhiều trong Task 2 Society."
+                      },
+                      {
+                          "term":  "dense",
+                          "definition":  "Dày đặc, đông đúc (mật độ dân số hoặc nhà cửa cao)",
+                          "definitionVi":  "Dày đặc, đông đúc (mật độ dân số hoặc nhà cửa cao)",
+                          "phonetic":  "/dens/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Densely populated urban centers often suffer from severe air pollution and lack of recreational parks.",
+                          "exampleSentence":  "Densely populated urban centers often suffer from severe air pollution and lack of recreational parks.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "crowded, congested, packed, highly concentrated",
+                          "antonyms":  "sparse, thinly populated, scattered",
+                          "collocations":  "densely populated, dense urban area, dense traffic",
+                          "note":  "Trạng từ: densely. Danh từ: density (population density = mật độ dân số)."
+                      },
+                      {
+                          "term":  "deprivation",
+                          "definition":  "Sự tước đoạt, tình trạng thiếu thốn trầm trọng các nhu cầu cơ bản",
+                          "definitionVi":  "Sự tước đoạt, tình trạng thiếu thốn trầm trọng các nhu cầu cơ bản",
+                          "phonetic":  "/ˌdep.rɪˈveɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Children growing up in severe economic deprivation often encounter significant cognitive and health obstacles.",
+                          "exampleSentence":  "Children growing up in severe economic deprivation often encounter significant cognitive and health obstacles.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "hardship, poverty, destitution, deficiency",
+                          "antonyms":  "affluence, privilege, abundance",
+                          "collocations":  "material deprivation, social deprivation, suffer deprivation, relative deprivation",
+                          "note":  "Động từ: deprive of something (tước đoạt cái gì của ai)."
+                      },
+                      {
+                          "term":  "gig economy",
+                          "definition":  "Nền kinh tế việc làm tự do (dựa trên các hợp đồng ngắn hạn, thời vụ qua ứng dụng số)",
+                          "definitionVi":  "Nền kinh tế việc làm tự do (dựa trên các hợp đồng ngắn hạn, thời vụ qua ứng dụng số)",
+                          "phonetic":  "/ˈɡɪɡ ɪˌkɒn.ə.mi/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The proliferation of the gig economy offers flexible work arrangements but lacks traditional employment protections.",
+                          "exampleSentence":  "The proliferation of the gig economy offers flexible work arrangements but lacks traditional employment protections.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "freelance economy, on-demand labor market",
+                          "antonyms":  "traditional employment, permanent contract",
+                          "collocations":  "rise of the gig economy, gig economy workers, participate in the gig economy",
+                          "note":  "\u0027Gig\u0027 ban đầu là buổi biểu diễn âm nhạc, nay chỉ công việc tự do thời vụ."
+                      },
+                      {
+                          "term":  "lucrative",
+                          "definition":  "Béo bở, sinh lợi cao, mang lại thu nhập tài chính dồi dào",
+                          "definitionVi":  "Béo bở, sinh lợi cao, mang lại thu nhập tài chính dồi dào",
+                          "phonetic":  "/ˈluː.krə.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Specializing in artificial intelligence software engineering has become an exceptionally lucrative career path.",
+                          "exampleSentence":  "Specializing in artificial intelligence software engineering has become an exceptionally lucrative career path.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "profitable, highly remunerative, high-paying, rewarding",
+                          "antonyms":  "unprofitable, low-paying, poorly rewarded",
+                          "collocations":  "lucrative career, lucrative business contract, lucrative market, lucrative opportunity",
+                          "note":  "Trọng âm 1: LU-cra-tive. Từ vựng ăn điểm thay thế cho \u0027well-paid\u0027 hoặc \u0027profitable\u0027."
+                      },
+                      {
+                          "term":  "telecommuting",
+                          "definition":  "Làm việc từ xa (làm việc tại nhà thông qua máy tính và Internet)",
+                          "definitionVi":  "Làm việc từ xa (làm việc tại nhà thông qua máy tính và Internet)",
+                          "phonetic":  "/ˌtel.ɪ.kəˈmjuː.tɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Telecommuting enables employees to maintain a healthier work-life balance while reducing commuting costs.",
+                          "exampleSentence":  "Telecommuting enables employees to maintain a healthier work-life balance while reducing commuting costs.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "remote work, working from home (WFH), telework",
+                          "antonyms":  "on-site work, office-based employment",
+                          "collocations":  "embrace telecommuting, telecommuting arrangement, telecommuting policy",
+                          "note":  "Người làm việc từ xa: telecommuter. Động từ: telecommute."
+                      },
+                      {
+                          "term":  "entrepreneurship",
+                          "definition":  "Tinh thần khởi nghiệp, hoạt động sáng lập và điều hành doanh nghiệp",
+                          "definitionVi":  "Tinh thần khởi nghiệp, hoạt động sáng lập và điều hành doanh nghiệp",
+                          "phonetic":  "/ˌɒn.trə.prəˈnɜː.ʃɪp/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Government grants encourage youth entrepreneurship in high-tech sectors to drive economic growth.",
+                          "exampleSentence":  "Government grants encourage youth entrepreneurship in high-tech sectors to drive economic growth.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "enterprise, business creation, venture initiative",
+                          "antonyms":  "N/A",
+                          "collocations":  "foster entrepreneurship, youth entrepreneurship, promote entrepreneurship",
+                          "note":  "Người khởi nghiệp: entrepreneur /ˌɒn.trə.prəˈnɜːr/ (trọng âm cuối). Tính từ: entrepreneurial."
+                      },
+                      {
+                          "term":  "downsizing",
+                          "definition":  "Sự cắt giảm quy mô nhân sự để tiết kiệm chi phí trong doanh nghiệp",
+                          "definitionVi":  "Sự cắt giảm quy mô nhân sự để tiết kiệm chi phí trong doanh nghiệp",
+                          "phonetic":  "/ˈdaʊnˌsaɪ.zɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Due to prolonged economic recession, the automotive corporation announced an aggressive downsizing program.",
+                          "exampleSentence":  "Due to prolonged economic recession, the automotive corporation announced an aggressive downsizing program.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "staff reduction, workforce layoff, retrenchment",
+                          "antonyms":  "expansion, recruitment, workforce growth",
+                          "collocations":  "corporate downsizing, corporate restructuring and downsizing, face downsizing",
+                          "note":  "Động từ: downsize (downsize the workforce = cắt giảm nhân sự)."
+                      },
+                      {
+                          "term":  "remuneration",
+                          "definition":  "Tiền thù lao, tiền lương và đãi ngộ xứng đáng cho công việc",
+                          "definitionVi":  "Tiền thù lao, tiền lương và đãi ngộ xứng đáng cho công việc",
+                          "phonetic":  "/rɪˌmjuː.nərˈeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Offering competitive remuneration packages is essential for multinational firms to retain top executive talent.",
+                          "exampleSentence":  "Offering competitive remuneration packages is essential for multinational firms to retain top executive talent.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "salary, compensation, earnings, wage package",
+                          "antonyms":  "N/A",
+                          "collocations":  "remuneration package, financial remuneration, fair remuneration",
+                          "note":  "Tính từ: remunerative (sinh lợi, trả lương cao). Dùng thay cho \u0027salary\u0027 trong bài luận Task 2."
+                      },
+                      {
+                          "term":  "upskill",
+                          "definition":  "Nâng cao tay nghề, học thêm các kỹ năng mới cao cấp hơn",
+                          "definitionVi":  "Nâng cao tay nghề, học thêm các kỹ năng mới cao cấp hơn",
+                          "phonetic":  "/ˌʌpˈskɪl/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Mid-career employees must continuously upskill in data analytics and cloud tools to avoid obsolescence.",
+                          "exampleSentence":  "Mid-career employees must continuously upskill in data analytics and cloud tools to avoid obsolescence.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "enhance skills, reskill, upgrade competencies, retrain",
+                          "antonyms":  "deskill, stagnate",
+                          "collocations":  "upskill the workforce, upskill employees, opportunities to upskill",
+                          "note":  "Đi kèm cặp với \u0027reskill\u0027 (đào tạo lại kỹ năng để chuyển nghề)."
+                      },
+                      {
+                          "term":  "fiscal",
+                          "definition":  "Thuộc về tài chính công, ngân sách và thuế khóa của chính phủ",
+                          "definitionVi":  "Thuộc về tài chính công, ngân sách và thuế khóa của chính phủ",
+                          "phonetic":  "/ˈfɪs.kəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The ministry introduced expansionary fiscal policies to stimulate consumer demand and business investments.",
+                          "exampleSentence":  "The ministry introduced expansionary fiscal policies to stimulate consumer demand and business investments.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "financial, monetary, budgetary, revenue",
+                          "antonyms":  "N/A",
+                          "collocations":  "fiscal policy, fiscal stimulus, fiscal deficit, fiscal year",
+                          "note":  "Phân biệt: fiscal policy (chính sách tài khóa) vs monetary policy (chính sách tiền tệ)."
+                      },
+                      {
+                          "term":  "inflation",
+                          "definition":  "Lạm phát (sự tăng giá liên tục của hàng hóa làm giảm sức mua của đồng tiền)",
+                          "definitionVi":  "Lạm phát (sự tăng giá liên tục của hàng hóa làm giảm sức mua của đồng tiền)",
+                          "phonetic":  "/ɪnˈfleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Spiraling inflation erodes the real purchasing power of middle-income households.",
+                          "exampleSentence":  "Spiraling inflation erodes the real purchasing power of middle-income households.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Work \u0026 Economy",
+                          "synonyms":  "price increase, economic overheating",
+                          "antonyms":  "deflation (giảm phát)",
+                          "collocations":  "curb inflation, inflation rate, soaring inflation, combat inflation",
+                          "note":  "Tính từ: inflationary (inflationary pressure = áp lực lạm phát)."
+                      },
+                      {
+                          "term":  "sedentary",
+                          "definition":  "Thụ động, ngồi nhiều một chỗ và ít vận động thể chất",
+                          "definitionVi":  "Thụ động, ngồi nhiều một chỗ và ít vận động thể chất",
+                          "phonetic":  "/ˈsed.ən.tər.i/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Adopting a sedentary lifestyle is a leading contributor to cardiovascular disease and obesity in desk workers.",
+                          "exampleSentence":  "Adopting a sedentary lifestyle is a leading contributor to cardiovascular disease and obesity in desk workers.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "inactive, seated, desk-bound, motionless",
+                          "antonyms":  "active, dynamic, energetic, vigorous",
+                          "collocations":  "sedentary lifestyle, sedentary job, sedentary behavior",
+                          "note":  "Thường xuyên xuất hiện trong các bài IELTS Task 2 về sức khỏe và lối sống."
+                      },
+                      {
+                          "term":  "longevity",
+                          "definition":  "Tuổi thọ cao, sự sống lâu",
+                          "definitionVi":  "Tuổi thọ cao, sự sống lâu",
+                          "phonetic":  "/lɒnˈdʒev.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "A Mediterranean diet rich in fresh vegetables, fish, and olive oil is strongly correlated with increased longevity.",
+                          "exampleSentence":  "A Mediterranean diet rich in fresh vegetables, fish, and olive oil is strongly correlated with increased longevity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "long life, lifespan, life expectancy",
+                          "antonyms":  "short lifespan, premature mortality",
+                          "collocations":  "promote longevity, secret to longevity, human longevity, exceptional longevity",
+                          "note":  "Gốc từ \u0027long\u0027 -\u003e tính từ \u0027long-lived\u0027 -\u003e danh từ \u0027longevity\u0027. Trọng âm 2."
+                      },
+                      {
+                          "term":  "chronic",
+                          "definition":  "Mãn tính, kinh niên (bệnh tật hoặc tình trạng kéo dài dai dẳng khó chữa)",
+                          "definitionVi":  "Mãn tính, kinh niên (bệnh tật hoặc tình trạng kéo dài dai dẳng khó chữa)",
+                          "phonetic":  "/ˈkrɒn.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Preventive healthcare aims to lower the incidence of chronic illnesses such as diabetes and hypertension.",
+                          "exampleSentence":  "Preventive healthcare aims to lower the incidence of chronic illnesses such as diabetes and hypertension.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "long-lasting, persistent, incurable, recurring",
+                          "antonyms":  "acute (cấp tính), temporary, transient",
+                          "collocations":  "chronic illness, chronic disease, chronic pain, chronic stress",
+                          "note":  "Trái nghĩa y khoa: acute /əˈkjuːt/ (cấp tính, phát tác nhanh)."
+                      },
+                      {
+                          "term":  "epidemic",
+                          "definition":  "Bệnh dịch lây lan nhanh trong một cộng đồng / Mang tính dịch bệnh",
+                          "definitionVi":  "Bệnh dịch lây lan nhanh trong một cộng đồng / Mang tính dịch bệnh",
+                          "phonetic":  "/ˌep.ɪˈdem.ɪk/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "Health authorities launched a nationwide vaccination drive to contain the measles epidemic.",
+                          "exampleSentence":  "Health authorities launched a nationwide vaccination drive to contain the measles epidemic.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "outbreak, plague, widespread contagion",
+                          "antonyms":  "endemic (bản địa), eradication",
+                          "collocations":  "epidemic outbreak, childhood obesity epidemic, contain an epidemic",
+                          "note":  "Phân biệt: epidemic (dịch bệnh khu vực) \u0026 pandemic (đại dịch toàn cầu)."
+                      },
+                      {
+                          "term":  "immune system",
+                          "definition":  "Hệ miễn dịch (hệ thống tế bào bảo vệ cơ thể chống lại vi khuẩn và mầm bệnh)",
+                          "definitionVi":  "Hệ miễn dịch (hệ thống tế bào bảo vệ cơ thể chống lại vi khuẩn và mầm bệnh)",
+                          "phonetic":  "/ɪˈmjuːn ˌsɪs.təm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Adequate sleep and nutritious meals are essential to boost the immune system against viral infections.",
+                          "exampleSentence":  "Adequate sleep and nutritious meals are essential to boost the immune system against viral infections.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "body defense system, immunity",
+                          "antonyms":  "immunodeficiency",
+                          "collocations":  "boost the immune system, weaken the immune system, robust immune system",
+                          "note":  "Tính từ: immune (immune to disease = miễn nhiễm với bệnh tật)."
+                      },
+                      {
+                          "term":  "obesity",
+                          "definition":  "Bệnh béo phì (tình trạng tích tụ mỡ thừa nghiêm trọng ảnh hưởng xấu tới sức khỏe)",
+                          "definitionVi":  "Bệnh béo phì (tình trạng tích tụ mỡ thừa nghiêm trọng ảnh hưởng xấu tới sức khỏe)",
+                          "phonetic":  "/əʊˈbiː.sə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The alarming surge in childhood obesity is largely attributed to excessive consumption of sugary soft drinks.",
+                          "exampleSentence":  "The alarming surge in childhood obesity is largely attributed to excessive consumption of sugary soft drinks.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "corpulence, extreme overweight, fatness",
+                          "antonyms":  "underweight, slimness, fitness",
+                          "collocations":  "childhood obesity, tackle obesity, combat obesity, obesity epidemic",
+                          "note":  "Tính từ: obese /əʊˈbiːs/ (an obese patient)."
+                      },
+                      {
+                          "term":  "rehabilitation",
+                          "definition":  "Sự phục hồi chức năng sau chấn thương hoặc cai nghiện, hòa nhập lại cộng đồng",
+                          "definitionVi":  "Sự phục hồi chức năng sau chấn thương hoặc cai nghiện, hòa nhập lại cộng đồng",
+                          "phonetic":  "/ˌriː.həˌbɪl.ɪˈteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Physical therapy and cardiac rehabilitation allow stroke patients to regain mobility and independence.",
+                          "exampleSentence":  "Physical therapy and cardiac rehabilitation allow stroke patients to regain mobility and independence.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "recovery, recuperation, restorative therapy",
+                          "antonyms":  "relapse, degeneration",
+                          "collocations":  "undergo rehabilitation, rehabilitation center, post-surgery rehabilitation",
+                          "note":  "Viết tắt khẩu ngữ: rehab (in rehab). Động từ: rehabilitate."
+                      },
+                      {
+                          "term":  "nutritious",
+                          "definition":  "Bổ dưỡng, giàu chất dinh dưỡng có lợi cho cơ thể",
+                          "definitionVi":  "Bổ dưỡng, giàu chất dinh dưỡng có lợi cho cơ thể",
+                          "phonetic":  "/njuːˈtrɪʃ.əs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Providing free nutritious school lunches ensures that underprivileged pupils receive sufficient daily vitamins.",
+                          "exampleSentence":  "Providing free nutritious school lunches ensures that underprivileged pupils receive sufficient daily vitamins.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "nourishing, wholesome, nutrient-dense",
+                          "antonyms":  "unhealthy, junk food, nutritionally deficient",
+                          "collocations":  "nutritious meal, highly nutritious, nutritious diet",
+                          "note":  "Danh từ: nutrition (chế độ dinh dưỡng) / nutrient (chất dinh dưỡng)."
+                      },
+                      {
+                          "term":  "psychological",
+                          "definition":  "Thuộc về tâm lý, tinh thần và cảm xúc con người",
+                          "definitionVi":  "Thuộc về tâm lý, tinh thần và cảm xúc con người",
+                          "phonetic":  "/ˌsaɪ.kəˈlɒdʒ.ɪ.kəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Workplace harassment causes severe psychological distress and impairs employee productivity.",
+                          "exampleSentence":  "Workplace harassment causes severe psychological distress and impairs employee productivity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Well-being",
+                          "synonyms":  "mental, emotional, cognitive, psychic",
+                          "antonyms":  "physical, somatic, physiological",
+                          "collocations":  "psychological distress, psychological counseling, psychological impact",
+                          "note":  "Chữ \u0027p\u0027 ở đầu là âm câm: phát âm là /ˌsaɪ.kəˈlɒdʒ.ɪ.kəl/. Danh từ: psychology."
+                      },
+                      {
+                          "term":  "acculturation",
+                          "definition":  "Sự tiếp biến văn hóa (quá trình tiếp thu các yếu tố văn hóa mới khi hai nền văn hóa tiếp xúc)",
+                          "definitionVi":  "Sự tiếp biến văn hóa (quá trình tiếp thu các yếu tố văn hóa mới khi hai nền văn hóa tiếp xúc)",
+                          "phonetic":  "/əˌkʌl.tʃəˈreɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Acculturation allows immigrants to adapt to host society norms while preserving their native customs.",
+                          "exampleSentence":  "Acculturation allows immigrants to adapt to host society norms while preserving their native customs.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "cultural adaptation, intercultural assimilation",
+                          "antonyms":  "cultural segregation, cultural alienation",
+                          "collocations":  "process of acculturation, cross-cultural acculturation, levels of acculturation",
+                          "note":  "Thuật ngữ nhân học văn hóa nâng cao rất ăn điểm trong Writing Task 2 về globalization."
+                      },
+                      {
+                          "term":  "cultural heritage",
+                          "definition":  "Di sản văn hóa (những giá trị vật thể và phi vật thể truyền qua các thế hệ)",
+                          "definitionVi":  "Di sản văn hóa (những giá trị vật thể và phi vật thể truyền qua các thế hệ)",
+                          "phonetic":  "/ˌkʌl.tʃər.əl ˈher.ɪ.tɪdʒ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Hoi An Ancient Town was recognized by UNESCO as an exceptional World Cultural Heritage site.",
+                          "exampleSentence":  "Hoi An Ancient Town was recognized by UNESCO as an exceptional World Cultural Heritage site.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "cultural legacy, historical patrimony",
+                          "antonyms":  "modern innovation",
+                          "collocations":  "tangible cultural heritage, intangible cultural heritage, preserve cultural heritage",
+                          "note":  "Phân biệt: tangible heritage (di sản vật thể) \u0026 intangible heritage (di sản phi vật thể)."
+                      },
+                      {
+                          "term":  "assimilation",
+                          "definition":  "Sự đồng hóa văn hóa (quá trình hòa tan hoàn toàn vào văn hóa của cộng đồng đa số)",
+                          "definitionVi":  "Sự đồng hóa văn hóa (quá trình hòa tan hoàn toàn vào văn hóa của cộng đồng đa số)",
+                          "phonetic":  "/əˌsɪm.ɪˈleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Forced cultural assimilation historically led to the gradual erosion of indigenous languages.",
+                          "exampleSentence":  "Forced cultural assimilation historically led to the gradual erosion of indigenous languages.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "cultural absorption, integration, incorporation",
+                          "antonyms":  "cultural preservation, diversity",
+                          "collocations":  "cultural assimilation, rapid assimilation, resist assimilation",
+                          "note":  "Động từ: assimilate into (hòa nhập, đồng hóa vào)."
+                      },
+                      {
+                          "term":  "ethnocentrism",
+                          "definition":  "Chủ nghĩa vị chủng (thái độ tự coi văn hóa của dân tộc mình là ưu việt hơn tất cả)",
+                          "definitionVi":  "Chủ nghĩa vị chủng (thái độ tự coi văn hóa của dân tộc mình là ưu việt hơn tất cả)",
+                          "phonetic":  "/ˌeθ.nəʊˈsen.trɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Global citizenship education aims to dismantle ethnocentrism and cultivate mutual tolerance.",
+                          "exampleSentence":  "Global citizenship education aims to dismantle ethnocentrism and cultivate mutual tolerance.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "cultural chauvinism, xenophobia, cultural superiority",
+                          "antonyms":  "cultural relativism, cosmopolitanism, open-mindedness",
+                          "collocations":  "overcome ethnocentrism, danger of ethnocentrism, ethnocentric attitude",
+                          "note":  "Tính từ: ethnocentric /ˌeθ.nəʊˈsen.trɪk/."
+                      },
+                      {
+                          "term":  "intangible",
+                          "definition":  "Phi vật thể, vô hình, không thể sờ nắm được bằng tay",
+                          "definitionVi":  "Phi vật thể, vô hình, không thể sờ nắm được bằng tay",
+                          "phonetic":  "/ɪnˈtæn.dʒə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Traditional folk songs and epic storytelling are priceless forms of intangible cultural heritage.",
+                          "exampleSentence":  "Traditional folk songs and epic storytelling are priceless forms of intangible cultural heritage.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "immaterial, non-physical, untouchable, abstract",
+                          "antonyms":  "tangible, material, physical, concrete",
+                          "collocations":  "intangible cultural heritage, intangible asset, intangible value",
+                          "note":  "Trái nghĩa: tangible /ˈtæn.dʒə.bəl/ (hữu hình, vật thể)."
+                      },
+                      {
+                          "term":  "homogenization",
+                          "definition":  "Sự đồng nhất hóa văn hóa (hiện tượng các nền văn hóa địa phương dần trở nên giống hệt nhau)",
+                          "definitionVi":  "Sự đồng nhất hóa văn hóa (hiện tượng các nền văn hóa địa phương dần trở nên giống hệt nhau)",
+                          "phonetic":  "/həˌmɒdʒ.ə.naɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Critics argue that globalization fuels cultural homogenization, threatening unique local traditions.",
+                          "exampleSentence":  "Critics argue that globalization fuels cultural homogenization, threatening unique local traditions.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "cultural standardization, uniformity, Americanization",
+                          "antonyms":  "cultural diversification, heterogeneity",
+                          "collocations":  "cultural homogenization, resist homogenization, global homogenization",
+                          "note":  "Tính từ: homogeneous /ˌhəʊ.məˈdʒiː.ni.əs/ (đồng nhất). Động từ: homogenize."
+                      },
+                      {
+                          "term":  "cosmopolitan",
+                          "definition":  "Mang tính quốc tế, đa văn hóa (nơi có người từ khắp nơi trên thế giới sinh sống)",
+                          "definitionVi":  "Mang tính quốc tế, đa văn hóa (nơi có người từ khắp nơi trên thế giới sinh sống)",
+                          "phonetic":  "/ˌkɒz.məˈpɒl.ɪ.tən/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Singapore and London are renowned cosmopolitan hubs celebrated for their multicultural cuisines and lifestyles.",
+                          "exampleSentence":  "Singapore and London are renowned cosmopolitan hubs celebrated for their multicultural cuisines and lifestyles.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "international, multicultural, global, worldly",
+                          "antonyms":  "provincial, insular, narrow-minded, parochial",
+                          "collocations":  "cosmopolitan city, cosmopolitan atmosphere, cosmopolitan lifestyle",
+                          "note":  "Danh từ: cosmopolitan (người có lối sống quốc tế)."
+                      },
+                      {
+                          "term":  "preservation",
+                          "definition":  "Sự bảo tồn, gìn giữ di tích, văn hóa hoặc thiên nhiên nguyên vẹn",
+                          "definitionVi":  "Sự bảo tồn, gìn giữ di tích, văn hóa hoặc thiên nhiên nguyên vẹn",
+                          "phonetic":  "/ˌprez.əˈveɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The municipal government allocated funds for the historical preservation of ancient colonial architecture.",
+                          "exampleSentence":  "The municipal government allocated funds for the historical preservation of ancient colonial architecture.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "conservation, protection, safeguarding, maintenance",
+                          "antonyms":  "destruction, demolition, neglect",
+                          "collocations":  "historical preservation, cultural preservation, preservation of wildlife",
+                          "note":  "Động từ: preserve /prɪˈzɜːv/. Người làm bảo tồn: preservationist."
+                      },
+                      {
+                          "term":  "authentic",
+                          "definition":  "Đích thực, nguyên bản, chuẩn xác theo truyền thống gốc",
+                          "definitionVi":  "Đích thực, nguyên bản, chuẩn xác theo truyền thống gốc",
+                          "phonetic":  "/ɔːˈθen.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "International tourists flock to traditional craft villages to experience authentic artisanal pottery making.",
+                          "exampleSentence":  "International tourists flock to traditional craft villages to experience authentic artisanal pottery making.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Culture \u0026 Heritage",
+                          "synonyms":  "genuine, original, bona fide, legitimate",
+                          "antonyms":  "fake, counterfeit, imitation, artificial",
+                          "collocations":  "authentic experience, authentic cuisine, authentic artifacts, prove authentic",
+                          "note":  "Danh từ: authenticity /ˌɔː.θenˈtɪs.ə.ti/ (tính chân thực, tính nguyên bản)."
+                      },
+                      {
+                          "term":  "deterrent",
+                          "definition":  "Biện pháp răn đe, yếu tố ngăn chặn hành vi phạm tội",
+                          "definitionVi":  "Biện pháp răn đe, yếu tố ngăn chặn hành vi phạm tội",
+                          "phonetic":  "/dɪˈter.ənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Criminologists debate whether capital punishment acts as an effective deterrent against violent crime.",
+                          "exampleSentence":  "Criminologists debate whether capital punishment acts as an effective deterrent against violent crime.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "disincentive, discouragement, curb, check, restraint",
+                          "antonyms":  "incentive, encouragement, catalyst",
+                          "collocations":  "effective deterrent, act as a deterrent, strong deterrent, nuclear deterrent",
+                          "note":  "Động từ: deter /dɪˈtɜːr/ (deter someone from doing something = ngăn cản ai làm gì)."
+                      },
+                      {
+                          "term":  "rehabilitation",
+                          "definition":  "Sự cải tạo, giáo dục phục hồi nhân phẩm để người phạm tội tái hòa nhập cộng đồng",
+                          "definitionVi":  "Sự cải tạo, giáo dục phục hồi nhân phẩm để người phạm tội tái hòa nhập cộng đồng",
+                          "phonetic":  "/ˌriː.həˌbɪl.ɪˈteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Penal reformers argue that prisons should prioritize education and vocational rehabilitation over mere retribution.",
+                          "exampleSentence":  "Penal reformers argue that prisons should prioritize education and vocational rehabilitation over mere retribution.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "reintegration, reformation, restorative justice",
+                          "antonyms":  "punishment, retribution, recidivism",
+                          "collocations":  "prison rehabilitation, rehabilitation program, facilitate rehabilitation",
+                          "note":  "Chủ đề muôn thuở trong Task 2 Crime: \u0027Punishment vs. Rehabilitation\u0027."
+                      },
+                      {
+                          "term":  "recidivism",
+                          "definition":  "Tỷ lệ tái phạm tội (hành vi ngựa quen đường cũ, phạm tội trở lại sau khi ra tù)",
+                          "definitionVi":  "Tỷ lệ tái phạm tội (hành vi ngựa quen đường cũ, phạm tội trở lại sau khi ra tù)",
+                          "phonetic":  "/rɪˈsɪd.ɪ.vɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Providing former inmates with vocational skills significantly reduces rates of criminal recidivism.",
+                          "exampleSentence":  "Providing former inmates with vocational skills significantly reduces rates of criminal recidivism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "relapse into crime, reoffending rate, repeat offending",
+                          "antonyms":  "complete rehabilitation, desistance",
+                          "collocations":  "high rate of recidivism, curb recidivism, reduce recidivism",
+                          "note":  "Người tái phạm tội: recidivist /rɪˈsɪd.ɪ.vɪst/ (repeat offender)."
+                      },
+                      {
+                          "term":  "juvenile delinquency",
+                          "definition":  "Tội phạm vị thành niên (hành vi vi phạm pháp luật của thanh thiếu niên)",
+                          "definitionVi":  "Tội phạm vị thành niên (hành vi vi phạm pháp luật của thanh thiếu niên)",
+                          "phonetic":  "/ˈdʒuː.vən.aɪl dɪˈlɪŋ.kwən.si/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Family breakdown and peer pressure are considered prominent drivers of juvenile delinquency in urban hubs.",
+                          "exampleSentence":  "Family breakdown and peer pressure are considered prominent drivers of juvenile delinquency in urban hubs.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "youth crime, underage offending, teenage criminality",
+                          "antonyms":  "youth lawfulness, civic obedience",
+                          "collocations":  "combat juvenile delinquency, rise in juvenile delinquency, juvenile delinquency prevention",
+                          "note":  "Người phạm tội vị thành niên: juvenile delinquent."
+                      },
+                      {
+                          "term":  "capital punishment",
+                          "definition":  "Án tử hình, hình phạt tước đoạt tính mạng người phạm tội",
+                          "definitionVi":  "Án tử hình, hình phạt tước đoạt tính mạng người phạm tội",
+                          "phonetic":  "/ˌkæp.ɪ.təl ˈpʌn.ɪʃ.mənt/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Many human rights advocacy organizations campaign tirelessly for the global abolition of capital punishment.",
+                          "exampleSentence":  "Many human rights advocacy organizations campaign tirelessly for the global abolition of capital punishment.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "death penalty, execution",
+                          "antonyms":  "life imprisonment, non-custodial sentence",
+                          "collocations":  "abolish capital punishment, enforce capital punishment, debate on capital punishment",
+                          "note":  "Đồng nghĩa với \u0027the death penalty\u0027. Cụm \u0027abolish capital punishment\u0027 = bãi bỏ án tử hình."
+                      },
+                      {
+                          "term":  "cybercrime",
+                          "definition":  "Tội phạm công nghệ cao, hành vi phạm tội trên không gian mạng",
+                          "definitionVi":  "Tội phạm công nghệ cao, hành vi phạm tội trên không gian mạng",
+                          "phonetic":  "/ˈsaɪ.bə.kraɪm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Police forces are collaborating across borders to crack down on identity theft and financial cybercrime.",
+                          "exampleSentence":  "Police forces are collaborating across borders to crack down on identity theft and financial cybercrime.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "digital crime, computer-oriented crime, internet fraud",
+                          "antonyms":  "N/A",
+                          "collocations":  "fight cybercrime, victim of cybercrime, surge in cybercrime, cybercrime syndicate",
+                          "note":  "Kẻ phạm tội trên mạng: cybercriminal."
+                      },
+                      {
+                          "term":  "legislation",
+                          "definition":  "Hệ thống pháp luật, luật pháp được quốc hội/nghị viện ban hành",
+                          "definitionVi":  "Hệ thống pháp luật, luật pháp được quốc hội/nghị viện ban hành",
+                          "phonetic":  "/ˌledʒ.ɪˈsleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Parliament introduced strict environmental legislation to heavily penalize illegal chemical dumping.",
+                          "exampleSentence":  "Parliament introduced strict environmental legislation to heavily penalize illegal chemical dumping.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "law, statutes, statutory regulations, legal enactments",
+                          "antonyms":  "lawlessness, anarchy",
+                          "collocations":  "enact legislation, pass legislation, introduce legislation, environmental legislation",
+                          "note":  "Động từ: legislate (lập pháp). Cơ quan lập pháp: legislature."
+                      },
+                      {
+                          "term":  "illicit",
+                          "definition":  "Bất hợp pháp, bị pháp luật hoặc chuẩn mực xã hội nghiêm cấm",
+                          "definitionVi":  "Bất hợp pháp, bị pháp luật hoặc chuẩn mực xã hội nghiêm cấm",
+                          "phonetic":  "/ɪˈlɪs.ɪt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Customs officers seized a massive consignment of illicit drugs at the international border checkpoint.",
+                          "exampleSentence":  "Customs officers seized a massive consignment of illicit drugs at the international border checkpoint.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "illegal, unlawful, prohibited, illegitimate, contraband",
+                          "antonyms":  "licit, legal, lawful, authorized",
+                          "collocations":  "illicit trade, illicit drugs, illicit activities, illicit trafficking",
+                          "note":  "Trọng âm 2: il-LIC-it. Dùng thay thế cực sang cho từ \u0027illegal\u0027."
+                      },
+                      {
+                          "term":  "incarcerate",
+                          "definition":  "Tống giam, bắt bỏ tù người phạm tội",
+                          "definitionVi":  "Tống giam, bắt bỏ tù người phạm tội",
+                          "phonetic":  "/ɪnˈkɑː.sər.eɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Courts decided to incarcerate the convicted corrupt officials for twenty years in maximum security.",
+                          "exampleSentence":  "Courts decided to incarcerate the convicted corrupt officials for twenty years in maximum security.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Justice",
+                          "synonyms":  "imprison, jail, confine, detain",
+                          "antonyms":  "release, liberate, parole, acquit",
+                          "collocations":  "incarcerate criminals, sentenced to be incarcerated",
+                          "note":  "Danh từ: incarceration (sự giam giữ, việc bỏ tù). Tỷ lệ bỏ tù: incarceration rate."
+                      },
+                      {
+                          "term":  "misinformation",
+                          "definition":  "Thông tin sai lệch (thông tin không chính xác do sơ suất hoặc chia sẻ thiếu kiểm chứng)",
+                          "definitionVi":  "Thông tin sai lệch (thông tin không chính xác do sơ suất hoặc chia sẻ thiếu kiểm chứng)",
+                          "phonetic":  "/ˌmɪs.ɪn.fəˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "During public health crises, health agencies must actively debunk medical misinformation circulating on social networks.",
+                          "exampleSentence":  "During public health crises, health agencies must actively debunk medical misinformation circulating on social networks.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "fake news, false information, inaccurate report",
+                          "antonyms":  "fact, verified truth, accurate information",
+                          "collocations":  "spread misinformation, combat misinformation, rampant misinformation",
+                          "note":  "Phân biệt: misinformation (tin sai vô ý) \u0026 disinformation (tin giả cố ý bịa đặt nhằm lừa đảo)."
+                      },
+                      {
+                          "term":  "censorship",
+                          "definition":  "Sự kiểm duyệt nội dung (hành động thẩm tra và cắt bỏ nội dung nhạy cảm/độc hại)",
+                          "definitionVi":  "Sự kiểm duyệt nội dung (hành động thẩm tra và cắt bỏ nội dung nhạy cảm/độc hại)",
+                          "phonetic":  "/ˈsen.sə.ʃɪp/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Democratic societies grapple with finding an optimal balance between media censorship and freedom of speech.",
+                          "exampleSentence":  "Democratic societies grapple with finding an optimal balance between media censorship and freedom of speech.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "editorial suppression, information filtering, content control",
+                          "antonyms":  "freedom of expression, free press, uncensored media",
+                          "collocations":  "strict censorship, impose censorship, media censorship, evade censorship",
+                          "note":  "Động từ: censor (kiểm duyệt). Người kiểm duyệt: censor."
+                      },
+                      {
+                          "term":  "sensationalism",
+                          "definition":  "Khuynh hướng giật gân, câu khách (thủ pháp thổi phồng giật gân trên báo chí)",
+                          "definitionVi":  "Khuynh hướng giật gân, câu khách (thủ pháp thổi phồng giật gân trên báo chí)",
+                          "phonetic":  "/senˈseɪ.ʃən.əl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Critics accuse tabloid newspapers of relying on sensationalism and celebrity gossip rather than investigative journalism.",
+                          "exampleSentence":  "Critics accuse tabloid newspapers of relying on sensationalism and celebrity gossip rather than investigative journalism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "yellow journalism, melodrama, exaggeration, hype",
+                          "antonyms":  "objective journalism, factual accuracy",
+                          "collocations":  "media sensationalism, resort to sensationalism, accused of sensationalism",
+                          "note":  "Tính từ: sensational (giật gân, gây chấn động)."
+                      },
+                      {
+                          "term":  "media literacy",
+                          "definition":  "Năng lực hiểu biết truyền thông (kỹ năng tiếp nhận, đánh giá phản biện tin tức số)",
+                          "definitionVi":  "Năng lực hiểu biết truyền thông (kỹ năng tiếp nhận, đánh giá phản biện tin tức số)",
+                          "phonetic":  "/ˈmiː.di.ə ˈlɪt.ər.ə.si/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Equipping youth with media literacy skills enables them to critically evaluate online advertising and political propaganda.",
+                          "exampleSentence":  "Equipping youth with media literacy skills enables them to critically evaluate online advertising and political propaganda.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "critical media awareness, digital information literacy",
+                          "antonyms":  "media gullibility, digital illiteracy",
+                          "collocations":  "teach media literacy, media literacy curriculum, lack of media literacy",
+                          "note":  "Kỹ năng thiết yếu của thế kỷ 21 trong mọi bài thi Speaking \u0026 Writing."
+                      },
+                      {
+                          "term":  "propaganda",
+                          "definition":  "Sự tuyên truyền (thông tin mang tính định hướng một chiều nhằm lôi kéo dư luận)",
+                          "definitionVi":  "Sự tuyên truyền (thông tin mang tính định hướng một chiều nhằm lôi kéo dư luận)",
+                          "phonetic":  "/ˌprɒp.əˈɡæn.də/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Authoritarian regimes historically deployed radio broadcasts as powerful instruments of political propaganda.",
+                          "exampleSentence":  "Authoritarian regimes historically deployed radio broadcasts as powerful instruments of political propaganda.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "indoctrination, state advocacy, biased messaging, disinformation",
+                          "antonyms":  "impartial reporting, objective truth",
+                          "collocations":  "political propaganda, disseminate propaganda, anti-war propaganda",
+                          "note":  "Danh từ không đếm được. Người tuyên truyền: propagandist."
+                      },
+                      {
+                          "term":  "endorsement",
+                          "definition":  "Sự bảo chứng, quảng bá sản phẩm của người nổi tiếng",
+                          "definitionVi":  "Sự bảo chứng, quảng bá sản phẩm của người nổi tiếng",
+                          "phonetic":  "/ɪnˈdɔːs.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Luxury fashion brands invest millions securing celebrity endorsements to boost product credibility among consumers.",
+                          "exampleSentence":  "Luxury fashion brands invest millions securing celebrity endorsements to boost product credibility among consumers.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "sponsorship, celebrity testimonial, advocacy, backing",
+                          "antonyms":  "condemnation, disapproval",
+                          "collocations":  "celebrity endorsement, product endorsement, commercial endorsement",
+                          "note":  "Động từ: endorse (quảng cáo, chứng thực sản phẩm)."
+                      },
+                      {
+                          "term":  "credible",
+                          "definition":  "Đáng tin cậy, có căn cứ xác thực và có thể tin tưởng được",
+                          "definitionVi":  "Đáng tin cậy, có căn cứ xác thực và có thể tin tưởng được",
+                          "phonetic":  "/ˈkred.ə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Academic researchers must verify that their citations originate exclusively from credible peer-reviewed journals.",
+                          "exampleSentence":  "Academic researchers must verify that their citations originate exclusively from credible peer-reviewed journals.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "reliable, trustworthy, dependable, authoritative, valid",
+                          "antonyms":  "incredible, untrustworthy, dubious, suspicious",
+                          "collocations":  "credible source, credible evidence, highly credible, prove credible",
+                          "note":  "Danh từ: credibility (sự tin cậy, uy tín). Tránh nhầm với \u0027credulous\u0027 (cả tin)."
+                      },
+                      {
+                          "term":  "consumerism",
+                          "definition":  "Chủ nghĩa tiêu dùng (lối sống và tư tưởng khuyến khích mua sắm vật chất quá mức)",
+                          "definitionVi":  "Chủ nghĩa tiêu dùng (lối sống và tư tưởng khuyến khích mua sắm vật chất quá mức)",
+                          "phonetic":  "/kənˈsjuː.mə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Aggressive commercial advertising fuels rampant consumerism, leading to excessive waste generation.",
+                          "exampleSentence":  "Aggressive commercial advertising fuels rampant consumerism, leading to excessive waste generation.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "materialism, overconsumption, shopping culture",
+                          "antonyms":  "asceticism, minimalism, frugality",
+                          "collocations":  "rampant consumerism, fuel consumerism, culture of consumerism",
+                          "note":  "Chủ đề cực hay trong Task 2 Writing: Materialism \u0026 Consumerism."
+                      },
+                      {
+                          "term":  "clickbait",
+                          "definition":  "Mồi câu nhấp chuột (tiêu đề giật gân, phóng đại nhằm câu view trên mạng)",
+                          "definitionVi":  "Mồi câu nhấp chuột (tiêu đề giật gân, phóng đại nhằm câu view trên mạng)",
+                          "phonetic":  "/ˈklɪk.beɪt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Many commercial digital news outlets rely on deceptive clickbait headlines to inflate website traffic.",
+                          "exampleSentence":  "Many commercial digital news outlets rely on deceptive clickbait headlines to inflate website traffic.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Communication",
+                          "synonyms":  "sensationalist headline, link bait, digital lure",
+                          "antonyms":  "accurate headline, factual reporting",
+                          "collocations":  "clickbait headline, clickbait article, fall for clickbait",
+                          "note":  "Ghép từ click (nhấp chuột) + bait (mồi câu)."
+                      },
+                      {
+                          "term":  "bureaucracy",
+                          "definition":  "Bộ máy quan liêu, hệ thống thủ tục hành chính rườm rà",
+                          "definitionVi":  "Bộ máy quan liêu, hệ thống thủ tục hành chính rườm rà",
+                          "phonetic":  "/bjʊəˈrɒk.rə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Excessive administrative bureaucracy hinders foreign direct investment and stalls business registration.",
+                          "exampleSentence":  "Excessive administrative bureaucracy hinders foreign direct investment and stalls business registration.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "red tape, administrative hierarchy, civil service apparatus",
+                          "antonyms":  "administrative efficiency, streamlined management",
+                          "collocations":  "cut through bureaucracy, government bureaucracy, bureaucratic red tape",
+                          "note":  "Tính từ: bureaucratic /ˌbjʊə.rəˈkræt.ɪk/ (quan liêu, mang tính thủ tục)."
+                      },
+                      {
+                          "term":  "allocate",
+                          "definition":  "Phân bổ, cấp phát ngân sách hoặc tài nguyên cho một mục đích cụ thể",
+                          "definitionVi":  "Phân bổ, cấp phát ngân sách hoặc tài nguyên cho một mục đích cụ thể",
+                          "phonetic":  "/ˈæl.ə.keɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The government should allocate substantial fiscal resources to healthcare infrastructure and medical research.",
+                          "exampleSentence":  "The government should allocate substantial fiscal resources to healthcare infrastructure and medical research.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "assign, apportion, distribute, designate, earmark",
+                          "antonyms":  "withhold, misallocate, confiscate",
+                          "collocations":  "allocate funds, allocate budget, allocate resources, allocate time",
+                          "note":  "Danh từ: allocation (resource allocation = sự phân bổ nguồn lực)."
+                      },
+                      {
+                          "term":  "subsidize",
+                          "definition":  "Trợ cấp, bao cấp (chính phủ hỗ trợ tiền để giảm giá thành sản phẩm/dịch vụ)",
+                          "definitionVi":  "Trợ cấp, bao cấp (chính phủ hỗ trợ tiền để giảm giá thành sản phẩm/dịch vụ)",
+                          "phonetic":  "/ˈsʌb.sɪ.daɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Municipal authorities subsidize public bus fares to encourage commuters to leave private cars at home.",
+                          "exampleSentence":  "Municipal authorities subsidize public bus fares to encourage commuters to leave private cars at home.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "fund, sponsor, finance, underwrite, grant aid",
+                          "antonyms":  "tax, fine, defund",
+                          "collocations":  "heavily subsidize, subsidize public transport, state-subsidized",
+                          "note":  "Danh từ: subsidy /ˈsʌb.sɪ.di/ (tiền trợ cấp). Tính từ: subsidized."
+                      },
+                      {
+                          "term":  "implement",
+                          "definition":  "Triển khai, thi hành chính sách, kế hoạch hoặc luật lệ vào thực tế",
+                          "definitionVi":  "Triển khai, thi hành chính sách, kế hoạch hoặc luật lệ vào thực tế",
+                          "phonetic":  "/ˈɪm.plɪ.ment/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Policy makers must implement stringent emissions regulations to combat worsening urban smog.",
+                          "exampleSentence":  "Policy makers must implement stringent emissions regulations to combat worsening urban smog.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "execute, enforce, carry out, apply, enact",
+                          "antonyms":  "repeal, abolish, delay, abandon",
+                          "collocations":  "implement a policy, implement regulations, implement a strategy, successfully implement",
+                          "note":  "Danh từ: implementation /ˌɪm.plɪ.menˈteɪ.ʃən/ (sự thi hành, triển khai)."
+                      },
+                      {
+                          "term":  "transparency",
+                          "definition":  "Tính minh bạch, sự công khai rõ ràng không giấu giếm trong quản trị",
+                          "definitionVi":  "Tính minh bạch, sự công khai rõ ràng không giấu giếm trong quản trị",
+                          "phonetic":  "/trænˈspær.ən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Enhancing financial transparency in municipal procurement projects prevents bribery and embezzlement.",
+                          "exampleSentence":  "Enhancing financial transparency in municipal procurement projects prevents bribery and embezzlement.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "openness, clarity, accountability, candor",
+                          "antonyms":  "opacity, corruption, secrecy, ambiguity",
+                          "collocations":  "ensure transparency, financial transparency, lack of transparency, foster transparency",
+                          "note":  "Tính từ: transparent /trænˈspær.ənt/ (minh bạch, trong suốt)."
+                      },
+                      {
+                          "term":  "accountability",
+                          "definition":  "Trách nhiệm giải trình (nghĩa vụ phải báo cáo và chịu trách nhiệm về hành động của mình)",
+                          "definitionVi":  "Trách nhiệm giải trình (nghĩa vụ phải báo cáo và chịu trách nhiệm về hành động của mình)",
+                          "phonetic":  "/əˌkaʊn.təˈbɪl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Elected officials must maintain strict public accountability regarding how taxpayers\u0027 funds are spent.",
+                          "exampleSentence":  "Elected officials must maintain strict public accountability regarding how taxpayers\u0027 funds are spent.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "responsibility, answerability, liability, duty",
+                          "antonyms":  "irresponsibility, unaccountability",
+                          "collocations":  "hold someone accountable, public accountability, corporate accountability, lack of accountability",
+                          "note":  "Tính từ: accountable (be held accountable for something = phải chịu trách nhiệm về cái gì)."
+                      },
+                      {
+                          "term":  "welfare",
+                          "definition":  "Phúc lợi xã hội (sự an sinh, sức khỏe và hỗ trợ tài chính cho người dân nghèo)",
+                          "definitionVi":  "Phúc lợi xã hội (sự an sinh, sức khỏe và hỗ trợ tài chính cho người dân nghèo)",
+                          "phonetic":  "/ˈwel.feər/",
+                          "partOfSpeech":  "noun",
+                          "example":  "A well-structured social welfare system protects vulnerable demographics against sudden economic shocks.",
+                          "exampleSentence":  "A well-structured social welfare system protects vulnerable demographics against sudden economic shocks.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "social security, well-being, public assistance, benefit system",
+                          "antonyms":  "neglect, destitution",
+                          "collocations":  "social welfare, welfare state, welfare system, child welfare",
+                          "note":  "Welfare state = nhà nước phúc lợi."
+                      },
+                      {
+                          "term":  "regulations",
+                          "definition":  "Quy định, quy chế pháp lý do cơ quan thẩm quyền ban hành",
+                          "definitionVi":  "Quy định, quy chế pháp lý do cơ quan thẩm quyền ban hành",
+                          "phonetic":  "/ˌreɡ.jəˈleɪ.ʃənz/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Stricter food safety regulations were introduced following several severe contamination incidents.",
+                          "exampleSentence":  "Stricter food safety regulations were introduced following several severe contamination incidents.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "rules, statutes, directives, guidelines, legal codes",
+                          "antonyms":  "deregulation, lawlessness",
+                          "collocations":  "comply with regulations, enforce regulations, safety regulations, government regulations",
+                          "note":  "Động từ: regulate (điều tiết, quy định). Cơ quan quản lý: regulatory body."
+                      },
+                      {
+                          "term":  "incentive",
+                          "definition":  "Động lực, chính sách khuyến khích (thường là giảm thuế, thưởng tiền)",
+                          "definitionVi":  "Động lực, chính sách khuyến khích (thường là giảm thuế, thưởng tiền)",
+                          "phonetic":  "/ɪnˈsen.tɪv/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Tax incentives for electric vehicle buyers encourage the rapid adoption of green transportation.",
+                          "exampleSentence":  "Tax incentives for electric vehicle buyers encourage the rapid adoption of green transportation.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Policy",
+                          "synonyms":  "inducement, motivation, stimulus, spur, encouragement",
+                          "antonyms":  "disincentive, deterrent, penalty",
+                          "collocations":  "financial incentive, tax incentive, provide an incentive, create incentives",
+                          "note":  "Trái nghĩa: disincentive / deterrent (yếu tố làm nản lòng/răn đe)."
+                      },
+                      {
+                          "term":  "ecotourism",
+                          "definition":  "Du lịch sinh thái (du lịch có trách nhiệm nhằm bảo tồn thiên nhiên và hỗ trợ dân bản địa)",
+                          "definitionVi":  "Du lịch sinh thái (du lịch có trách nhiệm nhằm bảo tồn thiên nhiên và hỗ trợ dân bản địa)",
+                          "phonetic":  "/ˈiː.kəʊˌtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Sustainable ecotourism generates critical revenue for national park conservation while funding local schools.",
+                          "exampleSentence":  "Sustainable ecotourism generates critical revenue for national park conservation while funding local schools.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "green tourism, sustainable travel, ecological tourism",
+                          "antonyms":  "mass tourism, commercial sightseeing",
+                          "collocations":  "promote ecotourism, ecotourism destination, ecotourism development",
+                          "note":  "Ghép từ ecology (sinh thái học) + tourism (du lịch). Người đi du lịch sinh thái: ecotourist."
+                      },
+                      {
+                          "term":  "overtourism",
+                          "definition":  "Tình trạng quá tải du lịch (lượng du khách vượt quá sức chứa gây hủy hoại môi trường và đời sống địa phương)",
+                          "definitionVi":  "Tình trạng quá tải du lịch (lượng du khách vượt quá sức chứa gây hủy hoại môi trường và đời sống địa phương)",
+                          "phonetic":  "/ˌəʊ.vəˈtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Historic European cities like Venice have introduced tourist entrance fees to counteract rampant overtourism.",
+                          "exampleSentence":  "Historic European cities like Venice have introduced tourist entrance fees to counteract rampant overtourism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "tourist overcrowding, mass tourism influx, tourism congestion",
+                          "antonyms":  "sustainable tourism, low-impact travel",
+                          "collocations":  "combat overtourism, suffer from overtourism, impact of overtourism",
+                          "note":  "Chủ đề cực kỳ thời sự trong đề thi IELTS gần đây về tác động tiêu cực của du lịch."
+                      },
+                      {
+                          "term":  "itinerary",
+                          "definition":  "Lịch trình chuyến đi, lộ trình các điểm tham quan theo kế hoạch",
+                          "definitionVi":  "Lịch trình chuyến đi, lộ trình các điểm tham quan theo kế hoạch",
+                          "phonetic":  "/aɪˈtɪn.ər.ər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Our travel agent organized a detailed two-week itinerary covering all major cultural heritage sites.",
+                          "exampleSentence":  "Our travel agent organized a detailed two-week itinerary covering all major cultural heritage sites.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "travel schedule, route plan, tour program",
+                          "antonyms":  "N/A",
+                          "collocations":  "travel itinerary, flexible itinerary, plan an itinerary",
+                          "note":  "Trọng âm 2: ai-TIN-er-a-ry. Rất phổ biến trong IELTS Listening Section 1 \u0026 Speaking Part 2."
+                      },
+                      {
+                          "term":  "exotic",
+                          "definition":  "Kỳ lạ, độc đáo, mang vẻ đẹp quyến rũ từ những vùng đất xa xôi",
+                          "definitionVi":  "Kỳ lạ, độc đáo, mang vẻ đẹp quyến rũ từ những vùng đất xa xôi",
+                          "phonetic":  "/ɪɡˈzɒt.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Backpackers are drawn to Southeast Asia to explore pristine islands and sample exotic tropical fruits.",
+                          "exampleSentence":  "Backpackers are drawn to Southeast Asia to explore pristine islands and sample exotic tropical fruits.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "unusual, alluring, foreign, striking, fascinating",
+                          "antonyms":  "ordinary, familiar, native, conventional",
+                          "collocations":  "exotic destination, exotic wildlife, exotic plants, exotic culture",
+                          "note":  "Trọng âm 2. Phát âm âm đầu là /ɪɡˈzɒt.ɪk/."
+                      },
+                      {
+                          "term":  "hospitality",
+                          "definition":  "Lòng hiếu khách, ngành dịch vụ khách sạn - nhà hàng - du lịch",
+                          "definitionVi":  "Lòng hiếu khách, ngành dịch vụ khách sạn - nhà hàng - du lịch",
+                          "phonetic":  "/ˌhɒs.pɪˈtæl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Vietnamese homestay hosts are internationally celebrated for their warm hospitality and generosity.",
+                          "exampleSentence":  "Vietnamese homestay hosts are internationally celebrated for their warm hospitality and generosity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "warm welcome, friendliness, accommodation service",
+                          "antonyms":  "inhospitality, coldness, hostility",
+                          "collocations":  "hospitality industry, show hospitality, warm hospitality, famous for hospitality",
+                          "note":  "Tính từ: hospitable /hɒsˈpɪt.ə.bəl/ (hiếu khách)."
+                      },
+                      {
+                          "term":  "pristine",
+                          "definition":  "Nguyên sơ, thuần khiết, chưa từng bị con người làm ô uế hoặc biến đổi",
+                          "definitionVi":  "Nguyên sơ, thuần khiết, chưa từng bị con người làm ô uế hoặc biến đổi",
+                          "phonetic":  "/ˈprɪs.tiːn/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Eco-friendly guidelines ensure that the archipelago\u0027s pristine coral reefs remain completely undamaged.",
+                          "exampleSentence":  "Eco-friendly guidelines ensure that the archipelago\u0027s pristine coral reefs remain completely undamaged.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "unspoiled, untouched, immaculate, pure, virgin",
+                          "antonyms":  "polluted, damaged, degraded, contaminated",
+                          "collocations":  "pristine beaches, pristine rainforest, pristine wilderness, remain pristine",
+                          "note":  "Dùng thay thế hoàn hảo cho từ \u0027untouched\u0027 hoặc \u0027clean\u0027 trong bài miêu tả cảnh quan."
+                      },
+                      {
+                          "term":  "destination",
+                          "definition":  "Điểm đến, đích đến trong hành trình du lịch",
+                          "definitionVi":  "Điểm đến, đích đến trong hành trình du lịch",
+                          "phonetic":  "/ˌdes.tɪˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Da Nang has emerged as a premier tourist destination renowned for its modern bridges and coastal resorts.",
+                          "exampleSentence":  "Da Nang has emerged as a premier tourist destination renowned for its modern bridges and coastal resorts.",
+                          "level":  "B1",
+                          "cefrLevel":  "B1",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "tourist spot, holiday location, travel stop",
+                          "antonyms":  "point of departure, origin",
+                          "collocations":  "popular destination, tourist destination, holiday destination, dream destination",
+                          "note":  "Trọng âm 3: des-ti-NA-tion."
+                      },
+                      {
+                          "term":  "commercialization",
+                          "definition":  "Sự thương mại hóa (quá trình biến văn hóa/di tích thành hàng hóa phục vụ lợi nhuận)",
+                          "definitionVi":  "Sự thương mại hóa (quá trình biến văn hóa/di tích thành hàng hóa phục vụ lợi nhuận)",
+                          "phonetic":  "/kəˌmɜː.ʃəl.aɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Excessive commercialization of holy pilgrimage shrines degrades their profound spiritual significance.",
+                          "exampleSentence":  "Excessive commercialization of holy pilgrimage shrines degrades their profound spiritual significance.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "commodification, monetization, exploitation",
+                          "antonyms":  "preservation, spiritual purity",
+                          "collocations":  "commercialization of culture, prevent commercialization, rapid commercialization",
+                          "note":  "Động từ: commercialize. Tính từ: commercialized."
+                      },
+                      {
+                          "term":  "unspoiled",
+                          "definition":  "Chưa bị tàn phá, còn giữ nguyên vẻ đẹp hoang sơ tự nhiên",
+                          "definitionVi":  "Chưa bị tàn phá, còn giữ nguyên vẻ đẹp hoang sơ tự nhiên",
+                          "phonetic":  "/ʌnˈspɔɪld/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The island\u0027s unspoiled natural scenery attracts nature photographers from all corners of the globe.",
+                          "exampleSentence":  "The island\u0027s unspoiled natural scenery attracts nature photographers from all corners of the globe.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Travel",
+                          "synonyms":  "undamaged, untouched, pristine, natural",
+                          "antonyms":  "spoiled, ruined, overdeveloped",
+                          "collocations":  "unspoiled beauty, unspoiled countryside, unspoiled beaches",
+                          "note":  "Gốc từ: un- (không) + spoil (làm hỏng) + -ed."
+                      },
+                      {
+                          "term":  "resilience",
+                          "definition":  "Khả năng phục hồi, sự kiên cường vượt qua nghịch cảnh và chấn thương tâm lý",
+                          "definitionVi":  "Khả năng phục hồi, sự kiên cường vượt qua nghịch cảnh và chấn thương tâm lý",
+                          "phonetic":  "/rɪˈzɪl.jəns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Fostering emotional resilience during childhood equips individuals to handle adult workplace stressors effectively.",
+                          "exampleSentence":  "Fostering emotional resilience during childhood equips individuals to handle adult workplace stressors effectively.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "toughness, fortitude, bounce-back ability, adaptability",
+                          "antonyms":  "fragility, vulnerability, weakness",
+                          "collocations":  "build resilience, psychological resilience, emotional resilience, show resilience",
+                          "note":  "Tính từ: resilient /rɪˈzɪl.jənt/ (kiên cường, nhanh phục hồi)."
+                      },
+                      {
+                          "term":  "empathy",
+                          "definition":  "Sự thấu cảm (khả năng thấu hiểu và sẻ chia cảm xúc sâu sắc với người khác)",
+                          "definitionVi":  "Sự thấu cảm (khả năng thấu hiểu và sẻ chia cảm xúc sâu sắc với người khác)",
+                          "phonetic":  "/ˈem.pə.θi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Developing genuine empathy is the foundation of constructive cross-cultural dialogue and conflict resolution.",
+                          "exampleSentence":  "Developing genuine empathy is the foundation of constructive cross-cultural dialogue and conflict resolution.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "compassion, understanding, emotional insight, sensitivity",
+                          "antonyms":  "apathy, indifference, coldness, callousness",
+                          "collocations":  "show empathy, lack empathy, cultivate empathy, deep empathy",
+                          "note":  "Phân biệt: empathy (thấu cảm - đặt mình vào vị trí người khác) \u0026 sympathy (thương cảm)."
+                      },
+                      {
+                          "term":  "nurture",
+                          "definition":  "Nuôi dưỡng, chăm sóc và ươm mầm tài năng/tính cách",
+                          "definitionVi":  "Nuôi dưỡng, chăm sóc và ươm mầm tài năng/tính cách",
+                          "phonetic":  "/ˈnɜː.tʃər/",
+                          "partOfSpeech":  "verb/noun",
+                          "example":  "Parents and teachers must collaborate closely to nurture children\u0027s innate artistic creativity.",
+                          "exampleSentence":  "Parents and teachers must collaborate closely to nurture children\u0027s innate artistic creativity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "foster, cultivate, nourish, encourage, rear",
+                          "antonyms":  "neglect, suppress, hinder",
+                          "collocations":  "nurture talent, nature vs nurture, nurture a relationship",
+                          "note":  "Thành ngữ triết học kinh điển: \u0027Nature versus Nurture\u0027 (Bản chất bẩm sinh vs Nuôi dưỡng giáo dục)."
+                      },
+                      {
+                          "term":  "self-esteem",
+                          "definition":  "Lòng tự trọng, niềm tin vào giá trị và năng lực của bản thân",
+                          "definitionVi":  "Lòng tự trọng, niềm tin vào giá trị và năng lực của bản thân",
+                          "phonetic":  "/ˌself.ɪˈstiːm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Cyberbullying and unrealistic social media standards can severely undermine adolescents\u0027 self-esteem.",
+                          "exampleSentence":  "Cyberbullying and unrealistic social media standards can severely undermine adolescents\u0027 self-esteem.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "self-worth, self-confidence, self-respect, self-regard",
+                          "antonyms":  "self-doubt, inferiority complex, low self-worth",
+                          "collocations":  "boost self-esteem, low self-esteem, high self-esteem, build self-esteem",
+                          "note":  "Thành ngữ: \u0027suffer from low self-esteem\u0027 (mặc cảm, tự ti)."
+                      },
+                      {
+                          "term":  "conformity",
+                          "definition":  "Sự tuân thủ, xu hướng rập khuôn theo số đông để được chấp nhận",
+                          "definitionVi":  "Sự tuân thủ, xu hướng rập khuôn theo số đông để được chấp nhận",
+                          "phonetic":  "/kənˈfɔː.mə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Excessive social conformity discourages unconventional thinking and impedes scientific innovation.",
+                          "exampleSentence":  "Excessive social conformity discourages unconventional thinking and impedes scientific innovation.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "compliance, obedience, conventionality, consensus",
+                          "antonyms":  "non-conformity, rebellion, individualism, dissent",
+                          "collocations":  "social conformity, pressure toward conformity, enforce conformity",
+                          "note":  "Động từ: conform to / with (tuân theo, rập khuôn theo)."
+                      },
+                      {
+                          "term":  "gratification",
+                          "definition":  "Sự thỏa mãn, sự hài lòng khi mong muốn được đáp ứng",
+                          "definitionVi":  "Sự thỏa mãn, sự hài lòng khi mong muốn được đáp ứng",
+                          "phonetic":  "/ˌɡræt.ɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The ability to delay instant gratification is strongly correlated with long-term academic and financial success.",
+                          "exampleSentence":  "The ability to delay instant gratification is strongly correlated with long-term academic and financial success.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "satisfaction, fulfillment, pleasure, contentment",
+                          "antonyms":  "frustration, disappointment, dissatisfaction",
+                          "collocations":  "delayed gratification, instant gratification, sense of gratification",
+                          "note":  "Khái niệm tâm lý kinh điển: \u0027delayed gratification\u0027 (trì hoãn sự thỏa mãn tức thời)."
+                      },
+                      {
+                          "term":  "procrastination",
+                          "definition":  "Thói quen trì hoãn, thói lùi việc lại đến phút chót",
+                          "definitionVi":  "Thói quen trì hoãn, thói lùi việc lại đến phút chót",
+                          "phonetic":  "/prəˌkræs.tɪˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Poor time management and anxiety about failure frequently lead to chronic academic procrastination.",
+                          "exampleSentence":  "Poor time management and anxiety about failure frequently lead to chronic academic procrastination.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "delay, putting off, hesitance, postponement",
+                          "antonyms":  "promptness, proactiveness, diligence",
+                          "collocations":  "chronic procrastination, overcome procrastination, beat procrastination",
+                          "note":  "Động từ: procrastinate /prəˈkræs.tɪ.neɪt/. Người có tính trì hoãn: procrastinator."
+                      },
+                      {
+                          "term":  "peer pressure",
+                          "definition":  "Áp lực đồng trang lứa (áp lực phải làm theo nhóm bạn cùng tuổi để được hòa nhập)",
+                          "definitionVi":  "Áp lực đồng trang lứa (áp lực phải làm theo nhóm bạn cùng tuổi để được hòa nhập)",
+                          "phonetic":  "/ˈpɪə ˌpreʃ.ər/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Adolescents often engage in risky behaviors such as smoking due to overwhelming peer pressure.",
+                          "exampleSentence":  "Adolescents often engage in risky behaviors such as smoking due to overwhelming peer pressure.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "social influence, classmate pressure",
+                          "antonyms":  "individual independence, self-reliance",
+                          "collocations":  "succumb to peer pressure, resist peer pressure, negative peer pressure",
+                          "note":  "Động từ đi kèm: succumb to / yield to (nhượng bộ) hoặc resist (chống lại) peer pressure."
+                      },
+                      {
+                          "term":  "introverted",
+                          "definition":  "Hướng nội (có xu hướng suy ngẫm nội tâm và nạp năng lượng khi ở một mình)",
+                          "definitionVi":  "Hướng nội (có xu hướng suy ngẫm nội tâm và nạp năng lượng khi ở một mình)",
+                          "phonetic":  "/ˈɪn.trə.vɜː.tɪd/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Introverted students may prefer solitary research and written communication over noisy group presentations.",
+                          "exampleSentence":  "Introverted students may prefer solitary research and written communication over noisy group presentations.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Behavior",
+                          "synonyms":  "quiet, reserved, introspective, shy",
+                          "antonyms":  "extroverted, outgoing, sociable, gregarious",
+                          "collocations":  "introverted personality, introverted tendencies, naturally introverted",
+                          "note":  "Danh từ: introvert /ˈɪn.trə.vɜːt/. Trái nghĩa: extroverted / extrovert."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_ielts_7_8",
+        "title":  "Từ Vựng IELTS 7.0 - 8.0 Chuyên Sâu (C1-C2 Lexical Resource)",
+        "description":  "Bộ 108 từ vựng và Collocations học thuật sắc bén, nâng cấp Lexical Resource đạt Band 7.5 - 8.0+ trong Writing Task 2 \u0026 Speaking.",
+        "category":  "IELTS",
+        "icon":  "💎",
+        "color":  "#8b5cf6",
+        "totalWords":  108,
+        "isVipOnly":  true,
+        "isVip":  true,
+        "price":  0,
+        "words":  [
+                      {
+                          "term":  "pedagogical",
+                          "definition":  "Thuộc về phương pháp sư phạm, nghệ thuật và lý thuyết giảng dạy",
+                          "definitionVi":  "Thuộc về phương pháp sư phạm, nghệ thuật và lý thuyết giảng dạy",
+                          "phonetic":  "/ˌped.əˈɡɒdʒ.ɪ.kəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Progressive pedagogical frameworks prioritize active inquiry and collaborative problem-solving over passive rote learning.",
+                          "exampleSentence":  "Progressive pedagogical frameworks prioritize active inquiry and collaborative problem-solving over passive rote learning.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "didactic, instructional, educational, academic",
+                          "antonyms":  "non-instructional",
+                          "collocations":  "pedagogical approach, pedagogical methods, pedagogical innovation, pedagogical framework",
+                          "note":  "Danh từ: pedagogy /ˈped.ə.ɡɒdʒ.i/. Rất hiệu quả khi phân tích phương pháp giáo dục trong Writing Task 2."
+                      },
+                      {
+                          "term":  "delineate",
+                          "definition":  "Phác thảo, mô tả hoặc phân định ranh giới một cách chi tiết, chính xác",
+                          "definitionVi":  "Phác thảo, mô tả hoặc phân định ranh giới một cách chi tiết, chính xác",
+                          "phonetic":  "/dɪˈlɪn.i.eɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The revised academic curriculum clearly delineates the specific learning outcomes and assessment criteria for each module.",
+                          "exampleSentence":  "The revised academic curriculum clearly delineates the specific learning outcomes and assessment criteria for each module.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "demarcate, outline, define, articulate, specify",
+                          "antonyms":  "confuse, obscure, blur, distort",
+                          "collocations":  "clearly delineate, delineate boundaries, delineate responsibilities",
+                          "note":  "Danh từ: delineation /dɪˌlɪn.iˈeɪ.ʃən/. Dùng thay cho \u0027describe clearly\u0027 hoặc \u0027set boundaries\u0027."
+                      },
+                      {
+                          "term":  "erudite",
+                          "definition":  "Uyên bác, thông thái, có học vấn sâu rộng nhờ dày công nghiên cứu",
+                          "definitionVi":  "Uyên bác, thông thái, có học vấn sâu rộng nhờ dày công nghiên cứu",
+                          "phonetic":  "/ˈer.uː.daɪt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The professor delivered an erudite lecture examining the epistemological foundations of classical philosophy.",
+                          "exampleSentence":  "The professor delivered an erudite lecture examining the epistemological foundations of classical philosophy.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "scholarly, learned, profound, knowledgeable, intellectual",
+                          "antonyms":  "ignorant, uneducated, illiterate, shallow",
+                          "collocations":  "erudite scholar, erudite commentary, erudite lecture, highly erudite",
+                          "note":  "Danh từ: erudition /ˌer.uːˈdɪʃ.ən/ (sự uyên bác). Từ C2 ăn điểm cực cao trong Speaking Part 3."
+                      },
+                      {
+                          "term":  "didactic",
+                          "definition":  "Mang tính giáo huấn, có chủ đích răn dạy đạo đức hoặc truyền thụ kiến thức",
+                          "definitionVi":  "Mang tính giáo huấn, có chủ đích răn dạy đạo đức hoặc truyền thụ kiến thức",
+                          "phonetic":  "/daɪˈdæk.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Traditional children\u0027s literature often employs overtly didactic narratives to instill civic virtues.",
+                          "exampleSentence":  "Traditional children\u0027s literature often employs overtly didactic narratives to instill civic virtues.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "instructive, moralistic, educational, pedagogic",
+                          "antonyms":  "uninstructive, entertaining, non-moralizing",
+                          "collocations":  "didactic literature, didactic purpose, didactic tone, didactic approach",
+                          "note":  "Đôi khi mang sắc thái tiêu cực nhẹ nếu việc giáo huấn quá cứng nhắc hoặc giáo điều."
+                      },
+                      {
+                          "term":  "epistemology",
+                          "definition":  "Nhận thức luận (phân ngành triết học nghiên cứu về bản chất, nguồn gốc và giới hạn của tri thức)",
+                          "definitionVi":  "Nhận thức luận (phân ngành triết học nghiên cứu về bản chất, nguồn gốc và giới hạn của tri thức)",
+                          "phonetic":  "/ɪˌpɪs.təˈmɒl.ə.dʒi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The transition to digital learning environments has compelled educators to re-examine traditional epistemology.",
+                          "exampleSentence":  "The transition to digital learning environments has compelled educators to re-examine traditional epistemology.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "theory of knowledge, cognitive philosophy",
+                          "antonyms":  "N/A",
+                          "collocations":  "epistemological framework, branch of epistemology, epistemological inquiry",
+                          "note":  "Tính từ: epistemological /ɪˌpɪs.tə.məˈlɒdʒ.ɪ.kəl/. Thuật ngữ triết học học thuật đỉnh cao."
+                      },
+                      {
+                          "term":  "disseminate",
+                          "definition":  "Phổ biến, truyền bá rộng rãi thông tin, tri thức hoặc tư tưởng",
+                          "definitionVi":  "Phổ biến, truyền bá rộng rãi thông tin, tri thức hoặc tư tưởng",
+                          "phonetic":  "/dɪˈsem.ɪ.neɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Open-access digital repositories enable academic institutions to disseminate peer-reviewed research globally.",
+                          "exampleSentence":  "Open-access digital repositories enable academic institutions to disseminate peer-reviewed research globally.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "promulgate, distribute, circulate, broadcast, propagate",
+                          "antonyms":  "suppress, withhold, conceal, restrict",
+                          "collocations":  "disseminate information, disseminate knowledge, widely disseminate",
+                          "note":  "Danh từ: dissemination /dɪˌsem.ɪˈneɪ.ʃən/. Dùng thay thế hoàn hảo cho \u0027spread information\u0027."
+                      },
+                      {
+                          "term":  "stifle",
+                          "definition":  "Kìm hãm, dập tắt, bóp nghẹt sự sáng tạo hoặc tư duy độc lập",
+                          "definitionVi":  "Kìm hãm, dập tắt, bóp nghẹt sự sáng tạo hoặc tư duy độc lập",
+                          "phonetic":  "/ˈstaɪ.fəl/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Excessive emphasis on standardized testing risks stifling students\u0027 intellectual curiosity and original thinking.",
+                          "exampleSentence":  "Excessive emphasis on standardized testing risks stifling students\u0027 intellectual curiosity and original thinking.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "suppress, inhibit, suffocate, quell, repress",
+                          "antonyms":  "foster, nurture, cultivate, stimulate, encourage",
+                          "collocations":  "stifle creativity, stifle innovation, stifle debate, stifle curiosity",
+                          "note":  "Thường dùng trong các lập luận phản đối giáo dục rập khuôn: \u0027stifle critical thinking\u0027."
+                      },
+                      {
+                          "term":  "paradigm shift",
+                          "definition":  "Sự chuyển dịch hệ hình (sự thay đổi căn bản trong nhận thức và phương thức tiếp cận một lĩnh vực)",
+                          "definitionVi":  "Sự chuyển dịch hệ hình (sự thay đổi căn bản trong nhận thức và phương thức tiếp cận một lĩnh vực)",
+                          "phonetic":  "/ˈpær.ə.daɪm ʃɪft/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The integration of generative artificial intelligence represents a profound paradigm shift in educational delivery.",
+                          "exampleSentence":  "The integration of generative artificial intelligence represents a profound paradigm shift in educational delivery.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "fundamental transformation, radical change, conceptual revolution",
+                          "antonyms":  "status quo, incremental adjustment",
+                          "collocations":  "trigger a paradigm shift, profound paradigm shift, witness a paradigm shift",
+                          "note":  "Phát âm: /ˈpær.ə.daɪm/ (chữ \u0027g\u0027 câm). Thuật ngữ học thuật nổi tiếng của Thomas Kuhn."
+                      },
+                      {
+                          "term":  "holistic",
+                          "definition":  "Toàn diện, tổng thể (xem xét mọi khía cạnh liên kết hữu cơ thay vì phân mảnh)",
+                          "definitionVi":  "Toàn diện, tổng thể (xem xét mọi khía cạnh liên kết hữu cơ thay vì phân mảnh)",
+                          "phonetic":  "/həʊˈlɪs.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Adopting a holistic pedagogical approach ensures that learners develop emotional intelligence alongside academic acumen.",
+                          "exampleSentence":  "Adopting a holistic pedagogical approach ensures that learners develop emotional intelligence alongside academic acumen.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Education \u0026 Intellectual Inquiry",
+                          "synonyms":  "comprehensive, integrated, all-encompassing, exhaustive",
+                          "antonyms":  "atomistic, fragmented, piecemeal, compartmentalized",
+                          "collocations":  "holistic approach, holistic assessment, holistic view, holistic education",
+                          "note":  "Dùng cực kỳ ấn tượng trong câu kết bài hoặc phần đề xuất giải pháp bài Writing Task 2."
+                      },
+                      {
+                          "term":  "anthropogenic",
+                          "definition":  "Do con người gây ra, có nguồn gốc từ các hoạt động của nhân loại",
+                          "definitionVi":  "Do con người gây ra, có nguồn gốc từ các hoạt động của nhân loại",
+                          "phonetic":  "/ˌæn.θrə.pəˈdʒen.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Scientific consensus overwhelmingly attributes the accelerating rate of global warming to anthropogenic emissions.",
+                          "exampleSentence":  "Scientific consensus overwhelmingly attributes the accelerating rate of global warming to anthropogenic emissions.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "human-induced, human-caused, artificial",
+                          "antonyms":  "natural, biogenic, non-anthropogenic",
+                          "collocations":  "anthropogenic climate change, anthropogenic emissions, anthropogenic activities",
+                          "note":  "Anthropo- (con người) + -genic (sinh ra/gây ra). Cụm từ chuẩn học thuật thay cho \u0027caused by humans\u0027."
+                      },
+                      {
+                          "term":  "exacerbate",
+                          "definition":  "Làm trầm trọng thêm, khiến một tình trạng vốn đã xấu trở nên tồi tệ hơn",
+                          "definitionVi":  "Làm trầm trọng thêm, khiến một tình trạng vốn đã xấu trở nên tồi tệ hơn",
+                          "phonetic":  "/ɪɡˈzæs.ə.beɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Severe deforestation exacerbates topsoil erosion, rendering coastal regions acutely vulnerable to flash floods.",
+                          "exampleSentence":  "Severe deforestation exacerbates topsoil erosion, rendering coastal regions acutely vulnerable to flash floods.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "aggravate, worsen, intensify, inflame, compound",
+                          "antonyms":  "mitigate, alleviate, ameliorate, relieve",
+                          "collocations":  "exacerbate the problem, exacerbate tensions, exacerbate climate change",
+                          "note":  "Trọng âm 2. Từ vựng C1 cốt lõi trong Writing Task 2 để phân tích nguyên nhân - hậu quả."
+                      },
+                      {
+                          "term":  "mitigate",
+                          "definition":  "Làm giảm nhẹ, xoa dịu mức độ tàn phá hoặc tác hại của hiểm họa",
+                          "definitionVi":  "Làm giảm nhẹ, xoa dịu mức độ tàn phá hoặc tác hại của hiểm họa",
+                          "phonetic":  "/ˈmɪt.ɪ.ɡeɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Decisive policy interventions are urgently required to mitigate the catastrophic ramifications of biodiversity loss.",
+                          "exampleSentence":  "Decisive policy interventions are urgently required to mitigate the catastrophic ramifications of biodiversity loss.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "alleviate, attenuate, diminish, lessen, abate",
+                          "antonyms":  "exacerbate, aggravate, escalate, intensify",
+                          "collocations":  "mitigate the impact, mitigate climate change, mitigate risks, mitigation strategy",
+                          "note":  "Danh từ: mitigation. Luôn đi kèm cặp đối lập với \u0027exacerbate\u0027 trong bài luận Task 2."
+                      },
+                      {
+                          "term":  "cataclysmic",
+                          "definition":  "Mang tính đại thảm họa, gây ra sự tàn phá khủng khiếp và biến động dữ dội",
+                          "definitionVi":  "Mang tính đại thảm họa, gây ra sự tàn phá khủng khiếp và biến động dữ dội",
+                          "phonetic":  "/ˌkæt.əˈklɪz.mɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Failure to contain global temperature rise within 1.5 degrees Celsius could precipitate cataclysmic ecological collapses.",
+                          "exampleSentence":  "Failure to contain global temperature rise within 1.5 degrees Celsius could precipitate cataclysmic ecological collapses.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "disastrous, catastrophic, devastating, ruinous, calamitous",
+                          "antonyms":  "beneficial, benign, harmless, fortunate",
+                          "collocations":  "cataclysmic event, cataclysmic collapse, cataclysmic consequences",
+                          "note":  "Danh từ: cataclysm /ˈkæt.ə.klɪz.əm/ (đại biến động, thảm họa toàn cầu)."
+                      },
+                      {
+                          "term":  "carbon sequestration",
+                          "definition":  "Sự thu giữ và cô lập carbon (quá trình giữ lại CO2 trong cây xanh, đại dương hoặc dưới lòng đất)",
+                          "definitionVi":  "Sự thu giữ và cô lập carbon (quá trình giữ lại CO2 trong cây xanh, đại dương hoặc dưới lòng đất)",
+                          "phonetic":  "/ˌkɑː.bən ˌsiː.kwesˈtreɪ.ʃən/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Preserving primary rainforests enhances natural carbon sequestration, acting as a crucial global climate buffer.",
+                          "exampleSentence":  "Preserving primary rainforests enhances natural carbon sequestration, acting as a crucial global climate buffer.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "carbon capture, carbon storage",
+                          "antonyms":  "carbon emission, carbon release",
+                          "collocations":  "enhance carbon sequestration, natural carbon sequestration, industrial carbon sequestration",
+                          "note":  "Động từ: sequester /sɪˈkwes.tər/ (cô lập, giam giữ carbon)."
+                      },
+                      {
+                          "term":  "irreversible",
+                          "definition":  "Không thể đảo ngược, không thể cứu vãn hay đưa về trạng thái ban đầu",
+                          "definitionVi":  "Không thể đảo ngược, không thể cứu vãn hay đưa về trạng thái ban đầu",
+                          "phonetic":  "/ˌɪr.ɪˈvɜː.sə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The extinction of apex predators inflicts irreversible damage on the intricate equilibrium of local food webs.",
+                          "exampleSentence":  "The extinction of apex predators inflicts irreversible damage on the intricate equilibrium of local food webs.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "irrevocable, permanent, irreparable, unalterable",
+                          "antonyms":  "reversible, temporary, reparable, rectifiable",
+                          "collocations":  "irreversible damage, irreversible change, irreversible decline, irreversible loss",
+                          "note":  "Tiền tố ir- (không) + reverse (đảo ngược) + -ible (có thể)."
+                      },
+                      {
+                          "term":  "depletion",
+                          "definition":  "Sự cạn kiệt nghiêm trọng của nguồn tài nguyên, năng lượng hoặc khoáng sản",
+                          "definitionVi":  "Sự cạn kiệt nghiêm trọng của nguồn tài nguyên, năng lượng hoặc khoáng sản",
+                          "phonetic":  "/dɪˈpliː.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Unchecked resource depletion threatens the socio-economic stability of future generations.",
+                          "exampleSentence":  "Unchecked resource depletion threatens the socio-economic stability of future generations.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "exhaustion, consumption, draining, reduction",
+                          "antonyms":  "replenishment, restoration, renewal, accumulation",
+                          "collocations":  "resource depletion, ozone depletion, rapid depletion, prevent depletion",
+                          "note":  "Động từ: deplete /dɪˈpliːt/. Tính từ: depleted."
+                      },
+                      {
+                          "term":  "biodiversity hotspot",
+                          "definition":  "Điểm nóng đa dạng sinh học (khu vực giàu loài đặc hữu nhưng đang bị đe dọa hủy hoại nặng nề)",
+                          "definitionVi":  "Điểm nóng đa dạng sinh học (khu vực giàu loài đặc hữu nhưng đang bị đe dọa hủy hoại nặng nề)",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti ˈhɒt.spɒt/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The tropical forests of Southeast Asia are recognized as critical biodiversity hotspots requiring immediate legal protection.",
+                          "exampleSentence":  "The tropical forests of Southeast Asia are recognized as critical biodiversity hotspots requiring immediate legal protection.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "ecological treasure trove, vital bio-reserve",
+                          "antonyms":  "ecological desert, degraded wasteland",
+                          "collocations":  "preserve biodiversity hotspots, designate a biodiversity hotspot, fragile biodiversity hotspot",
+                          "note":  "Thuật ngữ bảo tồn sinh thái chuyên sâu giúp bài viết giàu tính học thuật."
+                      },
+                      {
+                          "term":  "precarious",
+                          "definition":  "Bấp bênh, mong manh, hiểm nghèo và tiềm ẩn nguy cơ sụp đổ bất cứ lúc nào",
+                          "definitionVi":  "Bấp bênh, mong manh, hiểm nghèo và tiềm ẩn nguy cơ sụp đổ bất cứ lúc nào",
+                          "phonetic":  "/prɪˈkeə.ri.əs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Many indigenous coastal communities exist in a precarious state due to relentless sea level rise and extreme storms.",
+                          "exampleSentence":  "Many indigenous coastal communities exist in a precarious state due to relentless sea level rise and extreme storms.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Environment \u0026 Climate Crisis",
+                          "synonyms":  "perilous, hazardous, vulnerable, insecure, unstable",
+                          "antonyms":  "secure, stable, safe, robust",
+                          "collocations":  "precarious balance, precarious position, precarious state, precarious existence",
+                          "note":  "Trọng âm 2. Cụm: \u0027a precarious ecological balance\u0027 (thế cân bằng sinh thái mong manh)."
+                      },
+                      {
+                          "term":  "ubiquitous",
+                          "definition":  "Hiện diện ở khắp mọi nơi cùng lúc, phổ biến đến mức không thể thiếu",
+                          "definitionVi":  "Hiện diện ở khắp mọi nơi cùng lúc, phổ biến đến mức không thể thiếu",
+                          "phonetic":  "/juːˈbɪk.wə.təs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Smartphones and algorithm-driven applications have become ubiquitous fixtures in the daily lives of global citizens.",
+                          "exampleSentence":  "Smartphones and algorithm-driven applications have become ubiquitous fixtures in the daily lives of global citizens.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "omnipresent, pervasive, universal, widespread, rampant",
+                          "antonyms":  "rare, scarce, exceptional, localized",
+                          "collocations":  "ubiquitous presence, become ubiquitous, ubiquitous technology, ubiquitous computing",
+                          "note":  "Danh từ: ubiquity /juːˈbɪk.wə.ti/. Từ C1 đỉnh cao để nâng điểm Lexical Resource."
+                      },
+                      {
+                          "term":  "disruptive",
+                          "definition":  "Mang tính đột phá làm đảo lộn và tái định hình hoàn toàn các mô hình truyền thống",
+                          "definitionVi":  "Mang tính đột phá làm đảo lộn và tái định hình hoàn toàn các mô hình truyền thống",
+                          "phonetic":  "/dɪsˈrʌp.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Generative artificial intelligence represents a disruptive innovation that challenges conventional employment structures.",
+                          "exampleSentence":  "Generative artificial intelligence represents a disruptive innovation that challenges conventional employment structures.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "revolutionary, radical, transformative, groundbreaking",
+                          "antonyms":  "conservative, traditional, incremental, evolutionary",
+                          "collocations":  "disruptive technology, disruptive innovation, disruptive force, disruptive impact",
+                          "note":  "Động từ: disrupt. Danh từ: disruption (sự đột phá/gián đoạn mang tính cách mạng)."
+                      },
+                      {
+                          "term":  "algorithmic bias",
+                          "definition":  "Sự thiên vị thuật toán (lỗi thiên lệch trong mô hình AI do dữ liệu huấn luyện mang định kiến sẵn)",
+                          "definitionVi":  "Sự thiên vị thuật toán (lỗi thiên lệch trong mô hình AI do dữ liệu huấn luyện mang định kiến sẵn)",
+                          "phonetic":  "/ˌæl.ɡəˈrɪð.mɪk ˈbaɪ.əs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Machine learning systems risk perpetuating algorithmic bias if trained on historically discriminatory datasets.",
+                          "exampleSentence":  "Machine learning systems risk perpetuating algorithmic bias if trained on historically discriminatory datasets.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "computational prejudice, automated discrimination",
+                          "antonyms":  "algorithmic fairness, algorithmic neutrality",
+                          "collocations":  "perpetuate algorithmic bias, eliminate algorithmic bias, mitigate algorithmic bias",
+                          "note":  "Chủ đề đạo đức AI (AI Ethics) rất thịnh hành trong các đề thi IELTS gần đây."
+                      },
+                      {
+                          "term":  "obsolescence",
+                          "definition":  "Tình trạng trở nên lỗi thời, không còn giá trị sử dụng do công nghệ mới ra đời",
+                          "definitionVi":  "Tình trạng trở nên lỗi thời, không còn giá trị sử dụng do công nghệ mới ra đời",
+                          "phonetic":  "/ˌɒb.səˈles.əns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Tech conglomerates frequently practice planned obsolescence to compel consumers into purchasing successive device iterations.",
+                          "exampleSentence":  "Tech conglomerates frequently practice planned obsolescence to compel consumers into purchasing successive device iterations.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "antiquation, outmodedness, supersession, uselessness",
+                          "antonyms":  "currency, modernity, timelessness, durability",
+                          "collocations":  "planned obsolescence, rapid obsolescence, technological obsolescence",
+                          "note":  "Khái niệm kinh tế - công nghệ kinh điển: \u0027planned obsolescence\u0027 (sự lỗi thời có toan tính)."
+                      },
+                      {
+                          "term":  "autonomous",
+                          "definition":  "Tự hành, tự chủ, có khả năng tự vận hành và đưa ra quyết định độc lập",
+                          "definitionVi":  "Tự hành, tự chủ, có khả năng tự vận hành và đưa ra quyết định độc lập",
+                          "phonetic":  "/ɔːˈtɒn.ə.məs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The deployment of autonomous weapons systems raises profound ethical dilemmas under international humanitarian law.",
+                          "exampleSentence":  "The deployment of autonomous weapons systems raises profound ethical dilemmas under international humanitarian law.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "self-governing, self-directed, automated, independent",
+                          "antonyms":  "dependent, subordinate, human-operated",
+                          "collocations":  "autonomous vehicle, autonomous system, autonomous weapons, autonomous decision",
+                          "note":  "Danh từ: autonomy /ɔːˈtɒn.ə.mi/ (quyền tự chủ, tính tự động độc lập)."
+                      },
+                      {
+                          "term":  "cybernetic",
+                          "definition":  "Thuộc về điều khiển học, sự kết hợp giữa hệ thống máy móc cơ điện và cơ thể sống/sinh học",
+                          "definitionVi":  "Thuộc về điều khiển học, sự kết hợp giữa hệ thống máy móc cơ điện và cơ thể sống/sinh học",
+                          "phonetic":  "/ˌsaɪ.bəˈnet.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Pioneering bioengineers are developing cybernetic prosthetics that interface seamlessly with the human nervous system.",
+                          "exampleSentence":  "Pioneering bioengineers are developing cybernetic prosthetics that interface seamlessly with the human nervous system.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "bionic, automated, robotic, computerized",
+                          "antonyms":  "purely biological, non-electronic",
+                          "collocations":  "cybernetic organism, cybernetic system, cybernetic interface, cybernetic technology",
+                          "note":  "Danh từ: cybernetics (điều khiển học). Gốc từ tiếng Hy Lạp \u0027kybernetes\u0027 (người cầm lái)."
+                      },
+                      {
+                          "term":  "surveillance",
+                          "definition":  "Sự giám sát chặt chẽ bằng camera, vệ tinh hoặc thuật toán theo dõi số",
+                          "definitionVi":  "Sự giám sát chặt chẽ bằng camera, vệ tinh hoặc thuật toán theo dõi số",
+                          "phonetic":  "/sɜːˈveɪ.ləns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The proliferation of facial-recognition cameras has sparked fierce debates concerning government surveillance and civil liberties.",
+                          "exampleSentence":  "The proliferation of facial-recognition cameras has sparked fierce debates concerning government surveillance and civil liberties.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "monitoring, observation, scrutiny, supervision, vigilance",
+                          "antonyms":  "neglect, disregard, privacy",
+                          "collocations":  "mass surveillance, constant surveillance, under surveillance, surveillance camera",
+                          "note":  "Phát âm tiếng Anh-Anh: /sɜːˈveɪ.ləns/. Cụm từ: \u0027under strict surveillance\u0027."
+                      },
+                      {
+                          "term":  "disenfranchise",
+                          "definition":  "Tước quyền công dân, tước bỏ cơ hội tiếp cận công nghệ hoặc quyền lợi chính đáng",
+                          "definitionVi":  "Tước quyền công dân, tước bỏ cơ hội tiếp cận công nghệ hoặc quyền lợi chính đáng",
+                          "phonetic":  "/ˌdɪs.ɪnˈfræn.tʃaɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The deepening digital divide threatens to disenfranchise marginalized rural communities from essential e-governance services.",
+                          "exampleSentence":  "The deepening digital divide threatens to disenfranchise marginalized rural communities from essential e-governance services.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "marginalize, disempower, sideline, deprive of rights",
+                          "antonyms":  "enfranchise, empower, integrate",
+                          "collocations":  "disenfranchise citizens, digitally disenfranchised, economically disenfranchised",
+                          "note":  "Danh từ: disenfranchisement. Dùng để nói về hậu quả bất bình đẳng công nghệ."
+                      },
+                      {
+                          "term":  "proliferate",
+                          "definition":  "Tăng nhanh đột biến, sinh sôi nảy nở với tốc độ chóng mặt",
+                          "definitionVi":  "Tăng nhanh đột biến, sinh sôi nảy nở với tốc độ chóng mặt",
+                          "phonetic":  "/prəˈlɪf.ər.eɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Unverified online platforms continue to proliferate, accelerating the viral transmission of deceptive conspiracy theories.",
+                          "exampleSentence":  "Unverified online platforms continue to proliferate, accelerating the viral transmission of deceptive conspiracy theories.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Technology \u0026 AI",
+                          "synonyms":  "multiply, mushroom, burgeon, escalate, snowball",
+                          "antonyms":  "dwindle, diminish, decline, decrease",
+                          "collocations":  "proliferate rapidly, technologies proliferate, nuclear proliferation",
+                          "note":  "Danh từ: proliferation /prəˌlɪf.ərˈeɪ.ʃən/ (sự gia tăng đột biến, sự phổ biến ồ ạt)."
+                      },
+                      {
+                          "term":  "gentrification",
+                          "definition":  "Quá trình chỉnh trang đô thị (nâng cấp khu dân cư nghèo làm giá nhà tăng cao, đẩy người nghèo đi nơi khác)",
+                          "definitionVi":  "Quá trình chỉnh trang đô thị (nâng cấp khu dân cư nghèo làm giá nhà tăng cao, đẩy người nghèo đi nơi khác)",
+                          "phonetic":  "/ˌdʒen.trɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "While gentrification stimulates economic regeneration, it frequently precipitates the displacement of vulnerable long-term residents.",
+                          "exampleSentence":  "While gentrification stimulates economic regeneration, it frequently precipitates the displacement of vulnerable long-term residents.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "urban renewal, residential upgrading, neighborhood transformation",
+                          "antonyms":  "urban decay, neighborhood blight",
+                          "collocations":  "process of gentrification, rapid gentrification, consequences of gentrification",
+                          "note":  "Động từ: gentrify. Chủ đề đô thị hóa rất phổ biến trong đề thi Academic Reading \u0026 Task 2."
+                      },
+                      {
+                          "term":  "stratification",
+                          "definition":  "Sự phân tầng xã hội (sự chia cắt đẳng cấp dựa trên tài sản, địa vị và quyền lực)",
+                          "definitionVi":  "Sự phân tầng xã hội (sự chia cắt đẳng cấp dựa trên tài sản, địa vị và quyền lực)",
+                          "phonetic":  "/ˌstræt.ɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Widening disparities in wealth accumulation exacerbate social stratification and stifle upward economic mobility.",
+                          "exampleSentence":  "Widening disparities in wealth accumulation exacerbate social stratification and stifle upward economic mobility.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "social hierarchy, class division, socio-economic grading",
+                          "antonyms":  "egalitarianism, classless society, equality",
+                          "collocations":  "social stratification, class stratification, economic stratification",
+                          "note":  "Tính từ: stratified (a highly stratified society = một xã hội phân tầng sâu sắc)."
+                      },
+                      {
+                          "term":  "demographic dividend",
+                          "definition":  "Cơ cấu dân số vàng (lợi thế kinh tế khi tỷ lệ dân số trong độ tuổi lao động vượt trội người phụ thuộc)",
+                          "definitionVi":  "Cơ cấu dân số vàng (lợi thế kinh tế khi tỷ lệ dân số trong độ tuổi lao động vượt trội người phụ thuộc)",
+                          "phonetic":  "/ˌdem.əˈɡræf.ɪk ˈdɪv.ɪ.dend/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Developing nations must invest aggressively in vocational upskilling to harness the potential of their demographic dividend.",
+                          "exampleSentence":  "Developing nations must invest aggressively in vocational upskilling to harness the potential of their demographic dividend.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "demographic bonus, youth demographic advantage",
+                          "antonyms":  "demographic deficit, population aging burden",
+                          "collocations":  "harness the demographic dividend, capitalize on demographic dividend, window of demographic dividend",
+                          "note":  "Cụm từ kinh tế - xã hội đắt giá khi bàn về cơ cấu dân số của các nước đang phát triển như Việt Nam."
+                      },
+                      {
+                          "term":  "alienation",
+                          "definition":  "Sự tha hóa, cảm giác bị cô lập và tách biệt khỏi cộng đồng xung quanh",
+                          "definitionVi":  "Sự tha hóa, cảm giác bị cô lập và tách biệt khỏi cộng đồng xung quanh",
+                          "phonetic":  "/ˌeɪ.li.əˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Rapid urban life and digital hyper-connectivity paradoxically induce profound feelings of social alienation among young professionals.",
+                          "exampleSentence":  "Rapid urban life and digital hyper-connectivity paradoxically induce profound feelings of social alienation among young professionals.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "estrangement, isolation, detachment, detachment",
+                          "antonyms":  "belonging, integration, solidarity, connection",
+                          "collocations":  "social alienation, sense of alienation, feelings of alienation",
+                          "note":  "Động từ: alienate /ˈeɪ.li.ə.neɪt/ (alienate someone from society)."
+                      },
+                      {
+                          "term":  "cohesion",
+                          "definition":  "Sự gắn kết xã hội, tinh thần đoàn kết keo sơn giữa các thành viên",
+                          "definitionVi":  "Sự gắn kết xã hội, tinh thần đoàn kết keo sơn giữa các thành viên",
+                          "phonetic":  "/kəʊˈhiː.ʒən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Equitable income distribution and inclusive public spaces are paramount for fostering durable social cohesion.",
+                          "exampleSentence":  "Equitable income distribution and inclusive public spaces are paramount for fostering durable social cohesion.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "solidarity, unity, harmony, connectedness",
+                          "antonyms":  "discord, fragmentation, division, conflict",
+                          "collocations":  "social cohesion, community cohesion, promote cohesion, strengthen cohesion",
+                          "note":  "Tính từ: cohesive (a cohesive community). Dùng thay thế tuyệt vời cho \u0027unity\u0027."
+                      },
+                      {
+                          "term":  "marginalize",
+                          "definition":  "Đẩy ra bên lề xã hội, tước bỏ vị thế và không cho tham gia vào các tiến trình chính",
+                          "definitionVi":  "Đẩy ra bên lề xã hội, tước bỏ vị thế và không cho tham gia vào các tiến trình chính",
+                          "phonetic":  "/ˈmɑː.dʒɪ.nəl.aɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Socioeconomic policies must be redesigned to ensure that minority groups are not marginalized in decision-making.",
+                          "exampleSentence":  "Socioeconomic policies must be redesigned to ensure that minority groups are not marginalized in decision-making.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "sidelined, disenfranchised, isolated, excluded",
+                          "antonyms":  "integrated, empowered, included",
+                          "collocations":  "marginalized groups, marginalized communities, economically marginalized",
+                          "note":  "Tính từ: marginalized (marginalized segments of society = các bộ phận yếu thế trong xã hội)."
+                      },
+                      {
+                          "term":  "disparity",
+                          "definition":  "Sự chênh lệch lớn, khoảng cách bất bình đẳng sâu sắc (về thu nhập, y tế, cơ hội)",
+                          "definitionVi":  "Sự chênh lệch lớn, khoảng cách bất bình đẳng sâu sắc (về thu nhập, y tế, cơ hội)",
+                          "phonetic":  "/dɪˈspær.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Targeted regional subsidies are crucial to bridging the conspicuous disparity in healthcare access between urban and rural provinces.",
+                          "exampleSentence":  "Targeted regional subsidies are crucial to bridging the conspicuous disparity in healthcare access between urban and rural provinces.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "inequality, gap, divergence, imbalance, discrepancy",
+                          "antonyms":  "parity, equality, balance, uniformity",
+                          "collocations":  "income disparity, regional disparity, healthcare disparity, widening disparity",
+                          "note":  "Trọng âm 2. Trái nghĩa: parity /ˈpær.ə.ti/ (sự bình đẳng, ngang hàng)."
+                      },
+                      {
+                          "term":  "urban sprawl",
+                          "definition":  "Sự mở rộng đô thị tự phát, thiếu quy hoạch lấn chiếm đất nông nghiệp ngoại thành",
+                          "definitionVi":  "Sự mở rộng đô thị tự phát, thiếu quy hoạch lấn chiếm đất nông nghiệp ngoại thành",
+                          "phonetic":  "/ˌɜː.bən ˈsprɔːl/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Unchecked urban sprawl places tremendous strain on public transport and necessitates costly municipal utilities.",
+                          "exampleSentence":  "Unchecked urban sprawl places tremendous strain on public transport and necessitates costly municipal utilities.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "uncontrolled suburbanization, metropolitan expansion",
+                          "antonyms":  "compact city, urban densification",
+                          "collocations":  "combat urban sprawl, curb urban sprawl, rapid urban sprawl",
+                          "note":  "Sprawl chỉ sự trải dài lộn xộn, ngổn ngang không kiểm soát."
+                      },
+                      {
+                          "term":  "egalitarian",
+                          "definition":  "Mang tính bình quân chủ nghĩa, ủng hộ quyền bình đẳng tuyệt đối cho mọi người",
+                          "definitionVi":  "Mang tính bình quân chủ nghĩa, ủng hộ quyền bình đẳng tuyệt đối cho mọi người",
+                          "phonetic":  "/ɪˌɡæl.ɪˈteə.ri.ən/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Nordic welfare systems are renowned for building egalitarian societies through progressive taxation and universal education.",
+                          "exampleSentence":  "Nordic welfare systems are renowned for building egalitarian societies through progressive taxation and universal education.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Society \u0026 Urbanization",
+                          "synonyms":  "equal, democratic, fair, classless, unstratified",
+                          "antonyms":  "elitist, hierarchical, stratified, authoritarian",
+                          "collocations":  "egalitarian society, egalitarian principles, egalitarian philosophy",
+                          "note":  "Danh từ: egalitarianism /ɪˌɡæl.ɪˈteə.ri.ən.ɪ.zəm/ (chủ nghĩa bình đẳng)."
+                      },
+                      {
+                          "term":  "lucrative",
+                          "definition":  "Béo bở, sinh lợi nhuận cao, mang lại thu nhập tài chính kếch xù",
+                          "definitionVi":  "Béo bở, sinh lợi nhuận cao, mang lại thu nhập tài chính kếch xù",
+                          "phonetic":  "/ˈluː.krə.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Specializing in corporate mergers and intellectual property law represents an exceptionally lucrative career trajectory.",
+                          "exampleSentence":  "Specializing in corporate mergers and intellectual property law represents an exceptionally lucrative career trajectory.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "highly remunerative, profitable, high-paying, fruitful",
+                          "antonyms":  "unprofitable, low-paying, unrewarding, loss-making",
+                          "collocations":  "lucrative career, lucrative business contract, lucrative market",
+                          "note":  "Trọng âm 1: LU-cra-tive. Từ C1 tuyệt vời thay cho \u0027well-paid\u0027."
+                      },
+                      {
+                          "term":  "precariat",
+                          "definition":  "Tầng lớp lao động bấp bênh (những người làm việc tự do, hợp đồng ngắn hạn không có bảo hiểm và phúc lợi)",
+                          "definitionVi":  "Tầng lớp lao động bấp bênh (những người làm việc tự do, hợp đồng ngắn hạn không có bảo hiểm và phúc lợi)",
+                          "phonetic":  "/prɪˈkeə.ri.ət/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The exponential expansion of gig economy platforms has given rise to a global precariat devoid of social security safeguards.",
+                          "exampleSentence":  "The exponential expansion of gig economy platforms has given rise to a global precariat devoid of social security safeguards.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "vulnerable workforce, insecure labor class",
+                          "antonyms":  "tenured workforce, permanent employees",
+                          "collocations":  "rise of the precariat, global precariat, member of the precariat",
+                          "note":  "Ghép từ \u0027precarious\u0027 (bấp bênh) + \u0027proletariat\u0027 (tầng lớp vô sản). Thuật ngữ xã hội học kinh tế C2."
+                      },
+                      {
+                          "term":  "remuneration",
+                          "definition":  "Tiền thù lao, chế độ lương thưởng và đãi ngộ tài chính tương xứng với công sức",
+                          "definitionVi":  "Tiền thù lao, chế độ lương thưởng và đãi ngộ tài chính tương xứng với công sức",
+                          "phonetic":  "/rɪˌmjuː.nərˈeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Executive remuneration packages must be tied to transparent environmental and governance benchmarks.",
+                          "exampleSentence":  "Executive remuneration packages must be tied to transparent environmental and governance benchmarks.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "compensation, financial reward, salary, emolument",
+                          "antonyms":  "N/A",
+                          "collocations":  "remuneration package, adequate remuneration, financial remuneration",
+                          "note":  "Tính từ: remunerative /rɪˈmjuː.nər.ə.tɪv/ (sinh lợi cao)."
+                      },
+                      {
+                          "term":  "monopolistic",
+                          "definition":  "Mang tính độc quyền, thâu tóm toàn bộ thị trường để triệt tiêu cạnh tranh",
+                          "definitionVi":  "Mang tính độc quyền, thâu tóm toàn bộ thị trường để triệt tiêu cạnh tranh",
+                          "phonetic":  "/məˌnɒp.əlˈɪs.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Antitrust regulators are investigating monopolistic practices among major technology conglomerates to protect market competition.",
+                          "exampleSentence":  "Antitrust regulators are investigating monopolistic practices among major technology conglomerates to protect market competition.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "exclusive, dominating, anti-competitive, controlling",
+                          "antonyms":  "competitive, pluralistic, open-market",
+                          "collocations":  "monopolistic practices, monopolistic behavior, monopolistic power",
+                          "note":  "Danh từ: monopoly /məˈnɒp.əl.i/ (thế độc quyền)."
+                      },
+                      {
+                          "term":  "austerity",
+                          "definition":  "Chính sách thắt lưng buộc bụng (cắt giảm chi tiêu công và tăng thuế để giảm thâm hụt ngân sách)",
+                          "definitionVi":  "Chính sách thắt lưng buộc bụng (cắt giảm chi tiêu công và tăng thuế để giảm thâm hụt ngân sách)",
+                          "phonetic":  "/ɒsˈter.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Severe government austerity measures provoked widespread public demonstrations over cuts to healthcare and pension funding.",
+                          "exampleSentence":  "Severe government austerity measures provoked widespread public demonstrations over cuts to healthcare and pension funding.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "fiscal belt-tightening, spending cuts, public retrenchment",
+                          "antonyms":  "expansionary spending, fiscal stimulus",
+                          "collocations":  "austerity measures, austerity program, era of austerity, impose austerity",
+                          "note":  "Tính từ: austere /ɒsˈtɪər/ (khắc khổ, thắt chặt chi tiêu)."
+                      },
+                      {
+                          "term":  "volatility",
+                          "definition":  "Sự biến động khó lường, tính không ổn định dễ đổi thay của thị trường/giá cả",
+                          "definitionVi":  "Sự biến động khó lường, tính không ổn định dễ đổi thay của thị trường/giá cả",
+                          "phonetic":  "/ˌvɒl.əˈtɪl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Geopolitical friction introduces acute volatility into global crude oil and commodity pricing.",
+                          "exampleSentence":  "Geopolitical friction introduces acute volatility into global crude oil and commodity pricing.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "instability, unpredictability, turbulence, fluctuation",
+                          "antonyms":  "stability, constancy, equilibrium, predictability",
+                          "collocations":  "market volatility, price volatility, financial volatility, reduce volatility",
+                          "note":  "Tính từ: volatile /ˈvɒl.ə.taɪl/ (dễ biến động, không ổn định)."
+                      },
+                      {
+                          "term":  "deregulation",
+                          "definition":  "Sự dỡ bỏ rào cản quy chế pháp lý để khuyến khích kinh tế tư nhân cạnh tranh tự do",
+                          "definitionVi":  "Sự dỡ bỏ rào cản quy chế pháp lý để khuyến khích kinh tế tư nhân cạnh tranh tự do",
+                          "phonetic":  "/diːˌreɡ.jəˈleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Proponents argue that financial deregulation fosters entrepreneurial innovation, while critics warn of systemic risks.",
+                          "exampleSentence":  "Proponents argue that financial deregulation fosters entrepreneurial innovation, while critics warn of systemic risks.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "market liberalization, removal of controls, decontrol",
+                          "antonyms":  "regulation, state intervention, government control",
+                          "collocations":  "economic deregulation, financial deregulation, wave of deregulation",
+                          "note":  "Động từ: deregulate. Tiền tố de- mang nghĩa dỡ bỏ/hủy bỏ."
+                      },
+                      {
+                          "term":  "insolvent",
+                          "definition":  "Vỡ nợ, mất khả năng thanh toán các khoản nợ đến hạn",
+                          "definitionVi":  "Vỡ nợ, mất khả năng thanh toán các khoản nợ đến hạn",
+                          "phonetic":  "/ɪnˈsɒl.vənt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Several mid-sized commercial lenders became insolvent following the abrupt collapse of the real estate bubble.",
+                          "exampleSentence":  "Several mid-sized commercial lenders became insolvent following the abrupt collapse of the real estate bubble.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "bankrupt, ruined, broke, in default",
+                          "antonyms":  "solvent, financially sound, thriving",
+                          "collocations":  "become insolvent, declare insolvent, technically insolvent",
+                          "note":  "Danh từ: insolvency /ɪnˈsɒl.vən.si/ (tình trạng vỡ nợ, mất khả năng chi trả)."
+                      },
+                      {
+                          "term":  "fiscal stimulus",
+                          "definition":  "Gói kích thích tài khóa (gói chi tiêu công hoặc giảm thuế của chính phủ nhằm phục hồi kinh tế)",
+                          "definitionVi":  "Gói kích thích tài khóa (gói chi tiêu công hoặc giảm thuế của chính phủ nhằm phục hồi kinh tế)",
+                          "phonetic":  "/ˈfɪs.kəl ˈstɪm.jə.ləs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The central government injected a massive fiscal stimulus package to sustain consumer purchasing power during the recession.",
+                          "exampleSentence":  "The central government injected a massive fiscal stimulus package to sustain consumer purchasing power during the recession.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Economy \u0026 Labor Market",
+                          "synonyms":  "economic bailout, budgetary injection, fiscal expansion",
+                          "antonyms":  "fiscal austerity, fiscal contraction",
+                          "collocations":  "implement fiscal stimulus, massive fiscal stimulus, fiscal stimulus package",
+                          "note":  "Số nhiều: stimuli /ˈstɪm.jə.laɪ/. Fiscal liên quan đến ngân sách nhà nước."
+                      },
+                      {
+                          "term":  "sedentary",
+                          "definition":  "Thụ động, ngồi nhiều một chỗ và lười vận động thể chất",
+                          "definitionVi":  "Thụ động, ngồi nhiều một chỗ và lười vận động thể chất",
+                          "phonetic":  "/ˈsed.ən.tər.i/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Adopting an excessively sedentary lifestyle represents an insidious risk factor for metabolic syndrome and heart disease.",
+                          "exampleSentence":  "Adopting an excessively sedentary lifestyle represents an insidious risk factor for metabolic syndrome and heart disease.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "inactive, desk-bound, seated, motionless",
+                          "antonyms":  "active, vigorous, dynamic, athletic",
+                          "collocations":  "sedentary lifestyle, sedentary behavior, sedentary job, lead a sedentary life",
+                          "note":  "Thường xuyên xuất hiện trong các bài luận Task 2 về sức khỏe cộng đồng."
+                      },
+                      {
+                          "term":  "panacea",
+                          "definition":  "Phương thuốc vạn năng, liều thuốc chữa bách bệnh (thường dùng nghĩa bóng: giải pháp cho mọi vấn đề)",
+                          "definitionVi":  "Phương thuốc vạn năng, liều thuốc chữa bách bệnh (thường dùng nghĩa bóng: giải pháp cho mọi vấn đề)",
+                          "phonetic":  "/ˌpæn.əˈsiː.ə/",
+                          "partOfSpeech":  "noun",
+                          "example":  "While technological automation improves administrative efficiency, it is by no means a panacea for deep structural unemployment.",
+                          "exampleSentence":  "While technological automation improves administrative efficiency, it is by no means a panacea for deep structural unemployment.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "cure-all, universal remedy, magic bullet, elixir",
+                          "antonyms":  "N/A",
+                          "collocations":  "universal panacea, not a panacea, offer a panacea",
+                          "note":  "Cụm từ C2 rất đắt giá: \u0027X is not a panacea for Y\u0027 (X không phải là chiếc đũa thần giải quyết mọi vấn đề)."
+                      },
+                      {
+                          "term":  "psychosomatic",
+                          "definition":  "Thuộc về tâm thể (bệnh thể xác bắt nguồn từ căng thẳng tâm lý hoặc xung đột tinh thần)",
+                          "definitionVi":  "Thuộc về tâm thể (bệnh thể xác bắt nguồn từ căng thẳng tâm lý hoặc xung đột tinh thần)",
+                          "phonetic":  "/ˌsaɪ.kəʊ.səˈmæt.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Chronic occupational burnout frequently manifests as debilitating psychosomatic ailments such as migraines and insomnia.",
+                          "exampleSentence":  "Chronic occupational burnout frequently manifests as debilitating psychosomatic ailments such as migraines and insomnia.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "mind-body, stress-induced, psychological",
+                          "antonyms":  "purely physical, organic, somatic",
+                          "collocations":  "psychosomatic symptoms, psychosomatic illness, psychosomatic disorder",
+                          "note":  "Psycho- (tâm trí) + somatic (thuộc thể xác). Thuật ngữ y học cao cấp."
+                      },
+                      {
+                          "term":  "longevity",
+                          "definition":  "Tuổi thọ cao, sự trường thọ",
+                          "definitionVi":  "Tuổi thọ cao, sự trường thọ",
+                          "phonetic":  "/lɒnˈdʒev.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Regular aerobic exercise and calorie-restricted Mediterranean diets are demonstrably correlated with exceptional human longevity.",
+                          "exampleSentence":  "Regular aerobic exercise and calorie-restricted Mediterranean diets are demonstrably correlated with exceptional human longevity.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "lifespan, life expectancy, long life",
+                          "antonyms":  "early mortality, premature death",
+                          "collocations":  "promote longevity, secret to longevity, human longevity, longevity gene",
+                          "note":  "Trọng âm 2: lon-GEV-i-ty. Gốc từ \u0027long\u0027."
+                      },
+                      {
+                          "term":  "insidious",
+                          "definition":  "Âm ỉ, tiến triển ngấm ngầm gây hại nghiêm trọng mà không dễ phát hiện",
+                          "definitionVi":  "Âm ỉ, tiến triển ngấm ngầm gây hại nghiêm trọng mà không dễ phát hiện",
+                          "phonetic":  "/ɪnˈsɪd.i.əs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Hypertension is widely termed an insidious disease because irreversible vascular damage occurs without manifest symptoms.",
+                          "exampleSentence":  "Hypertension is widely termed an insidious disease because irreversible vascular damage occurs without manifest symptoms.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "stealthy, gradual, treacherous, subtle, pernicious",
+                          "antonyms":  "overt, acute, obvious, harmless",
+                          "collocations":  "insidious onset, insidious disease, insidious threat, insidious effects",
+                          "note":  "Trọng âm 2. Rất hay dùng để tả tác hại ngấm ngầm của ô nhiễm hoặc thói quen xấu."
+                      },
+                      {
+                          "term":  "contagion",
+                          "definition":  "Sự lây nhiễm dịch bệnh (hoặc sự lan truyền nhanh chóng của tâm lý/khủng hoảng tài chính)",
+                          "definitionVi":  "Sự lây nhiễm dịch bệnh (hoặc sự lan truyền nhanh chóng của tâm lý/khủng hoảng tài chính)",
+                          "phonetic":  "/kənˈteɪ.dʒən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Strict quarantine protocols were swiftly instituted at international transit hubs to halt the contagion.",
+                          "exampleSentence":  "Strict quarantine protocols were swiftly instituted at international transit hubs to halt the contagion.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "infection, transmission, epidemic spread, contamination",
+                          "antonyms":  "immunity, containment, sterilization",
+                          "collocations":  "halt the contagion, risk of contagion, financial contagion",
+                          "note":  "Tính từ: contagious /kənˈteɪ.dʒəs/ (truyền nhiễm, dễ lây lan)."
+                      },
+                      {
+                          "term":  "euthanasia",
+                          "definition":  "Cái chết nhân đạo, phương pháp trợ tử cho bệnh nhân nan y giai đoạn cuối",
+                          "definitionVi":  "Cái chết nhân đạo, phương pháp trợ tử cho bệnh nhân nan y giai đoạn cuối",
+                          "phonetic":  "/ˌjuː.θəˈneɪ.zi.ə/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The legalization of voluntary euthanasia remains one of the most intensely contested bioethical dilemmas of our era.",
+                          "exampleSentence":  "The legalization of voluntary euthanasia remains one of the most intensely contested bioethical dilemmas of our era.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "mercy killing, assisted dying",
+                          "antonyms":  "N/A",
+                          "collocations":  "voluntary euthanasia, legalize euthanasia, practice euthanasia, debate on euthanasia",
+                          "note":  "Chủ đề đạo đức y sinh (Bioethics) kinh điển trong các bài luận tranh luận học thuật."
+                      },
+                      {
+                          "term":  "bioethics",
+                          "definition":  "Đạo đức y sinh học (nghiên cứu về các chuẩn mực luân lý trong y khoa và công nghệ sinh học)",
+                          "definitionVi":  "Đạo đức y sinh học (nghiên cứu về các chuẩn mực luân lý trong y khoa và công nghệ sinh học)",
+                          "phonetic":  "/ˌbaɪ.əʊˈeθ.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Human genome editing via CRISPR technology has compelled international regulatory bodies to draft stringent bioethics charters.",
+                          "exampleSentence":  "Human genome editing via CRISPR technology has compelled international regulatory bodies to draft stringent bioethics charters.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "biomedical ethics, medical ethics",
+                          "antonyms":  "N/A",
+                          "collocations":  "field of bioethics, bioethical dilemma, bioethics committee",
+                          "note":  "Tính từ: bioethical /ˌbaɪ.əʊˈeθ.ɪ.kəl/."
+                      },
+                      {
+                          "term":  "debilitating",
+                          "definition":  "Làm suy nhược, làm kiệt quệ sức lực và khả năng vận động",
+                          "definitionVi":  "Làm suy nhược, làm kiệt quệ sức lực và khả năng vận động",
+                          "phonetic":  "/dɪˈbɪl.ɪ.teɪ.tɪŋ/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Rheumatoid arthritis is a chronic and debilitating inflammatory condition that severely impairs joint flexibility.",
+                          "exampleSentence":  "Rheumatoid arthritis is a chronic and debilitating inflammatory condition that severely impairs joint flexibility.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Health \u0026 Bioethics",
+                          "synonyms":  "incapacitating, paralyzing, weakening, crippling, draining",
+                          "antonyms":  "restorative, invigorating, strengthening, energizing",
+                          "collocations":  "debilitating illness, debilitating condition, debilitating effect, severely debilitating",
+                          "note":  "Động từ: debilitate /dɪˈbɪl.ɪ.teɪt/ (làm suy nhược cơ thể)."
+                      },
+                      {
+                          "term":  "acculturation",
+                          "definition":  "Sự tiếp biến văn hóa (quá trình biến đổi văn hóa khi hai cộng đồng tiếp xúc mà vẫn giữ bản sắc gốc)",
+                          "definitionVi":  "Sự tiếp biến văn hóa (quá trình biến đổi văn hóa khi hai cộng đồng tiếp xúc mà vẫn giữ bản sắc gốc)",
+                          "phonetic":  "/əˌkʌl.tʃəˈreɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Acculturation allows migrant communities to incorporate host values without relinquishing their ancestral heritage.",
+                          "exampleSentence":  "Acculturation allows migrant communities to incorporate host values without relinquishing their ancestral heritage.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "cultural adaptation, intercultural exchange, cross-cultural integration",
+                          "antonyms":  "cultural alienation, ethnocentrism, cultural segregation",
+                          "collocations":  "process of acculturation, cross-cultural acculturation, facilitate acculturation",
+                          "note":  "Phân biệt với \u0027assimilation\u0027 (đồng hóa hoàn toàn làm mất bản sắc gốc)."
+                      },
+                      {
+                          "term":  "ethnocentrism",
+                          "definition":  "Chủ nghĩa vị chủng (thái độ tự tôn dân tộc mình là trung tâm và vượt trội hơn mọi nền văn hóa khác)",
+                          "definitionVi":  "Chủ nghĩa vị chủng (thái độ tự tôn dân tộc mình là trung tâm và vượt trội hơn mọi nền văn hóa khác)",
+                          "phonetic":  "/ˌeθ.nəʊˈsen.trɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Comprehensive intercultural education is indispensable to dismantling ingrained ethnocentrism among university students.",
+                          "exampleSentence":  "Comprehensive intercultural education is indispensable to dismantling ingrained ethnocentrism among university students.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "cultural chauvinism, xenophobia, cultural supremacy",
+                          "antonyms":  "cultural relativism, cosmopolitanism, open-mindedness",
+                          "collocations":  "combat ethnocentrism, rooted in ethnocentrism, ethnocentric bias",
+                          "note":  "Tính từ: ethnocentric /ˌeθ.nəʊˈsen.trɪk/. Khái niệm nhân học văn hóa cốt lõi."
+                      },
+                      {
+                          "term":  "homogenization",
+                          "definition":  "Sự đồng nhất hóa văn hóa (hiện tượng toàn cầu hóa làm các nền văn hóa địa phương mất dần nét độc đáo và giống hệt nhau)",
+                          "definitionVi":  "Sự đồng nhất hóa văn hóa (hiện tượng toàn cầu hóa làm các nền văn hóa địa phương mất dần nét độc đáo và giống hệt nhau)",
+                          "phonetic":  "/həˌmɒdʒ.ə.naɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Critics lament that commercial globalization fuels cultural homogenization, eclipsing indigenous languages and crafts.",
+                          "exampleSentence":  "Critics lament that commercial globalization fuels cultural homogenization, eclipsing indigenous languages and crafts.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "cultural standardization, uniformity, Americanization",
+                          "antonyms":  "cultural diversification, heterogeneity, pluralism",
+                          "collocations":  "cultural homogenization, threat of homogenization, resist homogenization",
+                          "note":  "Tính từ: homogeneous /ˌhəʊ.məˈdʒiː.ni.əs/. Động từ: homogenize."
+                      },
+                      {
+                          "term":  "hegemony",
+                          "definition":  "Sự bá quyền, thế thống trị áp đảo về văn hóa, chính trị hoặc kinh tế của một thế lực lớn",
+                          "definitionVi":  "Sự bá quyền, thế thống trị áp đảo về văn hóa, chính trị hoặc kinh tế của một thế lực lớn",
+                          "phonetic":  "/hɪˈɡem.ə.ni/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The global spread of western media franchises has often been analyzed as an expression of cultural hegemony.",
+                          "exampleSentence":  "The global spread of western media franchises has often been analyzed as an expression of cultural hegemony.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "dominance, supremacy, mastery, ascendancy, leadership",
+                          "antonyms":  "subordination, equality, balance of power",
+                          "collocations":  "cultural hegemony, establish hegemony, challenge hegemony, global hegemony",
+                          "note":  "Trọng âm 2: he-GEM-o-ny (Anh-Anh) hoặc HE-ge-mo-ny (Anh-Mỹ). Tính từ: hegemonic /ˌhedʒ.ɪˈmɒn.ɪk/."
+                      },
+                      {
+                          "term":  "intangible",
+                          "definition":  "Phi vật thể, vô hình, không thể sờ chạm bằng tay nhưng có giá trị tinh thần lớn",
+                          "definitionVi":  "Phi vật thể, vô hình, không thể sờ chạm bằng tay nhưng có giá trị tinh thần lớn",
+                          "phonetic":  "/ɪnˈtæn.dʒə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Traditional ritual dances, culinary savoir-faire, and oral folklore constitute invaluable intangible cultural heritage.",
+                          "exampleSentence":  "Traditional ritual dances, culinary savoir-faire, and oral folklore constitute invaluable intangible cultural heritage.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "immaterial, non-physical, incorporeal, abstract",
+                          "antonyms":  "tangible, concrete, material, physical",
+                          "collocations":  "intangible cultural heritage, intangible assets, intangible value",
+                          "note":  "Trái nghĩa: tangible /ˈtæn.dʒə.bəl/ (vật thể, hữu hình: tangible assets)."
+                      },
+                      {
+                          "term":  "indigenous",
+                          "definition":  "Bản địa, thổ trước, có nguồn gốc tự nhiên từ một vùng đất cụ thể",
+                          "definitionVi":  "Bản địa, thổ trước, có nguồn gốc tự nhiên từ một vùng đất cụ thể",
+                          "phonetic":  "/ɪnˈdɪdʒ.ɪ.nəs/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Preserving indigenous botanical wisdom provides pharmacologists with indispensable insights into new therapeutics.",
+                          "exampleSentence":  "Preserving indigenous botanical wisdom provides pharmacologists with indispensable insights into new therapeutics.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "native, aboriginal, endemic, local, original",
+                          "antonyms":  "exotic, foreign, invasive, non-native",
+                          "collocations":  "indigenous people, indigenous culture, indigenous knowledge, indigenous language",
+                          "note":  "Trọng âm 2: in-DI-ge-nous. Từ chuẩn mực thay cho \u0027native\u0027."
+                      },
+                      {
+                          "term":  "cosmopolitan",
+                          "definition":  "Mang tính quốc tế, bao hàm đa văn hóa toàn cầu",
+                          "definitionVi":  "Mang tính quốc tế, bao hàm đa văn hóa toàn cầu",
+                          "phonetic":  "/ˌkɒz.məˈpɒl.ɪ.tən/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Metropolises like London and Singapore celebrate a cosmopolitan character that attracts international talent.",
+                          "exampleSentence":  "Metropolises like London and Singapore celebrate a cosmopolitan character that attracts international talent.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "multicultural, international, global, worldly, ecumenical",
+                          "antonyms":  "provincial, insular, parochial, narrow-minded",
+                          "collocations":  "cosmopolitan city, cosmopolitan outlook, cosmopolitan atmosphere",
+                          "note":  "Danh từ: cosmopolitanism /ˌkɒz.məˈpɒl.ɪ.tən.ɪ.zəm/ (chủ nghĩa thế giới)."
+                      },
+                      {
+                          "term":  "juxtaposition",
+                          "definition":  "Sự đặt cạnh nhau để làm nổi bật nét tương phản hoặc sự giao thoa độc đáo",
+                          "definitionVi":  "Sự đặt cạnh nhau để làm nổi bật nét tương phản hoặc sự giao thoa độc đáo",
+                          "phonetic":  "/ˌdʒʌk.stə.pəˈzɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The striking juxtaposition of ancient pagodas beside soaring glass skyscrapers epitomizes Asian modernization.",
+                          "exampleSentence":  "The striking juxtaposition of ancient pagodas beside soaring glass skyscrapers epitomizes Asian modernization.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "comparison, contrast, collocation, proximity",
+                          "antonyms":  "separation, isolation, detachment",
+                          "collocations":  "striking juxtaposition, unusual juxtaposition, juxtaposition of old and new",
+                          "note":  "Động từ: juxtapose /ˌdʒʌk.stəˈpəʊz/ (đặt cạnh nhau để đối chiếu)."
+                      },
+                      {
+                          "term":  "assimilation",
+                          "definition":  "Sự đồng hóa (quá trình tiếp thu hoàn toàn văn hóa đa số và dần từ bỏ văn hóa gốc)",
+                          "definitionVi":  "Sự đồng hóa (quá trình tiếp thu hoàn toàn văn hóa đa số và dần từ bỏ văn hóa gốc)",
+                          "phonetic":  "/əˌsɪm.ɪˈleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Government policies historically pressured ethnic minorities toward cultural assimilation at the expense of native tongues.",
+                          "exampleSentence":  "Government policies historically pressured ethnic minorities toward cultural assimilation at the expense of native tongues.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Culture \u0026 Globalization",
+                          "synonyms":  "cultural absorption, integration, incorporation",
+                          "antonyms":  "cultural preservation, segregation, autonomy",
+                          "collocations":  "forced assimilation, cultural assimilation, policy of assimilation",
+                          "note":  "Động từ: assimilate into (hòa nhập, đồng hóa vào)."
+                      },
+                      {
+                          "term":  "deterrent",
+                          "definition":  "Biện pháp răn đe, yếu tố ngăn chặn người khác thực hiện hành vi phi pháp",
+                          "definitionVi":  "Biện pháp răn đe, yếu tố ngăn chặn người khác thực hiện hành vi phi pháp",
+                          "phonetic":  "/dɪˈter.ənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Criminologists contend that certainty of apprehension serves as a vastly more potent deterrent than severity of sentencing.",
+                          "exampleSentence":  "Criminologists contend that certainty of apprehension serves as a vastly more potent deterrent than severity of sentencing.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "disincentive, discouragement, curb, restraint, check",
+                          "antonyms":  "incentive, encouragement, catalyst",
+                          "collocations":  "effective deterrent, act as a deterrent, strong deterrent, nuclear deterrent",
+                          "note":  "Động từ: deter /dɪˈtɜːr/ (deter someone from doing something)."
+                      },
+                      {
+                          "term":  "recidivism",
+                          "definition":  "Tỷ lệ tái phạm tội (hành vi tái phạm pháp luật sau khi đã chấp hành xong án phạt tù)",
+                          "definitionVi":  "Tỷ lệ tái phạm tội (hành vi tái phạm pháp luật sau khi đã chấp hành xong án phạt tù)",
+                          "phonetic":  "/rɪˈsɪd.ɪ.vɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Correctional facilities that incorporate post-release job placement experience drastically reduced rates of recidivism.",
+                          "exampleSentence":  "Correctional facilities that incorporate post-release job placement experience drastically reduced rates of recidivism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "reoffending, relapse into crime, habitual criminality",
+                          "antonyms":  "rehabilitation, desistance, reformation",
+                          "collocations":  "rate of recidivism, curb recidivism, reduce recidivism, high recidivism",
+                          "note":  "Người tái phạm tội: recidivist /rɪˈsɪd.ɪ.vɪst/. Từ C1 đỉnh cao trong chủ đề Crime."
+                      },
+                      {
+                          "term":  "incarceration",
+                          "definition":  "Sự tống giam, việc giam giữ trong trại cải tạo hoặc nhà tù",
+                          "definitionVi":  "Sự tống giam, việc giam giữ trong trại cải tạo hoặc nhà tù",
+                          "phonetic":  "/ɪnˌkɑː.sərˈeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Sociologists advocate for restorative justice alternatives over mass incarceration for non-violent offenders.",
+                          "exampleSentence":  "Sociologists advocate for restorative justice alternatives over mass incarceration for non-violent offenders.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "imprisonment, confinement, detention, custody",
+                          "antonyms":  "liberation, release, exoneration, acquittal",
+                          "collocations":  "mass incarceration, rate of incarceration, alternative to incarceration",
+                          "note":  "Động từ: incarcerate /ɪnˈkɑː.sər.eɪt/. Dùng thay cho \u0027imprisonment\u0027 hoặc \u0027jailing\u0027."
+                      },
+                      {
+                          "term":  "punitive",
+                          "definition":  "Mang tính trừng phạt, trừng trị thích đáng theo luật định",
+                          "definitionVi":  "Mang tính trừng phạt, trừng trị thích đáng theo luật định",
+                          "phonetic":  "/ˈpjuː.nɪ.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The court imposed severe punitive damages on the manufacturing conglomerate for willful toxic dumping.",
+                          "exampleSentence":  "The court imposed severe punitive damages on the manufacturing conglomerate for willful toxic dumping.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "disciplinary, retributive, penal, correctional, penalizing",
+                          "antonyms":  "rehabilitative, restorative, lenient, exonerating",
+                          "collocations":  "punitive measures, punitive damages, punitive action, punitive sentence",
+                          "note":  "Thường đối chiếu với \u0027rehabilitative measures\u0027 (biện pháp mang tính giáo dục phục hồi)."
+                      },
+                      {
+                          "term":  "exonerate",
+                          "definition":  "Minh oan, tuyên bố trắng án và xóa bỏ mọi cáo buộc tội danh",
+                          "definitionVi":  "Minh oan, tuyên bố trắng án và xóa bỏ mọi cáo buộc tội danh",
+                          "phonetic":  "/ɪɡˈzɒn.ə.reɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Post-conviction DNA testing successfully exonerated several inmates who had spent decades on death row.",
+                          "exampleSentence":  "Post-conviction DNA testing successfully exonerated several inmates who had spent decades on death row.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "absolve, acquit, vindicate, clear, pardon",
+                          "antonyms":  "convict, incriminate, condemn, sentence",
+                          "collocations":  "fully exonerate, exonerate from blame, DNA evidence exonerates",
+                          "note":  "Danh từ: exoneration /ɪɡˌzɒn.əˈreɪ.ʃən/. Dùng thay thế cho \u0027prove innocent\u0027."
+                      },
+                      {
+                          "term":  "illicit",
+                          "definition":  "Bất hợp pháp, bị luật pháp hoặc quy chuẩn đạo đức xã hội nghiêm cấm",
+                          "definitionVi":  "Bất hợp pháp, bị luật pháp hoặc quy chuẩn đạo đức xã hội nghiêm cấm",
+                          "phonetic":  "/ɪˈlɪs.ɪt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Interpol coordinates global crackdowns to dismantle illicit trafficking cartels operating in cyberspace.",
+                          "exampleSentence":  "Interpol coordinates global crackdowns to dismantle illicit trafficking cartels operating in cyberspace.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "unlawful, illegal, prohibited, contraband, clandestine",
+                          "antonyms":  "licit, legal, legitimate, authorized, lawful",
+                          "collocations":  "illicit trade, illicit drugs, illicit activities, illicit trafficking",
+                          "note":  "Trọng âm 2: il-LIC-it. Dùng thay cho từ \u0027illegal\u0027 đơn điệu."
+                      },
+                      {
+                          "term":  "delinquency",
+                          "definition":  "Hành vi phạm pháp, hành vi phạm tội (đặc biệt là ở lứa tuổi thanh thiếu niên)",
+                          "definitionVi":  "Hành vi phạm pháp, hành vi phạm tội (đặc biệt là ở lứa tuổi thanh thiếu niên)",
+                          "phonetic":  "/dɪˈlɪŋ.kwən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Targeted community mentorship programs offer an effective pathway to counteract rising juvenile delinquency.",
+                          "exampleSentence":  "Targeted community mentorship programs offer an effective pathway to counteract rising juvenile delinquency.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "lawbreaking, criminality, wrongdoing, misbehavior",
+                          "antonyms":  "lawfulness, obedience, civic conformity",
+                          "collocations":  "juvenile delinquency, delinquency rate, combat delinquency",
+                          "note":  "Người phạm tội vị thành niên: juvenile delinquent. Danh từ đếm được hoặc không đếm được."
+                      },
+                      {
+                          "term":  "jurisdiction",
+                          "definition":  "Thẩm quyền pháp lý, quyền tài phán của một tòa án hoặc cơ quan luật pháp",
+                          "definitionVi":  "Thẩm quyền pháp lý, quyền tài phán của một tòa án hoặc cơ quan luật pháp",
+                          "phonetic":  "/ˌdʒʊə.rɪsˈdɪk.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Cross-border cybercrimes frequently present complex jurisdictional challenges for national prosecutorial agencies.",
+                          "exampleSentence":  "Cross-border cybercrimes frequently present complex jurisdictional challenges for national prosecutorial agencies.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "legal authority, judicial competency, remit, sovereignty",
+                          "antonyms":  "N/A",
+                          "collocations":  "under the jurisdiction of, fall outside the jurisdiction, legal jurisdiction",
+                          "note":  "Thuật ngữ luật pháp chuyên nghiệp trong các bài thảo luận quốc tế."
+                      },
+                      {
+                          "term":  "retribution",
+                          "definition":  "Sự trừng phạt đích đáng, sự báo ứng thích đáng cho tội ác đã gây ra",
+                          "definitionVi":  "Sự trừng phạt đích đáng, sự báo ứng thích đáng cho tội ác đã gây ra",
+                          "phonetic":  "/ˌret.rɪˈbjuː.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Advocates of retributive justice argue that severe punishment is morally required to balance the scales of justice.",
+                          "exampleSentence":  "Advocates of retributive justice argue that severe punishment is morally required to balance the scales of justice.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Crime \u0026 Penal Policy",
+                          "synonyms":  "vengeance, punishment, retaliation, justice, payback",
+                          "antonyms":  "forgiveness, mercy, leniency, pardon",
+                          "collocations":  "seek retribution, divine retribution, act of retribution, retributive justice",
+                          "note":  "Tính từ: retributive /rɪˈtrɪb.jə.tɪv/ (retributive justice = tư pháp trừng phạt)."
+                      },
+                      {
+                          "term":  "misinformation",
+                          "definition":  "Thông tin sai lệch (thông tin không đúng do nhầm lẫn hoặc lan truyền thiếu kiểm chứng)",
+                          "definitionVi":  "Thông tin sai lệch (thông tin không đúng do nhầm lẫn hoặc lan truyền thiếu kiểm chứng)",
+                          "phonetic":  "/ˌmɪs.ɪn.fəˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Social media platforms must deploy advanced fact-checking algorithms to halt the virulent spread of health misinformation.",
+                          "exampleSentence":  "Social media platforms must deploy advanced fact-checking algorithms to halt the virulent spread of health misinformation.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "inaccurate reporting, false narrative, fake news, fallacy",
+                          "antonyms":  "verified fact, factual accuracy, objective truth",
+                          "collocations":  "spread misinformation, combat misinformation, rampant misinformation, debunk misinformation",
+                          "note":  "Phân biệt: misinformation (tin sai vô ý) \u0026 disinformation (tin giả bịa đặt cố ý để lừa đảo)."
+                      },
+                      {
+                          "term":  "sensationalism",
+                          "definition":  "Khuynh hướng giật gân (thủ pháp thổi phồng giật gân câu khách của báo lá cải)",
+                          "definitionVi":  "Khuynh hướng giật gân (thủ pháp thổi phồng giật gân câu khách của báo lá cải)",
+                          "phonetic":  "/senˈseɪ.ʃən.əl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Mainstream journalistic standards are compromised when commercial publishers prioritize sensationalism over factual rigor.",
+                          "exampleSentence":  "Mainstream journalistic standards are compromised when commercial publishers prioritize sensationalism over factual rigor.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "yellow journalism, melodrama, hype, exaggeration",
+                          "antonyms":  "objective reporting, sobriety, factual accuracy",
+                          "collocations":  "media sensationalism, tabloid sensationalism, accused of sensationalism",
+                          "note":  "Tính từ: sensational (sensational headlines = tiêu đề giật gân)."
+                      },
+                      {
+                          "term":  "polarize",
+                          "definition":  "Làm phân cực, chia rẽ dư luận thành hai thái cực đối lập gay gắt",
+                          "definitionVi":  "Làm phân cực, chia rẽ dư luận thành hai thái cực đối lập gay gắt",
+                          "phonetic":  "/ˈpəʊ.lə.raɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Algorithmic echo chambers on social networks polarize public discourse, eroding the consensus required for democracy.",
+                          "exampleSentence":  "Algorithmic echo chambers on social networks polarize public discourse, eroding the consensus required for democracy.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "divide, split, fracture, sever, antagonize",
+                          "antonyms":  "unify, harmonize, unite, reconcile",
+                          "collocations":  "polarize society, polarize opinion, deeply polarized, polarizing issue",
+                          "note":  "Danh từ: polarization /ˌpəʊ.lə.raɪˈzeɪ.ʃən/ (sự phân cực xã hội/chính trị)."
+                      },
+                      {
+                          "term":  "propaganda",
+                          "definition":  "Sự tuyên truyền (thông tin mang tính định hướng một chiều để phục vụ mục tiêu chính trị)",
+                          "definitionVi":  "Sự tuyên truyền (thông tin mang tính định hướng một chiều để phục vụ mục tiêu chính trị)",
+                          "phonetic":  "/ˌprɒp.əˈɡæn.də/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Media literacy curricula empower young scholars to discern state-sponsored propaganda from objective investigative reporting.",
+                          "exampleSentence":  "Media literacy curricula empower young scholars to discern state-sponsored propaganda from objective investigative reporting.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "disinformation, political indoctrination, biased messaging",
+                          "antonyms":  "impartial journalism, objective truth",
+                          "collocations":  "disseminate propaganda, political propaganda, anti-war propaganda",
+                          "note":  "Danh từ không đếm được. Người làm tuyên truyền: propagandist."
+                      },
+                      {
+                          "term":  "veracity",
+                          "definition":  "Tính chân thực, sự trung thực và tính xác thực tuyệt đối của thông tin",
+                          "definitionVi":  "Tính chân thực, sự trung thực và tính xác thực tuyệt đối của thông tin",
+                          "phonetic":  "/vəˈræs.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Rigorous investigative journalists meticulously cross-reference multiple primary sources to ascertain the veracity of allegations.",
+                          "exampleSentence":  "Rigorous investigative journalists meticulously cross-reference multiple primary sources to ascertain the veracity of allegations.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "truthfulness, accuracy, authenticity, credibility, reliability",
+                          "antonyms":  "falsehood, deceit, mendacity, inaccurate reporting",
+                          "collocations":  "question the veracity, verify the veracity, doubt the veracity",
+                          "note":  "Tính từ: veracious /vəˈreɪ.ʃəs/ (chân thật, đúng sự thật). Từ C2 ăn điểm rất cao."
+                      },
+                      {
+                          "term":  "censorship",
+                          "definition":  "Sự kiểm duyệt nội dung (thẩm tra và cắt bỏ nội dung nhạy cảm, độc hại hoặc bất đồng chính kiến)",
+                          "definitionVi":  "Sự kiểm duyệt nội dung (thẩm tra và cắt bỏ nội dung nhạy cảm, độc hại hoặc bất đồng chính kiến)",
+                          "phonetic":  "/ˈsen.sə.ʃɪp/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Excessive governmental censorship of artistic expression stifles civil society and breaches fundamental human rights.",
+                          "exampleSentence":  "Excessive governmental censorship of artistic expression stifles civil society and breaches fundamental human rights.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "suppression, information filtering, media blackouts",
+                          "antonyms":  "free expression, uncensored media, press freedom",
+                          "collocations":  "impose censorship, strict censorship, evade censorship, internet censorship",
+                          "note":  "Động từ: censor. Người làm kiểm duyệt: censor."
+                      },
+                      {
+                          "term":  "echo chamber",
+                          "definition":  "Buồng vang thông tin (môi trường mạng nơi người dùng chỉ tiếp xúc với ý kiến tương đồng, củng cố định kiến)",
+                          "definitionVi":  "Buồng vang thông tin (môi trường mạng nơi người dùng chỉ tiếp xúc với ý kiến tương đồng, củng cố định kiến)",
+                          "phonetic":  "/ˈek.əʊ ˌtʃeɪm.bər/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Social media recommendation algorithms trap users within ideological echo chambers that reinforce dogmatic beliefs.",
+                          "exampleSentence":  "Social media recommendation algorithms trap users within ideological echo chambers that reinforce dogmatic beliefs.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "information bubble, ideological bubble, walled garden",
+                          "antonyms":  "diverse public forum, open debate",
+                          "collocations":  "trapped in an echo chamber, digital echo chamber, political echo chamber",
+                          "note":  "Thuật ngữ truyền thông số hiện đại cực kỳ đắt giá trong bài thi Writing \u0026 Speaking."
+                      },
+                      {
+                          "term":  "scrutinize",
+                          "definition":  "Xem xét kỹ lưỡng, soi xét cẩn mật từng chi tiết để tìm lỗ hổng hoặc sự thật",
+                          "definitionVi":  "Xem xét kỹ lưỡng, soi xét cẩn mật từng chi tiết để tìm lỗ hổng hoặc sự thật",
+                          "phonetic":  "/ˈskruː.tɪ.naɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "An independent free press performs a democratic watchdog role by scrutinizing the financial dealings of elected officials.",
+                          "exampleSentence":  "An independent free press performs a democratic watchdog role by scrutinizing the financial dealings of elected officials.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "examine, inspect, audit, investigate, probe",
+                          "antonyms":  "overlook, glance at, ignore, neglect",
+                          "collocations":  "closely scrutinize, scrutinize policy, public scrutiny",
+                          "note":  "Danh từ: scrutiny /ˈskruː.tɪ.ni/ (under close public scrutiny = dưới sự soi xét kỹ của công chúng)."
+                      },
+                      {
+                          "term":  "ostensibly",
+                          "definition":  "Bề ngoài là, theo như tuyên bố bên ngoài (nhưng thực chất có thể khác)",
+                          "definitionVi":  "Bề ngoài là, theo như tuyên bố bên ngoài (nhưng thực chất có thể khác)",
+                          "phonetic":  "/ɒsˈten.sə.bli/",
+                          "partOfSpeech":  "adverb",
+                          "example":  "The cybersecurity legislation was ostensibly enacted to combat terrorism, though critics fear it curtails journalistic privacy.",
+                          "exampleSentence":  "The cybersecurity legislation was ostensibly enacted to combat terrorism, though critics fear it curtails journalistic privacy.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Public Discourse",
+                          "synonyms":  "apparently, seemingly, supposedly, superficially",
+                          "antonyms":  "genuinely, truly, covertly, in reality",
+                          "collocations":  "ostensibly intended for, ostensibly independent, ostensibly designed to",
+                          "note":  "Tính từ: ostensible /ɒsˈten.sə.bəl/. Trạng từ chỉ sắc thái học thuật bậc C2."
+                      },
+                      {
+                          "term":  "bureaucracy",
+                          "definition":  "Bộ máy quan liêu, thủ tục hành chính cồng kềnh phức tạp",
+                          "definitionVi":  "Bộ máy quan liêu, thủ tục hành chính cồng kềnh phức tạp",
+                          "phonetic":  "/bjʊəˈrɒk.rə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Streamlining administrative bureaucracy is essential to stimulate foreign investment and reduce corporate compliance costs.",
+                          "exampleSentence":  "Streamlining administrative bureaucracy is essential to stimulate foreign investment and reduce corporate compliance costs.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "red tape, civil service apparatus, administrative hierarchy",
+                          "antonyms":  "administrative efficiency, streamlined governance",
+                          "collocations":  "cut through bureaucracy, government bureaucracy, bureaucratic hurdles",
+                          "note":  "Tính từ: bureaucratic /ˌbjʊə.rəˈkræt.ɪk/."
+                      },
+                      {
+                          "term":  "subsidize",
+                          "definition":  "Trợ cấp ngân sách, chính phủ hỗ trợ tài chính để hạ giá thành hàng hóa/dịch vụ",
+                          "definitionVi":  "Trợ cấp ngân sách, chính phủ hỗ trợ tài chính để hạ giá thành hàng hóa/dịch vụ",
+                          "phonetic":  "/ˈsʌb.sɪ.daɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Municipal administrations should heavily subsidize public rapid transit to incentivize motorists to abandon private vehicles.",
+                          "exampleSentence":  "Municipal administrations should heavily subsidize public rapid transit to incentivize motorists to abandon private vehicles.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "underwrite, fund, sponsor, finance, grant aid",
+                          "antonyms":  "tax, levy, defund",
+                          "collocations":  "subsidize public transport, state-subsidized, heavily subsidize, farm subsidies",
+                          "note":  "Danh từ: subsidy /ˈsʌb.sɪ.di/. Tính từ: subsidized."
+                      },
+                      {
+                          "term":  "stringent",
+                          "definition":  "Nghiêm ngặt, chặt chẽ, khắt khe về mặt pháp lý hoặc quy định",
+                          "definitionVi":  "Nghiêm ngặt, chặt chẽ, khắt khe về mặt pháp lý hoặc quy định",
+                          "phonetic":  "/ˈstrɪn.dʒənt/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Legislators must enact stringent environmental regulations with severe punitive fines for industrial polluters.",
+                          "exampleSentence":  "Legislators must enact stringent environmental regulations with severe punitive fines for industrial polluters.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "rigorous, strict, rigorous, tight, demanding",
+                          "antonyms":  "lenient, lax, loose, flexible",
+                          "collocations":  "stringent regulations, stringent criteria, stringent laws, stringent standards",
+                          "note":  "Trọng âm 1. Dùng thay cho \u0027very strict laws\u0027."
+                      },
+                      {
+                          "term":  "transparency",
+                          "definition":  "Tính minh bạch, sự công khai rõ ràng trong quản trị và sử dụng công quỹ",
+                          "definitionVi":  "Tính minh bạch, sự công khai rõ ràng trong quản trị và sử dụng công quỹ",
+                          "phonetic":  "/trænˈspær.ən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Institutional transparency regarding government procurement contracts is the strongest antidote to bureaucratic corruption.",
+                          "exampleSentence":  "Institutional transparency regarding government procurement contracts is the strongest antidote to bureaucratic corruption.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "openness, clarity, accountability, candor",
+                          "antonyms":  "opacity, secrecy, corruption, ambiguity",
+                          "collocations":  "ensure transparency, promote transparency, lack of transparency, fiscal transparency",
+                          "note":  "Tính từ: transparent /trænˈspær.ənt/."
+                      },
+                      {
+                          "term":  "accountability",
+                          "definition":  "Trách nhiệm giải trình (nghĩa vụ của cơ quan công quyền phải chịu trách nhiệm trước người dân)",
+                          "definitionVi":  "Trách nhiệm giải trình (nghĩa vụ của cơ quan công quyền phải chịu trách nhiệm trước người dân)",
+                          "phonetic":  "/əˌkaʊn.təˈbɪl.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Democratic governance demands that elected representatives maintain absolute fiscal accountability to taxpayers.",
+                          "exampleSentence":  "Democratic governance demands that elected representatives maintain absolute fiscal accountability to taxpayers.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "responsibility, answerability, liability",
+                          "antonyms":  "unaccountability, impunity, irresponsibility",
+                          "collocations":  "hold someone accountable, public accountability, corporate accountability, fiscal accountability",
+                          "note":  "Tính từ: accountable (be held accountable for something)."
+                      },
+                      {
+                          "term":  "promulgate",
+                          "definition":  "Ban hành, công bố chính thức một đạo luật hoặc sắc lệnh mới",
+                          "definitionVi":  "Ban hành, công bố chính thức một đạo luật hoặc sắc lệnh mới",
+                          "phonetic":  "/ˈprɒm.əl.ɡeɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The head of state promulgated a comprehensive constitutional decree safeguarding civil liberties during emergencies.",
+                          "exampleSentence":  "The head of state promulgated a comprehensive constitutional decree safeguarding civil liberties during emergencies.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "enact, proclaim, decree, issue, announce",
+                          "antonyms":  "repeal, revoke, rescind, annul",
+                          "collocations":  "promulgate a law, promulgate a decree, promulgate regulations",
+                          "note":  "Danh từ: promulgation /ˌprɒm.əlˈɡeɪ.ʃən/. Từ pháp lý C2 đỉnh cao."
+                      },
+                      {
+                          "term":  "allocate",
+                          "definition":  "Phân bổ, chỉ định ngân sách hoặc nguồn lực cho mục đích cụ thể",
+                          "definitionVi":  "Phân bổ, chỉ định ngân sách hoặc nguồn lực cho mục đích cụ thể",
+                          "phonetic":  "/ˈæl.ə.keɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "National budgets must allocate substantial funding toward preventive healthcare infrastructure and medical research.",
+                          "exampleSentence":  "National budgets must allocate substantial funding toward preventive healthcare infrastructure and medical research.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "apportion, earmark, assign, designate, distribute",
+                          "antonyms":  "withhold, misallocate, confiscate",
+                          "collocations":  "allocate funds, allocate resources, allocate budget, efficiently allocate",
+                          "note":  "Danh từ: allocation (resource allocation = phân bổ nguồn lực)."
+                      },
+                      {
+                          "term":  "hegemony",
+                          "definition":  "Sự bá quyền, thế thống trị áp đảo về mặt địa chính trị hoặc kinh tế",
+                          "definitionVi":  "Sự bá quyền, thế thống trị áp đảo về mặt địa chính trị hoặc kinh tế",
+                          "phonetic":  "/hɪˈɡem.ə.ni/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Multilateral diplomacy seeks to maintain regional stability by preventing any single superpower from establishing unilateral hegemony.",
+                          "exampleSentence":  "Multilateral diplomacy seeks to maintain regional stability by preventing any single superpower from establishing unilateral hegemony.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "dominance, supremacy, mastery, paramountcy",
+                          "antonyms":  "subordination, equality, balance of power",
+                          "collocations":  "geopolitical hegemony, military hegemony, challenge hegemony",
+                          "note":  "Tính từ: hegemonic /ˌhedʒ.ɪˈmɒn.ɪk/."
+                      },
+                      {
+                          "term":  "implement",
+                          "definition":  "Triển khai, thi hành chính sách, kế hoạch hoặc luật lệ vào thực tiễn",
+                          "definitionVi":  "Triển khai, thi hành chính sách, kế hoạch hoặc luật lệ vào thực tiễn",
+                          "phonetic":  "/ˈɪm.plɪ.ment/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Policy makers must collaboratively implement evidence-based interventions to eradicate chronic childhood poverty.",
+                          "exampleSentence":  "Policy makers must collaboratively implement evidence-based interventions to eradicate chronic childhood poverty.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Government \u0026 Public Policy",
+                          "synonyms":  "execute, enforce, enact, apply, put into practice",
+                          "antonyms":  "repeal, abandon, suspend, delay",
+                          "collocations":  "implement a policy, implement a reform, implement measures, successfully implement",
+                          "note":  "Danh từ: implementation /ˌɪm.plɪ.menˈteɪ.ʃən/ (sự thi hành/triển khai)."
+                      },
+                      {
+                          "term":  "overtourism",
+                          "definition":  "Tình trạng quá tải du lịch (lượng du khách vượt quá sức chứa phá vỡ môi trường và đời sống địa phương)",
+                          "definitionVi":  "Tình trạng quá tải du lịch (lượng du khách vượt quá sức chứa phá vỡ môi trường và đời sống địa phương)",
+                          "phonetic":  "/ˌəʊ.vəˈtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Historic cities like Venice and Amsterdam have introduced tourist caps to mitigate the acute strains of overtourism.",
+                          "exampleSentence":  "Historic cities like Venice and Amsterdam have introduced tourist caps to mitigate the acute strains of overtourism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "tourist congestion, mass tourism influx, tourist saturation",
+                          "antonyms":  "sustainable tourism, ecotourism, low-impact travel",
+                          "collocations":  "suffer from overtourism, combat overtourism, impact of overtourism",
+                          "note":  "Chủ đề cực kỳ thịnh hành trong các đề thi Task 2 gần đây về du lịch quốc tế."
+                      },
+                      {
+                          "term":  "pristine",
+                          "definition":  "Nguyên sơ, thuần khiết, chưa từng bị con người làm ô uế hay biến đổi",
+                          "definitionVi":  "Nguyên sơ, thuần khiết, chưa từng bị con người làm ô uế hay biến đổi",
+                          "phonetic":  "/ˈprɪs.tiːn/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Eco-friendly guidelines ensure that the archipelago\u0027s pristine coral reefs remain completely undamaged by mass tourism.",
+                          "exampleSentence":  "Eco-friendly guidelines ensure that the archipelago\u0027s pristine coral reefs remain completely undamaged by mass tourism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "unspoiled, untouched, immaculate, virgin, pure",
+                          "antonyms":  "polluted, degraded, contaminated, spoiled",
+                          "collocations":  "pristine beaches, pristine rainforest, pristine condition, pristine wilderness",
+                          "note":  "Từ vựng C1 miêu tả cảnh quan thiên nhiên hoang sơ rất đắt giá."
+                      },
+                      {
+                          "term":  "commercialization",
+                          "definition":  "Sự thương mại hóa (quá trình biến di sản hoặc văn hóa thành hàng hóa vụ lợi)",
+                          "definitionVi":  "Sự thương mại hóa (quá trình biến di sản hoặc văn hóa thành hàng hóa vụ lợi)",
+                          "phonetic":  "/kəˌmɜː.ʃəl.aɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The rampant commercialization of sacred pilgrimage sites erodes their profound spiritual resonance.",
+                          "exampleSentence":  "The rampant commercialization of sacred pilgrimage sites erodes their profound spiritual resonance.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "commodification, monetization, exploitation",
+                          "antonyms":  "preservation, spiritual integrity",
+                          "collocations":  "commercialization of culture, resist commercialization, prevent commercialization",
+                          "note":  "Động từ: commercialize. Danh từ đồng nghĩa cao cấp: commodification."
+                      },
+                      {
+                          "term":  "ecotourism",
+                          "definition":  "Du lịch sinh thái (hình thức du lịch có trách nhiệm bảo tồn thiên nhiên và hỗ trợ cộng đồng bản địa)",
+                          "definitionVi":  "Du lịch sinh thái (hình thức du lịch có trách nhiệm bảo tồn thiên nhiên và hỗ trợ cộng đồng bản địa)",
+                          "phonetic":  "/ˈiː.kəʊˌtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Community-based ecotourism generates vital revenue for wildlife conservation while empowering ethnic host families.",
+                          "exampleSentence":  "Community-based ecotourism generates vital revenue for wildlife conservation while empowering ethnic host families.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "green tourism, sustainable travel, ecological tourism",
+                          "antonyms":  "mass tourism, exploitative travel",
+                          "collocations":  "promote ecotourism, ecotourism destination, ecotourism development",
+                          "note":  "Người đi du lịch sinh thái: ecotourist."
+                      },
+                      {
+                          "term":  "irreparable",
+                          "definition":  "Không thể khắc phục, không thể bù đắp hay sửa chữa được",
+                          "definitionVi":  "Không thể khắc phục, không thể bù đắp hay sửa chữa được",
+                          "phonetic":  "/ɪˈrep.ər.ə.bəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Unregulated tourist traffic inside ancient cave systems causes irreparable degradation to delicate stalactites.",
+                          "exampleSentence":  "Unregulated tourist traffic inside ancient cave systems causes irreparable degradation to delicate stalactites.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "irreversible, irremediable, permanent, incurable",
+                          "antonyms":  "reparable, rectifiable, reversible, restorable",
+                          "collocations":  "irreparable damage, irreparable harm, irreparable loss, cause irreparable",
+                          "note":  "Trọng âm 2: ir-REP-ar-a-ble. Chú ý không đọc thành \u0027repairable\u0027."
+                      },
+                      {
+                          "term":  "fragile",
+                          "definition":  "Mong manh, dễ vỡ, dễ bị tổn thương trước tác động từ bên ngoài",
+                          "definitionVi":  "Mong manh, dễ vỡ, dễ bị tổn thương trước tác động từ bên ngoài",
+                          "phonetic":  "/ˈfrædʒ.aɪl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Alpine tundras and coral reefs are exceptionally fragile ecosystems highly vulnerable to human intrusion.",
+                          "exampleSentence":  "Alpine tundras and coral reefs are exceptionally fragile ecosystems highly vulnerable to human intrusion.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "delicate, vulnerable, frail, susceptible, precarious",
+                          "antonyms":  "robust, resilient, durable, sturdy",
+                          "collocations":  "fragile ecosystem, fragile balance, fragile environment, fragile heritage",
+                          "note":  "Danh từ: fragility /frəˈdʒɪl.ə.ti/ (sự mong manh, tính dễ tổn thương)."
+                      },
+                      {
+                          "term":  "itinerary",
+                          "definition":  "Lịch trình chuyến đi, kế hoạch lộ trình các điểm tham quan chi tiết",
+                          "definitionVi":  "Lịch trình chuyến đi, kế hoạch lộ trình các điểm tham quan chi tiết",
+                          "phonetic":  "/aɪˈtɪn.ər.ər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The research expedition compiled a comprehensive itinerary covering remote biosphere reserves across the continent.",
+                          "exampleSentence":  "The research expedition compiled a comprehensive itinerary covering remote biosphere reserves across the continent.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "travel schedule, route plan, tour program",
+                          "antonyms":  "N/A",
+                          "collocations":  "detailed itinerary, flexible itinerary, plan an itinerary",
+                          "note":  "Trọng âm 2: ai-TIN-er-a-ry."
+                      },
+                      {
+                          "term":  "exploitation",
+                          "definition":  "Sự bóc lột, việc khai thác tài nguyên hoặc con người một cách quá mức và vụ lợi",
+                          "definitionVi":  "Sự bóc lột, việc khai thác tài nguyên hoặc con người một cách quá mức và vụ lợi",
+                          "phonetic":  "/ˌek.splɔɪˈteɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Stringent maritime quotas are essential to prevent the ruthless commercial exploitation of endangered marine fauna.",
+                          "exampleSentence":  "Stringent maritime quotas are essential to prevent the ruthless commercial exploitation of endangered marine fauna.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "overexploitation, abuse, victimization, depletion",
+                          "antonyms":  "conservation, preservation, protection",
+                          "collocations":  "commercial exploitation, resource exploitation, prevent exploitation",
+                          "note":  "Động từ: exploit /ɪkˈsplɔɪt/."
+                      },
+                      {
+                          "term":  "biodiversity corridor",
+                          "definition":  "Hành lang đa dạng sinh học (dải sinh cảnh kết nối các khu bảo tồn cho phép động vật di chuyển an toàn)",
+                          "definitionVi":  "Hành lang đa dạng sinh học (dải sinh cảnh kết nối các khu bảo tồn cho phép động vật di chuyển an toàn)",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti ˈkɒr.ɪ.dɔːr/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Establishing cross-provincial biodiversity corridors counters habitat fragmentation and safeguards genetic diversity.",
+                          "exampleSentence":  "Establishing cross-provincial biodiversity corridors counters habitat fragmentation and safeguards genetic diversity.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Tourism \u0026 Conservation",
+                          "synonyms":  "wildlife corridor, ecological corridor, green corridor",
+                          "antonyms":  "habitat fragmentation, isolated habitat",
+                          "collocations":  "establish a biodiversity corridor, connect via biodiversity corridors, corridor protection",
+                          "note":  "Thuật ngữ bảo tồn sinh thái bậc C2 rất chuyên nghiệp."
+                      },
+                      {
+                          "term":  "resilience",
+                          "definition":  "Khả năng phục hồi, sự kiên cường vượt qua nghịch cảnh và chấn thương tâm lý",
+                          "definitionVi":  "Khả năng phục hồi, sự kiên cường vượt qua nghịch cảnh và chấn thương tâm lý",
+                          "phonetic":  "/rɪˈzɪl.jəns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Cultivating psychological resilience during adolescence equips young adults to navigate intense professional pressures.",
+                          "exampleSentence":  "Cultivating psychological resilience during adolescence equips young adults to navigate intense professional pressures.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "fortitude, mental toughness, adaptability, endurance",
+                          "antonyms":  "fragility, vulnerability, helplessness",
+                          "collocations":  "build resilience, psychological resilience, emotional resilience, demonstrate resilience",
+                          "note":  "Tính từ: resilient /rɪˈzɪl.jənt/ (kiên cường, nhanh phục hồi)."
+                      },
+                      {
+                          "term":  "cognitive dissonance",
+                          "definition":  "Bất hòa nhận thức (sự mâu thuẫn tâm lý khó chịu khi hành động trái ngược với niềm tin của bản thân)",
+                          "definitionVi":  "Bất hòa nhận thức (sự mâu thuẫn tâm lý khó chịu khi hành động trái ngược với niềm tin của bản thân)",
+                          "phonetic":  "/ˌkɒɡ.nə.tɪv ˈdɪs.ə.nəns/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Consumers who purchase environmentally harmful fast fashion frequently experience acute cognitive dissonance.",
+                          "exampleSentence":  "Consumers who purchase environmentally harmful fast fashion frequently experience acute cognitive dissonance.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "mental conflict, psychological disharmony, internal contradiction",
+                          "antonyms":  "cognitive harmony, internal consistency",
+                          "collocations":  "experience cognitive dissonance, resolve cognitive dissonance, acute cognitive dissonance",
+                          "note":  "Khái niệm tâm lý học kinh điển của Leon Festinger. Dùng phân tích hành vi con người rất hay."
+                      },
+                      {
+                          "term":  "conformity",
+                          "definition":  "Sự tuân thủ, xu hướng rập khuôn theo đám đông để được xã hội chấp nhận",
+                          "definitionVi":  "Sự tuân thủ, xu hướng rập khuôn theo đám đông để được xã hội chấp nhận",
+                          "phonetic":  "/kənˈfɔː.mə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Excessive institutional pressure toward behavioral conformity stifles unconventional problem-solving and innovation.",
+                          "exampleSentence":  "Excessive institutional pressure toward behavioral conformity stifles unconventional problem-solving and innovation.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "compliance, conventionality, consensus, obedience",
+                          "antonyms":  "individualism, non-conformity, rebellion, eccentricity",
+                          "collocations":  "social conformity, enforce conformity, pressure toward conformity",
+                          "note":  "Động từ: conform to/with. Người không tuân thủ: non-conformist."
+                      },
+                      {
+                          "term":  "empathy",
+                          "definition":  "Sự thấu cảm (khả năng thấu hiểu và sẻ chia cảm xúc sâu sắc bằng cách đặt mình vào vị trí người khác)",
+                          "definitionVi":  "Sự thấu cảm (khả năng thấu hiểu và sẻ chia cảm xúc sâu sắc bằng cách đặt mình vào vị trí người khác)",
+                          "phonetic":  "/ˈem.pə.θi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Cultivating emotional empathy is the bedrock of restorative conflict mediation and global diplomatic harmony.",
+                          "exampleSentence":  "Cultivating emotional empathy is the bedrock of restorative conflict mediation and global diplomatic harmony.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "compassion, emotional insight, sensitivity, understanding",
+                          "antonyms":  "apathy, callousness, indifference, coldness",
+                          "collocations":  "show empathy, cultivate empathy, lack of empathy, deep empathy",
+                          "note":  "Phân biệt: empathy (thấu cảm) \u0026 sympathy (thương cảm từ góc nhìn bên ngoài)."
+                      },
+                      {
+                          "term":  "predisposition",
+                          "definition":  "Khuynh hướng thiên bẩm, tố chất dễ dẫn đến một hành vi hoặc căn bệnh nào đó",
+                          "definitionVi":  "Khuynh hướng thiên bẩm, tố chất dễ dẫn đến một hành vi hoặc căn bệnh nào đó",
+                          "phonetic":  "/ˌpriː.dɪs.pəˈzɪʃ.ən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Genetic predisposition interacts dynamically with adverse socioeconomic environments to influence adolescent mental health.",
+                          "exampleSentence":  "Genetic predisposition interacts dynamically with adverse socioeconomic environments to influence adolescent mental health.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "inclination, propensity, susceptibility, proneness, bent",
+                          "antonyms":  "immunity, resistance, aversion",
+                          "collocations":  "genetic predisposition, predisposition toward, biological predisposition",
+                          "note":  "Động từ: predispose (predispose someone to/towards something)."
+                      },
+                      {
+                          "term":  "gratification",
+                          "definition":  "Sự thỏa mãn, cảm giác hài lòng khi đạt được điều mong muốn",
+                          "definitionVi":  "Sự thỏa mãn, cảm giác hài lòng khi đạt được điều mong muốn",
+                          "phonetic":  "/ˌɡræt.ɪ.fɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The cognitive capability to delay instant gratification correlates strongly with sustained long-term academic excellence.",
+                          "exampleSentence":  "The cognitive capability to delay instant gratification correlates strongly with sustained long-term academic excellence.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "satisfaction, fulfillment, contentment, pleasure",
+                          "antonyms":  "dissatisfaction, frustration, deprivation",
+                          "collocations":  "delayed gratification, instant gratification, sense of gratification",
+                          "note":  "Thành ngữ tâm lý học nổi tiếng: \u0027delay gratification\u0027 (trì hoãn sự thỏa mãn nhất thời)."
+                      },
+                      {
+                          "term":  "procrastination",
+                          "definition":  "Thói quen trì hoãn, chần chừ lùi công việc lại đến phút chót",
+                          "definitionVi":  "Thói quen trì hoãn, chần chừ lùi công việc lại đến phút chót",
+                          "phonetic":  "/prəˌkræs.tɪˈneɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Chronic academic procrastination is frequently driven by perfectionistic anxieties rather than mere laziness.",
+                          "exampleSentence":  "Chronic academic procrastination is frequently driven by perfectionistic anxieties rather than mere laziness.",
+                          "level":  "B2",
+                          "cefrLevel":  "B2",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "delay, postponement, hesitation, temporizing",
+                          "antonyms":  "proactivity, promptness, diligence, punctuality",
+                          "collocations":  "chronic procrastination, beat procrastination, overcome procrastination",
+                          "note":  "Động từ: procrastinate. Người trì hoãn: procrastinator."
+                      },
+                      {
+                          "term":  "introspection",
+                          "definition":  "Sự nội quan, hành động tự suy ngẫm và phân tích sâu sắc cảm xúc, tư tưởng của chính mình",
+                          "definitionVi":  "Sự nội quan, hành động tự suy ngẫm và phân tích sâu sắc cảm xúc, tư tưởng của chính mình",
+                          "phonetic":  "/ˌɪn.trəˈspek.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Engaging in structured daily introspection allows scholars to identify subconscious biases in their analytical reasoning.",
+                          "exampleSentence":  "Engaging in structured daily introspection allows scholars to identify subconscious biases in their analytical reasoning.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "self-reflection, soul-searching, self-examination, contemplation",
+                          "antonyms":  "extroversion, superficiality, impulsiveness",
+                          "collocations":  "deep introspection, moment of introspection, practice introspection",
+                          "note":  "Tính từ: introspective /ˌɪn.trəˈspek.tɪv/ (có xu hướng suy ngẫm nội tâm)."
+                      },
+                      {
+                          "term":  "altruism",
+                          "definition":  "Lòng vị tha, hành động cống hiến quên mình vì lợi ích của người khác",
+                          "definitionVi":  "Lòng vị tha, hành động cống hiến quên mình vì lợi ích của người khác",
+                          "phonetic":  "/ˈæl.tru.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Evolutionary biologists investigate whether pure altruism exists or if cooperative behaviors offer mutual survival benefits.",
+                          "exampleSentence":  "Evolutionary biologists investigate whether pure altruism exists or if cooperative behaviors offer mutual survival benefits.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Psychology \u0026 Human Behavior",
+                          "synonyms":  "selflessness, philanthropy, benevolence, generosity, unselfishness",
+                          "antonyms":  "egoism, selfishness, narcissism, self-interest",
+                          "collocations":  "pure altruism, act of altruism, reciprocal altruism",
+                          "note":  "Tính từ: altruistic /ˌæl.truˈɪs.tɪk/. Trái nghĩa: egoism / selfishness."
+                      }
+                  ]
+    },
+    {
+        "id":  "lib_deck_ielts_8_9",
+        "title":  "Từ Vựng IELTS 8.0 - 9.0 Mastery (C2 Native Nuances)",
+        "description":  "Tuyệt đỉnh 108 từ vựng học thuật C2 đỉnh cao và tinh tế dành cho thí sinh chinh phục mốc điểm 8.5 - 9.0 tuyệt đối.",
+        "category":  "IELTS",
+        "icon":  "👑",
+        "color":  "#f59e0b",
+        "totalWords":  108,
+        "isVipOnly":  true,
+        "isVip":  true,
+        "price":  0,
+        "words":  [
+                      {
+                          "term":  "hermeneutics",
+                          "definition":  "Khoa giải kinh, lý thuyết và phương pháp luận về sự diễn giải văn bản và ý nghĩa biểu tượng",
+                          "definitionVi":  "Khoa giải kinh, lý thuyết và phương pháp luận về sự diễn giải văn bản và ý nghĩa biểu tượng",
+                          "phonetic":  "/ˌhɜː.mɪˈnjuː.tɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Philosophical hermeneutics posits that human understanding is inherently contextual and historically conditioned.",
+                          "exampleSentence":  "Philosophical hermeneutics posits that human understanding is inherently contextual and historically conditioned.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "interpretive theory, textual exegesis, interpretive methodology",
+                          "antonyms":  "literalism, uncritical reading",
+                          "collocations":  "philosophical hermeneutics, principles of hermeneutics, hermeneutic circle",
+                          "note":  "Tính từ: hermeneutic /ˌhɜː.mɪˈnjuː.tɪk/. Dùng phân tích chiều sâu diễn giải văn bản học thuật."
+                      },
+                      {
+                          "term":  "tautology",
+                          "definition":  "Phép lặp luận vô nghĩa, lỗi lập luận luẩn quẩn lặp lại cùng một ý bằng các từ khác nhau",
+                          "definitionVi":  "Phép lặp luận vô nghĩa, lỗi lập luận luẩn quẩn lặp lại cùng một ý bằng các từ khác nhau",
+                          "phonetic":  "/tɔːˈtɒl.ə.dʒi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Critics dismissed the minister\u0027s policy statement as a meaningless tautology devoid of substantive empirical evidence.",
+                          "exampleSentence":  "Critics dismissed the minister\u0027s policy statement as a meaningless tautology devoid of substantive empirical evidence.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "circular reasoning, pleonasm, redundancy, reiteration",
+                          "antonyms":  "substantive argument, empirical refutation",
+                          "collocations":  "logical tautology, redundant tautology, border on tautology",
+                          "note":  "Tính từ: tautological /ˌtɔː.təˈlɒdʒ.ɪ.kəl/. Dùng để phản biện sắc sảo lập luận ngụy biện."
+                      },
+                      {
+                          "term":  "heuristic",
+                          "definition":  "Mang tính phỏng đoán khám phá, phương pháp tìm tòi thực nghiệm giúp giải quyết vấn đề nhanh",
+                          "definitionVi":  "Mang tính phỏng đoán khám phá, phương pháp tìm tòi thực nghiệm giúp giải quyết vấn đề nhanh",
+                          "phonetic":  "/hjuˈrɪs.tɪk/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "Heuristic problem-solving techniques enable researchers to discover viable approximations when exact algorithms fail.",
+                          "exampleSentence":  "Heuristic problem-solving techniques enable researchers to discover viable approximations when exact algorithms fail.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "exploratory, rule-of-thumb, trial-and-error, empirical",
+                          "antonyms":  "algorithmic, deductive, rigid",
+                          "collocations":  "heuristic method, heuristic approach, cognitive heuristic, heuristic tool",
+                          "note":  "Số nhiều: heuristics (các phương pháp giải quyết vấn đề dựa trên kinh nghiệm)."
+                      },
+                      {
+                          "term":  "dialectic",
+                          "definition":  "Phép biện chứng, nghệ thuật tranh biện đối thoại giữa các ý kiến đối lập để tìm chân lý",
+                          "definitionVi":  "Phép biện chứng, nghệ thuật tranh biện đối thoại giữa các ý kiến đối lập để tìm chân lý",
+                          "phonetic":  "/ˌdaɪ.əˈlek.tɪk/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Hegelian dialectic conceptualizes historical progress as an ongoing clash between thesis and antithesis culminating in synthesis.",
+                          "exampleSentence":  "Hegelian dialectic conceptualizes historical progress as an ongoing clash between thesis and antithesis culminating in synthesis.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "logical debate, philosophical argumentation, reasoned dialogue",
+                          "antonyms":  "dogmatism, monologue",
+                          "collocations":  "Hegelian dialectic, Marxist dialectic, historical dialectic, dialectical method",
+                          "note":  "Tính từ: dialectical /ˌdaɪ.əˈlek.tɪ.kəl/ (dialectical reasoning = tư duy biện chứng)."
+                      },
+                      {
+                          "term":  "epistemological",
+                          "definition":  "Thuộc về nhận thức luận (nghiên cứu về bản chất, nguồn gốc và giới hạn của tri thức)",
+                          "definitionVi":  "Thuộc về nhận thức luận (nghiên cứu về bản chất, nguồn gốc và giới hạn của tri thức)",
+                          "phonetic":  "/ɪˌpɪs.tə.məˈlɒdʒ.ɪ.kəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "The advent of quantum mechanics precipitated a profound epistemological crisis in deterministic Newtonian physics.",
+                          "exampleSentence":  "The advent of quantum mechanics precipitated a profound epistemological crisis in deterministic Newtonian physics.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "cognitive-philosophical, epistemological, gnoseological",
+                          "antonyms":  "N/A",
+                          "collocations":  "epistemological framework, epistemological inquiry, epistemological crisis",
+                          "note":  "Danh từ: epistemology /ɪˌpɪs.təˈmɒl.ə.dʒi/. Thuật ngữ triết học học thuật đỉnh cao."
+                      },
+                      {
+                          "term":  "axiom",
+                          "definition":  "Tiên đề, nguyên lý tự hiển nhiên được chấp nhận là đúng mà không cần chứng minh",
+                          "definitionVi":  "Tiên đề, nguyên lý tự hiển nhiên được chấp nhận là đúng mà không cần chứng minh",
+                          "phonetic":  "/ˈæk.si.əm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Classical economic theory rests upon the foundational axiom that individual consumers behave with perfect rationality.",
+                          "exampleSentence":  "Classical economic theory rests upon the foundational axiom that individual consumers behave with perfect rationality.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "postulate, fundamental premise, self-evident truth, truism",
+                          "antonyms":  "fallacy, hypothesis, unproven conjecture",
+                          "collocations":  "fundamental axiom, accepted axiom, basic axiom of science",
+                          "note":  "Tính từ: axiomatic /ˌæk.si.əˈmæt.ɪk/ (hiển nhiên, rõ ràng không cần bàn cãi)."
+                      },
+                      {
+                          "term":  "teleological",
+                          "definition":  "Thuộc về mục đích luận (giải thích các hiện tượng tự nhiên dựa trên cứu cánh và mục đích cuối cùng)",
+                          "definitionVi":  "Thuộc về mục đích luận (giải thích các hiện tượng tự nhiên dựa trên cứu cánh và mục đích cuối cùng)",
+                          "phonetic":  "/ˌtel.i.əˈlɒdʒ.ɪ.kəl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Aristotelian philosophy adopts a teleological perspective, asserting that every entity in nature strives toward an ultimate telos.",
+                          "exampleSentence":  "Aristotelian philosophy adopts a teleological perspective, asserting that every entity in nature strives toward an ultimate telos.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "purpose-driven, finalistic, goal-directed",
+                          "antonyms":  "mechanistic, accidental, causal",
+                          "collocations":  "teleological argument, teleological explanation, teleological view",
+                          "note":  "Danh từ: teleology /ˌtel.iˈɒl.ə.dʒi/. Gốc Hy Lạp \u0027telos\u0027 = mục đích cuối cùng."
+                      },
+                      {
+                          "term":  "dichotomy",
+                          "definition":  "Sự phân đôi, thế lưỡng phân tương phản rạch ròi giữa hai thái cực hoàn toàn trái ngược",
+                          "definitionVi":  "Sự phân đôi, thế lưỡng phân tương phản rạch ròi giữa hai thái cực hoàn toàn trái ngược",
+                          "phonetic":  "/daɪˈkɒt.ə.mi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Scholars increasingly reject the rigid Cartesian dichotomy between the immaterial mind and the physical body.",
+                          "exampleSentence":  "Scholars increasingly reject the rigid Cartesian dichotomy between the immaterial mind and the physical body.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "dualism, division, polarity, bifurcation, split",
+                          "antonyms":  "unity, continuum, harmony, synthesis",
+                          "collocations":  "false dichotomy, sharp dichotomy, rigid dichotomy, bridge the dichotomy",
+                          "note":  "Cụm từ C2 rất hay gặp: \u0027fall into a false dichotomy\u0027 (mắc bẫy nhị phân giả tạo)."
+                      },
+                      {
+                          "term":  "dogmatic",
+                          "definition":  "Giáo điều, võ đoán, khăng khăng bảo thủ áp đặt tín điều mà không cần bằng chứng",
+                          "definitionVi":  "Giáo điều, võ đoán, khăng khăng bảo thủ áp đặt tín điều mà không cần bằng chứng",
+                          "phonetic":  "/dɒɡˈmæt.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Rigorous scientific investigation demands empirical open-mindedness rather than uncritical adherence to dogmatic doctrines.",
+                          "exampleSentence":  "Rigorous scientific investigation demands empirical open-mindedness rather than uncritical adherence to dogmatic doctrines.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Epistemology \u0026 Philosophy",
+                          "synonyms":  "doctrinaire, authoritarian, opinionated, inflexible, imperious",
+                          "antonyms":  "open-minded, skeptical, pragmatic, flexible",
+                          "collocations":  "dogmatic assertion, dogmatic belief, dogmatic approach, highly dogmatic",
+                          "note":  "Danh từ: dogma (giáo điều) / dogmatism (chủ nghĩa giáo điều)."
+                      },
+                      {
+                          "term":  "anthropocene",
+                          "definition":  "Kỷ Nhân sinh (kỷ nguyên địa chất hiện tại nơi hoạt động của con người là động lực biến đổi Trái Đất lớn nhất)",
+                          "definitionVi":  "Kỷ Nhân sinh (kỷ nguyên địa chất hiện tại nơi hoạt động của con người là động lực biến đổi Trái Đất lớn nhất)",
+                          "phonetic":  "/ˈæn.θrə.pəˌsiːn/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Geoscientists advocate formal recognition of the Anthropocene, citing indelible plastic strata and global radionuclide deposits.",
+                          "exampleSentence":  "Geoscientists advocate formal recognition of the Anthropocene, citing indelible plastic strata and global radionuclide deposits.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "human epoch, post-Holocene era",
+                          "antonyms":  "Holocene, pre-industrial era",
+                          "collocations":  "dawn of the Anthropocene, challenges of the Anthropocene, living in the Anthropocene",
+                          "note":  "Anthropo- (con người) + -cene (kỷ nguyên địa chất). Thuật ngữ học thuật danh giá."
+                      },
+                      {
+                          "term":  "biocentric",
+                          "definition":  "Lấy sinh giới làm trung tâm (quan điểm đạo đức sinh thái coi mọi sinh mệnh đều có giá trị tự thân bình đẳng)",
+                          "definitionVi":  "Lấy sinh giới làm trung tâm (quan điểm đạo đức sinh thái coi mọi sinh mệnh đều có giá trị tự thân bình đẳng)",
+                          "phonetic":  "/ˌbaɪ.əʊˈsen.trɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Deep ecology advocates a biocentric worldview that categorically rejects the exploitative premises of human exceptionalism.",
+                          "exampleSentence":  "Deep ecology advocates a biocentric worldview that categorically rejects the exploitative premises of human exceptionalism.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "ecocentric, life-centered, non-anthropocentric",
+                          "antonyms":  "anthropocentric, human-centered",
+                          "collocations":  "biocentric ethics, biocentric philosophy, biocentric worldview",
+                          "note":  "Trái nghĩa trực tiếp với \u0027anthropocentric\u0027 (lấy con người làm trung tâm)."
+                      },
+                      {
+                          "term":  "homeostasis",
+                          "definition":  "Trạng thái cân bằng nội môi, khả năng tự điều chỉnh cân bằng động của hệ sinh thái hoặc cơ thể sống",
+                          "definitionVi":  "Trạng thái cân bằng nội môi, khả năng tự điều chỉnh cân bằng động của hệ sinh thái hoặc cơ thể sống",
+                          "phonetic":  "/ˌhəʊ.mi.əʊˈsteɪ.sɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Destabilizing critical tipping points disrupts the fragile biospheric homeostasis that regulates global atmospheric temperatures.",
+                          "exampleSentence":  "Destabilizing critical tipping points disrupts the fragile biospheric homeostasis that regulates global atmospheric temperatures.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "ecological equilibrium, dynamic balance, self-regulation",
+                          "antonyms":  "instability, ecological collapse, imbalance",
+                          "collocations":  "maintain homeostasis, biospheric homeostasis, disrupt homeostasis",
+                          "note":  "Tính từ: homeostatic /ˌhəʊ.mi.əʊˈstæt.ɪk/ (homeostatic equilibrium)."
+                      },
+                      {
+                          "term":  "desiccation",
+                          "definition":  "Sự khô cằn hóa kiệt quệ, tình trạng mất hoàn toàn độ ẩm của đất đai và thảm thực vật",
+                          "definitionVi":  "Sự khô cằn hóa kiệt quệ, tình trạng mất hoàn toàn độ ẩm của đất đai và thảm thực vật",
+                          "phonetic":  "/ˌdes.ɪˈkeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Prolonged meteorological droughts trigger severe soil desiccation, rendering once-fertile plains entirely barren.",
+                          "exampleSentence":  "Prolonged meteorological droughts trigger severe soil desiccation, rendering once-fertile plains entirely barren.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "dehydration, aridification, parching, withering",
+                          "antonyms":  "hydration, irrigation, humidification",
+                          "collocations":  "soil desiccation, severe desiccation, risk of desiccation",
+                          "note":  "Động từ: desiccate /ˈdes.ɪ.keɪt/ (làm khô cằn kiệt quệ)."
+                      },
+                      {
+                          "term":  "carbon sink",
+                          "definition":  "Bể hấp thụ carbon (rừng nguyên sinh, đầm lầy than bùn, đại dương có khả năng hấp thụ CO2 nhiều hơn thải ra)",
+                          "definitionVi":  "Bể hấp thụ carbon (rừng nguyên sinh, đầm lầy than bùn, đại dương có khả năng hấp thụ CO2 nhiều hơn thải ra)",
+                          "phonetic":  "/ˈkɑː.bən sɪŋk/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Widespread degradation threatens to transform the Amazon basin from an essential carbon sink into a net carbon source.",
+                          "exampleSentence":  "Widespread degradation threatens to transform the Amazon basin from an essential carbon sink into a net carbon source.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "carbon reservoir, natural carbon absorber",
+                          "antonyms":  "carbon source, carbon emitter",
+                          "collocations":  "vital carbon sink, oceanic carbon sink, natural carbon sink",
+                          "note":  "Phân biệt: carbon sink (bể hấp thụ) \u003e\u003c carbon source (nguồn phát thải)."
+                      },
+                      {
+                          "term":  "trophic cascade",
+                          "definition":  "Hiệu ứng thác dinh dưỡng (biến động dây chuyền từ đỉnh chuỗi thức ăn làm thay đổi toàn bộ hệ sinh thái)",
+                          "definitionVi":  "Hiệu ứng thác dinh dưỡng (biến động dây chuyền từ đỉnh chuỗi thức ăn làm thay đổi toàn bộ hệ sinh thái)",
+                          "phonetic":  "/ˈtrɒf.ɪk kæˈskeɪd/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The reintroduction of wolves into Yellowstone ignited an extraordinary trophic cascade that rejuvenated riparian forests.",
+                          "exampleSentence":  "The reintroduction of wolves into Yellowstone ignited an extraordinary trophic cascade that rejuvenated riparian forests.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "ecological domino effect, top-down regulation",
+                          "antonyms":  "N/A",
+                          "collocations":  "trigger a trophic cascade, top-down trophic cascade, widespread trophic cascade",
+                          "note":  "Khái niệm sinh thái học bậc C2 cực kỳ giá trị khi bàn về đa dạng sinh học."
+                      },
+                      {
+                          "term":  "ecocide",
+                          "definition":  "Tội ác hủy diệt sinh thái (hành vi tàn phá môi trường quy mô lớn có chủ đích hoặc do cẩu thả nghiêm trọng)",
+                          "definitionVi":  "Tội ác hủy diệt sinh thái (hành vi tàn phá môi trường quy mô lớn có chủ đích hoặc do cẩu thả nghiêm trọng)",
+                          "phonetic":  "/ˈiː.kəʊ.saɪd/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Legal scholars are actively campaigning for the International Criminal Court to recognize ecocide as a formal crime against humanity.",
+                          "exampleSentence":  "Legal scholars are actively campaigning for the International Criminal Court to recognize ecocide as a formal crime against humanity.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "environmental devastation, biocide, ecological destruction",
+                          "antonyms":  "ecological restoration, conservation",
+                          "collocations":  "commit ecocide, prosecute ecocide, law against ecocide",
+                          "note":  "Eco- (môi trường) + -cide (hành vi giết hại/tiêu diệt, như genocide)."
+                      },
+                      {
+                          "term":  "effluence",
+                          "definition":  "Dòng tuôn chảy chất thải độc hại ra môi trường tự nhiên (nước thải, khói thải độc)",
+                          "definitionVi":  "Dòng tuôn chảy chất thải độc hại ra môi trường tự nhiên (nước thải, khói thải độc)",
+                          "phonetic":  "/ˈef.lu.əns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Untreated industrial effluence discharged directly into estuaries destroys spawning grounds for anadromous fisheries.",
+                          "exampleSentence":  "Untreated industrial effluence discharged directly into estuaries destroys spawning grounds for anadromous fisheries.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "effluent, toxic discharge, pollutant outflow, emission",
+                          "antonyms":  "influx, purified intake",
+                          "collocations":  "toxic effluence, industrial effluence, chemical effluence",
+                          "note":  "Từ đồng nghĩa học thuật C2: effluent (thường dùng ở dạng số nhiều: industrial effluents)."
+                      },
+                      {
+                          "term":  "symbiosis",
+                          "definition":  "Mối quan hệ cộng sinh tương hỗ (hoặc sự gắn kết hợp tác cùng có lợi giữa các tổ chức)",
+                          "definitionVi":  "Mối quan hệ cộng sinh tương hỗ (hoặc sự gắn kết hợp tác cùng có lợi giữa các tổ chức)",
+                          "phonetic":  "/ˌsɪm.baɪˈəʊ.sɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Coral polyps rely upon an obligate mutualistic symbiosis with photosynthetic microalgae to construct reef ecosystems.",
+                          "exampleSentence":  "Coral polyps rely upon an obligate mutualistic symbiosis with photosynthetic microalgae to construct reef ecosystems.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Ecology \u0026 Anthropocene",
+                          "synonyms":  "mutualism, mutual interdependence, reciprocal partnership",
+                          "antonyms":  "parasitism, antagonism, competition",
+                          "collocations":  "mutualistic symbiosis, live in symbiosis, obligate symbiosis",
+                          "note":  "Tính từ: symbiotic /ˌsɪm.baɪˈɒt.ɪk/ (a symbiotic relationship)."
+                      },
+                      {
+                          "term":  "transhumanism",
+                          "definition":  "Chủ nghĩa siêu nhân học (học thuyết triết học ủng hộ dùng công nghệ biến đổi sinh học để nâng cấp con người vượt bậc)",
+                          "definitionVi":  "Chủ nghĩa siêu nhân học (học thuyết triết học ủng hộ dùng công nghệ biến đổi sinh học để nâng cấp con người vượt bậc)",
+                          "phonetic":  "/trænzˈhjuː.mən.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Philosophers debate whether transhumanism represents the next evolutionary milestone or an existential peril to human dignity.",
+                          "exampleSentence":  "Philosophers debate whether transhumanism represents the next evolutionary milestone or an existential peril to human dignity.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "human enhancement philosophy, post-humanism",
+                          "antonyms":  "bioconservatism, human naturalism",
+                          "collocations":  "advocate transhumanism, tenets of transhumanism, transhumanist movement",
+                          "note":  "Người theo chủ nghĩa này: transhumanist. Tính từ: transhuman."
+                      },
+                      {
+                          "term":  "technological singularity",
+                          "definition":  "Điểm kỳ dị công nghệ (thời điểm giả định khi AI tự nhân bản trí thông minh vượt xa tầm kiểm soát của con người)",
+                          "definitionVi":  "Điểm kỳ dị công nghệ (thời điểm giả định khi AI tự nhân bản trí thông minh vượt xa tầm kiểm soát của con người)",
+                          "phonetic":  "/ˌtek.nəˈlɒdʒ.ɪ.kəl ˌsɪŋ.ɡjəˈlær.ə.ti/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Futurists warn that approaching the technological singularity without robust alignment safeguards could precipitate civilizational catastrophe.",
+                          "exampleSentence":  "Futurists warn that approaching the technological singularity without robust alignment safeguards could precipitate civilizational catastrophe.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "superintelligence threshold, intelligence explosion",
+                          "antonyms":  "technological stagnation",
+                          "collocations":  "reach the technological singularity, verge of technological singularity, singularity theory",
+                          "note":  "Khái niệm khoa học máy tính và triết học tương lai học đỉnh cao."
+                      },
+                      {
+                          "term":  "panoptic",
+                          "definition":  "Có khả năng quan sát toàn cảnh, giám sát toàn diện mọi hành vi ở mọi góc độ",
+                          "definitionVi":  "Có khả năng quan sát toàn cảnh, giám sát toàn diện mọi hành vi ở mọi góc độ",
+                          "phonetic":  "/pænˈɒp.tɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Digital footprint harvesting creates a panoptic surveillance architecture where user privacy is effectively annihilated.",
+                          "exampleSentence":  "Digital footprint harvesting creates a panoptic surveillance architecture where user privacy is effectively annihilated.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "all-seeing, all-encompassing, panoramic, totalizing",
+                          "antonyms":  "unobserved, private, localized, hidden",
+                          "collocations":  "panoptic surveillance, panoptic apparatus, panoptic control",
+                          "note":  "Gốc từ triết học Michel Foucault: \u0027Panopticon\u0027 (nhà tù vạn năng quan sát)."
+                      },
+                      {
+                          "term":  "sentience",
+                          "definition":  "Tri giác, khả năng cảm nhận cảm xúc, sự đau đớn và có ý thức chủ quan",
+                          "definitionVi":  "Tri giác, khả năng cảm nhận cảm xúc, sự đau đớn và có ý thức chủ quan",
+                          "phonetic":  "/ˈsen.ti.əns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Computer scientists contend that current large language models exhibit sophisticated mimicry rather than genuine artificial sentience.",
+                          "exampleSentence":  "Computer scientists contend that current large language models exhibit sophisticated mimicry rather than genuine artificial sentience.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "consciousness, self-awareness, feeling capacity, subjective experience",
+                          "antonyms":  "insentience, unconsciousness, inanimate mechanism",
+                          "collocations":  "artificial sentience, animal sentience, threshold of sentience",
+                          "note":  "Tính từ: sentient /ˈsen.ti.ənt/ (sentient beings = chúng sinh có tri giác)."
+                      },
+                      {
+                          "term":  "anthropomorphic",
+                          "definition":  "Có tính nhân hóa, gán hình dáng, cảm xúc hoặc trí tuệ con người cho máy móc/vật vô tri",
+                          "definitionVi":  "Có tính nhân hóa, gán hình dáng, cảm xúc hoặc trí tuệ con người cho máy móc/vật vô tri",
+                          "phonetic":  "/ˌæn.θrə.pəˈmɔː.fɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Designers deliberately endow conversational AI with anthropomorphic traits to evoke unearned emotional trust from users.",
+                          "exampleSentence":  "Designers deliberately endow conversational AI with anthropomorphic traits to evoke unearned emotional trust from users.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "humanized, personified, human-like",
+                          "antonyms":  "mechanistic, abstract, zoomorphic",
+                          "collocations":  "anthropomorphic robot, anthropomorphic bias, anthropomorphic interface",
+                          "note":  "Danh từ: anthropomorphism /ˌæn.θrə.pəˈmɔː.fɪ.zəm/ (thuyết nhân hóa)."
+                      },
+                      {
+                          "term":  "cybernetic",
+                          "definition":  "Thuộc điều khiển học, tích hợp giữa hệ thống máy móc cơ điện và cơ thể sinh học sống",
+                          "definitionVi":  "Thuộc điều khiển học, tích hợp giữa hệ thống máy móc cơ điện và cơ thể sinh học sống",
+                          "phonetic":  "/ˌsaɪ.bəˈnet.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Groundbreaking cybernetic implants interface directly with cortical neurons to restore vision to visually impaired patients.",
+                          "exampleSentence":  "Groundbreaking cybernetic implants interface directly with cortical neurons to restore vision to visually impaired patients.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "bionic, automated-biological, computerized-neural",
+                          "antonyms":  "purely biological, non-electronic",
+                          "collocations":  "cybernetic organism, cybernetic implant, cybernetic interface",
+                          "note":  "Danh từ: cybernetics (ngành điều khiển học). Viết tắt trong khoa học viễn tưởng: cyborg."
+                      },
+                      {
+                          "term":  "hegemonic algorithm",
+                          "definition":  "Thuật toán bá quyền thống trị và thao túng luồng thông tin trên không gian mạng",
+                          "definitionVi":  "Thuật toán bá quyền thống trị và thao túng luồng thông tin trên không gian mạng",
+                          "phonetic":  "/ˌhedʒ.ɪˈmɒn.ɪk ˈæl.ɡə.rɪ.ðəm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Sociologists warn that hegemonic algorithms deployed by tech monopolies curate subjective realities and distort democratic debates.",
+                          "exampleSentence":  "Sociologists warn that hegemonic algorithms deployed by tech monopolies curate subjective realities and distort democratic debates.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "dominant algorithm, monopoly ranking system",
+                          "antonyms":  "decentralized algorithm, open-source protocol",
+                          "collocations":  "power of hegemonic algorithms, dismantle hegemonic algorithms",
+                          "note":  "Cụm danh từ học thuật cực kỳ sắc sảo để phân tích quyền lực của các tập đoàn công nghệ."
+                      },
+                      {
+                          "term":  "disembodied",
+                          "definition":  "Tách rời khỏi thể xác, tồn tại dưới dạng trí tuệ thuần túy trên không gian số",
+                          "definitionVi":  "Tách rời khỏi thể xác, tồn tại dưới dạng trí tuệ thuần túy trên không gian số",
+                          "phonetic":  "/ˌdɪs.ɪmˈbɒd.id/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Virtual metaverses encourage users to interact through disembodied digital avatars devoid of physical liabilities.",
+                          "exampleSentence":  "Virtual metaverses encourage users to interact through disembodied digital avatars devoid of physical liabilities.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "incorporeal, intangible, spiritual, non-physical",
+                          "antonyms":  "embodied, corporeal, physical, tangible",
+                          "collocations":  "disembodied intelligence, disembodied voice, disembodied presence",
+                          "note":  "Động từ: disembody. Đối lập với \u0027embodied cognition\u0027 (nhận thức gắn liền cơ thể)."
+                      },
+                      {
+                          "term":  "automation anxiety",
+                          "definition":  "Nỗi bất an trước nguy cơ tự động hóa và robot thay thế triệt để việc làm con người",
+                          "definitionVi":  "Nỗi bất an trước nguy cơ tự động hóa và robot thay thế triệt để việc làm con người",
+                          "phonetic":  "/ˌɔː.təˈmeɪ.ʃən æŋˈzaɪ.ə.ti/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Pervasive automation anxiety among knowledge workers has intensified calls for universal basic income pilots.",
+                          "exampleSentence":  "Pervasive automation anxiety among knowledge workers has intensified calls for universal basic income pilots.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "AI \u0026 Transhumanism",
+                          "synonyms":  "technological unemployment fear, AI displacement dread",
+                          "antonyms":  "techno-optimism, technological confidence",
+                          "collocations":  "heighten automation anxiety, fuel automation anxiety, cope with automation anxiety",
+                          "note":  "Thuật ngữ kinh tế - tâm lý học đương đại rất thịnh hành trong các đề thi Task 2."
+                      },
+                      {
+                          "term":  "meritocracy",
+                          "definition":  "Chế độ trọng dụng nhân tài (nhưng thường bị phê phán che giấu các đặc quyền giai cấp thừa kế)",
+                          "definitionVi":  "Chế độ trọng dụng nhân tài (nhưng thường bị phê phán che giấu các đặc quyền giai cấp thừa kế)",
+                          "phonetic":  "/ˌmer.ɪˈtɒk.rə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Sociological critics argue that the myth of absolute meritocracy legitimizes systemic educational inequities.",
+                          "exampleSentence":  "Sociological critics argue that the myth of absolute meritocracy legitimizes systemic educational inequities.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "talent-based system, achievement-based hierarchy",
+                          "antonyms":  "nepotism, cronyism, hereditary oligarchy",
+                          "collocations":  "myth of meritocracy, educational meritocracy, illusion of meritocracy",
+                          "note":  "Tính từ: meritocratic /ˌmer.ɪ.təˈkræt.ɪk/ (a meritocratic society)."
+                      },
+                      {
+                          "term":  "oligarchy",
+                          "definition":  "Chế độ tài phiệt đầu sỏ chính trị (quyền lực chính trị tối cao nằm trong tay một nhóm thiểu số giàu có)",
+                          "definitionVi":  "Chế độ tài phiệt đầu sỏ chính trị (quyền lực chính trị tối cao nằm trong tay một nhóm thiểu số giàu có)",
+                          "phonetic":  "/ˈɒl.ɪ.ɡɑː.ki/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Unchecked political lobbying risks transforming democratic institutions into a de facto corporate oligarchy.",
+                          "exampleSentence":  "Unchecked political lobbying risks transforming democratic institutions into a de facto corporate oligarchy.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "plutocracy, ruling faction, elite clique",
+                          "antonyms":  "direct democracy, egalitarian governance",
+                          "collocations":  "ruling oligarchy, financial oligarchy, entrench an oligarchy",
+                          "note":  "Người thuộc nhóm tài phiệt đầu sỏ: oligarch /ˈɒl.ɪ.ɡɑːk/."
+                      },
+                      {
+                          "term":  "anomie",
+                          "definition":  "Tình trạng vô chuẩn tắc xã hội (sự sụp đổ của các chuẩn mực đạo đức chung gây hoang mang tha hóa)",
+                          "definitionVi":  "Tình trạng vô chuẩn tắc xã hội (sự sụp đổ của các chuẩn mực đạo đức chung gây hoang mang tha hóa)",
+                          "phonetic":  "/ˈæn.ə.mi/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Émile Durkheim conceptualized anomie as a pervasive breakdown of normative societal standards during rapid industrialization.",
+                          "exampleSentence":  "Émile Durkheim conceptualized anomie as a pervasive breakdown of normative societal standards during rapid industrialization.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "normlessness, moral deregulation, social disintegration, alienation",
+                          "antonyms":  "social order, normative cohesion, moral stability",
+                          "collocations":  "state of anomie, experience anomie, social anomie",
+                          "note":  "Thuật ngữ xã hội học cổ điển nền tảng của Émile Durkheim."
+                      },
+                      {
+                          "term":  "proletarianization",
+                          "definition":  "Quá trình vô sản hóa (tầng lớp trung lưu hoặc lao động tự do bị mất tư liệu sản xuất và biến thành công nhân làm thuê)",
+                          "definitionVi":  "Quá trình vô sản hóa (tầng lớp trung lưu hoặc lao động tự do bị mất tư liệu sản xuất và biến thành công nhân làm thuê)",
+                          "phonetic":  "/ˌprəʊ.lɪˌteə.ri.ə.naɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The platformization of creative freelance labor represents a modern wave of digital proletarianization.",
+                          "exampleSentence":  "The platformization of creative freelance labor represents a modern wave of digital proletarianization.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "downward social mobility, economic degradation, de-skilling",
+                          "antonyms":  "bourgeoisification, upward mobility, capitalization",
+                          "collocations":  "process of proletarianization, digital proletarianization",
+                          "note":  "Động từ: proletarianize. Bắt nguồn từ \u0027proletariat\u0027 (giai cấp vô sản)."
+                      },
+                      {
+                          "term":  "hegemony",
+                          "definition":  "Sự bá quyền tư tưởng (sự thống trị của giai cấp thống trị thông qua thao túng văn hóa và đồng thuận ngầm)",
+                          "definitionVi":  "Sự bá quyền tư tưởng (sự thống trị của giai cấp thống trị thông qua thao túng văn hóa và đồng thuận ngầm)",
+                          "phonetic":  "/hɪˈɡem.ə.ni/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Gramscian theory posits that ruling classes maintain power primarily through cultural hegemony rather than sheer coercion.",
+                          "exampleSentence":  "Gramscian theory posits that ruling classes maintain power primarily through cultural hegemony rather than sheer coercion.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "ideological supremacy, cultural ascendancy, dominance",
+                          "antonyms":  "subordination, resistance, counter-culture",
+                          "collocations":  "cultural hegemony, ideological hegemony, establish hegemony",
+                          "note":  "Khái niệm nổi tiếng của Antonio Gramsci về \u0027Hegemony\u0027."
+                      },
+                      {
+                          "term":  "bourgeoisie",
+                          "definition":  "Giai cấp tư sản (tầng lớp thượng lưu sở hữu phần lớn tư liệu sản xuất và tài sản xã hội)",
+                          "definitionVi":  "Giai cấp tư sản (tầng lớp thượng lưu sở hữu phần lớn tư liệu sản xuất và tài sản xã hội)",
+                          "phonetic":  "/ˌbʊəʒ.wɑːˈziː/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Historical sociology examines how the rising merchant bourgeoisie reshaped legal frameworks to protect private capital.",
+                          "exampleSentence":  "Historical sociology examines how the rising merchant bourgeoisie reshaped legal frameworks to protect private capital.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "capitalist class, upper-middle class, property owners",
+                          "antonyms":  "proletariat, working class, precariat",
+                          "collocations":  "petite bourgeoisie, merchant bourgeoisie, interests of the bourgeoisie",
+                          "note":  "Tính từ/Danh từ số ít: bourgeois /ˈbʊəʒ.wɑː/ (mang tính tư sản, trưởng giả)."
+                      },
+                      {
+                          "term":  "demographic winter",
+                          "definition":  "Mùa đông nhân khẩu học (tình trạng tỷ lệ sinh giảm sâu dưới mức thay thế đe dọa làm suy giảm dân số nghiêm trọng)",
+                          "definitionVi":  "Mùa đông nhân khẩu học (tình trạng tỷ lệ sinh giảm sâu dưới mức thay thế đe dọa làm suy giảm dân số nghiêm trọng)",
+                          "phonetic":  "/ˌdem.əˈɡræf.ɪk ˈwɪn.tər/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "East Asian economies are enacting unprecedented childcare subsidies to avert a catastrophic demographic winter.",
+                          "exampleSentence":  "East Asian economies are enacting unprecedented childcare subsidies to avert a catastrophic demographic winter.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "fertility collapse, sub-replacement crisis, depopulation spiral",
+                          "antonyms":  "baby boom, demographic expansion",
+                          "collocations":  "face a demographic winter, stave off a demographic winter, onset of demographic winter",
+                          "note":  "Ẩn dụ học thuật C2 sắc bén dùng thay thế cho \u0027low birth rate crisis\u0027."
+                      },
+                      {
+                          "term":  "disenfranchisement",
+                          "definition":  "Sự tước quyền công dân, sự gạt bỏ quyền lợi chính trị và kinh tế của một nhóm xã hội",
+                          "definitionVi":  "Sự tước quyền công dân, sự gạt bỏ quyền lợi chính trị và kinh tế của một nhóm xã hội",
+                          "phonetic":  "/ˌdɪs.ɪnˈfræn.tʃaɪz.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Restrictive voter registration statutes inevitably perpetuate the systemic disenfranchisement of marginalized communities.",
+                          "exampleSentence":  "Restrictive voter registration statutes inevitably perpetuate the systemic disenfranchisement of marginalized communities.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "marginalization, disempowerment, deprivation of rights",
+                          "antonyms":  "enfranchisement, civic empowerment, inclusion",
+                          "collocations":  "political disenfranchisement, systemic disenfranchisement, economic disenfranchisement",
+                          "note":  "Động từ: disenfranchise /ˌdɪs.ɪnˈfræn.tʃaɪz/."
+                      },
+                      {
+                          "term":  "xenophobia",
+                          "definition":  "Chủ nghĩa bài ngoại cực đoan, sự thù ghét hoặc sợ hãi người nước ngoài vô cớ",
+                          "definitionVi":  "Chủ nghĩa bài ngoại cực đoan, sự thù ghét hoặc sợ hãi người nước ngoài vô cớ",
+                          "phonetic":  "/ˌzen.əˈfəʊ.bi.ə/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Economic hardship is frequently weaponized by populist politicians to incite virulent xenophobia against refugees.",
+                          "exampleSentence":  "Economic hardship is frequently weaponized by populist politicians to incite virulent xenophobia against refugees.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Sociology \u0026 Stratification",
+                          "synonyms":  "anti-immigrant sentiment, nativism, ethnocentrism, racial prejudice",
+                          "antonyms":  "cosmopolitanism, xenophilia, cultural openness",
+                          "collocations":  "fuel xenophobia, rise in xenophobia, combat xenophobia, virulent xenophobia",
+                          "note":  "Tính từ: xenophobic /ˌzen.əˈfəʊ.bɪk/. Trái nghĩa: xenophilia (lòng yêu mến văn hóa ngoại quốc)."
+                      },
+                      {
+                          "term":  "stagflation",
+                          "definition":  "Lạm phát đình đốn (hiện tượng kinh tế đình trệ nhưng lạm phát và tỷ lệ thất nghiệp đồng loạt tăng cao)",
+                          "definitionVi":  "Lạm phát đình đốn (hiện tượng kinh tế đình trệ nhưng lạm phát và tỷ lệ thất nghiệp đồng loạt tăng cao)",
+                          "phonetic":  "/stæɡˈfleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Central banks face excruciating policy dilemmas when confronted with supply-shock-induced stagflation.",
+                          "exampleSentence":  "Central banks face excruciating policy dilemmas when confronted with supply-shock-induced stagflation.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "recessionary inflation, economic stagnation with inflation",
+                          "antonyms":  "healthy non-inflationary growth, economic boom",
+                          "collocations":  "risk of stagflation, battle stagflation, succumb to stagflation",
+                          "note":  "Ghép từ \u0027stagnation\u0027 (đình trệ) + \u0027inflation\u0027 (lạm phát). Thuật ngữ kinh tế vĩ mô C2."
+                      },
+                      {
+                          "term":  "hyperinflation",
+                          "definition":  "Siêu lạm phát (hiện tượng mức giá chung tăng phi mã mất kiểm soát khiến đồng tiền mất giá hoàn toàn)",
+                          "definitionVi":  "Siêu lạm phát (hiện tượng mức giá chung tăng phi mã mất kiểm soát khiến đồng tiền mất giá hoàn toàn)",
+                          "phonetic":  "/ˌhaɪ.pər.ɪnˈfleɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Unrestrained sovereign money printing precipitated catastrophic hyperinflation, rendering the national currency worthless.",
+                          "exampleSentence":  "Unrestrained sovereign money printing precipitated catastrophic hyperinflation, rendering the national currency worthless.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "runaway inflation, monetary collapse",
+                          "antonyms":  "disinflation, deflation, monetary stability",
+                          "collocations":  "spiral into hyperinflation, combat hyperinflation, bouts of hyperinflation",
+                          "note":  "Hyper- (vượt ngưỡng cực đại) + inflation."
+                      },
+                      {
+                          "term":  "fiduciary",
+                          "definition":  "Thuộc về trách nhiệm ủy thác tài chính tín cẩn, nghĩa vụ pháp lý phải hành động vì lợi ích tốt nhất của khách hàng",
+                          "definitionVi":  "Thuộc về trách nhiệm ủy thác tài chính tín cẩn, nghĩa vụ pháp lý phải hành động vì lợi ích tốt nhất của khách hàng",
+                          "phonetic":  "/fɪˈdjuː.ʃi.ər.i/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "Pension fund managers have a binding fiduciary duty to balance financial yields with environmental sustainability.",
+                          "exampleSentence":  "Pension fund managers have a binding fiduciary duty to balance financial yields with environmental sustainability.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "trust-based, custodial, ethical-financial, trustee",
+                          "antonyms":  "self-serving, fraudulent, non-custodial",
+                          "collocations":  "fiduciary duty, fiduciary responsibility, fiduciary obligation",
+                          "note":  "Thuật ngữ pháp lý - tài chính tối thượng: \u0027fiduciary duty\u0027 (nghĩa vụ ủy thác)."
+                      },
+                      {
+                          "term":  "neoliberalism",
+                          "definition":  "Chủ nghĩa tân tự do (học thuyết kinh tế ủng hộ tối đa hóa tư nhân hóa, bãi bỏ quy chế và tự do hóa thị trường)",
+                          "definitionVi":  "Chủ nghĩa tân tự do (học thuyết kinh tế ủng hộ tối đa hóa tư nhân hóa, bãi bỏ quy chế và tự do hóa thị trường)",
+                          "phonetic":  "/ˌniː.əʊˈlɪb.ər.əl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Socioeconomic analysts argue that unbridled neoliberalism has dismantled the post-war welfare state apparatus.",
+                          "exampleSentence":  "Socioeconomic analysts argue that unbridled neoliberalism has dismantled the post-war welfare state apparatus.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "free-market fundamentalism, laissez-faire capitalism",
+                          "antonyms":  "Keynesianism, democratic socialism, state interventionism",
+                          "collocations":  "tenets of neoliberalism, rise of neoliberalism, critique of neoliberalism",
+                          "note":  "Tính từ: neoliberal. Học thuyết kinh tế thống trị toàn cầu từ thập niên 1980."
+                      },
+                      {
+                          "term":  "retrenchment",
+                          "definition":  "Sự cắt giảm mạnh chi tiêu công hoặc cắt giảm quy mô nhân sự trong thời kỳ khủng hoảng",
+                          "definitionVi":  "Sự cắt giảm mạnh chi tiêu công hoặc cắt giảm quy mô nhân sự trong thời kỳ khủng hoảng",
+                          "phonetic":  "/rɪˈtrentʃ.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Post-crisis fiscal retrenchment severely curtailed government allocations for fundamental scientific research.",
+                          "exampleSentence":  "Post-crisis fiscal retrenchment severely curtailed government allocations for fundamental scientific research.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "budgetary reduction, austerity downsizing, expenditure cutback",
+                          "antonyms":  "budget expansion, fiscal stimulus, capital expenditure",
+                          "collocations":  "fiscal retrenchment, policy of retrenchment, massive retrenchment",
+                          "note":  "Động từ: retrench (cắt giảm chi tiêu, thắt chặt ngân sách)."
+                      },
+                      {
+                          "term":  "plutocracy",
+                          "definition":  "Chế độ tài phiệt trị, thể chế chính trị nơi quyền lực thực tế nằm trong tay giới siêu giàu",
+                          "definitionVi":  "Chế độ tài phiệt trị, thể chế chính trị nơi quyền lực thực tế nằm trong tay giới siêu giàu",
+                          "phonetic":  "/pluːˈtɒk.rə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Campaign finance deregulation risks degrading representative democracy into an entrenched plutocracy.",
+                          "exampleSentence":  "Campaign finance deregulation risks degrading representative democracy into an entrenched plutocracy.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "rule by the wealthy, oligarchy, kleptocracy",
+                          "antonyms":  "egalitarian democracy, direct representation",
+                          "collocations":  "descent into plutocracy, corporate plutocracy, modern plutocracy",
+                          "note":  "Tính từ: plutocratic /ˌpluː.təˈkræt.ɪk/. Gốc Hy Lạp \u0027ploutos\u0027 = của cải."
+                      },
+                      {
+                          "term":  "monopsony",
+                          "definition":  "Thế độc quyền mua (tình trạng thị trường chỉ có duy nhất một người mua, thao túng giá thu mua và tiền lương)",
+                          "definitionVi":  "Thế độc quyền mua (tình trạng thị trường chỉ có duy nhất một người mua, thao túng giá thu mua và tiền lương)",
+                          "phonetic":  "/məˈnɒp.sə.ni/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Monopsony power in local labor markets allows dominant employers to suppress worker wages below competitive equilibrium.",
+                          "exampleSentence":  "Monopsony power in local labor markets allows dominant employers to suppress worker wages below competitive equilibrium.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "buyer monopoly, single-buyer dominance",
+                          "antonyms":  "monopoly (độc quyền bán), competitive buyer market",
+                          "collocations":  "labor monopsony, monopsony power, buyer monopsony",
+                          "note":  "Phân biệt: Monopoly (độc quyền bán) vs Monopsony (độc quyền mua)."
+                      },
+                      {
+                          "term":  "remunerative",
+                          "definition":  "Đem lại thù lao hậu hĩnh, sinh lợi nhuận tài chính xứng đáng",
+                          "definitionVi":  "Đem lại thù lao hậu hĩnh, sinh lợi nhuận tài chính xứng đáng",
+                          "phonetic":  "/rɪˈmjuː.nər.ə.tɪv/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Acquiring advanced machine learning capabilities equips software engineers for exceptionally remunerative posts.",
+                          "exampleSentence":  "Acquiring advanced machine learning capabilities equips software engineers for exceptionally remunerative posts.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "lucrative, profitable, well-compensated, financially rewarding",
+                          "antonyms":  "unremunerative, unprofitable, poorly paid",
+                          "collocations":  "remunerative employment, highly remunerative, remunerative career",
+                          "note":  "Danh từ: remuneration /rɪˌmjuː.nərˈeɪ.ʃən/ (tiền lương thù lao)."
+                      },
+                      {
+                          "term":  "insolvency",
+                          "definition":  "Tình trạng vỡ nợ, mất hoàn toàn khả năng chi trả các nghĩa vụ tài chính khi đến hạn",
+                          "definitionVi":  "Tình trạng vỡ nợ, mất hoàn toàn khả năng chi trả các nghĩa vụ tài chính khi đến hạn",
+                          "phonetic":  "/ɪnˈsɒl.vən.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Severe cash flow constraints forced the multinational property developer into formal bankruptcy insolvency.",
+                          "exampleSentence":  "Severe cash flow constraints forced the multinational property developer into formal bankruptcy insolvency.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Macroeconomics \u0026 Finance",
+                          "synonyms":  "bankruptcy, financial ruin, liquidation, default",
+                          "antonyms":  "solvency, financial soundness, liquidity",
+                          "collocations":  "declare insolvency, corporate insolvency, verge of insolvency",
+                          "note":  "Tính từ: insolvent (trái nghĩa: solvent = có đủ khả năng thanh toán)."
+                      },
+                      {
+                          "term":  "epigenetics",
+                          "definition":  "Di truyền học biểu sinh (sự thay đổi trong biểu hiện gen do môi trường mà không làm biến đổi chuỗi ADN)",
+                          "definitionVi":  "Di truyền học biểu sinh (sự thay đổi trong biểu hiện gen do môi trường mà không làm biến đổi chuỗi ADN)",
+                          "phonetic":  "/ˌep.ɪ.dʒəˈnet.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Research in epigenetics demonstrates that chronic psychological trauma can induce heritable modifications in gene expression.",
+                          "exampleSentence":  "Research in epigenetics demonstrates that chronic psychological trauma can induce heritable modifications in gene expression.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "epigenetic regulation, gene-environment interaction",
+                          "antonyms":  "Mendelian genetics",
+                          "collocations":  "field of epigenetics, epigenetic changes, epigenetic markers",
+                          "note":  "Tính từ: epigenetic /ˌep.ɪ.dʒəˈnet.ɪk/. Thuật ngữ y sinh học thời thượng bậc C2."
+                      },
+                      {
+                          "term":  "iatrogenic",
+                          "definition":  "Do y tế gây ra (bệnh lý, tổn thương hoặc biến chứng phát sinh do sai sót trong quá trình điều trị y khoa)",
+                          "definitionVi":  "Do y tế gây ra (bệnh lý, tổn thương hoặc biến chứng phát sinh do sai sót trong quá trình điều trị y khoa)",
+                          "phonetic":  "/aɪˌæt.rəˈdʒen.ɪk/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Strict antimicrobial stewardship aims to minimize iatrogenic infections contracted during extended hospitalizations.",
+                          "exampleSentence":  "Strict antimicrobial stewardship aims to minimize iatrogenic infections contracted during extended hospitalizations.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "treatment-induced, medically caused, physician-induced",
+                          "antonyms":  "naturally occurring, idiopathic",
+                          "collocations":  "iatrogenic harm, iatrogenic disease, iatrogenic complications",
+                          "note":  "Gốc Hy Lạp: iatros (thầy thuốc) + -genic (sinh ra)."
+                      },
+                      {
+                          "term":  "somatization",
+                          "definition":  "Sự thể chất hóa (quá trình chuyển hóa căng thẳng tâm lý thành các triệu chứng đau đớn thể xác thực tế)",
+                          "definitionVi":  "Sự thể chất hóa (quá trình chuyển hóa căng thẳng tâm lý thành các triệu chứng đau đớn thể xác thực tế)",
+                          "phonetic":  "/ˌsəʊ.mə.taɪˈzeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Patients under severe emotional duress frequently manifest somatization in the form of chronic gastrointestinal distress.",
+                          "exampleSentence":  "Patients under severe emotional duress frequently manifest somatization in the form of chronic gastrointestinal distress.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "psychosomatic manifestation, bodily conversion of stress",
+                          "antonyms":  "psychological processing, cognitive verbalization",
+                          "collocations":  "somatization disorder, process of somatization, symptoms of somatization",
+                          "note":  "Động từ: somatize. Tính từ: somatic /səʊˈmæt.ɪk/ (thuộc thể xác)."
+                      },
+                      {
+                          "term":  "eugenics",
+                          "definition":  "Thuyết ưu sinh (học thuyết chọn lọc giống người bằng biến đổi gen hoặc triệt sản, bị lên án phi nhân tính)",
+                          "definitionVi":  "Thuyết ưu sinh (học thuyết chọn lọc giống người bằng biến đổi gen hoặc triệt sản, bị lên án phi nhân tính)",
+                          "phonetic":  "/juːˈdʒen.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Germline genetic engineering reignites fraught bioethical debates surrounding the dystopian specter of consumer eugenics.",
+                          "exampleSentence":  "Germline genetic engineering reignites fraught bioethical debates surrounding the dystopian specter of consumer eugenics.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "selective breeding of humans, genetic purification",
+                          "antonyms":  "biodiversity, genetic pluralism",
+                          "collocations":  "liberal eugenics, history of eugenics, eugenic policies",
+                          "note":  "Tính từ: eugenic /juːˈdʒen.ɪk/. Thuật ngữ bắt buộc trong tranh luận chỉnh sửa gen (CRISPR)."
+                      },
+                      {
+                          "term":  "placebo effect",
+                          "definition":  "Hiệu ứng giả dược (hiện tượng sức khỏe bệnh nhân cải thiện nhờ niềm tin tâm lý dù dùng thuốc vô hại không dược chất)",
+                          "definitionVi":  "Hiệu ứng giả dược (hiện tượng sức khỏe bệnh nhân cải thiện nhờ niềm tin tâm lý dù dùng thuốc vô hại không dược chất)",
+                          "phonetic":  "/pləˈsiː.bəʊ ɪˌfekt/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Clinical pharmacologists utilize double-blind trials to isolate genuine therapeutic efficacy from the robust placebo effect.",
+                          "exampleSentence":  "Clinical pharmacologists utilize double-blind trials to isolate genuine therapeutic efficacy from the robust placebo effect.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "placebo response, psychogenic healing",
+                          "antonyms":  "nocebo effect (hiệu ứng tác dụng phụ do tâm lý tiêu cực)",
+                          "collocations":  "demonstrate a placebo effect, powerful placebo effect, placebo-controlled trial",
+                          "note":  "Trái nghĩa: nocebo effect /nəʊˈsiː.bəʊ ɪˌfekt/."
+                      },
+                      {
+                          "term":  "palliative",
+                          "definition":  "Mang tính xoa dịu, giảm đau tạm thời mà không chữa dứt điểm nguyên nhân (chăm sóc giảm nhẹ cho bệnh nhân nan y)",
+                          "definitionVi":  "Mang tính xoa dịu, giảm đau tạm thời mà không chữa dứt điểm nguyên nhân (chăm sóc giảm nhẹ cho bệnh nhân nan y)",
+                          "phonetic":  "/ˈpæl.i.ə.tɪv/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "Integrative palliative care optimizes quality of life for terminally ill patients through holistic symptom management.",
+                          "exampleSentence":  "Integrative palliative care optimizes quality of life for terminally ill patients through holistic symptom management.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "alleviative, soothing, mitigating, pain-relieving, sedative",
+                          "antonyms":  "curative, therapeutic, remedial",
+                          "collocations":  "palliative care, palliative medicine, palliative measures",
+                          "note":  "Dùng theo nghĩa đen y học (palliative care) hoặc nghĩa bóng chính sách (palliative measure = biện pháp đối phó tạm thời)."
+                      },
+                      {
+                          "term":  "nosocomial",
+                          "definition":  "Thuộc nhiễm khuẩn bệnh viện (bệnh hoặc nhiễm trùng mắc phải trong thời gian điều trị tại cơ sở y tế)",
+                          "definitionVi":  "Thuộc nhiễm khuẩn bệnh viện (bệnh hoặc nhiễm trùng mắc phải trong thời gian điều trị tại cơ sở y tế)",
+                          "phonetic":  "/ˌnɒs.əˈkəʊ.mi.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Rigorous sterilization protocols in intensive care units are paramount to preventing the transmission of nosocomial superbugs.",
+                          "exampleSentence":  "Rigorous sterilization protocols in intensive care units are paramount to preventing the transmission of nosocomial superbugs.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "hospital-acquired, healthcare-associated",
+                          "antonyms":  "community-acquired",
+                          "collocations":  "nosocomial infection, nosocomial pathogen, nosocomial transmission",
+                          "note":  "Gốc Hy Lạp: nosokomeion (bệnh viện)."
+                      },
+                      {
+                          "term":  "prophylactic",
+                          "definition":  "Mang tính phòng bệnh, thuốc hoặc biện pháp dùng để ngăn ngừa dịch bệnh trước khi phát tác",
+                          "definitionVi":  "Mang tính phòng bệnh, thuốc hoặc biện pháp dùng để ngăn ngừa dịch bệnh trước khi phát tác",
+                          "phonetic":  "/ˌprɒf.ɪˈlæk.tɪk/",
+                          "partOfSpeech":  "adjective/noun",
+                          "example":  "The administration of prophylactic antiviral medication significantly curtails post-exposure viral transmission rates.",
+                          "exampleSentence":  "The administration of prophylactic antiviral medication significantly curtails post-exposure viral transmission rates.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "preventative, protective, precautionary, inhibitory",
+                          "antonyms":  "pathogenic, curative, responsive",
+                          "collocations":  "prophylactic treatment, prophylactic measure, prophylactic administration",
+                          "note":  "Danh từ: prophylaxis /ˌprɒf.ɪˈlæk.sɪs/ (biện pháp phòng bệnh tổng thể)."
+                      },
+                      {
+                          "term":  "comorbidity",
+                          "definition":  "Tình trạng bệnh đồng mắc (sự tồn tại đồng thời của nhiều bệnh lý mãn tính trên cùng một bệnh nhân)",
+                          "definitionVi":  "Tình trạng bệnh đồng mắc (sự tồn tại đồng thời của nhiều bệnh lý mãn tính trên cùng một bệnh nhân)",
+                          "phonetic":  "/ˌkəʊ.mɔːˈbɪd.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Geriatric clinicians must carefully tailor therapeutic regimens to accommodate complex psychiatric and metabolic comorbidity.",
+                          "exampleSentence":  "Geriatric clinicians must carefully tailor therapeutic regimens to accommodate complex psychiatric and metabolic comorbidity.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Bioethics \u0026 Epigenetics",
+                          "synonyms":  "concurrent illness, secondary condition, coexisting disorder",
+                          "antonyms":  "isolated pathology, single ailment",
+                          "collocations":  "high comorbidity, psychiatric comorbidity, manage comorbidity",
+                          "note":  "Số nhiều: comorbidities. Tính từ: comorbid (comorbid conditions)."
+                      },
+                      {
+                          "term":  "ethnocentrism",
+                          "definition":  "Chủ nghĩa vị chủng (thói quen lấy văn hóa của dân tộc mình làm thước đo tối thượng để phán xét các nền văn hóa khác)",
+                          "definitionVi":  "Chủ nghĩa vị chủng (thói quen lấy văn hóa của dân tộc mình làm thước đo tối thượng để phán xét các nền văn hóa khác)",
+                          "phonetic":  "/ˌeθ.nəʊˈsen.trɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Anthropological training encourages scholars to transcend reflexive ethnocentrism by practicing rigorous cultural relativism.",
+                          "exampleSentence":  "Anthropological training encourages scholars to transcend reflexive ethnocentrism by practicing rigorous cultural relativism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "cultural chauvinism, xenophobia, cultural supremacy",
+                          "antonyms":  "cultural relativism, cosmopolitanism, pluralism",
+                          "collocations":  "ingrained ethnocentrism, combat ethnocentrism, ethnocentric bias",
+                          "note":  "Tính từ: ethnocentric /ˌeθ.nəʊˈsen.trɪk/."
+                      },
+                      {
+                          "term":  "postcolonialism",
+                          "definition":  "Chủ nghĩa hậu thực dân (trường phái lý thuyết phân tích di sản văn hóa, chính trị và quyền lực thời kỳ hậu thuộc địa)",
+                          "definitionVi":  "Chủ nghĩa hậu thực dân (trường phái lý thuyết phân tích di sản văn hóa, chính trị và quyền lực thời kỳ hậu thuộc địa)",
+                          "phonetic":  "/ˌpəʊst.kəˈləʊ.ni.ə.lɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Postcolonialism critiques the persistent Eurocentric epistemology that marginalizes indigenous knowledge systems.",
+                          "exampleSentence":  "Postcolonialism critiques the persistent Eurocentric epistemology that marginalizes indigenous knowledge systems.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "postcolonial theory, decolonial critique",
+                          "antonyms":  "colonialism, imperialist discourse",
+                          "collocations":  "theory of postcolonialism, postcolonial literature, postcolonial discourse",
+                          "note":  "Tính từ: postcolonial /ˌpəʊst.kəˈləʊ.ni.əl/ (postcolonial studies)."
+                      },
+                      {
+                          "term":  "syncretism",
+                          "definition":  "Sự dung hợp văn hóa tôn giáo (quá trình hòa quyện các tín ngưỡng và hệ tư tưởng khác nhau thành một thực thể mới)",
+                          "definitionVi":  "Sự dung hợp văn hóa tôn giáo (quá trình hòa quyện các tín ngưỡng và hệ tư tưởng khác nhau thành một thực thể mới)",
+                          "phonetic":  "/ˈsɪŋ.krə.tɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Vietnamese religious architecture reflects rich religious syncretism, blending Confucianism, Buddhism, and Taoism.",
+                          "exampleSentence":  "Vietnamese religious architecture reflects rich religious syncretism, blending Confucianism, Buddhism, and Taoism.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "amalgamation, cultural synthesis, hybridity, fusion",
+                          "antonyms":  "fundamentalism, sectarian purity, isolation",
+                          "collocations":  "religious syncretism, cultural syncretism, artistic syncretism",
+                          "note":  "Tính từ: syncretic /sɪŋˈkret.ɪk/ (a syncretic belief system)."
+                      },
+                      {
+                          "term":  "cultural imperialism",
+                          "definition":  "Sự đế quốc hóa văn hóa (sự bành trướng và áp đặt các giá trị văn hóa của nước lớn nhằm lấn át văn hóa bản địa)",
+                          "definitionVi":  "Sự đế quốc hóa văn hóa (sự bành trướng và áp đặt các giá trị văn hóa của nước lớn nhằm lấn át văn hóa bản địa)",
+                          "phonetic":  "/ˌkʌl.tʃər.əl ɪmˈpɪə.ri.ə.lɪ.zəm/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The ubiquitous globalization of western commercial media is frequently critiqued as an insidious form of cultural imperialism.",
+                          "exampleSentence":  "The ubiquitous globalization of western commercial media is frequently critiqued as an insidious form of cultural imperialism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "cultural hegemony, media colonization, soft-power domination",
+                          "antonyms":  "cultural pluralism, indigenous sovereignty",
+                          "collocations":  "form of cultural imperialism, resist cultural imperialism, Western cultural imperialism",
+                          "note":  "Cụm danh từ đắt giá bậc C1-C2 khi viết bài luận về Toàn cầu hóa."
+                      },
+                      {
+                          "term":  "exoticize",
+                          "definition":  "Ngoại lai hóa (nhìn nhận và miêu tả nền văn hóa khác như một thứ kỳ quái, lạ lẫm nhằm phục vụ sự tò mò vị kỷ)",
+                          "definitionVi":  "Ngoại lai hóa (nhìn nhận và miêu tả nền văn hóa khác như một thứ kỳ quái, lạ lẫm nhằm phục vụ sự tò mò vị kỷ)",
+                          "phonetic":  "/ɪɡˈzɒt.ɪ.saɪz/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Travel writers must be cautious not to exoticize ethnic customs by reducing sacred rituals to tourist spectacles.",
+                          "exampleSentence":  "Travel writers must be cautious not to exoticize ethnic customs by reducing sacred rituals to tourist spectacles.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "glamourize, other, romanticize, orientalize",
+                          "antonyms":  "humanize, contextualize, normalize",
+                          "collocations":  "exoticize foreign cultures, tendency to exoticize, avoid exoticizing",
+                          "note":  "Danh từ: exoticization /ɪɡˌzɒt.ɪ.saɪˈzeɪ.ʃən/."
+                      },
+                      {
+                          "term":  "chauvinism",
+                          "definition":  "Chủ nghĩa sô-vanh (lòng ái quốc mù quáng, tự tôn dân tộc quá khích hoặc tư tưởng phân biệt giới tính cực đoan)",
+                          "definitionVi":  "Chủ nghĩa sô-vanh (lòng ái quốc mù quáng, tự tôn dân tộc quá khích hoặc tư tưởng phân biệt giới tính cực đoan)",
+                          "phonetic":  "/ˈʃəʊ.vɪ.nɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Populist movements frequently exploit nationalist chauvinism to justify isolationist trade barriers and militarization.",
+                          "exampleSentence":  "Populist movements frequently exploit nationalist chauvinism to justify isolationist trade barriers and militarization.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "jingoism, extreme nationalism, fanatical patriotism, prejudice",
+                          "antonyms":  "internationalism, egalitarianism, cosmopolitanism",
+                          "collocations":  "nationalist chauvinism, male chauvinism, blatant chauvinism",
+                          "note":  "Tính từ: chauvinistic /ˌʃəʊ.vɪˈnɪs.tɪk/. Người theo chủ nghĩa này: chauvinist."
+                      },
+                      {
+                          "term":  "acculturation",
+                          "definition":  "Sự tiếp biến văn hóa (quá trình tiếp thu văn hóa mới thông qua tiếp xúc nhưng vẫn gìn giữ bản sắc gốc)",
+                          "definitionVi":  "Sự tiếp biến văn hóa (quá trình tiếp thu văn hóa mới thông qua tiếp xúc nhưng vẫn gìn giữ bản sắc gốc)",
+                          "phonetic":  "/əˌkʌl.tʃəˈreɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Bilingual educational programs facilitate healthy acculturation by honoring ancestral traditions alongside civic integration.",
+                          "exampleSentence":  "Bilingual educational programs facilitate healthy acculturation by honoring ancestral traditions alongside civic integration.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "intercultural adaptation, cultural cross-fertilization",
+                          "antonyms":  "cultural alienation, forced assimilation",
+                          "collocations":  "process of acculturation, cross-cultural acculturation, levels of acculturation",
+                          "note":  "Phân biệt với \u0027assimilation\u0027 (đồng hóa mất gốc hoàn toàn)."
+                      },
+                      {
+                          "term":  "intangible heritage",
+                          "definition":  "Di sản văn hóa phi vật thể (làn điệu dân ca, nghi lễ, bí quyết thủ công truyền khẩu qua các thế hệ)",
+                          "definitionVi":  "Di sản văn hóa phi vật thể (làn điệu dân ca, nghi lễ, bí quyết thủ công truyền khẩu qua các thế hệ)",
+                          "phonetic":  "/ɪnˈtæn.dʒə.bəl ˈher.ɪ.tɪdʒ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "UNESCO safeguards intangible heritage such as epic oral storytelling from being eclipsed by commercial pop culture.",
+                          "exampleSentence":  "UNESCO safeguards intangible heritage such as epic oral storytelling from being eclipsed by commercial pop culture.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "living heritage, immaterial patrimony",
+                          "antonyms":  "tangible heritage, physical monuments",
+                          "collocations":  "preserve intangible heritage, UNESCO intangible heritage, oral intangible heritage",
+                          "note":  "Phân biệt rõ: Tangible heritage (di tích, cổ vật) \u003e\u003c Intangible heritage (nhã nhạc, ca trù)."
+                      },
+                      {
+                          "term":  "taboo",
+                          "definition":  "Điều cấm kỵ (quy ước xã hội hoặc tôn giáo nghiêm cấm một hành vi/chủ đề cụ thể)",
+                          "definitionVi":  "Điều cấm kỵ (quy ước xã hội hoặc tôn giáo nghiêm cấm một hành vi/chủ đề cụ thể)",
+                          "phonetic":  "/təˈbuː/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "Open discourse surrounding mental health was historically treated as a cultural taboo in many traditional societies.",
+                          "exampleSentence":  "Open discourse surrounding mental health was historically treated as a cultural taboo in many traditional societies.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Anthropology \u0026 Globalism",
+                          "synonyms":  "prohibition, ban, interdiction, forbidden practice",
+                          "antonyms":  "social norm, accepted practice, endorsement",
+                          "collocations":  "break a taboo, cultural taboo, subject of a taboo, strictly taboo",
+                          "note":  "Gốc từ tiếng Polynesia \u0027tapu\u0027 (bất khả xâm phạm/thiêng liêng)."
+                      },
+                      {
+                          "term":  "jurisprudence",
+                          "definition":  "Triết học pháp quyền, khoa học và lý luận nền tảng về bản chất của pháp luật",
+                          "definitionVi":  "Triết học pháp quyền, khoa học và lý luận nền tảng về bản chất của pháp luật",
+                          "phonetic":  "/ˌdʒʊə.rɪsˈpruː.dəns/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Comparative jurisprudence demonstrates how constitutional legal systems balance individual liberties with collective security.",
+                          "exampleSentence":  "Comparative jurisprudence demonstrates how constitutional legal systems balance individual liberties with collective security.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "legal philosophy, science of law, legal theory",
+                          "antonyms":  "lawlessness, arbitrary rule",
+                          "collocations":  "constitutional jurisprudence, medical jurisprudence, principles of jurisprudence",
+                          "note":  "Tính từ: jurisprudential /ˌdʒʊə.rɪs.pruːˈden.ʃəl/."
+                      },
+                      {
+                          "term":  "recidivism",
+                          "definition":  "Tỷ lệ tái phạm tội (hành vi tái phạm pháp luật sau khi đã hoàn thành cải tạo)",
+                          "definitionVi":  "Tỷ lệ tái phạm tội (hành vi tái phạm pháp luật sau khi đã hoàn thành cải tạo)",
+                          "phonetic":  "/rɪˈsɪd.ɪ.vɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Comprehensive post-release vocational rehabilitation has been shown to dramatically curb chronic criminal recidivism.",
+                          "exampleSentence":  "Comprehensive post-release vocational rehabilitation has been shown to dramatically curb chronic criminal recidivism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "relapse into crime, reoffending, habitual criminality",
+                          "antonyms":  "rehabilitation, desistance, law-abiding reform",
+                          "collocations":  "rate of recidivism, curb recidivism, reduce recidivism",
+                          "note":  "Người tái phạm: recidivist /rɪˈsɪd.ɪ.vɪst/."
+                      },
+                      {
+                          "term":  "retributive justice",
+                          "definition":  "Tư pháp trừng phạt (học thuyết tư pháp khẳng định hình phạt phải tương xứng đích đáng với tội lỗi đã gây ra)",
+                          "definitionVi":  "Tư pháp trừng phạt (học thuyết tư pháp khẳng định hình phạt phải tương xứng đích đáng với tội lỗi đã gây ra)",
+                          "phonetic":  "/rɪˌtrɪb.jə.tɪv ˈdʒʌs.tɪs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Proponents of retributive justice argue that severe punitive sentencing is morally mandatory to re-establish moral order.",
+                          "exampleSentence":  "Proponents of retributive justice argue that severe punitive sentencing is morally mandatory to re-establish moral order.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "punitive justice, lex talionis, eye-for-an-eye justice",
+                          "antonyms":  "restorative justice, rehabilitative justice",
+                          "collocations":  "principle of retributive justice, enforce retributive justice, advocate retributive justice",
+                          "note":  "Đối lập kinh điển trong đề thi Criminology: Retributive Justice vs. Restorative Justice."
+                      },
+                      {
+                          "term":  "restorative justice",
+                          "definition":  "Tư pháp phục hồi (mô hình tư pháp tập trung hòa giải, bồi thường thiệt hại cho nạn nhân và giáo dục kẻ phạm tội)",
+                          "definitionVi":  "Tư pháp phục hồi (mô hình tư pháp tập trung hòa giải, bồi thường thiệt hại cho nạn nhân và giáo dục kẻ phạm tội)",
+                          "phonetic":  "/rɪˌstɔː.rə.tɪv ˈdʒʌs.tɪs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Restorative justice conferences bring victims and juvenile offenders together to facilitate genuine remorse and reconciliation.",
+                          "exampleSentence":  "Restorative justice conferences bring victims and juvenile offenders together to facilitate genuine remorse and reconciliation.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "reparative justice, transformative justice, reconciliatory mediation",
+                          "antonyms":  "retributive justice, punitive incarceration",
+                          "collocations":  "practice restorative justice, model of restorative justice, restorative justice mediation",
+                          "note":  "Mô hình tư pháp tiến bộ được đánh giá rất cao trong các bài viết Writing Task 2."
+                      },
+                      {
+                          "term":  "exonerate",
+                          "definition":  "Minh oan, tuyên bố trắng án và xóa bỏ mọi cáo buộc tội danh sai trái",
+                          "definitionVi":  "Minh oan, tuyên bố trắng án và xóa bỏ mọi cáo buộc tội danh sai trái",
+                          "phonetic":  "/ɪɡˈzɒn.ə.reɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Post-conviction genomic DNA analysis successfully exonerated the defendant after thirty years of wrongful imprisonment.",
+                          "exampleSentence":  "Post-conviction genomic DNA analysis successfully exonerated the defendant after thirty years of wrongful imprisonment.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "absolve, acquit, vindicate, clear, pardon",
+                          "antonyms":  "convict, incriminate, condemn, sentence",
+                          "collocations":  "fully exonerate, exonerate from blame, DNA evidence exonerates",
+                          "note":  "Danh từ: exoneration /ɪɡˌzɒn.əˈreɪ.ʃən/. Dùng thay thế cho \u0027prove innocent\u0027."
+                      },
+                      {
+                          "term":  "habeas corpus",
+                          "definition":  "Lệnh đình quyền giam giữ (nguyên tắc pháp lý tối thượng bảo vệ công dân khỏi bị bắt giữ và bỏ tù phi pháp)",
+                          "definitionVi":  "Lệnh đình quyền giam giữ (nguyên tắc pháp lý tối thượng bảo vệ công dân khỏi bị bắt giữ và bỏ tù phi pháp)",
+                          "phonetic":  "/ˌheɪ.bi.əs ˈkɔː.pəs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "The writ of habeas corpus stands as an indispensable constitutional bulwark against arbitrary executive detention.",
+                          "exampleSentence":  "The writ of habeas corpus stands as an indispensable constitutional bulwark against arbitrary executive detention.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "protection against unlawful detention, due process writ",
+                          "antonyms":  "arbitrary detention, indefinite imprisonment",
+                          "collocations":  "writ of habeas corpus, suspend habeas corpus, petition for habeas corpus",
+                          "note":  "Gốc Latin: \u0027ngươi hãy có thân xác\u0027. Nguyên lý nền tảng của nhà nước pháp quyền."
+                      },
+                      {
+                          "term":  "draconian",
+                          "definition":  "Vô cùng hà khắc, tàn khốc, quá mức nghiêm ngặt (luật lệ, biện pháp trừng trị)",
+                          "definitionVi":  "Vô cùng hà khắc, tàn khốc, quá mức nghiêm ngặt (luật lệ, biện pháp trừng trị)",
+                          "phonetic":  "/drəˈkəʊ.ni.ən/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Human rights ombudsmen condemned the emergency state decrees as draconian measures that extinguish civil dissent.",
+                          "exampleSentence":  "Human rights ombudsmen condemned the emergency state decrees as draconian measures that extinguish civil dissent.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "drastic, harsh, oppressive, severe, tyrannical",
+                          "antonyms":  "lenient, humane, compassionate, moderate",
+                          "collocations":  "draconian laws, draconian measures, draconian penalties, draconian censorship",
+                          "note":  "Bắt nguồn từ nhà làm luật cổ đại Draco ở Athens thế kỷ 7 TCN nổi tiếng vì luật tàn khốc."
+                      },
+                      {
+                          "term":  "indictment",
+                          "definition":  "Bản cáo trạng truy tố chính thức (hoặc sự tố cáo đanh thép về một tệ nạn xã hội)",
+                          "definitionVi":  "Bản cáo trạng truy tố chính thức (hoặc sự tố cáo đanh thép về một tệ nạn xã hội)",
+                          "phonetic":  "/ɪnˈdaɪt.mənt/",
+                          "partOfSpeech":  "noun",
+                          "example":  "The investigative report stands as a devastating indictment of institutional neglect and systemic regulatory failure.",
+                          "exampleSentence":  "The investigative report stands as a devastating indictment of institutional neglect and systemic regulatory failure.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "formal accusation, charge, arraignment, condemnation",
+                          "antonyms":  "exoneration, acquittal, commendation",
+                          "collocations":  "damning indictment, federal indictment, hand down an indictment",
+                          "note":  "Phát âm: /ɪnˈdaɪt.mənt/ (âm \u0027c\u0027 hoàn toàn câm!). Động từ: indict /ɪnˈdaɪt/."
+                      },
+                      {
+                          "term":  "impunity",
+                          "definition":  "Tình trạng thoát tội, sự miễn trừ không bị trừng phạt dù vi phạm luật pháp nghiêm trọng",
+                          "definitionVi":  "Tình trạng thoát tội, sự miễn trừ không bị trừng phạt dù vi phạm luật pháp nghiêm trọng",
+                          "phonetic":  "/ɪmˈpjuː.nə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "An independent judiciary is vital to ensure that powerful political actors cannot violate constitutional statutes with impunity.",
+                          "exampleSentence":  "An independent judiciary is vital to ensure that powerful political actors cannot violate constitutional statutes with impunity.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Jurisprudence \u0026 Criminology",
+                          "synonyms":  "exemption from punishment, immunity, freedom from liability",
+                          "antonyms":  "accountability, retribution, liability, culpability",
+                          "collocations":  "act with impunity, culture of impunity, end impunity",
+                          "note":  "Thành ngữ: \u0027act with impunity\u0027 (hoành hành ngang ngược không sợ bị trừng phạt)."
+                      },
+                      {
+                          "term":  "demagoguery",
+                          "definition":  "Trò mị dân, nghệ thuật kích động cảm xúc tiêu cực và định kiến của quần chúng để trục lợi chính trị",
+                          "definitionVi":  "Trò mị dân, nghệ thuật kích động cảm xúc tiêu cực và định kiến của quần chúng để trục lợi chính trị",
+                          "phonetic":  "/ˌdem.əˈɡɒɡ.ər.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Responsible journalism acts as a critical democratic barrier against populist politicians who weaponize demagoguery.",
+                          "exampleSentence":  "Responsible journalism acts as a critical democratic barrier against populist politicians who weaponize demagoguery.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "populist rabble-rousing, political agitation, demagogy",
+                          "antonyms":  "statesmanship, reasoned discourse, ethical leadership",
+                          "collocations":  "resort to demagoguery, populist demagoguery, dangerous demagoguery",
+                          "note":  "Kẻ mị dân: demagogue /ˈdem.ə.ɡɒɡ/."
+                      },
+                      {
+                          "term":  "disinformation",
+                          "definition":  "Thông tin giả cố ý (tin tức ngụy tạo có toan tính nhằm đánh lừa và thao túng dư luận)",
+                          "definitionVi":  "Thông tin giả cố ý (tin tức ngụy tạo có toan tính nhằm đánh lừa và thao túng dư luận)",
+                          "phonetic":  "/ˌdɪs.ɪn.fəˈmeɪ.ʃən/",
+                          "partOfSpeech":  "noun",
+                          "example":  "State-sponsored cyber units orchestrated coordinated disinformation campaigns to sabotage electoral legitimacy.",
+                          "exampleSentence":  "State-sponsored cyber units orchestrated coordinated disinformation campaigns to sabotage electoral legitimacy.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "deliberate falsehood, orchestrated propaganda, fake intelligence",
+                          "antonyms":  "verified fact, factual accuracy, objective truth",
+                          "collocations":  "disinformation campaign, combat disinformation, spread disinformation",
+                          "note":  "Khác biệt bản chất: Misinformation (tin sai vô ý) \u003e\u003c Disinformation (tin giả cố ý lừa đảo)."
+                      },
+                      {
+                          "term":  "hyperbole",
+                          "definition":  "Phép ngoa dụ, thủ pháp phóng đại thậm xưng nhằm gây ấn tượng mạnh",
+                          "definitionVi":  "Phép ngoa dụ, thủ pháp phóng đại thậm xưng nhằm gây ấn tượng mạnh",
+                          "phonetic":  "/haɪˈpɜː.bəl.i/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Advertising copywriters habitually deploy dramatic hyperbole to elevate commonplace consumer products into lifestyle necessities.",
+                          "exampleSentence":  "Advertising copywriters habitually deploy dramatic hyperbole to elevate commonplace consumer products into lifestyle necessities.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "exaggeration, overstatement, embellishment, magnification",
+                          "antonyms":  "understatement, litotes, factual precision",
+                          "collocations":  "rhetorical hyperbole, devoid of hyperbole, sheer hyperbole",
+                          "note":  "Phát âm: /haɪˈpɜː.bəl.i/ (trọng âm 2). Tính từ: hyperbolic /ˌhaɪ.pəˈbɒl.ɪk/."
+                      },
+                      {
+                          "term":  "semiotics",
+                          "definition":  "Ký hiệu học (khoa học nghiên cứu về hệ thống dấu hiệu, biểu tượng và quá trình tạo nghĩa trong giao tiếp)",
+                          "definitionVi":  "Ký hiệu học (khoa học nghiên cứu về hệ thống dấu hiệu, biểu tượng và quá trình tạo nghĩa trong giao tiếp)",
+                          "phonetic":  "/ˌsem.iˈɒt.ɪks/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Cultural semiotics analyzes how luxury brand logos function as potent semiotic signifiers of socio-economic prestige.",
+                          "exampleSentence":  "Cultural semiotics analyzes how luxury brand logos function as potent semiotic signifiers of socio-economic prestige.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "semiology, science of signs, symbolism theory",
+                          "antonyms":  "N/A",
+                          "collocations":  "branch of semiotics, semiotic analysis, semiotic code",
+                          "note":  "Tính từ: semiotic /ˌsem.iˈɒt.ɪk/ (semiotic meaning = ý nghĩa ký hiệu học)."
+                      },
+                      {
+                          "term":  "veracity",
+                          "definition":  "Tính chân thực, sự xác thực tuyệt đối của thông tin và lời khai",
+                          "definitionVi":  "Tính chân thực, sự xác thực tuyệt đối của thông tin và lời khai",
+                          "phonetic":  "/vəˈræs.ə.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Fact-checking organizations perform meticulous forensic audits to verify the empirical veracity of viral digital claims.",
+                          "exampleSentence":  "Fact-checking organizations perform meticulous forensic audits to verify the empirical veracity of viral digital claims.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "truthfulness, accuracy, authenticity, credibility",
+                          "antonyms":  "mendacity, falsity, deceit, dishonesty",
+                          "collocations":  "verify the veracity, question the veracity, doubt the veracity",
+                          "note":  "Tính từ: veracious /vəˈreɪ.ʃəs/ (chân thật). Từ C2 ăn điểm rất cao trong Task 2."
+                      },
+                      {
+                          "term":  "polemic",
+                          "definition":  "Bài văn đả kích kịch liệt, văn phong bút chiến mang tính công kích quan điểm đối lập sâu cay",
+                          "definitionVi":  "Bài văn đả kích kịch liệt, văn phong bút chiến mang tính công kích quan điểm đối lập sâu cay",
+                          "phonetic":  "/pəˈlem.ɪk/",
+                          "partOfSpeech":  "noun/adjective",
+                          "example":  "The environmental activist published a passionate polemic indicting global fossil fuel subsidies.",
+                          "exampleSentence":  "The environmental activist published a passionate polemic indicting global fossil fuel subsidies.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "tirade, diatribe, denunciation, philippic, broadside",
+                          "antonyms":  "panegyric, eulogy, praise, tribute",
+                          "collocations":  "fierce polemic, write a polemic, polemical essay",
+                          "note":  "Tính từ: polemical /pəˈlem.ɪ.kəl/ (a polemical debate = cuộc tranh luận gay gắt)."
+                      },
+                      {
+                          "term":  "obfuscate",
+                          "definition":  "Làm mờ ám, cố tình dùng từ ngữ phức tạp để làm rối rắm nhằm che giấu sự thật",
+                          "definitionVi":  "Làm mờ ám, cố tình dùng từ ngữ phức tạp để làm rối rắm nhằm che giấu sự thật",
+                          "phonetic":  "/ˈɒb.fʌs.keɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "Spokespersons often deploy convoluted bureaucratic jargon to obfuscate controversial policy failures.",
+                          "exampleSentence":  "Spokespersons often deploy convoluted bureaucratic jargon to obfuscate controversial policy failures.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "obscure, confuse, muddy the waters, blur, cloud",
+                          "antonyms":  "clarify, elucidate, illuminate, demystify",
+                          "collocations":  "obfuscate the truth, deliberately obfuscate, obfuscate the issue",
+                          "note":  "Danh từ: obfuscation /ˌɒb.fʌsˈkeɪ.ʃən/ (sự làm mờ ám thông tin)."
+                      },
+                      {
+                          "term":  "platitude",
+                          "definition":  "Lời nói sáo rỗng, phát biểu rập khuôn vô vị dù nghe có vẻ đạo lý",
+                          "definitionVi":  "Lời nói sáo rỗng, phát biểu rập khuôn vô vị dù nghe có vẻ đạo lý",
+                          "phonetic":  "/ˈplæt.ɪ.tʃuːd/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Voters grow cynical when political debates offer empty rhetorical platitudes instead of concrete policy solutions.",
+                          "exampleSentence":  "Voters grow cynical when political debates offer empty rhetorical platitudes instead of concrete policy solutions.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "cliché, banality, truism, bromide, commonplace",
+                          "antonyms":  "original insight, profound revelation, depth",
+                          "collocations":  "empty platitude, utter platitudes, mouth platitudes",
+                          "note":  "Tính từ: platitudinous /ˌplæt.ɪˈtʃuː.dɪ.nəs/ (sáo rỗng, vô nghĩa)."
+                      },
+                      {
+                          "term":  "sensationalism",
+                          "definition":  "Khuynh hướng giật gân (thủ pháp thổi phồng gây sốc để câu view của truyền thông thương mại)",
+                          "definitionVi":  "Khuynh hướng giật gân (thủ pháp thổi phồng gây sốc để câu view của truyền thông thương mại)",
+                          "phonetic":  "/senˈseɪ.ʃən.əl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Commercial broadcasting models inevitably sacrifice journalistic integrity on the altar of click-driven sensationalism.",
+                          "exampleSentence":  "Commercial broadcasting models inevitably sacrifice journalistic integrity on the altar of click-driven sensationalism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Media \u0026 Semiotics",
+                          "synonyms":  "yellow journalism, melodrama, hyperbole, media hype",
+                          "antonyms":  "objective reporting, measured analysis, factual sobriety",
+                          "collocations":  "media sensationalism, cheap sensationalism, accused of sensationalism",
+                          "note":  "Tính từ: sensational (sensational reporting)."
+                      },
+                      {
+                          "term":  "realpolitik",
+                          "definition":  "Chính trị thực dụng (chính sách ngoại giao dựa trên tính toán quyền lực thực tế và lợi ích quốc gia hơn là đạo đức)",
+                          "definitionVi":  "Chính trị thực dụng (chính sách ngoại giao dựa trên tính toán quyền lực thực tế và lợi ích quốc gia hơn là đạo đức)",
+                          "phonetic":  "/reɪˈɑːl.pɒl.ɪ.tiːk/",
+                          "partOfSpeech":  "noun",
+                          "example":  "In international diplomacy, ruthless realpolitik frequently overrides abstract commitments to universal human rights.",
+                          "exampleSentence":  "In international diplomacy, ruthless realpolitik frequently overrides abstract commitments to universal human rights.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "pragmatic politics, power politics, Machiavellianism",
+                          "antonyms":  "idealism, utopian diplomacy, moral governance",
+                          "collocations":  "exercise realpolitik, master of realpolitik, cold realpolitik",
+                          "note":  "Từ mượn gốc tiếng Đức (Real = thực tế + Politik = chính trị). Trọng âm 2."
+                      },
+                      {
+                          "term":  "hegemony",
+                          "definition":  "Quyền bá chủ địa chính trị toàn cầu của một siêu cường",
+                          "definitionVi":  "Quyền bá chủ địa chính trị toàn cầu của một siêu cường",
+                          "phonetic":  "/hɪˈɡem.ə.ni/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Multipolar geopolitical dynamics increasingly challenge unilateral superpower hegemony across the Pacific Rim.",
+                          "exampleSentence":  "Multipolar geopolitical dynamics increasingly challenge unilateral superpower hegemony across the Pacific Rim.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "geopolitical supremacy, global dominance, ascendancy",
+                          "antonyms":  "multipolarity, balance of power, sovereignty",
+                          "collocations":  "global hegemony, geopolitical hegemony, challenge hegemony",
+                          "note":  "Tính từ: hegemonic /ˌhedʒ.ɪˈmɒn.ɪk/."
+                      },
+                      {
+                          "term":  "gerrymandering",
+                          "definition":  "Hành vi thao túng chia ranh giới khu vực bầu cử để đem lại lợi thế bất công cho đảng phái cầm quyền",
+                          "definitionVi":  "Hành vi thao túng chia ranh giới khu vực bầu cử để đem lại lợi thế bất công cho đảng phái cầm quyền",
+                          "phonetic":  "/ˈdʒer.iˌmæn.dər.ɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Partisan gerrymandering fundamentally undermines representative democracy by predetermining electoral outcomes.",
+                          "exampleSentence":  "Partisan gerrymandering fundamentally undermines representative democracy by predetermining electoral outcomes.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "electoral district manipulation, boundary tampering",
+                          "antonyms":  "fair redistricting, impartial boundary demarcation",
+                          "collocations":  "partisan gerrymandering, racial gerrymandering, combat gerrymandering",
+                          "note":  "Động từ: gerrymander. Xuất xứ từ Thống đốc bang Elbridge Gerry (Mỹ) năm 1812."
+                      },
+                      {
+                          "term":  "sovereignty",
+                          "definition":  "Chủ quyền quốc gia tối cao, quyền tự quyết tuyệt đối không bị can thiệp từ bên ngoài",
+                          "definitionVi":  "Chủ quyền quốc gia tối cao, quyền tự quyết tuyệt đối không bị can thiệp từ bên ngoài",
+                          "phonetic":  "/ˈsɒv.rɪn.ti/",
+                          "partOfSpeech":  "noun",
+                          "example":  "International law strictly obligates all nation-states to respect the territorial integrity and national sovereignty of others.",
+                          "exampleSentence":  "International law strictly obligates all nation-states to respect the territorial integrity and national sovereignty of others.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "supreme power, national autonomy, self-determination, independence",
+                          "antonyms":  "subjugation, vassalage, colonialism, dependency",
+                          "collocations":  "national sovereignty, territorial sovereignty, breach of sovereignty",
+                          "note":  "Tính từ: sovereign /ˈsɒv.rɪn/ (a sovereign state = một quốc gia có chủ quyền)."
+                      },
+                      {
+                          "term":  "promulgate",
+                          "definition":  "Ban hành, công bố chính thức một đạo luật, sắc lệnh hoặc hiến pháp mới",
+                          "definitionVi":  "Ban hành, công bố chính thức một đạo luật, sắc lệnh hoặc hiến pháp mới",
+                          "phonetic":  "/ˈprɒm.əl.ɡeɪt/",
+                          "partOfSpeech":  "verb",
+                          "example":  "The national parliament promulgated an ambitious omnibus climate bill establishing legally binding decarbonization targets.",
+                          "exampleSentence":  "The national parliament promulgated an ambitious omnibus climate bill establishing legally binding decarbonization targets.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "enact, proclaim, decree, issue, institute",
+                          "antonyms":  "repeal, annul, revoke, rescind",
+                          "collocations":  "promulgate a law, promulgate a decree, officially promulgate",
+                          "note":  "Danh từ: promulgation /ˌprɒm.əlˈɡeɪ.ʃən/. Dùng thay thế cho \u0027pass a law\u0027."
+                      },
+                      {
+                          "term":  "bipartisan",
+                          "definition":  "Lưỡng đảng (có sự đồng thuận, hợp tác của cả hai chính đảng đối lập)",
+                          "definitionVi":  "Lưỡng đảng (có sự đồng thuận, hợp tác của cả hai chính đảng đối lập)",
+                          "phonetic":  "/baɪˌpɑː.tɪˈzæn/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Passing landmark infrastructure legislation required rare bipartisan consensus across deeply divided congressional factions.",
+                          "exampleSentence":  "Passing landmark infrastructure legislation required rare bipartisan consensus across deeply divided congressional factions.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "cross-party, two-party, non-partisan, consensual",
+                          "antonyms":  "partisan, sectarian, factional, polarized",
+                          "collocations":  "bipartisan support, bipartisan agreement, bipartisan committee",
+                          "note":  "Bi- (hai) + partisan (đảng phái). Danh từ: bipartisanship."
+                      },
+                      {
+                          "term":  "kleptocracy",
+                          "definition":  "Chế độ đạo tặc trị (chính quyền tha hóa nơi các nhà lãnh đạo lạm quyền vơ vét công quỹ làm giàu cá nhân)",
+                          "definitionVi":  "Chế độ đạo tặc trị (chính quyền tha hóa nơi các nhà lãnh đạo lạm quyền vơ vét công quỹ làm giàu cá nhân)",
+                          "phonetic":  "/klepˈtɒk.rə.si/",
+                          "partOfSpeech":  "noun",
+                          "example":  "International sanctions target illicit financial conduits that allow authoritarian kleptocracies to launder embezzled funds.",
+                          "exampleSentence":  "International sanctions target illicit financial conduits that allow authoritarian kleptocracies to launder embezzled funds.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "corrupt regime, rule by thieves, predatory governance",
+                          "antonyms":  "clean governance, transparent democracy, meritocracy",
+                          "collocations":  "entrenched kleptocracy, defeat kleptocracy, financial kleptocracy",
+                          "note":  "Gốc Hy Lạp: klepto- (trộm cắp) + -cracy (chính thể cai trị)."
+                      },
+                      {
+                          "term":  "unilateralism",
+                          "definition":  "Chủ nghĩa đơn phương (chính sách hành động độc đoán một mình mà không cần sự đồng thuận quốc tế)",
+                          "definitionVi":  "Chủ nghĩa đơn phương (chính sách hành động độc đoán một mình mà không cần sự đồng thuận quốc tế)",
+                          "phonetic":  "/ˌjuː.nɪˈlæt.ər.əl.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Diplomatic historians warn that aggressive unilateralism destabilizes treaty-based international peacekeeping alliances.",
+                          "exampleSentence":  "Diplomatic historians warn that aggressive unilateralism destabilizes treaty-based international peacekeeping alliances.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "solo diplomacy, independent action, go-it-alone policy",
+                          "antonyms":  "multilateralism, collective diplomacy, internationalism",
+                          "collocations":  "policy of unilateralism, retreat into unilateralism, assertive unilateralism",
+                          "note":  "Đối lập: multilateralism /ˌmʌl.tiˈlæt.ər.əl.ɪ.zəm/ (chủ nghĩa đa phương)."
+                      },
+                      {
+                          "term":  "supranational",
+                          "definition":  "Siêu quốc gia (vượt lên trên thẩm quyền của từng quốc gia thành viên, như Liên minh châu Âu EU)",
+                          "definitionVi":  "Siêu quốc gia (vượt lên trên thẩm quyền của từng quốc gia thành viên, như Liên minh châu Âu EU)",
+                          "phonetic":  "/ˌsuː.prəˈnæʃ.ən.əl/",
+                          "partOfSpeech":  "adjective",
+                          "example":  "Member states cede specified legislative competencies to supranational bodies to harmonize cross-border environmental standards.",
+                          "exampleSentence":  "Member states cede specified legislative competencies to supranational bodies to harmonize cross-border environmental standards.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Governance \u0026 Realpolitik",
+                          "synonyms":  "transnational, international-governing, global-regulatory",
+                          "antonyms":  "strictly national, sovereign, parochial",
+                          "collocations":  "supranational organization, supranational authority, supranational governance",
+                          "note":  "Supra- (vượt lên trên) + national (quốc gia)."
+                      },
+                      {
+                          "term":  "keystone species",
+                          "definition":  "Loài chủ chốt (loài sinh vật có vai trò sống còn quyết định sự tồn vong và cấu trúc của toàn bộ hệ sinh thái)",
+                          "definitionVi":  "Loài chủ chốt (loài sinh vật có vai trò sống còn quyết định sự tồn vong và cấu trúc của toàn bộ hệ sinh thái)",
+                          "phonetic":  "/ˈkiː.stəʊn ˈspiː.ʃiːz/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Sea otters act as a keystone species by preying on sea urchins, thereby preventing the collapse of kelp forest biomes.",
+                          "exampleSentence":  "Sea otters act as a keystone species by preying on sea urchins, thereby preventing the collapse of kelp forest biomes.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "ecological anchor, crucial apex organism",
+                          "antonyms":  "redundant species",
+                          "collocations":  "protect keystone species, role of keystone species, loss of keystone species",
+                          "note":  "Khái niệm kiến trúc \u0027keystone\u0027 (viên đá đỉnh vòm khóa giữ cả cây cầu)."
+                      },
+                      {
+                          "term":  "rewilding",
+                          "definition":  "Tái hoang dã hóa (phương pháp bảo tồn quy mô lớn nhằm phục hồi các tiến trình tự nhiên và tái thả động vật săn mồi)",
+                          "definitionVi":  "Tái hoang dã hóa (phương pháp bảo tồn quy mô lớn nhằm phục hồi các tiến trình tự nhiên và tái thả động vật săn mồi)",
+                          "phonetic":  "/ˌriːˈwaɪl.dɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Large-scale rewilding initiatives across European highlands aim to re-establish self-sustaining apex carnivore populations.",
+                          "exampleSentence":  "Large-scale rewilding initiatives across European highlands aim to re-establish self-sustaining apex carnivore populations.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "ecological restoration, wilderness restoration, habitat regeneration",
+                          "antonyms":  "domestication, urbanization, land clearing",
+                          "collocations":  "rewilding project, rewilding initiative, marine rewilding",
+                          "note":  "Động từ: rewild /ˌriːˈwaɪld/. Chiến lược sinh thái hiện đại bậc C2."
+                      },
+                      {
+                          "term":  "anthropocentrism",
+                          "definition":  "Thuyết duy nhân loại (quan điểm triết học coi con người là trung tâm và là thước đo giá trị của vạn vật)",
+                          "definitionVi":  "Thuyết duy nhân loại (quan điểm triết học coi con người là trung tâm và là thước đo giá trị của vạn vật)",
+                          "phonetic":  "/ˌæn.θrə.pəˈsen.trɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Environmental philosophers argue that unexamined anthropocentrism is the root ideological driver of biospheric degradation.",
+                          "exampleSentence":  "Environmental philosophers argue that unexamined anthropocentrism is the root ideological driver of biospheric degradation.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "human exceptionalism, human-centeredness",
+                          "antonyms":  "biocentrism, ecocentrism, deep ecology",
+                          "collocations":  "critique of anthropocentrism, ingrained anthropocentrism",
+                          "note":  "Tính từ: anthropocentric /ˌæn.θrə.pəˈsen.trɪk/."
+                      },
+                      {
+                          "term":  "overtourism",
+                          "definition":  "Tình trạng quá tải du lịch tàn phá môi trường sinh thái và làm suy thoái di sản địa phương",
+                          "definitionVi":  "Tình trạng quá tải du lịch tàn phá môi trường sinh thái và làm suy thoái di sản địa phương",
+                          "phonetic":  "/ˌəʊ.vəˈtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Vulnerable biosphere reserves have instituted dynamic ticketing quotas to protect fragile habitats from rampant overtourism.",
+                          "exampleSentence":  "Vulnerable biosphere reserves have instituted dynamic ticketing quotas to protect fragile habitats from rampant overtourism.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "tourism congestion, tourist overcrowding, mass tourism saturation",
+                          "antonyms":  "sustainable ecotourism, low-impact travel",
+                          "collocations":  "suffer from overtourism, combat overtourism, strains of overtourism",
+                          "note":  "Chủ đề cực kỳ thời sự trong đề thi IELTS gần đây."
+                      },
+                      {
+                          "term":  "in situ conservation",
+                          "definition":  "Bảo tồn tại chỗ (bảo tồn đa dạng sinh học ngay trong môi trường sống tự nhiên của loài)",
+                          "definitionVi":  "Bảo tồn tại chỗ (bảo tồn đa dạng sinh học ngay trong môi trường sống tự nhiên của loài)",
+                          "phonetic":  "/ɪn ˈsɪt.juː ˌkɒn.səˈveɪ.ʃən/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "International wildlife treaties emphasize in situ conservation within national parks as the gold standard of ecological preservation.",
+                          "exampleSentence":  "International wildlife treaties emphasize in situ conservation within national parks as the gold standard of ecological preservation.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "on-site conservation, native habitat protection",
+                          "antonyms":  "ex situ conservation, captive breeding",
+                          "collocations":  "prioritize in situ conservation, in situ conservation methods",
+                          "note":  "Gốc Latin: \u0027in situ\u0027 = tại chỗ nguyên gốc. Phân biệt với Ex situ conservation."
+                      },
+                      {
+                          "term":  "ex situ conservation",
+                          "definition":  "Bảo tồn chuyển chỗ (bảo tồn động thực vật quý hiếm ngoài sinh cảnh tự nhiên như vườn thú, ngân hàng hạt giống)",
+                          "definitionVi":  "Bảo tồn chuyển chỗ (bảo tồn động thực vật quý hiếm ngoài sinh cảnh tự nhiên như vườn thú, ngân hàng hạt giống)",
+                          "phonetic":  "/eks ˈsɪt.juː ˌkɒn.səˈveɪ.ʃən/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Cryogenic seed banks and captive breeding centers provide indispensable ex situ conservation safeguards against extinction.",
+                          "exampleSentence":  "Cryogenic seed banks and captive breeding centers provide indispensable ex situ conservation safeguards against extinction.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "off-site conservation, captive preservation, gene banking",
+                          "antonyms":  "in situ conservation, wilderness protection",
+                          "collocations":  "ex situ conservation facilities, role of ex situ conservation",
+                          "note":  "Gốc Latin: \u0027ex situ\u0027 = ngoài vị trí tự nhiên."
+                      },
+                      {
+                          "term":  "ecotourism",
+                          "definition":  "Du lịch sinh thái có trách nhiệm với thiên nhiên và văn hóa bản địa",
+                          "definitionVi":  "Du lịch sinh thái có trách nhiệm với thiên nhiên và văn hóa bản địa",
+                          "phonetic":  "/ˈiː.kəʊˌtʊə.rɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Authentic community-managed ecotourism generates sustainable alternative livelihoods that discourage illegal logging.",
+                          "exampleSentence":  "Authentic community-managed ecotourism generates sustainable alternative livelihoods that discourage illegal logging.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "green tourism, sustainable travel, conservation tourism",
+                          "antonyms":  "mass tourism, commercial sightseeing",
+                          "collocations":  "promote ecotourism, ecotourism destination, ecotourism framework",
+                          "note":  "Người đi du lịch sinh thái: ecotourist."
+                      },
+                      {
+                          "term":  "poaching",
+                          "definition":  "Nạn săn bắt và buôn bán động vật hoang dã quý hiếm trái phép",
+                          "definitionVi":  "Nạn săn bắt và buôn bán động vật hoang dã quý hiếm trái phép",
+                          "phonetic":  "/ˈpəʊ.tʃɪŋ/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Militarized ranger patrols and satellite surveillance are deployed to dismantle international syndicates orchestrating rhino poaching.",
+                          "exampleSentence":  "Militarized ranger patrols and satellite surveillance are deployed to dismantle international syndicates orchestrating rhino poaching.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "illegal hunting, wildlife trafficking, illicit game capture",
+                          "antonyms":  "wildlife protection, lawful conservation",
+                          "collocations":  "anti-poaching patrol, combat poaching, rampant poaching",
+                          "note":  "Kẻ săn trộm: poacher."
+                      },
+                      {
+                          "term":  "biodiversity corridor",
+                          "definition":  "Hành lang đa dạng sinh học (dải sinh cảnh kết nối các khu bảo tồn cho phép động vật hoang dã di cư an toàn)",
+                          "definitionVi":  "Hành lang đa dạng sinh học (dải sinh cảnh kết nối các khu bảo tồn cho phép động vật hoang dã di cư an toàn)",
+                          "phonetic":  "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti ˈkɒr.ɪ.dɔːr/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Connecting fragmented rainforest parcels via trans-provincial biodiversity corridors preserves genetic diversity among tigers.",
+                          "exampleSentence":  "Connecting fragmented rainforest parcels via trans-provincial biodiversity corridors preserves genetic diversity among tigers.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Conservation \u0026 Bioethics",
+                          "synonyms":  "wildlife corridor, ecological corridor, green corridor",
+                          "antonyms":  "habitat fragmentation, ecological barrier",
+                          "collocations":  "establish a biodiversity corridor, protect biodiversity corridors",
+                          "note":  "Thuật ngữ bảo tồn sinh học bậc C2 cực kỳ giá trị."
+                      },
+                      {
+                          "term":  "cognitive dissonance",
+                          "definition":  "Bất hòa nhận thức (sự khó chịu tâm lý sâu sắc khi hành vi thực tế mâu thuẫn với niềm tin đạo đức của bản thân)",
+                          "definitionVi":  "Bất hòa nhận thức (sự khó chịu tâm lý sâu sắc khi hành vi thực tế mâu thuẫn với niềm tin đạo đức của bản thân)",
+                          "phonetic":  "/ˌkɒɡ.nə.tɪv ˈdɪs.ə.nəns/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Consumers who profess environmental stewardship while buying disposable fast fashion experience acute cognitive dissonance.",
+                          "exampleSentence":  "Consumers who profess environmental stewardship while buying disposable fast fashion experience acute cognitive dissonance.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "mental conflict, psychological discord, internal contradiction",
+                          "antonyms":  "cognitive consonance, psychological harmony",
+                          "collocations":  "experience cognitive dissonance, resolve cognitive dissonance, trigger cognitive dissonance",
+                          "note":  "Học thuyết tâm lý kinh điển của Leon Festinger. Rất ăn điểm khi phân tích mâu thuẫn xã hội."
+                      },
+                      {
+                          "term":  "hyperbolic discounting",
+                          "definition":  "Chiết khấu hyperbol (thiên kiến tâm lý ưu tiên phần thưởng nhỏ tức thì hơn là lợi ích to lớn trong tương lai dài hạn)",
+                          "definitionVi":  "Chiết khấu hyperbol (thiên kiến tâm lý ưu tiên phần thưởng nhỏ tức thì hơn là lợi ích to lớn trong tương lai dài hạn)",
+                          "phonetic":  "/ˌhaɪ.pəˈbɒl.ɪk dɪsˈkaʊn.tɪŋ/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Hyperbolic discounting explains why individuals systematically underfund retirement pensions and procrastinate on climate action.",
+                          "exampleSentence":  "Hyperbolic discounting explains why individuals systematically underfund retirement pensions and procrastinate on climate action.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "present bias, short-termism, temporal discounting",
+                          "antonyms":  "long-term planning, delayed gratification",
+                          "collocations":  "prone to hyperbolic discounting, model of hyperbolic discounting",
+                          "note":  "Thuật ngữ kinh tế học hành vi đoạt giải Nobel. Dùng để giải thích các vấn đề ngắn hạn."
+                      },
+                      {
+                          "term":  "confirmation bias",
+                          "definition":  "Thiên kiến xác nhận (xu hướng chỉ tìm kiếm, tin tưởng thông tin củng cố niềm tin định kiến sẵn có)",
+                          "definitionVi":  "Thiên kiến xác nhận (xu hướng chỉ tìm kiếm, tin tưởng thông tin củng cố niềm tin định kiến sẵn có)",
+                          "phonetic":  "/ˌkɒn.fəˈmeɪ.ʃən ˈbaɪ.əs/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Social media recommendation algorithms supercharge confirmation bias, hardening ideological polarization.",
+                          "exampleSentence":  "Social media recommendation algorithms supercharge confirmation bias, hardening ideological polarization.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "selective perception, myside bias, cherry-picking evidence",
+                          "antonyms":  "objective skepticism, intellectual open-mindedness",
+                          "collocations":  "succumb to confirmation bias, reinforce confirmation bias, overcome confirmation bias",
+                          "note":  "Một trong những thiên kiến nhận thức phổ biến nhất trong mọi đề thi."
+                      },
+                      {
+                          "term":  "nudge theory",
+                          "definition":  "Thuyết cú hích (phương pháp định hình hành vi con người bằng thiết kế lựa chọn gián tiếp mà không cần cấm đoán)",
+                          "definitionVi":  "Thuyết cú hích (phương pháp định hình hành vi con người bằng thiết kế lựa chọn gián tiếp mà không cần cấm đoán)",
+                          "phonetic":  "/ˈnʌdʒ ˌθɪə.ri/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Governments apply nudge theory by making organ donation the default opt-out choice, dramatically boosting donor registries.",
+                          "exampleSentence":  "Governments apply nudge theory by making organ donation the default opt-out choice, dramatically boosting donor registries.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "behavioral choice architecture, subtle intervention",
+                          "antonyms":  "coercive mandate, explicit prohibition",
+                          "collocations":  "apply nudge theory, principles of nudge theory, behavioral nudge",
+                          "note":  "Ý tưởng của Richard Thaler (Nobel Kinh tế 2017). Ứng dụng xuất sắc trong Task 2 Government Solutions."
+                      },
+                      {
+                          "term":  "altruism",
+                          "definition":  "Lòng vị tha, hành động hy sinh cống hiến quên mình vì hạnh phúc và lợi ích của tha nhân",
+                          "definitionVi":  "Lòng vị tha, hành động hy sinh cống hiến quên mình vì hạnh phúc và lợi ích của tha nhân",
+                          "phonetic":  "/ˈæl.tru.ɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Evolutionary anthropologists investigate whether reciprocal altruism provided evolutionary survival advantages in early hominids.",
+                          "exampleSentence":  "Evolutionary anthropologists investigate whether reciprocal altruism provided evolutionary survival advantages in early hominids.",
+                          "level":  "C1",
+                          "cefrLevel":  "C1",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "selflessness, philanthropy, benevolence, self-sacrifice",
+                          "antonyms":  "egoism, self-interest, narcissism, selfishness",
+                          "collocations":  "pure altruism, reciprocal altruism, act of altruism",
+                          "note":  "Tính từ: altruistic /ˌæl.truˈɪs.tɪk/. Đối lập: egoism / narcissism."
+                      },
+                      {
+                          "term":  "affective heuristic",
+                          "definition":  "Phỏng đoán cảm xúc (lối tắt tư duy ra quyết định nhanh dựa trên phản ứng cảm xúc yêu/ghét nhất thời)",
+                          "definitionVi":  "Phỏng đoán cảm xúc (lối tắt tư duy ra quyết định nhanh dựa trên phản ứng cảm xúc yêu/ghét nhất thời)",
+                          "phonetic":  "/əˈfek.tɪv hjuˈrɪs.tɪk/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Under intense stress, decision-makers default to the affective heuristic, prioritizing instinctual fear over statistical probabilities.",
+                          "exampleSentence":  "Under intense stress, decision-makers default to the affective heuristic, prioritizing instinctual fear over statistical probabilities.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "emotional shortcut, gut-feeling decision",
+                          "antonyms":  "deliberative reasoning, rational calculation",
+                          "collocations":  "rely on the affective heuristic, driven by affective heuristic",
+                          "note":  "Thuật ngữ tâm lý học nhận thức C2 đắt giá."
+                      },
+                      {
+                          "term":  "solipsism",
+                          "definition":  "Thuyết duy ngã (học thuyết triết học cực đoan cho rằng chỉ có tâm trí của chính bản thân là thực sự tồn tại)",
+                          "definitionVi":  "Thuyết duy ngã (học thuyết triết học cực đoan cho rằng chỉ có tâm trí của chính bản thân là thực sự tồn tại)",
+                          "phonetic":  "/ˈsɒl.ɪp.sɪ.zəm/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Digital echo chambers risk fostering an insidious epistemological solipsism where external verifiable realities are dismissed.",
+                          "exampleSentence":  "Digital echo chambers risk fostering an insidious epistemological solipsism where external verifiable realities are dismissed.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "extreme egocentrism, philosophical self-absorption",
+                          "antonyms":  "intersubjectivity, objective realism",
+                          "collocations":  "epistemological solipsism, moral solipsism, lapse into solipsism",
+                          "note":  "Tính từ: solipsistic /ˌsɒl.ɪpˈsɪs.tɪk/ (solipsistic worldview)."
+                      },
+                      {
+                          "term":  "loss aversion",
+                          "definition":  "Tâm lý sợ mất mát (hiện tượng nỗi đau khi mất một thứ gì đó luôn mạnh gấp đôi niềm vui khi nhận được nó)",
+                          "definitionVi":  "Tâm lý sợ mất mát (hiện tượng nỗi đau khi mất một thứ gì đó luôn mạnh gấp đôi niềm vui khi nhận được nó)",
+                          "phonetic":  "/ˈlɒs əˌvɜː.ʃən/",
+                          "partOfSpeech":  "noun phrase",
+                          "example":  "Prospect theory demonstrates that profound loss aversion makes financial investors irrationally reluctant to realize losses.",
+                          "exampleSentence":  "Prospect theory demonstrates that profound loss aversion makes financial investors irrationally reluctant to realize losses.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "fear of loss, risk asymmetry",
+                          "antonyms":  "risk seeking, loss tolerance",
+                          "collocations":  "driven by loss aversion, manifest loss aversion, overcome loss aversion",
+                          "note":  "Trụ cột của Prospect Theory (Kahneman \u0026 Tversky)."
+                      },
+                      {
+                          "term":  "catharsis",
+                          "definition":  "Sự giải tỏa thanh lọc cảm xúc (quá trình giải phóng các cảm xúc dồn nén thông qua nghệ thuật hoặc trải nghiệm kịch tính)",
+                          "definitionVi":  "Sự giải tỏa thanh lọc cảm xúc (quá trình giải phóng các cảm xúc dồn nén thông qua nghệ thuật hoặc trải nghiệm kịch tính)",
+                          "phonetic":  "/kəˈθɑː.sɪs/",
+                          "partOfSpeech":  "noun",
+                          "example":  "Classical Greek tragedy was engineered to evoke pity and fear, thereby inducing psychological catharsis in the audience.",
+                          "exampleSentence":  "Classical Greek tragedy was engineered to evoke pity and fear, thereby inducing psychological catharsis in the audience.",
+                          "level":  "C2",
+                          "cefrLevel":  "C2",
+                          "topic":  "Behavioral Economics \u0026 Bias",
+                          "synonyms":  "emotional release, purification, purgation, emotional cleansing",
+                          "antonyms":  "emotional repression, bottling up, internal turmoil",
+                          "collocations":  "experience catharsis, emotional catharsis, provide catharsis",
+                          "note":  "Tính từ: cathartic /kəˈθɑː.tɪk/ (a cathartic experience = một trải nghiệm giải tỏa tâm lý)."
+                      }
+                  ]
+    }
+]
+;
+    let cloudLibraryDecks = [];
+    let currentLibraryCategory = 'all';
+    let libraryMyDecksOnly = false;
+    let currentPreviewDeck = null;
+    let pendingPublisherDeck = null;
+
+    function toggleLibraryMyDecksFilter() {
+      libraryMyDecksOnly = !libraryMyDecksOnly;
+      const btn = document.getElementById('lib-btn-my-decks');
+      if (btn) {
+        if (libraryMyDecksOnly) {
+          btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          btn.style.color = '#fff';
+          btn.style.borderColor = '#f59e0b';
+        } else {
+          btn.style.background = 'rgba(245, 158, 11, 0.08)';
+          btn.style.color = '#fbbf24';
+          btn.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        }
+      }
+      renderLibraryDecks();
+    }
+
+    function openLibraryModal() {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('VocaLib', 'VocaLib, Tải VocaDeck VocaCommunity & Theo Dõi Tác Giả', '📚 🔒');
+        return;
+      }
+      if (!requireLogin('Thư Viện Từ Vựng')) {
+        return;
+      }
+      currentLibraryCategory = 'all';
+      const searchInput = document.getElementById('library-search-input');
+      if (searchInput) searchInput.value = '';
+      updateLibraryTabsUI();
+      renderLibraryDecks();
+      openModal('modal-library');
+      fetchCloudLibraryDecks();
+    }
+
+    function setLibraryCategory(cat) {
+      currentLibraryCategory = cat;
+      updateLibraryTabsUI();
+      renderLibraryDecks();
+    }
+
+    function updateLibraryTabsUI() {
+      document.querySelectorAll('#lib-category-tabs .lib-filter-btn').forEach(btn => {
+        const cat = btn.getAttribute('data-cat');
+        if (cat === currentLibraryCategory) {
+          btn.className = 'btn btn-sm btn-primary lib-filter-btn active';
+        } else {
+          btn.className = 'btn btn-sm btn-outline lib-filter-btn';
+        }
+      });
+    }
+
+    async function fetchCloudLibraryDecks() {
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      try {
+        const res = await fetch(`${rtdbUrl}/publicLibraryDecks.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            cloudLibraryDecks = Object.values(data).filter(d => d && d.title && Array.isArray(d.words));
+            checkFollowedCreatorsNewDecks();
+            
+            // v0.10.7b: Auto-patch legacy cloud decks for current logged in user
+            if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+              const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+              cloudLibraryDecks.forEach(d => {
+                if (!d.authorUid && !d.isAnonymous) {
+                  const isEmailMatch = d.authorEmail && currentUser.email && d.authorEmail.toLowerCase() === currentUser.email.toLowerCase();
+                  const isNameMatch = d.author && currentUser.displayName && d.author.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase();
+                  if (isEmailMatch || isNameMatch) {
+                    d.authorUid = currentUser.uid;
+                    d.authorUsername = currentUser.username || d.authorUsername || '';
+                    fetch(`${rtdbUrl}/publicLibraryDecks/${d.id}/authorUid.json${authParam}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(currentUser.uid)
+                    }).catch(() => {});
+                    if (currentUser.username) {
+                      fetch(`${rtdbUrl}/publicLibraryDecks/${d.id}/authorUsername.json${authParam}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentUser.username)
+                      }).catch(() => {});
+                    }
+                  }
+                }
+              });
+            }
+
+            renderLibraryDecks();
+            if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+          }
+        }
+      } catch (err) {
+        console.warn('Cloud library fetch notice:', err);
+      }
+    }
+
+    function getAllLibraryDecks() {
+      const map = new Map();
+      BUILTIN_LIBRARY_DECKS.forEach(d => {
+        const isVipDeck = d.isVipOnly === true || d.isVip === true;
+        const builtInDeck = {
+          ...d,
+          isVipOnly: isVipDeck,
+          isVip: isVipDeck,
+          author: isVipDeck ? 'VocaFlow VocaVIP Official' : 'VocaFlow Chuẩn',
+          authorAvatar: 'icons/Icon-192.png',
+          authorBio: isVipDeck ? '👑 VocaStore học thuật đỉnh cao biên soạn độc quyền cho thành viên VocaVIP VocaFlow.' : 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.'
+        };
+        map.set(d.id, builtInDeck);
+      });
+      cloudLibraryDecks.forEach(d => {
+        if (d && d.id) {
+          // If this cloud deck was uploaded by current user, dynamically reflect their latest profile!
+          if (currentUser && ((d.authorUid && d.authorUid === currentUser.uid) || (currentUser.displayName && (d.author || '').toLowerCase() === currentUser.displayName.toLowerCase()))) {
+            if (!d.isAnonymous) {
+              d.author = currentUser.displayName || d.author;
+              d.authorAvatar = currentUser.avatar || d.authorAvatar;
+              d.authorBio = currentUser.bio || d.authorBio;
+            }
+          }
+          map.set(d.id, d);
+        }
+      });
+      return Array.from(map.values());
+    }
+
+    function renderLibraryDecks() {
+      const container = document.getElementById('library-deck-list');
+      const countAllEl = document.getElementById('lib-count-all');
+      const countFollowingEl = document.getElementById('lib-count-following');
+      const countVipEl = document.getElementById('lib-count-vip');
+      if (!container) return;
+
+      const allDecks = getAllLibraryDecks();
+      if (countAllEl) countAllEl.textContent = allDecks.length;
+      if (countFollowingEl) {
+        countFollowingEl.textContent = allDecks.filter(d => d.authorUid && myFollowingMap[d.authorUid]).length;
+      }
+      if (countVipEl) {
+        countVipEl.textContent = allDecks.filter(d => d.isVipOnly || d.isVip).length;
+      }
+
+      const query = (document.getElementById('library-search-input')?.value || '').toLowerCase().trim();
+
+      let filtered = allDecks.filter(deck => {
+        const cat = (deck.category || '').toUpperCase();
+        const grade = Number(deck.grade);
+        const title = (deck.title || '').toLowerCase();
+        const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
+
+        // My Decks Filter Toggle
+        if (libraryMyDecksOnly) {
+          if (!isDeckAuthor(deck)) return false;
+        }
+
+        // Category Filter (v0.10.7e: Following Filter, VIP Filter)
+        if (currentLibraryCategory === 'following') {
+          const authorUid = deck.authorUid;
+          if (!authorUid || !myFollowingMap[authorUid]) return false;
+        } else if (currentLibraryCategory === 'vip') {
+          if (!isVipDeck) return false;
+        } else if (currentLibraryCategory === 'thcs') {
+          if (!['THCS', '6', '7', '8', '9'].includes(cat) && ![6, 7, 8, 9].includes(grade) && !['lớp 6', 'lớp 7', 'lớp 8', 'lớp 9', 'thcs'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'thpt') {
+          if (!['THPT', '10', '11', '12'].includes(cat) && ![10, 11, 12].includes(grade) && !['lớp 10', 'lớp 11', 'lớp 12', 'thpt'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'cert') {
+          if (!['IELTS', 'TOEIC', 'TOEFL', 'CAMBRIDGE', 'SAT_GRE'].includes(cat) && !['ielts', 'toeic', 'toefl', 'cambridge', 'sat', 'gre'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'life') {
+          if (!['GIAOTIEP', 'DULICH', 'DUHOC', 'IT', 'KINHTE', 'YKHOA', 'KYTHUAT', 'CHUYENNGANH'].includes(cat) && !['giao tiếp', 'du lịch', 'chuyên ngành', 'it', 'kinh tế', 'y khoa'].some(t => title.includes(t))) return false;
+        } else if (currentLibraryCategory === 'cloud') {
+          if (!deck.id.startsWith('pub_')) return false;
+        }
+
+        // Search Filter
+        if (query) {
+          const matchTitle = (deck.title || '').toLowerCase().includes(query);
+          const matchDesc = (deck.description || '').toLowerCase().includes(query);
+          const matchAuthor = (deck.author || '').toLowerCase().includes(query);
+          const matchCat = (deck.category || '').toLowerCase().includes(query);
+          const matchWords = Array.isArray(deck.words) && deck.words.some(w => (w.term || '').toLowerCase().includes(query) || (w.definition || '').toLowerCase().includes(query));
+          return matchTitle || matchDesc || matchAuthor || matchCat || matchWords;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        if (currentLibraryCategory === 'following') {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+              <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
+              <div style="font-size: 14.5px; font-weight: 700; color: var(--text);">Bạn chưa theo dõi tác giả nào hoặc tác giả chưa đăng VocaDeck mới</div>
+              <div style="font-size: 12px; margin-top: 6px; color: var(--text-muted); line-height: 1.5;">Hãy theo dõi các pháp sư tạo VocaDeck trong VocaLib để cập nhật nội dung mới nhất!</div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+              <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+              <div style="font-size: 14px; font-weight: 600;">Không tìm thấy VocaDeck nào phù hợp</div>
+              <div style="font-size: 12px; margin-top: 4px;">Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút làm mới.</div>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(deck => {
+        const isImported = decks.some(d => d.title === deck.title || d.libSourceId === deck.id);
+        const wordCount = Array.isArray(deck.words) ? deck.words.length : 0;
+        const color = deck.color || '#4f46e5';
+        const icon = deck.icon || '📘';
+        const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
+        const isVipActive = isUserVip();
+        const authorName = deck.author || (isVipDeck ? 'VocaFlow VocaVIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'VocaCommunity'));
+
+        // Check if current logged in user is the owner/author of this public deck
+        const isAuthor = isDeckAuthor(deck);
+
+        html += `
+          <div class="vocalib-deck-card ${isVipDeck ? 'vip-vocalib-card' : ''}" style="background: ${isVipDeck ? 'linear-gradient(135deg, rgba(245,158,11,0.06), var(--surface))' : 'var(--surface)'}; border: 1px solid ${isVipDeck ? 'rgba(245,158,11,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; box-shadow: ${isVipDeck ? '0 4px 16px rgba(0,0,0,0.2), 0 0 15px rgba(245,158,11,0.15)' : '0 3px 10px rgba(0,0,0,0.12)'}; transition: all 0.2s ease;">
+            ${!isVipDeck ? `<div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${color}; border-top-left-radius: 12px; border-bottom-left-radius: 12px;"></div>` : ''}
+            <div style="flex: 1; min-width: 240px; padding-left: ${isVipDeck ? '2px' : '6px'};">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                <span style="font-size: 20px; line-height: 1;">${icon}</span>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3;">${escapeHtml(deck.title)}</h4>
+                <span class="badge" style="background: rgba(255,255,255,0.08); font-size: 11px; font-weight: 700;">${wordCount} từ</span>
+                <span class="badge" style="background: rgba(99,102,241,0.15); color: #a5b4fc; font-size: 10.5px;">${deck.category || 'THPT'}</span>
+                ${deck.grade ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px;">Khối ${deck.grade}</span>` : ''}
+                ${isVipDeck ? `<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 10px; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); box-shadow: 0 0 8px rgba(245,158,11,0.35);">👑 VocaVIP Độc Quyền</span>` : ''}
+                ${(!isVipDeck && (deck.price || 0) > 0) ? `<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 10.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4);">💎 ${deck.price} VoCoin</span>` : ''}
+                ${isAuthor ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700;">TỦ TỪ CỦA TÔI</span>' : ''}
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                ${escapeHtml(deck.description || 'VocaDeck trọng tâm chuẩn GDPT & Quốc tế')}
+              </p>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : ((isVipDeck || isAuthorVipUser(deck.authorUid, authorName)) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
+                ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
+                  <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận VocaDeck mới'}">
+                    ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
+                  </button>
+                ` : '' }
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex-shrink: 0;">
+              <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);" onclick="previewLibraryDeck('${deck.id}')">
+                👁️ Xem
+              </button>
+              ${isAuthor ? `
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #fbbf24; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1);" onclick="openEditPublishedDeckModal('${deck.id}')" title="Chỉnh sửa thông tin VocaDeck đã đăng">
+                  ✏️ Sửa
+                </button>
+                <button class="btn btn-outline btn-sm" style="height: 34px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1);" onclick="deletePublishedDeck('${deck.id}')" title="Xóa VocaDeck khỏi VocaLib Toàn Cầu">
+                  🗑️ Xóa
+                </button>
+              ` : ''}
+              ${isVipDeck ? (
+                isVipActive ? `
+                  <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 800; ${isImported ? 'background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4);' : 'background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.35);'}" onclick="installLibraryDeck('${deck.id}')">
+                    👑 ${isImported ? 'Tải lại (VIP)' : 'Tải về (VIP Free)'}
+                  </button>
+                ` : `
+                  <button class="btn btn-primary btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #dc2626); border: 1px solid rgba(251,191,36,0.6); color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.35);" onclick="previewLibraryDeck('${deck.id}')">
+                    🔒 Mở Khóa VocaVIP
+                  </button>
+                `
+              ) : (
+                (!isImported && !isAuthor && (deck.price || 0) > 0 && !userPurchasedDeckIds.has(deck.id)) ? `
+                  <button class="btn btn-primary btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; color: white; box-shadow: 0 2px 10px rgba(245,158,11,0.3);" onclick="buyCommunityDeck('${deck.id}')">
+                    🛒 Mua (${deck.price} VoCoin)
+                  </button>
+                ` : `
+                  <button class="btn ${isImported ? 'btn-outline' : 'btn-primary'} btn-sm" style="height: 34px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 700; ${isImported ? 'background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);' : 'background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; color: white;'}" onclick="installLibraryDeck('${deck.id}')">
+                    📥 ${isImported ? 'Tải lại' : 'Tải về'}
+                  </button>
+                `
+              )}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+        function renderTopCreatorsLeaderboard() {
+      const container = document.getElementById('studio-leaderboard-list');
+      if (!container) return;
+
+      const allDecks = getAllLibraryDecks();
+      const creatorsMap = new Map();
+
+      allDecks.forEach(d => {
+        if (!d || !d.author || d.id.startsWith('lib_deck_') || d.isAnonymous || d.author === 'Ẩn danh') return;
+        const authorName = d.author;
+        const price = d.price || 0;
+        const sales = d.salesCount || 0;
+        const revenue = (d.revenueXu || (sales * price)) || 0;
+
+        const authorUid = d.authorUid || '';
+        let curAvatar = d.authorAvatar || authorName;
+
+        // Dynamic avatar sync for current user (v0.10.6c)
+        if (currentUser && ((authorUid && authorUid === currentUser.uid) || (currentUser.displayName && authorName.trim().toLowerCase() === currentUser.displayName.trim().toLowerCase()))) {
+          curAvatar = currentUser.avatar || localStorage.getItem('vocaflow_user_avatar') || curAvatar;
+        } else {
+          const student = adminStudentsData.find(s => (authorUid && s.uid === authorUid) || (s.displayName && s.displayName.trim().toLowerCase() === authorName.trim().toLowerCase()));
+          if (student && student.avatar) {
+            curAvatar = student.avatar;
+          }
+        }
+
+        if (!creatorsMap.has(authorName)) {
+          creatorsMap.set(authorName, {
+            name: authorName,
+            avatar: curAvatar,
+            authorBio: d.authorBio || '',
+            authorUid: authorUid,
+            decksCount: 0,
+            totalWords: 0,
+            totalSales: 0,
+            totalRevenue: 0
+          });
+        } else {
+          // Update avatar if latest found
+          if (curAvatar && curAvatar !== authorName) {
+            creatorsMap.get(authorName).avatar = curAvatar;
+          }
+        }
+
+        const c = creatorsMap.get(authorName);
+        c.decksCount++;
+        c.totalWords += (d.words || []).length;
+        c.totalSales += sales;
+        c.totalRevenue += revenue;
+      });
+
+      const sortedCreators = Array.from(creatorsMap.values()).sort((a, b) => b.totalRevenue - a.totalRevenue || b.totalSales - a.totalSales || b.decksCount - a.decksCount);
+
+      if (sortedCreators.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">🏆</div>
+            Chưa có dữ liệu tác giả. Hãy xuất bản VocaDeck đầu tiên để dẫn đầu VocaRank!
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      sortedCreators.forEach((c, idx) => {
+        let rankBadge = `<span style="font-weight: 800; font-size: 14px; width: 24px; text-align: center; color: var(--text-muted);">#${idx + 1}</span>`;
+        let rankBorder = 'var(--border)';
+        let rankBg = 'var(--surface-elevated)';
+        let creatorTitle = 'Học Giả Soạn Bài';
+
+        if (idx === 0) {
+          rankBadge = '<span style="font-size: 20px;">🥇</span>';
+          rankBorder = 'rgba(245, 158, 11, 0.5)';
+          rankBg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(99, 102, 241, 0.08))';
+          creatorTitle = '🌟 Đại Pháp Sư Từ Vựng';
+        } else if (idx === 1) {
+          rankBadge = '<span style="font-size: 20px;">🥈</span>';
+          rankBorder = 'rgba(156, 163, 175, 0.5)';
+          creatorTitle = '🥈 Bậc Thầy Biên Soạn';
+        } else if (idx === 2) {
+          rankBadge = '<span style="font-size: 20px;">🥉</span>';
+          rankBorder = 'rgba(217, 119, 6, 0.5)';
+          creatorTitle = '🥉 Chuyên Gia Đóng Góp';
+        }
+
+        const isCreatorVip = isAuthorVipUser(c.authorUid, c.name);
+        const creatorVipTier = getAuthorVipTier(c.authorUid, c.name);
+
+        if (isCreatorVip) {
+          rankBg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(168, 85, 247, 0.12))';
+          rankBorder = 'rgba(251, 191, 36, 0.6)';
+        }
+
+        html += `
+          <div style="background: ${rankBg}; border: 1px solid ${rankBorder}; border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-shadow: ${isCreatorVip ? '0 4px 16px rgba(0,0,0,0.25), 0 0 15px rgba(245,158,11,0.25)' : '0 2px 8px rgba(0,0,0,0.1)'}; transition: all 0.2s;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${rankBadge}
+              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 14px; overflow: hidden; flex-shrink: 0; ${isCreatorVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 14px rgba(251,191,36,0.65); border: 1.5px solid #fbbf24;' : ''}">
+                ${renderAvatarHtml(c.avatar, 38, 15)}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  ${isCreatorVip ? `
+                    <span class="vip-name-wrapper" style="gap: 4px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">
+                      <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
+                      <strong class="vip-glowing-name" style="font-size: 14px; text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(c.name)}</strong>
+                    </span>
+                    <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VocaVIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>
+                  ` : `
+                    <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
+                  `}
+                  <span class="badge" style="font-size: 9.5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${creatorTitle}</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                  ${c.decksCount} VocaDeck • ${c.totalWords} từ vựng • ${c.totalSales} lượt mua
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 15px; font-weight: 800; color: #fbbf24;">+${c.totalRevenue} VoCoin</div>
+              <div style="font-size: 10px; color: var(--text-muted);">Doanh thu tích lũy</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function copyAffiliateLink(deckId) {
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const myUid = (currentUser && currentUser.uid) ? currentUser.uid : 'user_' + Date.now();
+      const currentUrl = window.location.href.split('?')[0];
+      const affUrl = `${currentUrl}?deckId=${encodeURIComponent(deckId)}&ref=${encodeURIComponent(myUid)}`;
+
+      navigator.clipboard.writeText(affUrl).then(() => {
+        showToast(`📋 Đã sao chép link giới thiệu VocaDeck "${deck.title}"! Bạn bè mua qua link bạn nhận ngay 20% VoCoin hoa hồng VocaShare!`);
+      }).catch(() => {
+        prompt('Sao chép link VocaShare nhận 20% VoCoin hoa hồng:', affUrl);
+      });
+    }
+
+    async function submitDeckRating(deckId, stars, comment) {
+      if (!requireLogin('Đánh Giá VocaDeck')) return;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const uid = currentUser.uid;
+      const ratingObj = {
+        uid: uid,
+        stars: Math.max(1, Math.min(5, Number(stars) || 5)),
+        comment: (comment || '').trim(),
+        authorName: currentUser.displayName || 'Flower VocaFlow',
+        authorAvatar: currentUser.avatar || '',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!deck.ratings) deck.ratings = {};
+      deck.ratings[uid] = ratingObj;
+
+      const ratingValues = Object.values(deck.ratings).map(r => r.stars);
+      const totalStars = ratingValues.reduce((a, b) => a + b, 0);
+      deck.ratingCount = ratingValues.length;
+      deck.avgRating = parseFloat((totalStars / ratingValues.length).toFixed(1));
+
+      // Save to Firebase RTDB
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/ratings/${uid}.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ratingObj)
+      }).catch(() => {});
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/avgRating.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deck.avgRating)
+      }).catch(() => {});
+
+      fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}/ratingCount.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deck.ratingCount)
+      }).catch(() => {});
+
+      showToast(`⭐ Cảm ơn bạn đã đánh giá ${stars} sao cho VocaDeck "${deck.title}"!`);
+      previewLibraryDeck(deckId);
+      renderLibraryDecks();
+    }
+
+    let parentModalBeforePreview = null;
+
+    function previewLibraryDeck(deckId, sourceModal = null) {
+      if (sourceModal) parentModalBeforePreview = sourceModal;
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+      currentPreviewDeck = deck;
+
+      const isAuthor = isDeckAuthor(deck);
+
+      const btnEdit = document.getElementById('btn-lib-preview-edit');
+      const btnDelete = document.getElementById('btn-lib-preview-delete');
+      if (btnEdit) btnEdit.style.display = isAuthor ? 'inline-flex' : 'none';
+      if (btnDelete) btnDelete.style.display = isAuthor ? 'inline-flex' : 'none';
+
+      const authorName = deck.author || (deck.id.startsWith('lib_deck_') ? 'VocaFlow Official' : 'VocaCommunity');
+
+      document.getElementById('lib-preview-icon').textContent = deck.icon || '📘';
+      document.getElementById('lib-preview-title').textContent = deck.title;
+      document.getElementById('lib-preview-desc').textContent = deck.description || '';
+      document.getElementById('lib-preview-count').textContent = `${(deck.words || []).length} từ vựng`;
+      document.getElementById('lib-preview-category').textContent = deck.category || 'THPT';
+      const authorEl = document.getElementById('lib-preview-author');
+      if (authorEl) {
+        if (deck.isAnonymous || authorName === 'Ẩn danh') {
+          authorEl.innerHTML = `👤 Đóng góp: Ẩn danh`;
+        } else {
+          authorEl.innerHTML = `👤 Đóng góp: <span style="color: #818cf8; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${escapeHtml(deck.id)}')" title="Xem hồ sơ tác giả">${escapeHtml(authorName)}</span>`;
+        }
+      }
+
+      const wordsList = document.getElementById('lib-preview-words-container');
+      const isImported = decks.some(d => d.title === deck.title || d.libSourceId === deck.id);
+      const isPurchased = userPurchasedDeckIds.has(deck.id);
+      const price = Number(deck.price) || 0;
+      const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
+      const isVipActive = isUserVip();
+      const isLockedVip = isVipDeck && !isVipActive;
+      const isLockedPremium = isLockedVip || (price > 0 && !isAuthor && !isPurchased && !isImported);
+
+      const totalWords = (deck.words || []).length;
+      const allowedPreviewCount = isLockedVip ? 5 : (isLockedPremium ? Math.max(3, Math.ceil(totalWords * 0.25)) : totalWords);
+
+      if (wordsList) {
+        let html = '';
+        (deck.words || []).slice(0, allowedPreviewCount).forEach((w, idx) => {
+          html += `
+            <div style="background: var(--surface-elevated); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+                <div>
+                  <strong style="color: #38bdf8; font-size: 13px;">${idx + 1}. ${escapeHtml(w.term)}</strong>
+                  ${w.phonetic ? `<span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">${escapeHtml(w.phonetic)}</span>` : ''}
+                </div>
+                <div style="display: flex; gap: 4px;">
+                  ${w.partOfSpeech ? `<span class="badge" style="font-size: 9.5px; padding: 1px 5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${escapeHtml(w.partOfSpeech)}</span>` : ''}
+                  ${w.level ? `<span class="badge badge-level-${w.level.toLowerCase()}" style="font-size: 9.5px; padding: 1px 5px;">${w.level}</span>` : ''}
+                </div>
+              </div>
+              <div style="font-size: 12px; color: var(--text); margin-bottom: 2px;">${escapeHtml(w.definition || w.definitionVi || '')}</div>
+              ${w.example ? `<div style="font-size: 11px; color: var(--text-muted); font-style: italic;">VD: "${escapeHtml(w.example)}"</div>` : ''}
+              ${w.collocations ? `<div style="font-size: 10.5px; color: #34d399; margin-top: 2px;">⚡ <strong>Collocations:</strong> ${escapeHtml(w.collocations)}</div>` : ''}
+              ${w.topic ? `<div style="font-size: 10px; color: #a855f7; margin-top: 2px;">📌 ${escapeHtml(w.topic)}</div>` : ''}
+            </div>
+          `;
+        });
+
+        if (isLockedVip && totalWords > allowedPreviewCount) {
+          html += `
+            <div style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.1)); border: 1.5px dashed #fbbf24; border-radius: 12px; padding: 18px 14px; text-align: center; margin-top: 10px;">
+              <div style="font-size: 32px; margin-bottom: 6px;">👑 🔒</div>
+              <strong style="color: #fbbf24; font-size: 15px;">VocaDeck VocaVIP Độc Quyền (${totalWords} Từ Vựng)</strong>
+              <p style="font-size: 12px; color: var(--text); margin: 6px 0 12px 0; line-height: 1.5;">VocaDeck này được biên soạn chuyên sâu theo chuẩn Cambridge & Oxford dành riêng cho Hội viên VocaVIP VocaFlow.<br><span style="color:#34d399; font-weight:600;">✨ Tải về miễn phí 100% khi có VocaVIP và sử dụng vĩnh viễn không bị giới hạn!</span></p>
+              <button class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 800; padding: 8px 20px; font-size: 13px; box-shadow: 0 4px 15px rgba(245,158,11,0.4);" onclick="closeModal('modal-library-preview'); openVipSubscriptionModal();">
+                👑 Nâng Cấp VocaVIP Để Mở Khóa Ngay
+              </button>
+            </div>
+          `;
+        } else if (isLockedPremium && totalWords > allowedPreviewCount) {
+          html += `
+            <div style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(236,72,153,0.1)); border: 1px dashed rgba(245,158,11,0.4); border-radius: 12px; padding: 16px 12px; text-align: center; margin-top: 8px;">
+              <div style="font-size: 26px; margin-bottom: 4px;">🔒</div>
+              <strong style="color: #fbbf24; font-size: 13.5px;">Đã khóa ${totalWords - allowedPreviewCount} từ vựng còn lại (Xem trước 25%)</strong>
+              <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 10px 0;">Mua trọn bộ để mở khóa 100% từ vựng, phiên âm & câu ví dụ!</p>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; font-weight: 700; padding: 6px 16px; font-size: 12px;" onclick="buyCommunityDeck('${deck.id}')">
+                🛒 Mua Trọn Bộ (${price} VoCoin)
+              </button>
+            </div>
+          `;
+        }
+
+        // Ratings & Reviews Box in Preview Modal
+        const avgRating = deck.avgRating || 5.0;
+        const rCount = deck.ratingCount || (deck.ratings ? Object.keys(deck.ratings).length : 0);
+        html += `
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 15px; color: #fbbf24; font-weight: 800;">⭐ ${avgRating}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">(${rCount} đánh giá)</span>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="copyAffiliateLink('${deck.id}')" style="font-size: 11px; padding: 3px 8px; color: #c084fc; border-color: rgba(168,85,247,0.4);">
+                🔗 VocaShare (Nhận 20% Hoa Hồng VoCoin)
+              </button>
+            </div>
+            ${(isImported || isPurchased || isAuthor || (isVipDeck && isVipActive)) ? `
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 11px; font-weight: 700; color: var(--text);">Chấm sao:</span>
+                <div style="display: flex; gap: 2px;">
+                  ${[1,2,3,4,5].map(s => `<button type="button" class="btn btn-outline btn-sm" onclick="submitDeckRating('${deck.id}', ${s})" style="padding: 1px 5px; font-size: 11px; border-color: rgba(245,158,11,0.3); color: #fbbf24;">${s}⭐</button>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
+        wordsList.innerHTML = html;
+      }
+
+      // Update Preview Modal Install Action Button
+      const installBtn = document.getElementById('btn-lib-preview-install');
+      if (installBtn) {
+        if (isLockedVip) {
+          installBtn.innerHTML = '🔒 Mở Khóa Bằng Gói VocaVIP';
+          installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #dc2626)';
+          installBtn.onclick = () => {
+            closeModal('modal-library-preview');
+            openVipSubscriptionModal();
+          };
+        } else if (isVipDeck && isVipActive) {
+          installBtn.innerHTML = `👑 ${isImported ? 'Tải Lại (VocaVIP)' : 'Thêm Vào Máy (VocaVIP Miễn Phí)'}`;
+          installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          installBtn.onclick = () => installPreviewedDeck();
+        } else if (isLockedPremium) {
+          installBtn.innerHTML = `🛒 Mua Trọn Bộ (${price} VoCoin)`;
+          installBtn.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
+          installBtn.onclick = () => buyCommunityDeck(deck.id);
+        } else {
+          installBtn.innerHTML = `📥 ${isImported ? 'Tải Lại' : 'Thêm Vào VocaDeck Của Tôi'}`;
+          installBtn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+          installBtn.onclick = () => installPreviewedDeck();
+        }
+      }
+
+      openModal('modal-library-preview');
+    }
+
+    function installPreviewedDeck() {
+      if (currentPreviewDeck) {
+        closeModal('modal-library-preview');
+        installLibraryDeck(currentPreviewDeck.id);
+      }
+    }
+
+    function installLibraryDeck(deckId) {
+      const allDecks = getAllLibraryDecks();
+      const deck = allDecks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const isVipDeck = deck.isVipOnly === true || deck.isVip === true;
+      if (isVipDeck && !isUserVip()) {
+        alert('👑 VOCADECK VOCAVIP ĐỘC QUYỀN!\n\nVocaDeck IELTS chuyên sâu này chỉ dành riêng cho thành viên VocaVIP VocaFlow.\nHãy nâng cấp gói VocaVIP để tải về máy học tập miễn phí và sở hữu trọn đời nhé!');
+        openVipSubscriptionModal();
+        return;
+      }
+
+      const existing = decks.find(d => d.title === deck.title);
+      if (existing) {
+        if (!confirm(`Bạn đã có VocaDeck "${deck.title}" trong danh sách. Bạn có muốn tạo thêm một bản sao mới của VocaDeck này không?`)) {
+          return;
+        }
+      }
+
+      const authorName = deck.author || (isVipDeck ? 'VocaFlow VocaVIP Official' : (deck.id.startsWith('lib_deck_') ? 'VocaFlow Chuẩn' : 'VocaCommunity'));
+      const authorUid = deck.authorUid || '';
+
+      const newDeckId = 'deck_' + Date.now();
+      const newDeck = {
+        id: newDeckId,
+        title: deck.title,
+        description: deck.description || (isVipDeck ? 'VocaDeck IELTS VocaVIP Độc Quyền từ VocaLib' : 'VocaDeck từ VocaLib'),
+        author: authorName,
+        authorUid: authorUid,
+        color: deck.color || '#4f46e5',
+        isPinned: false,
+        isArchived: false,
+        isVipOnly: isVipDeck,
+        isVipExclusive: isVipDeck,
+        libSourceId: deck.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const newWords = (deck.words || []).map((w, idx) => ({
+        id: 'w_' + Date.now() + '_' + idx,
+        deckId: newDeckId,
+        term: w.term,
+        definitionVi: w.definition || w.definitionVi || '',
+        definition: w.definition || w.definitionVi || '',
+        phonetic: w.phonetic || '',
+        partOfSpeech: w.partOfSpeech || '',
+        exampleSentence: w.example || w.exampleSentence || '',
+        example: w.example || w.exampleSentence || '',
+        cefrLevel: w.level || w.cefrLevel || 'B1',
+        level: w.level || w.cefrLevel || 'B1',
+        synonyms: Array.isArray(w.synonyms) ? w.synonyms : (w.synonyms ? w.synonyms.split(',').map(s=>s.trim()) : []),
+        antonyms: Array.isArray(w.antonyms) ? w.antonyms : (w.antonyms ? w.antonyms.split(',').map(s=>s.trim()) : []),
+        collocations: Array.isArray(w.collocations) ? w.collocations : (w.collocations ? w.collocations.split(',').map(s=>s.trim()) : []),
+        note: w.note || '',
+        topic: w.topic || '',
+        status: 'newWord',
+        masteryScore: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }));
+
+      decks.unshift(newDeck);
+      words.push(...newWords);
+      saveDatabase(true);
+      renderDecks();
+      closeModal('modal-library');
+
+      showToast(isVipDeck
+        ? `👑🎉 Đã mở khóa & cài đặt thành công VocaDeck VIP "${deck.title}" (+${newWords.length} từ vựng) vào máy! Bạn có thể sử dụng vĩnh viễn.`
+        : `🎉 Đã thêm thành công VocaDeck "${deck.title}" (+${newWords.length} từ vựng) vào máy của bạn!`);
+      openDeckDetail(newDeckId);
+    }
+
+    // =========================================================================
+    // COMMUNITY DECK CONTRIBUTION ENGINE (DÀNH CHO TẤT CẢ MỌI NGƯỜI)
+    // =========================================================================
+    let currentUploadSource = 'file';
+
+    function openCommunityDeckUploadModal(prefillDeckId = null) {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('Chia Sẻ VocaLib', 'Chia Sẻ & Đóng Góp VocaDeck Lên VocaLib Toàn Cầu', '🚀 🔒');
+        return;
+      }
+      pendingPublisherDeck = null;
+      const fileInput = document.getElementById('pub-upload-file-input');
+      const statusEl = document.getElementById('pub-upload-preview-status');
+      const authorInput = document.getElementById('pub-deck-author');
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      const localDeckSelect = document.getElementById('pub-local-deck-select');
+
+      if (fileInput) fileInput.value = '';
+      if (statusEl) statusEl.style.display = 'none';
+
+      updatePublishModalAuthorUI();
+
+      const pubRadio = document.getElementById('pub-visibility-public');
+      if (pubRadio) pubRadio.checked = true;
+
+      const editInput = document.getElementById('pub-editing-deck-id');
+      if (editInput) editInput.value = '';
+
+      const modalIcon = document.getElementById('pub-modal-icon');
+      const modalTitle = document.getElementById('pub-modal-title');
+      const modalSubtitle = document.getElementById('pub-modal-subtitle');
+      if (modalIcon) modalIcon.textContent = '🚀';
+      if (modalTitle) modalTitle.textContent = 'Đóng Góp VocaDeck Lên VocaLib Toàn Cầu';
+      if (modalSubtitle) modalSubtitle.textContent = 'Chia sẻ VocaDeck cho toàn bộ VocaCommunity Flower VocaFlow';
+
+      const uploadBtn = document.getElementById('btn-pub-do-upload');
+      if (uploadBtn) uploadBtn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
+
+      // Populate local decks select
+      if (localDeckSelect) {
+        let optsHtml = '<option value="">-- Chọn 1 VocaDeck của bạn --</option>';
+        decks.forEach(d => {
+          const count = words.filter(w => w.deckId === d.id).length;
+          optsHtml += `<option value="${d.id}">${escapeHtml(d.title)} (${count} từ)</option>`;
+        });
+        localDeckSelect.innerHTML = optsHtml;
+      }
+
+      if (prefillDeckId) {
+        setPublisherUploadSource('deck');
+        if (localDeckSelect) localDeckSelect.value = prefillDeckId;
+        handlePublisherLocalDeckSelected(prefillDeckId);
+      } else {
+        setPublisherUploadSource('file');
+        if (titleInput) titleInput.value = '';
+        if (descInput) descInput.value = '';
+      }
+
+      openModal('modal-community-upload');
+    }
+
+    // Legacy alias
+    function openPublisherDeckUploadModal() {
+      openCommunityDeckUploadModal();
+    }
+    function openCommunityUploadModal() {
+      openCommunityDeckUploadModal();
+    }
+
+    function shareCurrentDeckToLibrary() {
+      if (!currentUser || !currentUser.email) {
+        openGuestFeatureLockModal('Chia Sẻ VocaLib', 'Chia Sẻ & Đóng Góp VocaDeck Lên VocaLib Toàn Cầu', '🚀 🔒');
+        return;
+      }
+      if (currentDeckId) {
+        openCommunityDeckUploadModal(currentDeckId);
+      }
+    }
+
+    function setPublisherUploadSource(source) {
+      currentUploadSource = source;
+      const fileSection = document.getElementById('pub-source-file-section');
+      const deckSection = document.getElementById('pub-source-deck-section');
+      const btnFile = document.getElementById('btn-pub-source-file');
+      const btnDeck = document.getElementById('btn-pub-source-deck');
+
+      if (source === 'file') {
+        if (fileSection) fileSection.style.display = 'block';
+        if (deckSection) deckSection.style.display = 'none';
+        if (btnFile) { btnFile.className = 'btn btn-sm btn-primary'; }
+        if (btnDeck) { btnDeck.className = 'btn btn-sm btn-outline'; }
+      } else {
+        if (fileSection) fileSection.style.display = 'none';
+        if (deckSection) deckSection.style.display = 'block';
+        if (btnFile) { btnFile.className = 'btn btn-sm btn-outline'; }
+        if (btnDeck) { btnDeck.className = 'btn btn-sm btn-primary'; }
+      }
+    }
+
+    function handlePublisherCategoryChange(val) {
+      const customGroup = document.getElementById('pub-custom-category-group');
+      if (customGroup) {
+        customGroup.style.display = (val === 'CUSTOM') ? 'block' : 'none';
+        if (val === 'CUSTOM') {
+          const input = document.getElementById('pub-deck-custom-category');
+          if (input) input.focus();
+        }
+      }
+    }
+
+    function handlePublisherLocalDeckSelected(deckId) {
+      if (!deckId) return;
+      const deck = decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      const deckWords = words.filter(w => w.deckId === deckId);
+      if (deckWords.length === 0) {
+        alert('VocaDeck này hiện chưa có từ vựng nào để VocaShare!');
+        return;
+      }
+
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      const statusEl = document.getElementById('pub-upload-preview-status');
+
+      if (titleInput) titleInput.value = deck.title;
+      if (descInput) descInput.value = deck.description || `VocaDeck VocaShare bởi ${document.getElementById('pub-deck-author')?.value || 'Thành viên VocaFlow'}`;
+
+      pendingPublisherDeck = {
+        title: deck.title,
+        description: deck.description || '',
+        words: deckWords.map(w => ({
+          term: w.term,
+          definition: w.definitionVi || w.definition || '',
+          partOfSpeech: w.partOfSpeech || '',
+          phonetic: w.phonetic || '',
+          example: w.exampleSentence || w.example || '',
+          topic: w.topic || '',
+          level: w.cefrLevel || w.level || 'B1'
+        }))
+      };
+
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.textContent = `✅ Đã sẵn sàng phát hành "${deck.title}" với ${deckWords.length} từ vựng!`;
+      }
+    }
+
+    function handlePublisherFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById('pub-upload-preview-status');
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+
+      if (!titleInput.value) {
+        titleInput.value = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+      }
+
+      if (file.name.endsWith('.json')) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const parsed = JSON.parse(evt.target.result);
+            const wList = Array.isArray(parsed) ? parsed : (parsed.words || []);
+            pendingPublisherDeck = {
+              title: titleInput.value,
+              description: descInput.value,
+              words: wList
+            };
+            if (statusEl) {
+              statusEl.style.display = 'block';
+              statusEl.textContent = `✅ Đã đọc thành công ${wList.length} từ vựng từ file JSON!`;
+            }
+          } catch (err) {
+            alert('Lỗi đọc file JSON: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        if (typeof XLSX === 'undefined') {
+          alert('Thư viện đọc Excel (SheetJS) chưa sẵn sàng.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Auto pick the sheet with the most rows
+            let bestSheetName = workbook.SheetNames[0];
+            let maxRows = 0;
+            workbook.SheetNames.forEach(sName => {
+              const sheet = workbook.Sheets[sName];
+              const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+              const rowCount = range.e.r - range.s.r;
+              if (rowCount > maxRows) {
+                maxRows = rowCount;
+                bestSheetName = sName;
+              }
+            });
+
+            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[bestSheetName], { header: 1 });
+            if (!sheetData || sheetData.length < 2) {
+              alert('File Excel không có dữ liệu!');
+              return;
+            }
+
+            const header = sheetData[0].map(h => (h || '').toString().toLowerCase().trim());
+            
+            // Column detection
+            let termIdx = header.findIndex(h => h.includes('term') || h.includes('từ') || h.includes('vocab') || h.includes('word'));
+            let defIdx = header.findIndex(h => h.includes('definition') || h.includes('nghĩa') || h.includes('meaning') || h.includes('dịch'));
+            let posIdx = header.findIndex(h => h.includes('partofspeech') || h.includes('loại từ') || h.includes('pos') || h.includes('type'));
+            let phonIdx = header.findIndex(h => h.includes('phonetic') || h.includes('phiên âm') || h.includes('ipa') || h.includes('pronun'));
+            let exIdx = header.findIndex(h => h.includes('example') || h.includes('ví dụ') || h.includes('sentence'));
+            let topicIdx = header.findIndex(h => h.includes('topic') || h.includes('chủ đề') || h.includes('unit'));
+            let levelIdx = header.findIndex(h => h.includes('cefr') || h.includes('level') || h.includes('cấp độ'));
+
+            if (termIdx === -1) termIdx = 1;
+            if (defIdx === -1) defIdx = 4;
+
+            const extractedWords = [];
+            for (let r = 1; r < sheetData.length; r++) {
+              const row = sheetData[r];
+              if (!row || !row[termIdx]) continue;
+              const term = (row[termIdx] || '').toString().trim();
+              const def = defIdx !== -1 && row[defIdx] ? row[defIdx].toString().trim() : '';
+              if (!term || !def) continue;
+
+              extractedWords.push({
+                term: term,
+                definition: def,
+                partOfSpeech: posIdx !== -1 && row[posIdx] ? row[posIdx].toString().trim() : '',
+                phonetic: phonIdx !== -1 && row[phonIdx] ? row[phonIdx].toString().trim() : '',
+                example: exIdx !== -1 && row[exIdx] ? row[exIdx].toString().trim() : '',
+                topic: topicIdx !== -1 && row[topicIdx] ? row[topicIdx].toString().trim() : '',
+                level: levelIdx !== -1 && row[levelIdx] ? row[levelIdx].toString().trim() : 'B1'
+              });
+            }
+
+            pendingPublisherDeck = {
+              title: titleInput.value,
+              description: descInput.value,
+              words: extractedWords
+            };
+
+            if (statusEl) {
+              statusEl.style.display = 'block';
+              statusEl.textContent = `✅ Đã nhận diện thành công ${extractedWords.length} từ vựng từ sheet "${bestSheetName}"!`;
+            }
+          } catch (err) {
+            alert('Lỗi phân tích file Excel: ' + err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    async function doPublishDeckToCloud() {
+      if (!pendingPublisherDeck || !pendingPublisherDeck.words || pendingPublisherDeck.words.length === 0) {
+        alert('Vui lòng chọn file Excel hoặc chọn 1 VocaDeck hợp lệ trước!');
+        return;
+      }
+
+      const titleInput = document.getElementById('pub-deck-title');
+      const descInput = document.getElementById('pub-deck-desc');
+      const catSelect = document.getElementById('pub-deck-category');
+      const iconSelect = document.getElementById('pub-deck-icon');
+      const editingDeckId = (document.getElementById('pub-editing-deck-id')?.value || '').trim();
+      const isEditing = !!editingDeckId;
+
+      const title = (titleInput?.value || '').trim();
+      if (!title) {
+        alert('Vui lòng nhập tên VocaDeck!');
+        return;
+      }
+
+      const isAnon = document.getElementById('pub-visibility-anon')?.checked;
+      const currentName = (currentUser && currentUser.displayName) || 'Thành viên VocaFlow';
+      const author = isAnon ? 'Ẩn danh' : currentName;
+      const authorUid = isAnon ? '' : ((currentUser && currentUser.uid) || '');
+      const authorAvatar = isAnon ? '' : ((currentUser && currentUser.avatar) || '');
+      const authorBio = isAnon ? '' : ((currentUser && currentUser.bio) || '');
+
+      const existingDeck = isEditing ? getAllLibraryDecks().find(d => d.id === editingDeckId) : null;
+      const deckId = isEditing ? editingDeckId : ('pub_deck_' + Date.now());
+
+      const customCatInput = document.getElementById('pub-deck-custom-category');
+      let finalCategory = catSelect ? catSelect.value : 'THPT';
+      if (finalCategory === 'CUSTOM') {
+        finalCategory = (customCatInput?.value || '').trim() || 'Chủ đề tự do';
+      }
+
+      const priceVal = Number(document.getElementById('pub-deck-price')?.value) || 0;
+
+      const payload = {
+        id: deckId,
+        title: title,
+        description: (descInput?.value || '').trim() || (isAnon ? 'VocaDeck VocaShare bởi thành viên ẩn danh' : `VocaDeck VocaShare bởi ${author}`),
+        author: author,
+        authorUid: authorUid || (existingDeck?.authorUid || ''),
+        authorAvatar: authorAvatar || (existingDeck?.authorAvatar || ''),
+        authorBio: authorBio || (existingDeck?.authorBio || ''),
+        isAnonymous: !!isAnon,
+        category: finalCategory,
+        icon: iconSelect ? iconSelect.value : (existingDeck?.icon || '📘'),
+        color: iconSelect && iconSelect.value === '📙' ? '#f59e0b' : (iconSelect && iconSelect.value === '📕' ? '#ec4899' : (iconSelect && iconSelect.value === '📗' ? '#10b981' : '#3b82f6')),
+        price: Math.max(0, priceVal),
+        salesCount: existingDeck?.salesCount || 0,
+        revenueXu: existingDeck?.revenueXu || 0,
+        totalWords: pendingPublisherDeck.words.length,
+        words: pendingPublisherDeck.words,
+        publishedAt: existingDeck?.publishedAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const btn = document.getElementById('btn-pub-do-upload');
+        if (btn) btn.textContent = isEditing ? '⏳ Đang cập nhật...' : '⏳ Đang tải lên Thư Viện...';
+
+        const res = await fetch(`${rtdbUrl}/publicLibraryDecks/${deckId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          if (isEditing) {
+            showToast(`✅ Đã cập nhật thành công VocaDeck "${title}" (Giá: ${payload.price > 0 ? payload.price + ' VoCoin' : 'Miễn phí'})!`);
+          } else {
+            showToast(`🚀 Đã đóng góp thành công VocaDeck "${title}" (+${pendingPublisherDeck.words.length} từ) lên Thư Viện!`);
+          }
+          closeModal('modal-community-upload');
+          fetchCloudLibraryDecks();
+          renderCreatorStoreDecks();
+        } else {
+          alert('Không thể lưu lên Cloud. Kiểm tra quyền hoặc kết nối!');
+        }
+      } catch (err) {
+        alert('Lỗi phát hành: ' + err.message);
+      } finally {
+        const btn = document.getElementById('btn-pub-do-upload');
+        if (btn) btn.textContent = '🚀 Đóng Góp Lên Thư Viện Ngay';
+      }
+    }

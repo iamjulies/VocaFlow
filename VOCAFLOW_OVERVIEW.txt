@@ -1,3 +1,31 @@
+﻿================================================================================
+Phiên bản: v0.10.9-48 (Build 280) - Tái Cấu Trúc Toàn Diện "Chia Để Trị" Mã Nguồn JavaScript Thành 12 Modules Chuyên Biệt, Khắc Phục Triệt Để Định Tuyến Dynamic Profile & Chuẩn Hóa Liên Kết Chia Sẻ Hồ Sơ
+================================================================================
+1. [Tái Cấu Trúc Toàn Diện Kiến Trúc Mã Nguồn JavaScript "Chia Để Trị" (12 Modules)]:
+   - Phân rã tệp tin nguyên khối app.js thành 12 module JavaScript độc lập đặt tại src/scripts/modules/, tự động nạp theo thứ tự alphabet trong build_vocaflow.ps1:
+     • 01-router.js: Điều hướng SPA, lịch sử trình duyệt pushState/popstate, xử lý sạch URL và giải mã route động.
+     • 02-state-core.js: Biến toàn cục, bộ nhớ lưu trữ localStorage, trạng thái cơ sở dữ liệu cốt lõi, công cụ phục hồi dữ liệu và khử trùng từ vựng.
+     • 03-auth.js: Đăng nhập/đăng ký Firebase Auth, đồng bộ Realtime Cloud, hồ sơ công khai, đồ thị theo dõi xã hội, cổng đối soát VIP & hóa đơn.
+     • 04-decks-manager.js: Quản lý bộ từ CRUD VocaDeck, modal từ vựng, tự động điền AI, nhập xuất Excel/JSON, bộ lặp thẻ ghi nhớ Auto-Flashcards và xưởng AI Studio.
+     • 05-quiz-engine.js: Động cơ trắc nghiệm đa cấp độ, tính điểm thông minh, tạo câu hỏi tự động và sổ tay từ sai lưu trữ vĩnh viễn.
+     • 06-spelling-engine.js: Chế độ luyện viết chính tả, bàn phím ảo thông minh, gợi ý âm tiết & phát âm IPA.
+     • 07-speaking-engine.js: Phòng luyện phát âm AI Speaking Lab chuẩn Oxford, MediaRecorder, VAD chống gian lận, kinh tế nhiều lượt thử (Multi-Take Economy).
+     • 08-wallet-economy.js: Ví điểm VoCoin, sổ cái bất biến, chuỗi ngày học Flow Streak, khiên đóng băng chuỗi và hệ thống giới thiệu bạn bè.
+     • 09-ai-mentor.js: Trợ lý gia sư AI VocaMentor, quản trị nhóm khóa API Gemini đa tầng và gợi ý câu hỏi thông minh.
+     • 10-lucky-wheel.js: Vòng quay may mắn Canvas, cơ chế tự động bù lượt quay VIP, quảng cáo thưởng xem video và kinh tế lượt quay.
+     • 11-publisher-studio.js: Thư viện cộng đồng VocaLib, cổng tác giả xuất bản VocaStudio và đóng góp bộ từ vựng.
+     • 12-achievements.js: Hệ thống 40 huy hiệu thành tựu, trung tâm thông báo, báo cáo lỗi nhận thưởng, hộp thư VocaMail và hướng dẫn người dùng.
+     • app.js: Điểm khởi nhập (Entry Point), bộ điều hướng màn hình showScreen, quản lý modal toàn cục openModal/closeModal, phím tắt và vòng đời DOMContentLoaded.
+
+2. [Khắc Phục Lỗi Định Tuyến & Chuẩn Hóa Liên Kết Chia Sẻ Hồ Sơ Cá Nhân]:
+   - Sửa lỗi getStandardProfileUrl nối chuỗi sai khi đường dẫn đã chứa /@handle dẫn đến biến dạng username thành @_iamjulies__use.
+   - Chuẩn hóa URL chia sẻ trả về định dạng chuẩn trực tiếp ${baseUrl}@${cleanHandle} (ví dụ: https://iamjulies.github.io/VocaFlow/@iamjulies).
+   - Nâng cấp 01-router.js tự động làm sạch tham số query và dấu gạch chéo thừa trên các phân đoạn đường dẫn profile.
+
+3. [Đồng Bộ Toàn Diện Phiên Bản & Đóng Gói Windows Native]:
+   - Cập nhật chuẩn hóa phiên bản v0.10.9-48 (Build 280) trên toàn bộ 7 vị trí bắt buộc.
+   - Biên dịch thành công nhị phân Windows Native VocaFlow.exe và cập nhật tệp phân phối GITHUB_RELEASE.
+
 ================================================================================
 Phiên bản: v0.10.9-47 (Build 279) - Tự Động Nhận Diện CEFR Đa Nét Nghĩa, Chuẩn Hóa Cài Đặt Meme Cat & Đồng Bộ Cloud, Tinh Chỉnh Prompt Đố Vui VocaMentor AI, Hiệu Ứng Loading Toàn Cục & Khắc Phục Định Tuyến Dynamic Profile /@<username>
 ================================================================================
