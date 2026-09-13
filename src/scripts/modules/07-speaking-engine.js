@@ -2281,3 +2281,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardIndex++;
       }
     }
+
+    // Global Window Bindings for Speaking Engine (v0.10.9-61)
+    window.openSpeakingSetupModal = openSpeakingSetupModal;
+    window.startSpeakingMode = startSpeakingMode;
+    window.exitSpeakingMode = exitSpeakingMode;
+    window.startAutoFlashcardMode = startAutoFlashcardMode;
+

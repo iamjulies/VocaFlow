@@ -3179,7 +3179,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM (term): Unique, high-frequency, lowercase (unless proper noun). Singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
 3. PART OF SPEECH (part_of_speech): Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection".
-4. DEFINITION (definition_vietnamese): Concise, high-accuracy Vietnamese translation matching topic.
+4. DEFINITION (definition_vietnamese): Extremely concise Vietnamese meaning (1-4 words, e.g. "Kiên cường", "Yêu thích"). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary explanations MUST be placed in 'note'. For vulgar/taboo/slang words, write the full explicit Vietnamese vulgar meaning without censorship or abbreviations.
 5. EXAMPLE SENTENCE (example_sentence): A natural, high-quality contextual sentence demonstrating usage.
 6. CEFR LEVEL (cefr_level): Exactly one of "A1", "A2", "B1", "B2", "C1", "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. Provide 2-4 natural, high-frequency collocations/phrases separated by commas (e.g. "resilient economy, highly resilient, remain resilient"). NEVER leave empty!
@@ -3206,7 +3206,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM: Unique, academic terms. Lowercase, singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
 3. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-4. DEFINITION: Accurate, natural Vietnamese translation in passage context.
+4. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 5. EXAMPLE SENTENCE: Natural contextual sentence from passage or illustrating usage.
 6. CEFR LEVEL: "A1", "A2", "B1", "B2", "C1", or "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
@@ -3233,7 +3233,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 2. CASING & FORMS: Lowercase; Nouns in SINGULAR; Verbs in BASE INFINITIVE.
 3. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/.../").
 4. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-5. DEFINITION: Precise Vietnamese meaning.
+5. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 6. EXAMPLE SENTENCE: A natural, clear contextual example sentence.
 7. CEFR LEVEL: Accurate CEFR grade ("A1", "A2", "B1", "B2", "C1", "C2").
 8. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!

@@ -1,0 +1,6 @@
+v0.10.9-61
+1. lỗi ở "Sổ Tay Lỗi Sai". mô tả: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 140815.png", khi nhấn học trắc nghiệm, luyện viết, luyện nói thì kh hiện bảng chọn cấp độ, và khi học xong các từ kh bị loại ra khỏi danh sách sổ tay này. -> sửa: dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay
+2. stats thời gian học 	ở biểu đồ 7 ngày chưa được đồng bộ 2 chiều đúng thành ra mất dữ liệu -> cập nhật an toàn dữ liệu đi
+3. sửa lại prompt chỉ dẫn AI điền từ: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 143913.png" -> cô đọng lại nghĩa tiếng việt cho các nét nghĩa hạn chế sử dụng các dấu phẩy, chấm phẩy, chấm lửng, chữ "và", dấu ngoặc đơn... những thông tin bổ sung thì thêm vô phần "ghi chú"; đối với các từ có nét nghĩa tục tĩu thì cứ điền nguyên từ tục, kh cần viết thêm dấu sao hay là viết tắt -> cứ viết đầy đủ
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

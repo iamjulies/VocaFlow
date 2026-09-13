@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-60 (Build 292)</span>
+            <span class="mini-footer-version">v0.10.9-61 (Build 293)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-60 (Build 292)</span>
+            <span class="mini-footer-version">v0.10.9-61 (Build 293)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9878,7 +9878,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-60 (Build 292)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-61 (Build 293)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10833,7 +10833,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-60 Build 292)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-61 Build 293)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11273,18 +11273,18 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-60 Build 292)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-61 Build 293)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-60 Build 292)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-61 Build 293)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-60';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-60 (Build 292)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-61';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-61 (Build 293)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-60)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-61)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
     const GEMINI_MODELS_DEEP = [
@@ -22575,6 +22575,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowDates: getFlowDates(),
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
+          dailyStudyTime: (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {},
           settings: {
             showReviewQueue: showReviewQueueSetting,
             showFilterPos: showFilterPosSetting,
@@ -23559,6 +23560,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         } catch (errMistakeMerge) {
           console.warn('Mistake notebook cloud merge error:', errMistakeMerge);
+        }
+      }
+
+      // 16. Daily Study Time Two-Way Sync (v0.10.9-61)
+      if (cloudData.dailyStudyTime !== undefined && cloudData.dailyStudyTime !== null) {
+        try {
+          const remoteMap = (typeof cloudData.dailyStudyTime === 'object' && cloudData.dailyStudyTime !== null) ? cloudData.dailyStudyTime : {};
+          const localMap = (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {};
+          const mergedDailyTime = { ...localMap };
+
+          Object.keys(remoteMap).forEach(dateKey => {
+            const rVal = Number(remoteMap[dateKey]) || 0;
+            const lVal = Number(localMap[dateKey]) || 0;
+            if (rVal > 0 || lVal > 0) {
+              mergedDailyTime[dateKey] = Math.max(lVal, rVal);
+            }
+          });
+
+          localStorage.setItem('vocaflow_daily_study_time', JSON.stringify(mergedDailyTime));
+          if (currentUser) {
+            currentUser.dailyStudyTime = { ...mergedDailyTime };
+          }
+          if (typeof render7DayPerformanceCard === 'function') {
+            render7DayPerformanceCard();
+          }
+        } catch (errStudyTimeMerge) {
+          console.warn('Daily study time cloud merge error:', errStudyTimeMerge);
         }
       }
 
@@ -26840,7 +26868,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM (term): Unique, high-frequency, lowercase (unless proper noun). Singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
 3. PART OF SPEECH (part_of_speech): Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection".
-4. DEFINITION (definition_vietnamese): Concise, high-accuracy Vietnamese translation matching topic.
+4. DEFINITION (definition_vietnamese): Extremely concise Vietnamese meaning (1-4 words, e.g. "Kiên cường", "Yêu thích"). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary explanations MUST be placed in 'note'. For vulgar/taboo/slang words, write the full explicit Vietnamese vulgar meaning without censorship or abbreviations.
 5. EXAMPLE SENTENCE (example_sentence): A natural, high-quality contextual sentence demonstrating usage.
 6. CEFR LEVEL (cefr_level): Exactly one of "A1", "A2", "B1", "B2", "C1", "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. Provide 2-4 natural, high-frequency collocations/phrases separated by commas (e.g. "resilient economy, highly resilient, remain resilient"). NEVER leave empty!
@@ -26867,7 +26895,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM: Unique, academic terms. Lowercase, singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
 3. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-4. DEFINITION: Accurate, natural Vietnamese translation in passage context.
+4. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 5. EXAMPLE SENTENCE: Natural contextual sentence from passage or illustrating usage.
 6. CEFR LEVEL: "A1", "A2", "B1", "B2", "C1", or "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
@@ -26894,7 +26922,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 2. CASING & FORMS: Lowercase; Nouns in SINGULAR; Verbs in BASE INFINITIVE.
 3. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/.../").
 4. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-5. DEFINITION: Precise Vietnamese meaning.
+5. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 6. EXAMPLE SENTENCE: A natural, clear contextual example sentence.
 7. CEFR LEVEL: Accurate CEFR grade ("A1", "A2", "B1", "B2", "C1", "C2").
 8. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
@@ -28085,16 +28113,27 @@ Yêu cầu nghiêm ngặt:
       if (!wordOrIdOrTerm) return;
       try {
         const list = getMistakeWordsList();
-        const targetStr = (typeof wordOrIdOrTerm === 'object') 
-          ? String(wordOrIdOrTerm.id || wordOrIdOrTerm.term || '').trim().toLowerCase()
-          : String(wordOrIdOrTerm).trim().toLowerCase();
-        const targetTerm = (typeof wordOrIdOrTerm === 'object' && wordOrIdOrTerm.term)
-          ? String(wordOrIdOrTerm.term).trim().toLowerCase()
-          : targetStr;
+        if (!list || list.length === 0) return;
+
+        let targetId = '';
+        let targetTerm = '';
+
+        if (typeof wordOrIdOrTerm === 'object') {
+          targetId = String(wordOrIdOrTerm.id || wordOrIdOrTerm.wordId || '').trim().toLowerCase();
+          targetTerm = String(wordOrIdOrTerm.term || '').trim().toLowerCase();
+        } else {
+          const str = String(wordOrIdOrTerm).trim().toLowerCase();
+          targetId = str;
+          targetTerm = str;
+        }
 
         const idx = list.findIndex(item => {
-          const idMatch = item.wordId && (String(item.wordId).toLowerCase() === targetStr || String(item.wordId).toLowerCase() === targetTerm);
-          const termMatch = item.term && (item.term.toLowerCase() === targetStr || item.term.toLowerCase() === targetTerm);
+          const itemWordId = String(item.wordId || item.id || '').trim().toLowerCase();
+          const itemTerm = String(item.term || '').trim().toLowerCase();
+
+          const idMatch = targetId && (itemWordId === targetId || itemTerm === targetId);
+          const termMatch = targetTerm && (itemTerm === targetTerm || itemWordId === targetTerm);
+
           return idMatch || termMatch;
         });
 
@@ -28104,7 +28143,7 @@ Yêu cầu nghiêm ngặt:
             list.splice(idx, 1);
             saveMistakeWordsList(list);
           } else {
-            // "sai bao nhiêu lần thì phải làm bù đúng bấy nhiêu lần"
+            // "dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay"
             const currentCount = parseInt(item.mistakeCount, 10) || 1;
             const newCount = currentCount - 1;
             if (newCount <= 0) {
@@ -28117,6 +28156,11 @@ Yêu cầu nghiêm ngặt:
               saveMistakeWordsList(list);
               showToast(`✨ Làm đúng từ "${item.term}"! (Còn ${newCount} lần làm đúng nữa để gỡ khỏi Sổ Tay Lỗi Sai)`);
             }
+          }
+          // Refresh open modal list if open
+          const modal = document.getElementById('modal-mistake-notebook');
+          if (modal && (modal.classList.contains('active') || modal.style.display === 'flex' || modal.style.display === 'block')) {
+            renderMistakeNotebookList();
           }
         }
       } catch (e) {
@@ -28403,11 +28447,23 @@ Yêu cầu nghiêm ngặt:
       closeModal('modal-mistake-notebook');
 
       if (mode === 'quiz') {
-        startQuizMode(false, reviewWords);
+        if (typeof openQuizSetupModal === 'function') {
+          openQuizSetupModal(false, reviewWords);
+        } else {
+          startQuizMode(false, reviewWords);
+        }
       } else if (mode === 'spelling') {
-        startSpellingMode(false, reviewWords);
+        if (typeof openSpellingSetupModal === 'function') {
+          openSpellingSetupModal(false, reviewWords);
+        } else {
+          startSpellingMode(false, reviewWords);
+        }
       } else if (mode === 'speaking') {
-        startSpeakingMode(false, reviewWords);
+        if (typeof openSpeakingSetupModal === 'function') {
+          openSpeakingSetupModal(false, reviewWords);
+        } else {
+          startSpeakingMode(false, reviewWords);
+        }
       }
     }
 
@@ -28418,7 +28474,11 @@ Yêu cầu nghiêm ngặt:
 
       const resolved = resolveMistakeWordsToAppWords([item]);
       closeModal('modal-mistake-notebook');
-      startSpellingMode(false, resolved);
+      if (typeof openSpellingSetupModal === 'function') {
+        openSpellingSetupModal(false, resolved);
+      } else {
+        startSpellingMode(false, resolved);
+      }
     }
 
     function retryQuizWrongWordsOnly() {
@@ -29418,6 +29478,26 @@ Yêu cầu nghiêm ngặt:
         speakText(questionWord.term);
       }
     }
+
+    // Global Window Bindings for Mistake Notebook & Quiz Engine (v0.10.9-61)
+    window.getMistakeWordsList = getMistakeWordsList;
+    window.saveMistakeWordsList = saveMistakeWordsList;
+    window.addWordToMistakeList = addWordToMistakeList;
+    window.removeWordFromMistakeList = removeWordFromMistakeList;
+    window.clearAllMistakeWords = clearAllMistakeWords;
+    window.updateMistakeBadgeUI = updateMistakeBadgeUI;
+    window.openMistakeNotebookModal = openMistakeNotebookModal;
+    window.onMistakeNotebookSearch = onMistakeNotebookSearch;
+    window.onMistakeNotebookDeckFilterChange = onMistakeNotebookDeckFilterChange;
+    window.onMistakeNotebookModeFilterChange = onMistakeNotebookModeFilterChange;
+    window.getFilteredMistakeList = getFilteredMistakeList;
+    window.renderMistakeNotebookList = renderMistakeNotebookList;
+    window.removeWordFromMistakeListAndRender = removeWordFromMistakeListAndRender;
+    window.startMistakeReviewSession = startMistakeReviewSession;
+    window.startSingleMistakeReview = startSingleMistakeReview;
+    window.openQuizSetupModal = openQuizSetupModal;
+    window.startQuizMode = startQuizMode;
+
 
 // =========================================================================
 
@@ -30957,22 +31037,31 @@ Yêu cầu nghiêm ngặt:
       } catch (e) {}
     }
 
-        // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
+        // =========================================================================
+    // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK - v0.10.9-61)
     // =========================================================================
     function cleanVietnameseDefinition(def) {
       if (!def || typeof def !== 'string') return '';
       let clean = def.trim();
 
-      // Replace ' hoặc ', ' và ', ' / ', '/', ' | ', '|' with ', '
-      clean = clean.replace(/\s+(hoặc|và)\s+/gi, ', ');
-      clean = clean.replace(/\s*[\/|]\s*/g, ', ');
+      // Remove parentheses and brackets content (e.g. (ai, cái gì), [vật gì])
+      clean = clean.replace(/\([^)]*\)/g, '');
+      clean = clean.replace(/\[[^\]]*\]/g, '');
 
-      // Remove multiple consecutive commas and spaces
-      clean = clean.replace(/\s*,\s*,+\s*/g, ', ');
-      clean = clean.replace(/,\s*,/g, ', ');
+      // Remove filler phrases like "ai, cái gì", "ai đó, cái gì đó", "ai/cái gì", "người nào đó", "sự việc nào đó"
+      clean = clean.replace(/\b(ai\s*,\s*cái gì|ai\s*\/\s*cái gì|ai đó\s*,\s*cái gì đó|ai đó|cái gì đó|người nào đó|sự việc nào đó)\b/gi, '');
 
-      // Remove leading / trailing dots, commas, semicolons
-      clean = clean.replace(/^[\s.,;:]+|[\s.,;:]+$/g, '');
+      // If definition has commas/semicolons/slashes separating multiple phrases, take the first primary concise meaning
+      if (clean.includes(',') || clean.includes(';') || clean.includes(' / ') || clean.includes(' | ')) {
+        const parts = clean.split(/[,;\/|]/).map(p => p.trim()).filter(p => p.length > 0);
+        if (parts.length > 0) clean = parts[0];
+      }
+
+      // Remove leading / trailing punctuation, dots, commas, semicolons, hyphens
+      clean = clean.replace(/^[\s.,;:/\-|]+|[\s.,;:/\-|]+$/g, '');
+
+      // Remove leading/trailing "và" or "hoặc"
+      clean = clean.replace(/^(và|hoặc)\s+/gi, '').replace(/\s+(và|hoặc)$/gi, '');
 
       return clean.trim();
     }
@@ -31150,31 +31239,39 @@ ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\
 - Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
 - Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
+QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ:
+1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (chỉ từ 1 đến 4 từ, ví dụ: "Yêu thích", "Chạy", "Giống như", "Sở thích", "Xinh đẹp").
+2. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
+3. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
+4. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
+5. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
+6. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
+
 YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
-1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction". (Nếu người dùng đã chỉ định từ loại thì bắt buộc theo từ loại đó).
-2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/tɪər/").
+1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/laɪk/").
 3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
-4. "definition": Nghĩa tiếng Việt cô đọng, tự nhiên (dưới 8 từ), KHÔNG có dấu chấm (.) ở cuối.
+4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ, KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
 5. "example": 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
 6. "synonyms": Mảng 2-3 từ đồng nghĩa tiếng Anh.
 7. "antonyms": Mảng 1-2 từ trái nghĩa tiếng Anh (hoặc rỗng []).
 8. "collocations": Mảng 2-3 collocations thường gặp.
-9. "note": Mẹo nhớ hoặc ngữ cảnh ngữ pháp.
+9. "note": Mẹo nhớ, ngữ cảnh ngữ pháp, giới từ hoặc ghi chú bổ sung.
 
 Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 {
   "term": "${term}",
   "senses": [
     {
-      "pos": "noun",
-      "ipa": "/ipa/",
-      "cefrLevel": "B1",
-      "definition": "Nghĩa tiếng Việt ngắn gọn",
-      "example": "English example (Dịch nghĩa)",
-      "synonyms": ["syn1", "syn2"],
-      "antonyms": ["ant1"],
-      "collocations": ["coll1", "coll2"],
-      "note": "Mẹo nhớ"
+      "pos": "verb",
+      "ipa": "/laɪk/",
+      "cefrLevel": "A1",
+      "definition": "Yêu thích",
+      "example": "I like reading books. (Tôi thích đọc sách.)",
+      "synonyms": ["enjoy", "adore"],
+      "antonyms": ["dislike", "hate"],
+      "collocations": ["like very much", "would like"],
+      "note": "Thường đi kèm V-ing hoặc to-V; dùng trong thì đơn"
     }
   ]
 }`;
@@ -31364,7 +31461,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       input.setSelectionRange(start + sym.length, start + sym.length);
     }
 
-    // Legacy Flashcard JS removed permanently
+    // Global Window Bindings for Spelling Engine (v0.10.9-61)
+    window.openSpellingSetupModal = openSpellingSetupModal;
+    window.startSpellingMode = startSpellingMode;
+    window.cleanVietnameseDefinition = cleanVietnameseDefinition;
+    window.handleAiGenerateWord = handleAiGenerateWord;
+    window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
 
@@ -33649,6 +33751,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardIndex++;
       }
     }
+
+    // Global Window Bindings for Speaking Engine (v0.10.9-61)
+    window.openSpeakingSetupModal = openSpeakingSetupModal;
+    window.startSpeakingMode = startSpeakingMode;
+    window.exitSpeakingMode = exitSpeakingMode;
+    window.startAutoFlashcardMode = startAutoFlashcardMode;
+
 
 // =========================================================================
 

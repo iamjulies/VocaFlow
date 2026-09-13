@@ -1536,22 +1536,31 @@
       } catch (e) {}
     }
 
-        // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK)
+        // =========================================================================
+    // AI WORD GENERATION ENGINE (GEMINI AI + FREE DICTIONARY FALLBACK - v0.10.9-61)
     // =========================================================================
     function cleanVietnameseDefinition(def) {
       if (!def || typeof def !== 'string') return '';
       let clean = def.trim();
 
-      // Replace ' hoặc ', ' và ', ' / ', '/', ' | ', '|' with ', '
-      clean = clean.replace(/\s+(hoặc|và)\s+/gi, ', ');
-      clean = clean.replace(/\s*[\/|]\s*/g, ', ');
+      // Remove parentheses and brackets content (e.g. (ai, cái gì), [vật gì])
+      clean = clean.replace(/\([^)]*\)/g, '');
+      clean = clean.replace(/\[[^\]]*\]/g, '');
 
-      // Remove multiple consecutive commas and spaces
-      clean = clean.replace(/\s*,\s*,+\s*/g, ', ');
-      clean = clean.replace(/,\s*,/g, ', ');
+      // Remove filler phrases like "ai, cái gì", "ai đó, cái gì đó", "ai/cái gì", "người nào đó", "sự việc nào đó"
+      clean = clean.replace(/\b(ai\s*,\s*cái gì|ai\s*\/\s*cái gì|ai đó\s*,\s*cái gì đó|ai đó|cái gì đó|người nào đó|sự việc nào đó)\b/gi, '');
 
-      // Remove leading / trailing dots, commas, semicolons
-      clean = clean.replace(/^[\s.,;:]+|[\s.,;:]+$/g, '');
+      // If definition has commas/semicolons/slashes separating multiple phrases, take the first primary concise meaning
+      if (clean.includes(',') || clean.includes(';') || clean.includes(' / ') || clean.includes(' | ')) {
+        const parts = clean.split(/[,;\/|]/).map(p => p.trim()).filter(p => p.length > 0);
+        if (parts.length > 0) clean = parts[0];
+      }
+
+      // Remove leading / trailing punctuation, dots, commas, semicolons, hyphens
+      clean = clean.replace(/^[\s.,;:/\-|]+|[\s.,;:/\-|]+$/g, '');
+
+      // Remove leading/trailing "và" or "hoặc"
+      clean = clean.replace(/^(và|hoặc)\s+/gi, '').replace(/\s+(và|hoặc)$/gi, '');
 
       return clean.trim();
     }
@@ -1729,31 +1738,39 @@ ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\
 - Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
 - Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
+QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ:
+1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (chỉ từ 1 đến 4 từ, ví dụ: "Yêu thích", "Chạy", "Giống như", "Sở thích", "Xinh đẹp").
+2. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
+3. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
+4. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
+5. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
+6. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
+
 YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
-1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction". (Nếu người dùng đã chỉ định từ loại thì bắt buộc theo từ loại đó).
-2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/tɪər/").
+1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
+2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/laɪk/").
 3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
-4. "definition": Nghĩa tiếng Việt cô đọng, tự nhiên (dưới 8 từ), KHÔNG có dấu chấm (.) ở cuối.
+4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ, KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
 5. "example": 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
 6. "synonyms": Mảng 2-3 từ đồng nghĩa tiếng Anh.
 7. "antonyms": Mảng 1-2 từ trái nghĩa tiếng Anh (hoặc rỗng []).
 8. "collocations": Mảng 2-3 collocations thường gặp.
-9. "note": Mẹo nhớ hoặc ngữ cảnh ngữ pháp.
+9. "note": Mẹo nhớ, ngữ cảnh ngữ pháp, giới từ hoặc ghi chú bổ sung.
 
 Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 {
   "term": "${term}",
   "senses": [
     {
-      "pos": "noun",
-      "ipa": "/ipa/",
-      "cefrLevel": "B1",
-      "definition": "Nghĩa tiếng Việt ngắn gọn",
-      "example": "English example (Dịch nghĩa)",
-      "synonyms": ["syn1", "syn2"],
-      "antonyms": ["ant1"],
-      "collocations": ["coll1", "coll2"],
-      "note": "Mẹo nhớ"
+      "pos": "verb",
+      "ipa": "/laɪk/",
+      "cefrLevel": "A1",
+      "definition": "Yêu thích",
+      "example": "I like reading books. (Tôi thích đọc sách.)",
+      "synonyms": ["enjoy", "adore"],
+      "antonyms": ["dislike", "hate"],
+      "collocations": ["like very much", "would like"],
+      "note": "Thường đi kèm V-ing hoặc to-V; dùng trong thì đơn"
     }
   ]
 }`;
@@ -1943,4 +1960,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       input.setSelectionRange(start + sym.length, start + sym.length);
     }
 
-    // Legacy Flashcard JS removed permanently
+    // Global Window Bindings for Spelling Engine (v0.10.9-61)
+    window.openSpellingSetupModal = openSpellingSetupModal;
+    window.startSpellingMode = startSpellingMode;
+    window.cleanVietnameseDefinition = cleanVietnameseDefinition;
+    window.handleAiGenerateWord = handleAiGenerateWord;
+    window.fetchWordFromGemini = fetchWordFromGemini;

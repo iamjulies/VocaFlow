@@ -711,16 +711,27 @@ Yêu cầu nghiêm ngặt:
       if (!wordOrIdOrTerm) return;
       try {
         const list = getMistakeWordsList();
-        const targetStr = (typeof wordOrIdOrTerm === 'object') 
-          ? String(wordOrIdOrTerm.id || wordOrIdOrTerm.term || '').trim().toLowerCase()
-          : String(wordOrIdOrTerm).trim().toLowerCase();
-        const targetTerm = (typeof wordOrIdOrTerm === 'object' && wordOrIdOrTerm.term)
-          ? String(wordOrIdOrTerm.term).trim().toLowerCase()
-          : targetStr;
+        if (!list || list.length === 0) return;
+
+        let targetId = '';
+        let targetTerm = '';
+
+        if (typeof wordOrIdOrTerm === 'object') {
+          targetId = String(wordOrIdOrTerm.id || wordOrIdOrTerm.wordId || '').trim().toLowerCase();
+          targetTerm = String(wordOrIdOrTerm.term || '').trim().toLowerCase();
+        } else {
+          const str = String(wordOrIdOrTerm).trim().toLowerCase();
+          targetId = str;
+          targetTerm = str;
+        }
 
         const idx = list.findIndex(item => {
-          const idMatch = item.wordId && (String(item.wordId).toLowerCase() === targetStr || String(item.wordId).toLowerCase() === targetTerm);
-          const termMatch = item.term && (item.term.toLowerCase() === targetStr || item.term.toLowerCase() === targetTerm);
+          const itemWordId = String(item.wordId || item.id || '').trim().toLowerCase();
+          const itemTerm = String(item.term || '').trim().toLowerCase();
+
+          const idMatch = targetId && (itemWordId === targetId || itemTerm === targetId);
+          const termMatch = targetTerm && (itemTerm === targetTerm || itemWordId === targetTerm);
+
           return idMatch || termMatch;
         });
 
@@ -730,7 +741,7 @@ Yêu cầu nghiêm ngặt:
             list.splice(idx, 1);
             saveMistakeWordsList(list);
           } else {
-            // "sai bao nhiêu lần thì phải làm bù đúng bấy nhiêu lần"
+            // "dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay"
             const currentCount = parseInt(item.mistakeCount, 10) || 1;
             const newCount = currentCount - 1;
             if (newCount <= 0) {
@@ -743,6 +754,11 @@ Yêu cầu nghiêm ngặt:
               saveMistakeWordsList(list);
               showToast(`✨ Làm đúng từ "${item.term}"! (Còn ${newCount} lần làm đúng nữa để gỡ khỏi Sổ Tay Lỗi Sai)`);
             }
+          }
+          // Refresh open modal list if open
+          const modal = document.getElementById('modal-mistake-notebook');
+          if (modal && (modal.classList.contains('active') || modal.style.display === 'flex' || modal.style.display === 'block')) {
+            renderMistakeNotebookList();
           }
         }
       } catch (e) {
@@ -1029,11 +1045,23 @@ Yêu cầu nghiêm ngặt:
       closeModal('modal-mistake-notebook');
 
       if (mode === 'quiz') {
-        startQuizMode(false, reviewWords);
+        if (typeof openQuizSetupModal === 'function') {
+          openQuizSetupModal(false, reviewWords);
+        } else {
+          startQuizMode(false, reviewWords);
+        }
       } else if (mode === 'spelling') {
-        startSpellingMode(false, reviewWords);
+        if (typeof openSpellingSetupModal === 'function') {
+          openSpellingSetupModal(false, reviewWords);
+        } else {
+          startSpellingMode(false, reviewWords);
+        }
       } else if (mode === 'speaking') {
-        startSpeakingMode(false, reviewWords);
+        if (typeof openSpeakingSetupModal === 'function') {
+          openSpeakingSetupModal(false, reviewWords);
+        } else {
+          startSpeakingMode(false, reviewWords);
+        }
       }
     }
 
@@ -1044,7 +1072,11 @@ Yêu cầu nghiêm ngặt:
 
       const resolved = resolveMistakeWordsToAppWords([item]);
       closeModal('modal-mistake-notebook');
-      startSpellingMode(false, resolved);
+      if (typeof openSpellingSetupModal === 'function') {
+        openSpellingSetupModal(false, resolved);
+      } else {
+        startSpellingMode(false, resolved);
+      }
     }
 
     function retryQuizWrongWordsOnly() {
@@ -2044,3 +2076,23 @@ Yêu cầu nghiêm ngặt:
         speakText(questionWord.term);
       }
     }
+
+    // Global Window Bindings for Mistake Notebook & Quiz Engine (v0.10.9-61)
+    window.getMistakeWordsList = getMistakeWordsList;
+    window.saveMistakeWordsList = saveMistakeWordsList;
+    window.addWordToMistakeList = addWordToMistakeList;
+    window.removeWordFromMistakeList = removeWordFromMistakeList;
+    window.clearAllMistakeWords = clearAllMistakeWords;
+    window.updateMistakeBadgeUI = updateMistakeBadgeUI;
+    window.openMistakeNotebookModal = openMistakeNotebookModal;
+    window.onMistakeNotebookSearch = onMistakeNotebookSearch;
+    window.onMistakeNotebookDeckFilterChange = onMistakeNotebookDeckFilterChange;
+    window.onMistakeNotebookModeFilterChange = onMistakeNotebookModeFilterChange;
+    window.getFilteredMistakeList = getFilteredMistakeList;
+    window.renderMistakeNotebookList = renderMistakeNotebookList;
+    window.removeWordFromMistakeListAndRender = removeWordFromMistakeListAndRender;
+    window.startMistakeReviewSession = startMistakeReviewSession;
+    window.startSingleMistakeReview = startSingleMistakeReview;
+    window.openQuizSetupModal = openQuizSetupModal;
+    window.startQuizMode = startQuizMode;
+

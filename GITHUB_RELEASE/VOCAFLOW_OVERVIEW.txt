@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.9-61 (Build 293) - Khắc Phục Lỗi Sổ Tay Lỗi Sai (Mở Bảng Chọn Cấp Độ & Giảm Dần Số Lần Sai), Đồng Bộ 2 Chiều An Toàn Biểu Đồ 7 Ngày Thời Gian Học & Tinh Chỉnh Prompt AI Điền Từ Siêu Cô Đọng
+================================================================================
+1. [Nâng Cấp Toàn Diện Sổ Tay Lỗi Sai (Mistakes Notebook Engine)]:
+   - Khắc phục lỗi khi nhấn nút "🎯 Ôn Trắc Nghiệm", "✍️ Luyện Viết", "🎙️ Luyện Nói" hoặc "🎯 Ôn từ này" trong modal Sổ Tay Lỗi Sai bị bỏ qua bảng chọn cấp độ. Đã cập nhật tự động mở đúng Setup Modal tương ứng (openQuizSetupModal, openSpellingSetupModal, openSpeakingSetupModal) cho phép người dùng tùy biến cấp độ khó và manh mối gợi ý.
+   - Sửa triệt để cơ chế gỡ từ sai: Dù từ vựng bị làm sai ở chế độ học nào, người dùng chỉ cần làm đúng ở BẤT KỲ chế độ học nào (Trắc nghiệm, Luyện viết, Luyện nói) cũng được tính là khắc phục lỗi sai.
+   - Cơ chế giảm dần số lần sai: Mỗi lần làm đúng sẽ giảm 1 lần làm sai (mistakeCount = mistakeCount - 1). Khi số lần sai = 0, từ vựng sẽ tự động được gỡ bỏ vĩnh viễn khỏi Sổ Tay Lỗi Sai. Cập nhật huy hiệu số lượng tức thì trên Header, Chi tiết VocaDeck và Modal.
+
+2. [Đồng Bộ 2 Chiều An Toàn Dữ Liệu Thời Gian Học Biểu Đồ 7 Ngày (Daily Study Time)]:
+   - Bổ sung `dailyStudyTime` vào payload đẩy lên Firebase RTDB trong `pushCurrentDatabaseToCloud`.
+   - Bổ sung Mục 16 trong `mergeCloudDataIntoLocal` thực hiện hợp nhất 2 chiều an toàn giữa local và Cloud cho tất cả các ngày (`Math.max(local[date] || 0, cloud[date] || 0)`), bảo toàn tuyệt đối dữ liệu thời gian học thực tế trên biểu đồ 7 ngày và bảng điều khiển ME khi đổi thiết bị hoặc tải lại ứng dụng.
+
+3. [Tinh Chỉnh Prompt AI Điền Từ & Chuẩn Hóa Định Nghĩa Siêu Cô Đọng (VocaFill AI)]:
+   - Cập nhật prompt Gemini AI biên soạn từ điển trong `06-spelling-engine.js` và `04-decks-manager.js`: Nghĩa tiếng Việt (definition) bắt buộc siêu cô đọng (1-4 từ, ví dụ: "Yêu thích", "Chạy", "Giống như", "Sở thích"), tuyệt đối KHÔNG chứa dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), chữ "và", dấu ngoặc đơn/vuông hay cụm rườm rà "ai, cái gì", "ai đó, cái gì đó".
+   - Mọi thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm bắt buộc đưa vào trường `note` (Ghi chú).
+   - Đối với từ ngữ thô tục, tiếng lóng, từ cấm (vulgar / taboo / swear words): AI bắt buộc điền nguyên từ tiếng Việt đầy đủ, không được viết tắt hay thêm dấu sao (*).
+   - Nâng cấp hàm `cleanVietnameseDefinition` tự động lọc bỏ dấu ngoặc đơn, cụm rườm rà và trích xuất đúng nét nghĩa cốt lõi.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-61 Build 293)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-61_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-60 (Build 292) - Khắc Phục Lỗi Phông Chữ & Bảng Màu Rich Editor, Thông Báo Tương Tác Thả Tim / Bình Luận Thời Gian Thực & Phân Tách 3 Không Gian Cộng Đồng
 ================================================================================
 1. [Khắc Phục Lỗi Phông Chữ & Bảng Màu Soạn Thảo (Rich Editor Toolbar Fix)]:

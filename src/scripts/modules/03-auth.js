@@ -7493,6 +7493,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowDates: getFlowDates(),
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
+          dailyStudyTime: (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {},
           settings: {
             showReviewQueue: showReviewQueueSetting,
             showFilterPos: showFilterPosSetting,
@@ -8477,6 +8478,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         } catch (errMistakeMerge) {
           console.warn('Mistake notebook cloud merge error:', errMistakeMerge);
+        }
+      }
+
+      // 16. Daily Study Time Two-Way Sync (v0.10.9-61)
+      if (cloudData.dailyStudyTime !== undefined && cloudData.dailyStudyTime !== null) {
+        try {
+          const remoteMap = (typeof cloudData.dailyStudyTime === 'object' && cloudData.dailyStudyTime !== null) ? cloudData.dailyStudyTime : {};
+          const localMap = (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {};
+          const mergedDailyTime = { ...localMap };
+
+          Object.keys(remoteMap).forEach(dateKey => {
+            const rVal = Number(remoteMap[dateKey]) || 0;
+            const lVal = Number(localMap[dateKey]) || 0;
+            if (rVal > 0 || lVal > 0) {
+              mergedDailyTime[dateKey] = Math.max(lVal, rVal);
+            }
+          });
+
+          localStorage.setItem('vocaflow_daily_study_time', JSON.stringify(mergedDailyTime));
+          if (currentUser) {
+            currentUser.dailyStudyTime = { ...mergedDailyTime };
+          }
+          if (typeof render7DayPerformanceCard === 'function') {
+            render7DayPerformanceCard();
+          }
+        } catch (errStudyTimeMerge) {
+          console.warn('Daily study time cloud merge error:', errStudyTimeMerge);
         }
       }
 
