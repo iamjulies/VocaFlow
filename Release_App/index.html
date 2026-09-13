@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-1 (Build 302)</span>
+            <span class="mini-footer-version">v0.10.10-2 (Build 303)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-1 (Build 302)</span>
+            <span class="mini-footer-version">v0.10.10-2 (Build 303)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-1 (Build 302)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-2 (Build 303)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-1 Build 302)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-2 Build 303)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11448,15 +11448,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-1 Build 302)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-2 Build 303)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-1 Build 302)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-2 Build 303)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-1';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-1 (Build 302)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-2';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-2 (Build 303)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -27512,7 +27512,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM (term): Unique, high-frequency, lowercase (unless proper noun). Singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard Oxford/Cambridge IPA transcription enclosed in slashes (e.g. "/rɪˈzɪliənt/").
 3. PART OF SPEECH (part_of_speech): Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction", "interjection".
-4. DEFINITION (definition_vietnamese): Extremely concise Vietnamese meaning (1-4 words, e.g. "Kiên cường", "Yêu thích"). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary explanations MUST be placed in 'note'. For vulgar/taboo/slang words, write the full explicit Vietnamese vulgar meaning without censorship or abbreviations.
+4. DEFINITION (definition_vietnamese): Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. MANDATORY PART-OF-SPEECH ACCURACY: For abstract/action nouns (e.g. withdrawal, development, negotiation), ALWAYS add noun markers like "Sự", "Việc", "Cuộc", "Khoản" (e.g. "Sự rút tiền", "Sự phát triển", "Cuộc đàm phán"); for agent nouns add "Người/Nhà" (e.g. "Nhà khoa học"); for tool nouns add "Máy/Thiết bị/Dụng cụ". For verbs use bare action verbs without "sự" (e.g. "Rút tiền", "Phát triển"). For adverbs use "Một cách..." (e.g. "Một cách cẩn thận"). Supplementary explanations MUST be placed in 'note'. For vulgar/taboo/slang words, write the full explicit Vietnamese vulgar meaning without censorship or abbreviations.
 5. EXAMPLE SENTENCE (example_sentence): A natural, high-quality contextual sentence demonstrating usage.
 6. CEFR LEVEL (cefr_level): Exactly one of "A1", "A2", "B1", "B2", "C1", "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. Provide 2-4 natural, high-frequency collocations/phrases separated by commas (e.g. "resilient economy, highly resilient, remain resilient"). NEVER leave empty!
@@ -27539,7 +27539,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 1. TERM: Unique, academic terms. Lowercase, singular nouns, base infinitive verbs.
 2. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/ˌskruːtənaɪz/").
 3. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-4. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
+4. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. MANDATORY PART-OF-SPEECH ACCURACY: For abstract/action nouns (e.g. withdrawal, development, negotiation), ALWAYS add noun markers like "Sự", "Việc", "Cuộc", "Khoản" (e.g. "Sự rút tiền", "Sự phát triển", "Cuộc đàm phán"); for agent nouns add "Người/Nhà" (e.g. "Nhà khoa học"); for tool nouns add "Máy/Thiết bị/Dụng cụ". For verbs use bare action verbs without "sự" (e.g. "Rút tiền", "Phát triển"). For adverbs use "Một cách..." (e.g. "Một cách cẩn thận"). Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 5. EXAMPLE SENTENCE: Natural contextual sentence from passage or illustrating usage.
 6. CEFR LEVEL: "A1", "A2", "B1", "B2", "C1", or "C2".
 7. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
@@ -27566,7 +27566,7 @@ MANDATORY COMPREHENSIVE VOCABULARY STANDARDS (ALL 10 COLUMNS ARE STRICTLY REQUIR
 2. CASING & FORMS: Lowercase; Nouns in SINGULAR; Verbs in BASE INFINITIVE.
 3. PHONETIC (phonetic_ipa): Accurate standard IPA enclosed in slashes (e.g. "/.../").
 4. PART OF SPEECH: Exactly one of: "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
-5. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
+5. DEFINITION: Extremely concise Vietnamese meaning (1-4 words). Strictly 1 core meaning. NO commas, NO semicolons, NO ellipses, NO "và", NO "ai, cái gì", NO parentheses. MANDATORY PART-OF-SPEECH ACCURACY: For abstract/action nouns (e.g. withdrawal, development, negotiation), ALWAYS add noun markers like "Sự", "Việc", "Cuộc", "Khoản" (e.g. "Sự rút tiền", "Sự phát triển", "Cuộc đàm phán"); for agent nouns add "Người/Nhà" (e.g. "Nhà khoa học"); for tool nouns add "Máy/Thiết bị/Dụng cụ". For verbs use bare action verbs without "sự" (e.g. "Rút tiền", "Phát triển"). For adverbs use "Một cách..." (e.g. "Một cách cẩn thận"). Supplementary notes go into 'note'. Full uncensored vulgar words if taboo.
 6. EXAMPLE SENTENCE: A natural, clear contextual example sentence.
 7. CEFR LEVEL: Accurate CEFR grade ("A1", "A2", "B1", "B2", "C1", "C2").
 8. COLLOCATIONS (collocations_csv): MANDATORY. 2-4 natural collocations separated by commas. NEVER leave empty!
@@ -32008,19 +32008,32 @@ ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\
 - Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
 - Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
-QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ:
-1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (chỉ từ 1 đến 4 từ, ví dụ: "Yêu thích", "Chạy", "Giống như", "Sở thích", "Xinh đẹp").
-2. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
-3. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
-4. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
-5. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
-6. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
+QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ NGHIÊM NGẶT:
+1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (1 đến 4 từ, ví dụ: "Sự rút tiền", "Rút tiền", "Kiên cường", "Một cách cẩn thận").
+2. BẮT BUỘC PHÂN BIỆT RÕ RÀNG TỪ LOẠI (PART OF SPEECH) QUA CÁC THÀNH TỐ ĐẶC TRƯNG:
+   - DANH TỪ (noun, noun phrase):
+     * Với danh từ chỉ hành động, quá trình, trạng thái, khái niệm trừu tượng (abstract/action nouns như withdrawal, development, decision, failure, sadness...): BẮT BUỘC thêm tiền tố danh từ hóa như "Sự", "Việc", "Cuộc", "Quá trình", "Tình trạng", "Khoản", "Niềm", "Nỗi" (Ví dụ: withdrawal -> "Sự rút tiền" hoặc "Khoản rút tiền" hoặc "Sự rút lui", development -> "Sự phát triển", negotiation -> "Cuộc đàm phán", decision -> "Quyết định" hoặc "Sự quyết định", sadness -> "Nỗi buồn"). TUYỆT ĐỐI KHÔNG dịch danh từ trừu tượng thành động từ trống không (như withdrawal dịch là "Rút tiền" là SAI TỪ LOẠI).
+     * Với danh từ chỉ người/tác nhân: Thêm "Người", "Kẻ", "Nhà", "Chuyên gia", "Thợ" (Ví dụ: driver -> "Người lái xe", researcher -> "Nhà nghiên cứu", thief -> "Kẻ trộm").
+     * Với danh từ chỉ dụng cụ/máy móc/đồ vật: Thêm "Máy", "Thiết bị", "Dụng cụ", "Đồ", "Cái" (Ví dụ: printer -> "Máy in", tool -> "Dụng cụ", recorder -> "Thiết bị ghi âm").
+     * Với danh từ chỉ cơ quan/nơi chốn: Thêm "Cơ quan", "Viện", "Nơi", "Chỗ" (Ví dụ: agency -> "Cơ quan đại diện").
+   - ĐỘNG TỪ (verb, phrasal verb):
+     * Dùng trực tiếp động từ hành động/trạng thái nguyên thể (Ví dụ: withdraw -> "Rút tiền" hoặc "Rút lui", develop -> "Phát triển", love -> "Yêu thích", analyze -> "Phân tích"). TUYỆT ĐỐI KHÔNG thêm "sự" hay "việc" đằng trước động từ.
+   - TÍNH TỪ (adjective):
+     * Thể hiện tính chất, đặc điểm (Ví dụ: resilient -> "Kiên cường", beautiful -> "Xinh đẹp", financial -> "Thuộc tài chính", fragile -> "Dễ vỡ", efficient -> "Hiệu quả").
+   - TRẠNG TỪ / PHÓ TỪ (adverb):
+     * Thể hiện cách thức, mức độ. Thường thêm tiền tố "Một cách..." (Ví dụ: carefully -> "Một cách cẩn thận", fluently -> "Một cách lưu loát") hoặc phó từ mức độ ("Rất", "Hoàn toàn", "Thường xuyên").
+   - GIỚI TỪ / LIÊN TỪ (preposition, conjunction): Dịch đúng từ nối/vị trí ("Ở", "Trong", "Bởi vì", "Mặc dù").
+3. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
+4. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
+5. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
+6. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
+7. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
 
 YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
 1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
 2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/laɪk/").
 3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
-4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ, KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
+4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ tuân thủ nghiêm ngặt từ loại (danh từ có 'Sự'/'Việc'/'Khoản', v.v.), KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
 5. "example": 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
 6. "synonyms": Mảng 2-3 từ đồng nghĩa tiếng Anh.
 7. "antonyms": Mảng 1-2 từ trái nghĩa tiếng Anh (hoặc rỗng []).

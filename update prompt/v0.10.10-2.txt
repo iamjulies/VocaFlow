@@ -1,0 +1,5 @@
+v0.10.10-2
+sửa prompt cho AI điền từ. ảnh: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 234632.png"
+đối với mấy từ theo loại danh từ (noun) hoặc các loại khác v.v. thì nên thêm cái thành tố nào đó để phân biệt -> gợi ý: danh từ thêm "sự' vào đằng trước nè...
+(tìm hiểu thêm trên internet)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

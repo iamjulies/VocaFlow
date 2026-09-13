@@ -1745,19 +1745,32 @@ ${contextNote ? `\nThông tin người dùng đã nhập sẵn:\n${contextNote}\
 - Chỉ khi từ này thật sự đơn nghĩa, từ ngữ chuyên ngành hẹp chỉ có đúng 1 nghĩa duy nhất thì mới trả về 1 nét nghĩa.
 - Sắp xếp các nét nghĩa theo thứ tự độ phổ biến giảm dần (nghĩa quan trọng phổ biến nhất ở vị trí đầu tiên).
 
-QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ:
-1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (chỉ từ 1 đến 4 từ, ví dụ: "Yêu thích", "Chạy", "Giống như", "Sở thích", "Xinh đẹp").
-2. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
-3. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
-4. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
-5. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
-6. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
+QUY CHUẨN ĐỊNH NGHĨA TIẾNG VIỆT (definition) - BẮT BUỘC TUÂN THỦ NGHIÊM NGẶT:
+1. "definition": Nghĩa tiếng Việt SIÊU CÔ ĐỌNG, súc tích (1 đến 4 từ, ví dụ: "Sự rút tiền", "Rút tiền", "Kiên cường", "Một cách cẩn thận").
+2. BẮT BUỘC PHÂN BIỆT RÕ RÀNG TỪ LOẠI (PART OF SPEECH) QUA CÁC THÀNH TỐ ĐẶC TRƯNG:
+   - DANH TỪ (noun, noun phrase):
+     * Với danh từ chỉ hành động, quá trình, trạng thái, khái niệm trừu tượng (abstract/action nouns như withdrawal, development, decision, failure, sadness...): BẮT BUỘC thêm tiền tố danh từ hóa như "Sự", "Việc", "Cuộc", "Quá trình", "Tình trạng", "Khoản", "Niềm", "Nỗi" (Ví dụ: withdrawal -> "Sự rút tiền" hoặc "Khoản rút tiền" hoặc "Sự rút lui", development -> "Sự phát triển", negotiation -> "Cuộc đàm phán", decision -> "Quyết định" hoặc "Sự quyết định", sadness -> "Nỗi buồn"). TUYỆT ĐỐI KHÔNG dịch danh từ trừu tượng thành động từ trống không (như withdrawal dịch là "Rút tiền" là SAI TỪ LOẠI).
+     * Với danh từ chỉ người/tác nhân: Thêm "Người", "Kẻ", "Nhà", "Chuyên gia", "Thợ" (Ví dụ: driver -> "Người lái xe", researcher -> "Nhà nghiên cứu", thief -> "Kẻ trộm").
+     * Với danh từ chỉ dụng cụ/máy móc/đồ vật: Thêm "Máy", "Thiết bị", "Dụng cụ", "Đồ", "Cái" (Ví dụ: printer -> "Máy in", tool -> "Dụng cụ", recorder -> "Thiết bị ghi âm").
+     * Với danh từ chỉ cơ quan/nơi chốn: Thêm "Cơ quan", "Viện", "Nơi", "Chỗ" (Ví dụ: agency -> "Cơ quan đại diện").
+   - ĐỘNG TỪ (verb, phrasal verb):
+     * Dùng trực tiếp động từ hành động/trạng thái nguyên thể (Ví dụ: withdraw -> "Rút tiền" hoặc "Rút lui", develop -> "Phát triển", love -> "Yêu thích", analyze -> "Phân tích"). TUYỆT ĐỐI KHÔNG thêm "sự" hay "việc" đằng trước động từ.
+   - TÍNH TỪ (adjective):
+     * Thể hiện tính chất, đặc điểm (Ví dụ: resilient -> "Kiên cường", beautiful -> "Xinh đẹp", financial -> "Thuộc tài chính", fragile -> "Dễ vỡ", efficient -> "Hiệu quả").
+   - TRẠNG TỪ / PHÓ TỪ (adverb):
+     * Thể hiện cách thức, mức độ. Thường thêm tiền tố "Một cách..." (Ví dụ: carefully -> "Một cách cẩn thận", fluently -> "Một cách lưu loát") hoặc phó từ mức độ ("Rất", "Hoàn toàn", "Thường xuyên").
+   - GIỚI TỪ / LIÊN TỪ (preposition, conjunction): Dịch đúng từ nối/vị trí ("Ở", "Trong", "Bởi vì", "Mặc dù").
+3. TUYỆT ĐỐI KHÔNG dùng dấu phẩy (,), dấu chấm phẩy (;), dấu chấm lửng (...), dấu gạch chéo (/), dấu ngoặc đơn (...) hay dấu ngoặc vuông [...].
+4. TUYỆT ĐỐI KHÔNG dùng chữ "và", "hoặc", "hay là".
+5. TUYỆT ĐỐI KHÔNG dùng các cụm từ ngữ rườm rà như: "ai, cái gì", "ai đó", "cái gì đó", "người nào đó", "sự việc nào đó".
+6. Tất cả thông tin giải thích ngữ cảnh, ngữ pháp, giới từ đi kèm BẮT BUỘC PHẢI ĐẶT VÀO TRƯỜNG "note" (Ghi chú).
+7. ĐỐI VỚI CÁC TỪ TỤC TĨU, THÔ TỤC, TIẾNG LÓNG (Vulgar / Taboo / Swear words): BẮT BUỘC viết ĐẦY ĐỦ nguyên từ tiếng Việt thô tục chính xác, KHÔNG ĐƯỢC kiểm duyệt, KHÔNG ĐƯỢC thêm dấu sao (*), KHÔNG ĐƯỢC viết tắt.
 
 YÊU CẦU MỖI NÉT NGHĨA TRONG MẢNG "senses" PHẢI ĐẦY ĐỦ CÁC TRƯỜNG:
 1. "pos": "noun", "verb", "adjective", "adverb", "noun phrase", "phrasal verb", "phrase", "idiom", "preposition", "conjunction".
 2. "ipa": Phiên âm chuẩn IPA Oxford/Cambridge kèm dấu gạch chéo /.../ (ví dụ: "/laɪk/").
 3. "cefrLevel": "A1", "A2", "B1", "B2", "C1", hoặc "C2".
-4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ, KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
+4. "definition": Nghĩa tiếng Việt siêu cô đọng 1-4 từ tuân thủ nghiêm ngặt từ loại (danh từ có 'Sự'/'Việc'/'Khoản', v.v.), KHÔNG dấu phẩy, KHÔNG "và", KHÔNG "ai, cái gì", KHÔNG dấu chấm cuối.
 5. "example": 1 câu ví dụ tiếng Anh tự nhiên kèm bản dịch tiếng Việt trong ngoặc.
 6. "synonyms": Mảng 2-3 từ đồng nghĩa tiếng Anh.
 7. "antonyms": Mảng 1-2 từ trái nghĩa tiếng Anh (hoặc rỗng []).

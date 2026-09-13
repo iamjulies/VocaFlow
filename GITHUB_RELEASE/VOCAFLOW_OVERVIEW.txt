@@ -1,4 +1,22 @@
 ================================================================================
+Phiên bản: v0.10.10-2 (Build 303) - Chuẩn Hóa Prompt AI Điền Từ & Sáng Tạo Bộ Từ Phân Biệt Rõ Ràng Thành Tố Từ Loại (Danh Từ, Động Từ, Tính Từ, Trạng Từ)
+================================================================================
+1. [Chuẩn Hóa Prompt AI Tự Động Điền Từ & Sáng Tạo Bộ Từ (Part-Of-Speech Discrimination Engine)]:
+   - Khắc phục triệt để hiện tượng AI điền nghĩa tiếng Việt của danh từ (noun) bị trùng lặp hoặc trơ trọi như động từ (verb) mà không có thành tố phân biệt từ loại (ví dụ: từ `withdraw` [verb] có nghĩa "Rút tiền", trong khi từ `withdrawal` [noun] cũng bị AI dịch trơ thành "Rút tiền" thay vì "Sự rút tiền" hoặc "Khoản rút tiền" hoặc "Sự rút lui").
+   - Nguyên nhân: Trước đây prompt chỉ yêu cầu nghĩa siêu cô đọng 1-4 từ mà thiếu quy chuẩn ngôn ngữ học nghiêm ngặt về tiền tố/hậu tố phân biệt từ loại trong tiếng Việt.
+   - Giải pháp:
+     + Nâng cấp toàn diện Prompt của hàm `fetchWordFromGemini` trong `06-spelling-engine.js` (AI Điền Tự Động & Đa Nét Nghĩa Polysemy) và `handleGenerateAiDeck` trong `04-decks-manager.js` (AI Deck Studio: Theo chủ đề, Trích xuất đoạn văn, Chuẩn hóa danh sách thô).
+     + Thiết lập quy chuẩn bắt buộc phân biệt từ loại qua thành tố tiếng Việt:
+       * DANH TỪ (Noun / Noun Phrase): Đối với danh từ chỉ hành động, quá trình, trạng thái, khái niệm trừu tượng (như withdrawal, development, negotiation, sadness...), BẮT BUỘC thêm tiền tố danh từ hóa như "Sự", "Việc", "Cuộc", "Quá trình", "Tình trạng", "Khoản", "Niềm", "Nỗi" (Ví dụ: `withdrawal` -> "Sự rút tiền", "Khoản rút tiền", "Sự rút lui", "Sự thu hồi"; `development` -> "Sự phát triển"; `negotiation` -> "Cuộc đàm phán"). Danh từ chỉ người/tác nhân thêm "Người", "Kẻ", "Nhà", "Chuyên gia", "Thợ". Danh từ chỉ dụng cụ/máy móc thêm "Máy", "Thiết bị", "Dụng cụ".
+       * ĐỘNG TỪ (Verb / Phrasal Verb): Dùng trực tiếp động từ nguyên thể hành động ("Rút tiền", "Rút lui", "Thu hồi", "Phát triển", "Đàm phán"), tuyệt đối không thêm "sự" hay "việc".
+       * TÍNH TỪ (Adjective): Thể hiện đặc điểm, tính chất ("Kiên cường", "Xinh đẹp", "Linh hoạt", "Dễ vỡ", "Thuộc tài chính").
+       * TRẠNG TỪ (Adverb): Thể hiện cách thức, mức độ, thường thêm "Một cách..." ("Một cách cẩn thận", "Một cách lưu loát") hoặc phó từ mức độ ("Rất", "Hoàn toàn", "Thường xuyên").
+     + Bảo đảm hàm làm sạch định nghĩa `cleanVietnameseDefinition` giữ nguyên vẹn 100% các thành tố từ loại này.
+
+2. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-2 Build 303)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-2_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.10-1 (Build 302) - Khắc Phục Triệt Để Lỗi Đồng Bộ Chỉ Số Biểu Đồ 7 Ngày Khi Xem Hồ Sơ Công Khai Của Người Khác (Full 2-Way Public Profile Stats & Ledger Synchronization)
 ================================================================================
 1. [Khắc Phục Lỗi Đồng Bộ Biểu Đồ & Thống Kê 7 Ngày Khi Xem Hồ Sơ Người Dùng Khác (7-Day Stats Cloud Sync)]:
