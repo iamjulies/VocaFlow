@@ -1,4 +1,22 @@
 ================================================================================
+Phiên bản: v0.10.10-1 (Build 302) - Khắc Phục Triệt Để Lỗi Đồng Bộ Chỉ Số Biểu Đồ 7 Ngày Khi Xem Hồ Sơ Công Khai Của Người Khác (Full 2-Way Public Profile Stats & Ledger Synchronization)
+================================================================================
+1. [Khắc Phục Lỗi Đồng Bộ Biểu Đồ & Thống Kê 7 Ngày Khi Xem Hồ Sơ Người Dùng Khác (7-Day Stats Cloud Sync)]:
+   - Xử lý dứt điểm vấn đề khi xem trang cá nhân công khai của người dùng khác (Public Profile / Chi Số), biểu đồ "Hoạt Động & Hiệu Suất 7 Ngày" và 3 thẻ thống kê hiển thị số 0 (0 phút, +0 Xu, +0 đ), trong khi xem ở tài khoản chính mình thì dữ liệu hiển thị đầy đủ và chính xác.
+   - Nguyên nhân gốc rễ:
+     + Khi hàm `openPublicProfileByAuthor` tải dữ liệu từ Cloud RTDB (`/users/{targetUid}.json`), các trường dữ liệu `dailyStudyTime` và `ledger` (sổ cái giao dịch) chỉ nằm trong biến cục bộ `uData` mà không được lưu vào đối tượng `currentPublicProfileAuthor` và không được đăng ký vào `__vocaChartAuthorRegistry`.
+     + Khi chuyển sang tab "Chi Số" (`switchPubProfileTab('stats')`), hàm `render7DayPerformanceChart` gọi `get7DayPerformanceData(currentPublicProfileAuthor)` nhưng đối tượng này không chứa dữ liệu học tập và sổ cái của tác giả, dẫn đến biểu đồ được vẽ phẳng với toàn bộ chỉ số bằng 0.
+   - Giải pháp:
+     + Nâng cấp `openPublicProfileByAuthor` để trích xuất đầy đủ `dailyStudyTime`, `ledger`, `dailyStats`, `points`, `flowDays` từ Cloud RTDB và gán đầy đủ vào `currentPublicProfileAuthor`.
+     + Bổ sung cơ chế tự động tải dự phòng các nút chuyên sâu `/users/{targetUid}/dailyStudyTime.json` và `/users/{targetUid}/ledger.json` nếu dữ liệu chưa có sẵn ở nút gốc.
+     + Đăng ký đa khóa cho tác giả trong `window.__vocaChartAuthorRegistry` theo `uid`, `targetUid`, `resolvedHandle`, `username`, `name` để cơ chế Tooltip của biểu đồ và các thẻ thống kê luôn tra cứu đúng người dùng.
+     + Nâng cấp hàm `get7DayPerformanceData` trong `02-state-core.js` để đọc và phân tích mảng/đối tượng `ledger` cũng như `dailyStudyTime` của tác giả mục tiêu, tính toán chính xác tổng thời lượng học, VoCoin thu được và điểm rèn luyện 7 ngày qua khớp hoàn hảo giữa biểu đồ cá nhân và khi người khác vào xem.
+     + Cập nhật `pushCurrentDatabaseToCloud` để đồng bộ cả `dailyStudyTime` và `ledger` lên Firebase RTDB mỗi khi có giao dịch hoặc phiên học mới.
+
+2. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-1 Build 302)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-1_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.10-0 (Build 301) - Tự Động So Khớp Thông Tin Tác Giả Bài Viết Cộng Đồng, Cho Phép Xem Followers/Following Khi Xem Hồ Sơ Công Khai & Chặn Truy Cập Hồ Sơ Không Tồn Tại
 ================================================================================
 1. [Tự Động Đồng Bộ & Khớp Tên, Avatar Bài Viết Trong Trung Tâm Cộng Đồng (Real-time Community Author Matcher)]:

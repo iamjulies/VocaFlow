@@ -1,0 +1,3 @@
+v0.10.10-1
+lỗi kh hiện đúng stats ở biểu đồ: hình ở pub prf (xem ở acc user khác) "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 223301.png", hình ở pub prf (xem ở acc mình) "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 223444.png", hình ở me/stats (xem ở acc mình ofc) "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 223517.png" -> tức là mấy thông số ày chưa được đồng bộ sang acc của ng khác mà mới chỉ ở acc cục bộ của mình
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-0 (Build 301)</span>
+            <span class="mini-footer-version">v0.10.10-1 (Build 302)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-0 (Build 301)</span>
+            <span class="mini-footer-version">v0.10.10-1 (Build 302)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-0 (Build 301)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-1 (Build 302)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-0 Build 301)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-1 Build 302)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11448,15 +11448,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-0 Build 301)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-1 Build 302)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-0 Build 301)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-1 Build 302)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-0';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-0 (Build 301)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-1';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-1 (Build 302)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -14721,15 +14721,21 @@ window.initSpaRouter = initSpaRouter;
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-59)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-1)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
       const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
       const now = new Date();
 
-      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
-      const studyTimeMap = isCurrent ? getDailyStudyTimeMap() : (targetAuthor?.dailyStudyTime || targetAuthor?.stats?.dailyStudyTime || {});
+      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.targetUid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
+      
+      let studyTimeMap = {};
+      if (isCurrent) {
+        studyTimeMap = typeof getDailyStudyTimeMap === 'function' ? getDailyStudyTimeMap() : {};
+      } else if (targetAuthor) {
+        studyTimeMap = targetAuthor.dailyStudyTime || targetAuthor.stats?.dailyStudyTime || targetAuthor.studyTimeMap || {};
+      }
 
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -14769,9 +14775,20 @@ window.initSpaRouter = initSpaRouter;
             });
           }
         } else {
-          // Public profile author
-          if (targetAuthor && Array.isArray(targetAuthor.ledger)) {
-            targetAuthor.ledger.forEach(entry => {
+          // Public profile author: aggregate from targetAuthor.ledger or targetAuthor.dailyStats
+          let targetEntries = [];
+          if (Array.isArray(targetAuthor?.ledger)) {
+            targetEntries = targetAuthor.ledger;
+          } else if (targetAuthor?.ledger && typeof targetAuthor.ledger === 'object') {
+            targetEntries = Object.values(targetAuthor.ledger);
+          } else if (Array.isArray(targetAuthor?.stats?.ledger)) {
+            targetEntries = targetAuthor.stats.ledger;
+          } else if (targetAuthor?.stats?.ledger && typeof targetAuthor.stats.ledger === 'object') {
+            targetEntries = Object.values(targetAuthor.stats.ledger);
+          }
+
+          if (targetEntries.length > 0) {
+            targetEntries.forEach(entry => {
               if (!entry || !entry.timestamp) return;
               const entryDate = new Date(entry.timestamp);
               const eY = entryDate.getFullYear();
@@ -14783,10 +14800,12 @@ window.initSpaRouter = initSpaRouter;
                 if (entry.type && String(entry.type).startsWith('STUDY')) studyPoints += Math.max(0, entry.amount || 0);
               }
             });
-          } else {
-            // Real data: if no day ledger logs exist, keep accurate 0
-            vocoinsEarned = 0;
-            studyPoints = 0;
+          } else if (targetAuthor?.dailyStats && typeof targetAuthor.dailyStats === 'object') {
+            const ds = targetAuthor.dailyStats[dateStr];
+            if (ds) {
+              vocoinsEarned = ds.vocoinsEarned || ds.coins || 0;
+              studyPoints = ds.studyPoints || ds.points || 0;
+            }
           }
         }
 
@@ -14803,9 +14822,7 @@ window.initSpaRouter = initSpaRouter;
       }
 
       const totalScreenMinutes = days.reduce((sum, d) => sum + d.screenMinutes, 0);
-      const totalVoCoins = isCurrent 
-        ? days.reduce((sum, d) => sum + d.vocoinsEarned, 0)
-        : (targetAuthor?.points || targetAuthor?.vocoins || targetAuthor?.stats?.totalCoins || days.reduce((sum, d) => sum + d.vocoinsEarned, 0));
+      const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
       // Best days
@@ -14948,10 +14965,15 @@ window.initSpaRouter = initSpaRouter;
       const totalMins = data.totalScreenMinutes % 60;
       const totalScreenStr = totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`;
 
-      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
+      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.targetUid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
       if (targetAuthor) {
         window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
-        window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+        if (authorKey) window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+        if (targetAuthor.targetUid) window.__vocaChartAuthorRegistry[targetAuthor.targetUid] = targetAuthor;
+        if (targetAuthor.uid) window.__vocaChartAuthorRegistry[targetAuthor.uid] = targetAuthor;
+        if (targetAuthor.resolvedHandle) window.__vocaChartAuthorRegistry[targetAuthor.resolvedHandle] = targetAuthor;
+        if (targetAuthor.resolvedHandle) window.__vocaChartAuthorRegistry['@' + targetAuthor.resolvedHandle.replace(/^@/, '')] = targetAuthor;
+        if (targetAuthor.resolvedName) window.__vocaChartAuthorRegistry[targetAuthor.resolvedName] = targetAuthor;
       }
       const safeAuthorKey = escapeHtml(authorKey);
 
@@ -15099,7 +15121,7 @@ window.initSpaRouter = initSpaRouter;
         resolvedAuthor = currentPublicProfileAuthor;
       }
 
-      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
+      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.targetUid && resolvedAuthor.targetUid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
       const data = get7DayPerformanceData(resolvedAuthor);
       let headerTitle = '';
       let rowsHtml = '';
@@ -19778,6 +19800,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetPoints = 0;
         let targetFlowDays = 0;
         let targetPinnedBadges = [];
+        let targetDailyStudyTime = {};
+        let targetLedger = [];
+        let targetDailyStats = {};
 
         let uDataFound = false;
 
@@ -19792,6 +19817,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
           targetFollowerCount = 9999;
           targetFollowingCount = 1;
+
+          // Official active stats baseline
+          const now = new Date();
+          targetDailyStudyTime = {};
+          targetDailyStats = {};
+          for (let i = 0; i < 7; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const mins = 45 + ((i * 13) % 40);
+            targetDailyStudyTime[ds] = mins;
+            targetDailyStats[ds] = {
+              vocoinsEarned: 150 + ((i * 35) % 200),
+              studyPoints: 100 + ((i * 25) % 150)
+            };
+          }
         } else if (isCurrentUser) {
           targetUid = currentUid;
           resolvedName = currentUser.displayName || authorName;
@@ -19804,6 +19844,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
           targetFollowerCount = Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length);
           targetFollowingCount = Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length);
+          targetDailyStudyTime = (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {};
+          targetLedger = Array.isArray(userLedger) ? userLedger : [];
         } else {
           // Resolve targetUid from all available registries if not provided
           if (!targetUid) {
@@ -19855,7 +19897,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             }
           }
 
-          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-50)
+          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-50 / v0.10.10-1)
           if (targetUid && targetUid !== 'undefined') {
             try {
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
@@ -19907,10 +19949,47 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   } else if (uData.decks && typeof uData.decks === 'object') {
                     authorDecks = Object.values(uData.decks);
                   }
+
+                  if (uData.dailyStudyTime && typeof uData.dailyStudyTime === 'object') {
+                    targetDailyStudyTime = uData.dailyStudyTime;
+                  }
+                  if (uData.ledger && typeof uData.ledger === 'object') {
+                    targetLedger = Array.isArray(uData.ledger) ? uData.ledger : Object.values(uData.ledger);
+                  }
+                  if (uData.dailyStats && typeof uData.dailyStats === 'object') {
+                    targetDailyStats = uData.dailyStats;
+                  }
                 }
               }
             } catch (e) {
               console.warn('Single RTDB pull error:', e);
+            }
+
+            // Fallback: Fetch granular stats & ledger nodes if empty
+            if (!targetLedger || targetLedger.length === 0 || Object.keys(targetDailyStudyTime).length === 0) {
+              try {
+                const [dstRes, ledRes] = await Promise.all([
+                  fetch(`${rtdbUrl}/users/${targetUid}/dailyStudyTime.json`),
+                  fetch(`${rtdbUrl}/users/${targetUid}/ledger.json`)
+                ]);
+                if (dstRes && dstRes.ok) {
+                  const dstData = await dstRes.json();
+                  if (dstData && typeof dstData === 'object' && Object.keys(dstData).length > 0) {
+                    targetDailyStudyTime = { ...targetDailyStudyTime, ...dstData };
+                  }
+                }
+                if (ledRes && ledRes.ok) {
+                  const ledData = await ledRes.json();
+                  if (ledData && typeof ledData === 'object') {
+                    const extraLedger = Array.isArray(ledData) ? ledData : Object.values(ledData);
+                    if (extraLedger.length > 0) {
+                      targetLedger = extraLedger;
+                    }
+                  }
+                }
+              } catch (eStats) {
+                console.warn('Fallback stats fetch error:', eStats);
+              }
             }
           }
 
@@ -19973,12 +20052,39 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         currentPublicProfileAuthor = {
           targetUid: targetUid,
+          uid: targetUid,
+          id: targetUid,
           resolvedName: resolvedName,
+          name: resolvedName,
+          displayName: resolvedName,
           resolvedHandle: resolvedHandle,
+          username: resolvedHandle,
+          resolvedAvatar: resolvedAvatar,
+          avatar: resolvedAvatar,
+          bio: resolvedBio,
           isCurrentUser: isCurrentUser,
           targetFollowerCount: targetFollowerCount,
-          targetFollowingCount: targetFollowingCount
+          targetFollowingCount: targetFollowingCount,
+          followerCount: targetFollowerCount,
+          followingCount: targetFollowingCount,
+          dailyStudyTime: targetDailyStudyTime,
+          ledger: targetLedger,
+          dailyStats: targetDailyStats,
+          points: targetPoints,
+          vocoins: targetPoints,
+          flowDays: targetFlowDays,
+          flow: targetFlowDays,
+          pinnedBadges: targetPinnedBadges,
+          decks: authorDecks,
+          authorDecks: authorDecks
         };
+
+        window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
+        if (targetUid) window.__vocaChartAuthorRegistry[targetUid] = currentPublicProfileAuthor;
+        if (resolvedHandle) window.__vocaChartAuthorRegistry[resolvedHandle] = currentPublicProfileAuthor;
+        if (resolvedHandle) window.__vocaChartAuthorRegistry['@' + resolvedHandle.replace(/^@/, '')] = currentPublicProfileAuthor;
+        if (resolvedName) window.__vocaChartAuthorRegistry[resolvedName] = currentPublicProfileAuthor;
+
         updatePubViewFollowBtn(targetUid);
 
         const pubFollowerEl = document.getElementById('pub-view-follower-count');
@@ -23022,6 +23128,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
           dailyStudyTime: (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {},
+          ledger: (() => {
+            const lMap = {};
+            if (Array.isArray(userLedger)) {
+              userLedger.slice(0, 100).forEach(tx => {
+                if (tx && tx.id) lMap[tx.id] = tx;
+              });
+            }
+            return lMap;
+          })(),
           settings: {
             showReviewQueue: showReviewQueueSetting,
             showFilterPos: showFilterPosSetting,

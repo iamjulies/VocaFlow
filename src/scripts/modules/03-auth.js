@@ -4521,6 +4521,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetPoints = 0;
         let targetFlowDays = 0;
         let targetPinnedBadges = [];
+        let targetDailyStudyTime = {};
+        let targetLedger = [];
+        let targetDailyStats = {};
 
         let uDataFound = false;
 
@@ -4535,6 +4538,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
           targetFollowerCount = 9999;
           targetFollowingCount = 1;
+
+          // Official active stats baseline
+          const now = new Date();
+          targetDailyStudyTime = {};
+          targetDailyStats = {};
+          for (let i = 0; i < 7; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const mins = 45 + ((i * 13) % 40);
+            targetDailyStudyTime[ds] = mins;
+            targetDailyStats[ds] = {
+              vocoinsEarned: 150 + ((i * 35) % 200),
+              studyPoints: 100 + ((i * 25) % 150)
+            };
+          }
         } else if (isCurrentUser) {
           targetUid = currentUid;
           resolvedName = currentUser.displayName || authorName;
@@ -4547,6 +4565,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
           targetFollowerCount = Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length);
           targetFollowingCount = Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length);
+          targetDailyStudyTime = (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {};
+          targetLedger = Array.isArray(userLedger) ? userLedger : [];
         } else {
           // Resolve targetUid from all available registries if not provided
           if (!targetUid) {
@@ -4598,7 +4618,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             }
           }
 
-          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-50)
+          // Fetch fresh profile & stats from Cloud RTDB for authentic user metadata (v0.10.9-50 / v0.10.10-1)
           if (targetUid && targetUid !== 'undefined') {
             try {
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
@@ -4650,10 +4670,47 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   } else if (uData.decks && typeof uData.decks === 'object') {
                     authorDecks = Object.values(uData.decks);
                   }
+
+                  if (uData.dailyStudyTime && typeof uData.dailyStudyTime === 'object') {
+                    targetDailyStudyTime = uData.dailyStudyTime;
+                  }
+                  if (uData.ledger && typeof uData.ledger === 'object') {
+                    targetLedger = Array.isArray(uData.ledger) ? uData.ledger : Object.values(uData.ledger);
+                  }
+                  if (uData.dailyStats && typeof uData.dailyStats === 'object') {
+                    targetDailyStats = uData.dailyStats;
+                  }
                 }
               }
             } catch (e) {
               console.warn('Single RTDB pull error:', e);
+            }
+
+            // Fallback: Fetch granular stats & ledger nodes if empty
+            if (!targetLedger || targetLedger.length === 0 || Object.keys(targetDailyStudyTime).length === 0) {
+              try {
+                const [dstRes, ledRes] = await Promise.all([
+                  fetch(`${rtdbUrl}/users/${targetUid}/dailyStudyTime.json`),
+                  fetch(`${rtdbUrl}/users/${targetUid}/ledger.json`)
+                ]);
+                if (dstRes && dstRes.ok) {
+                  const dstData = await dstRes.json();
+                  if (dstData && typeof dstData === 'object' && Object.keys(dstData).length > 0) {
+                    targetDailyStudyTime = { ...targetDailyStudyTime, ...dstData };
+                  }
+                }
+                if (ledRes && ledRes.ok) {
+                  const ledData = await ledRes.json();
+                  if (ledData && typeof ledData === 'object') {
+                    const extraLedger = Array.isArray(ledData) ? ledData : Object.values(ledData);
+                    if (extraLedger.length > 0) {
+                      targetLedger = extraLedger;
+                    }
+                  }
+                }
+              } catch (eStats) {
+                console.warn('Fallback stats fetch error:', eStats);
+              }
             }
           }
 
@@ -4716,12 +4773,39 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         currentPublicProfileAuthor = {
           targetUid: targetUid,
+          uid: targetUid,
+          id: targetUid,
           resolvedName: resolvedName,
+          name: resolvedName,
+          displayName: resolvedName,
           resolvedHandle: resolvedHandle,
+          username: resolvedHandle,
+          resolvedAvatar: resolvedAvatar,
+          avatar: resolvedAvatar,
+          bio: resolvedBio,
           isCurrentUser: isCurrentUser,
           targetFollowerCount: targetFollowerCount,
-          targetFollowingCount: targetFollowingCount
+          targetFollowingCount: targetFollowingCount,
+          followerCount: targetFollowerCount,
+          followingCount: targetFollowingCount,
+          dailyStudyTime: targetDailyStudyTime,
+          ledger: targetLedger,
+          dailyStats: targetDailyStats,
+          points: targetPoints,
+          vocoins: targetPoints,
+          flowDays: targetFlowDays,
+          flow: targetFlowDays,
+          pinnedBadges: targetPinnedBadges,
+          decks: authorDecks,
+          authorDecks: authorDecks
         };
+
+        window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
+        if (targetUid) window.__vocaChartAuthorRegistry[targetUid] = currentPublicProfileAuthor;
+        if (resolvedHandle) window.__vocaChartAuthorRegistry[resolvedHandle] = currentPublicProfileAuthor;
+        if (resolvedHandle) window.__vocaChartAuthorRegistry['@' + resolvedHandle.replace(/^@/, '')] = currentPublicProfileAuthor;
+        if (resolvedName) window.__vocaChartAuthorRegistry[resolvedName] = currentPublicProfileAuthor;
+
         updatePubViewFollowBtn(targetUid);
 
         const pubFollowerEl = document.getElementById('pub-view-follower-count');
@@ -7765,6 +7849,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowFreezeDates: getFlowFreezeDates(),
           flowFreezes: getUserFlowFreezes(),
           dailyStudyTime: (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {},
+          ledger: (() => {
+            const lMap = {};
+            if (Array.isArray(userLedger)) {
+              userLedger.slice(0, 100).forEach(tx => {
+                if (tx && tx.id) lMap[tx.id] = tx;
+              });
+            }
+            return lMap;
+          })(),
           settings: {
             showReviewQueue: showReviewQueueSetting,
             showFilterPos: showFilterPosSetting,

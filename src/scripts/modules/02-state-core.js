@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-0 Build 301)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-1 Build 302)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-0 Build 301)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-1 Build 302)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-0';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-0 (Build 301)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-1';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-1 (Build 302)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -3271,15 +3271,21 @@
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.9-59)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-1)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
       const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
       const now = new Date();
 
-      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
-      const studyTimeMap = isCurrent ? getDailyStudyTimeMap() : (targetAuthor?.dailyStudyTime || targetAuthor?.stats?.dailyStudyTime || {});
+      const isCurrent = (!targetAuthor || (targetAuthor && (targetAuthor.isCurrentUser || (currentUser && (targetAuthor.uid === currentUser.uid || targetAuthor.targetUid === currentUser.uid || targetAuthor.id === currentUser.uid)))));
+      
+      let studyTimeMap = {};
+      if (isCurrent) {
+        studyTimeMap = typeof getDailyStudyTimeMap === 'function' ? getDailyStudyTimeMap() : {};
+      } else if (targetAuthor) {
+        studyTimeMap = targetAuthor.dailyStudyTime || targetAuthor.stats?.dailyStudyTime || targetAuthor.studyTimeMap || {};
+      }
 
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -3319,9 +3325,20 @@
             });
           }
         } else {
-          // Public profile author
-          if (targetAuthor && Array.isArray(targetAuthor.ledger)) {
-            targetAuthor.ledger.forEach(entry => {
+          // Public profile author: aggregate from targetAuthor.ledger or targetAuthor.dailyStats
+          let targetEntries = [];
+          if (Array.isArray(targetAuthor?.ledger)) {
+            targetEntries = targetAuthor.ledger;
+          } else if (targetAuthor?.ledger && typeof targetAuthor.ledger === 'object') {
+            targetEntries = Object.values(targetAuthor.ledger);
+          } else if (Array.isArray(targetAuthor?.stats?.ledger)) {
+            targetEntries = targetAuthor.stats.ledger;
+          } else if (targetAuthor?.stats?.ledger && typeof targetAuthor.stats.ledger === 'object') {
+            targetEntries = Object.values(targetAuthor.stats.ledger);
+          }
+
+          if (targetEntries.length > 0) {
+            targetEntries.forEach(entry => {
               if (!entry || !entry.timestamp) return;
               const entryDate = new Date(entry.timestamp);
               const eY = entryDate.getFullYear();
@@ -3333,10 +3350,12 @@
                 if (entry.type && String(entry.type).startsWith('STUDY')) studyPoints += Math.max(0, entry.amount || 0);
               }
             });
-          } else {
-            // Real data: if no day ledger logs exist, keep accurate 0
-            vocoinsEarned = 0;
-            studyPoints = 0;
+          } else if (targetAuthor?.dailyStats && typeof targetAuthor.dailyStats === 'object') {
+            const ds = targetAuthor.dailyStats[dateStr];
+            if (ds) {
+              vocoinsEarned = ds.vocoinsEarned || ds.coins || 0;
+              studyPoints = ds.studyPoints || ds.points || 0;
+            }
           }
         }
 
@@ -3353,9 +3372,7 @@
       }
 
       const totalScreenMinutes = days.reduce((sum, d) => sum + d.screenMinutes, 0);
-      const totalVoCoins = isCurrent 
-        ? days.reduce((sum, d) => sum + d.vocoinsEarned, 0)
-        : (targetAuthor?.points || targetAuthor?.vocoins || targetAuthor?.stats?.totalCoins || days.reduce((sum, d) => sum + d.vocoinsEarned, 0));
+      const totalVoCoins = days.reduce((sum, d) => sum + d.vocoinsEarned, 0);
       const totalStudyPoints = days.reduce((sum, d) => sum + d.studyPoints, 0);
 
       // Best days
@@ -3498,10 +3515,15 @@
       const totalMins = data.totalScreenMinutes % 60;
       const totalScreenStr = totalHours > 0 ? `${totalHours}h ${totalMins}p` : `${totalMins} phút`;
 
-      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
+      const authorKey = targetAuthor ? (targetAuthor.uid || targetAuthor.targetUid || targetAuthor.id || targetAuthor.username || targetAuthor.resolvedHandle || 'target_author') : '';
       if (targetAuthor) {
         window.__vocaChartAuthorRegistry = window.__vocaChartAuthorRegistry || {};
-        window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+        if (authorKey) window.__vocaChartAuthorRegistry[authorKey] = targetAuthor;
+        if (targetAuthor.targetUid) window.__vocaChartAuthorRegistry[targetAuthor.targetUid] = targetAuthor;
+        if (targetAuthor.uid) window.__vocaChartAuthorRegistry[targetAuthor.uid] = targetAuthor;
+        if (targetAuthor.resolvedHandle) window.__vocaChartAuthorRegistry[targetAuthor.resolvedHandle] = targetAuthor;
+        if (targetAuthor.resolvedHandle) window.__vocaChartAuthorRegistry['@' + targetAuthor.resolvedHandle.replace(/^@/, '')] = targetAuthor;
+        if (targetAuthor.resolvedName) window.__vocaChartAuthorRegistry[targetAuthor.resolvedName] = targetAuthor;
       }
       const safeAuthorKey = escapeHtml(authorKey);
 
@@ -3649,7 +3671,7 @@
         resolvedAuthor = currentPublicProfileAuthor;
       }
 
-      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
+      const isOtherUser = !!(resolvedAuthor && (!currentUser || (resolvedAuthor.uid && resolvedAuthor.uid !== currentUser.uid) || (resolvedAuthor.targetUid && resolvedAuthor.targetUid !== currentUser.uid) || (resolvedAuthor.id && resolvedAuthor.id !== currentUser.uid)));
       const data = get7DayPerformanceData(resolvedAuthor);
       let headerTitle = '';
       let rowsHtml = '';
