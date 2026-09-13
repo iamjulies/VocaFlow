@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-63 (Build 295)</span>
+            <span class="mini-footer-version">v0.10.9-64 (Build 296)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-63 (Build 295)</span>
+            <span class="mini-footer-version">v0.10.9-64 (Build 296)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-63 (Build 295)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-64 (Build 296)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-63 Build 295)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-64 Build 296)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11438,18 +11438,18 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-63 Build 295)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-64 Build 296)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-63 Build 295)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-64 Build 296)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-63';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-63 (Build 295)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-64';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-64 (Build 296)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-63)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-64)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
     const GEMINI_MODELS_DEEP = [
@@ -17781,18 +17781,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
 
     // =========================================================================
-    // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d)
+    // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d / v0.10.9-64 Anti-Resurrect)
     // =========================================================================
     let myFollowingMap = {};
     let myFollowersMap = {};
     let currentPublicProfileAuthor = null;
+    let unfollowedUserUids = new Set();
 
     try {
       const savedFollowing = localStorage.getItem('vocaflow_following_map');
       if (savedFollowing) myFollowingMap = JSON.parse(savedFollowing) || {};
       const savedFollowers = localStorage.getItem('vocaflow_followers_map');
       if (savedFollowers) myFollowersMap = JSON.parse(savedFollowers) || {};
+      const savedUnfollowed = localStorage.getItem('vocaflow_unfollowed_uids');
+      if (savedUnfollowed) unfollowedUserUids = new Set(JSON.parse(savedUnfollowed) || []);
     } catch (e) {}
+
+    window.unfollowedUserUids = unfollowedUserUids;
+    window.myFollowingMap = myFollowingMap;
+    window.myFollowersMap = myFollowersMap;
 
     async function syncFollowStateWithCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
@@ -17800,39 +17807,43 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        // Fetch Following Map (Cloud Source of Truth + Bidirectional Union Merge)
+        // Fetch Following Map (Cloud Source of Truth + Tombstone Filtering)
         const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
         if (followingRes.ok) {
           const data = await followingRes.json();
           if (data && typeof data === 'object') {
-            myFollowingMap = { ...myFollowingMap, ...data };
+            const incoming = { ...data };
+            unfollowedUserUids.forEach(uid => {
+              delete incoming[uid];
+              delete myFollowingMap[uid];
+            });
+            myFollowingMap = { ...myFollowingMap, ...incoming };
             if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+            unfollowedUserUids.forEach(uid => {
+              delete myFollowingMap[uid];
+            });
             localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
           }
         }
 
-        // Fetch Followers Map (Cloud Source of Truth + Bidirectional Union Merge)
+        // Fetch Followers Map (Cloud Authoritative Source of Truth)
         const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
         if (followersRes.ok) {
           const fData = await followersRes.json();
           if (fData && typeof fData === 'object') {
-            myFollowersMap = { ...myFollowersMap, ...fData };
+            myFollowersMap = { ...fData };
             if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
             localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
           }
         }
 
-        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, currentUser.followingCount || 0);
-        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, currentUser.followerCount || 0);
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
 
         // Push bidirectional sync to cloud to guarantee data retention
         const followPatch = {};
-        if (Object.keys(myFollowingMap).length > 0) {
-          followPatch[`users/${currentUser.uid}/following`] = myFollowingMap;
-        }
-        if (Object.keys(myFollowersMap).length > 0) {
-          followPatch[`users/${currentUser.uid}/followers`] = myFollowersMap;
-        }
+        followPatch[`users/${currentUser.uid}/following`] = myFollowingMap;
+        followPatch[`users/${currentUser.uid}/followers`] = myFollowersMap;
         followPatch[`users/${currentUser.uid}/profile/followingCount`] = currentUser.followingCount;
         followPatch[`users/${currentUser.uid}/profile/followerCount`] = currentUser.followerCount;
 
@@ -17863,6 +17874,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (isCurrentlyFollowing) {
         // Unfollow
         delete myFollowingMap[targetUid];
+        unfollowedUserUids.add(targetUid);
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
         currentUser.followingCount = Object.keys(myFollowingMap).length;
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
@@ -17895,6 +17908,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
       } else {
         // Follow
+        unfollowedUserUids.delete(targetUid);
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
         myFollowingMap[targetUid] = true;
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
         currentUser.followingCount = Object.keys(myFollowingMap).length;
@@ -22874,6 +22889,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           decks: decks,
           words: words,
           mistakeNotebook: getMistakeWordsList(),
+          deletedMistakeWordKeys: Array.from(typeof deletedMistakeWordKeys !== 'undefined' ? deletedMistakeWordKeys : (new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]')))),
+          unfollowedUserUids: Array.from(unfollowedUserUids),
           deletedWordIds: Array.from(deletedWordIds),
           deletedDeckIds: Array.from(deletedDeckIds),
           aiChatHistory: sanitizeAiChatHistoryForCloud(aiChatHistory),
@@ -23648,27 +23665,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
       }
 
-      // 9. Following & Followers
+      // 9. Following & Followers (v0.10.9-64: Anti-Resurrect Unfollow Sync)
+      if (cloudData.unfollowedUserUids && Array.isArray(cloudData.unfollowedUserUids)) {
+        cloudData.unfollowedUserUids.forEach(uid => { if (uid) unfollowedUserUids.add(uid); });
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
+      }
+
       if (cloudData.following && typeof cloudData.following === 'object') {
-        myFollowingMap = { ...myFollowingMap, ...cloudData.following };
+        const incomingFollowing = { ...cloudData.following };
+        unfollowedUserUids.forEach(uid => {
+          delete incomingFollowing[uid];
+          delete myFollowingMap[uid];
+        });
+        myFollowingMap = { ...myFollowingMap, ...incomingFollowing };
         if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+        unfollowedUserUids.forEach(uid => {
+          delete myFollowingMap[uid];
+        });
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
       }
       if (cloudData.followers && typeof cloudData.followers === 'object') {
-        myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
+        myFollowersMap = { ...cloudData.followers };
         if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
         localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
       }
       if (currentUser) {
-        const cloudFollowerCount = (cloudData.profile && typeof cloudData.profile.followerCount === 'number')
-          ? cloudData.profile.followerCount
-          : (typeof cloudData.followerCount === 'number' ? cloudData.followerCount : 0);
-        const cloudFollowingCount = (cloudData.profile && typeof cloudData.profile.followingCount === 'number')
-          ? cloudData.profile.followingCount
-          : (typeof cloudData.followingCount === 'number' ? cloudData.followingCount : 0);
-
-        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
-        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         updateAuthUI();
       }
@@ -23844,7 +23867,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       updateNotificationsUI();
       renderNotificationsList();
 
-      // 15. Mistake Notebook Two-Way Sync (v0.10.9-63: Anti-Revert & Accurate Decrement Sync)
+      // 15. Mistake Notebook Two-Way Sync (v0.10.9-64: Anti-Zombie Tombstone Filtering)
+      if (cloudData.deletedMistakeWordKeys && Array.isArray(cloudData.deletedMistakeWordKeys)) {
+        cloudData.deletedMistakeWordKeys.forEach(k => {
+          if (k) {
+            const cleanKey = String(k).trim().toLowerCase();
+            if (typeof deletedMistakeWordKeys !== 'undefined') deletedMistakeWordKeys.add(cleanKey);
+          }
+        });
+        if (typeof deletedMistakeWordKeys !== 'undefined') {
+          localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
+        }
+      }
+
       if (cloudData.mistakeNotebook !== undefined) {
         try {
           const remoteMistakes = Array.isArray(cloudData.mistakeNotebook)
@@ -23852,37 +23887,56 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             : (cloudData.mistakeNotebook && typeof cloudData.mistakeNotebook === 'object' ? Object.values(cloudData.mistakeNotebook) : []);
           const hasLocalMistakeStorage = localStorage.getItem('vocaflow_mistake_notebook_v1') !== null;
           const localMistakes = getMistakeWordsList();
+          const tombstoneSet = typeof deletedMistakeWordKeys !== 'undefined'
+            ? deletedMistakeWordKeys
+            : new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]'));
 
           if (!hasLocalMistakeStorage) {
-            // Fresh login on new machine: adopt remote mistake notebook directly
-            saveMistakeWordsList(remoteMistakes, false);
+            // Fresh login on new machine: adopt remote mistake notebook directly (filtered by tombstones)
+            const filteredRemote = remoteMistakes.filter(item => {
+              if (!item) return false;
+              const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+              const kTerm = String(item.term || '').trim().toLowerCase();
+              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm));
+            });
+            saveMistakeWordsList(filteredRemote, false);
           } else {
             // Existing local session: local is the authoritative working state for resolved/decremented words
             const mergedMap = new Map();
             localMistakes.forEach(item => {
               if (item && (item.wordId || item.term)) {
-                const key = String(item.wordId || item.term).toLowerCase();
-                mergedMap.set(key, { ...item });
+                const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+                const kTerm = String(item.term || '').trim().toLowerCase();
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                  const key = kId || kTerm;
+                  mergedMap.set(key, { ...item });
+                }
               }
             });
 
             remoteMistakes.forEach(item => {
               if (item && (item.wordId || item.term)) {
-                const key = String(item.wordId || item.term).toLowerCase();
-                if (mergedMap.has(key)) {
-                  const existing = mergedMap.get(key);
-                  // Only adopt remote mistakeCount if remote has a strictly newer failure timestamp
-                  const isRemoteNewer = (item.lastMistakeAt || 0) > (existing.lastMistakeAt || 0);
-                  const finalCount = isRemoteNewer ? (parseInt(item.mistakeCount, 10) || existing.mistakeCount) : existing.mistakeCount;
-                  const finalTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
-                  const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
-                  mergedMap.set(key, {
-                    ...existing,
-                    ...item,
-                    mistakeCount: finalCount,
-                    lastMistakeAt: finalTime,
-                    modesFailed: mergedModes
-                  });
+                const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+                const kTerm = String(item.term || '').trim().toLowerCase();
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                  const key = kId || kTerm;
+                  if (mergedMap.has(key)) {
+                    const existing = mergedMap.get(key);
+                    // Only adopt remote mistakeCount if remote has a strictly newer failure timestamp
+                    const isRemoteNewer = (item.lastMistakeAt || 0) > (existing.lastMistakeAt || 0);
+                    const finalCount = isRemoteNewer ? (parseInt(item.mistakeCount, 10) || existing.mistakeCount) : existing.mistakeCount;
+                    const finalTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
+                    const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
+                    mergedMap.set(key, {
+                      ...existing,
+                      ...item,
+                      mistakeCount: finalCount,
+                      lastMistakeAt: finalTime,
+                      modesFailed: mergedModes
+                    });
+                  } else {
+                    mergedMap.set(key, { ...item });
+                  }
                 }
               }
             });
@@ -28449,6 +28503,8 @@ Yêu cầu nghiêm ngặt:
     let currentMistakeSearchQuery = '';
     let currentMistakeDeckFilter = 'all';
     let currentMistakeModeFilter = 'all';
+    let deletedMistakeWordKeys = new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]'));
+    window.deletedMistakeWordKeys = deletedMistakeWordKeys;
 
     function getMistakeWordsList() {
       try {
@@ -28481,6 +28537,12 @@ Yêu cầu nghiêm ngặt:
         const list = getMistakeWordsList();
         const wordId = word.id || ('w_' + encodeURIComponent(word.term).replace(/%/g, '_'));
         const termClean = (word.term || '').trim();
+
+        // Clear deleted tombstone since word was failed anew
+        if (wordId) deletedMistakeWordKeys.delete(wordId.toLowerCase());
+        if (termClean) deletedMistakeWordKeys.delete(termClean.toLowerCase());
+        localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
+
         const existingIdx = list.findIndex(item => (item.wordId && item.wordId === wordId) || (item.term && item.term.toLowerCase() === termClean.toLowerCase()));
 
         const now = Date.now();
@@ -28559,7 +28621,13 @@ Yêu cầu nghiêm ngặt:
 
         if (idx >= 0) {
           const item = list[idx];
+          const keyId = String(item.wordId || item.id || '').trim().toLowerCase();
+          const keyTerm = String(item.term || '').trim().toLowerCase();
+
           if (forceRemove) {
+            if (keyId) deletedMistakeWordKeys.add(keyId);
+            if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+            localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
             list.splice(idx, 1);
             saveMistakeWordsList(list);
           } else {
@@ -28567,6 +28635,9 @@ Yêu cầu nghiêm ngặt:
             const currentCount = parseInt(item.mistakeCount, 10) || 1;
             const newCount = currentCount - 1;
             if (newCount <= 0) {
+              if (keyId) deletedMistakeWordKeys.add(keyId);
+              if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+              localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
               list.splice(idx, 1);
               saveMistakeWordsList(list);
               showToast(`🎉 Tuyệt vời! Đã hoàn toàn khắc phục lỗi sai từ: "${item.term}"!`);
@@ -28595,6 +28666,11 @@ Yêu cầu nghiêm ngặt:
         return;
       }
       if (confirm('🗑️ Bạn có chắc chắn muốn xóa toàn bộ ' + list.length + ' từ trong Sổ Tay Lỗi Sai không?')) {
+        list.forEach(item => {
+          if (item.wordId) deletedMistakeWordKeys.add(String(item.wordId).trim().toLowerCase());
+          if (item.term) deletedMistakeWordKeys.add(String(item.term).trim().toLowerCase());
+        });
+        localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
         saveMistakeWordsList([]);
         renderMistakeNotebookList();
         showToast('🗑️ Đã xóa sạch toàn bộ Sổ Tay Lỗi Sai!');
@@ -29857,11 +29933,11 @@ Yêu cầu nghiêm ngặt:
               showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
               addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            saveDatabase(true);
-            pushCurrentDatabaseToCloud();
           }
           quizPointsEarned = finalPts;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Quiz points settlement error:', errPoints);
       }
@@ -31325,10 +31401,11 @@ Yêu cầu nghiêm ngặt:
               showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
               addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            saveDatabase(true);
           }
           spellingPointsEarned = finalPts;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Spelling points settlement error:', errPoints);
       }
@@ -32388,12 +32465,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
             setUserPoints(newBalance);
             const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
             addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')', newBalance);
-            saveDatabase(true);
-            pushCurrentDatabaseToCloud();
             showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
           }
           speakingSessionPointsEarned = 0;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Speaking points settlement error:', errPoints);
       }
@@ -33936,9 +34013,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardStartTime = 0;
       }
 
-      if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
-        recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
+      if (autoFlashcardList && autoFlashcardList.length > 0) {
+        const reviewedCards = autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1));
+        if (typeof recordStudySessionWordReviews === 'function') {
+          recordStudySessionWordReviews(reviewedCards);
+        }
+        if (typeof removeWordFromMistakeList === 'function') {
+          reviewedCards.forEach(w => removeWordFromMistakeList(w, false));
+        }
       }
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
       try {
         if (studySourceContext === 'review-queue' || !currentDeckId) {
           showScreen('screen-decks');

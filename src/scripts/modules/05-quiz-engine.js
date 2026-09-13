@@ -690,6 +690,8 @@ Yêu cầu nghiêm ngặt:
     let currentMistakeSearchQuery = '';
     let currentMistakeDeckFilter = 'all';
     let currentMistakeModeFilter = 'all';
+    let deletedMistakeWordKeys = new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]'));
+    window.deletedMistakeWordKeys = deletedMistakeWordKeys;
 
     function getMistakeWordsList() {
       try {
@@ -722,6 +724,12 @@ Yêu cầu nghiêm ngặt:
         const list = getMistakeWordsList();
         const wordId = word.id || ('w_' + encodeURIComponent(word.term).replace(/%/g, '_'));
         const termClean = (word.term || '').trim();
+
+        // Clear deleted tombstone since word was failed anew
+        if (wordId) deletedMistakeWordKeys.delete(wordId.toLowerCase());
+        if (termClean) deletedMistakeWordKeys.delete(termClean.toLowerCase());
+        localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
+
         const existingIdx = list.findIndex(item => (item.wordId && item.wordId === wordId) || (item.term && item.term.toLowerCase() === termClean.toLowerCase()));
 
         const now = Date.now();
@@ -800,7 +808,13 @@ Yêu cầu nghiêm ngặt:
 
         if (idx >= 0) {
           const item = list[idx];
+          const keyId = String(item.wordId || item.id || '').trim().toLowerCase();
+          const keyTerm = String(item.term || '').trim().toLowerCase();
+
           if (forceRemove) {
+            if (keyId) deletedMistakeWordKeys.add(keyId);
+            if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+            localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
             list.splice(idx, 1);
             saveMistakeWordsList(list);
           } else {
@@ -808,6 +822,9 @@ Yêu cầu nghiêm ngặt:
             const currentCount = parseInt(item.mistakeCount, 10) || 1;
             const newCount = currentCount - 1;
             if (newCount <= 0) {
+              if (keyId) deletedMistakeWordKeys.add(keyId);
+              if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+              localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
               list.splice(idx, 1);
               saveMistakeWordsList(list);
               showToast(`🎉 Tuyệt vời! Đã hoàn toàn khắc phục lỗi sai từ: "${item.term}"!`);
@@ -836,6 +853,11 @@ Yêu cầu nghiêm ngặt:
         return;
       }
       if (confirm('🗑️ Bạn có chắc chắn muốn xóa toàn bộ ' + list.length + ' từ trong Sổ Tay Lỗi Sai không?')) {
+        list.forEach(item => {
+          if (item.wordId) deletedMistakeWordKeys.add(String(item.wordId).trim().toLowerCase());
+          if (item.term) deletedMistakeWordKeys.add(String(item.term).trim().toLowerCase());
+        });
+        localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
         saveMistakeWordsList([]);
         renderMistakeNotebookList();
         showToast('🗑️ Đã xóa sạch toàn bộ Sổ Tay Lỗi Sai!');
@@ -2098,11 +2120,11 @@ Yêu cầu nghiêm ngặt:
               showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
               addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            saveDatabase(true);
-            pushCurrentDatabaseToCloud();
           }
           quizPointsEarned = finalPts;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Quiz points settlement error:', errPoints);
       }

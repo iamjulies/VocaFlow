@@ -486,12 +486,12 @@
             setUserPoints(newBalance);
             const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
             addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')', newBalance);
-            saveDatabase(true);
-            pushCurrentDatabaseToCloud();
             showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
           }
           speakingSessionPointsEarned = 0;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Speaking points settlement error:', errPoints);
       }
@@ -2034,9 +2034,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardStartTime = 0;
       }
 
-      if (typeof recordStudySessionWordReviews === 'function' && autoFlashcardList && autoFlashcardList.length > 0) {
-        recordStudySessionWordReviews(autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1)));
+      if (autoFlashcardList && autoFlashcardList.length > 0) {
+        const reviewedCards = autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1));
+        if (typeof recordStudySessionWordReviews === 'function') {
+          recordStudySessionWordReviews(reviewedCards);
+        }
+        if (typeof removeWordFromMistakeList === 'function') {
+          reviewedCards.forEach(w => removeWordFromMistakeList(w, false));
+        }
       }
+      saveDatabase(true);
+      pushCurrentDatabaseToCloud();
       try {
         if (studySourceContext === 'review-queue' || !currentDeckId) {
           showScreen('screen-decks');

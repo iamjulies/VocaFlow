@@ -1,0 +1,5 @@
+v0.10.9-64
+1. đang học mà thoát ngang thì cũng tính là đã học -> giảm số lần làm sai -> nếu đạt 0 thì được xóa ra khỏi danh sách từ sai
+2. đồng bộ followers và following đang bị lỗi. ví dụ: t unfollow user A, sau khi đồng bộ thì user A lại quay về danh sách following của t. -> sửa
+3. khả năng đồng bộ các từ trong danh sách làm sai bị lỗi, t xóa (làm xong) mà nó kh đồng bộ 2 chiều cho t. nhớ thêm cái gì đó để nó kh bị zombie nha (tức là xóa hoặc làm xong rồi mà vẫn bị sync để quay trở về ấy)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

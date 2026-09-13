@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-64 (Build 296) - Tự Động Giảm & Xóa Lỗi Sai Khi Thoát Sớm Mọi Chế Độ Học, Đồng Bộ 2 Chiều Chống Hồi Sinh Đang Theo Dõi & Sổ Tay Lỗi Sai (Tombstone Architecture)
+================================================================================
+1. [Giảm Trừ & Xóa Bỏ Lỗi Sai Khi Thoát Sớm Mọi Chế Độ Học]:
+   - Bổ sung cơ chế tự động ghi nhận học từ vựng khi người dùng thoát ngang chừng (ở bất kỳ mode nào: Trắc nghiệm, Luyện viết, Luyện nói, Flashcard rảnh tay).
+   - Mọi từ vựng đã được học/ôn tập trong phiên thoát sớm đều được tính là đã học => giảm trừ 1 lần làm sai nếu nằm trong Sổ Tay Lỗi Sai; khi số lần sai <= 0 thì tự động loại bỏ khỏi sổ tay.
+   - Luôn tự động lưu trữ cục bộ và đồng bộ tức thì lên đám mây (Cloud) khi thoát.
+
+2. [Đồng Bộ 2 Chiều Chống Hồi Sinh Đang Theo Dõi & Người Theo Dõi (Anti-Resurrection Following/Followers Sync)]:
+   - Khắc phục triệt để lỗi khi người dùng hủy theo dõi tác giả A thì sau khi đồng bộ Cloud tác giả A bị hồi sinh trở lại danh sách đang theo dõi.
+   - Triển khai tập bia mộ unfollowedUserUids (lưu trữ tại vocaflow_unfollowed_uids và đồng bộ lên Cloud) để lọc sạch các creator đã hủy theo dõi khỏi mọi tiến trình merge Cloud.
+   - Với danh sách người theo dõi (followers), sử dụng Cloud làm nguồn chân lý duy nhất (authoritative source of truth).
+
+3. [Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai Kháng Zombie (Anti-Zombie Mistake Notebook 2-Way Sync)]:
+   - Triển khai tập bia mộ deletedMistakeWordKeys (lưu trữ tại vocaflow_deleted_mistakes và đồng bộ lên Cloud) ghi nhận cả wordId và term của các từ đã khắc phục xong hoặc xóa bỏ.
+   - Loại trừ hoàn toàn nguy cơ các từ lỗi sai đã hoàn thành bị tải về và hồi sinh trở lại qua các lần sync dữ liệu giữa các thiết bị.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-64 Build 296)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-64_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-63 (Build 295) - Khắc Phục Lỗi Giảm Trừ & Đồng Bộ Sổ Tay Lỗi Sai, Chặn Mở Sổ Tay Khi Học & Ra Mắt Trung Tâm Cộng Đồng (Community Center) Tách Biệt
 ================================================================================
 1. [Khắc Phục Lỗi Giảm Trừ & Xóa Bỏ Từ Trong Sổ Tay Lỗi Sai (Mistake Notebook Decrement & Sync Fix)]:

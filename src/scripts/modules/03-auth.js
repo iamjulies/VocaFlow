@@ -2534,18 +2534,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
 
     // =========================================================================
-    // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d)
+    // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d / v0.10.9-64 Anti-Resurrect)
     // =========================================================================
     let myFollowingMap = {};
     let myFollowersMap = {};
     let currentPublicProfileAuthor = null;
+    let unfollowedUserUids = new Set();
 
     try {
       const savedFollowing = localStorage.getItem('vocaflow_following_map');
       if (savedFollowing) myFollowingMap = JSON.parse(savedFollowing) || {};
       const savedFollowers = localStorage.getItem('vocaflow_followers_map');
       if (savedFollowers) myFollowersMap = JSON.parse(savedFollowers) || {};
+      const savedUnfollowed = localStorage.getItem('vocaflow_unfollowed_uids');
+      if (savedUnfollowed) unfollowedUserUids = new Set(JSON.parse(savedUnfollowed) || []);
     } catch (e) {}
+
+    window.unfollowedUserUids = unfollowedUserUids;
+    window.myFollowingMap = myFollowingMap;
+    window.myFollowersMap = myFollowersMap;
 
     async function syncFollowStateWithCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
@@ -2553,39 +2560,43 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
 
       try {
-        // Fetch Following Map (Cloud Source of Truth + Bidirectional Union Merge)
+        // Fetch Following Map (Cloud Source of Truth + Tombstone Filtering)
         const followingRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/following.json${authParam}`);
         if (followingRes.ok) {
           const data = await followingRes.json();
           if (data && typeof data === 'object') {
-            myFollowingMap = { ...myFollowingMap, ...data };
+            const incoming = { ...data };
+            unfollowedUserUids.forEach(uid => {
+              delete incoming[uid];
+              delete myFollowingMap[uid];
+            });
+            myFollowingMap = { ...myFollowingMap, ...incoming };
             if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+            unfollowedUserUids.forEach(uid => {
+              delete myFollowingMap[uid];
+            });
             localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
           }
         }
 
-        // Fetch Followers Map (Cloud Source of Truth + Bidirectional Union Merge)
+        // Fetch Followers Map (Cloud Authoritative Source of Truth)
         const followersRes = await fetch(`${rtdbUrl}/users/${currentUser.uid}/followers.json${authParam}`);
         if (followersRes.ok) {
           const fData = await followersRes.json();
           if (fData && typeof fData === 'object') {
-            myFollowersMap = { ...myFollowersMap, ...fData };
+            myFollowersMap = { ...fData };
             if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
             localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
           }
         }
 
-        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, currentUser.followingCount || 0);
-        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, currentUser.followerCount || 0);
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
 
         // Push bidirectional sync to cloud to guarantee data retention
         const followPatch = {};
-        if (Object.keys(myFollowingMap).length > 0) {
-          followPatch[`users/${currentUser.uid}/following`] = myFollowingMap;
-        }
-        if (Object.keys(myFollowersMap).length > 0) {
-          followPatch[`users/${currentUser.uid}/followers`] = myFollowersMap;
-        }
+        followPatch[`users/${currentUser.uid}/following`] = myFollowingMap;
+        followPatch[`users/${currentUser.uid}/followers`] = myFollowersMap;
         followPatch[`users/${currentUser.uid}/profile/followingCount`] = currentUser.followingCount;
         followPatch[`users/${currentUser.uid}/profile/followerCount`] = currentUser.followerCount;
 
@@ -2616,6 +2627,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (isCurrentlyFollowing) {
         // Unfollow
         delete myFollowingMap[targetUid];
+        unfollowedUserUids.add(targetUid);
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
         currentUser.followingCount = Object.keys(myFollowingMap).length;
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
@@ -2648,6 +2661,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
       } else {
         // Follow
+        unfollowedUserUids.delete(targetUid);
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
         myFollowingMap[targetUid] = true;
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
         currentUser.followingCount = Object.keys(myFollowingMap).length;
@@ -7627,6 +7642,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           decks: decks,
           words: words,
           mistakeNotebook: getMistakeWordsList(),
+          deletedMistakeWordKeys: Array.from(typeof deletedMistakeWordKeys !== 'undefined' ? deletedMistakeWordKeys : (new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]')))),
+          unfollowedUserUids: Array.from(unfollowedUserUids),
           deletedWordIds: Array.from(deletedWordIds),
           deletedDeckIds: Array.from(deletedDeckIds),
           aiChatHistory: sanitizeAiChatHistoryForCloud(aiChatHistory),
@@ -8401,27 +8418,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         localStorage.setItem(key, JSON.stringify(Array.from(localClaimed)));
       }
 
-      // 9. Following & Followers
+      // 9. Following & Followers (v0.10.9-64: Anti-Resurrect Unfollow Sync)
+      if (cloudData.unfollowedUserUids && Array.isArray(cloudData.unfollowedUserUids)) {
+        cloudData.unfollowedUserUids.forEach(uid => { if (uid) unfollowedUserUids.add(uid); });
+        localStorage.setItem('vocaflow_unfollowed_uids', JSON.stringify(Array.from(unfollowedUserUids)));
+      }
+
       if (cloudData.following && typeof cloudData.following === 'object') {
-        myFollowingMap = { ...myFollowingMap, ...cloudData.following };
+        const incomingFollowing = { ...cloudData.following };
+        unfollowedUserUids.forEach(uid => {
+          delete incomingFollowing[uid];
+          delete myFollowingMap[uid];
+        });
+        myFollowingMap = { ...myFollowingMap, ...incomingFollowing };
         if (currentUser && currentUser.uid) delete myFollowingMap[currentUser.uid];
+        unfollowedUserUids.forEach(uid => {
+          delete myFollowingMap[uid];
+        });
         localStorage.setItem('vocaflow_following_map', JSON.stringify(myFollowingMap));
       }
       if (cloudData.followers && typeof cloudData.followers === 'object') {
-        myFollowersMap = { ...myFollowersMap, ...cloudData.followers };
+        myFollowersMap = { ...cloudData.followers };
         if (currentUser && currentUser.uid) delete myFollowersMap[currentUser.uid];
         localStorage.setItem('vocaflow_followers_map', JSON.stringify(myFollowersMap));
       }
       if (currentUser) {
-        const cloudFollowerCount = (cloudData.profile && typeof cloudData.profile.followerCount === 'number')
-          ? cloudData.profile.followerCount
-          : (typeof cloudData.followerCount === 'number' ? cloudData.followerCount : 0);
-        const cloudFollowingCount = (cloudData.profile && typeof cloudData.profile.followingCount === 'number')
-          ? cloudData.profile.followingCount
-          : (typeof cloudData.followingCount === 'number' ? cloudData.followingCount : 0);
-
-        currentUser.followingCount = Math.max(Object.keys(myFollowingMap).length, cloudFollowingCount, currentUser.followingCount || 0);
-        currentUser.followerCount = Math.max(Object.keys(myFollowersMap).length, cloudFollowerCount, currentUser.followerCount || 0);
+        currentUser.followingCount = Object.keys(myFollowingMap).length;
+        currentUser.followerCount = Object.keys(myFollowersMap).length;
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         updateAuthUI();
       }
@@ -8597,7 +8620,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       updateNotificationsUI();
       renderNotificationsList();
 
-      // 15. Mistake Notebook Two-Way Sync (v0.10.9-63: Anti-Revert & Accurate Decrement Sync)
+      // 15. Mistake Notebook Two-Way Sync (v0.10.9-64: Anti-Zombie Tombstone Filtering)
+      if (cloudData.deletedMistakeWordKeys && Array.isArray(cloudData.deletedMistakeWordKeys)) {
+        cloudData.deletedMistakeWordKeys.forEach(k => {
+          if (k) {
+            const cleanKey = String(k).trim().toLowerCase();
+            if (typeof deletedMistakeWordKeys !== 'undefined') deletedMistakeWordKeys.add(cleanKey);
+          }
+        });
+        if (typeof deletedMistakeWordKeys !== 'undefined') {
+          localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
+        }
+      }
+
       if (cloudData.mistakeNotebook !== undefined) {
         try {
           const remoteMistakes = Array.isArray(cloudData.mistakeNotebook)
@@ -8605,37 +8640,56 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             : (cloudData.mistakeNotebook && typeof cloudData.mistakeNotebook === 'object' ? Object.values(cloudData.mistakeNotebook) : []);
           const hasLocalMistakeStorage = localStorage.getItem('vocaflow_mistake_notebook_v1') !== null;
           const localMistakes = getMistakeWordsList();
+          const tombstoneSet = typeof deletedMistakeWordKeys !== 'undefined'
+            ? deletedMistakeWordKeys
+            : new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]'));
 
           if (!hasLocalMistakeStorage) {
-            // Fresh login on new machine: adopt remote mistake notebook directly
-            saveMistakeWordsList(remoteMistakes, false);
+            // Fresh login on new machine: adopt remote mistake notebook directly (filtered by tombstones)
+            const filteredRemote = remoteMistakes.filter(item => {
+              if (!item) return false;
+              const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+              const kTerm = String(item.term || '').trim().toLowerCase();
+              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm));
+            });
+            saveMistakeWordsList(filteredRemote, false);
           } else {
             // Existing local session: local is the authoritative working state for resolved/decremented words
             const mergedMap = new Map();
             localMistakes.forEach(item => {
               if (item && (item.wordId || item.term)) {
-                const key = String(item.wordId || item.term).toLowerCase();
-                mergedMap.set(key, { ...item });
+                const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+                const kTerm = String(item.term || '').trim().toLowerCase();
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                  const key = kId || kTerm;
+                  mergedMap.set(key, { ...item });
+                }
               }
             });
 
             remoteMistakes.forEach(item => {
               if (item && (item.wordId || item.term)) {
-                const key = String(item.wordId || item.term).toLowerCase();
-                if (mergedMap.has(key)) {
-                  const existing = mergedMap.get(key);
-                  // Only adopt remote mistakeCount if remote has a strictly newer failure timestamp
-                  const isRemoteNewer = (item.lastMistakeAt || 0) > (existing.lastMistakeAt || 0);
-                  const finalCount = isRemoteNewer ? (parseInt(item.mistakeCount, 10) || existing.mistakeCount) : existing.mistakeCount;
-                  const finalTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
-                  const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
-                  mergedMap.set(key, {
-                    ...existing,
-                    ...item,
-                    mistakeCount: finalCount,
-                    lastMistakeAt: finalTime,
-                    modesFailed: mergedModes
-                  });
+                const kId = String(item.wordId || item.id || '').trim().toLowerCase();
+                const kTerm = String(item.term || '').trim().toLowerCase();
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                  const key = kId || kTerm;
+                  if (mergedMap.has(key)) {
+                    const existing = mergedMap.get(key);
+                    // Only adopt remote mistakeCount if remote has a strictly newer failure timestamp
+                    const isRemoteNewer = (item.lastMistakeAt || 0) > (existing.lastMistakeAt || 0);
+                    const finalCount = isRemoteNewer ? (parseInt(item.mistakeCount, 10) || existing.mistakeCount) : existing.mistakeCount;
+                    const finalTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
+                    const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
+                    mergedMap.set(key, {
+                      ...existing,
+                      ...item,
+                      mistakeCount: finalCount,
+                      lastMistakeAt: finalTime,
+                      modesFailed: mergedModes
+                    });
+                  } else {
+                    mergedMap.set(key, { ...item });
+                  }
                 }
               }
             });

@@ -1392,10 +1392,11 @@
               showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
               addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`, newBalance);
             }
-            saveDatabase(true);
           }
           spellingPointsEarned = finalPts;
         }
+        saveDatabase(true);
+        pushCurrentDatabaseToCloud();
       } catch (errPoints) {
         console.warn('Spelling points settlement error:', errPoints);
       }
