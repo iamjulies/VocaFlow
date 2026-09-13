@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-61 (Build 293)</span>
+            <span class="mini-footer-version">v0.10.9-62 (Build 294)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-61 (Build 293)</span>
+            <span class="mini-footer-version">v0.10.9-62 (Build 294)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4963,12 +4963,12 @@
           
           <div id="quiz-detail-meta" style="background: var(--surface-elevated); border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: var(--text); margin-bottom: 12px;"></div>
 
-          <!-- AI INSIGHTS CARD: MNEMONICS & ETYMOLOGY (v0.10.8-alpha-10.3) -->
+          <!-- AI INSIGHTS CARD: MNEMONICS & ETYMOLOGY (v0.10.9-62 On-Demand Token Saver) -->
           <div id="quiz-ai-explanation-box" style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.12)); border: 1px solid rgba(99,102,241,0.35); border-radius: 12px; padding: 12px 14px; font-size: 12.5px; color: #c7d2fe; line-height: 1.5; margin-top: 12px;">
             <div style="font-weight: 700; color: #a5b4fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
               <span>🤖</span> <span>Nhận xét chuyên sâu từ AI:</span>
             </div>
-            <div id="quiz-ai-explanation-text"><em>AI đang phân tích mẹo ghi nhớ & nguồn gốc từ...</em></div>
+            <div id="quiz-ai-explanation-text"></div>
           </div>
         </div>
       </div>
@@ -9878,7 +9878,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-61 (Build 293)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-62 (Build 294)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10833,7 +10833,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-61 Build 293)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-62 Build 294)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11273,18 +11273,18 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-61 Build 293)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-62 Build 294)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-61 Build 293)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-62 Build 294)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-61';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-61 (Build 293)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-62';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-62 (Build 294)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-61)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-62)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
     const GEMINI_MODELS_DEEP = [
@@ -25571,8 +25571,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       renderWordList();
+      renderDecks();
       closeModal('modal-word');
+
+      // Reset form fields to avoid ghost duplicates
+      const wordIdEl = document.getElementById('word-id');
+      if (wordIdEl) wordIdEl.value = '';
+      const wordTermEl = document.getElementById('word-term');
+      if (wordTermEl) wordTermEl.value = '';
+      const dupWarnEl = document.getElementById('word-term-duplicate-warning');
+      if (dupWarnEl) dupWarnEl.style.display = 'none';
+      const wordFormEl = document.getElementById('word-form');
+      if (wordFormEl) {
+        try { wordFormEl.reset(); } catch (e) {}
+      }
+
       showToast('Đã lưu từ vựng thành công!');
     }
 
@@ -27400,6 +27415,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
     }
 
+    window.saveWordForm = saveWordForm;
+    window.openWordModal = openWordModal;
+    window.editWord = editWord;
+    window.deleteWord = deleteWord;
+    window.renderWordList = renderWordList;
+    window.checkWordTermDuplicate = checkWordTermDuplicate;
+
 // =========================================================================
 
 // VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.9-48)
@@ -27920,6 +27942,13 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       return str;
     }
 
+    // =========================================================================
+    // ON-DEMAND AI INSIGHTS & MNEMONICS ENGINE (v0.10.9-62 - TOKEN SAVER)
+    // =========================================================================
+    let quizAiExplanationsCache = {};
+    let quizCurrentAiQuestionWord = null;
+    let quizCurrentAiCorrectDef = '';
+
     function generateSmartMnemonicFallback(term, pos, def) {
       const clean = (term || '').toLowerCase().trim();
       let originHint = '';
@@ -27942,22 +27971,51 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       </div>`;
     }
 
-    async function loadQuizAiExplanation(questionWord, correctDef, choices) {
+    function renderQuizAiExplanationPrompt(questionWord, correctDef, choices) {
       const expBox = document.getElementById('quiz-ai-explanation-box');
       const expText = document.getElementById('quiz-ai-explanation-text');
       if (!expBox || !expText || !questionWord) return;
 
       expBox.style.display = 'block';
+      quizCurrentAiQuestionWord = questionWord;
+      quizCurrentAiCorrectDef = correctDef || questionWord.definitionVi || questionWord.definition || '';
 
+      const termKey = (questionWord.term || '').trim().toLowerCase();
+      if (quizAiExplanationsCache[termKey]) {
+        expText.innerHTML = quizAiExplanationsCache[termKey];
+        return;
+      }
+
+      // Render On-Demand Button to save API tokens
+      expText.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <span style="font-size: 12px; color: #cbd5e1;">Mẹo ghi nhớ liên tưởng & nguồn gốc từ vựng.</span>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-quiz-gen-ai-insight" onclick="generateQuizAiExplanationOnDemand()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 11.5px; padding: 5px 12px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(99,102,241,0.3); cursor: pointer;">
+            <span>✨</span> <span>Tạo nhận xét AI</span>
+          </button>
+        </div>
+      `;
+    }
+
+    async function generateQuizAiExplanationOnDemand() {
+      const expText = document.getElementById('quiz-ai-explanation-text');
+      if (!expText || !quizCurrentAiQuestionWord) return;
+
+      const questionWord = quizCurrentAiQuestionWord;
       const term = questionWord.term || '';
       const pos = questionWord.partOfSpeech || questionWord.pos || 'từ vựng';
-      const def = correctDef || questionWord.definitionVi || questionWord.definition || '';
+      const def = quizCurrentAiCorrectDef || questionWord.definitionVi || questionWord.definition || '';
       const example = questionWord.exampleSentence || questionWord.example || '';
+      const termKey = term.trim().toLowerCase();
 
-      // Set initial smart mnemonic & origin breakdown immediately
-      expText.innerHTML = generateSmartMnemonicFallback(term, pos, def);
+      // Show Loading indicator
+      expText.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a5b4fc; padding: 4px 0;">
+          <span style="display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(165,180,252,0.3); border-top-color: #a5b4fc; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
+          <em>AI đang phân tích mẹo ghi nhớ & nguồn gốc từ...</em>
+        </div>
+      `;
 
-      // If Gemini API is available, fetch live custom mnemonic & etymology
       let keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
       if (keys.length === 0) {
         const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
@@ -27965,8 +28023,18 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
       const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
 
-      if (keys.length > 0) {
-        const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
+      if (keys.length === 0) {
+        const fallback = generateSmartMnemonicFallback(term, pos, def) + `
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic;">
+            💡 Mẹo từ điển cục bộ • Nhập Gemini API Key trong Cài Đặt để AI tùy biến sâu hơn.
+          </div>
+        `;
+        quizAiExplanationsCache[termKey] = fallback;
+        expText.innerHTML = fallback;
+        return;
+      }
+
+      const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
 Định nghĩa: "${def}".
 ${example ? `Ví dụ: "${example}"` : ''}
 
@@ -27981,47 +28049,60 @@ Yêu cầu nghiêm ngặt:
 💡 Mẹo nhớ: [nội dung]
 🏛️ Nguồn gốc: [nội dung]`;
 
-        let expFetched = false;
-        for (const k of keys) {
-          if (expFetched) break;
-          for (const m of models) {
-            try {
-              const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 12000);
+      let expFetched = false;
+      for (const k of keys) {
+        if (expFetched) break;
+        for (const m of models) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
-                method: 'POST',
-                signal: controller.signal,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  contents: [{ parts: [{ text: prompt }] }],
-                  generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
-                })
-              });
-              clearTimeout(timeoutId);
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+              method: 'POST',
+              signal: controller.signal,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
+              })
+            });
+            clearTimeout(timeoutId);
 
-              if (res.ok) {
-                const data = await res.json();
-                const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                if (rawExp) {
-                  if (typeof saveWorkingGeminiModel === 'function') {
-                    saveWorkingGeminiModel(m, 'fast');
-                  } else {
-                    localStorage.setItem('vocaflow_gemini_working_model', m);
-                  }
-                  const formatted = formatAiMarkdownText(rawExp);
-                  expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
-                  expFetched = true;
-                  break;
+            if (res.ok) {
+              const data = await res.json();
+              const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+              if (rawExp) {
+                if (typeof saveWorkingGeminiModel === 'function') {
+                  saveWorkingGeminiModel(m, 'fast');
+                } else {
+                  localStorage.setItem('vocaflow_gemini_working_model', m);
                 }
+                const formatted = `<div style="line-height: 1.55; color: #fdf4ff;">${formatAiMarkdownText(rawExp)}</div>`;
+                quizAiExplanationsCache[termKey] = formatted;
+                expText.innerHTML = formatted;
+                expFetched = true;
+                break;
               }
-            } catch (e) {
-              console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
             }
+          } catch (e) {
+            console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
           }
         }
       }
+
+      if (!expFetched) {
+        const fallback = generateSmartMnemonicFallback(term, pos, def) + `
+          <div style="font-size: 11px; color: #f87171; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>⚠️ Không thể kết nối AI (mạng chập chờn).</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="generateQuizAiExplanationOnDemand()" style="font-size: 10px; padding: 2px 6px;">Thử lại ↻</button>
+          </div>
+        `;
+        quizAiExplanationsCache[termKey] = fallback;
+        expText.innerHTML = fallback;
+      }
     }
+
+    const loadQuizAiExplanation = renderQuizAiExplanationPrompt;
 
     // =========================================================================
     // MISTAKE NOTEBOOK ENGINE & PERSISTENT WRONG ANSWERS TRACKER (v0.10.9-37)
@@ -29497,6 +29578,9 @@ Yêu cầu nghiêm ngặt:
     window.startSingleMistakeReview = startSingleMistakeReview;
     window.openQuizSetupModal = openQuizSetupModal;
     window.startQuizMode = startQuizMode;
+    window.generateQuizAiExplanationOnDemand = generateQuizAiExplanationOnDemand;
+    window.renderQuizAiExplanationPrompt = renderQuizAiExplanationPrompt;
+    window.loadQuizAiExplanation = renderQuizAiExplanationPrompt;
 
 
 // =========================================================================

@@ -1882,8 +1882,23 @@
       }
 
       saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       renderWordList();
+      renderDecks();
       closeModal('modal-word');
+
+      // Reset form fields to avoid ghost duplicates
+      const wordIdEl = document.getElementById('word-id');
+      if (wordIdEl) wordIdEl.value = '';
+      const wordTermEl = document.getElementById('word-term');
+      if (wordTermEl) wordTermEl.value = '';
+      const dupWarnEl = document.getElementById('word-term-duplicate-warning');
+      if (dupWarnEl) dupWarnEl.style.display = 'none';
+      const wordFormEl = document.getElementById('word-form');
+      if (wordFormEl) {
+        try { wordFormEl.reset(); } catch (e) {}
+      }
+
       showToast('Đã lưu từ vựng thành công!');
     }
 
@@ -3710,3 +3725,10 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
         labelPaste.textContent = `${actLabel} (${vocaClipboard.words.length})`;
       }
     }
+
+    window.saveWordForm = saveWordForm;
+    window.openWordModal = openWordModal;
+    window.editWord = editWord;
+    window.deleteWord = deleteWord;
+    window.renderWordList = renderWordList;
+    window.checkWordTermDuplicate = checkWordTermDuplicate;

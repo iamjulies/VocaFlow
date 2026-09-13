@@ -518,6 +518,13 @@
       return str;
     }
 
+    // =========================================================================
+    // ON-DEMAND AI INSIGHTS & MNEMONICS ENGINE (v0.10.9-62 - TOKEN SAVER)
+    // =========================================================================
+    let quizAiExplanationsCache = {};
+    let quizCurrentAiQuestionWord = null;
+    let quizCurrentAiCorrectDef = '';
+
     function generateSmartMnemonicFallback(term, pos, def) {
       const clean = (term || '').toLowerCase().trim();
       let originHint = '';
@@ -540,22 +547,51 @@
       </div>`;
     }
 
-    async function loadQuizAiExplanation(questionWord, correctDef, choices) {
+    function renderQuizAiExplanationPrompt(questionWord, correctDef, choices) {
       const expBox = document.getElementById('quiz-ai-explanation-box');
       const expText = document.getElementById('quiz-ai-explanation-text');
       if (!expBox || !expText || !questionWord) return;
 
       expBox.style.display = 'block';
+      quizCurrentAiQuestionWord = questionWord;
+      quizCurrentAiCorrectDef = correctDef || questionWord.definitionVi || questionWord.definition || '';
 
+      const termKey = (questionWord.term || '').trim().toLowerCase();
+      if (quizAiExplanationsCache[termKey]) {
+        expText.innerHTML = quizAiExplanationsCache[termKey];
+        return;
+      }
+
+      // Render On-Demand Button to save API tokens
+      expText.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <span style="font-size: 12px; color: #cbd5e1;">Mẹo ghi nhớ liên tưởng & nguồn gốc từ vựng.</span>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-quiz-gen-ai-insight" onclick="generateQuizAiExplanationOnDemand()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 11.5px; padding: 5px 12px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(99,102,241,0.3); cursor: pointer;">
+            <span>✨</span> <span>Tạo nhận xét AI</span>
+          </button>
+        </div>
+      `;
+    }
+
+    async function generateQuizAiExplanationOnDemand() {
+      const expText = document.getElementById('quiz-ai-explanation-text');
+      if (!expText || !quizCurrentAiQuestionWord) return;
+
+      const questionWord = quizCurrentAiQuestionWord;
       const term = questionWord.term || '';
       const pos = questionWord.partOfSpeech || questionWord.pos || 'từ vựng';
-      const def = correctDef || questionWord.definitionVi || questionWord.definition || '';
+      const def = quizCurrentAiCorrectDef || questionWord.definitionVi || questionWord.definition || '';
       const example = questionWord.exampleSentence || questionWord.example || '';
+      const termKey = term.trim().toLowerCase();
 
-      // Set initial smart mnemonic & origin breakdown immediately
-      expText.innerHTML = generateSmartMnemonicFallback(term, pos, def);
+      // Show Loading indicator
+      expText.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a5b4fc; padding: 4px 0;">
+          <span style="display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(165,180,252,0.3); border-top-color: #a5b4fc; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
+          <em>AI đang phân tích mẹo ghi nhớ & nguồn gốc từ...</em>
+        </div>
+      `;
 
-      // If Gemini API is available, fetch live custom mnemonic & etymology
       let keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
       if (keys.length === 0) {
         const single = (typeof getEffectiveGeminiApiKey === 'function' ? getEffectiveGeminiApiKey() : '') || localStorage.getItem('vocaflow_gemini_api_key') || '';
@@ -563,8 +599,18 @@
       }
       const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
 
-      if (keys.length > 0) {
-        const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
+      if (keys.length === 0) {
+        const fallback = generateSmartMnemonicFallback(term, pos, def) + `
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic;">
+            💡 Mẹo từ điển cục bộ • Nhập Gemini API Key trong Cài Đặt để AI tùy biến sâu hơn.
+          </div>
+        `;
+        quizAiExplanationsCache[termKey] = fallback;
+        expText.innerHTML = fallback;
+        return;
+      }
+
+      const prompt = `Từ vựng tiếng Anh: "${term}" (${pos}).
 Định nghĩa: "${def}".
 ${example ? `Ví dụ: "${example}"` : ''}
 
@@ -579,47 +625,60 @@ Yêu cầu nghiêm ngặt:
 💡 Mẹo nhớ: [nội dung]
 🏛️ Nguồn gốc: [nội dung]`;
 
-        let expFetched = false;
-        for (const k of keys) {
-          if (expFetched) break;
-          for (const m of models) {
-            try {
-              const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 12000);
+      let expFetched = false;
+      for (const k of keys) {
+        if (expFetched) break;
+        for (const m of models) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-              const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
-                method: 'POST',
-                signal: controller.signal,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  contents: [{ parts: [{ text: prompt }] }],
-                  generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
-                })
-              });
-              clearTimeout(timeoutId);
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + k.trim(), {
+              method: 'POST',
+              signal: controller.signal,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 120, temperature: 0.3 }
+              })
+            });
+            clearTimeout(timeoutId);
 
-              if (res.ok) {
-                const data = await res.json();
-                const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                if (rawExp) {
-                  if (typeof saveWorkingGeminiModel === 'function') {
-                    saveWorkingGeminiModel(m, 'fast');
-                  } else {
-                    localStorage.setItem('vocaflow_gemini_working_model', m);
-                  }
-                  const formatted = formatAiMarkdownText(rawExp);
-                  expText.innerHTML = `<div style="line-height: 1.55; color: #fdf4ff;">${formatted}</div>`;
-                  expFetched = true;
-                  break;
+            if (res.ok) {
+              const data = await res.json();
+              const rawExp = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+              if (rawExp) {
+                if (typeof saveWorkingGeminiModel === 'function') {
+                  saveWorkingGeminiModel(m, 'fast');
+                } else {
+                  localStorage.setItem('vocaflow_gemini_working_model', m);
                 }
+                const formatted = `<div style="line-height: 1.55; color: #fdf4ff;">${formatAiMarkdownText(rawExp)}</div>`;
+                quizAiExplanationsCache[termKey] = formatted;
+                expText.innerHTML = formatted;
+                expFetched = true;
+                break;
               }
-            } catch (e) {
-              console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
             }
+          } catch (e) {
+            console.warn('AI Quiz Explanation notice for model ' + m + ':', e);
           }
         }
       }
+
+      if (!expFetched) {
+        const fallback = generateSmartMnemonicFallback(term, pos, def) + `
+          <div style="font-size: 11px; color: #f87171; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>⚠️ Không thể kết nối AI (mạng chập chờn).</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="generateQuizAiExplanationOnDemand()" style="font-size: 10px; padding: 2px 6px;">Thử lại ↻</button>
+          </div>
+        `;
+        quizAiExplanationsCache[termKey] = fallback;
+        expText.innerHTML = fallback;
+      }
     }
+
+    const loadQuizAiExplanation = renderQuizAiExplanationPrompt;
 
     // =========================================================================
     // MISTAKE NOTEBOOK ENGINE & PERSISTENT WRONG ANSWERS TRACKER (v0.10.9-37)
@@ -2095,4 +2154,7 @@ Yêu cầu nghiêm ngặt:
     window.startSingleMistakeReview = startSingleMistakeReview;
     window.openQuizSetupModal = openQuizSetupModal;
     window.startQuizMode = startQuizMode;
+    window.generateQuizAiExplanationOnDemand = generateQuizAiExplanationOnDemand;
+    window.renderQuizAiExplanationPrompt = renderQuizAiExplanationPrompt;
+    window.loadQuizAiExplanation = renderQuizAiExplanationPrompt;
 

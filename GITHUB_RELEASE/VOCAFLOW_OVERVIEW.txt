@@ -1,4 +1,21 @@
 ================================================================================
+Phiên bản: v0.10.9-62 (Build 294) - Tự Động Đóng & Dọn Dẹp Form Thêm Từ Mới, Nhận Xét Chuyên Sâu AI Theo Yêu Cầu Tiết Kiệm Token (On-Demand Insights) & Hoàn Thiện Cơ Chế Giảm Lỗi Sai Sổ Tay
+================================================================================
+1. [Tự Động Đóng & Dọn Dẹp Form Thêm Từ Vựng (Add Word Modal Fix)]:
+   - Khắc phục sự cố khi thêm từ mới nhấn Lưu từ vựng thì modal không tự động đóng, dẫn tới việc nếu người dùng bấm Lưu lần 2 sẽ xuất hiện cảnh báo trùng lặp từ.
+   - Cập nhật hàm saveWordForm tự động reset form, xóa trắng input, xóa cảnh báo trùng lặp và đóng modal-word an toàn ngay sau khi lưu và đồng bộ Cloud.
+
+2. [Chuyển Đổi Nhận Xét Chuyên Sâu AI Thành Nút Theo Yêu Cầu (On-Demand AI Insights - Token Saver)]:
+   - Thay vì tự động kích hoạt Gemini AI để tạo nhận xét chuyên sâu (mẹo ghi nhớ & nguồn gốc từ) trên mọi câu hỏi Trắc Nghiệm (gây lãng phí token cho các từ không cần thiết), hệ thống đã chuyển sang hiển thị nút bấm: "✨ Tạo nhận xét AI".
+   - Chỉ khi người dùng chủ động nhấp nút, Gemini AI mới được kích hoạt để phân tích sâu, lưu cache trong phiên làm bài để tái sử dụng ngay lập tức mà không gọi lại API.
+
+3. [Hoàn Thiện Cơ Chế Giảm Trừ Lỗi Sai Đa Chế Độ (Mistakes Notebook Engine)]:
+   - Đảm bảo bất kể từ vựng bị làm sai ở chế độ học nào, người dùng chỉ cần học và làm đúng ở 1 chế độ bất kỳ là được giảm 1 lần làm sai (mistakeCount = mistakeCount - 1). Khi số lần sai = 0, từ vựng được tự động loại bỏ vĩnh viễn khỏi Sổ Tay Lỗi Sai.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-62 Build 294)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-62_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-61 (Build 293) - Khắc Phục Lỗi Sổ Tay Lỗi Sai (Mở Bảng Chọn Cấp Độ & Giảm Dần Số Lần Sai), Đồng Bộ 2 Chiều An Toàn Biểu Đồ 7 Ngày Thời Gian Học & Tinh Chỉnh Prompt AI Điền Từ Siêu Cô Đọng
 ================================================================================
 1. [Nâng Cấp Toàn Diện Sổ Tay Lỗi Sai (Mistakes Notebook Engine)]:

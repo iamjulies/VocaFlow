@@ -1,0 +1,6 @@
+v0.10.9-62
+1. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 151232.png", khi thêm từ mới, t nhấn lưu thì nó lưu nhưng mà nó kh tự động đóng cửa sổ thêm từ, và nếu t nhấn lưu lần nữa thì hiện thông báo đã có từ này. đây kh phải lỗi nhưng mà nếu sửa đc thì tiện lợi và tốt hơn.s
+2. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 151709.png" thay vì tự động tạo nhận xét bằng AI thì t muốn sửa thành cho phép user nhấn tạo nhận xét ->  hệ quả: tiết kiệm được token đối với những từ mà kh cần cái nhận xét này.
+3. sửa: dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
