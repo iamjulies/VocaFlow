@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-62 Build 294)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-63 Build 295)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -263,8 +263,7 @@ function navigateToRoute(route, isPopState = false) {
       case 'community':
       case 'feed':
       case 'congdong':
-        if (typeof openCommunityCenter === 'function') openCommunityCenter('feed');
-        else if (typeof openProfileModal === 'function') openProfileModal('community', 'feed');
+        if (typeof openCommunityCenter === 'function') openCommunityCenter('all');
         break;
 
       case 'shop':

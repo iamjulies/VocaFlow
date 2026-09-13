@@ -703,10 +703,14 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
-    function saveMistakeWordsList(list) {
+    function saveMistakeWordsList(list, triggerCloudPush = true) {
       try {
-        localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(Array.isArray(list) ? list : []));
+        const cleanList = Array.isArray(list) ? list : [];
+        localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(cleanList));
         updateMistakeBadgeUI();
+        if (triggerCloudPush !== false && typeof pushCurrentDatabaseToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser) {
+          pushCurrentDatabaseToCloud();
+        }
       } catch (e) {
         console.warn('Error saving mistake notebook:', e);
       }
@@ -881,6 +885,15 @@ Yêu cầu nghiêm ngặt:
     }
 
     function openMistakeNotebookModal(deckIdFilter = null) {
+      // Guard against opening in any study mode (v0.10.9-63)
+      const activeStudyScreen = document.querySelector('.screen.active');
+      if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+        }
+        return;
+      }
+
       // Populate Deck filter dropdown
       const deckSelect = document.getElementById('mistake-notebook-deck-filter');
       if (deckSelect) {

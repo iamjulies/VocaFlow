@@ -4488,12 +4488,12 @@
               <small style="color: var(--text-muted); font-size: 10.5px;">Quản lý doanh thu & rút tiền</small>
             </div>
           </div>
-          <!-- VOCACOMMUNITY / BẢNG TIN CỘNG ĐỒNG (v0.10.9-50) -->
-          <div class="dropdown-item" onclick="openCommunityCenter('feed'); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.4);">
+          <!-- VOCACOMMUNITY / TRUNG TÂM CỘNG ĐỒNG (v0.10.9-63) -->
+          <div class="dropdown-item" onclick="openCommunityCenter('all'); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.4);">
             <span style="font-size: 16px;">💬</span>
             <div>
-              <div style="font-weight: 700; font-size: 13px; color: #a5b4fc;">VocaCommunity</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">Bảng tin cộng đồng & khoe thành tích</small>
+              <div style="font-weight: 700; font-size: 13px; color: #a5b4fc;">Trung Tâm Cộng Đồng</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Bảng tin người theo dõi & chia sẻ</small>
             </div>
           </div>
           <!-- VOCAMENTOR AI IN DROPDOWN (v0.10.8-alpha-24) -->
@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-62 (Build 294)</span>
+            <span class="mini-footer-version">v0.10.9-63 (Build 295)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-62 (Build 294)</span>
+            <span class="mini-footer-version">v0.10.9-63 (Build 295)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9059,25 +9059,19 @@
             </div>
           </div>
 
-          <!-- FEED FILTER & REFRESH -->
+          <!-- ME COMMUNITY HEADER (v0.10.9-63: Isolated My Posts Feed) -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
-            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-              <button type="button" class="btn btn-xs active-pill" id="community-filter-feed" onclick="filterCommunityFeed('feed')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
-                👥 Đang Theo Dõi
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <strong style="font-size: 13.5px; color: var(--text);">👤 Bài Viết Của Tôi</strong>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button type="button" class="btn btn-primary btn-xs" onclick="closeModal('modal-profile'); openCommunityCenter('all');" style="font-size: 11px; padding: 4px 10px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">
+                🌐 Trung Tâm Cộng Đồng
               </button>
-              <button type="button" class="btn btn-xs" id="community-filter-mine" onclick="filterCommunityFeed('mine')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
-                👤 Bài Của Tôi
-              </button>
-              <button type="button" class="btn btn-xs" id="community-filter-all" onclick="filterCommunityFeed('all')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
-                🌍 Khám Phá
-              </button>
-              <button type="button" class="btn btn-xs" id="community-filter-milestone" onclick="filterCommunityFeed('milestone')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
-                🌟 Thành Tích
+              <button type="button" class="btn btn-outline btn-xs" onclick="fetchAndRenderCommunityFeed(true)" title="Làm mới bài viết của tôi" style="font-size: 11px; padding: 4px 8px;">
+                🔄 Làm Mới
               </button>
             </div>
-            <button type="button" class="btn btn-outline btn-xs" onclick="fetchAndRenderCommunityFeed(true)" title="Làm mới bảng tin" style="font-size: 11px; padding: 4px 8px;">
-              🔄 Làm Mới
-            </button>
           </div>
 
           <!-- POSTS FEED CONTAINER -->
@@ -9878,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-62 (Build 294)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-63 (Build 295)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10617,6 +10611,178 @@
     </div>
   </div>
 
+  <!-- MODAL: COMMUNITY CENTER (v0.10.9-63) -->
+  <div class="modal-overlay" id="modal-community-center">
+    <div class="modal" style="max-width: 680px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+      
+      <!-- HEADER BAR -->
+      <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">💬</span>
+          <div>
+            <strong style="font-size: 16px; color: var(--text);">Trung Tâm Cộng Đồng (Community Center)</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Bảng tin bài viết của bạn và những người bạn đang theo dõi</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-center')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- MAIN SCROLLABLE BODY -->
+      <div style="overflow-y: auto; flex: 1; padding-right: 4px; display: flex; flex-direction: column; gap: 14px;">
+        
+        <!-- POST COMPOSER (Rich Text Editor for Community Center) -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;">
+            <div id="community-center-composer-avatar" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
+            <div style="flex: 1; min-width: 0; position: relative;">
+              
+              <!-- RICH TEXT TOOLBAR -->
+              <div class="rich-toolbar" id="community-center-post-rich-toolbar">
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'community-center-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'community-center-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'community-center-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'community-center-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+                
+                <div class="rich-tool-sep"></div>
+
+                <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'community-center-post-rich-content')" title="Cỡ chữ">
+                  <option value="">Cỡ chữ</option>
+                  <option value="12px">Nhỏ (12px)</option>
+                  <option value="14px">Vừa (14px)</option>
+                  <option value="18px">Lớn (18px)</option>
+                  <option value="22px">Tiêu đề (22px)</option>
+                </select>
+
+                <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'community-center-post-rich-content')" title="Phông chữ">
+                  <option value="">Phông chữ</option>
+                  <option value="sans-serif">Mặc định</option>
+                  <option value="Georgia, serif">Cổ điển (Serif)</option>
+                  <option value="monospace">Lập trình (Monospace)</option>
+                  <option value="'Comic Sans MS', cursive">Viết tay</option>
+                </select>
+
+                <div class="rich-tool-sep"></div>
+
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'community-center-post-rich-content')" title="Căn trái">⇤</button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'community-center-post-rich-content')" title="Căn giữa">≡</button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'community-center-post-rich-content')" title="Căn phải">⇥</button>
+
+                <div class="rich-tool-sep"></div>
+
+                <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('composer-center-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+                <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('composer-center-post-emoji-popover')" title="Chèn Emoji">😀</button>
+                <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('community-center-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+              </div>
+
+              <!-- COLOR POPOVER -->
+              <div id="composer-center-post-color-popover" class="rich-popover">
+                <div class="rich-color-grid">
+                  <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'community-center-post-rich-content')" title="Trắng"></div>
+                  <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'community-center-post-rich-content')" title="Đỏ"></div>
+                  <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'community-center-post-rich-content')" title="Vàng / Cam"></div>
+                  <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'community-center-post-rich-content')" title="Xanh lá"></div>
+                  <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'community-center-post-rich-content')" title="Xanh dương"></div>
+                  <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'community-center-post-rich-content')" title="Tím"></div>
+                  <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'community-center-post-rich-content')" title="Hồng"></div>
+                </div>
+              </div>
+
+              <!-- EMOJI POPOVER -->
+              <div id="composer-center-post-emoji-popover" class="rich-popover">
+                <div class="rich-emoji-grid">
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'community-center-post-rich-content')">🔥</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'community-center-post-rich-content')">💡</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'community-center-post-rich-content')">🏆</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'community-center-post-rich-content')">✨</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'community-center-post-rich-content')">🚀</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'community-center-post-rich-content')">❤️</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'community-center-post-rich-content')">👏</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'community-center-post-rich-content')">💯</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'community-center-post-rich-content')">📚</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'community-center-post-rich-content')">🎯</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'community-center-post-rich-content')">🎉</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'community-center-post-rich-content')">🌊</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'community-center-post-rich-content')">👑</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'community-center-post-rich-content')">💪</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'community-center-post-rich-content')">🌟</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'community-center-post-rich-content')">🥳</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'community-center-post-rich-content')">😎</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'community-center-post-rich-content')">⭐</button>
+                </div>
+              </div>
+
+              <!-- RICH CONTENT EDITABLE -->
+              <div id="community-center-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..."></div>
+              
+              <!-- ATTACHMENT PREVIEWS -->
+              <div id="community-center-post-image-preview-container" style="display: none; position: relative; margin-top: 8px; border-radius: 8px; overflow: hidden; max-height: 180px; border: 1px solid var(--border);">
+                <img id="community-center-post-image-preview" src="" alt="Preview" style="width: 100%; height: 180px; object-fit: cover;">
+                <button type="button" onclick="clearCommunityCenterPostImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+              </div>
+
+              <div id="community-center-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span id="community-center-post-badge-icon" style="font-size: 20px;">🏆</span>
+                  <div>
+                    <strong id="community-center-post-badge-name" style="font-size: 12.5px; color: #fbbf24;">Danh hiệu</strong>
+                    <div id="community-center-post-badge-desc" style="font-size: 11px; color: var(--text-muted);">Mô tả danh hiệu</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-xs btn-outline" onclick="clearCommunityCenterPostBadge()">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPOSER TOOLBAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <input type="file" id="community-center-image-file-input" accept="image/*" style="display: none;" onchange="handleCommunityCenterImageUpload(event)">
+              <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('community-center-image-file-input').click()" style="font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>🖼️</span> <span>Ảnh</span>
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="openCommunityBadgePicker(true)" style="font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>🎖️</span> <span>Khoe Danh Hiệu</span>
+              </button>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-submit-community-center-post" onclick="submitCommunityCenterPost()" style="font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; padding: 6px 16px;">
+              🚀 Đăng Bài
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 FILTER PILLS (Tất Cả, Đang Theo Dõi, Của Tôi, Chứa Ảnh, Thành Tích) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;" id="community-center-filter-pills-container">
+            <button type="button" class="btn btn-xs active-pill" id="cc-filter-all" onclick="filterCommunityCenterFeed('all')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🌐 Tất Cả
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-following" onclick="filterCommunityCenterFeed('following')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              👥 Đang Theo Dõi
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-my" onclick="filterCommunityCenterFeed('my')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              👤 Của Tôi
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-has_image" onclick="filterCommunityCenterFeed('has_image')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🖼️ Chứa Ảnh
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-achievement" onclick="filterCommunityCenterFeed('achievement')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🏆 Thành Tích
+            </button>
+          </div>
+          <button type="button" class="btn btn-outline btn-xs" onclick="fetchAndRenderCommunityCenterFeed(true)" title="Làm mới bảng tin" style="font-size: 11px; padding: 4px 8px;">
+            🔄 Làm Mới
+          </button>
+        </div>
+
+        <!-- FEED CONTAINER -->
+        <div id="community-center-posts-container" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px;">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: EDIT COMMUNITY POST (v0.10.9-53) -->
   <div class="modal-overlay sub-modal-overlay" id="modal-edit-community-post" style="z-index: 10015;">
     <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
@@ -10833,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-62 Build 294)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-63 Build 295)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11097,8 +11263,7 @@ function navigateToRoute(route, isPopState = false) {
       case 'community':
       case 'feed':
       case 'congdong':
-        if (typeof openCommunityCenter === 'function') openCommunityCenter('feed');
-        else if (typeof openProfileModal === 'function') openProfileModal('community', 'feed');
+        if (typeof openCommunityCenter === 'function') openCommunityCenter('all');
         break;
 
       case 'shop':
@@ -11273,18 +11438,18 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-62 Build 294)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-63 Build 295)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-62 Build 294)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-63 Build 295)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-62';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-62 (Build 294)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-63';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-63 (Build 295)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-62)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-63)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
     const GEMINI_MODELS_DEEP = [
@@ -19985,23 +20150,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           flowCardEl.textContent = `${calculateCurrentFlow().currentFlow} Ngày`;
         }
       } else if (cleanTab === 'community') {
-        if (communityFilter) {
-          communityCurrentFilter = communityFilter;
-        } else if (communityCurrentFilter !== 'feed' && communityCurrentFilter !== 'mine' && communityCurrentFilter !== 'all' && communityCurrentFilter !== 'milestone') {
-          communityCurrentFilter = 'mine';
-        }
-        if (typeof updateCommunityFilterPillsUI === 'function') updateCommunityFilterPillsUI();
         fetchAndRenderCommunityFeed();
       }
 
-      // v0.10.9-60: Synchronize Sub-URL for ME Profile / Community Center
+      // v0.10.9-63: Synchronize Sub-URL for ME Profile
       if (typeof updateAppUrlRoute === 'function') {
         if (cleanTab === 'community') {
-          if (communityCurrentFilter === 'feed' || communityFilter === 'feed') {
-            updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
-          } else {
-            updateAppUrlRoute('/me/community', 'Bài Viết Của Tôi - VocaFlow');
-          }
+          updateAppUrlRoute('/me/community', 'Bài Viết Của Tôi - VocaFlow');
         } else {
           const routeMap = {
             'decks': '/me/mydeck',
@@ -20017,7 +20172,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.switchProfileTab = switchProfileTab;
 
     // =========================================================================
-    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-53)
+    // COMMUNITY FEED & SOCIAL ENGINE (v0.10.9-63 - COMMUNITY SPACES REFACTOR)
     // =========================================================================
     let communityPosts = [];
     let communityCurrentFilter = 'all';
@@ -20025,6 +20180,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     let communityActiveAttachedBadge = null;
     let communityReplyingToComment = null; // { postId, commentId, authorHandle }
     let communityActiveCommentsPostId = null;
+
+    // Community Center (v0.10.9-63)
+    let communityCenterCurrentFilter = 'all'; // 'all' | 'following' | 'my' | 'has_image' | 'achievement'
+    let communityCenterActiveAttachedImage = null;
+    let communityCenterActiveAttachedBadge = null;
+    let isCommunityCenterBadgePickerActive = false;
+
+    // Unified comment tracking for cc, me, pub views
+    let activePostCommentsMap = {
+      cc: null,
+      me: null,
+      pub: null
+    };
+
+    let activeReplyingCommentMap = {
+      cc: null,
+      me: null,
+      pub: null
+    };
 
     // =========================================================================
     // =========================================================================
@@ -20758,7 +20932,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.clearCommunityPostImage = clearCommunityPostImage;
 
-    function openCommunityBadgePicker() {
+    function openCommunityBadgePicker(context = 'me') {
+      if (context === 'edit' || context === 'editing') {
+        isEditingPostBadgePickerActive = true;
+        isCommunityCenterBadgePickerActive = false;
+      } else if (context === true || context === 'cc' || context === 'communitycenter') {
+        isCommunityCenterBadgePickerActive = true;
+        isEditingPostBadgePickerActive = false;
+      } else {
+        isEditingPostBadgePickerActive = false;
+        isCommunityCenterBadgePickerActive = false;
+      }
+
       const container = document.getElementById('community-badge-picker-list');
       if (!container) return;
 
@@ -20802,7 +20987,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const tier = b.tier || 'bronze';
           const tColor = tierColors[tier] || '#fbbf24';
           const tName = tierNames[tier] || 'Danh hiệu';
-          const isCurrentlySelected = (isEditingPostBadgePickerActive && editingPostAttachedBadge && editingPostAttachedBadge.id === b.badgeId) || (!isEditingPostBadgePickerActive && communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId);
+          const isCurrentlySelected = isEditingPostBadgePickerActive
+            ? (editingPostAttachedBadge && editingPostAttachedBadge.id === b.badgeId)
+            : (isCommunityCenterBadgePickerActive
+              ? (communityCenterActiveAttachedBadge && communityCenterActiveAttachedBadge.id === b.badgeId)
+              : (communityActiveAttachedBadge && communityActiveAttachedBadge.id === b.badgeId));
 
           html += `
             <div onclick="selectCommunityPostBadge('${b.badgeId}')" style="cursor: pointer; background: var(--surface-elevated); border: 2px solid ${isCurrentlySelected ? '#6366f1' : 'var(--border)'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='${isCurrentlySelected ? '#6366f1' : 'var(--border)'}'">
@@ -20857,6 +21046,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
+      if (isCommunityCenterBadgePickerActive) {
+        communityCenterActiveAttachedBadge = badgeData;
+        const prevCont = document.getElementById('community-center-post-badge-preview-container');
+        const iconEl = document.getElementById('community-center-post-badge-icon');
+        const nameEl = document.getElementById('community-center-post-badge-name');
+        const descEl = document.getElementById('community-center-post-badge-desc');
+        if (iconEl) iconEl.textContent = bDef.icon || '🏆';
+        if (nameEl) nameEl.textContent = bDef.name;
+        if (descEl) descEl.textContent = bDef.desc || '';
+        if (prevCont) prevCont.style.display = 'flex';
+        isCommunityCenterBadgePickerActive = false;
+        closeModal('modal-community-badge-picker');
+        showToast(`🎖️ Đã đính kèm danh hiệu "${bDef.name}"!`);
+        return;
+      }
+
       communityActiveAttachedBadge = badgeData;
       const prevCont = document.getElementById('community-post-badge-preview-container');
       const iconEl = document.getElementById('community-post-badge-icon');
@@ -20877,6 +21082,157 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (prevCont) prevCont.style.display = 'none';
     }
     window.clearCommunityPostBadge = clearCommunityPostBadge;
+
+    function handleCommunityCenterImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('⚠️ Vui lòng chọn tệp hình ảnh hợp lệ (PNG, JPG, WEBP)!');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('⚠️ Dung lượng ảnh tối đa là 5MB!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const rawBase64 = e.target.result;
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxW = 1080;
+          const maxH = 1080;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxW || h > maxH) {
+            if (w > h) {
+              h = Math.round((h * maxW) / w);
+              w = maxW;
+            } else {
+              w = Math.round((w * maxH) / h);
+              h = maxH;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          communityCenterActiveAttachedImage = canvas.toDataURL('image/jpeg', 0.82);
+          const prevContainer = document.getElementById('community-center-post-image-preview-container');
+          const prevImg = document.getElementById('community-center-post-image-preview');
+          if (prevImg) prevImg.src = communityCenterActiveAttachedImage;
+          if (prevContainer) prevContainer.style.display = 'block';
+        };
+        img.src = rawBase64;
+      };
+      reader.readAsDataURL(file);
+    }
+    window.handleCommunityCenterImageUpload = handleCommunityCenterImageUpload;
+
+    function clearCommunityCenterPostImage() {
+      communityCenterActiveAttachedImage = null;
+      const prevContainer = document.getElementById('community-center-post-image-preview-container');
+      const prevImg = document.getElementById('community-center-post-image-preview');
+      if (prevImg) prevImg.src = '';
+      if (prevContainer) prevContainer.style.display = 'none';
+      const fileInp = document.getElementById('community-center-image-file-input');
+      if (fileInp) fileInp.value = '';
+    }
+    window.clearCommunityCenterPostImage = clearCommunityCenterPostImage;
+
+    function clearCommunityCenterPostBadge() {
+      communityCenterActiveAttachedBadge = null;
+      const prevCont = document.getElementById('community-center-post-badge-preview-container');
+      if (prevCont) prevCont.style.display = 'none';
+    }
+    window.clearCommunityCenterPostBadge = clearCommunityCenterPostBadge;
+
+    async function submitCommunityCenterPost() {
+      if (isGuest()) {
+        alert('🔒 Vui lòng đăng nhập tài khoản để đăng bài lên Trung Tâm Cộng Đồng!');
+        openAuthModal('login');
+        return;
+      }
+      const richEditor = document.getElementById('community-center-post-rich-content');
+      let htmlContent = richEditor ? richEditor.innerHTML.trim() : '';
+      const plainText = richEditor ? richEditor.textContent.trim() : '';
+
+      if (!plainText && !htmlContent && !communityCenterActiveAttachedImage && !communityCenterActiveAttachedBadge) {
+        showToast('⚠️ Vui lòng nhập nội dung hoặc đính kèm ảnh/danh hiệu trước khi đăng!');
+        return;
+      }
+
+      if (richEditor && (richEditor.style.fontFamily || richEditor.style.color || richEditor.style.fontSize)) {
+        const styles = [];
+        if (richEditor.style.fontFamily) styles.push(`font-family: ${richEditor.style.fontFamily}`);
+        if (richEditor.style.color) styles.push(`color: ${richEditor.style.color}`);
+        if (richEditor.style.fontSize) styles.push(`font-size: ${richEditor.style.fontSize}`);
+        htmlContent = `<div style="${styles.join('; ')}">${htmlContent}</div>`;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-community-center-post');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Đang đăng...'; }
+
+      const postId = 'post_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      const postObj = {
+        id: postId,
+        authorUid: currentUser.uid,
+        authorName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Flower'),
+        authorHandle: currentUser.username || (currentUser.email ? currentUser.email.split('@')[0] : 'user'),
+        authorAvatar: getUserAvatar() || currentUser.displayName || '👤',
+        isVip: isUserVip(),
+        vipTier: getUserVipTier(),
+        content: sanitizePostHtml(htmlContent),
+        image: communityCenterActiveAttachedImage || null,
+        imageUrl: communityCenterActiveAttachedImage || null,
+        badge: communityCenterActiveAttachedBadge || null,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        type: 'manual'
+      };
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(postObj)
+        });
+
+        dispatchFollowersNotification({
+          type: 'new_post',
+          postId: postId,
+          authorName: postObj.authorName,
+          authorHandle: postObj.authorHandle,
+          message: `${postObj.authorName} vừa đăng một bài viết mới trên Cộng Đồng!`
+        });
+
+        if (richEditor) {
+          richEditor.innerHTML = '';
+          richEditor.style.fontFamily = '';
+          richEditor.style.color = '';
+          richEditor.style.fontSize = '';
+        }
+        clearCommunityCenterPostImage();
+        clearCommunityCenterPostBadge();
+
+        communityPosts.unshift(postObj);
+        renderCommunityCenterFeed();
+        if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+        showToast('🎉 Đã đăng bài viết lên Trung Tâm Cộng Đồng thành công!');
+      } catch (err) {
+        console.error('Error posting to community center:', err);
+        showToast('⚠️ Không thể đăng bài lúc này. Vui lòng kiểm tra kết nối!');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '🚀 Đăng Bài'; }
+      }
+    }
+    window.submitCommunityCenterPost = submitCommunityCenterPost;
 
     async function submitCommunityPost() {
       if (isGuest()) {
@@ -20957,6 +21313,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         communityPosts.unshift(postObj);
         renderCommunityFeed();
+        if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
         showToast('🎉 Đã đăng bài viết lên Cộng Đồng thành công!');
       } catch (err) {
         console.error('Error posting to community:', err);
@@ -21065,6 +21422,87 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       });
     }
 
+    // =========================================================================
+    // COMMUNITY CENTER & PROFILE COMMUNITY CONTROLLERS (v0.10.9-63)
+    // =========================================================================
+
+    function openCommunityCenter(filter = 'all') {
+      communityCenterCurrentFilter = filter || 'all';
+      updateCommunityCenterFilterPillsUI();
+      openModal('modal-community-center');
+      fetchAndRenderCommunityCenterFeed();
+      if (typeof updateAppUrlRoute === 'function') {
+        updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
+      }
+    }
+    window.openCommunityCenter = openCommunityCenter;
+
+    function updateCommunityCenterFilterPillsUI() {
+      ['all', 'following', 'my', 'has_image', 'achievement'].forEach(f => {
+        const btn = document.getElementById('cc-filter-' + f);
+        if (btn) {
+          if (f === communityCenterCurrentFilter) {
+            btn.classList.add('active-pill');
+            btn.style.background = '#6366f1';
+            btn.style.color = '#fff';
+          } else {
+            btn.classList.remove('active-pill');
+            btn.style.background = 'var(--surface-elevated)';
+            btn.style.color = 'var(--text-muted)';
+          }
+        }
+      });
+    }
+    window.updateCommunityCenterFilterPillsUI = updateCommunityCenterFilterPillsUI;
+
+    function filterCommunityCenterFeed(filter) {
+      communityCenterCurrentFilter = filter;
+      updateCommunityCenterFilterPillsUI();
+      renderCommunityCenterFeed();
+    }
+    window.filterCommunityCenterFeed = filterCommunityCenterFeed;
+
+    async function fetchAndRenderCommunityCenterFeed(force = false) {
+      const container = document.getElementById('community-center-posts-container');
+      if (!container) return;
+
+      const compAv = document.getElementById('community-center-composer-avatar');
+      if (compAv) {
+        compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
+      }
+
+      if (communityPosts.length === 0 || force) {
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data === 'object') {
+              communityPosts = Object.values(data).filter(p => p && p.id);
+              communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+              localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+            } else {
+              communityPosts = [];
+            }
+          }
+        } catch (err) {
+          console.warn('Community center feed load error, fallback to cache:', err);
+          const cached = localStorage.getItem('vocaflow_community_posts_cache');
+          if (cached) {
+            try { communityPosts = JSON.parse(cached); } catch (e) {}
+          }
+        }
+      }
+
+      renderCommunityCenterFeed();
+    }
+    window.fetchAndRenderCommunityCenterFeed = fetchAndRenderCommunityCenterFeed;
+
     async function fetchAndRenderCommunityFeed(force = false) {
       const container = document.getElementById('community-posts-container');
       if (!container) return;
@@ -21075,7 +21513,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       if (communityPosts.length === 0 || force) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết của bạn...</div>';
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const controller = new AbortController();
@@ -21107,39 +21545,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.fetchAndRenderCommunityFeed = fetchAndRenderCommunityFeed;
 
     function updateCommunityFilterPillsUI() {
-      ['feed', 'mine', 'all', 'milestone'].forEach(f => {
-        const btn = document.getElementById('community-filter-' + f);
-        if (btn) {
-          if (f === communityCurrentFilter) {
-            btn.classList.add('active-pill');
-            btn.style.background = '#6366f1';
-            btn.style.color = '#fff';
-          } else {
-            btn.classList.remove('active-pill');
-            btn.style.background = 'var(--surface-elevated)';
-            btn.style.color = 'var(--text-muted)';
-          }
-        }
-      });
+      // Legacy wrapper
+      updateCommunityCenterFilterPillsUI();
     }
     window.updateCommunityFilterPillsUI = updateCommunityFilterPillsUI;
 
     function filterCommunityFeed(filter) {
-      communityCurrentFilter = filter;
-      updateCommunityFilterPillsUI();
-      if (typeof updateAppUrlRoute === 'function') {
-        if (filter === 'feed') updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
-        else if (filter === 'mine') updateAppUrlRoute('/me/community', 'Bài Viết Của Tôi - VocaFlow');
-        else if (filter === 'all') updateAppUrlRoute('/community/explore', 'Khám Phá Cộng Đồng - VocaFlow');
+      // If legacy call passes 'mine', just render local feed; else forward to Community Center
+      if (filter === 'mine') {
+        renderCommunityFeed();
+      } else {
+        openCommunityCenter(filter);
       }
-      renderCommunityFeed();
     }
     window.filterCommunityFeed = filterCommunityFeed;
 
-    // Global state for comments and avatar resolution (v0.10.9-52)
-    let pubCommunityActiveCommentsPostId = null;
-    let pubCommunityReplyingToComment = null;
-
+    // Helper functions for author and comment resolution
     function getCommunityAuthorAvatar(post) {
       if (!post) return '👤';
       if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
@@ -21239,10 +21660,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.getCommunityCommentAuthorHandle = getCommunityCommentAuthorHandle;
 
-    function highlightAndScrollToPost(postId, isPublicProfile = false) {
+    function highlightAndScrollToPost(postId, context = 'cc') {
       setTimeout(() => {
-        const targetId = isPublicProfile ? `pub-post-card-${postId}` : `post-card-${postId}`;
-        const el = document.getElementById(targetId);
+        const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub' || context === true) ? 'pub-' : '');
+        const targetId = `${idPrefix}post-card-${postId}`;
+        let el = document.getElementById(targetId);
+        if (!el) el = document.getElementById(`post-card-${postId}`) || document.getElementById(`cc-post-card-${postId}`) || document.getElementById(`pub-post-card-${postId}`);
         if (!el) return;
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         el.style.transition = 'all 0.5s ease';
@@ -21256,206 +21679,270 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.highlightAndScrollToPost = highlightAndScrollToPost;
 
-    function renderCommunityFeed() {
-      const container = document.getElementById('community-posts-container');
+    // UNIFIED POST CARD HTML GENERATOR
+    function buildCommunityPostCardHtml(post, context = 'cc') {
+      const myUid = currentUser?.uid;
+      const isAuthor = myUid && post.authorUid === myUid;
+      const likesMap = post.likes || {};
+      const likesCount = Object.keys(likesMap).length;
+      const isLiked = myUid && !!likesMap[myUid];
+
+      const commentsMap = post.comments || {};
+      const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
+      const commentsCount = commentsList.length;
+
+      const postDate = new Date(post.createdAt || Date.now());
+      const timeAgo = formatTimeAgo(postDate);
+      const fullTimeStr = formatFullExactDateTime(postDate);
+      const authorAvatar = getCommunityAuthorAvatar(post);
+      const authorName = getCommunityAuthorName(post);
+      const authorHandle = getCommunityAuthorHandle(post);
+      const isVip = getCommunityAuthorIsVip(post);
+      const postImg = post.image || post.imageUrl || '';
+
+      const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
+      const isCommentsOpen = (activePostCommentsMap[context] === post.id);
+
+      return `
+        <div class="community-post-card" id="${idPrefix}post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
+          <!-- AUTHOR HEADER -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${post.authorUid}')">
+              <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                ${renderAvatarHtml(authorAvatar, 40, 16)}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                  ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                  <span>@${escapeHtml((authorHandle || 'user').replace(/^@/, ''))}</span>
+                  <span>•</span>
+                  <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- AUTHOR ACTION MENU -->
+            ${isAuthor ? `
+              <div style="display: flex; gap: 4px;">
+                <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
+                <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- POST CONTENT (Rich Text Render) -->
+          ${post.content ? `
+            <div id="${idPrefix}post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; word-break: break-word;">
+              ${sanitizePostHtml(post.content)}
+            </div>
+          ` : ''}
+
+          <!-- ATTACHED BADGE BANNER -->
+          ${post.badge ? `
+            <div style="margin-bottom: 10px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.15)); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 26px;">${post.badge.icon || '🏆'}</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">${escapeHtml(post.badge.name || post.badge.title || 'Danh Hiệu VocaFlow')}</div>
+                <div style="font-size: 11.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || '')}</div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
+          ${postImg ? `
+            <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
+              <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
+              <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
+                <span>🔍 Phóng to</span>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- INTERACTION ACTION BAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;">
+            <div style="display: flex; gap: 10px;">
+              <!-- LIKE BUTTON -->
+              <button type="button" class="btn btn-xs ${isLiked ? 'btn-primary' : 'btn-outline'}" onclick="togglePostLike('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px; ${isLiked ? 'background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.5);' : ''}">
+                <span>${isLiked ? '❤️' : '🤍'}</span>
+                <span>${likesCount}</span>
+              </button>
+
+              <!-- COMMENT TOGGLE BUTTON -->
+              <button type="button" class="btn btn-xs btn-outline" onclick="toggleCommunityPostCommentsSection('${post.id}', '${context}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
+                <span>💬</span>
+                <span>${commentsCount} bình luận</span>
+              </button>
+            </div>
+
+            <!-- SHARE BUTTON -->
+            <button type="button" class="btn btn-xs btn-outline" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ liên kết bài viết" style="font-size: 11px;">
+              <span>🔗</span>
+            </button>
+          </div>
+
+          <!-- COMMENTS SECTION (Collapsible) -->
+          <div id="${idPrefix}post-comments-section-${post.id}" style="display: ${isCommentsOpen ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            
+            <!-- COMMENTS LIST -->
+            <div id="${idPrefix}post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+              ${commentsList.length === 0 ? `
+                <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
+              ` : commentsList.map(c => {
+                const commentDate = new Date(c.timestamp || Date.now());
+                const cAuthorName = getCommunityCommentAuthorName(c);
+                const cAuthorHandle = getCommunityCommentAuthorHandle(c);
+                return `
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
+                      <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml((cAuthorHandle || 'user').replace(/^@/, ''))}</strong>
+                      <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
+                    </div>
+                    <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToCommunityPostComment('${post.id}', '${c.id}', '${escapeHtml((cAuthorHandle || 'user').replace(/^@/, ''))}', '${context}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
+                  </div>
+                  ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle.replace(/^@/, ''))} </span>` : ''}
+                  <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
+                </div>
+              `;}).join('')}
+            </div>
+
+            <!-- COMMENT INPUT -->
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div id="${idPrefix}reply-indicator-${post.id}" style="display: none; font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 3px 8px; border-radius: 6px; justify-content: space-between; align-items: center;">
+                <span id="${idPrefix}reply-indicator-text-${post.id}">Đang trả lời @user</span>
+                <button type="button" onclick="cancelReplyingToCommunityPostComment('${post.id}', '${context}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <input type="text" id="${idPrefix}post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitCommunityPostComment('${post.id}', '${context}')">
+                <button type="button" class="btn btn-primary btn-sm" onclick="submitCommunityPostComment('${post.id}', '${context}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+    window.buildCommunityPostCardHtml = buildCommunityPostCardHtml;
+
+    // COMMUNITY CENTER FEED RENDERER
+    function renderCommunityCenterFeed() {
+      const container = document.getElementById('community-center-posts-container');
       if (!container) return;
 
-      const myUid = currentUser?.uid;
-      let filtered = communityPosts;
+      const compAv = document.getElementById('community-center-composer-avatar');
+      if (compAv) {
+        compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
+      }
 
-      if (communityCurrentFilter === 'mine') {
-        filtered = communityPosts.filter(p => myUid && p.authorUid === myUid);
-      } else if (communityCurrentFilter === 'feed') {
-        filtered = communityPosts.filter(p => {
-          if (!myUid) return true;
-          if (p.authorUid === myUid) return true;
-          if (typeof myFollowingMap !== 'undefined' && myFollowingMap && !!myFollowingMap[p.authorUid]) return true;
-          return false;
-        });
-      } else if (communityCurrentFilter === 'milestone') {
-        filtered = communityPosts.filter(p => p.type === 'milestone' || p.badge);
+      const myUid = currentUser?.uid;
+
+      // Base allowed posts: Self OR Followed users only
+      const baseAllowed = communityPosts.filter(p => {
+        if (!p) return false;
+        if (myUid && p.authorUid === myUid) return true;
+        if (typeof myFollowingMap !== 'undefined' && myFollowingMap && p.authorUid && !!myFollowingMap[p.authorUid]) return true;
+        return false;
+      });
+
+      let filtered = baseAllowed;
+      if (communityCenterCurrentFilter === 'following') {
+        filtered = baseAllowed.filter(p => !myUid || p.authorUid !== myUid);
+      } else if (communityCenterCurrentFilter === 'my') {
+        filtered = baseAllowed.filter(p => myUid && p.authorUid === myUid);
+      } else if (communityCenterCurrentFilter === 'has_image') {
+        filtered = baseAllowed.filter(p => !!(p.image || p.imageUrl || (p.imageUrls && p.imageUrls.length > 0)));
+      } else if (communityCenterCurrentFilter === 'achievement') {
+        filtered = baseAllowed.filter(p => !!(p.badge || p.attachedAchievement || p.type === 'milestone' || p.milestoneType));
       } else {
         // 'all'
-        filtered = communityPosts;
+        filtered = baseAllowed;
       }
 
       if (filtered.length === 0) {
-        if (communityCurrentFilter === 'mine') {
-          container.innerHTML = `
+        let emptyHtml = '';
+        if (communityCenterCurrentFilter === 'following') {
+          emptyHtml = `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">👥🌱</div>
+              <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết từ người đang theo dõi</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Hãy theo dõi thêm tác giả hoặc người dùng khác để xem bài viết của họ!</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="filterCommunityCenterFeed('all')" style="font-size: 12px; font-weight: 700;">
+                🌐 Xem Tất Cả Bài Viết
+              </button>
+            </div>
+          `;
+        } else if (communityCenterCurrentFilter === 'my') {
+          emptyHtml = `
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
               <div style="font-size: 36px; margin-bottom: 8px;">📝✨</div>
               <strong style="font-size: 14px; color: var(--text);">Bạn chưa có bài viết nào</strong>
               <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy chia sẻ suy nghĩ hoặc chiến tích học tập đầu tiên của bạn ở khung soạn thảo phía trên!</p>
             </div>
           `;
-        } else if (communityCurrentFilter === 'feed') {
-          container.innerHTML = `
+        } else if (communityCenterCurrentFilter === 'has_image') {
+          emptyHtml = `
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
-              <div style="font-size: 36px; margin-bottom: 8px;">👥🌱</div>
-              <strong style="font-size: 14px; color: var(--text);">Bảng tin theo dõi đang trống</strong>
-              <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">Hãy theo dõi thêm tác giả hoặc chuyển sang tab Khám Phá để xem tất cả bài viết.</p>
-              <button type="button" class="btn btn-primary btn-sm" onclick="filterCommunityFeed('all')" style="font-size: 12px; font-weight: 700;">
-                🌍 Khám Phá Cộng Đồng
-              </button>
+              <div style="font-size: 36px; margin-bottom: 8px;">🖼️</div>
+              <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào chứa hình ảnh</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Bạn có thể đính kèm ảnh chụp tiến độ học tập khi đăng bài!</p>
+            </div>
+          `;
+        } else if (communityCenterCurrentFilter === 'achievement') {
+          emptyHtml = `
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">🏆</div>
+              <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết khoe thành tích nào</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy đính kèm danh hiệu đạt được khi hoàn thành các mục tiêu học từ vựng!</p>
             </div>
           `;
         } else {
-          container.innerHTML = `
+          emptyHtml = `
             <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
               <div style="font-size: 36px; margin-bottom: 8px;">💬✨</div>
-              <strong style="font-size: 14px; color: var(--text);">Chưa có bài viết nào</strong>
-              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy là người đầu tiên chia sẻ cảm nghĩ hoặc chiến tích học tập!</p>
+              <strong style="font-size: 14px; color: var(--text);">Bảng tin cộng đồng đang trống</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Hãy là người đầu tiên chia sẻ cảm nghĩ hoặc kết nối với những người dùng khác!</p>
             </div>
           `;
         }
+        container.innerHTML = emptyHtml;
         return;
       }
 
-      let html = '';
-      filtered.forEach(post => {
-        const isAuthor = myUid && post.authorUid === myUid;
-        const likesMap = post.likes || {};
-        const likesCount = Object.keys(likesMap).length;
-        const isLiked = myUid && !!likesMap[myUid];
+      container.innerHTML = filtered.map(post => buildCommunityPostCardHtml(post, 'cc')).join('');
+    }
+    window.renderCommunityCenterFeed = renderCommunityCenterFeed;
 
-        const commentsMap = post.comments || {};
-        const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
-        const commentsCount = commentsList.length;
+    // ME / PROFILE COMMUNITY FEED RENDERER (ONLY CURRENT USER'S POSTS)
+    function renderCommunityFeed() {
+      const container = document.getElementById('community-posts-container');
+      if (!container) return;
 
-        const postDate = new Date(post.createdAt || Date.now());
-        const timeAgo = formatTimeAgo(postDate);
-        const fullTimeStr = formatFullExactDateTime(postDate);
-        const authorAvatar = getCommunityAuthorAvatar(post);
-        const authorName = getCommunityAuthorName(post);
-        const authorHandle = getCommunityAuthorHandle(post);
-        const isVip = getCommunityAuthorIsVip(post);
+      const compAv = document.getElementById('community-composer-avatar');
+      if (compAv) {
+        compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
+      }
 
-        const postImg = post.image || post.imageUrl || '';
+      const myUid = currentUser?.uid;
+      const filtered = communityPosts.filter(p => myUid && p.authorUid === myUid);
 
-        html += `
-          <div class="community-post-card" id="post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
-            <!-- AUTHOR HEADER -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${post.authorUid}')">
-                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                  ${renderAvatarHtml(authorAvatar, 40, 16)}
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
-                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
-                  </div>
-                  <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml(authorHandle || 'user')}</span>
-                    <span>•</span>
-                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- AUTHOR ACTION MENU -->
-              ${isAuthor ? `
-                <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
-                  <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- POST CONTENT (Rich Text Render) -->
-            ${post.content ? `
-              <div id="post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 10px; word-break: break-word;">
-                ${sanitizePostHtml(post.content)}
-              </div>
-            ` : ''}
-
-            <!-- ATTACHED BADGE BANNER -->
-            ${post.badge ? `
-              <div style="margin-bottom: 10px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.15)); border: 1px solid rgba(245,158,11,0.4); display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 26px;">${post.badge.icon || '🏆'}</span>
-                <div>
-                  <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">${escapeHtml(post.badge.name || post.badge.title || 'Danh Hiệu VocaFlow')}</div>
-                  <div style="font-size: 11.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || '')}</div>
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
-            ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative; group;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
-                <img src="${escapeHtml(postImg)}" alt="Post image" style="width: 100%; height: auto; max-height: 360px; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none';">
-                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
-                  <span>🔍 Phóng to</span>
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- INTERACTION ACTION BAR -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;">
-              <div style="display: flex; gap: 10px;">
-                <!-- LIKE BUTTON -->
-                <button type="button" class="btn btn-xs ${isLiked ? 'btn-primary' : 'btn-outline'}" onclick="togglePostLike('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px; ${isLiked ? 'background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.5);' : ''}">
-                  <span>${isLiked ? '❤️' : '🤍'}</span>
-                  <span>${likesCount}</span>
-                </button>
-
-                <!-- COMMENT TOGGLE BUTTON -->
-                <button type="button" class="btn btn-xs btn-outline" onclick="togglePostCommentsSection('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
-                  <span>💬</span>
-                  <span>${commentsCount} bình luận</span>
-                </button>
-              </div>
-
-              <!-- SHARE BUTTON -->
-              <button type="button" class="btn btn-xs btn-outline" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ liên kết bài viết" style="font-size: 11px;">
-                <span>🔗</span>
-              </button>
-            </div>
-
-            <!-- COMMENTS SECTION (Collapsible) -->
-            <div id="post-comments-section-${post.id}" style="display: ${communityActiveCommentsPostId === post.id ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-              
-              <!-- COMMENTS LIST -->
-              <div id="post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                ${commentsList.length === 0 ? `
-                  <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => {
-                  const commentDate = new Date(c.timestamp || Date.now());
-                  const cAuthorName = getCommunityCommentAuthorName(c);
-                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
-                  return `
-                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
-                      </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
-                    </div>
-                    ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
-                    <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
-                  </div>
-                `;}).join('')}
-              </div>
-
-              <!-- COMMENT INPUT -->
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div id="reply-indicator-${post.id}" style="display: none; font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 3px 8px; border-radius: 6px; justify-content: space-between; align-items: center;">
-                  <span id="reply-indicator-text-${post.id}">Đang trả lời @user</span>
-                  <button type="button" onclick="cancelReplyingToComment('${post.id}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                  <input type="text" id="post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitPostComment('${post.id}')">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="submitPostComment('${post.id}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
-                </div>
-              </div>
-
-            </div>
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 32px 16px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📝✨</div>
+            <strong style="font-size: 14px; color: var(--text);">Bạn chưa có bài viết nào</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 14px 0;">Hãy chia sẻ suy nghĩ hoặc chiến tích học tập đầu tiên của bạn ở khung soạn thảo phía trên!</p>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openCommunityCenter('all')" style="font-size: 12px; font-weight: 700;">
+              🌐 Khám Phá Trung Tâm Cộng Đồng
+            </button>
           </div>
         `;
-      });
+        return;
+      }
 
-      container.innerHTML = html;
+      container.innerHTML = filtered.map(post => buildCommunityPostCardHtml(post, 'me')).join('');
     }
     window.renderCommunityFeed = renderCommunityFeed;
 
@@ -21511,10 +21998,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             }).catch(e => console.warn(e));
           }
         }
-        renderCommunityFeed();
-        if (typeof renderPubProfileCommunityPosts === 'function') {
-          renderPubProfileCommunityPosts();
-        }
+        if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+        if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+        if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
       } catch (err) {
         console.warn('Like toggle sync error:', err);
       }
@@ -21522,22 +22008,34 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.togglePostLike = togglePostLike;
     window.toggleLikeCommunityPost = togglePostLike;
 
-    function togglePostCommentsSection(postId) {
-      communityActiveCommentsPostId = (communityActiveCommentsPostId === postId) ? null : postId;
-      renderCommunityFeed();
-      if (communityActiveCommentsPostId === postId) {
+    function toggleCommunityPostCommentsSection(postId, context = 'cc') {
+      if (activePostCommentsMap[context] === postId) {
+        activePostCommentsMap[context] = null;
+      } else {
+        activePostCommentsMap[context] = postId;
+      }
+      if (context === 'cc' && typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      else if (context === 'me' && typeof renderCommunityFeed === 'function') renderCommunityFeed();
+      else if (context === 'pub' && typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
+
+      if (activePostCommentsMap[context] === postId) {
         setTimeout(() => {
-          document.getElementById(`post-comment-input-${postId}`)?.focus();
+          const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
+          document.getElementById(`${idPrefix}post-comment-input-${postId}`)?.focus();
         }, 100);
       }
     }
-    window.togglePostCommentsSection = togglePostCommentsSection;
+    window.toggleCommunityPostCommentsSection = toggleCommunityPostCommentsSection;
+    window.togglePostCommentsSection = (postId) => toggleCommunityPostCommentsSection(postId, 'me');
+    window.togglePubPostCommentsSection = (postId) => toggleCommunityPostCommentsSection(postId, 'pub');
+    window.toggleCommunityCenterPostCommentsSection = (postId) => toggleCommunityPostCommentsSection(postId, 'cc');
 
-    function setReplyingToComment(postId, commentId, authorHandle) {
-      communityReplyingToComment = { postId, commentId, authorHandle };
-      const ind = document.getElementById(`reply-indicator-${postId}`);
-      const txt = document.getElementById(`reply-indicator-text-${postId}`);
-      const inp = document.getElementById(`post-comment-input-${postId}`);
+    function setReplyingToCommunityPostComment(postId, commentId, authorHandle, context = 'cc') {
+      activeReplyingCommentMap[context] = { postId, commentId, authorHandle };
+      const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
+      const ind = document.getElementById(`${idPrefix}reply-indicator-${postId}`);
+      const txt = document.getElementById(`${idPrefix}reply-indicator-text-${postId}`);
+      const inp = document.getElementById(`${idPrefix}post-comment-input-${postId}`);
       if (ind) ind.style.display = 'flex';
       if (txt) txt.textContent = `Đang trả lời @${authorHandle}`;
       if (inp) {
@@ -21545,58 +22043,30 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         inp.focus();
       }
     }
-    window.setReplyingToComment = setReplyingToComment;
+    window.setReplyingToCommunityPostComment = setReplyingToCommunityPostComment;
+    window.setReplyingToComment = (p, c, a) => setReplyingToCommunityPostComment(p, c, a, 'me');
+    window.setPubReplyingToComment = (p, c, a) => setReplyingToCommunityPostComment(p, c, a, 'pub');
 
-    function cancelReplyingToComment(postId) {
-      communityReplyingToComment = null;
-      const ind = document.getElementById(`reply-indicator-${postId}`);
+    function cancelReplyingToCommunityPostComment(postId, context = 'cc') {
+      activeReplyingCommentMap[context] = null;
+      const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
+      const ind = document.getElementById(`${idPrefix}reply-indicator-${postId}`);
+      const inp = document.getElementById(`${idPrefix}post-comment-input-${postId}`);
       if (ind) ind.style.display = 'none';
-      const inp = document.getElementById(`post-comment-input-${postId}`);
       if (inp) inp.value = '';
     }
-    window.cancelReplyingToComment = cancelReplyingToComment;
+    window.cancelReplyingToCommunityPostComment = cancelReplyingToCommunityPostComment;
+    window.cancelReplyingToComment = (p) => cancelReplyingToCommunityPostComment(p, 'me');
+    window.cancelPubReplyingToComment = (p) => cancelReplyingToCommunityPostComment(p, 'pub');
 
-    function togglePubPostCommentsSection(postId) {
-      pubCommunityActiveCommentsPostId = (pubCommunityActiveCommentsPostId === postId) ? null : postId;
-      renderPubProfileCommunityPosts();
-      if (pubCommunityActiveCommentsPostId === postId) {
-        setTimeout(() => {
-          document.getElementById(`pub-post-comment-input-${postId}`)?.focus();
-        }, 100);
-      }
-    }
-    window.togglePubPostCommentsSection = togglePubPostCommentsSection;
-
-    function setPubReplyingToComment(postId, commentId, authorHandle) {
-      pubCommunityReplyingToComment = { postId, commentId, authorHandle };
-      const ind = document.getElementById(`pub-reply-indicator-${postId}`);
-      const txt = document.getElementById(`pub-reply-indicator-text-${postId}`);
-      const inp = document.getElementById(`pub-post-comment-input-${postId}`);
-      if (ind) ind.style.display = 'flex';
-      if (txt) txt.textContent = `Đang trả lời @${authorHandle}`;
-      if (inp) {
-        inp.value = `@${authorHandle} `;
-        inp.focus();
-      }
-    }
-    window.setPubReplyingToComment = setPubReplyingToComment;
-
-    function cancelPubReplyingToComment(postId) {
-      pubCommunityReplyingToComment = null;
-      const ind = document.getElementById(`pub-reply-indicator-${postId}`);
-      if (ind) ind.style.display = 'none';
-      const inp = document.getElementById(`pub-post-comment-input-${postId}`);
-      if (inp) inp.value = '';
-    }
-    window.cancelPubReplyingToComment = cancelPubReplyingToComment;
-
-    async function submitPostComment(postId) {
+    async function submitCommunityPostComment(postId, context = 'cc') {
       if (isGuest()) {
         alert('🔒 Vui lòng đăng nhập để bình luận!');
         openAuthModal('login');
         return;
       }
-      const inp = document.getElementById(`post-comment-input-${postId}`) || document.getElementById(`pub-post-comment-input-${postId}`);
+      const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
+      const inp = document.getElementById(`${idPrefix}post-comment-input-${postId}`) || document.getElementById(`post-comment-input-${postId}`) || document.getElementById(`pub-post-comment-input-${postId}`);
       const text = (inp?.value || '').trim();
       if (!text) return;
 
@@ -21604,9 +22074,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!post) return;
       if (!post.comments) post.comments = {};
 
+      const replyState = activeReplyingCommentMap[context];
       const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-      const replyHandle = communityReplyingToComment?.postId === postId ? communityReplyingToComment.authorHandle : (pubCommunityReplyingToComment?.postId === postId ? pubCommunityReplyingToComment.authorHandle : null);
-      const replyCommentId = communityReplyingToComment?.postId === postId ? communityReplyingToComment.commentId : (pubCommunityReplyingToComment?.postId === postId ? pubCommunityReplyingToComment.commentId : null);
+      const replyHandle = replyState?.postId === postId ? replyState.authorHandle : null;
+      const replyCommentId = replyState?.postId === postId ? replyState.commentId : null;
 
       const commentObj = {
         id: commentId,
@@ -21622,12 +22093,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       post.comments[commentId] = commentObj;
       if (inp) inp.value = '';
-      cancelReplyingToComment(postId);
-      cancelPubReplyingToComment(postId);
-      renderCommunityFeed();
-      if (typeof renderPubProfileCommunityPosts === 'function') {
-        renderPubProfileCommunityPosts();
-      }
+      cancelReplyingToCommunityPostComment(postId, context);
+
+      if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
 
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
@@ -21663,7 +22133,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }).catch(e => console.warn(e));
         }
 
-        // Notify replied user if replying to someone else's comment
         if (replyCommentId && post.comments && post.comments[replyCommentId]) {
           const targetComment = post.comments[replyCommentId];
           if (targetComment && targetComment.authorUid && targetComment.authorUid !== currentUser.uid && targetComment.authorUid !== post.authorUid) {
@@ -21693,7 +22162,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         console.warn('Comment sync error:', err);
       }
     }
-    window.submitPostComment = submitPostComment;
+    window.submitCommunityPostComment = submitCommunityPostComment;
+    window.submitPostComment = (postId) => submitCommunityPostComment(postId, 'me');
 
     function navigateToCommunityPost(postId) {
       if (!postId) return;
@@ -21712,33 +22182,27 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
           setTimeout(() => {
             if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community');
-            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, true);
+            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, 'pub');
           }, 300);
         } else {
-          if (typeof openProfileModal === 'function') {
-            openProfileModal('community', 'all');
+          if (typeof openCommunityCenter === 'function') {
+            openCommunityCenter('my');
+          } else if (typeof openProfileModal === 'function') {
+            openProfileModal('community');
           }
           setTimeout(() => {
-            if (typeof filterCommunityFeed === 'function') {
-              if (myUid && post.authorUid === myUid) {
-                filterCommunityFeed('mine');
-              } else {
-                filterCommunityFeed('all');
-              }
-            }
-            if (typeof togglePostCommentsSection === 'function') {
-              communityActiveCommentsPostId = postId;
-              if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
-            }
-            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, false);
+            activePostCommentsMap.cc = postId;
+            if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+            if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, 'cc');
           }, 300);
         }
       } else {
-        if (typeof openProfileModal === 'function') openProfileModal('community', 'all');
-        if (typeof fetchAndRenderCommunityFeed === 'function') {
-          fetchAndRenderCommunityFeed(true).then(() => {
+        if (typeof openCommunityCenter === 'function') openCommunityCenter('all');
+        else if (typeof openProfileModal === 'function') openProfileModal('community');
+        if (typeof fetchAndRenderCommunityCenterFeed === 'function') {
+          fetchAndRenderCommunityCenterFeed(true).then(() => {
             setTimeout(() => {
-              if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, false);
+              if (typeof highlightAndScrollToPost === 'function') highlightAndScrollToPost(postId, 'cc');
             }, 400);
           });
         }
@@ -21753,7 +22217,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (newText === null) return;
       post.content = newText.trim();
       post.updatedAt = new Date().toISOString();
-      renderCommunityFeed();
+      if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
       if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
 
       try {
@@ -21779,7 +22244,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
 
       communityPosts = communityPosts.filter(p => p.id !== postId);
-      renderCommunityFeed();
+      if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
       if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
 
       try {
@@ -21905,142 +22371,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
-      const myUid = currentUser?.uid;
       let html = '';
       authorPosts.forEach(post => {
-        const isAuthor = myUid && post.authorUid === myUid;
-        const likesMap = post.likes || {};
-        const likesCount = Object.keys(likesMap).length;
-        const isLiked = myUid && !!likesMap[myUid];
-
-        const commentsMap = post.comments || {};
-        const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
-        const commentsCount = commentsList.length;
-
-        const postDate = new Date(post.createdAt || Date.now());
-        const timeAgo = formatTimeAgo(postDate);
-        const fullTimeStr = formatFullExactDateTime(postDate);
-        const authorAvatar = getCommunityAuthorAvatar(post);
-        const authorName = getCommunityAuthorName(post);
-        const authorHandle = getCommunityAuthorHandle(post);
-        const isVip = getCommunityAuthorIsVip(post);
-
-        const postImg = post.image || post.imageUrl || '';
-
-        html += `
-          <div class="community-post-card" id="pub-post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
-            <!-- AUTHOR HEADER -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                  ${renderAvatarHtml(authorAvatar, 40, 16)}
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
-                    ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
-                  </div>
-                  <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                    <span>@${escapeHtml((authorHandle || 'user').replace(/^@/, ''))}</span>
-                    <span>•</span>
-                    <span title="${escapeHtml(fullTimeStr)}" style="cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;">${timeAgo}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- AUTHOR ACTION MENU -->
-              ${isAuthor ? `
-                <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-xs btn-outline" onclick="openEditCommunityPostModal('${post.id}')" title="Chỉnh sửa bài viết toàn diện" style="padding: 2px 6px; font-size: 11px;">✏️</button>
-                  <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPost('${post.id}')" title="Xóa bài viết" style="padding: 2px 6px; font-size: 11px; color: #f87171; border-color: rgba(248,113,113,0.3);">🗑️</button>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- POST CONTENT (Rich Text Render) -->
-            ${post.content ? `
-              <div id="pub-post-content-text-${post.id}" class="community-post-content" style="font-size: 13.5px; line-height: 1.55; color: var(--text); margin-bottom: 10px; word-break: break-word;">${sanitizePostHtml(post.content || '')}</div>
-            ` : ''}
-
-            <!-- ATTACHED BADGE BRAG -->
-            ${post.badge ? `
-              <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 6px 12px; margin-bottom: 10px;">
-                <span style="font-size: 20px;">${post.badge.icon || '🏅'}</span>
-                <div>
-                  <div style="font-size: 12px; font-weight: 700; color: #fbbf24;">${escapeHtml(post.badge.title || post.badge.name || 'Danh Hiệu VocaFlow')}</div>
-                  <div style="font-size: 10.5px; color: var(--text-muted);">${escapeHtml(post.badge.desc || 'Thành tích đạt được trong quá trình học tập')}</div>
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- ATTACHED IMAGE (Click to open full Lightbox Modal) -->
-            ${postImg ? `
-              <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); max-height: 360px; background: #000; cursor: zoom-in; position: relative;" onclick="openImageViewerModal('${encodeURI(postImg)}', 'Ảnh bài viết của ${escapeHtml(authorName)}')" title="Nhấp để phóng to / xem toàn màn hình">
-                <img src="${escapeHtml(postImg)}" alt="Attached Image" style="width: 100%; height: auto; object-fit: contain; max-height: 360px; display: block;" onerror="this.parentElement.style.display='none';">
-                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; display: flex; align-items: center; gap: 4px;">
-                  <span>🔍 Phóng to</span>
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- INTERACTIONS ROW -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; font-size: 12px;">
-              <div style="display: flex; gap: 10px; align-items: center;">
-                <button type="button" class="btn btn-xs ${isLiked ? 'btn-primary' : 'btn-outline'}" onclick="togglePostLike('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px; ${isLiked ? 'background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.5);' : ''}">
-                  <span>${isLiked ? '❤️' : '🤍'}</span> <span>${likesCount}</span>
-                </button>
-                <button type="button" class="btn btn-xs btn-outline" onclick="togglePubPostCommentsSection('${post.id}')" style="font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
-                  <span>💬</span> <span>${commentsCount} bình luận</span>
-                </button>
-              </div>
-              <button type="button" class="btn btn-outline btn-xs" onclick="shareCommunityPost('${post.id}')" title="Chia sẻ bài viết" style="font-size: 11px; padding: 3px 8px;">
-                <span>🔗</span> Chia Sẻ
-              </button>
-            </div>
-
-            <!-- COMMENTS SECTION (Collapsible) -->
-            <div id="pub-post-comments-section-${post.id}" style="display: ${pubCommunityActiveCommentsPostId === post.id ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-              
-              <!-- COMMENTS LIST -->
-              <div id="pub-post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                ${commentsList.length === 0 ? `
-                  <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-                ` : commentsList.map(c => {
-                  const commentDate = new Date(c.timestamp || Date.now());
-                  const cAuthorName = getCommunityCommentAuthorName(c);
-                  const cAuthorHandle = getCommunityCommentAuthorHandle(c);
-                  return `
-                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                      <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
-                        <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle || 'user')}</strong>
-                        <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
-                      </div>
-                      <button type="button" class="btn btn-xs btn-outline" onclick="setPubReplyingToComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle || 'user')}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
-                    </div>
-                    ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle)} </span>` : ''}
-                    <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
-                  </div>
-                `;}).join('')}
-              </div>
-
-              <!-- COMMENT INPUT -->
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div id="pub-reply-indicator-${post.id}" style="display: none; font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 3px 8px; border-radius: 6px; justify-content: space-between; align-items: center;">
-                  <span id="pub-reply-indicator-text-${post.id}">Đang trả lời @user</span>
-                  <button type="button" onclick="cancelPubReplyingToComment('${post.id}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                  <input type="text" id="pub-post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitPostComment('${post.id}')">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="submitPostComment('${post.id}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        `;
+        html += buildCommunityPostCardHtml(post, 'pub');
       });
-
       container.innerHTML = html;
     }
     window.renderPubProfileCommunityPosts = renderPubProfileCommunityPosts;
@@ -22129,12 +22463,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       openModal('modal-profile');
     }
     window.openProfileModal = openProfileModal;
-
-    function openCommunityCenter(filter = 'feed') {
-      openProfileModal('community', filter);
-    }
-    window.openCommunityCenter = openCommunityCenter;
-    window.openCommunityFeed = openCommunityCenter;
 
     function openAuthModal(defaultTab = 'login') {
       openModal('modal-auth');
@@ -23516,45 +23844,52 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       updateNotificationsUI();
       renderNotificationsList();
 
-      // 15. Mistake Notebook Two-Way Sync (v0.10.9-43)
+      // 15. Mistake Notebook Two-Way Sync (v0.10.9-63: Anti-Revert & Accurate Decrement Sync)
       if (cloudData.mistakeNotebook !== undefined) {
         try {
           const remoteMistakes = Array.isArray(cloudData.mistakeNotebook)
             ? cloudData.mistakeNotebook
             : (cloudData.mistakeNotebook && typeof cloudData.mistakeNotebook === 'object' ? Object.values(cloudData.mistakeNotebook) : []);
+          const hasLocalMistakeStorage = localStorage.getItem('vocaflow_mistake_notebook_v1') !== null;
           const localMistakes = getMistakeWordsList();
-          const mergedMap = new Map();
 
-          localMistakes.forEach(item => {
-            if (item && (item.wordId || item.term)) {
-              const key = String(item.wordId || item.term).toLowerCase();
-              mergedMap.set(key, { ...item });
-            }
-          });
-
-          remoteMistakes.forEach(item => {
-            if (item && (item.wordId || item.term)) {
-              const key = String(item.wordId || item.term).toLowerCase();
-              if (mergedMap.has(key)) {
-                const existing = mergedMap.get(key);
-                const mergedCount = Math.max(parseInt(existing.mistakeCount, 10) || 1, parseInt(item.mistakeCount, 10) || 1);
-                const mergedTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
-                const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
-                mergedMap.set(key, {
-                  ...existing,
-                  ...item,
-                  mistakeCount: mergedCount,
-                  lastMistakeAt: mergedTime,
-                  modesFailed: mergedModes
-                });
-              } else {
+          if (!hasLocalMistakeStorage) {
+            // Fresh login on new machine: adopt remote mistake notebook directly
+            saveMistakeWordsList(remoteMistakes, false);
+          } else {
+            // Existing local session: local is the authoritative working state for resolved/decremented words
+            const mergedMap = new Map();
+            localMistakes.forEach(item => {
+              if (item && (item.wordId || item.term)) {
+                const key = String(item.wordId || item.term).toLowerCase();
                 mergedMap.set(key, { ...item });
               }
-            }
-          });
+            });
 
-          const finalMistakeList = Array.from(mergedMap.values()).sort((a, b) => (b.lastMistakeAt || 0) - (a.lastMistakeAt || 0));
-          saveMistakeWordsList(finalMistakeList, false);
+            remoteMistakes.forEach(item => {
+              if (item && (item.wordId || item.term)) {
+                const key = String(item.wordId || item.term).toLowerCase();
+                if (mergedMap.has(key)) {
+                  const existing = mergedMap.get(key);
+                  // Only adopt remote mistakeCount if remote has a strictly newer failure timestamp
+                  const isRemoteNewer = (item.lastMistakeAt || 0) > (existing.lastMistakeAt || 0);
+                  const finalCount = isRemoteNewer ? (parseInt(item.mistakeCount, 10) || existing.mistakeCount) : existing.mistakeCount;
+                  const finalTime = Math.max(existing.lastMistakeAt || 0, item.lastMistakeAt || 0);
+                  const mergedModes = Array.from(new Set([...(existing.modesFailed || []), ...(item.modesFailed || [])]));
+                  mergedMap.set(key, {
+                    ...existing,
+                    ...item,
+                    mistakeCount: finalCount,
+                    lastMistakeAt: finalTime,
+                    modesFailed: mergedModes
+                  });
+                }
+              }
+            });
+
+            const finalMistakeList = Array.from(mergedMap.values()).sort((a, b) => (b.lastMistakeAt || 0) - (a.lastMistakeAt || 0));
+            saveMistakeWordsList(finalMistakeList, false);
+          }
           if (typeof renderMistakeNotebookList === 'function') {
             renderMistakeNotebookList();
           }
@@ -28127,10 +28462,14 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
-    function saveMistakeWordsList(list) {
+    function saveMistakeWordsList(list, triggerCloudPush = true) {
       try {
-        localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(Array.isArray(list) ? list : []));
+        const cleanList = Array.isArray(list) ? list : [];
+        localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(cleanList));
         updateMistakeBadgeUI();
+        if (triggerCloudPush !== false && typeof pushCurrentDatabaseToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser) {
+          pushCurrentDatabaseToCloud();
+        }
       } catch (e) {
         console.warn('Error saving mistake notebook:', e);
       }
@@ -28305,6 +28644,15 @@ Yêu cầu nghiêm ngặt:
     }
 
     function openMistakeNotebookModal(deckIdFilter = null) {
+      // Guard against opening in any study mode (v0.10.9-63)
+      const activeStudyScreen = document.querySelector('.screen.active');
+      if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+        }
+        return;
+      }
+
       // Populate Deck filter dropdown
       const deckSelect = document.getElementById('mistake-notebook-deck-filter');
       if (deckSelect) {
@@ -53981,9 +54329,16 @@ Quy tắc phản hồi quan trọng:
 
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
       const fab = document.getElementById('btn-ai-mentor-fab');
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
       if (fab) {
-        const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
         fab.style.display = isExamScreen ? 'none' : 'flex';
+      }
+
+      // v0.10.9-63: Mistake button locking & dimming during study screens
+      const btnMistakes = document.getElementById('btn-header-mistakes');
+      if (btnMistakes) {
+        btnMistakes.style.opacity = isExamScreen ? '0.4' : '';
+        btnMistakes.title = isExamScreen ? 'Đang trong phiên học tập (Khóa Sổ Tay Lỗi Sai)' : 'Sổ Tay Lỗi Sai & Câu Cần Ôn Tập';
       }
 
       // v0.10.9-alpha-12: Context-aware ads (suppress vignette during study screens)
@@ -53997,6 +54352,15 @@ Quy tắc phản hồi quan trọng:
 
     // MODAL CONTROL
     function openModal(id) {
+      if (id === 'modal-mistake-notebook') {
+        const activeStudyScreen = document.querySelector('.screen.active');
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+          if (typeof showToast === 'function') {
+            showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+          }
+          return;
+        }
+      }
       const el = document.getElementById(id);
       if (el) el.classList.add('active');
       if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {

@@ -38,9 +38,16 @@
 
       // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
       const fab = document.getElementById('btn-ai-mentor-fab');
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
       if (fab) {
-        const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
         fab.style.display = isExamScreen ? 'none' : 'flex';
+      }
+
+      // v0.10.9-63: Mistake button locking & dimming during study screens
+      const btnMistakes = document.getElementById('btn-header-mistakes');
+      if (btnMistakes) {
+        btnMistakes.style.opacity = isExamScreen ? '0.4' : '';
+        btnMistakes.title = isExamScreen ? 'Đang trong phiên học tập (Khóa Sổ Tay Lỗi Sai)' : 'Sổ Tay Lỗi Sai & Câu Cần Ôn Tập';
       }
 
       // v0.10.9-alpha-12: Context-aware ads (suppress vignette during study screens)
@@ -54,6 +61,15 @@
 
     // MODAL CONTROL
     function openModal(id) {
+      if (id === 'modal-mistake-notebook') {
+        const activeStudyScreen = document.querySelector('.screen.active');
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+          if (typeof showToast === 'function') {
+            showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+          }
+          return;
+        }
+      }
       const el = document.getElementById(id);
       if (el) el.classList.add('active');
       if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {

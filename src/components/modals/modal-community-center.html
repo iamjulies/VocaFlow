@@ -1,0 +1,171 @@
+  <!-- MODAL: COMMUNITY CENTER (v0.10.9-63) -->
+  <div class="modal-overlay" id="modal-community-center">
+    <div class="modal" style="max-width: 680px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+      
+      <!-- HEADER BAR -->
+      <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">💬</span>
+          <div>
+            <strong style="font-size: 16px; color: var(--text);">Trung Tâm Cộng Đồng (Community Center)</strong>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Bảng tin bài viết của bạn và những người bạn đang theo dõi</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-community-center')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- MAIN SCROLLABLE BODY -->
+      <div style="overflow-y: auto; flex: 1; padding-right: 4px; display: flex; flex-direction: column; gap: 14px;">
+        
+        <!-- POST COMPOSER (Rich Text Editor for Community Center) -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;">
+            <div id="community-center-composer-avatar" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
+            <div style="flex: 1; min-width: 0; position: relative;">
+              
+              <!-- RICH TEXT TOOLBAR -->
+              <div class="rich-toolbar" id="community-center-post-rich-toolbar">
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('bold', null, 'community-center-post-rich-content')" title="In đậm (Bold)"><b>B</b></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('italic', null, 'community-center-post-rich-content')" title="In nghiêng (Italic)"><i>I</i></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('underline', null, 'community-center-post-rich-content')" title="Gạch chân (Underline)"><u>U</u></button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('strikeThrough', null, 'community-center-post-rich-content')" title="Gạch ngang (Strikethrough)"><s>S</s></button>
+                
+                <div class="rich-tool-sep"></div>
+
+                <select class="rich-tool-select" onchange="setRichPostFontSize(this.value, 'community-center-post-rich-content')" title="Cỡ chữ">
+                  <option value="">Cỡ chữ</option>
+                  <option value="12px">Nhỏ (12px)</option>
+                  <option value="14px">Vừa (14px)</option>
+                  <option value="18px">Lớn (18px)</option>
+                  <option value="22px">Tiêu đề (22px)</option>
+                </select>
+
+                <select class="rich-tool-select" onchange="setRichPostFontFamily(this.value, 'community-center-post-rich-content')" title="Phông chữ">
+                  <option value="">Phông chữ</option>
+                  <option value="sans-serif">Mặc định</option>
+                  <option value="Georgia, serif">Cổ điển (Serif)</option>
+                  <option value="monospace">Lập trình (Monospace)</option>
+                  <option value="'Comic Sans MS', cursive">Viết tay</option>
+                </select>
+
+                <div class="rich-tool-sep"></div>
+
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyLeft', null, 'community-center-post-rich-content')" title="Căn trái">⇤</button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyCenter', null, 'community-center-post-rich-content')" title="Căn giữa">≡</button>
+                <button type="button" class="rich-tool-btn" onclick="execRichPostCommand('justifyRight', null, 'community-center-post-rich-content')" title="Căn phải">⇥</button>
+
+                <div class="rich-tool-sep"></div>
+
+                <button type="button" class="rich-tool-btn" onclick="toggleRichColorPopover('composer-center-post-color-popover')" title="Đổi màu chữ">🎨 Màu</button>
+                <button type="button" class="rich-tool-btn" onclick="toggleRichEmojiPopover('composer-center-post-emoji-popover')" title="Chèn Emoji">😀</button>
+                <button type="button" class="rich-tool-btn" onclick="clearRichPostFormatting('community-center-post-rich-content')" title="Xóa định dạng" style="color: #f87171;">🧹</button>
+              </div>
+
+              <!-- COLOR POPOVER -->
+              <div id="composer-center-post-color-popover" class="rich-popover">
+                <div class="rich-color-grid">
+                  <div class="rich-color-dot" style="background: #f8fafc;" onclick="setRichPostColor('#f8fafc', 'community-center-post-rich-content')" title="Trắng"></div>
+                  <div class="rich-color-dot" style="background: #ef4444;" onclick="setRichPostColor('#ef4444', 'community-center-post-rich-content')" title="Đỏ"></div>
+                  <div class="rich-color-dot" style="background: #f59e0b;" onclick="setRichPostColor('#f59e0b', 'community-center-post-rich-content')" title="Vàng / Cam"></div>
+                  <div class="rich-color-dot" style="background: #10b981;" onclick="setRichPostColor('#10b981', 'community-center-post-rich-content')" title="Xanh lá"></div>
+                  <div class="rich-color-dot" style="background: #38bdf8;" onclick="setRichPostColor('#38bdf8', 'community-center-post-rich-content')" title="Xanh dương"></div>
+                  <div class="rich-color-dot" style="background: #8b5cf6;" onclick="setRichPostColor('#8b5cf6', 'community-center-post-rich-content')" title="Tím"></div>
+                  <div class="rich-color-dot" style="background: #ec4899;" onclick="setRichPostColor('#ec4899', 'community-center-post-rich-content')" title="Hồng"></div>
+                </div>
+              </div>
+
+              <!-- EMOJI POPOVER -->
+              <div id="composer-center-post-emoji-popover" class="rich-popover">
+                <div class="rich-emoji-grid">
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🔥', 'community-center-post-rich-content')">🔥</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💡', 'community-center-post-rich-content')">💡</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🏆', 'community-center-post-rich-content')">🏆</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('✨', 'community-center-post-rich-content')">✨</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🚀', 'community-center-post-rich-content')">🚀</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('❤️', 'community-center-post-rich-content')">❤️</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👏', 'community-center-post-rich-content')">👏</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💯', 'community-center-post-rich-content')">💯</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('📚', 'community-center-post-rich-content')">📚</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎯', 'community-center-post-rich-content')">🎯</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🎉', 'community-center-post-rich-content')">🎉</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌊', 'community-center-post-rich-content')">🌊</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('👑', 'community-center-post-rich-content')">👑</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('💪', 'community-center-post-rich-content')">💪</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🌟', 'community-center-post-rich-content')">🌟</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('🥳', 'community-center-post-rich-content')">🥳</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('😎', 'community-center-post-rich-content')">😎</button>
+                  <button type="button" class="rich-emoji-btn" onclick="insertRichPostEmoji('⭐', 'community-center-post-rich-content')">⭐</button>
+                </div>
+              </div>
+
+              <!-- RICH CONTENT EDITABLE -->
+              <div id="community-center-post-rich-content" class="rich-post-editor" contenteditable="true" data-placeholder="Chia sẻ suy nghĩ, kinh nghiệm học từ, hay khoe chiến tích học tập..."></div>
+              
+              <!-- ATTACHMENT PREVIEWS -->
+              <div id="community-center-post-image-preview-container" style="display: none; position: relative; margin-top: 8px; border-radius: 8px; overflow: hidden; max-height: 180px; border: 1px solid var(--border);">
+                <img id="community-center-post-image-preview" src="" alt="Preview" style="width: 100%; height: 180px; object-fit: cover;">
+                <button type="button" onclick="clearCommunityCenterPostImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+              </div>
+
+              <div id="community-center-post-badge-preview-container" style="display: none; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span id="community-center-post-badge-icon" style="font-size: 20px;">🏆</span>
+                  <div>
+                    <strong id="community-center-post-badge-name" style="font-size: 12.5px; color: #fbbf24;">Danh hiệu</strong>
+                    <div id="community-center-post-badge-desc" style="font-size: 11px; color: var(--text-muted);">Mô tả danh hiệu</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-xs btn-outline" onclick="clearCommunityCenterPostBadge()">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPOSER TOOLBAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <input type="file" id="community-center-image-file-input" accept="image/*" style="display: none;" onchange="handleCommunityCenterImageUpload(event)">
+              <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('community-center-image-file-input').click()" style="font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>🖼️</span> <span>Ảnh</span>
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="openCommunityBadgePicker(true)" style="font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>🎖️</span> <span>Khoe Danh Hiệu</span>
+              </button>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-submit-community-center-post" onclick="submitCommunityCenterPost()" style="font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; padding: 6px 16px;">
+              🚀 Đăng Bài
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 FILTER PILLS (Tất Cả, Đang Theo Dõi, Của Tôi, Chứa Ảnh, Thành Tích) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;" id="community-center-filter-pills-container">
+            <button type="button" class="btn btn-xs active-pill" id="cc-filter-all" onclick="filterCommunityCenterFeed('all')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🌐 Tất Cả
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-following" onclick="filterCommunityCenterFeed('following')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              👥 Đang Theo Dõi
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-my" onclick="filterCommunityCenterFeed('my')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              👤 Của Tôi
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-has_image" onclick="filterCommunityCenterFeed('has_image')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🖼️ Chứa Ảnh
+            </button>
+            <button type="button" class="btn btn-xs" id="cc-filter-achievement" onclick="filterCommunityCenterFeed('achievement')" style="font-size: 11.5px; padding: 4px 10px; border-radius: 14px;">
+              🏆 Thành Tích
+            </button>
+          </div>
+          <button type="button" class="btn btn-outline btn-xs" onclick="fetchAndRenderCommunityCenterFeed(true)" title="Làm mới bảng tin" style="font-size: 11px; padding: 4px 8px;">
+            🔄 Làm Mới
+          </button>
+        </div>
+
+        <!-- FEED CONTAINER -->
+        <div id="community-center-posts-container" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px;">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+      </div>
+    </div>
+  </div>

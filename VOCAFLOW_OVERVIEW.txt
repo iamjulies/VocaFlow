@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.9-63 (Build 295) - Khắc Phục Lỗi Giảm Trừ & Đồng Bộ Sổ Tay Lỗi Sai, Chặn Mở Sổ Tay Khi Học & Ra Mắt Trung Tâm Cộng Đồng (Community Center) Tách Biệt
+================================================================================
+1. [Khắc Phục Lỗi Giảm Trừ & Xóa Bỏ Từ Trong Sổ Tay Lỗi Sai (Mistake Notebook Decrement & Sync Fix)]:
+   - Khắc phục sự cố đồng bộ Cloud mergeCloudDataIntoLocal kéo dữ liệu cũ từ Cloud về đè hoặc hồi sinh (Math.max) các từ đã được giảm trừ số lần sai hoặc đã giải quyết xong.
+   - Tự động kích hoạt đồng bộ nền đẩy lên Cloud pushCurrentDatabaseToCloud() ngay lập tức mỗi khi danh sách lỗi sai được cập nhật tại chỗ.
+
+2. [Chặn Mở Sổ Tay Lỗi Sai Khi Đang Trong Chế Độ Học Bất Kỳ]:
+   - Không cho phép người dùng mở #modal-mistake-notebook khi đang ở màn hình học chủ động (screen-quiz, screen-spelling, screen-speaking, screen-autofc).
+   - Làm mờ nút sổ tay trên Header (opacity: 0.4, không khả dụng) và hiển thị thông báo toast: "⚠️ Không thể mở Sổ tay lỗi sai khi đang trong chế độ học!".
+
+3. [Tái Cấu Trúc Không Gian Cộng Đồng & Ra Mắt Trung Tâm Cộng Đồng (Community Center)]:
+   - Tách triệt để "Đang theo dõi", "Khám phá" và "Thành tích" ra khỏi ME/COMMUNITY (modal-profile). Tab ME/COMMUNITY chỉ hiển thị duy nhất các bài viết do chính chủ tài khoản đăng tải (post.authorUid === myUid).
+   - Trang cá nhân công khai @<username>/COMMUNITY chỉ hiển thị duy nhất các bài viết do chính tác giả @<username> đăng tải.
+   - Tạo mới hoàn toàn modal Trung Tâm Cộng Đồng modal-community-center.html (COMMUNITYCENTER), tích hợp vào menu 3 chấm trên Header và route SPA /communitycenter.
+   - Trung Tâm Cộng Đồng hiển thị toàn bộ bài viết của chính mình + những người mình đang theo dõi (post.authorUid === myUid || myFollowingMap[post.authorUid]) với 5 bộ lọc pill: "Tất cả" (all), "Đang theo dõi" (following), "Của tôi" (my), "Chứa ảnh" (has_image), "Thành tích" (achievement).
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-63 Build 295)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-63_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-62 (Build 294) - Tự Động Đóng & Dọn Dẹp Form Thêm Từ Mới, Nhận Xét Chuyên Sâu AI Theo Yêu Cầu Tiết Kiệm Token (On-Demand Insights) & Hoàn Thiện Cơ Chế Giảm Lỗi Sai Sổ Tay
 ================================================================================
 1. [Tự Động Đóng & Dọn Dẹp Form Thêm Từ Vựng (Add Word Modal Fix)]:
