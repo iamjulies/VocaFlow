@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-68 Build 300)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-0 Build 301)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -218,6 +218,16 @@ function navigateToRoute(route, isPopState = false) {
           setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('stats'); }, 200);
         } else if (subTab === 'community') {
           setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('community'); }, 200);
+        } else if (subTab === 'followers' || subTab === 'follower') {
+          setTimeout(() => {
+            if (typeof openPubSubscribersListModal === 'function') openPubSubscribersListModal('followers');
+            else if (typeof openSubscribersListModal === 'function') openSubscribersListModal('followers');
+          }, 250);
+        } else if (subTab === 'following' || subTab === 'follows') {
+          setTimeout(() => {
+            if (typeof openPubSubscribersListModal === 'function') openPubSubscribersListModal('following');
+            else if (typeof openSubscribersListModal === 'function') openSubscribersListModal('following');
+          }, 250);
         } else {
           setTimeout(() => { if (typeof switchPubProfileTab === 'function') switchPubProfileTab('decks'); }, 200);
         }

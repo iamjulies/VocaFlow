@@ -2746,7 +2746,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       );
     }
 
-    async function openSubscribersListModal(type = 'following') {
+    async function openSubscribersListModal(type = 'following', targetUid = null, targetName = null, targetHandle = null) {
       const modal = document.getElementById('modal-subscribers-list');
       const titleEl = document.getElementById('subs-modal-title');
       const iconEl = document.getElementById('subs-modal-icon');
@@ -2754,65 +2754,108 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!modal || !bodyEl) return;
 
       const isFollowing = type === 'following';
-      if (titleEl) titleEl.textContent = isFollowing ? '✨ Danh Sách Đang Theo Dõi' : '👥 Danh Sách Người Theo Dõi';
+      const isViewingSelf = (!targetUid || (currentUser && targetUid === currentUser.uid));
+      
+      const displayName = targetName || (isViewingSelf ? (currentUser?.displayName || 'Bạn') : 'Thành viên');
+      const displayHandle = (targetHandle || (isViewingSelf ? (currentUser?.username || 'me') : 'user')).replace(/^@/, '');
+
+      if (titleEl) {
+        if (isViewingSelf) {
+          titleEl.textContent = isFollowing ? '✨ Danh Sách Đang Theo Dõi' : '👥 Danh Sách Người Theo Dõi';
+        } else {
+          titleEl.textContent = isFollowing ? `✨ @${displayHandle} Đang Theo Dõi` : `👥 Người Theo Dõi @${displayHandle}`;
+        }
+      }
       if (iconEl) iconEl.textContent = isFollowing ? '✨' : '👥';
 
       if (typeof updateAppUrlRoute === 'function') {
-        updateAppUrlRoute(isFollowing ? '/me/following' : '/me/followers', `${isFollowing ? 'Đang theo dõi' : 'Người theo dõi'} - VocaFlow`);
-      }
-
-      const map = isFollowing ? myFollowingMap : myFollowersMap;
-      const uids = Object.keys(map || {}).filter(uid => uid && uid !== currentUser?.uid && uid !== 'undefined' && uid !== 'null');
-
-      if (uids.length === 0) {
-        bodyEl.innerHTML = `
-          <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12.5px;">
-            <div style="font-size: 28px; margin-bottom: 6px;">${isFollowing ? '👥' : '🌱'}</div>
-            ${isFollowing ? 'Bạn chưa theo dõi tác giả nào. Ghé Thư Viện để theo dõi các tác giả yêu thích!' : 'Chưa có người theo dõi nào. Hãy xuất bản VocaDeck hữu ích để kết nối bạn bè!'}
-          </div>
-        `;
-        openModal('modal-subscribers-list');
-        return;
+        if (isViewingSelf) {
+          updateAppUrlRoute(isFollowing ? '/me/following' : '/me/followers', `${isFollowing ? 'Đang theo dõi' : 'Người theo dõi'} - VocaFlow`);
+        } else if (displayHandle) {
+          updateAppUrlRoute(`/@${displayHandle}/${isFollowing ? 'following' : 'followers'}`, `${displayName} (${isFollowing ? 'Đang theo dõi' : 'Người theo dõi'}) - VocaFlow`);
+        }
       }
 
       bodyEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px;">🔄 Đang tải danh sách tác giả...</div>';
       openModal('modal-subscribers-list');
 
-      const allDecks = getAllLibraryDecks();
+      let uids = [];
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+      if (isViewingSelf) {
+        const map = isFollowing ? myFollowingMap : myFollowersMap;
+        uids = Object.keys(map || {}).filter(uid => uid && uid !== currentUser?.uid && uid !== 'undefined' && uid !== 'null');
+      } else {
+        // Fetch target user's following/followers map from Cloud RTDB
+        try {
+          const res = await fetch(`${rtdbUrl}/users/${targetUid}/${type}.json`);
+          if (res.ok) {
+            const map = await res.json();
+            if (map && typeof map === 'object') {
+              uids = Object.keys(map).filter(uid => uid && uid !== targetUid && uid !== 'undefined' && uid !== 'null');
+            }
+          }
+        } catch (e) {
+          console.warn('Error fetching user subscribers list from RTDB:', e);
+        }
+      }
+
+      if (uids.length === 0) {
+        bodyEl.innerHTML = `
+          <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12.5px;">
+            <div style="font-size: 28px; margin-bottom: 6px;">${isFollowing ? '👥' : '🌱'}</div>
+            ${isViewingSelf 
+              ? (isFollowing ? 'Bạn chưa theo dõi tác giả nào. Ghé Thư Viện để theo dõi các tác giả yêu thích!' : 'Chưa có người theo dõi nào. Hãy xuất bản VocaDeck hữu ích để kết nối bạn bè!')
+              : (isFollowing ? `@${escapeHtml(displayHandle)} chưa theo dõi người dùng nào.` : `@${escapeHtml(displayHandle)} chưa có người theo dõi nào.`)}
+          </div>
+        `;
+        return;
+      }
+
+      const allDecks = getAllLibraryDecks();
 
       const userItems = await Promise.all(uids.map(async uid => {
         let name = 'Tác giả VocaFlow';
         let handle = 'user_' + uid.slice(0, 6);
         let avatar = name;
 
-        // Try local matching from library decks first for instant name/avatar fallback
+        // Try live registry first
+        const liveEntry = (typeof getLiveUserRegistryEntry === 'function') ? getLiveUserRegistryEntry(uid) : null;
+        if (liveEntry) {
+          if (liveEntry.displayName) name = liveEntry.displayName;
+          if (liveEntry.username) handle = liveEntry.username;
+          if (liveEntry.avatar) avatar = liveEntry.avatar;
+        }
+
+        // Try local matching from library decks fallback
         const foundDeck = allDecks.find(d => d.authorUid === uid);
         if (foundDeck) {
-          name = foundDeck.author || name;
-          if (foundDeck.authorUsername) handle = foundDeck.authorUsername;
-          avatar = foundDeck.authorAvatar || name;
+          if (!liveEntry?.displayName) name = foundDeck.author || name;
+          if (!liveEntry?.username && foundDeck.authorUsername) handle = foundDeck.authorUsername;
+          if (!liveEntry?.avatar) avatar = foundDeck.authorAvatar || name;
         }
 
         let isVip = isAuthorVipUser(uid, name);
         let vipTier = getAuthorVipTier(uid, name);
 
-        // ALWAYS fetch real-time profile from Cloud database to get the exact current username, avatar and VIP status
-        try {
-          const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
-          if (res.ok) {
-            const p = await res.json();
-            if (p && typeof p === 'object') {
-              if (p.displayName) name = p.displayName;
-              if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
-              if (p.avatar) avatar = p.avatar;
-              if (p.isVip === true) {
-                isVip = true;
-                vipTier = p.vipTier || vipTier || 'lifetime';
+        // Fetch real-time profile if not fully resolved
+        if (!liveEntry || !liveEntry.displayName || !liveEntry.avatar) {
+          try {
+            const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
+            if (res.ok) {
+              const p = await res.json();
+              if (p && typeof p === 'object') {
+                if (p.displayName) name = p.displayName;
+                if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
+                if (p.avatar) avatar = p.avatar;
+                if (p.isVip === true) {
+                  isVip = true;
+                  vipTier = p.vipTier || vipTier || 'lifetime';
+                }
               }
             }
-          }
-        } catch (e) {}
+          } catch (e) {}
+        }
 
         if (isAuthorVipUser(uid, name)) isVip = true;
 
@@ -2832,11 +2875,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px;">
                   ${u.isVip ? `<span class="vip-name-wrapper"><span class="vip-crown-icon" style="font-size: 12px; margin-right: 4px;">👑</span><span class="vip-glowing-name">${escapeHtml(u.name)}</span></span>` : `<span>${escapeHtml(u.name)}</span>`}
                 </div>
-                <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle)}</div>
+                <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle.replace(/^@/, ''))}</div>
               </div>
             </div>
             ${currentUser && u.uid !== currentUser.uid ? `
-              <button class="btn btn-sm ${isFollowed ? 'btn-outline' : 'btn-primary'}" onclick="toggleFollowCreator('${u.uid}', '${escapeHtml(u.name)}', '${escapeHtml(u.handle)}'); openSubscribersListModal('${type}')" style="font-size: 11px; padding: 3px 8px; flex-shrink: 0; ${isFollowed ? 'color: #34d399; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08);' : ''}">
+              <button class="btn btn-sm ${isFollowed ? 'btn-outline' : 'btn-primary'}" onclick="toggleFollowCreator('${u.uid}', '${escapeHtml(u.name)}', '${escapeHtml(u.handle)}'); openSubscribersListModal('${type}', ${targetUid ? `'${targetUid}'` : 'null'}, ${targetName ? `'${escapeHtml(targetName)}'` : 'null'}, ${targetHandle ? `'${escapeHtml(targetHandle)}'` : 'null'})" style="font-size: 11px; padding: 3px 8px; flex-shrink: 0; ${isFollowed ? 'color: #34d399; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08);' : ''}">
                 ${isFollowed ? '✓ Đang theo dõi' : '➕ Theo dõi'}
               </button>
             ` : ''}
@@ -2846,6 +2889,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       bodyEl.innerHTML = html;
     }
+    window.openSubscribersListModal = openSubscribersListModal;
+
+    function openPubSubscribersListModal(type = 'followers') {
+      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid) {
+        openSubscribersListModal(type, currentPublicProfileAuthor.targetUid, currentPublicProfileAuthor.resolvedName, currentPublicProfileAuthor.resolvedHandle);
+      } else {
+        openSubscribersListModal(type);
+      }
+    }
+    window.openPubSubscribersListModal = openPubSubscribersListModal;
 
     // =========================================================================
     // USER IDENTIFICATION & UNIQUE HANDLE REGISTRY ENGINE (v0.10.7a)
@@ -4469,6 +4522,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetFlowDays = 0;
         let targetPinnedBadges = [];
 
+        let uDataFound = false;
+
         if (isVocaFlowOfficial) {
           resolvedName = 'VocaFlow Chuẩn';
           resolvedHandle = 'official';
@@ -4549,7 +4604,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
               if (rootUserRes.ok) {
                 const uData = await rootUserRes.json();
-                if (uData && typeof uData === 'object') {
+                if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
+                  uDataFound = true;
                   if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
                   else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
@@ -4622,6 +4678,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               (d.authorEmail && d.authorEmail.split('@')[0].toLowerCase() === authorClean) ||
               (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase()
             );
+          }
+
+          const regEntry = (targetUid && typeof globalVipRegistry !== 'undefined') ? globalVipRegistry[targetUid] : null;
+          const nameMapEntry = (typeof globalVipRegistryNameMap !== 'undefined') ? (globalVipRegistryNameMap[authorClean] || globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]) : null;
+
+          const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0 && !!targetUid);
+
+          if (!isRealUser) {
+            hideAppLoading();
+            closeModal('modal-public-profile');
+            showToast('⚠️ Không tìm thấy người dùng hoặc hồ sơ không tồn tại!');
+            if (typeof showScreen === 'function') showScreen('screen-decks');
+            if (typeof updateAppUrlRoute === 'function') updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh');
+            return;
           }
         }
 
@@ -6202,6 +6272,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       communityCenterCurrentFilter = filter || 'all';
       updateCommunityCenterFilterPillsUI();
       openModal('modal-community-center');
+      if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       fetchAndRenderCommunityCenterFeed();
       if (typeof updateAppUrlRoute === 'function') {
         updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
@@ -6235,6 +6306,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.filterCommunityCenterFeed = filterCommunityCenterFeed;
 
     async function fetchAndRenderCommunityCenterFeed(force = false) {
+      if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       const container = document.getElementById('community-center-posts-container');
       if (!container) return;
 
@@ -6332,105 +6404,120 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityFeed = filterCommunityFeed;
 
-    // Helper functions for author and comment resolution
-    function getCommunityAuthorAvatar(post) {
-      if (!post) return '👤';
-      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
-        const liveAvt = (typeof getUserAvatar === 'function' ? getUserAvatar() : null) || currentUser.avatar || currentUser.photoURL;
-        if (liveAvt) return liveAvt;
+    // Helper functions for author and comment resolution (v0.10.10-0 Realtime User Metadata Matcher)
+    function getLiveUserRegistryEntry(uid, name = '', handle = '') {
+      if (currentUser && uid && currentUser.uid === uid) {
+        return {
+          uid: currentUser.uid,
+          displayName: currentUser.displayName || name,
+          username: currentUser.username || handle,
+          avatar: (typeof getUserAvatar === 'function' ? getUserAvatar() : null) || currentUser.avatar || currentUser.photoURL,
+          isVip: typeof isUserVip === 'function' ? isUserVip() : !!currentUser.isVip,
+          vipTier: currentUser.vipTier || 'none'
+        };
       }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === post.authorUid);
-        if (student && (student.avatar || student.avatarUrl || student.photoURL)) {
-          return student.avatar || student.avatarUrl || student.photoURL;
+      const reg = (typeof globalVipRegistry !== 'undefined' ? globalVipRegistry : window.globalVipRegistry) || {};
+      const nameMap = (typeof globalVipRegistryNameMap !== 'undefined' ? globalVipRegistryNameMap : window.globalVipRegistryNameMap) || {};
+
+      if (uid && reg[uid]) return reg[uid];
+
+      const cleanName = (name || '').trim().toLowerCase();
+      const cleanHandle = (handle || '').trim().toLowerCase().replace(/^@/, '');
+      if (cleanName && nameMap[cleanName]) return nameMap[cleanName];
+      if (cleanHandle && nameMap[cleanHandle]) return nameMap[cleanHandle];
+
+      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) {
+        const student = adminStudentsData.find(s => (uid && s.uid === uid) || (cleanName && (s.displayName || '').trim().toLowerCase() === cleanName) || (cleanHandle && (s.username || '').toLowerCase() === cleanHandle));
+        if (student) {
+          return {
+            uid: student.uid,
+            displayName: student.displayName || student.name || name,
+            username: student.username || student.handle || handle,
+            avatar: student.avatar || student.avatarUrl || student.photoURL,
+            isVip: !!student.isVip,
+            vipTier: student.vipTier || 'none'
+          };
         }
       }
-      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === post.authorUid) {
-        if (currentPublicProfileAuthor.resolvedAvatar) return currentPublicProfileAuthor.resolvedAvatar;
+
+      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === uid) {
+        return {
+          uid: currentPublicProfileAuthor.targetUid,
+          displayName: currentPublicProfileAuthor.resolvedName || name,
+          username: currentPublicProfileAuthor.resolvedHandle || handle,
+          avatar: currentPublicProfileAuthor.resolvedAvatar,
+          isVip: typeof isAuthorVipUser === 'function' ? isAuthorVipUser(uid, currentPublicProfileAuthor.resolvedName) : false,
+          vipTier: typeof getAuthorVipTier === 'function' ? getAuthorVipTier(uid, currentPublicProfileAuthor.resolvedName) : 'none'
+        };
       }
+
+      return null;
+    }
+    window.getLiveUserRegistryEntry = getLiveUserRegistryEntry;
+
+    function getCommunityAuthorAvatar(post) {
+      if (!post) return '👤';
+      const entry = getLiveUserRegistryEntry(post.authorUid, post.authorName, post.authorHandle);
+      if (entry && entry.avatar) return entry.avatar;
       return post.authorAvatar || post.authorName || '👤';
     }
     window.getCommunityAuthorAvatar = getCommunityAuthorAvatar;
 
     function getCommunityAuthorName(post) {
       if (!post) return 'Flower';
-      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
-        return (currentUser.displayName || currentUser.username || post.authorName || 'Flower').trim();
-      }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === post.authorUid);
-        if (student && (student.displayName || student.name)) {
-          return (student.displayName || student.name).trim();
-        }
-      }
-      if (typeof currentPublicProfileAuthor !== 'undefined' && currentPublicProfileAuthor && currentPublicProfileAuthor.targetUid === post.authorUid) {
-        if (currentPublicProfileAuthor.resolvedName) return currentPublicProfileAuthor.resolvedName.trim();
-      }
+      const entry = getLiveUserRegistryEntry(post.authorUid, post.authorName, post.authorHandle);
+      if (entry && entry.displayName) return entry.displayName.trim();
       return (post.authorName || 'Flower').trim();
     }
     window.getCommunityAuthorName = getCommunityAuthorName;
 
     function getCommunityAuthorHandle(post) {
       if (!post) return 'user';
-      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
-        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
-        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
-        return (post.authorHandle || myName || 'user').replace(/^@/, '');
-      }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === post.authorUid);
-        if (student && (student.handle || student.username)) {
-          return (student.handle || student.username).replace(/^@/, '');
-        }
-      }
+      const entry = getLiveUserRegistryEntry(post.authorUid, post.authorName, post.authorHandle);
+      if (entry && entry.username) return entry.username.replace(/^@/, '');
       return (post.authorHandle || post.authorName || 'user').replace(/^@/, '');
     }
     window.getCommunityAuthorHandle = getCommunityAuthorHandle;
 
     function getCommunityAuthorIsVip(post) {
       if (!post) return false;
-      if (currentUser && currentUser.uid && post.authorUid === currentUser.uid) {
-        return typeof isUserVip === 'function' ? isUserVip() : (currentUser.isVip === true);
-      }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && post.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === post.authorUid);
-        if (student && student.isVip) return true;
-      }
+      const entry = getLiveUserRegistryEntry(post.authorUid, post.authorName, post.authorHandle);
+      if (entry) return !!entry.isVip;
       return !!post.isVip;
     }
     window.getCommunityAuthorIsVip = getCommunityAuthorIsVip;
 
     function getCommunityCommentAuthorName(c) {
       if (!c) return 'Flower';
-      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
-        return (currentUser.displayName || currentUser.username || c.authorName || 'Flower').trim();
-      }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === c.authorUid);
-        if (student && (student.displayName || student.name)) {
-          return (student.displayName || student.name).trim();
-        }
-      }
+      const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
+      if (entry && entry.displayName) return entry.displayName.trim();
       return (c.authorName || 'Flower').trim();
     }
     window.getCommunityCommentAuthorName = getCommunityCommentAuthorName;
 
     function getCommunityCommentAuthorHandle(c) {
       if (!c) return 'user';
-      if (currentUser && currentUser.uid && c.authorUid === currentUser.uid) {
-        if (typeof currentUserHandle !== 'undefined' && currentUserHandle) return currentUserHandle.replace(/^@/, '');
-        const myName = (currentUser.displayName || '').replace(/\s+/g, '').toLowerCase();
-        return (c.authorHandle || myName || 'user').replace(/^@/, '');
-      }
-      if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData) && c.authorUid) {
-        const student = adminStudentsData.find(s => s.uid === c.authorUid);
-        if (student && (student.handle || student.username)) {
-          return (student.handle || student.username).replace(/^@/, '');
-        }
-      }
+      const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
+      if (entry && entry.username) return entry.username.replace(/^@/, '');
       return (c.authorHandle || c.authorName || 'user').replace(/^@/, '');
     }
     window.getCommunityCommentAuthorHandle = getCommunityCommentAuthorHandle;
+
+    function getCommunityCommentAuthorAvatar(c) {
+      if (!c) return '👤';
+      const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
+      if (entry && entry.avatar) return entry.avatar;
+      return c.authorAvatar || c.authorName || '👤';
+    }
+    window.getCommunityCommentAuthorAvatar = getCommunityCommentAuthorAvatar;
+
+    function getCommunityCommentAuthorIsVip(c) {
+      if (!c) return false;
+      const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
+      if (entry) return !!entry.isVip;
+      return !!c.isVip;
+    }
+    window.getCommunityCommentAuthorIsVip = getCommunityCommentAuthorIsVip;
 
     function highlightAndScrollToPost(postId, context = 'cc') {
       setTimeout(() => {

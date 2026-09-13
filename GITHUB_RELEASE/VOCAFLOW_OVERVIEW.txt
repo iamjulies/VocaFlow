@@ -1,4 +1,28 @@
 ================================================================================
+Phiên bản: v0.10.10-0 (Build 301) - Tự Động So Khớp Thông Tin Tác Giả Bài Viết Cộng Đồng, Cho Phép Xem Followers/Following Khi Xem Hồ Sơ Công Khai & Chặn Truy Cập Hồ Sơ Không Tồn Tại
+================================================================================
+1. [Tự Động Đồng Bộ & Khớp Tên, Avatar Bài Viết Trong Trung Tâm Cộng Đồng (Real-time Community Author Matcher)]:
+   - Khắc phục lỗi khi xem bài viết trong Community Center thì tên và avatar của tác giả không được đồng bộ với dữ liệu hiện hành, chỉ khi mở public profile của người đó lên xem thì mới đúng dữ liệu.
+   - Nguyên nhân: Trước đây hệ thống phụ thuộc vào biến toàn cục `currentPublicProfileAuthor` hoặc danh sách học viên cục bộ. Khi chưa mở trang cá nhân thì các hàm lấy tên, avatar, handle và VIP chỉ đọc snapshot tĩnh lúc tạo bài viết.
+   - Giải pháp:
+     + Xây dựng hàm `getLiveUserRegistryEntry(uid, name, handle)` tra cứu trực tiếp từ bể dữ liệu người dùng thời gian thực `globalVipRegistry` và `globalVipRegistryNameMap`.
+     + Cập nhật các hàm `getCommunityAuthorAvatar`, `getCommunityAuthorName`, `getCommunityAuthorHandle`, `getCommunityAuthorIsVip`, `getCommunityCommentAuthorName`, `getCommunityCommentAuthorHandle`, `getCommunityCommentAuthorAvatar`, `getCommunityCommentAuthorIsVip` để khớp ngay lập tức thông tin hiển thị mới nhất của tác giả và người bình luận mà không cần mở hồ sơ.
+     + Kích hoạt đồng bộ hóa `initGlobalVipRegistry()` tự động mỗi khi mở Trung Tâm Cộng Đồng hoặc tải bảng tin.
+
+2. [Cho Phép Xem Danh Sách Followers & Following Của Người Khác Khi Xem Public Profile (Social Graph Explorer)]:
+   - Nâng cấp modal `modal-subscribers-list` và hàm `openSubscribersListModal(type, targetUid, targetName, targetHandle)` để hỗ trợ xem danh sách người theo dõi (Followers) và đang theo dõi (Following) của bất kỳ người dùng nào trên VocaFlow.
+   - Khi xem hồ sơ công khai của tác giả khác, nhấp vào cột thống kê "Followers" hoặc "Following" sẽ mở danh sách chi tiết kèm avatar, tên hiển thị, danh hiệu VIP, handle @username và nút Theo dõi/Đang theo dõi tương tác trực tiếp.
+   - Tích hợp điều hướng URL sâu: `/@handle/followers` và `/@handle/following`.
+
+3. [Chặn Truy Cập Hồ Sơ Không Tồn Tại & Tự Động Chuyển Hướng Về Trang Chủ (Ghost/Fake Profile Protection)]:
+   - Khi người dùng truy cập hoặc nhập đường dẫn tới một tài khoản không có thật (tài khoản mẫu, handle ngẫu nhiên, hoặc ID không tồn tại trong hệ thống đăng ký Firebase), hệ thống sẽ không mở hồ sơ trống.
+   - Cơ chế xác thực nghiêm ngặt `isRealUser`: Kiểm tra tài khoản chính thức VocaFlow, tài khoản hiện tại, dữ liệu hồ sơ thật từ Cloud RTDB `/users/{targetUid}.json`, danh sách đăng ký `globalVipRegistry`, hoặc danh sách bộ từ công khai.
+   - Nếu tài khoản không có thật: Tự động đóng modal, hiển thị thông báo "⚠️ Người dùng hoặc hồ sơ này không tồn tại!", và chuyển hướng ngay về màn hình chính (Trang chủ `/`).
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-0 Build 301)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-0_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-68 (Build 300) - Sửa Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ Vựng Khi Đã Đăng Nhập Tài Khoản (Fix Undefined currentBalance ReferenceError in addLedgerEntry) & Cập Nhật Danh Sách Từ Lập Tức
 ================================================================================
 1. [Khắc Phục Triệt Để & Dứt Điểm Lỗi Cửa Sổ Thêm Từ Vựng Không Tự Đóng (Modal-Word Auto-Close & Word List Immediate Refresh Fix)]:

@@ -1,0 +1,5 @@
+v0.10.10-0
+1. lỗi: khi mà chưa mở public profile của user nào đó mà xem bài đăng ở trong community center thì tên (và có thể là cả avt) của ng đó kh được đồng bộ với tên (avt) hiện hành, chỉ khi mà đã mở public profile của ng đó lên xem cộng đồng thì mới đúng dữ liệu á. -> sửa hộ nhé: kh cần phải mở pub prf của ngta nữa, cứ match đúng thông tin luôn và ngay đi
+2. khi xem pub profile của ai đó, hiện tại chưa xem được followers và following của ngta -> sửa lại: cho phép xem.
+3. hiện tại khi truy cập 1 trang cá nhân kh có thật (được tạo ra theo mẫu, mà kh phải profile có thật được đăng kí và đăng nhập) thì mình vẫn mở được 1 cái prf trống mà kh phải của ai cả -> sửa: khi try cập mấy ài khoản kh có thật đấy thì kh mở được gì chỉ hiện thông báo là kh có, và chuyển hướng đến homepage,...
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

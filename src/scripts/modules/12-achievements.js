@@ -18,7 +18,7 @@
       });
     }
 
-    // Global Realtime VIP Registry (v0.10.8-alpha-10.3)
+    // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-0 User Meta Cache)
     let globalVipRegistry = {};
     let globalVipRegistryNameMap = {};
 
@@ -57,15 +57,27 @@
                 };
                 globalVipRegistry[uid] = entry;
                 if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
+                if (username) {
+                  const cleanU = username.trim().toLowerCase().replace(/^@/, '');
+                  globalVipRegistryNameMap[cleanU] = entry;
+                }
               }
             });
-            // Re-render components with fresh VIP data
+            window.globalVipRegistry = globalVipRegistry;
+            window.globalVipRegistryNameMap = globalVipRegistryNameMap;
+            // Re-render components with fresh VIP & author data
             renderLibraryDecks();
             if (typeof renderDecks === 'function') renderDecks();
+            if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+            if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+            if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
           }
         })
         .catch(() => {});
     }
+    window.initGlobalVipRegistry = initGlobalVipRegistry;
+    window.globalVipRegistry = globalVipRegistry;
+    window.globalVipRegistryNameMap = globalVipRegistryNameMap;
 
     function formatVipDurationText(expiresAt, tier) {
       if (tier === 'lifetime' || !expiresAt || expiresAt === 0 || expiresAt === Infinity) {
