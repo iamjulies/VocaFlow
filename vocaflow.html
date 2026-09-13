@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-67 (Build 299)</span>
+            <span class="mini-footer-version">v0.10.9-68 (Build 300)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-67 (Build 299)</span>
+            <span class="mini-footer-version">v0.10.9-68 (Build 300)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-67 (Build 299)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-68 (Build 300)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-67 Build 299)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-68 Build 300)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11438,15 +11438,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-67 Build 299)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-68 Build 300)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-67 Build 299)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-68 Build 300)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-67';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-67 (Build 299)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-68';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-68 (Build 300)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -18968,21 +18968,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       broadcastEconomyUpdate();
 
       // Realtime UI updates for studio ledger
-      const curBalEl = document.getElementById('studio-wallet-balance');
-      if (curBalEl) curBalEl.textContent = currentBalance + ' VoCoin';
+      try {
+        const curBalEl = document.getElementById('studio-wallet-balance');
+        if (curBalEl) curBalEl.textContent = balanceAfter + ' VoCoin';
 
-      let totalEarned = 0;
-      let totalSpent = 0;
-      userLedger.forEach(t => {
-        if (t.amount > 0) totalEarned += t.amount;
-        else totalSpent += Math.abs(t.amount);
-      });
-      const earnedEl = document.getElementById('studio-total-earned');
-      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
-      const spentEl = document.getElementById('studio-total-spent');
-      if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
+        let totalEarned = 0;
+        let totalSpent = 0;
+        userLedger.forEach(t => {
+          if (t && t.amount > 0) totalEarned += t.amount;
+          else if (t && t.amount < 0) totalSpent += Math.abs(t.amount);
+        });
+        const earnedEl = document.getElementById('studio-total-earned');
+        if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
+        const spentEl = document.getElementById('studio-total-spent');
+        if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
 
-      renderLedgerList();
+        renderLedgerList();
+      } catch (uiErr) {
+        console.warn('Studio ledger UI update error:', uiErr);
+      }
     }
 
     function setPublishPricePreset(price) {
@@ -25968,31 +25972,37 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           createdAt: nowIso,
           updatedAt: nowIso
         });
-        if (!isGuest()) {
-          addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 VoCoin)`);
-          setUserPoints(getUserPoints() + 10);
+        try {
+          if (!isGuest()) {
+            addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 VoCoin)`);
+            setUserPoints(getUserPoints() + 10);
+          }
+        } catch (ledgerErr) {
+          console.warn('Ledger error on create word:', ledgerErr);
         }
         showToast(`📝 Đã thêm từ vựng mới "${term}" (+10 VoCoin)!`);
       }
 
-      saveDatabase(true);
+      try { saveDatabase(true); } catch (e) { console.warn('saveDatabase error:', e); }
       if (typeof pushCurrentDatabaseToCloud === 'function') {
         try { pushCurrentDatabaseToCloud(); } catch (err) { console.warn('Cloud sync error:', err); }
       }
       try { renderWordList(); } catch (err) { console.warn('renderWordList error:', err); }
       try { renderDecks(); } catch (err) { console.warn('renderDecks error:', err); }
-      closeModal('modal-word');
+      try { closeModal('modal-word'); } catch (err) { console.warn('closeModal error:', err); }
 
       // Reset form fields to avoid ghost duplicates
-      const wordIdEl = document.getElementById('word-id');
-      if (wordIdEl) wordIdEl.value = '';
-      const wordTermEl = document.getElementById('word-term');
-      if (wordTermEl) wordTermEl.value = '';
-      const dupWarnEl = document.getElementById('word-term-duplicate-warning');
-      if (dupWarnEl) dupWarnEl.style.display = 'none';
-      const wordFormEl = document.getElementById('word-form');
-      if (wordFormEl) {
-        try { wordFormEl.reset(); } catch (e) {}
+      try {
+        const wordIdEl = document.getElementById('word-id');
+        if (wordIdEl) wordIdEl.value = '';
+        const wordTermEl = document.getElementById('word-term');
+        if (wordTermEl) wordTermEl.value = '';
+        const dupWarnEl = document.getElementById('word-term-duplicate-warning');
+        if (dupWarnEl) dupWarnEl.style.display = 'none';
+        const wordFormEl = document.getElementById('word-form');
+        if (wordFormEl) wordFormEl.reset();
+      } catch (resetErr) {
+        console.warn('Form reset error:', resetErr);
       }
 
       showToast('Đã lưu từ vựng thành công!');

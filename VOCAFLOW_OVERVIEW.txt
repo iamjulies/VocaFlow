@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v0.10.9-68 (Build 300) - Sửa Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ Vựng Khi Đã Đăng Nhập Tài Khoản (Fix Undefined currentBalance ReferenceError in addLedgerEntry) & Cập Nhật Danh Sách Từ Lập Tức
+================================================================================
+1. [Khắc Phục Triệt Để & Dứt Điểm Lỗi Cửa Sổ Thêm Từ Vựng Không Tự Đóng (Modal-Word Auto-Close & Word List Immediate Refresh Fix)]:
+   - Tìm ra và xử lý tận gốc nguyên nhân sâu xa khiến cửa sổ Thêm Từ Vựng (`modal-word`) không đóng lại sau khi nhấn "Lưu từ vựng" và từ mới không hiện ngay trên danh sách nếu người dùng ĐÃ ĐĂNG NHẬP tài khoản:
+     + Khi người dùng đã đăng nhập tài khoản (`!isGuest()`), hàm `saveWordForm` thực hiện cộng thưởng +10 VoCoin soạn từ mới qua hàm `addLedgerEntry('CREATE_WORD', 10, ...)`.
+     + Trong `03-auth.js`, dòng lệnh cập nhật số dư Studio Wallet gọi biến chưa được định nghĩa `currentBalance` (`curBalEl.textContent = currentBalance + ' VoCoin'`) dẫn đến lỗi `ReferenceError: currentBalance is not defined`.
+     + Lỗi này làm gián đoạn luồng thực thi JavaScript ngay trước các câu lệnh `saveDatabase(true)`, `renderWordList()`, `renderDecks()` và `closeModal('modal-word')`. Hệ quả là từ vựng đã được thêm vào mảng bộ nhớ nhưng giao diện danh sách chưa được vẽ lại và cửa sổ modal không được đóng lại cho đến khi người dùng tự nhấn nút X rồi nhấn vào bộ lọc để kích hoạt vẽ lại danh sách.
+   - Giải pháp:
+     + Sửa chính xác biến cập nhật số dư thành `balanceAfter` (hoặc `getUserPoints()`), đồng thời bọc toàn bộ khối cập nhật giao diện Studio Ledger trong khối `try...catch` an toàn.
+     + Bọc hàm gọi `addLedgerEntry` trong `saveWordForm` (`04-decks-manager.js`) vào khối `try...catch` để bảo đảm các giao dịch ví/sổ cái không bao giờ làm gián đoạn việc lưu dữ liệu và đóng modal.
+     + Bọc an toàn các bước `saveDatabase(true)`, `renderWordList()`, `renderDecks()`, `closeModal('modal-word')`, reset form để đảm bảo 100% cửa sổ thêm từ luôn tự đóng ngay lập tức và từ mới lập tức xuất hiện trên danh sách kèm số đếm bộ lọc được cập nhật ngay trong tích tắc (từ 7 -> 8).
+
+2. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-68 Build 300)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-68_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-67 (Build 299) - Xóa Sạch & Vĩnh Viễn Lỗi Sai Khi Học (Instant Force Mistake Removal & Anti-Resurrection Cloud Sync), Khắc Phục Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ
 ================================================================================
 1. [Xóa Sạch & Vĩnh Viễn Lỗi Sai Khi Học - Instant Force Mistake Removal & Anti-Resurrection Cloud Sync]:

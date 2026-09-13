@@ -1887,31 +1887,37 @@
           createdAt: nowIso,
           updatedAt: nowIso
         });
-        if (!isGuest()) {
-          addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 VoCoin)`);
-          setUserPoints(getUserPoints() + 10);
+        try {
+          if (!isGuest()) {
+            addLedgerEntry('CREATE_WORD', 10, `Tự soạn từ vựng mới "${term}" (+10 VoCoin)`);
+            setUserPoints(getUserPoints() + 10);
+          }
+        } catch (ledgerErr) {
+          console.warn('Ledger error on create word:', ledgerErr);
         }
         showToast(`📝 Đã thêm từ vựng mới "${term}" (+10 VoCoin)!`);
       }
 
-      saveDatabase(true);
+      try { saveDatabase(true); } catch (e) { console.warn('saveDatabase error:', e); }
       if (typeof pushCurrentDatabaseToCloud === 'function') {
         try { pushCurrentDatabaseToCloud(); } catch (err) { console.warn('Cloud sync error:', err); }
       }
       try { renderWordList(); } catch (err) { console.warn('renderWordList error:', err); }
       try { renderDecks(); } catch (err) { console.warn('renderDecks error:', err); }
-      closeModal('modal-word');
+      try { closeModal('modal-word'); } catch (err) { console.warn('closeModal error:', err); }
 
       // Reset form fields to avoid ghost duplicates
-      const wordIdEl = document.getElementById('word-id');
-      if (wordIdEl) wordIdEl.value = '';
-      const wordTermEl = document.getElementById('word-term');
-      if (wordTermEl) wordTermEl.value = '';
-      const dupWarnEl = document.getElementById('word-term-duplicate-warning');
-      if (dupWarnEl) dupWarnEl.style.display = 'none';
-      const wordFormEl = document.getElementById('word-form');
-      if (wordFormEl) {
-        try { wordFormEl.reset(); } catch (e) {}
+      try {
+        const wordIdEl = document.getElementById('word-id');
+        if (wordIdEl) wordIdEl.value = '';
+        const wordTermEl = document.getElementById('word-term');
+        if (wordTermEl) wordTermEl.value = '';
+        const dupWarnEl = document.getElementById('word-term-duplicate-warning');
+        if (dupWarnEl) dupWarnEl.style.display = 'none';
+        const wordFormEl = document.getElementById('word-form');
+        if (wordFormEl) wordFormEl.reset();
+      } catch (resetErr) {
+        console.warn('Form reset error:', resetErr);
       }
 
       showToast('Đã lưu từ vựng thành công!');

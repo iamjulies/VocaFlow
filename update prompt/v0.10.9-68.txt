@@ -1,0 +1,5 @@
+v0.10.9-68
+khi nhấn thêm từ xong thì cửa sổ thêm từ không đóng lại "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 151232.png", phải tự nhấn thoát ra, khi nhấn thoát ra thì từ vừa thêm cũng kh hiện ngay mà phải nhấn vào bộ lọc nào đó để kích hoạt thuật toán gì đó (t đoán) thì tự đó mới hiện ra, ví dụ nãy t thêm từ need thì nhấn lưu nhưng mà cửa sổ thêm từ kh đóng lại, từ need cũng kh hiện ngay mà t phải nhấn vào bộ lọc tất cả thì nó mới hiện ra và số đếm bên cạnh bộ lọc mới từ 7 -> 8
+lỗi này t mô tả quá chi tiết rồi nên mong là sửa được
+lỗi này dai dẳng, chưa giải quyết được -> tìm kiếm cách giải quyết trên mạng rồi quay lại sửa rồi báo cáo cho t. đừng bảo kh làm được vì trước kia vẫn dùng được bình thường nhé.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

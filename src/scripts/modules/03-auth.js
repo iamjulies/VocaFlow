@@ -3721,21 +3721,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       broadcastEconomyUpdate();
 
       // Realtime UI updates for studio ledger
-      const curBalEl = document.getElementById('studio-wallet-balance');
-      if (curBalEl) curBalEl.textContent = currentBalance + ' VoCoin';
+      try {
+        const curBalEl = document.getElementById('studio-wallet-balance');
+        if (curBalEl) curBalEl.textContent = balanceAfter + ' VoCoin';
 
-      let totalEarned = 0;
-      let totalSpent = 0;
-      userLedger.forEach(t => {
-        if (t.amount > 0) totalEarned += t.amount;
-        else totalSpent += Math.abs(t.amount);
-      });
-      const earnedEl = document.getElementById('studio-total-earned');
-      if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
-      const spentEl = document.getElementById('studio-total-spent');
-      if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
+        let totalEarned = 0;
+        let totalSpent = 0;
+        userLedger.forEach(t => {
+          if (t && t.amount > 0) totalEarned += t.amount;
+          else if (t && t.amount < 0) totalSpent += Math.abs(t.amount);
+        });
+        const earnedEl = document.getElementById('studio-total-earned');
+        if (earnedEl) earnedEl.textContent = '+' + totalEarned + ' VoCoin';
+        const spentEl = document.getElementById('studio-total-spent');
+        if (spentEl) spentEl.textContent = '-' + totalSpent + ' VoCoin';
 
-      renderLedgerList();
+        renderLedgerList();
+      } catch (uiErr) {
+        console.warn('Studio ledger UI update error:', uiErr);
+      }
     }
 
     function setPublishPricePreset(price) {
