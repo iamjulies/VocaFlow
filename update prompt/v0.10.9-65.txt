@@ -1,0 +1,5 @@
+v0.10.9-65
+YÊU CẦU SỬA LỖI KHÔNG XÓA TỪ RA KHỎI DANH SÁCH LÀM SAI:
+- hiện tại yêu cầu sửa lỗi này rất nhiều nhưng vẫn chưa sửa được
+-> vẫn theo yêu cầu của mấy lần trước, cải tiến: học đến đâu là xóa từ đến đấy (được từ nào là đồng bộ đến đấy).
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

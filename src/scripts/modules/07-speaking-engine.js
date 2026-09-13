@@ -1738,6 +1738,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             if (scoreBadge) scoreBadge.textContent = 'Bài: +' + speakingSessionPointsEarned + 'đ';
 
             const { deltaPoints: effectiveMasteryGain } = updateWordMasteryScore(currentWord, masteryDelta);
+            saveDatabase(true);
+            if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
 
             rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">🪙 +' + wordReward + ' VoCoin • 📈 +' + effectiveMasteryGain + '% Thuộc từ (Sàn: ' + speakingFloorScore + ')</span>';
             rewardCont.style.display = 'flex';
@@ -1850,6 +1852,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     let autoFlashcardStartTime = 0;
+    let autoFlashcardReviewedCardKeys = new Set();
 
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
       lastScreenBeforeAutoFc = document.querySelector('.screen.active')?.id || 'screen-decks';
@@ -1875,6 +1878,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardList = [...deckWords];
       }
       autoFlashcardIndex = 0;
+      autoFlashcardReviewedCardKeys.clear();
       isAutoPlaying = true;
       autoFlashcardStartTime = Date.now();
       showScreen('screen-autofc');
@@ -2062,7 +2066,21 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function renderAutoCardOnly(index) {
       if (!autoFlashcardList || autoFlashcardList.length === 0) return;
       const word = autoFlashcardList[index];
+      if (!word) return;
       const total = autoFlashcardList.length;
+
+      // Real-time per-card mistake notebook decrement & cloud sync (v0.10.9-65)
+      try {
+        const cardKey = (word.id || '') + '::' + String(word.term || '').trim().toLowerCase();
+        if (!autoFlashcardReviewedCardKeys.has(cardKey)) {
+          autoFlashcardReviewedCardKeys.add(cardKey);
+          if (typeof removeWordFromMistakeList === 'function') {
+            removeWordFromMistakeList(word, false);
+          }
+        }
+      } catch (errMistake) {
+        console.warn('Realtime mistake removal error on card render:', errMistake);
+      }
 
       document.getElementById('autofc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
       document.getElementById('autofc-progress-bar').style.width = `${Math.round(((index + 1) / total) * 100)}%`;
@@ -2164,6 +2182,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (autoFlashcardIndex >= autoFlashcardList.length) {
           if (isAutoLoop && autoFlashcardList.length > 0) {
             autoFlashcardIndex = 0;
+            autoFlashcardReviewedCardKeys.clear();
           } else {
             isAutoPlaying = false;
             syncAutoFlashcardControlsUI();
@@ -2252,6 +2271,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           await playAudioAsync(singleDef, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+
+        // Realtime per-card mistake removal & cloud sync guarantee (v0.10.9-65)
+        if (typeof removeWordFromMistakeList === 'function') {
+          removeWordFromMistakeList(word, false);
+        }
 
         // AUTO FC PROGRESSION (v0.0.9.22 & v0.10.9-49):
         // If word is brand new (masteryScore === 0), award +1% so it transitions to "Đang học (1%)"

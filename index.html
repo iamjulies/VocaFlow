@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-64 (Build 296)</span>
+            <span class="mini-footer-version">v0.10.9-65 (Build 297)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.9-64 (Build 296)</span>
+            <span class="mini-footer-version">v0.10.9-65 (Build 297)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-64 (Build 296)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.9-65 (Build 297)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-64 Build 296)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.9-65 Build 297)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11438,18 +11438,18 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-64 Build 296)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.9-65 Build 297)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-64 Build 296)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.9-65 Build 297)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.9-64';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-64 (Build 296)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.9-65';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-65 (Build 297)';
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-64)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-65)
     // =========================================================================
     // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
     const GEMINI_MODELS_DEEP = [
@@ -23897,7 +23897,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (!item) return false;
               const kId = String(item.wordId || item.id || '').trim().toLowerCase();
               const kTerm = String(item.term || '').trim().toLowerCase();
-              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm));
+              const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm));
             });
             saveMistakeWordsList(filteredRemote, false);
           } else {
@@ -23907,7 +23908,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (item && (item.wordId || item.term)) {
                 const kId = String(item.wordId || item.id || '').trim().toLowerCase();
                 const kTerm = String(item.term || '').trim().toLowerCase();
-                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm))) {
                   const key = kId || kTerm;
                   mergedMap.set(key, { ...item });
                 }
@@ -23918,7 +23920,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (item && (item.wordId || item.term)) {
                 const kId = String(item.wordId || item.id || '').trim().toLowerCase();
                 const kTerm = String(item.term || '').trim().toLowerCase();
-                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm))) {
                   const key = kId || kTerm;
                   if (mergedMap.has(key)) {
                     const existing = mergedMap.get(key);
@@ -28594,6 +28597,11 @@ Yêu cầu nghiêm ngặt:
     function removeWordFromMistakeList(wordOrIdOrTerm, forceRemove = false) {
       if (!wordOrIdOrTerm) return;
       try {
+        if (typeof deletedMistakeWordKeys === 'undefined' || !deletedMistakeWordKeys) {
+          deletedMistakeWordKeys = new Set(JSON.parse(localStorage.getItem('vocaflow_deleted_mistakes') || '[]'));
+          window.deletedMistakeWordKeys = deletedMistakeWordKeys;
+        }
+
         const list = getMistakeWordsList();
         if (!list || list.length === 0) return;
 
@@ -28609,12 +28617,18 @@ Yêu cầu nghiêm ngặt:
           targetTerm = str;
         }
 
+        const cleanTargetId = targetId ? String(targetId).trim().toLowerCase() : '';
+        const cleanTargetTerm = targetTerm ? String(targetTerm).trim().toLowerCase() : '';
+        const normTarget = cleanTargetTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+
         const idx = list.findIndex(item => {
+          if (!item) return false;
           const itemWordId = String(item.wordId || item.id || '').trim().toLowerCase();
           const itemTerm = String(item.term || '').trim().toLowerCase();
+          const normItem = itemTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
 
-          const idMatch = targetId && (itemWordId === targetId || itemTerm === targetId);
-          const termMatch = targetTerm && (itemTerm === targetTerm || itemWordId === targetTerm);
+          const idMatch = cleanTargetId && (itemWordId === cleanTargetId || itemTerm === cleanTargetId || normItem === cleanTargetId);
+          const termMatch = cleanTargetTerm && (itemTerm === cleanTargetTerm || (normTarget && normItem === normTarget) || itemWordId === cleanTargetTerm);
 
           return idMatch || termMatch;
         });
@@ -28623,13 +28637,25 @@ Yêu cầu nghiêm ngặt:
           const item = list[idx];
           const keyId = String(item.wordId || item.id || '').trim().toLowerCase();
           const keyTerm = String(item.term || '').trim().toLowerCase();
+          const normItem = keyTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
 
           if (forceRemove) {
             if (keyId) deletedMistakeWordKeys.add(keyId);
             if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+            if (normItem) deletedMistakeWordKeys.add(normItem);
             localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
-            list.splice(idx, 1);
-            saveMistakeWordsList(list);
+            
+            const updatedList = list.filter(it => {
+              if (!it) return false;
+              const itId = String(it.wordId || it.id || '').trim().toLowerCase();
+              const itTerm = String(it.term || '').trim().toLowerCase();
+              const itNorm = itTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+              const isSame = (cleanTargetId && (itId === cleanTargetId || itTerm === cleanTargetId || itNorm === cleanTargetId)) ||
+                             (cleanTargetTerm && (itTerm === cleanTargetTerm || (normTarget && itNorm === normTarget) || itId === cleanTargetTerm)) ||
+                             (keyId && itId === keyId) || (keyTerm && itTerm === keyTerm);
+              return !isSame;
+            });
+            saveMistakeWordsList(updatedList, true);
           } else {
             // "dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay"
             const currentCount = parseInt(item.mistakeCount, 10) || 1;
@@ -28637,14 +28663,25 @@ Yêu cầu nghiêm ngặt:
             if (newCount <= 0) {
               if (keyId) deletedMistakeWordKeys.add(keyId);
               if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
+              if (normItem) deletedMistakeWordKeys.add(normItem);
               localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
-              list.splice(idx, 1);
-              saveMistakeWordsList(list);
+              
+              const updatedList = list.filter(it => {
+                if (!it) return false;
+                const itId = String(it.wordId || it.id || '').trim().toLowerCase();
+                const itTerm = String(it.term || '').trim().toLowerCase();
+                const itNorm = itTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+                const isSame = (cleanTargetId && (itId === cleanTargetId || itTerm === cleanTargetId || itNorm === cleanTargetId)) ||
+                               (cleanTargetTerm && (itTerm === cleanTargetTerm || (normTarget && itNorm === normTarget) || itId === cleanTargetTerm)) ||
+                               (keyId && itId === keyId) || (keyTerm && itTerm === keyTerm);
+                return !isSame;
+              });
+              saveMistakeWordsList(updatedList, true);
               showToast(`🎉 Tuyệt vời! Đã hoàn toàn khắc phục lỗi sai từ: "${item.term}"!`);
             } else {
               item.mistakeCount = newCount;
               list[idx] = item;
-              saveMistakeWordsList(list);
+              saveMistakeWordsList(list, true);
               showToast(`✨ Làm đúng từ "${item.term}"! (Còn ${newCount} lần làm đúng nữa để gỡ khỏi Sổ Tay Lỗi Sai)`);
             }
           }
@@ -29547,6 +29584,7 @@ Yêu cầu nghiêm ngặt:
               const { masteryGain } = getQuizScoringDeltas(currentQuizDifficulty, true);
               const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
               saveDatabase(true);
+              if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
               showToast(`🎉 Đúng rồi (+${delta} Xu)! Thuộc bài: ${newScore}%`);
             } catch (e) {
               showToast(`🎉 Đúng rồi (+${delta} Xu)!`);
@@ -30721,6 +30759,9 @@ Yêu cầu nghiêm ngặt:
             words[idx].updatedAt = new Date().toISOString();
           }
 
+          saveDatabase(true);
+          if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+
           // Points accumulated in session (deferred to finish/exit)
 
           setTimeout(() => {
@@ -30870,6 +30911,9 @@ Yêu cầu nghiêm ngặt:
           words[idx].masteryScore = newScore;
           words[idx].updatedAt = new Date().toISOString();
         }
+
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
 
         // Points accumulated in session (deferred to finish/exit)
 
@@ -33717,6 +33761,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             if (scoreBadge) scoreBadge.textContent = 'Bài: +' + speakingSessionPointsEarned + 'đ';
 
             const { deltaPoints: effectiveMasteryGain } = updateWordMasteryScore(currentWord, masteryDelta);
+            saveDatabase(true);
+            if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
 
             rewardCont.innerHTML = '<span class="badge" style="font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(16,185,129,0.2)); color: #34d399; border: 1px solid rgba(52,211,153,0.4);">🪙 +' + wordReward + ' VoCoin • 📈 +' + effectiveMasteryGain + '% Thuộc từ (Sàn: ' + speakingFloorScore + ')</span>';
             rewardCont.style.display = 'flex';
@@ -33829,6 +33875,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
 
     let autoFlashcardStartTime = 0;
+    let autoFlashcardReviewedCardKeys = new Set();
 
     function startAutoFlashcardMode(useSelectionOnly = false, customWordList = null) {
       lastScreenBeforeAutoFc = document.querySelector('.screen.active')?.id || 'screen-decks';
@@ -33854,6 +33901,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         autoFlashcardList = [...deckWords];
       }
       autoFlashcardIndex = 0;
+      autoFlashcardReviewedCardKeys.clear();
       isAutoPlaying = true;
       autoFlashcardStartTime = Date.now();
       showScreen('screen-autofc');
@@ -34041,7 +34089,21 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     function renderAutoCardOnly(index) {
       if (!autoFlashcardList || autoFlashcardList.length === 0) return;
       const word = autoFlashcardList[index];
+      if (!word) return;
       const total = autoFlashcardList.length;
+
+      // Real-time per-card mistake notebook decrement & cloud sync (v0.10.9-65)
+      try {
+        const cardKey = (word.id || '') + '::' + String(word.term || '').trim().toLowerCase();
+        if (!autoFlashcardReviewedCardKeys.has(cardKey)) {
+          autoFlashcardReviewedCardKeys.add(cardKey);
+          if (typeof removeWordFromMistakeList === 'function') {
+            removeWordFromMistakeList(word, false);
+          }
+        }
+      } catch (errMistake) {
+        console.warn('Realtime mistake removal error on card render:', errMistake);
+      }
 
       document.getElementById('autofc-counter').textContent = `Thẻ ${index + 1} / ${total}`;
       document.getElementById('autofc-progress-bar').style.width = `${Math.round(((index + 1) / total) * 100)}%`;
@@ -34143,6 +34205,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (autoFlashcardIndex >= autoFlashcardList.length) {
           if (isAutoLoop && autoFlashcardList.length > 0) {
             autoFlashcardIndex = 0;
+            autoFlashcardReviewedCardKeys.clear();
           } else {
             isAutoPlaying = false;
             syncAutoFlashcardControlsUI();
@@ -34231,6 +34294,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           await playAudioAsync(singleDef, 'vi', currentSpeechRateVi);
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
+
+        // Realtime per-card mistake removal & cloud sync guarantee (v0.10.9-65)
+        if (typeof removeWordFromMistakeList === 'function') {
+          removeWordFromMistakeList(word, false);
+        }
 
         // AUTO FC PROGRESSION (v0.0.9.22 & v0.10.9-49):
         // If word is brand new (masteryScore === 0), award +1% so it transitions to "Đang học (1%)"

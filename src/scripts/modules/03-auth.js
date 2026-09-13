@@ -8650,7 +8650,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (!item) return false;
               const kId = String(item.wordId || item.id || '').trim().toLowerCase();
               const kTerm = String(item.term || '').trim().toLowerCase();
-              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm));
+              const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+              return (!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm));
             });
             saveMistakeWordsList(filteredRemote, false);
           } else {
@@ -8660,7 +8661,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (item && (item.wordId || item.term)) {
                 const kId = String(item.wordId || item.id || '').trim().toLowerCase();
                 const kTerm = String(item.term || '').trim().toLowerCase();
-                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm))) {
                   const key = kId || kTerm;
                   mergedMap.set(key, { ...item });
                 }
@@ -8671,7 +8673,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               if (item && (item.wordId || item.term)) {
                 const kId = String(item.wordId || item.id || '').trim().toLowerCase();
                 const kTerm = String(item.term || '').trim().toLowerCase();
-                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm))) {
+                const normTerm = kTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+                if ((!kId || !tombstoneSet.has(kId)) && (!kTerm || !tombstoneSet.has(kTerm)) && (!normTerm || !tombstoneSet.has(normTerm))) {
                   const key = kId || kTerm;
                   if (mergedMap.has(key)) {
                     const existing = mergedMap.get(key);

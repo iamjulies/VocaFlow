@@ -712,6 +712,9 @@
             words[idx].updatedAt = new Date().toISOString();
           }
 
+          saveDatabase(true);
+          if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+
           // Points accumulated in session (deferred to finish/exit)
 
           setTimeout(() => {
@@ -861,6 +864,9 @@
           words[idx].masteryScore = newScore;
           words[idx].updatedAt = new Date().toISOString();
         }
+
+        saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
 
         // Points accumulated in session (deferred to finish/exit)
 

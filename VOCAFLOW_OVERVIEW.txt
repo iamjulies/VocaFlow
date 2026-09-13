@@ -1,4 +1,23 @@
 ================================================================================
+Phiên bản: v0.10.9-65 (Build 297) - Học Đến Đâu Xóa Đến Đấy (Real-Time Per-Word Mistake Removal & Instant Cloud Sync Trong Mọi Chế Độ Học)
+================================================================================
+1. [Học Đến Đâu Xóa Đến Đấy - Real-time Per-Word Mistake Removal & Instant Cloud Sync]:
+   - Khắc phục triệt để và toàn diện lỗi từ sai không được xóa ra khỏi Sổ Tay Lỗi Sai trong quá trình học.
+   - Cơ chế mới: "Học đến đâu là xóa từ đến đấy (được từ nào là đồng bộ ngay đến đấy)".
+   - Auto Flashcard: Ngay khi từng thẻ bài được hiển thị/đọc/lật hoặc chuyển qua (renderAutoCardOnly, runAutoFlashcardLoop, next/prev), hệ thống lập tức giảm trừ/xóa từ khỏi Sổ Tay Lỗi Sai và đồng bộ ngay lập tức lên Cloud.
+   - Quiz Mode: Ngay khi trả lời đúng một câu hỏi, lập tức trừ số lần sai hoặc loại bỏ từ khỏi sổ tay và đẩy dữ liệu lên Cloud tức thì.
+   - Spelling Mode: Ngay khi gõ đúng từ ở chế độ Extreme hoặc Letter Boxes, lập tức trừ số lần sai/xóa từ và đồng bộ đám mây ngay lập tức.
+   - Speaking Mode: Ngay khi phát âm đạt điểm sàn, lập tức trừ số lần sai/xóa từ và đồng bộ đám mây ngay lập tức.
+
+2. [Cải Tiến Khớp Từ Đa Mã Định Danh (Robust Multi-Identifier Matching & Tombstone Architecture)]:
+   - Hỗ trợ chuẩn hóa và so khớp đa chiều: id, wordId, term (loại bỏ dấu câu, khoảng trắng thừa, chuẩn hóa chữ thường).
+   - Tự động làm sạch mọi bản ghi trùng lặp (duplicate entries) trong danh sách lỗi sai khi từ được khắc phục.
+   - Ghi nhận đầy đủ tombstone vào deletedMistakeWordKeys để chống hồi sinh dữ liệu khi đồng bộ đa thiết bị.
+
+3. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-65 Build 297)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-65_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-64 (Build 296) - Tự Động Giảm & Xóa Lỗi Sai Khi Thoát Sớm Mọi Chế Độ Học, Đồng Bộ 2 Chiều Chống Hồi Sinh Đang Theo Dõi & Sổ Tay Lỗi Sai (Tombstone Architecture)
 ================================================================================
 1. [Giảm Trừ & Xóa Bỏ Lỗi Sai Khi Thoát Sớm Mọi Chế Độ Học]:
