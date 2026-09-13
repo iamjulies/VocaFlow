@@ -1,0 +1,8 @@
+v0.10.9-67
+1. YÊU CẦU SỬA LỖI KHÔNG XÓA TỪ RA KHỎI DANH SÁCH LÀM SAI:
+- hiện tại yêu cầu sửa lỗi này rất nhiều nhưng vẫn chưa sửa được
+-> vẫn theo yêu cầu của mấy lần trước, cải tiến: học đến đâu là xóa từ đến đấy (được từ nào là đồng bộ đến đấy).
+2. FIX BUG: khi nhấn thêm từ xong thì cửa sổ thêm từ không đóng lại "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-13 151232.png"
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+
+2 lỗi này dai dẳng, chưa giải quyết được -> tìm kiếm cách giải quyết trên mạng rồi quay lại sửa rồi báo cáo cho t. đừng bảo kh làm được vì trước kia vẫn dùng được bình thường nhé.

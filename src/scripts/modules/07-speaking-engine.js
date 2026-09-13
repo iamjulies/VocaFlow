@@ -1723,7 +1723,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
           if (currentWord && !speakingGradedWordIds.has(currentWord.id)) {
             speakingGradedWordIds.add(currentWord.id);
-            removeWordFromMistakeList(currentWord, false);
+            removeWordFromMistakeList(currentWord, true);
             const syllCount = speakingSyllableCache[currentWord.id] || Math.max(1, Math.ceil((currentWord.term || '').length / 3));
             const baseXu = Math.max(3, syllCount * 3);
             const admissionScore = speakingTakes.reduce((a, b) => a + b, 0) / speakingTakes.length;
@@ -2044,7 +2044,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           recordStudySessionWordReviews(reviewedCards);
         }
         if (typeof removeWordFromMistakeList === 'function') {
-          reviewedCards.forEach(w => removeWordFromMistakeList(w, false));
+          reviewedCards.forEach(w => removeWordFromMistakeList(w, true));
         }
       }
       saveDatabase(true);
@@ -2069,13 +2069,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (!word) return;
       const total = autoFlashcardList.length;
 
-      // Real-time per-card mistake notebook decrement & cloud sync (v0.10.9-65)
+      // Real-time per-card mistake notebook removal & cloud sync (v0.10.9-67)
       try {
         const cardKey = (word.id || '') + '::' + String(word.term || '').trim().toLowerCase();
         if (!autoFlashcardReviewedCardKeys.has(cardKey)) {
           autoFlashcardReviewedCardKeys.add(cardKey);
           if (typeof removeWordFromMistakeList === 'function') {
-            removeWordFromMistakeList(word, false);
+            removeWordFromMistakeList(word, true);
           }
         }
       } catch (errMistake) {
@@ -2272,9 +2272,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         }
         if (!isAutoPlaying || thisStepId !== autoFlashcardStepId) return;
 
-        // Realtime per-card mistake removal & cloud sync guarantee (v0.10.9-65)
+        // Realtime per-card mistake removal & cloud sync guarantee (v0.10.9-67)
         if (typeof removeWordFromMistakeList === 'function') {
-          removeWordFromMistakeList(word, false);
+          removeWordFromMistakeList(word, true);
         }
 
         // AUTO FC PROGRESSION (v0.0.9.22 & v0.10.9-49):

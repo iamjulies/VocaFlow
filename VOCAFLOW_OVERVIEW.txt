@@ -1,4 +1,35 @@
 ================================================================================
+Phiên bản: v0.10.9-67 (Build 299) - Xóa Sạch & Vĩnh Viễn Lỗi Sai Khi Học (Instant Force Mistake Removal & Anti-Resurrection Cloud Sync), Khắc Phục Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ
+================================================================================
+1. [Xóa Sạch & Vĩnh Viễn Lỗi Sai Khi Học - Instant Force Mistake Removal & Anti-Resurrection Cloud Sync]:
+   - Khắc phục triệt để và dứt điểm lỗi từ sai không được xóa ra khỏi Sổ Tay Lỗi Sai trong quá trình học.
+   - Giải pháp cốt lõi: Thay vì chỉ giảm trừ `mistakeCount - 1` (khiến các từ sai nhiều lần vẫn còn tồn tại trong sổ tay), chuyển toàn bộ các chế độ học (Auto Flashcard, Quiz, Spelling, Speaking, Mistake Review) sang chế độ `removeWordFromMistakeList(word, true)` -> Xóa sạch 100% tất cả bản ghi của từ đó khỏi Sổ Tay Lỗi Sai ngay tại thời điểm học/làm đúng.
+   - Thuật toán so khớp đa chiều thông minh: Tìm và xóa sạch tất cả các phần tử khớp theo `id`, `wordId`, `term` (không phân biệt hoa thường), `normTerm` (chuẩn hóa loại bỏ dấu câu).
+   - Kiến trúc Bia Mộ Đám Mây Kháng Hồi Sinh: Lưu trữ toàn bộ các mã định danh của từ đã xóa vào `deletedMistakeWordKeys`, đồng bộ 2 chiều lên Cloud và cập nhật logic `mergeCloudDataIntoLocal` trong `03-auth.js` để tuyệt đối KHÔNG hồi sinh các từ đã bị xóa từ các bản sao lưu cũ trên đám mây.
+   - Tự động cập nhật số đếm huy hiệu trên Header (`#header-mistake-count`) và trong màn hình Bộ từ ngay lập tức.
+
+2. [Khắc Phục Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ Vựng Mới (Modal-Word Auto-Close Fix)]:
+   - Gắn sự kiện `onclick="saveWordForm(event)"` trực tiếp lên nút "Lưu từ vựng", thêm `novalidate` vào `<form id="word-form">`, loại bỏ thuộc tính `required` khỏi các ô nhập liệu động đa nét nghĩa (`display: none`).
+   - Đảm bảo `saveWordForm` luôn được thực thi và gọi `closeModal('modal-word')` thành công 100% bất kể người dùng thêm từ 1 nghĩa hay nhiều nét nghĩa polysemy.
+
+3. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-67 Build 299)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-67_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
+Phiên bản: v0.10.9-66 (Build 298) - Khắc Phục Lỗi Cửa Sổ Thêm Từ Vựng Không Đóng Khi Lưu & Tối Ưu Hóa Form Đa Nét Nghĩa (Polysemy Form Resilience)
+================================================================================
+1. [Khắc Phục Lỗi Cửa Sổ Thêm Từ Vựng Không Đóng Khi Lưu (Modal-Word Auto-Close & Validation Fix)]:
+   - Khắc phục triệt để lỗi khi người dùng nhấn "Lưu từ vựng" ở modal Thêm Từ Vựng Mới (đặc biệt khi có nhiều nét nghĩa polysemy / homograph) thì cửa sổ modal không đóng lại.
+   - Nguyên nhân: Thuộc tính HTML5 `required` trên các thẻ `<textarea>` định nghĩa nghĩa tiếng Việt và `<input>` từ vựng bị xung đột với các tab nét nghĩa ẩn (`display: none`), khiến trình duyệt Chromium chặn sự kiện submit (báo lỗi không thể focus control ẩn) và không kích hoạt hàm lưu `saveWordForm`.
+   - Giải pháp:
+     + Thêm thuộc tính `novalidate` vào `<form id="word-form">` và chuyển đổi toàn bộ quy trình kiểm tra dữ liệu sang JavaScript độc lập, thông minh.
+     + Loại bỏ thuộc tính `required` khỏi các ô nhập liệu động của từng nét nghĩa để tránh xung đột trình duyệt khi chuyển tab.
+     + Bổ sung cơ chế fallback tự động gán `currentDeckId` (nếu chưa chọn bộ từ) và bọc các hàm cập nhật UI (`renderWordList`, `renderDecks`, `pushCurrentDatabaseToCloud`) trong khối `try...catch` để đảm bảo `closeModal('modal-word')` và reset form luôn được thực thi 100% trong mọi tình huống.
+
+2. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-66 Build 298)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.9-66_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.9-65 (Build 297) - Học Đến Đâu Xóa Đến Đấy (Real-Time Per-Word Mistake Removal & Instant Cloud Sync Trong Mọi Chế Độ Học)
 ================================================================================
 1. [Học Đến Đâu Xóa Đến Đấy - Real-time Per-Word Mistake Removal & Instant Cloud Sync]:

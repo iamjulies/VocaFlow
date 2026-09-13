@@ -778,7 +778,7 @@ Yêu cầu nghiêm ngặt:
       }
     }
 
-    function removeWordFromMistakeList(wordOrIdOrTerm, forceRemove = false) {
+    function removeWordFromMistakeList(wordOrIdOrTerm, forceRemove = true) {
       if (!wordOrIdOrTerm) return;
       try {
         if (typeof deletedMistakeWordKeys === 'undefined' || !deletedMistakeWordKeys) {
@@ -805,8 +805,10 @@ Yêu cầu nghiêm ngặt:
         const cleanTargetTerm = targetTerm ? String(targetTerm).trim().toLowerCase() : '';
         const normTarget = cleanTargetTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
 
-        const idx = list.findIndex(item => {
-          if (!item) return false;
+        // Match all matching entries in the mistake list
+        const matchingIndices = [];
+        list.forEach((item, index) => {
+          if (!item) return;
           const itemWordId = String(item.wordId || item.id || '').trim().toLowerCase();
           const itemTerm = String(item.term || '').trim().toLowerCase();
           const normItem = itemTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
@@ -814,61 +816,38 @@ Yêu cầu nghiêm ngặt:
           const idMatch = cleanTargetId && (itemWordId === cleanTargetId || itemTerm === cleanTargetId || normItem === cleanTargetId);
           const termMatch = cleanTargetTerm && (itemTerm === cleanTargetTerm || (normTarget && normItem === normTarget) || itemWordId === cleanTargetTerm);
 
-          return idMatch || termMatch;
+          if (idMatch || termMatch) {
+            matchingIndices.push(index);
+          }
         });
 
-        if (idx >= 0) {
-          const item = list[idx];
-          const keyId = String(item.wordId || item.id || '').trim().toLowerCase();
-          const keyTerm = String(item.term || '').trim().toLowerCase();
-          const normItem = keyTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
-
-          if (forceRemove) {
-            if (keyId) deletedMistakeWordKeys.add(keyId);
-            if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
-            if (normItem) deletedMistakeWordKeys.add(normItem);
-            localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
-            
-            const updatedList = list.filter(it => {
-              if (!it) return false;
-              const itId = String(it.wordId || it.id || '').trim().toLowerCase();
-              const itTerm = String(it.term || '').trim().toLowerCase();
-              const itNorm = itTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
-              const isSame = (cleanTargetId && (itId === cleanTargetId || itTerm === cleanTargetId || itNorm === cleanTargetId)) ||
-                             (cleanTargetTerm && (itTerm === cleanTargetTerm || (normTarget && itNorm === normTarget) || itId === cleanTargetTerm)) ||
-                             (keyId && itId === keyId) || (keyTerm && itTerm === keyTerm);
-              return !isSame;
-            });
-            saveMistakeWordsList(updatedList, true);
-          } else {
-            // "dù từ đó bị sai ở chế độ học nào thì chỉ cần học 1 chế độ nào đó cũng đủ điều kiện loại từ đó ra khỏi danh sách từ sai rồi, nếu sai >1 lần thì mỗi lần làm đúng thì -1 lần làm sai, khi nào số lần sai = 0 thì bị loại khỏi sổ tay"
-            const currentCount = parseInt(item.mistakeCount, 10) || 1;
-            const newCount = currentCount - 1;
-            if (newCount <= 0) {
+        if (matchingIndices.length > 0) {
+          // Record tombstones for all identifiers
+          matchingIndices.forEach(idx => {
+            const item = list[idx];
+            if (item) {
+              const keyId = String(item.wordId || item.id || '').trim().toLowerCase();
+              const keyTerm = String(item.term || '').trim().toLowerCase();
+              const normItem = keyTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
               if (keyId) deletedMistakeWordKeys.add(keyId);
               if (keyTerm) deletedMistakeWordKeys.add(keyTerm);
               if (normItem) deletedMistakeWordKeys.add(normItem);
-              localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
-              
-              const updatedList = list.filter(it => {
-                if (!it) return false;
-                const itId = String(it.wordId || it.id || '').trim().toLowerCase();
-                const itTerm = String(it.term || '').trim().toLowerCase();
-                const itNorm = itTerm.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
-                const isSame = (cleanTargetId && (itId === cleanTargetId || itTerm === cleanTargetId || itNorm === cleanTargetId)) ||
-                               (cleanTargetTerm && (itTerm === cleanTargetTerm || (normTarget && itNorm === normTarget) || itId === cleanTargetTerm)) ||
-                               (keyId && itId === keyId) || (keyTerm && itTerm === keyTerm);
-                return !isSame;
-              });
-              saveMistakeWordsList(updatedList, true);
-              showToast(`🎉 Tuyệt vời! Đã hoàn toàn khắc phục lỗi sai từ: "${item.term}"!`);
-            } else {
-              item.mistakeCount = newCount;
-              list[idx] = item;
-              saveMistakeWordsList(list, true);
-              showToast(`✨ Làm đúng từ "${item.term}"! (Còn ${newCount} lần làm đúng nữa để gỡ khỏi Sổ Tay Lỗi Sai)`);
             }
-          }
+          });
+          if (cleanTargetId) deletedMistakeWordKeys.add(cleanTargetId);
+          if (cleanTargetTerm) deletedMistakeWordKeys.add(cleanTargetTerm);
+          if (normTarget) deletedMistakeWordKeys.add(normTarget);
+
+          localStorage.setItem('vocaflow_deleted_mistakes', JSON.stringify(Array.from(deletedMistakeWordKeys)));
+
+          // Remove all matching entries immediately (học đến đâu xóa sạch đến đấy)
+          const updatedList = list.filter((it, index) => !matchingIndices.includes(index));
+          saveMistakeWordsList(updatedList, true);
+
+          const matchedItem = list[matchingIndices[0]];
+          const displayTerm = (matchedItem && matchedItem.term) ? matchedItem.term : (cleanTargetTerm || cleanTargetId);
+          showToast(`🎉 Tuyệt vời! Đã khắc phục và xóa từ: "${displayTerm}" khỏi Sổ Tay Lỗi Sai!`);
+
           // Refresh open modal list if open
           const modal = document.getElementById('modal-mistake-notebook');
           if (modal && (modal.classList.contains('active') || modal.style.display === 'flex' || modal.style.display === 'block')) {
@@ -1764,7 +1743,7 @@ Yêu cầu nghiêm ngặt:
 
           if (questionWord) {
             try {
-              removeWordFromMistakeList(questionWord, false);
+              removeWordFromMistakeList(questionWord, true);
               const { masteryGain } = getQuizScoringDeltas(currentQuizDifficulty, true);
               const { newScore } = updateWordMasteryScore(questionWord, masteryGain);
               saveDatabase(true);

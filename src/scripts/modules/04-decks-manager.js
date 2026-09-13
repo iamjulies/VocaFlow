@@ -1584,7 +1584,7 @@
 
             <div class="form-group" style="margin-bottom: 10px;">
               <label class="form-label" style="font-size: 11px;">Định nghĩa tiếng Việt *</label>
-              <textarea id="word-def-${idx}" class="form-textarea" placeholder="Nghĩa cốt lõi tiếng Việt cho nét nghĩa này..." required style="font-size: 12.5px; padding: 6px 8px; min-height: 52px;">${escapeHtml(s.definitionVi || '')}</textarea>
+              <textarea id="word-def-${idx}" class="form-textarea" placeholder="Nghĩa cốt lõi tiếng Việt cho nét nghĩa này..." style="font-size: 12.5px; padding: 6px 8px; min-height: 52px;">${escapeHtml(s.definitionVi || '')}</textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 10px;">
@@ -1779,18 +1779,29 @@
     }
 
     function saveWordForm(e) {
-      e.preventDefault();
-      const id = document.getElementById('word-id').value || 'w-' + Date.now();
-      const term = document.getElementById('word-term').value.trim();
+      if (e) {
+        try { e.preventDefault(); } catch (err) {}
+      }
+      const id = document.getElementById('word-id')?.value || 'w-' + Date.now();
+      const term = (document.getElementById('word-term')?.value || '').trim();
       if (!term) {
         alert('Vui lòng nhập từ vựng tiếng Anh!');
+        const termEl = document.getElementById('word-term');
+        if (termEl) termEl.focus();
         return;
+      }
+
+      // Ensure valid deckId
+      let targetDeckId = currentDeckId;
+      if (!targetDeckId && decks && decks.length > 0) {
+        targetDeckId = decks[0].id;
+        currentDeckId = targetDeckId;
       }
 
       // Check duplicate word in current deck
       const normalizedTerm = term.toLowerCase();
       const duplicateWord = words.find(w => 
-        w.deckId === currentDeckId && 
+        w.deckId === targetDeckId && 
         w.id !== id && 
         w.term && 
         w.term.trim().toLowerCase() === normalizedTerm
@@ -1806,6 +1817,8 @@
 
       if (validSenses.length === 0) {
         alert('⚠️ Vui lòng nhập định nghĩa tiếng Việt cho ít nhất 1 nét nghĩa để lưu từ vựng!');
+        const activeDef = document.getElementById('word-def-' + currentActiveSenseTab) || document.getElementById('word-def-0');
+        if (activeDef) activeDef.focus();
         return;
       }
 
@@ -1857,7 +1870,7 @@
       } else {
         words.push({
           id,
-          deckId: currentDeckId,
+          deckId: targetDeckId,
           term,
           senses: validSenses,
           partOfSpeech: pos,
@@ -1882,9 +1895,11 @@
       }
 
       saveDatabase(true);
-      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
-      renderWordList();
-      renderDecks();
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        try { pushCurrentDatabaseToCloud(); } catch (err) { console.warn('Cloud sync error:', err); }
+      }
+      try { renderWordList(); } catch (err) { console.warn('renderWordList error:', err); }
+      try { renderDecks(); } catch (err) { console.warn('renderDecks error:', err); }
       closeModal('modal-word');
 
       // Reset form fields to avoid ghost duplicates

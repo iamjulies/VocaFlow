@@ -1,34 +1,32 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.9-65 (Build 297)`  
+> **Phiên bản mục tiêu:** `v0.10.9-67 (Build 299)`  
 > **Cập nhật lần cuối:** 2026-09-13  
 > **Trạng thái:** 🚀 **HOÀN TẤT TRIỂN KHAI VÀ XUẤT BẢN ĐA NỀN TẢNG**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-65 Build 297)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.9-67 Build 299)
 
-- [x] **Học Đến Đâu Xóa Đến Đấy - Real-Time Per-Word Mistake Removal & Instant Cloud Sync**:
-  - Khắc phục triệt để lỗi từ sai không được xóa ra khỏi Sổ Tay Lỗi Sai trong quá trình học.
-  - Cơ chế mới: "Học đến đâu là xóa từ đến đấy (được từ nào là đồng bộ ngay đến đấy)".
-  - Auto Flashcard: Ngay khi từng thẻ bài được hiển thị/đọc/lật hoặc chuyển qua (`renderAutoCardOnly`, `runAutoFlashcardLoop`, `nextAutoFlashcard`, `prevAutoFlashcard`), hệ thống lập tức giảm trừ/xóa từ khỏi Sổ Tay Lỗi Sai và đồng bộ ngay lập tức lên Cloud.
-  - Quiz Mode: Ngay khi trả lời đúng một câu hỏi, lập tức trừ số lần sai hoặc loại bỏ từ khỏi sổ tay và đẩy dữ liệu lên Cloud tức thì (`saveDatabase(true)`, `pushCurrentDatabaseToCloud()`).
-  - Spelling Mode: Ngay khi gõ đúng từ ở chế độ Extreme hoặc Letter Boxes, lập tức trừ số lần sai/xóa từ và đồng bộ đám mây ngay lập tức.
-  - Speaking Mode: Ngay khi phát âm đạt điểm sàn, lập tức trừ số lần sai/xóa từ và đồng bộ đám mây ngay lập tức.
+- [x] **Xóa Sạch & Vĩnh Viễn Lỗi Sai Khi Học (Instant Force Mistake Removal & Anti-Resurrection Cloud Sync)**:
+  - Khắc phục dứt điểm lỗi từ sai không được xóa ra khỏi Sổ Tay Lỗi Sai trong quá trình học.
+  - Chuyển đổi toàn bộ cơ chế xóa lỗi sai sang `removeWordFromMistakeList(word, true)`: Mỗi khi từ vựng được học (trong Flashcard tự động) hoặc làm đúng/đạt điểm sàn (trong Quiz, Spelling, Speaking, Mistake Review), toàn bộ bản ghi của từ đó lập tức bị xóa sạch 100% khỏi Sổ Tay Lỗi Sai.
+  - Thuật toán so khớp đa chiều: Khớp `id`, `wordId`, `term`, `normTerm` (loại bỏ dấu câu, chuẩn hóa chữ thường).
+  - Kiến trúc Bia Mộ Đám Mây Kháng Hồi Sinh: Lưu trữ toàn bộ các mã định danh của từ đã xóa vào `deletedMistakeWordKeys`, đồng bộ 2 chiều lên Cloud và cập nhật logic `mergeCloudDataIntoLocal` trong `03-auth.js` để tuyệt đối KHÔNG hồi sinh các từ đã bị xóa từ các bản sao lưu cũ trên đám mây.
+  - Tự động cập nhật số đếm huy hiệu trên Header (`#header-mistake-count`) và trong màn hình Bộ từ ngay lập tức.
 
-- [x] **Cải Tiến Khớp Từ Đa Mã Định Danh (Robust Multi-Identifier Matching & Tombstone Architecture)**:
-  - Hỗ trợ chuẩn hóa và so khớp đa chiều: `id`, `wordId`, `term` (loại bỏ dấu câu, khoảng trắng thừa, chuẩn hóa chữ thường).
-  - Tự động làm sạch mọi bản ghi trùng lặp (`duplicate entries`) trong danh sách lỗi sai khi từ được khắc phục.
-  - Ghi nhận đầy đủ tombstone vào `deletedMistakeWordKeys` để chống hồi sinh dữ liệu khi đồng bộ đa thiết bị.
+- [x] **Khắc Phục Triệt Để Lỗi Không Đóng Cửa Sổ Thêm Từ Vựng Mới (Modal-Word Auto-Close Fix)**:
+  - Gắn sự kiện `onclick="saveWordForm(event)"` trực tiếp lên nút "Lưu từ vựng", thêm `novalidate` vào `<form id="word-form">`, loại bỏ thuộc tính `required` khỏi các ô nhập liệu động đa nét nghĩa (`display: none`).
+  - Đảm bảo `saveWordForm` luôn được thực thi và gọi `closeModal('modal-word')` thành công 100% bất kể người dùng thêm từ 1 nghĩa hay nhiều nét nghĩa polysemy.
 
-- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-65 Build 297)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-65 (Build 297)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.9-65 (Build 297)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.9-65 (Build 297)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.9-65 Build 297`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-65'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-65 (Build 297)'`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.9-65`)
-  - `pubspec.yaml` (`version: 0.10.9+297`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-65`)
-  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-65_Windows_Portable.zip`, commit `v0.10.9-65 (Build 297)`)
-  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-65 (Build 297)`)
+- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.9-67 Build 299)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.9-67 (Build 299)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.9-67 (Build 299)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.9-67 (Build 299)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.9-67 Build 299`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.9-67'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.9-67 (Build 299)'`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.9-67`)
+  - `pubspec.yaml` (`version: 0.10.9+299`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.9-67`)
+  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.9-67_Windows_Portable.zip`, commit `v0.10.9-67 (Build 299)`)
+  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.9-67 (Build 299)`)

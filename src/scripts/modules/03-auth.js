@@ -8690,9 +8690,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                       lastMistakeAt: finalTime,
                       modesFailed: mergedModes
                     });
-                  } else {
-                    mergedMap.set(key, { ...item });
                   }
+                  // If item is in remoteMistakes but NOT in localMistakes while hasLocalMistakeStorage is true,
+                  // it was already learned/removed locally, so do not resurrect.
                 }
               }
             });

@@ -697,7 +697,7 @@
           spellingCorrectCount++;
           if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
           spellingWrongAttemptsForCurrentWord = 0;
-          removeWordFromMistakeList(questionWord, false);
+          removeWordFromMistakeList(questionWord, true);
 
           const totalBoxes = expected.length;
           const walletPts = Math.min(22, Math.max(1, Math.round(totalBoxes * 0.7 * mult)));
@@ -845,7 +845,7 @@
         spellingIsAnswered = true;
         spellingCorrectCount++;
         if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('spelling');
-        removeWordFromMistakeList(questionWord, false);
+        removeWordFromMistakeList(questionWord, true);
 
         // Balanced Point Calculation (v0.0.10.1d):
         // 1. Wallet Points: Full effort reward = Total boxes * multiplier
