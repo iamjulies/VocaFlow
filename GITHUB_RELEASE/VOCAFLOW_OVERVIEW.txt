@@ -1,4 +1,26 @@
 ================================================================================
+Phiên bản: v0.10.10-4 (Build 305) - Khắc Phục Triệt Để 3 Lỗi Tiềm Ẩn: Cơ Chế Bounded LRU Cache Giải Phóng Bộ Nhớ Audio Blob, Hệ Thống Fallback Đa Tầng TTS Kèm Circuit Breaker & Chống Xung Đột Ghi Đè Cloud Đa Thiết Bị
+================================================================================
+1. [Khắc Phục Rủi Ro Phụ Thuộc Vào Endpoint Google Translate TTS Không Chính Thức (02-state-core.js)]:
+   - Xây dựng cơ chế Circuit Breaker thông minh (`googleTtsCircuitBreakerUntil`) theo dõi trạng thái lỗi HTTP 429/403/Timeout từ endpoint Google Translate TTS.
+   - Khi phát hiện bị giới hạn tốc độ (Rate Limit) hoặc mạng gián đoạn, hệ thống kích hoạt Circuit Breaker trong 60-120s và tự động chuyển hướng tức thì sang Web SpeechSynthesis API với độ trễ 0ms.
+   - Tối ưu hóa chuỗi ưu tiên giọng đọc tự nhiên (Natural Online Voices, Google English/Vietnamese, Siri/Samantha, Microsoft Zira/David, Linh/An) đảm bảo trải nghiệm phát âm luôn mượt mà, chân thực và hoạt động 100% ngoại tuyến (Offline PWA).
+   - Tự động bỏ qua việc prefetch ngầm khi Circuit Breaker đang hoạt động để tránh gây áp lực mạng không cần thiết.
+
+2. [Khắc Phục Rò Rỉ Bộ Nhớ (Memory Leak) Đối Với Audio Blob URLs (02-state-core.js)]:
+   - Thay thế `Map()` lưu trữ vô hạn bằng cấu trúc `BoundedLruAudioCache` với kích thước giới hạn tối đa 50 phần tử.
+   - Cơ chế tự động giải phóng bộ nhớ RAM triệt để: Mỗi khi một phần tử bị đẩy ra khỏi cache (Eviction) hoặc khi làm mới phiên học, hệ thống chủ động gọi `URL.revokeObjectURL(blobUrl)` để giải phóng trực tiếp nhị phân Blob khỏi bộ nhớ của trình duyệt.
+   - Cung cấp hàm tiện ích `clearAudioBlobCache()` phục vụ dọn dẹp bộ nhớ khi chuyển màn hình hoặc đăng xuất.
+
+3. [Khắc Phục Xung Đột Ghi Đè Dữ Liệu Cloud Khi Mở Nhiều Thiết Bị (03-auth.js)]:
+   - Khắc phục triệt để hiện tượng ghi đè làm mất tiến độ học tập (Race Conditions) khi người dùng sử dụng đồng thời Desktop App và Mobile Web PWA.
+   - Tích hợp Concurrency Mutex Lock (`isPushingDatabaseToCloud`) kèm hàng đợi tự động (`pendingCloudPushRequest`) ngăn chặn các luồng ghi đè song song.
+   - Nâng cấp cơ chế Pull-Before-Push: Trước khi thực hiện `PATCH` lên Cloud, hệ thống tự động kiểm tra timestamp `lastSync` trên Cloud. Nếu phát hiện có thiết bị khác vừa đồng bộ dữ liệu mới hơn, hệ thống sẽ tải và hợp nhất (2-Way Merge) toàn diện các bộ từ, từ vựng, sổ cái VoCoin, nhật ký từ sai và thời lượng học 7 ngày trước khi đẩy trạng thái hoàn chỉnh lên Cloud.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-4 Build 305)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-4_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.10-3 (Build 304) - Khắc Phục Triệt Để 3 Lỗi Hệ Thống: Loại Bỏ Bulk Query /users.json, Chống Tràn Bộ Nhớ LocalStorage Do Ảnh AI Mentor & Bổ Sung Flow Icon Vào Cache PWA
 ================================================================================
 1. [Khắc Phục Lỗi Quét Toàn Bộ DB /users.json Trong initGlobalVipRegistry (12-achievements.js)]:

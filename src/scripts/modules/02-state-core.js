@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-3 Build 304)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-4 Build 305)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-3 Build 304)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-4 Build 305)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-3';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-3 (Build 304)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-4';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-4 (Build 305)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -2844,13 +2844,76 @@
 
 
     // =========================================================================
-    // AUDIO ENGINE - NATURAL STREAMING, SMART PRELOAD & BLOB CACHE
+    // AUDIO ENGINE - BOUNDED LRU CACHE, MEMORY RECOVERY & RESILIENT MULTI-TTS (v0.10.10-4)
     // =========================================================================
     let currentActiveAudio = null;
-    const audioBlobCache = new Map();
+    let googleTtsCircuitBreakerUntil = 0; // Timestamp until which unofficial Google TTS is bypassed
+    let googleTtsConsecutiveErrors = 0;
+
+    class BoundedLruAudioCache {
+      constructor(maxSize = 50) {
+        this.maxSize = maxSize;
+        this.cache = new Map(); // key -> { blobUrl, lastUsed }
+      }
+
+      get(key) {
+        if (!this.cache.has(key)) return null;
+        const entry = this.cache.get(key);
+        entry.lastUsed = Date.now();
+        this.cache.delete(key);
+        this.cache.set(key, entry);
+        return entry.blobUrl;
+      }
+
+      has(key) {
+        return this.cache.has(key);
+      }
+
+      set(key, blobUrl) {
+        if (!key || !blobUrl) return;
+        if (this.cache.has(key)) {
+          const existing = this.cache.get(key);
+          if (existing && existing.blobUrl && existing.blobUrl !== blobUrl) {
+            try { URL.revokeObjectURL(existing.blobUrl); } catch (e) {}
+          }
+          this.cache.delete(key);
+        }
+
+        while (this.cache.size >= this.maxSize) {
+          const oldestKey = this.cache.keys().next().value;
+          if (!oldestKey) break;
+          const oldestEntry = this.cache.get(oldestKey);
+          if (oldestEntry && oldestEntry.blobUrl) {
+            try { URL.revokeObjectURL(oldestEntry.blobUrl); } catch (e) {}
+          }
+          this.cache.delete(oldestKey);
+        }
+
+        this.cache.set(key, { blobUrl, lastUsed: Date.now() });
+      }
+
+      clear() {
+        for (const entry of this.cache.values()) {
+          if (entry && entry.blobUrl) {
+            try { URL.revokeObjectURL(entry.blobUrl); } catch (e) {}
+          }
+        }
+        this.cache.clear();
+      }
+
+      size() {
+        return this.cache.size;
+      }
+    }
+
+    const audioBlobCache = new BoundedLruAudioCache(50);
+    window.audioBlobCache = audioBlobCache;
+    window.clearAudioBlobCache = () => audioBlobCache.clear();
 
     function preloadUpcomingAudio(currentIndex) {
       if (!autoFlashcardList || autoFlashcardList.length === 0) return;
+      if (Date.now() < googleTtsCircuitBreakerUntil) return; // Skip preloading when rate limited
+
       for (let i = 1; i <= 3; i++) {
         const nextIdx = (currentIndex + i) % autoFlashcardList.length;
         const nextWord = autoFlashcardList[nextIdx];
@@ -2873,6 +2936,8 @@
     async function preloadAudioBlob(text, lang = 'en-US') {
       const clean = cleanTextForSpeech(text);
       if (!clean) return;
+      if (Date.now() < googleTtsCircuitBreakerUntil) return; // Bypassed during circuit breaker
+
       const targetLang = (lang === 'vi' || lang.startsWith('vi')) ? 'vi' : ((lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US');
       const cacheKey = `${targetLang}_${clean}`;
       if (audioBlobCache.has(cacheKey)) return;
@@ -2882,17 +2947,23 @@
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
         const res = await fetch(url, { signal: controller.signal, referrerPolicy: 'no-referrer' });
         clearTimeout(timeoutId);
         if (res.ok) {
           const blob = await res.blob();
           if (blob && blob.size > 200) {
             audioBlobCache.set(cacheKey, URL.createObjectURL(blob));
+            googleTtsConsecutiveErrors = 0;
           }
+        } else if (res.status === 429 || res.status === 403) {
+          // Rate limited by Google - trip circuit breaker for 60s
+          googleTtsConsecutiveErrors++;
+          googleTtsCircuitBreakerUntil = Date.now() + Math.min(180000, 60000 * Math.pow(1.5, googleTtsConsecutiveErrors - 1));
+          console.warn(`[AudioEngine] Google TTS rate limited (${res.status}), circuit breaker activated until:`, new Date(googleTtsCircuitBreakerUntil).toLocaleTimeString());
         }
       } catch (e) {
-        // Fallback gracefully without throwing
+        // Network error / abort - gracefully ignore in background preload
       }
     }
 
@@ -2947,7 +3018,7 @@
         // Priority for Vietnamese: Natural Online > Google Tiếng Việt > Enhanced > Apple Linh > Any Vietnamese voice
         return voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && (v.name.includes('Natural') || v.name.includes('Online')))
           || voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && v.name.includes('Google'))
-          || voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Linh') || v.name.includes('An')))
+          || voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi')) && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Linh') || v.name.includes('An') || v.name.includes('Nam')))
           || voices.find(v => v.lang === 'vi-VN' || v.lang === 'vi' || v.lang.startsWith('vi') || v.name.toLowerCase().includes('vietnam') || v.name.toLowerCase().includes('vietnamese'))
           || null;
       } else {
@@ -2955,7 +3026,7 @@
         const targetLang = (lang === 'en-GB' || lang === 'uk') ? 'en-GB' : 'en-US';
         return voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && (v.name.includes('Natural') || v.name.includes('Online')))
           || voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && v.name.includes('Google'))
-          || voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && (v.name.includes('Enhanced') || v.name.includes('Premium')))
+          || voices.find(v => (v.lang === targetLang || v.lang.startsWith('en')) && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Samantha') || v.name.includes('Siri')))
           || voices.find(v => v.lang === targetLang)
           || voices.find(v => v.lang.startsWith('en'))
           || null;
@@ -2972,10 +3043,16 @@
       const cacheKey = `${targetLang}_${clean}`;
       const encoded = encodeURIComponent(clean);
 
-      let audioSrc = audioBlobCache.get(cacheKey);
-      if (!audioSrc) {
-        audioSrc = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
+      // Check LRU audio cache first
+      let cachedBlobUrl = audioBlobCache.get(cacheKey);
+
+      // If circuit breaker is tripped and no cached audio, use SpeechSynthesis directly
+      const isCircuitBroken = Date.now() < googleTtsCircuitBreakerUntil;
+      if (!cachedBlobUrl && isCircuitBroken) {
+        return _fallbackSpeechSynthesisAsync(clean, targetLang, speed);
       }
+
+      let audioSrc = cachedBlobUrl || `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encoded}`;
 
       return new Promise((resolve) => {
         let isResolved = false;
@@ -2988,15 +3065,13 @@
             isResolved = true;
             if (safetyTimer) clearTimeout(safetyTimer);
             if (currentActiveAudio === audio) currentActiveAudio = null;
-            // Short 200ms buffer after completion for natural, calm cadence
-            setTimeout(resolve, 200);
+            setTimeout(resolve, 150);
           }
         };
 
         audio.preload = 'auto';
         audio.referrerPolicy = 'no-referrer';
 
-        // Apply rate on metadata loaded so playback timing is 100% accurate
         audio.onloadedmetadata = () => {
           try {
             audio.playbackRate = Math.max(0.6, Math.min(1.6, speed || 1.0));
@@ -3004,15 +3079,19 @@
         };
 
         audio.onended = () => {
+          googleTtsConsecutiveErrors = 0;
           finish();
         };
 
         audio.onerror = (e) => {
-          console.warn('Primary audio stream error, attempting fallback:', e);
+          if (!cachedBlobUrl) {
+            googleTtsConsecutiveErrors++;
+            googleTtsCircuitBreakerUntil = Date.now() + Math.min(120000, 60000 * Math.pow(1.5, googleTtsConsecutiveErrors - 1));
+            console.warn('[AudioEngine] TTS stream failed, activating circuit breaker and falling back to SpeechSynthesis:', e);
+          }
           _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
         };
 
-        // Safety timeout (prevents hang if audio never fires ended)
         const estimatedDurationMs = Math.max(2800, Math.ceil((clean.length / 7) * 1000 / (speed || 1.0)) + 3000);
         safetyTimer = setTimeout(() => {
           finish();
@@ -3027,7 +3106,11 @@
               audio.playbackRate = Math.max(0.6, Math.min(1.6, speed || 1.0));
             } catch (e) {}
           }).catch((err) => {
-            console.warn('Audio play() could not start, invoking fallback:', err);
+            if (!cachedBlobUrl) {
+              googleTtsConsecutiveErrors++;
+              googleTtsCircuitBreakerUntil = Date.now() + 60000;
+            }
+            console.warn('[AudioEngine] Audio play() prevented, invoking SpeechSynthesis fallback:', err);
             if (!isResolved) {
               _fallbackSpeechSynthesisAsync(clean, targetLang, speed).then(finish);
             }
@@ -3052,9 +3135,8 @@
         const bestVoice = getBestVoiceForLang(lang);
         const isVi = (lang === 'vi' || lang.startsWith('vi'));
 
-        // If requesting Vietnamese but no Vietnamese voice exists on device, do NOT use a robotic English voice to pronounce Vietnamese
         if (isVi && !bestVoice) {
-          console.warn('No Vietnamese SpeechSynthesis voice available on device.');
+          console.warn('[AudioEngine] No Vietnamese SpeechSynthesis voice available on device.');
           resolve();
           return;
         }
@@ -3098,10 +3180,19 @@
 
       stopAllAudio();
 
+      const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : (accent === 'vi' ? 'vi' : 'en-US');
+      const cacheKey = `${lang}_${clean}`;
+      const cachedBlobUrl = audioBlobCache.get(cacheKey);
+
+      // If circuit breaker is active and no cache, speak immediately via SpeechSynthesis with 0ms latency
+      if (!cachedBlobUrl && Date.now() < googleTtsCircuitBreakerUntil) {
+        _fallbackNaturalSpeechSynthesis(clean, lang);
+        return;
+      }
+
       try {
-        const lang = (accent === 'en-GB' || accent === 'uk') ? 'en-GB' : (accent === 'vi' ? 'vi' : 'en-US');
         const encoded = encodeURIComponent(clean);
-        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
+        const audioSrc = cachedBlobUrl || `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encoded}`;
 
         let audio = new Audio();
         audio.preload = 'auto';
@@ -3116,22 +3207,31 @@
         currentActiveAudio = audio;
 
         audio.onerror = () => {
+          if (!cachedBlobUrl) {
+            googleTtsConsecutiveErrors++;
+            googleTtsCircuitBreakerUntil = Date.now() + 60000;
+          }
           _fallbackNaturalSpeechSynthesis(clean, lang);
         };
 
-        audio.src = googleUrl;
+        audio.src = audioSrc;
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.then(() => {
             try {
               audio.playbackRate = currentSpeechRateEn || 0.9;
             } catch (e) {}
+            googleTtsConsecutiveErrors = 0;
           }).catch(err => {
+            if (!cachedBlobUrl) {
+              googleTtsConsecutiveErrors++;
+              googleTtsCircuitBreakerUntil = Date.now() + 60000;
+            }
             _fallbackNaturalSpeechSynthesis(clean, lang);
           });
         }
       } catch (e) {
-        _fallbackNaturalSpeechSynthesis(clean, 'en-US');
+        _fallbackNaturalSpeechSynthesis(clean, lang);
       }
     }
 

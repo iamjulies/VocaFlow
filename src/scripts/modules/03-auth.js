@@ -7766,14 +7766,60 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
 
+    let isPushingDatabaseToCloud = false;
+    let pendingCloudPushRequest = false;
+
     async function pushCurrentDatabaseToCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
+      if (isPushingDatabaseToCloud) {
+        pendingCloudPushRequest = true;
+        return;
+      }
+      isPushingDatabaseToCloud = true;
+
       const userId = currentUser.uid;
       const rtdbUrl = firebaseConfig.databaseURL;
       const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser && currentUser.idToken ? currentUser.idToken : '');
       const authParam = token ? `?auth=${token}` : '';
 
       try {
+        // MULTI-DEVICE CONFLICT RESOLUTION (v0.10.10-4):
+        // Check if another device synced newer changes to Cloud since our last sync.
+        // If so, pull and merge before pushing to prevent race-condition overwrites.
+        const lastLocalSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+        const lastLocalSyncTime = lastLocalSync ? new Date(lastLocalSync).getTime() : 0;
+
+        if (lastLocalSyncTime > 0) {
+          try {
+            const syncCheckCtrl = new AbortController();
+            const syncCheckTimeout = setTimeout(() => syncCheckCtrl.abort(), 3000);
+            const syncCheckRes = await fetch(`${rtdbUrl}/users/${userId}/lastSync.json${authParam}`, { signal: syncCheckCtrl.signal });
+            clearTimeout(syncCheckTimeout);
+
+            if (syncCheckRes.ok) {
+              const remoteLastSync = await syncCheckRes.json();
+              const remoteSyncTime = remoteLastSync ? new Date(remoteLastSync).getTime() : 0;
+
+              if (remoteSyncTime > lastLocalSyncTime + 1000) {
+                console.log('[CloudSync] Newer remote data detected from another device. Reconciling before push...');
+                const pullCtrl = new AbortController();
+                const pullTimeout = setTimeout(() => pullCtrl.abort(), 4000);
+                const fullPullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, { signal: pullCtrl.signal });
+                clearTimeout(pullTimeout);
+
+                if (fullPullRes.ok) {
+                  const remoteCloudData = await fullPullRes.json();
+                  if (remoteCloudData && typeof remoteCloudData === 'object') {
+                    mergeCloudDataIntoLocal(remoteCloudData, false);
+                  }
+                }
+              }
+            }
+          } catch (checkErr) {
+            // If remote check times out or network is flaky, proceed with local push
+          }
+        }
+
         decks = sanitizeDecks(decks);
         const currentAv = getUserAvatar();
         const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
@@ -7908,8 +7954,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
       } catch (err) {
         console.warn('Auto background push note:', err);
+      } finally {
+        isPushingDatabaseToCloud = false;
+        if (pendingCloudPushRequest) {
+          pendingCloudPushRequest = false;
+          setTimeout(() => {
+            pushCurrentDatabaseToCloud();
+          }, 1000);
+        }
       }
     }
+    window.pushCurrentDatabaseToCloud = pushCurrentDatabaseToCloud;
+    window.mergeCloudDataIntoLocal = mergeCloudDataIntoLocal;
 
     // =========================================================================
     // FIREBASE REALTIME WEBSOCKET & SSE EVENTSTREAM ENGINE (v0.10.9-alpha-31)
