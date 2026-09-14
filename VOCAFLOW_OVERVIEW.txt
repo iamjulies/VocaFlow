@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-13 (Build 314) - Phân Hệ Học Mở Rộng Extended Learning Modes (β), Bài Đăng @official Trên Tab Tất Cả, Tự Động Đăng Bài & Phát Thông Báo Siêu Sale / Ngày Lễ, Sửa Lỗi AI Giải Thích Chính Tả & Chuẩn Hóa Hồ Sơ @official
+================================================================================
+1. [Bảng Tin Cộng Đồng - Luôn Hiển Thị Bài Đăng @official Ở Bộ Lọc Tất Cả (03-auth.js)]:
+   - Khắc phục sự cố bài đăng chính thức của `@official` bị ẩn khi người dùng chưa nhấn theo dõi (Issue 20).
+   - Bộ lọc "Tất Cả" (`all`) trong Community Center luôn ưu tiên tải và hiển thị mọi bài viết cập nhật và sự kiện từ `@official` cho toàn bộ tài khoản học viên.
+
+2. [Tự Động Đăng Bài & Phát Thông Báo Vào Các Dịp Siêu Sale & Ngày Lễ Đặc Biệt (03-auth.js & 08-wallet-economy.js)]:
+   - Bổ sung hàm `checkAndSeedOfficialEventPosts()` tự động nhận diện theo thời gian thực các sự kiện:
+     + Siêu Sale Ngày Đôi: 1/1, 2/2, 3/3, 4/4, 5/5, 6/6, 7/7, 8/8, 9/9, 10/10, 11/11, 12/12.
+     + Sinh Nhật Tác Giả Sáng Lập: 10/08 (@iamjulies - Siêu ưu đãi -25%).
+     + Các ngày lễ lớn: Tết Dương Lịch (1/1), Valentine (14/2), Quốc tế Phụ nữ (8/3), 30/4 & 1/5, Quốc khánh (2/9), Phụ nữ VN (20/10), Halloween (31/10), Nhà giáo VN (20/11), Giáng Sinh Noel (24-25/12).
+   - Tự động đăng bài truyền cảm hứng từ `@official` lên Bảng Tin Cộng Đồng kèm thông báo phát sáng tím đặc biệt (`isSpecialGlowing: true`) và áp dụng giảm giá Cửa Hàng VocaShop / VocaVIP.
+
+3. [Triệt Tiêu Ảo Giác AI Mentor Khi Giải Thích Lỗi Chính Tả Trong Writing Lab (06c-writing-engine.js)]:
+   - Khắc phục triệt để lỗi AI tự bịa giải thích thêm/bớt ký tự sai lệch (vd: "cần thêm chữ c thành accidentally") (Issue 22).
+   - Bổ sung quy tắc bắt buộc `[SPELLING & TYPO CORRECTION PROTOCOL]`: AI chỉ được phép chỉ ra trực tiếp cặp đối chiếu `[từ sai] -> [từ đúng]`, nghiêm cấm suy luận số lượng ký tự theo kiểu toán học.
+   - Định dạng chuẩn mực trong Grammar Notes: `• Lỗi chính tả: '[từ sai]' (sai) -> '[từ đúng]' (đúng)`.
+
+4. [Chuẩn Hóa Định Danh & Điều Hướng Hồ Sơ @official (03-auth.js & 12-achievements.js)]:
+   - Sửa lỗi phân giải tài khoản tạo ra profile tạm `@vocaflow_offici` khi người dùng chạm vào thông báo (Issue 23).
+   - Mở rộng toàn diện bộ nhận diện `isVocaFlowOfficial` và `getLiveUserRegistryEntry` để luôn mở đúng hồ sơ "VocaFlow Chuẩn" (@official, 9,999 Followers, 999,999 VoCoin, huy hiệu Đội Ngũ Phát Triển).
+
+5. [Quy Chuẩn Danh Mục "Extended Learning Modes (β)"]:
+   - Phân biệt rõ ràng giữa 4 Chế độ học cơ bản (Learning Modes: Luyện Nói, Auto Flashcard, Chính Tả, Trắc Nghiệm) và các Chế độ học mở rộng đang phát triển (Extended Learning Modes β: Viết Câu / Writing Lab β; dự kiến: Cloze Test β, Dictation β, Dịch Thuật β).
+
+================================================================================
 Phiên bản: v0.10.10-12 (Build 313) - Tinh Gọn Speaking Lab, Tự Động Đăng Bài & Phát Thông Báo Phát Sáng Tím @official, Điều Hướng Thông Báo Cột Mốc, Tùy Chỉnh Số Lượng Câu Luyện Viết & AI Nhận Diện Ngữ Cảnh Đời Thường vs Học Thuật
 ================================================================================
 1. [Tinh Gọn Speaking Lab - Bỏ Biểu Đồ Sóng Âm (screen-speaking.html & 07-speaking-engine.js)]:

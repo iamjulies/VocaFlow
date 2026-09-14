@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-12 (Build 313)</span>
+            <span class="mini-footer-version">v0.10.10-13 (Build 314)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4863,7 +4863,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-12 (Build 313)</span>
+            <span class="mini-footer-version">v0.10.10-13 (Build 314)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -10342,7 +10342,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-12 (Build 313)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-13 (Build 314)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11469,7 +11469,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-12 Build 313)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-13 Build 314)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11922,15 +11922,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-12 Build 313)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-13 Build 314)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-12 Build 313)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-13 Build 314)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-12';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-12 (Build 313)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-13';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-13 (Build 314)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -20510,7 +20510,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
 
-        const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || authorClean === 'official' || authorClean === 'vocaflow' || (targetDeck && targetDeck.id.startsWith('lib_deck_'));
+        const isVocaFlowOfficial = authorName === 'VocaFlow Chuẩn' || 
+                                   authorName === 'VocaFlow Official' ||
+                                   authorClean === 'official' || 
+                                   authorClean === 'vocaflow' || 
+                                   authorClean === 'vocaflow official' ||
+                                   authorClean === 'vocaflow_official' ||
+                                   authorClean === 'vocaflow_offici' ||
+                                   authorClean.includes('official') ||
+                                   targetUid === 'official' ||
+                                   targetUid === 'vocaflow_official' ||
+                                   (targetDeck && targetDeck.id.startsWith('lib_deck_'));
 
         // STRICT USER MATCH: Check author identity against current logged in user (v0.10.9-50)
         const currentHandle = (currentUser?.username || (currentUser?.email ? currentUser.email.split('@')[0] : '')).toLowerCase().replace(/[^a-z0-9_]/g, '_');
@@ -22363,30 +22373,246 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST & GLOWING NOTIFICATION (v0.10.10-12 / Issue 16)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-13 / Build 314)
     // =========================================================================
-    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-12';
-    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_12';
+    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-13';
+    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_13';
+
+    function getActiveSpecialEventInfo() {
+      const now = new Date();
+      const d = now.getDate();
+      const m = now.getMonth() + 1;
+      const y = now.getFullYear();
+
+      // 1. Creator Birthday: 10/08 -> EXACTLY 25% OFF
+      if (d === 10 && m === 8) {
+        return {
+          eventId: `creator_birthday_${y}`,
+          title: `🎂 MỪNG SINH NHẬT TÁC GIẢ IAMJULIES (10/08)!`,
+          discountPct: 25,
+          content: `🎂 Hôm nay là ngày 10/08 - Sinh nhật của tác giả sáng lập VocaFlow (@iamjulies)!\n\n🎁 Tri ân toàn bộ cộng đồng học viên:\n✨ GIẢM NGAY 25% cho toàn bộ Cửa Hàng VocaShop và Nâng Cấp VocaVIP!\n✨ Thưởng x2 VoCoin cho tất cả các phiên Luyện Nói & Luyện Viết trong ngày hôm nay!\n\nChúc các bạn một ngày học tập tràn đầy cảm hứng và bứt phá vốn từ vựng nhé! 🎉🚀`
+        };
+      }
+
+      // 2. Double Days: 1/1, 2/2, 3/3, 4/4, 5/5, 6/6, 7/7, 8/8, 9/9, 10/10, 11/11, 12/12
+      if (d === m) {
+        const seedPct = 15 + ((d * 7 + m * 13) % 11); // 15..25%
+        return {
+          eventId: `double_day_${d}_${m}_${y}`,
+          title: `🔥 SIÊU SALE NGÀY ĐÔI ${d}/${m}!`,
+          discountPct: seedPct,
+          content: `🔥 Sự kiện Siêu Sale Ngày Đôi ${d}/${m} đã chính thức bùng nổ trên toàn hệ thống VocaFlow!\n\n🛍️ Ưu đãi đặc biệt trong hôm nay:\n✨ Giảm giá ${seedPct}% toàn bộ vật phẩm trong Cửa Hàng VocaShop & Gói Hội Viên VocaVIP.\n✨ Cơ hội mở khóa danh hiệu và nhân đôi điểm tích lũy VoCoin khi hoàn thành chuỗi Flow ngày hôm nay.\n\nHãy vào VocaShop nhận ưu đãi và bắt đầu chuỗi học ngay thôi nào! 🚀💎`
+        };
+      }
+
+      // 3. Special Vietnamese & International Holidays
+      // 3.1 Valentine's Day (14/02)
+      if (d === 14 && m === 2) {
+        return {
+          eventId: `valentine_${y}`,
+          title: `💖 MỪNG NGÀY LỄ TÌNH NHÂN VALENTINE (14/02)!`,
+          discountPct: 20,
+          content: `💖 Chúc toàn thể cộng đồng VocaFlow một mùa Valentine thật ngọt ngào, hạnh phúc và tràn đầy yêu thương!\n\n🎁 Quà tặng Valentine từ @official:\n✨ Giảm giá 20% VocaVIP & Cửa Hàng VocaShop.\n✨ Tặng ngay biểu tượng trái tim tình bạn khi tương tác bài viết cộng đồng.\n\nHãy dành tình yêu cho việc học mỗi ngày bạn nhé! 💕📖`
+        };
+      }
+
+      // 3.2 International Women's Day (08/03)
+      if (d === 8 && m === 3) {
+        return {
+          eventId: `womens_day_0803_${y}`,
+          title: `🌸 CHÚC MỪNG NGÀY QUỐC TẾ PHỤ NỮ (08/03)!`,
+          discountPct: 20,
+          content: `🌸 VocaFlow xin gửi lời chúc tốt đẹp nhất, rạng rỡ nhất tới một nửa thế giới xinh đẹp nhân ngày Quốc Tế Phụ Nữ 8/3!\n\n🎁 Ưu đãi ngày hội phái đẹp:\n✨ Giảm 20% toàn bộ gói Hội Viên VocaVIP và VocaShop.\n✨ Tôn vinh các tấm gương học tập xuất sắc trên Bảng Vàng danh dự.\n\nChúc các bạn nữ luôn tự tin, tỏa sáng và thành công trên mọi nẻo đường! 🌷✨`
+        };
+      }
+
+      // 3.3 Reunification & Labor Day (30/04 - 01/05)
+      if ((d === 30 && m === 4) || (d === 1 && m === 5)) {
+        return {
+          eventId: `holiday_3004_0105_${y}`,
+          title: `🇻🇳 MỪNG ĐẠI LỄ 30/4 & QUỐC TẾ LAO ĐỘNG 1/5!`,
+          discountPct: 20,
+          content: `🇻🇳 Chào mừng Kỷ niệm Ngày Giải phóng Miền Nam 30/4 & Ngày Quốc Tế Lao Động 1/5!\n\n🎉 Kỳ nghỉ lễ tuyệt vời cùng VocaFlow:\n✨ Ưu đãi giảm giá 20% Cửa Hàng VocaShop & VocaVIP.\n✨ Giữ vững chuỗi Flow Streak học tập rảnh tay cùng Auto Flashcard & Luyện Nói.\n\nChúc bạn và gia đình có một kỳ nghỉ lễ ngập tràn niềm vui và an toàn! 🎊🇻🇳`
+        };
+      }
+
+      // 3.4 Vietnamese National Day (02/09)
+      if (d === 2 && m === 9) {
+        return {
+          eventId: `national_day_0209_${y}`,
+          title: `🇻🇳 CHÀO MỪNG NGÀY QUỐC KHÁNH VIỆT NAM (02/09)!`,
+          discountPct: 20,
+          content: `🇻🇳 Nhiệt liệt chào mừng Ngày Quốc Khánh Nước Cộng Hòa Xã Hội Chủ Nghĩa Việt Nam 2/9!\n\n⭐️ Tự hào nâng tầm tri thức Việt cùng VocaFlow:\n✨ Đại tiệc tri ân: Giảm ngay 20% gói Hội Viên VocaVIP & Cửa Hàng VocaShop.\n✨ Thêm năng lượng học tập cùng các bộ từ vựng chuẩn quốc tế.\n\nChúc toàn thể người dùng kỳ nghỉ lễ Quốc Khánh rộn rã cờ hoa và ý nghĩa! 🎆🇻🇳`
+        };
+      }
+
+      // 3.5 Vietnamese Women's Day (20/10)
+      if (d === 20 && m === 10) {
+        return {
+          eventId: `vietnam_womens_day_2010_${y}`,
+          title: `💐 CHÚC MỪNG NGÀY PHỤ NỮ VIỆT NAM (20/10)!`,
+          discountPct: 20,
+          content: `💐 VocaFlow xin gửi những lời chúc thân thương, xinh đẹp và hạnh phúc nhất tới toàn thể các bà, các mẹ, các chị và các bạn gái nhân ngày Phụ Nữ Việt Nam 20/10!\n\n🎁 Siêu ưu đãi ngày 20/10:\n✨ Giảm giá 20% VocaVIP & Toàn bộ gian hàng VocaShop.\n✨ Chúc các bạn luôn giữ vững ngọn lửa đam mê học từ vựng mỗi ngày! 🌺💖`
+        };
+      }
+
+      // 3.6 Halloween (31/10)
+      if (d === 31 && m === 10) {
+        return {
+          eventId: `halloween_${y}`,
+          title: `🎃 LỄ HỘI HALLOWEEN - TRICK OR TREAT!`,
+          discountPct: 20,
+          content: `🎃 Happy Halloween! Cùng hòa mình vào không khí đêm hội hóa trang ma mị đầy thú vị cùng VocaFlow!\n\n🍬 Kẹo ngọt ưu đãi Halloween:\n✨ Giảm giá 20% toàn bộ Cửa Hàng VocaShop & Nâng Cấp VocaVIP.\n✨ Săn điểm VoCoin cực đã với các thử thách Luyện Nói và Luyện Viết rùng rợn.\n\nChúc bạn có một đêm Halloween vui vẻ và không bỏ quên chuỗi Flow nhé! 👻🦇`
+        };
+      }
+
+      // 3.7 Vietnamese Teacher's Day (20/11)
+      if (d === 20 && m === 11) {
+        return {
+          eventId: `teachers_day_2011_${y}`,
+          title: `🎓 TRI ÂN NGÀY NHÀ GIÁO VIỆT NAM (20/11)!`,
+          discountPct: 20,
+          content: `🎓 Nhân ngày Nhà Giáo Việt Nam 20/11, VocaFlow xin bày tỏ lòng tri ân sâu sắc nhất tới tất cả các thầy cô giáo, những người lái đò thầm lặng trên con đường truyền trao tri thức!\n\n🎁 Món quà tri ân từ VocaFlow:\n✨ Giảm 20% gói Hội Viên VocaVIP & Cửa Hàng VocaShop.\n✨ Tặng thêm điểm cống hiến cho các tác giả biên soạn VocaDeck xuất sắc.\n\nKính chúc quý thầy cô luôn dồi dào sức khỏe, hạnh phúc và nhiệt huyết! 💐📖`
+        };
+      }
+
+      // 3.8 Christmas (24/12 - 25/12)
+      if ((d === 24 || d === 25) && m === 12) {
+        return {
+          eventId: `christmas_${y}`,
+          title: `🎄 CHÚC MỪNG GIÁNG SINH - MERRY CHRISTMAS!`,
+          discountPct: 25,
+          content: `🎄 Merry Christmas! VocaFlow kính chúc toàn thể các bạn học viên một mùa Giáng Sinh an lành, ấm áp và tràn ngập niềm vui bên gia đình và người thân!\n\n🎅 Quà tặng Giáng Sinh từ Ông Già Noel VocaFlow:\n✨ ĐẠI TIỆC SALE GIẢM 25% VocaVIP & Toàn Bộ Cửa Hàng VocaShop!\n✨ Không khí lễ hội rực rỡ chào đón năm mới.\n\nChúc bạn có những phút giây học tập thật tuyệt vời trong mùa đông ấm áp này! ❄️🎁🌟`
+        };
+      }
+
+      return null;
+    }
+    window.getActiveSpecialEventInfo = getActiveSpecialEventInfo;
+
+    async function checkAndSeedOfficialEventPosts() {
+      const eventInfo = getActiveSpecialEventInfo();
+      if (!eventInfo) return;
+
+      const eventPostId = `official_event_${eventInfo.eventId}`;
+      const seededKey = `vocaflow_seeded_event_${eventInfo.eventId}`;
+      const notifiedKey = `vocaflow_notified_event_${eventInfo.eventId}`;
+
+      const eventPostObj = {
+        id: eventPostId,
+        isOfficialEvent: true,
+        authorUid: 'official',
+        authorName: 'VocaFlow Chuẩn',
+        authorHandle: 'official',
+        authorAvatar: 'icons/vocaflow_official_avatar.png',
+        authorVip: true,
+        authorVipTier: 'diamond',
+        content: `${eventInfo.title}\n\n${eventInfo.content}`,
+        image: null,
+        likesCount: 288,
+        commentsCount: 0,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        type: 'community',
+        tags: ['event', 'sale', 'official', eventInfo.eventId]
+      };
+
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        const existingIdx = communityPosts.findIndex(p => p && p.id === eventPostId);
+        if (existingIdx === -1) {
+          communityPosts.unshift(eventPostObj);
+          try {
+            localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+          } catch (e) {}
+        }
+      }
+
+      if (!localStorage.getItem(seededKey)) {
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+          const authParam = token ? `?auth=${token}` : '';
+          fetch(`${rtdbUrl}/community_posts/${eventPostId}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventPostObj)
+          }).then(() => {
+            localStorage.setItem(seededKey, 'true');
+          }).catch(() => {});
+        } catch (e) {}
+      }
+
+      if (!localStorage.getItem(notifiedKey)) {
+        const notifId = `notif_${eventPostId}`;
+        const eventNotif = {
+          id: notifId,
+          type: 'OFFICIAL_ANNOUNCEMENT',
+          actionType: 'VIEW_COMMUNITY_POST',
+          title: '⭐ VocaFlow Official',
+          message: `🎉 ${eventInfo.title} Khám phá ngay ưu đãi đặc biệt trong hôm nay!`,
+          authorHandle: 'official',
+          authorName: 'VocaFlow Chuẩn',
+          authorUid: 'official',
+          postId: eventPostId,
+          isSpecialGlowing: true,
+          timestamp: new Date().toISOString(),
+          isRead: false
+        };
+
+        if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
+          const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === eventPostId));
+          if (!hasNotif) {
+            userNotifications.unshift(eventNotif);
+            try {
+              localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+            } catch (e) {}
+            if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+            if (typeof renderNotificationsList === 'function') renderNotificationsList();
+          }
+        }
+
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          try {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+            const authParam = token ? `?auth=${token}` : '';
+            fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(eventNotif)
+            }).catch(() => {});
+          } catch (e) {}
+        }
+
+        localStorage.setItem(notifiedKey, 'true');
+      }
+    }
+    window.checkAndSeedOfficialEventPosts = checkAndSeedOfficialEventPosts;
 
     async function checkAndSeedOfficialUpdatePost() {
+      // Also seed any active special sale/holiday events
+      checkAndSeedOfficialEventPosts();
+
       const seededPostKey = `vocaflow_seeded_post_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
       const notifiedKey = `vocaflow_notified_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
 
-      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n🎙️ Speaking Lab được tinh gọn tối đa: Giao diện gọn gàng, vừa vặn tuyệt đối trên điện thoại giúp bạn tập trung trọn vẹn vào từng âm phát ra.\n✍️ Chế độ Viết Câu (β): Bổ sung ô tự nhập số lượng câu hỏi linh hoạt, kết hợp AI thông minh tự nhận diện phong cách ngữ cảnh (giao tiếp đời thường tự nhiên & học thuật IELTS) để chấm điểm công tâm nhất!\n📢 Kênh @official chính thức đồng hành cùng bạn trong mọi cột mốc mới.\n\nHãy trải nghiệm ngay và chia sẻ cảm nghĩ cùng cộng đồng nhé! 🚀`;
+      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n🌟 Định hình Phân Hệ Học Mở Rộng: Đánh dấu danh mục Extended Learning Modes (β) với chế độ Viết Câu (Writing Lab β) trọng tâm.\n🧠 AI Writing Mentor Không Ảo Giác: Chuẩn hóa cơ chế chỉ dẫn lỗi chính tả chuẩn xác [từ sai -> từ đúng], nghiêm cấm suy luận ký tự sai lệch.\n🌐 Bảng Tin Cộng Đồng: Luôn ưu tiên hiển thị bài viết chính thức từ @official cho toàn bộ người dùng ở tab Tất Cả.\n👑 Nhận diện thương hiệu @official: Chuẩn hóa hồ sơ chính thức VocaFlow Chuẩn (@official) đồng nhất trên toàn hệ sinh thái.\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`;
 
       const officialPostObj = {
         id: VOCAFLOW_OFFICIAL_POST_ID,
         targetVersion: VOCAFLOW_OFFICIAL_VERSION_KEY,
         isOfficialUpdate: true,
         authorUid: 'official',
-        authorName: 'VocaFlow Official',
+        authorName: 'VocaFlow Chuẩn',
         authorHandle: 'official',
         authorAvatar: 'icons/vocaflow_official_avatar.png',
         authorVip: true,
         authorVipTier: 'diamond',
         content: officialPostContent,
         image: null,
-        likesCount: 168,
+        likesCount: 199,
         commentsCount: 0,
         likes: {},
         comments: {},
@@ -22431,9 +22657,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           type: 'OFFICIAL_ANNOUNCEMENT',
           actionType: 'VIEW_COMMUNITY_POST',
           title: '⭐ VocaFlow Official',
-          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay các nâng cấp nổi bật cho Speaking Lab & Viết Câu.`,
+          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay các nâng cấp nổi bật cho Extended Learning Modes (β) & AI Mentor.`,
           authorHandle: 'official',
-          authorName: 'VocaFlow Official',
+          authorName: 'VocaFlow Chuẩn',
           authorUid: 'official',
           postId: VOCAFLOW_OFFICIAL_POST_ID,
           isSpecialGlowing: true,
@@ -22619,6 +22845,20 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     // Helper functions for author and comment resolution (v0.10.10-0 Realtime User Metadata Matcher)
     function getLiveUserRegistryEntry(uid, name = '', handle = '') {
+      const cleanName = (name || '').trim().toLowerCase();
+      const cleanHandle = (handle || '').trim().toLowerCase().replace(/^@/, '');
+
+      if (uid === 'official' || cleanHandle === 'official' || cleanName === 'vocaflow chuẩn' || cleanName === 'vocaflow official' || cleanName === 'official' || cleanName.includes('vocaflow chuẩn')) {
+        return {
+          uid: 'official',
+          displayName: 'VocaFlow Chuẩn',
+          username: 'official',
+          avatar: 'icons/vocaflow_official_avatar.png',
+          isVip: true,
+          vipTier: 'diamond'
+        };
+      }
+
       if (currentUser && uid && currentUser.uid === uid) {
         return {
           uid: currentUser.uid,
@@ -22911,9 +23151,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       const myUid = currentUser?.uid;
 
-      // Base allowed posts: Self OR Followed users only
+      const isOfficialPost = (p) => {
+        if (!p) return false;
+        if (p.isOfficialUpdate || p.isOfficialEvent || p.type === 'OFFICIAL_ANNOUNCEMENT') return true;
+        const aClean = (p.authorHandle || p.authorName || '').trim().toLowerCase().replace(/^@/, '');
+        const aUid = (p.authorUid || '').trim().toLowerCase();
+        const aName = (p.authorName || '').trim().toLowerCase();
+        return aUid === 'official' || aClean === 'official' || aName === 'vocaflow chuẩn' || aName === 'vocaflow official' || aName.includes('vocaflow chuẩn');
+      };
+
+      // Base allowed posts: Self OR Followed users OR Official VocaFlow (@official)
       const baseAllowed = communityPosts.filter(p => {
         if (!p) return false;
+        if (isOfficialPost(p)) return true;
         if (myUid && p.authorUid === myUid) return true;
         if (typeof myFollowingMap !== 'undefined' && myFollowingMap && p.authorUid && !!myFollowingMap[p.authorUid]) return true;
         return false;
@@ -22921,7 +23171,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       let filtered = baseAllowed;
       if (communityCenterCurrentFilter === 'following') {
-        filtered = baseAllowed.filter(p => !myUid || p.authorUid !== myUid);
+        filtered = baseAllowed.filter(p => (!myUid || p.authorUid !== myUid) && (!isOfficialPost(p) || (typeof myFollowingMap !== 'undefined' && myFollowingMap && !!myFollowingMap[p.authorUid])));
       } else if (communityCenterCurrentFilter === 'my') {
         filtered = baseAllowed.filter(p => myUid && p.authorUid === myUid);
       } else if (communityCenterCurrentFilter === 'has_image') {
@@ -22929,7 +23179,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       } else if (communityCenterCurrentFilter === 'achievement') {
         filtered = baseAllowed.filter(p => !!(p.badge || p.attachedAchievement || p.type === 'milestone' || p.milestoneType));
       } else {
-        // 'all'
+        // 'all': Always includes official announcements, events, followed posts and self posts
         filtered = baseAllowed;
       }
 
@@ -31326,7 +31576,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-12 Build 313 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-13 Build 314 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -31922,11 +32172,17 @@ Analyze the vocabulary domain and nature of the target words [${targetTerms}]:
   - Evaluate against rigorous IELTS Task 2 / academic standards with sophisticated sentence structures, precise collocations, and formal cohesion.
   - The "polishedRewrite" must be an elegant Band ${targetBand} academic sentence.
 
+[SPELLING & TYPO CORRECTION PROTOCOL - ZERO HALLUCINATION MANDATE]
+When correcting spelling errors or typos in "feedbackVi" and "grammarNotesVi":
+• ALWAYS state the incorrect word and the correct word directly. E.g.: "từ **'pennis'** (sai) cần sửa thành **'penis'** (đúng)", "từ **'accidently'** (sai) cần viết đúng là **'accidentally'**".
+• STRICTLY FORBIDDEN: NEVER attempt to guess, describe, or dissect letter-by-letter operations (e.g. NEVER say "cần thêm chữ c", "bớt chữ e", "thay chữ x"). Character-level arithmetic explanations cause hallucinations and are unacceptable.
+• In "grammarNotesVi", format each spelling correction explicitly as: "• Lỗi chính tả: '**[từ sai]**' (sai) -> '**[từ đúng]**' (đúng)."
+
 [EXAMINER EVALUATION RULES]
 1. Grammar & Syntax: Penalize grammar flaws (verb tenses, subject-verb agreement, prepositions, articles, punctuation, word order). Sentences with severe grammatical breakdown MUST score BELOW the floor score (<${cfg.floorScore}).
 2. Vocabulary & Collocations: All required target words [${targetTerms}] must be present and used in natural, context-appropriate collocations according to the detected Register.
 3. Length Compliance: If word count is outside ${question.minWords > 0 ? `[${question.minWords} - ${question.maxWords}]` : '[min 1 complete sentence]'}, mark length pillar as 'fail' and deduct score appropriately.
-4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix.
+4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix. Follow the Spelling Protocol above strictly.
 5. Vietnamese Translation of Polished Rewrite (polishedRewriteVi): You MUST provide a natural, accurate Vietnamese translation of your polished rewrite.
 6. Structured Grammar Notes (grammarNotesVi): List 1-3 crisp, practical grammar rules or corrections in bullet points (using • at start of each line) in Vietnamese.
 
@@ -34568,7 +34824,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-12 Build 313)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-13 Build 314)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -37172,9 +37428,24 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 // =========================================================================
 
     // =========================================================================
-    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.8-alpha-10.3)
+    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-13 / Build 314)
     // =========================================================================
     function getStoreActiveDiscount() {
+      if (typeof getActiveSpecialEventInfo === 'function') {
+        const ev = getActiveSpecialEventInfo();
+        if (ev) {
+          const discountPct = ev.discountPct || 20;
+          return {
+            isDiscountActive: true,
+            discountPct: discountPct,
+            discountRate: discountPct / 100,
+            eventName: ev.title,
+            badgeText: `🎁 SALE -${discountPct}%`,
+            bannerText: `${ev.title} Giảm giá ${discountPct}% toàn bộ Cửa Hàng VocaShop & Gói VocaVIP!`
+          };
+        }
+      }
+
       const now = new Date();
       const d = now.getDate();
       const m = now.getMonth() + 1;

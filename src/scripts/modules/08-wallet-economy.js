@@ -7,9 +7,24 @@
 // =========================================================================
 
     // =========================================================================
-    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.8-alpha-10.3)
+    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-13 / Build 314)
     // =========================================================================
     function getStoreActiveDiscount() {
+      if (typeof getActiveSpecialEventInfo === 'function') {
+        const ev = getActiveSpecialEventInfo();
+        if (ev) {
+          const discountPct = ev.discountPct || 20;
+          return {
+            isDiscountActive: true,
+            discountPct: discountPct,
+            discountRate: discountPct / 100,
+            eventName: ev.title,
+            badgeText: `🎁 SALE -${discountPct}%`,
+            bannerText: `${ev.title} Giảm giá ${discountPct}% toàn bộ Cửa Hàng VocaShop & Gói VocaVIP!`
+          };
+        }
+      }
+
       const now = new Date();
       const d = now.getDate();
       const m = now.getMonth() + 1;

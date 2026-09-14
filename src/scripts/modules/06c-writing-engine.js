@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-12 Build 313 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-13 Build 314 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -595,11 +595,17 @@ Analyze the vocabulary domain and nature of the target words [${targetTerms}]:
   - Evaluate against rigorous IELTS Task 2 / academic standards with sophisticated sentence structures, precise collocations, and formal cohesion.
   - The "polishedRewrite" must be an elegant Band ${targetBand} academic sentence.
 
+[SPELLING & TYPO CORRECTION PROTOCOL - ZERO HALLUCINATION MANDATE]
+When correcting spelling errors or typos in "feedbackVi" and "grammarNotesVi":
+• ALWAYS state the incorrect word and the correct word directly. E.g.: "từ **'pennis'** (sai) cần sửa thành **'penis'** (đúng)", "từ **'accidently'** (sai) cần viết đúng là **'accidentally'**".
+• STRICTLY FORBIDDEN: NEVER attempt to guess, describe, or dissect letter-by-letter operations (e.g. NEVER say "cần thêm chữ c", "bớt chữ e", "thay chữ x"). Character-level arithmetic explanations cause hallucinations and are unacceptable.
+• In "grammarNotesVi", format each spelling correction explicitly as: "• Lỗi chính tả: '**[từ sai]**' (sai) -> '**[từ đúng]**' (đúng)."
+
 [EXAMINER EVALUATION RULES]
 1. Grammar & Syntax: Penalize grammar flaws (verb tenses, subject-verb agreement, prepositions, articles, punctuation, word order). Sentences with severe grammatical breakdown MUST score BELOW the floor score (<${cfg.floorScore}).
 2. Vocabulary & Collocations: All required target words [${targetTerms}] must be present and used in natural, context-appropriate collocations according to the detected Register.
 3. Length Compliance: If word count is outside ${question.minWords > 0 ? `[${question.minWords} - ${question.maxWords}]` : '[min 1 complete sentence]'}, mark length pillar as 'fail' and deduct score appropriately.
-4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix.
+4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix. Follow the Spelling Protocol above strictly.
 5. Vietnamese Translation of Polished Rewrite (polishedRewriteVi): You MUST provide a natural, accurate Vietnamese translation of your polished rewrite.
 6. Structured Grammar Notes (grammarNotesVi): List 1-3 crisp, practical grammar rules or corrections in bullet points (using • at start of each line) in Vietnamese.
 
