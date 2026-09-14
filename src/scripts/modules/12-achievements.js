@@ -18,62 +18,86 @@
       });
     }
 
-    // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-0 User Meta Cache)
+    // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-3 Lightweight Index)
     let globalVipRegistry = {};
     let globalVipRegistryNameMap = {};
 
+    function registerAuthorToVipRegistry(authorObj) {
+      if (!authorObj || typeof authorObj !== 'object') return;
+      const now = getTrustedCurrentTimestamp();
+      const uid = authorObj.uid || authorObj.userId || '';
+      const name = (authorObj.displayName || authorObj.name || '').trim();
+      const username = (authorObj.username || '').trim();
+      const avatar = authorObj.avatar || '';
+      const rawIsVip = authorObj.isVip === true;
+      const vipTier = authorObj.vipTier || 'none';
+      const vipExpiresAt = Number(authorObj.vipExpiresAt || 0);
+      const isActiveVip = rawIsVip && (vipTier === 'lifetime' || vipExpiresAt > now);
+
+      const entry = {
+        uid,
+        isVip: isActiveVip,
+        vipTier: isActiveVip ? vipTier : 'none',
+        displayName: name,
+        username,
+        avatar,
+        vipExpiresAt: isActiveVip ? vipExpiresAt : 0
+      };
+
+      if (uid) globalVipRegistry[uid] = entry;
+      if (name) globalVipRegistryNameMap[name.toLowerCase()] = entry;
+      if (username) {
+        const cleanU = username.toLowerCase().replace(/^@/, '');
+        globalVipRegistryNameMap[cleanU] = entry;
+      }
+    }
+    window.registerAuthorToVipRegistry = registerAuthorToVipRegistry;
+
     function initGlobalVipRegistry() {
+      // 1. Seed current user into registry
+      if (currentUser && currentUser.uid) {
+        registerAuthorToVipRegistry({
+          uid: currentUser.uid,
+          displayName: currentUser.displayName || '',
+          username: currentUser.username || '',
+          avatar: getUserAvatar(),
+          isVip: isUserVip(),
+          vipTier: getUserVipTier(),
+          vipExpiresAt: userVipExpiresAt
+        });
+      }
+
       if (!firebaseConfig.databaseURL) return;
-      fetch(`${firebaseConfig.databaseURL}/users.json`)
+
+      // 2. Fetch lightweight VIP index only (avoids downloading entire bulk database)
+      fetch(`${firebaseConfig.databaseURL}/vip_users_index.json`)
         .then(res => {
           if (res.headers && res.headers.get('date')) {
             syncTrustedServerTimeFromHeader(res.headers.get('date'));
           }
           return res.ok ? res.json() : null;
         })
-        .then(allUsers => {
-          if (allUsers && typeof allUsers === 'object') {
+        .then(vipIndex => {
+          if (vipIndex && typeof vipIndex === 'object') {
             const now = getTrustedCurrentTimestamp();
-            Object.entries(allUsers).forEach(([uid, uData]) => {
+            Object.entries(vipIndex).forEach(([uid, uData]) => {
               if (uData && typeof uData === 'object') {
-                const prof = uData.profile || {};
-                const rawIsVip = prof.isVip === true || uData.isVip === true;
-                const vipTier = prof.vipTier || uData.vipTier || 'none';
-                const name = prof.displayName || uData.displayName || '';
-                const username = prof.username || uData.username || '';
-                const avatar = prof.avatar || uData.avatar || '';
-                const vipExpiresAt = Number(prof.vipExpiresAt || uData.vipExpiresAt || 0);
-
-                const isActiveVip = rawIsVip && (vipTier === 'lifetime' || (vipExpiresAt > now));
-
-                const entry = {
-                  uid,
-                  isVip: isActiveVip,
-                  vipTier: isActiveVip ? vipTier : 'none',
-                  displayName: name,
-                  username,
-                  avatar,
-                  vipExpiresAt: isActiveVip ? vipExpiresAt : 0
-                };
-                globalVipRegistry[uid] = entry;
-                if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
-                if (username) {
-                  const cleanU = username.trim().toLowerCase().replace(/^@/, '');
-                  globalVipRegistryNameMap[cleanU] = entry;
-                }
+                registerAuthorToVipRegistry({ ...uData, uid });
               }
             });
             window.globalVipRegistry = globalVipRegistry;
             window.globalVipRegistryNameMap = globalVipRegistryNameMap;
             // Re-render components with fresh VIP & author data
-            renderLibraryDecks();
+            if (typeof renderLibraryDecks === 'function') renderLibraryDecks();
             if (typeof renderDecks === 'function') renderDecks();
             if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
             if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
             if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
           }
         })
-        .catch(() => {});
+        .catch(err => {
+          console.log('VIP index fetch note:', err);
+        });
     }
     window.initGlobalVipRegistry = initGlobalVipRegistry;
     window.globalVipRegistry = globalVipRegistry;

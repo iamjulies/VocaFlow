@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-2 Build 303)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-3 Build 304)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-2 Build 303)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-3 Build 304)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-2';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-2 (Build 303)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-3';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-3 (Build 304)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -1522,11 +1522,11 @@
     }
 
     // =========================================================================
-    // GRANULAR CLOUD SYNC & AI PAYLOAD SANITIZER (v0.10.9-alpha-31)
+    // GRANULAR CLOUD SYNC & AI PAYLOAD SANITIZER (v0.10.9-alpha-31 / v0.10.10-3)
     // =========================================================================
     function sanitizeAiChatHistoryForCloud(history) {
       if (!Array.isArray(history)) return [];
-      return history.slice(-30).map(msg => {
+      return history.slice(-25).map(msg => {
         if (!msg) return msg;
         const cleanMsg = { ...msg };
         if (Array.isArray(cleanMsg.images)) {
@@ -1537,7 +1537,7 @@
               name: img.name || 'image.png',
               mimeType: img.mimeType || 'image/png',
               hasImage: true,
-              previewUrl: img.previewUrl || null,
+              previewUrl: (img.previewUrl && !img.previewUrl.startsWith('data:image')) ? img.previewUrl : null,
               base64: null // Strip heavy Base64 image payload from Cloud RTDB
             };
           });
@@ -1545,6 +1545,7 @@
         return cleanMsg;
       });
     }
+    window.sanitizeAiChatHistoryForCloud = sanitizeAiChatHistoryForCloud;
 
     async function syncSettingsToCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;

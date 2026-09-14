@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-2 (Build 303)</span>
+            <span class="mini-footer-version">v0.10.10-3 (Build 304)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-2 (Build 303)</span>
+            <span class="mini-footer-version">v0.10.10-3 (Build 304)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -9872,7 +9872,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-2 (Build 303)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-3 (Build 304)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +10999,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-2 Build 303)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-3 Build 304)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11448,15 +11448,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-2 Build 303)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-3 Build 304)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-2 Build 303)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-3 Build 304)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-2';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-2 (Build 303)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-3';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-3 (Build 304)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -12972,11 +12972,11 @@ window.initSpaRouter = initSpaRouter;
     }
 
     // =========================================================================
-    // GRANULAR CLOUD SYNC & AI PAYLOAD SANITIZER (v0.10.9-alpha-31)
+    // GRANULAR CLOUD SYNC & AI PAYLOAD SANITIZER (v0.10.9-alpha-31 / v0.10.10-3)
     // =========================================================================
     function sanitizeAiChatHistoryForCloud(history) {
       if (!Array.isArray(history)) return [];
-      return history.slice(-30).map(msg => {
+      return history.slice(-25).map(msg => {
         if (!msg) return msg;
         const cleanMsg = { ...msg };
         if (Array.isArray(cleanMsg.images)) {
@@ -12987,7 +12987,7 @@ window.initSpaRouter = initSpaRouter;
               name: img.name || 'image.png',
               mimeType: img.mimeType || 'image/png',
               hasImage: true,
-              previewUrl: img.previewUrl || null,
+              previewUrl: (img.previewUrl && !img.previewUrl.startsWith('data:image')) ? img.previewUrl : null,
               base64: null // Strip heavy Base64 image payload from Cloud RTDB
             };
           });
@@ -12995,6 +12995,7 @@ window.initSpaRouter = initSpaRouter;
         return cleanMsg;
       });
     }
+    window.sanitizeAiChatHistoryForCloud = sanitizeAiChatHistoryForCloud;
 
     async function syncSettingsToCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !firebaseConfig.databaseURL) return;
@@ -23165,6 +23166,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           body: JSON.stringify(payload)
         });
         clearTimeout(timeoutId);
+
+        // Keep lightweight VIP index in sync (v0.10.10-3)
+        if (isUserVip()) {
+          fetch(`${rtdbUrl}/vip_users_index/${userId}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              uid: userId,
+              displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
+              username: currentUser.username || '',
+              avatar: avToSave,
+              isVip: true,
+              vipTier: getUserVipTier(),
+              vipExpiresAt: userVipExpiresAt,
+              updatedAt: new Date().toISOString()
+            })
+          }).catch(() => {});
+        }
+
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
       } catch (err) {
         console.warn('Auto background push note:', err);
@@ -37220,13 +37240,42 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
     }
     loadAiChatHistory();
 
+    function sanitizeAiChatHistoryForLocal(history, limit = 20) {
+      if (!Array.isArray(history)) return [];
+      return history.slice(-limit).map(msg => {
+        if (!msg) return msg;
+        const cleanMsg = { ...msg };
+        if (Array.isArray(cleanMsg.images)) {
+          cleanMsg.images = cleanMsg.images.map(img => {
+            if (!img) return img;
+            return {
+              id: img.id || ('img_' + Date.now()),
+              name: img.name || 'image.png',
+              mimeType: img.mimeType || 'image/png',
+              hasImage: true,
+              previewUrl: (img.previewUrl && !img.previewUrl.startsWith('data:image')) ? img.previewUrl : null,
+              base64: null // Strip heavy Base64 image payload from LocalStorage to prevent 5MB QuotaExceededError
+            };
+          });
+        }
+        return cleanMsg;
+      });
+    }
+    window.sanitizeAiChatHistoryForLocal = sanitizeAiChatHistoryForLocal;
+
     function saveAiChatHistoryToStorage() {
+      const key = getAiChatStorageKey();
       try {
-        const key = getAiChatStorageKey();
-        localStorage.setItem(key, JSON.stringify(aiChatHistory));
-        localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+        const sanitized = sanitizeAiChatHistoryForLocal(aiChatHistory, 20);
+        localStorage.setItem(key, JSON.stringify(sanitized));
       } catch (e) {
-        console.warn('LocalStorage save error:', e);
+        console.warn('LocalStorage save attempt 1 failed, pruning history:', e);
+        try {
+          const aggressiveSanitized = sanitizeAiChatHistoryForLocal(aiChatHistory, 8);
+          localStorage.setItem(key, JSON.stringify(aggressiveSanitized));
+        } catch (e2) {
+          console.warn('LocalStorage save fallback failed:', e2);
+        }
       }
     }
 
@@ -37692,6 +37741,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
               const src = imgObj.previewUrl || (imgObj.base64 ? `data:${imgObj.mimeType || 'image/jpeg'};base64,${imgObj.base64}` : '');
               if (src) {
                 userImagesHtml += `<img src="${src}" class="ai-chat-msg-img-thumb" onclick="openBugScreenshotViewer('${src}')" title="Bấm để phóng to ảnh ${iIdx + 1}">`;
+              } else if (imgObj.hasImage) {
+                userImagesHtml += `<span class="ai-chat-msg-img-chip-placeholder" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.15); color: white;">📷 ${escapeHtml(imgObj.name || 'Ảnh đã gửi')}</span>`;
               }
             });
             userImagesHtml += '</div>';
@@ -51945,62 +51996,86 @@ Quy tắc phản hồi quan trọng:
       });
     }
 
-    // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-0 User Meta Cache)
+    // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-3 Lightweight Index)
     let globalVipRegistry = {};
     let globalVipRegistryNameMap = {};
 
+    function registerAuthorToVipRegistry(authorObj) {
+      if (!authorObj || typeof authorObj !== 'object') return;
+      const now = getTrustedCurrentTimestamp();
+      const uid = authorObj.uid || authorObj.userId || '';
+      const name = (authorObj.displayName || authorObj.name || '').trim();
+      const username = (authorObj.username || '').trim();
+      const avatar = authorObj.avatar || '';
+      const rawIsVip = authorObj.isVip === true;
+      const vipTier = authorObj.vipTier || 'none';
+      const vipExpiresAt = Number(authorObj.vipExpiresAt || 0);
+      const isActiveVip = rawIsVip && (vipTier === 'lifetime' || vipExpiresAt > now);
+
+      const entry = {
+        uid,
+        isVip: isActiveVip,
+        vipTier: isActiveVip ? vipTier : 'none',
+        displayName: name,
+        username,
+        avatar,
+        vipExpiresAt: isActiveVip ? vipExpiresAt : 0
+      };
+
+      if (uid) globalVipRegistry[uid] = entry;
+      if (name) globalVipRegistryNameMap[name.toLowerCase()] = entry;
+      if (username) {
+        const cleanU = username.toLowerCase().replace(/^@/, '');
+        globalVipRegistryNameMap[cleanU] = entry;
+      }
+    }
+    window.registerAuthorToVipRegistry = registerAuthorToVipRegistry;
+
     function initGlobalVipRegistry() {
+      // 1. Seed current user into registry
+      if (currentUser && currentUser.uid) {
+        registerAuthorToVipRegistry({
+          uid: currentUser.uid,
+          displayName: currentUser.displayName || '',
+          username: currentUser.username || '',
+          avatar: getUserAvatar(),
+          isVip: isUserVip(),
+          vipTier: getUserVipTier(),
+          vipExpiresAt: userVipExpiresAt
+        });
+      }
+
       if (!firebaseConfig.databaseURL) return;
-      fetch(`${firebaseConfig.databaseURL}/users.json`)
+
+      // 2. Fetch lightweight VIP index only (avoids downloading entire bulk database)
+      fetch(`${firebaseConfig.databaseURL}/vip_users_index.json`)
         .then(res => {
           if (res.headers && res.headers.get('date')) {
             syncTrustedServerTimeFromHeader(res.headers.get('date'));
           }
           return res.ok ? res.json() : null;
         })
-        .then(allUsers => {
-          if (allUsers && typeof allUsers === 'object') {
+        .then(vipIndex => {
+          if (vipIndex && typeof vipIndex === 'object') {
             const now = getTrustedCurrentTimestamp();
-            Object.entries(allUsers).forEach(([uid, uData]) => {
+            Object.entries(vipIndex).forEach(([uid, uData]) => {
               if (uData && typeof uData === 'object') {
-                const prof = uData.profile || {};
-                const rawIsVip = prof.isVip === true || uData.isVip === true;
-                const vipTier = prof.vipTier || uData.vipTier || 'none';
-                const name = prof.displayName || uData.displayName || '';
-                const username = prof.username || uData.username || '';
-                const avatar = prof.avatar || uData.avatar || '';
-                const vipExpiresAt = Number(prof.vipExpiresAt || uData.vipExpiresAt || 0);
-
-                const isActiveVip = rawIsVip && (vipTier === 'lifetime' || (vipExpiresAt > now));
-
-                const entry = {
-                  uid,
-                  isVip: isActiveVip,
-                  vipTier: isActiveVip ? vipTier : 'none',
-                  displayName: name,
-                  username,
-                  avatar,
-                  vipExpiresAt: isActiveVip ? vipExpiresAt : 0
-                };
-                globalVipRegistry[uid] = entry;
-                if (name) globalVipRegistryNameMap[name.trim().toLowerCase()] = entry;
-                if (username) {
-                  const cleanU = username.trim().toLowerCase().replace(/^@/, '');
-                  globalVipRegistryNameMap[cleanU] = entry;
-                }
+                registerAuthorToVipRegistry({ ...uData, uid });
               }
             });
             window.globalVipRegistry = globalVipRegistry;
             window.globalVipRegistryNameMap = globalVipRegistryNameMap;
             // Re-render components with fresh VIP & author data
-            renderLibraryDecks();
+            if (typeof renderLibraryDecks === 'function') renderLibraryDecks();
             if (typeof renderDecks === 'function') renderDecks();
             if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
             if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
             if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
           }
         })
-        .catch(() => {});
+        .catch(err => {
+          console.log('VIP index fetch note:', err);
+        });
     }
     window.initGlobalVipRegistry = initGlobalVipRegistry;
     window.globalVipRegistry = globalVipRegistry;

@@ -1,4 +1,27 @@
 ================================================================================
+Phiên bản: v0.10.10-3 (Build 304) - Khắc Phục Triệt Để 3 Lỗi Hệ Thống: Loại Bỏ Bulk Query /users.json, Chống Tràn Bộ Nhớ LocalStorage Do Ảnh AI Mentor & Bổ Sung Flow Icon Vào Cache PWA
+================================================================================
+1. [Khắc Phục Lỗi Quét Toàn Bộ DB /users.json Trong initGlobalVipRegistry (12-achievements.js)]:
+   - Xóa bỏ hoàn toàn lệnh fetch('${firebaseConfig.databaseURL}/users.json') tải toàn bộ dữ liệu cơ sở dữ liệu của tất cả người dùng khi khởi động ứng dụng.
+   - Thay thế bằng endpoint chỉ mục VIP siêu nhẹ `${firebaseConfig.databaseURL}/vip_users_index.json` (chỉ chứa metadata tối thiểu của người dùng VIP).
+   - Tự động đồng bộ mục này trong `pushCurrentDatabaseToCloud` khi người dùng VIP lưu dữ liệu.
+   - Bổ sung hàm `registerAuthorToVipRegistry(authorObj)` giúp nạp và lưu cache động thông tin tác giả khi tải thư viện/bài viết cộng đồng mà không cần tải hàng loạt.
+
+2. [Khắc Phục Lỗi Tràn Bộ Nhớ LocalStorage QuotaExceededError Do Ảnh AI Mentor (09-ai-mentor.js & 02-state-core.js)]:
+   - Xóa bỏ cơ chế lưu đúp dữ liệu lịch sử chat (Double Storage) vào cả 2 key.
+   - Xây dựng hàm `sanitizeAiChatHistoryForLocal(history, limit = 20)` tự động loại bỏ chuỗi Base64 và data URIs nặng trước khi lưu vào localStorage.
+   - Bổ sung cơ chế bảo vệ phân tầng: Nếu phát hiện bộ nhớ trình duyệt đầy (QuotaExceededError), hệ thống tự động cắt tỉa lịch sử về 8 tin nhắn gần nhất thay vì làm lỗi toàn bộ hệ thống lưu trữ `voca_db`.
+   - Cập nhật hàm `renderAiChatMessages` hiển thị chip ảnh thông minh khi ảnh đã được dọn dẹp nhị phân.
+   - Đồng bộ `sanitizeAiChatHistoryForCloud` để loại bỏ toàn bộ dữ liệu ảnh nặng trước khi gửi lên Cloud RTDB.
+
+3. [Bổ Sung Asset icons/flow.png Vào Service Worker Cache PWA (sw.js)]:
+   - Bổ sung `'./icons/flow.png'` vào danh sách `ASSETS` của tất cả các file `sw.js`.
+   - Cập nhật cache name lên `vocaflow-pwa-v0.10.10-3`, đảm bảo khi học ngoại tuyến (Offline PWA) icon Flow hiển thị mượt mà không bị lỗi.
+
+4. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-3 Build 304)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file, biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-3_Windows_Portable.zip và sẵn sàng triển khai.
+
+================================================================================
 Phiên bản: v0.10.10-2 (Build 303) - Chuẩn Hóa Prompt AI Điền Từ & Sáng Tạo Bộ Từ Phân Biệt Rõ Ràng Thành Tố Từ Loại (Danh Từ, Động Từ, Tính Từ, Trạng Từ)
 ================================================================================
 1. [Chuẩn Hóa Prompt AI Tự Động Điền Từ & Sáng Tạo Bộ Từ (Part-Of-Speech Discrimination Engine)]:

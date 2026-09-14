@@ -1,0 +1,23 @@
+v0.10.10-3
+SỬA LỖI HIỆN HỮU:
+1. Quét toàn bộ cơ sở dữ liệu /users.json trong initGlobalVipRegistry
+Vị trí: 
+12-achievements.js
+Lỗi:
+Lệnh fetch('${firebaseConfig.databaseURL}/users.json') cố gắng tải toàn bộ dữ liệu của tất cả người dùng trên hệ thống (bao gồm cả bộ từ, lịch sử học tập, cài đặt) chỉ để lấy danh sách ai là VIP.
+Nếu Firebase Rules được cấu hình an toàn, request này sẽ bị từ chối với lỗi HTTP 401/403 Permission Denied, khiến globalVipRegistry hoàn toàn rỗng.
+Nếu Firebase Rules mở, việc này gây rò rỉ dữ liệu nghiêm trọng và làm ứng dụng tải hàng chục MB dữ liệu không cần thiết khi vừa khởi động.
+2. Tràn bộ nhớ localStorage (QuotaExceededError) do ảnh đính kèm AI Mentor
+Vị trí: 
+09-ai-mentor.js
+Lỗi:
+Mỗi khi người dùng đính kèm ảnh (tối đa 5 ảnh), ảnh được lưu dưới dạng chuỗi Base64 nguyên gốc (500KB - 2MB/ảnh).
+Hàm saveAiChatHistoryToStorage() lưu tối đa 30 tin nhắn này vào localStorage (dung lượng tối đa của trình duyệt thường chỉ là 5MB).
+Chỉ sau 2-3 lượt hỏi có ảnh, trình duyệt sẽ ném lỗi DOMException: QuotaExceededError, làm tê liệt tính năng lưu trữ cục bộ và có thể làm gián đoạn việc lưu dữ liệu từ vựng voca_db.
+3. Thiếu asset icons/flow.png trong danh sách Cache PWA
+Vị trí: 
+sw.js
+ vs 
+header.html
+Lỗi: icons/flow.png được sử dụng ở thanh Header nhưng không được khai báo trong mảng ASSETS của sw.js. Khi mất kết nối mạng (Offline PWA), ảnh này bị lỗi load và phải rơi vào fallback emoji 🌊.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -341,13 +341,42 @@
     }
     loadAiChatHistory();
 
+    function sanitizeAiChatHistoryForLocal(history, limit = 20) {
+      if (!Array.isArray(history)) return [];
+      return history.slice(-limit).map(msg => {
+        if (!msg) return msg;
+        const cleanMsg = { ...msg };
+        if (Array.isArray(cleanMsg.images)) {
+          cleanMsg.images = cleanMsg.images.map(img => {
+            if (!img) return img;
+            return {
+              id: img.id || ('img_' + Date.now()),
+              name: img.name || 'image.png',
+              mimeType: img.mimeType || 'image/png',
+              hasImage: true,
+              previewUrl: (img.previewUrl && !img.previewUrl.startsWith('data:image')) ? img.previewUrl : null,
+              base64: null // Strip heavy Base64 image payload from LocalStorage to prevent 5MB QuotaExceededError
+            };
+          });
+        }
+        return cleanMsg;
+      });
+    }
+    window.sanitizeAiChatHistoryForLocal = sanitizeAiChatHistoryForLocal;
+
     function saveAiChatHistoryToStorage() {
+      const key = getAiChatStorageKey();
       try {
-        const key = getAiChatStorageKey();
-        localStorage.setItem(key, JSON.stringify(aiChatHistory));
-        localStorage.setItem('vocaflow_ai_chat_history', JSON.stringify(aiChatHistory));
+        const sanitized = sanitizeAiChatHistoryForLocal(aiChatHistory, 20);
+        localStorage.setItem(key, JSON.stringify(sanitized));
       } catch (e) {
-        console.warn('LocalStorage save error:', e);
+        console.warn('LocalStorage save attempt 1 failed, pruning history:', e);
+        try {
+          const aggressiveSanitized = sanitizeAiChatHistoryForLocal(aiChatHistory, 8);
+          localStorage.setItem(key, JSON.stringify(aggressiveSanitized));
+        } catch (e2) {
+          console.warn('LocalStorage save fallback failed:', e2);
+        }
       }
     }
 
@@ -813,6 +842,8 @@
               const src = imgObj.previewUrl || (imgObj.base64 ? `data:${imgObj.mimeType || 'image/jpeg'};base64,${imgObj.base64}` : '');
               if (src) {
                 userImagesHtml += `<img src="${src}" class="ai-chat-msg-img-thumb" onclick="openBugScreenshotViewer('${src}')" title="Bấm để phóng to ảnh ${iIdx + 1}">`;
+              } else if (imgObj.hasImage) {
+                userImagesHtml += `<span class="ai-chat-msg-img-chip-placeholder" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.15); color: white;">📷 ${escapeHtml(imgObj.name || 'Ảnh đã gửi')}</span>`;
               }
             });
             userImagesHtml += '</div>';

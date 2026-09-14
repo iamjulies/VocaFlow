@@ -7886,6 +7886,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           body: JSON.stringify(payload)
         });
         clearTimeout(timeoutId);
+
+        // Keep lightweight VIP index in sync (v0.10.10-3)
+        if (isUserVip()) {
+          fetch(`${rtdbUrl}/vip_users_index/${userId}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              uid: userId,
+              displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
+              username: currentUser.username || '',
+              avatar: avToSave,
+              isVip: true,
+              vipTier: getUserVipTier(),
+              vipExpiresAt: userVipExpiresAt,
+              updatedAt: new Date().toISOString()
+            })
+          }).catch(() => {});
+        }
+
         localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
       } catch (err) {
         console.warn('Auto background push note:', err);

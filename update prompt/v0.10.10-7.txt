@@ -1,0 +1,13 @@
+v0.10.10-7
+PHÁT TRIỂN NHỮNG TÍNH NĂNG CHƯA PHÁT TRIỂN HẾT TIỀM NĂNG
+1. Luyện Nói (Speaking Lab) chưa lưu trữ Bản thu âm & Thiếu so sánh sóng âm
+Vị trí: 
+07-speaking-engine.js
+Thực trạng: Bản thu âm sau khi chấm điểm bị xóa/ghi đè, không xem lại được quá trình tiến bộ.
+Tiềm năng phát triển:
+Cho phép lưu lại bản thu âm tốt nhất (Best Take) vào IndexedDB của từ vựng.
+Hiển thị biểu đồ phổ sóng âm (Waveform Visualizer) so sánh trực tiếp đường cong ngữ điệu giữa giọng đọc chuẩn Oxford và giọng người học.
+2. Chế độ Chính tả (Spelling) chưa có Luyện Nghe Chép Câu (Dictation)
+Vị trí: 
+06-spelling-engine.js
+Tiềm năng phát triển: Hiện tại Spelling chỉ gõ từng chữ cái của từ đơn lẻ. Có thể mở rộng thành chế độ Full Sentence Dictation (Nghe cả câu và gõ lại) hoặc Cloze Test (Điền từ vào đoạn văn có bối cảnh).

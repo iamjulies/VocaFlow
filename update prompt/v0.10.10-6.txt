@@ -1,0 +1,18 @@
+v0.10.10-6
+PHÁT TRIỂN NHỮNG TÍNH NĂNG CHƯA PHÁT TRIỂN HẾT TIỀM NĂNG
+1. Thuật toán Lặp lại Ngắt quãng (SRS) còn quá sơ sài
+Vị trí: 
+04-decks-manager.js
+ (getReviewIntervalDays)
+Thực trạng: Hiện tại chu kỳ ôn tập chỉ chia thành 5 mốc cứng: <26% (1 ngày), 26-50% (3 ngày), 51-75% (7 ngày), 76-99% (14 ngày), 100% (30 ngày).
+Tiềm năng phát triển:
+Cần nâng cấp lên chuẩn SM-2 (SuperMemo 2) hoặc FSRS (Free Spaced Repetition Scheduler): Tính toán chu kỳ dựa trên Hệ số dễ (Ease Factor), Số lần lặp lại liên tiếp (Repetition Count), và Độ quên lãng Ebbinghaus.
+Cho phép người dùng đánh giá 4 mức độ nhớ sau mỗi thẻ (Again, Hard, Good, Easy) để tự động co giãn chu kỳ chính xác từng từ.
+2. VocaMentor AI chưa có Trí nhớ dài hạn & Phân tích lỗi sai thông minh
+Vị trí: 
+09-ai-mentor.js
+Thực trạng: AI chỉ nhìn vào 8 tin nhắn gần nhất và ngữ cảnh của từ đang mở, khi phiên chat kết thúc hoặc đóng lại là AI "quên sạch".
+Tiềm năng phát triển:
+Hồ sơ năng lực học viên (Learner Profile Context): Truyền cho AI biết người học hay sai các âm nào trong Speaking (ví dụ hay nuốt ending sound /s/, /t/, /d/), sai từ loại nào trong Deck Studio để AI chủ động nhắc nhở và thiết kế bài tập riêng.
+Tính năng "Trò chuyện với Bộ từ": Yêu cầu Mentor viết 1 câu chuyện hoặc 1 bài báo ngắn sử dụng đúng 5-10 từ vựng mà người học vừa đánh dấu sao hoặc làm sai trong VocaDeck.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

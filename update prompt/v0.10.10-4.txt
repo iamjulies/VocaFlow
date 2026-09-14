@@ -1,0 +1,21 @@
+v0.10.10-4
+SỬA CÁC LỖI TIỀM ẨN
+1. Phụ thuộc vào Google Translate TTS endpoint không chính thức
+Vị trí: 
+02-state-core.js
+Nguy cơ:
+URL https://translate.google.com/translate_tts?client=tw-ob là endpoint không chính thức.
+Khi người dùng học liên tục nhiều từ (hoặc nhiều người dùng chung một địa chỉ IP mạng trường học / công ty), Google sẽ tự động chặn IP (HTTP 429 Too Many Requests hoặc yêu cầu Captcha), khiến việc phát âm bị ngắt quãng hoặc mất tiếng nếu máy khách không có sẵn giọng đọc offline tự nhiên.
+2. Rò rỉ bộ nhớ (Memory Leak) đối với Audio Blob URLs
+Vị trí: 
+02-state-core.js
+Nguy cơ:
+Trong audioBlobCache.set(cacheKey, URL.createObjectURL(blob)), các URL dạng blob:... được tạo ra liên tục và lưu trong bộ nhớ mà không bao giờ được giải phóng bằng URL.revokeObjectURL(), cũng không có cơ chế dọn dẹp LRU (Least Recently Used).
+Khi học phiên dài hàng trăm từ, dung lượng RAM của trình duyệt sẽ tăng dần theo thời gian.
+3. Xung đột ghi đè dữ liệu Cloud khi mở nhiều thiết bị (Race Conditions)
+Vị trí: 
+02-state-core.js
+Nguy cơ:
+Hàm pushCurrentDatabaseToCloud() đẩy nguyên khối toàn bộ voca_db lên Cloud RTDB bằng phương thức ghi đè.
+Nếu người dùng đăng nhập trên cả Máy tính (Windows EXE) và Điện thoại (Web PWA), dữ liệu của thiết bị bấm lưu sau sẽ ghi đè và xóa mất tiến độ học tập vừa làm trên thiết bị trước đó (thiếu cơ chế hợp nhất Timestamp / Conflict Resolution).
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

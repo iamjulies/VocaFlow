@@ -1,0 +1,36 @@
+v0.10.10-5
+SỬA NHỮNG THỨ VÔ NGHĨA / DƯ THỪA / CODE RÁC / UI ĐÁNH LỪA:
+1. Luồng thanh toán VietQR cho VocaVIP & Mua Lượt Quay Spin chưa có Backend / Bắn lỗi ảo
+Vị trí: 
+08-wallet-economy.js
+ & 
+modal-vip-pricing.html
+Vấn đề:
+Khi người dùng quét mã VietQR và bấm nút "✓ Tôi Đã Chuyển Khoản", hàm confirmVipPaymentSubmitted() chỉ lưu một object vào localStorage và bật một hàm đếm giờ setTimeout(150s).
+Hệ thống hoàn toàn không gửi thông tin đơn hàng lên Firebase RTDB (/vip_orders hay /pending_payments), cũng không có Webhook đối soát tài khoản ngân hàng thực tế.
+Hậu quả: Sau đúng 2.5 phút, hàm checkPendingVipPaymentStatus() tự động kích hoạt thông báo: ⚠️ Đối Soát Chưa Thành Công (${pending.planName}) dù người dùng đã chuyển tiền thật! Điều này làm người dùng hoang mang và tưởng giao dịch bị lỗi.
+Tương tự với nút "Tôi Đã Chuyển Khoản" ở gói Spin (08-wallet-economy.js:122), nó chỉ hiển thị một Toast cục bộ mà không gửi dữ liệu tới Admin.
+2. Mâu thuẫn quyền hạn VocaMentor AI giữa Quảng cáo và Code thực tế
+Vị trí: 
+modal-vip-pricing.html
+ vs 
+09-ai-mentor.js
+Vấn đề:
+Trong bảng giá và FAQ ghi rõ: "Gói Flower Free (0đ): Phục vụ học tập cơ bản với 5 tin nhắn/ngày cùng Trợ lý AI VocaMentor".
+Tuy nhiên, trong 
+09-ai-mentor.js
+ hàm openAiMentorModal() lại có dòng:
+javascript
+if (isGuest || !isVip) {
+  if (vView) vView.style.display = 'flex'; // Khóa hoàn toàn
+  openModal('modal-ai-mentor');
+  return;
+}
+Đoạn code này khiến tài khoản Free không bao giờ được nhắn dù chỉ 1 tin (luôn hiện màn hình khóa VIP), gây ức chế và mâu thuẫn trực tiếp với thông tin quảng cáo.
+3. Lưu trữ trùng lặp (Double Storage) Lịch sử Chat AI
+Vị trí: 
+09-ai-mentor.js
+Vấn đề:
+Hàm saveAiChatHistoryToStorage() lưu lịch sử chat vào cả 2 key: vocaflow_ai_chat_history_${currentUser.uid} VÀ vocaflow_ai_chat_history.
+Việc lưu nhân đôi toàn bộ tin nhắn (kèm ảnh base64) làm tốn gấp đôi dung lượng localStorage một cách hoàn toàn vô ích.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
