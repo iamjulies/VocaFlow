@@ -307,6 +307,15 @@
         if (e.code === 'Space') {
           e.preventDefault();
           toggleAutoFlashcardPlayPause();
+        } else if (e.key === '1' || e.code === 'Digit1' || e.code === 'Numpad1') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(1);
+        } else if (e.key === '2' || e.code === 'Digit2' || e.code === 'Numpad2') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(2);
+        } else if (e.key === '3' || e.code === 'Digit3' || e.code === 'Numpad3') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(3);
         } else if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
           nextAutoFlashcard();

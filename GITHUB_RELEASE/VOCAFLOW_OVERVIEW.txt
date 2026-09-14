@@ -1,4 +1,32 @@
 ================================================================================
+Phiên bản: v0.10.10-6 (Build 307) - Nâng Cấp Thuật Toán Lặp Lại Ngắt Quãng SRS Chuẩn SM-2 / Ebbinghaus & VocaMentor AI Trí Nhớ Dài Hạn (Learner Profile & Trò Chuyện Với Bộ Từ)
+================================================================================
+1. [Nâng Cấp Thuật Toán Lặp Lại Ngắt Quãng SRS Chuẩn SuperMemo-2 / Ebbinghaus (04-decks-manager.js & 07-speaking-engine.js)]:
+   - Chuyển đổi từ 5 mốc phân loại cứng sơ sài sang thuật toán Spaced Repetition System (SRS) SM-2 chuẩn hóa:
+     * Tính toán chu kỳ giãn cách động (srsInterval) dựa trên Hệ số dễ (srsEaseFactor), Số lần lặp lại liên tiếp (srsRepetition) và độ quên lãng Ebbinghaus.
+     * Cung cấp các hàm nòng cốt `calculateSm2Review(word, rating)` và `applySm2RatingToWord(word, rating)` tự động co giãn chu kỳ ngày ôn tập chính xác cho từng từ vựng.
+     * Cập nhật `getReviewIntervalDays(word)` và `getDueReviewWords()` hỗ trợ ưu tiên mốc thời gian `srsNextReview` chính xác đến từng mili-giây.
+   - Thêm thanh đánh giá 3 mức độ nhớ nhanh trong chế độ Auto Flashcard (`screen-autofc.html`):
+     * `[1] Chưa Rõ` (Ôn lại ngay sau 1 ngày, reset chu kỳ, giảm Ease Factor).
+     * `[2] Mang Máng` (Giãn cách vừa phải 3-5 ngày).
+     * `[3] Nhớ Rồi` (Giãn cách dài theo hàm số mũ Ease Factor).
+     * Hỗ trợ phím tắt siêu tốc `1`, `2`, `3` trên bàn phím (`app.js`).
+     * Cơ chế nghe thụ động trung tính: Khi người dùng để Auto Flashcard chạy tự động mà không nhấn đánh giá, hệ thống vẫn chuyển thẻ mượt mà mà không phạt điểm hay phá vỡ chu kỳ ôn tập.
+
+2. [VocaMentor AI Trí Nhớ Dài Hạn & Hồ Sơ Năng Lực Học Viên (09-ai-mentor.js & 07-speaking-engine.js)]:
+   - Hồ sơ năng lực học viên (Learner Profile Context):
+     * Tự động tổng hợp và truyền ngữ cảnh dài hạn cho AI qua `getLearnerProfileContext()`: Tên học viên, chuỗi ngày học Streak, các từ vựng đang gặp khó khăn (điểm ghi nhớ thấp < 60%), các từ trọng tâm được đánh dấu sao ⭐.
+     * Tích hợp cơ chế ghi nhận lỗi phát âm âm vị `recordSpeakingWeakPhonemes()` (ví dụ hay nuốt ending sound /s/, /t/, /d/, lệch trọng âm, âm bồi) từ phòng Speaking Lab vào trí nhớ để AI Mentor nhắc nhở và thiết kế bài tập cá nhân hóa.
+     * Nạp ngữ cảnh hồ sơ năng lực trực tiếp vào `systemInstruction` của Gemini AI trong `handleSendAiChatMessage()`.
+   - Tính năng "Trò chuyện với Bộ từ" (`deck_story`):
+     * Bổ sung Chip hành động nhanh `📖 Viết truyện từ vựng` / `📖 Kể chuyện với từ khó` trong mọi ngữ cảnh học (Thẻ từ, VocaDeck, Tự do).
+     * Khi nhấn chip, AI tự động lấy 5-8 từ vựng yếu / đánh dấu sao trong bộ từ hiện tại và khởi tạo prompt yêu cầu VocaMentor AI viết một mẩu truyện/bài báo sinh động, in đậm từ vựng và đặt câu hỏi đọc hiểu tương tác.
+
+3. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-6 Build 307)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file (`02-state-core.js`, `01-router.js`, `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`).
+   - Biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-6_Windows_Portable.zip và tự động đồng bộ đa nhánh GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-5 (Build 306) - Dọn Dẹp Code Dư Thừa & Sửa Lỗi UI Đánh Lừa: Lưu Đơn Hàng VietQR RTDB Thực Tế, Mở Khóa 5 Lượt AI Free Cho Tài Khoản Thường & Loại Bỏ Double Storage
 ================================================================================
 1. [Khắc Phục Luồng Thanh Toán VietQR VocaVIP & Mua VocaSpin - Lưu Trực Tiếp Lên Firebase RTDB (08-wallet-economy.js & modal-vip-pricing.html)]:

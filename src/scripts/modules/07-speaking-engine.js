@@ -1554,12 +1554,54 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       return toggleSpeakingRecord();
     }
 
+    function recordSpeakingWeakPhonemes(data, word) {
+      if (!data) return;
+      try {
+        const foundWeak = [];
+        const diag = data.phonemeDiagnostics || data.accuracyDetails;
+        const ending = (diag?.endingSounds || diag?.endingSound || '').toLowerCase();
+        const stress = (diag?.stress || '').toLowerCase();
+        const feedback = (data.feedbackVi || '').toLowerCase();
+
+        if (ending.includes('thiếu') || ending.includes('nuốt') || ending.includes('sai') || ending.includes('chưa') || ending.includes('yếu')) {
+          if (word && word.term) {
+            const lastChar = word.term.slice(-1).toLowerCase();
+            if (['s', 't', 'd', 'k', 'p', 'z'].includes(lastChar)) {
+              foundWeak.push(`Âm đuôi /${lastChar}/ (từ "${word.term}")`);
+            } else {
+              foundWeak.push(`Âm đuôi từ "${word.term}"`);
+            }
+          }
+        }
+        if (stress.includes('sai') || stress.includes('chưa đúng') || stress.includes('lệch')) {
+          if (word && word.term) foundWeak.push(`Trọng âm từ "${word.term}"`);
+        }
+        if (feedback.includes('âm bồi')) {
+          foundWeak.push('Đọc kiểu âm bồi tiếng Việt');
+        }
+
+        if (foundWeak.length > 0) {
+          let existing = [];
+          try {
+            existing = JSON.parse(localStorage.getItem('vocaflow_speaking_weak_phonemes') || '[]');
+          } catch (e) { existing = []; }
+          if (!Array.isArray(existing)) existing = [];
+          foundWeak.forEach(item => {
+            if (!existing.includes(item)) existing.unshift(item);
+          });
+          existing = existing.slice(0, 10);
+          localStorage.setItem('vocaflow_speaking_weak_phonemes', JSON.stringify(existing));
+        }
+      } catch (e) {}
+    }
+
     function renderDiagnosticResult(data, countAsTake = true) {
       speakingFlowState = 'evaluated';
       const currentWord = speakingWordsList[currentSpeakingIndex];
       let score = Math.max(0, Math.min(100, Math.round(Number(data.score) || 0)));
 
       if (countAsTake) {
+        recordSpeakingWeakPhonemes(data, currentWord);
         speakingTakes.push(score);
         speakingCurrentTakeIndex = speakingTakes.length;
         const isFloor = score >= speakingFloorScore;
@@ -2017,6 +2059,31 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         renderAutoCardOnly(autoFlashcardIndex);
       }
     }
+
+    function rateAutoFlashcardRecall(rating) {
+      if (!autoFlashcardList || autoFlashcardList.length === 0) return;
+      const word = autoFlashcardList[autoFlashcardIndex];
+      if (!word) return;
+
+      const sm2 = typeof applySm2RatingToWord === 'function' ? applySm2RatingToWord(word, rating) : null;
+      const intervalDays = sm2 ? sm2.interval : (rating === 3 ? 6 : rating === 2 ? 3 : 1);
+
+      const labels = {
+        1: '❌ Chưa rõ (Lặp lại ôn sớm)',
+        2: `🤔 Mang máng (Chu kỳ: ${intervalDays} ngày)`,
+        3: `✅ Đã thuộc (Chu kỳ: ${intervalDays} ngày)`
+      };
+      showToast(labels[rating] || '🎯 Đã ghi nhận đánh giá SM-2!');
+
+      const btn = document.getElementById('btn-autofc-rate-' + rating);
+      if (btn) {
+        btn.style.transform = 'scale(0.92)';
+        setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 140);
+      }
+
+      nextAutoFlashcard();
+    }
+    window.rateAutoFlashcardRecall = rateAutoFlashcardRecall;
 
     function exitAutoFlashcard(force = false) {
       // v0.10.9-alpha-30: Auto Flashcard allows free exit anytime without interruption/penalty modal

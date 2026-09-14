@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-5 (Build 306)</span>
+            <span class="mini-footer-version">v0.10.10-6 (Build 307)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4860,7 +4860,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-5 (Build 306)</span>
+            <span class="mini-footer-version">v0.10.10-6 (Build 307)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5335,6 +5335,33 @@
         </div>
       </div>
 
+      <!-- 3-LEVEL SM-2 QUICK SRS RATING BAR (v0.10.10-6) -->
+      <div id="autofc-srs-rating-container" style="max-width: 540px; margin: 0 auto 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 4px;">
+        <button type="button" class="btn btn-outline" onclick="rateAutoFlashcardRecall(1)" id="btn-autofc-rate-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 6px; border-radius: 12px; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); color: #f87171; transition: all 0.2s;" title="Chưa rõ từ này - Lặp lại ôn tập sớm nhất">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px;">❌</span>
+            <strong style="font-size: 12.5px;">Chưa Rõ</strong>
+          </div>
+          <span style="font-size: 10px; color: var(--text-muted);"><kbd class="key-shortcut-badge" style="padding: 1px 4px; font-size: 9px;">1</kbd> Ôn lại (1 ngày)</span>
+        </button>
+
+        <button type="button" class="btn btn-outline" onclick="rateAutoFlashcardRecall(2)" id="btn-autofc-rate-2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 6px; border-radius: 12px; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); color: #fbbf24; transition: all 0.2s;" title="Mang máng - Cần củng cố thêm">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px;">🤔</span>
+            <strong style="font-size: 12.5px;">Mang Máng</strong>
+          </div>
+          <span style="font-size: 10px; color: var(--text-muted);"><kbd class="key-shortcut-badge" style="padding: 1px 4px; font-size: 9px;">2</kbd> Giãn cách (3-5 ngày)</span>
+        </button>
+
+        <button type="button" class="btn btn-outline" onclick="rateAutoFlashcardRecall(3)" id="btn-autofc-rate-3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 6px; border-radius: 12px; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); color: #34d399; transition: all 0.2s;" title="Đã thuộc lòng - Giãn cách dài SM-2">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 14px;">✅</span>
+            <strong style="font-size: 12.5px;">Nhớ Rồi</strong>
+          </div>
+          <span style="font-size: 10px; color: var(--text-muted);"><kbd class="key-shortcut-badge" style="padding: 1px 4px; font-size: 9px;">3</kbd> Đã thuộc (SM-2)</span>
+        </button>
+      </div>
+
       <!-- Auto Control Bar -->
       <div class="autofc-controls-panel">
         <div class="autofc-main-controls">
@@ -5355,12 +5382,13 @@
           </button>
         </div>
 
-        <!-- Keyboard Shortcuts Hint Guide (v0.0.9.18) -->
+        <!-- Keyboard Shortcuts Hint Guide (v0.10.10-6) -->
         <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
           <span><kbd class="key-shortcut-badge">Space</kbd> Tạm dừng / Tiếp tục</span>
+          <span><kbd class="key-shortcut-badge">1 / 2 / 3</kbd> Đánh giá nhớ SM-2</span>
           <span><kbd class="key-shortcut-badge">A / ◀</kbd> Thẻ trước</span>
           <span><kbd class="key-shortcut-badge">D / ▶</kbd> Thẻ sau</span>
-          <span><kbd class="key-shortcut-badge">Enter</kbd> Lật thẻ (khi dừng)</span>
+          <span><kbd class="key-shortcut-badge">Enter</kbd> Lật thẻ</span>
         </div>
 
         <!-- Speed & Delay Controls -->
@@ -9872,7 +9900,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-5 (Build 306)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-6 (Build 307)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -10999,7 +11027,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-5 Build 306)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-6 Build 307)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11448,15 +11476,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-5 Build 306)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-6 Build 307)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-5 Build 306)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-6 Build 307)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-5';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-5 (Build 306)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-6';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-6 (Build 307)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -26442,17 +26470,117 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // SPACED REPETITION SYSTEM (SRS) REVIEW QUEUE ENGINE (v0.0.10.0)
+    // SUPERMEMO-2 (SM-2) / FSRS SPACED REPETITION ENGINE (v0.10.10-6)
     // =========================================================================
     let reviewDueWordsList = [];
 
-    function getReviewIntervalDays(score) {
+    function calculateSm2Review(word, rating) {
+      // rating: 1 (Chưa rõ / Quên), 2 (Mang máng), 3 (Nhớ rồi / Đã thuộc)
+      let grade = 4; // default neutral
+      if (rating === 1 || rating === 'forgot') grade = 1;
+      else if (rating === 2 || rating === 'vague') grade = 3;
+      else if (rating === 3 || rating === 'good') grade = 5;
+      else if (typeof rating === 'number') grade = rating;
+
+      let rep = typeof word.srsRepetition === 'number' ? word.srsRepetition : (word.masteryScore >= 80 ? 3 : word.masteryScore >= 50 ? 2 : word.masteryScore >= 20 ? 1 : 0);
+      let ef = typeof word.srsEaseFactor === 'number' ? word.srsEaseFactor : 2.5;
+      let interval = typeof word.srsInterval === 'number' && word.srsInterval > 0 ? word.srsInterval : getReviewIntervalDays(getWordScore(word));
+
+      // SM-2 Ease Factor formula: EF' = EF + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02))
+      ef = ef + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
+      if (ef < 1.3) ef = 1.3;
+
+      if (grade >= 3) {
+        if (rep === 0) {
+          interval = 1;
+        } else if (rep === 1) {
+          interval = (grade === 5) ? 6 : 3;
+        } else {
+          interval = Math.round(interval * ef);
+        }
+        rep++;
+      } else {
+        // Forgot: reset repetition, restart at 1 day
+        rep = 0;
+        interval = 1;
+      }
+
+      // Cap interval between 1 and 365 days
+      interval = Math.max(1, Math.min(365, interval));
+
+      const now = Date.now();
+      const nextReviewTime = now + (interval * 24 * 60 * 60 * 1000);
+
+      return {
+        repetition: rep,
+        easeFactor: Math.round(ef * 100) / 100,
+        interval: interval,
+        lastReviewedAt: new Date(now).toISOString(),
+        nextReviewAt: new Date(nextReviewTime).toISOString()
+      };
+    }
+    window.calculateSm2Review = calculateSm2Review;
+
+    function applySm2RatingToWord(word, rating) {
+      if (!word || !word.id) return null;
+      const sm2 = calculateSm2Review(word, rating);
+
+      word.srsRepetition = sm2.repetition;
+      word.srsEaseFactor = sm2.easeFactor;
+      word.srsInterval = sm2.interval;
+      word.srsLastReview = sm2.lastReviewedAt;
+      word.srsNextReview = sm2.nextReviewAt;
+      word.lastReviewedAt = sm2.lastReviewedAt;
+      word.updatedAt = sm2.lastReviewedAt;
+
+      // Adjust mastery score accordingly
+      let currentScore = getWordScore(word);
+      if (rating === 3) {
+        word.masteryScore = Math.min(100, Math.max(currentScore + 15, 60));
+      } else if (rating === 2) {
+        word.masteryScore = Math.min(100, Math.max(currentScore + 5, 30));
+      } else if (rating === 1) {
+        word.masteryScore = Math.max(10, currentScore - 15);
+      }
+
+      // Sync into master words list
+      const wIdx = words.findIndex(w => w.id === word.id);
+      if (wIdx !== -1) {
+        words[wIdx].srsRepetition = sm2.repetition;
+        words[wIdx].srsEaseFactor = sm2.easeFactor;
+        words[wIdx].srsInterval = sm2.interval;
+        words[wIdx].srsLastReview = sm2.lastReviewedAt;
+        words[wIdx].srsNextReview = sm2.nextReviewAt;
+        words[wIdx].lastReviewedAt = sm2.lastReviewedAt;
+        words[wIdx].updatedAt = sm2.lastReviewedAt;
+        words[wIdx].masteryScore = word.masteryScore;
+      }
+
+      saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
+
+      return sm2;
+    }
+    window.applySm2RatingToWord = applySm2RatingToWord;
+
+    function getReviewIntervalDays(wordOrScore) {
+      if (typeof wordOrScore === 'object' && wordOrScore !== null) {
+        if (typeof wordOrScore.srsInterval === 'number' && wordOrScore.srsInterval > 0) {
+          return wordOrScore.srsInterval;
+        }
+        const score = getWordScore(wordOrScore);
+        return getReviewIntervalDays(score);
+      }
+      const score = typeof wordOrScore === 'number' ? wordOrScore : 0;
       if (score >= 100) return 30;
       if (score >= 76) return 14;
       if (score >= 51) return 7;
       if (score >= 26) return 3;
       return 1; // 0 - 25%
     }
+    window.getReviewIntervalDays = getReviewIntervalDays;
 
     // =========================================================================
     // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-56)
@@ -26509,8 +26637,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       return words.filter(w => {
         if (archivedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
-        if (score <= 0) return false; // Words with 0% mastery have not been learned yet, exclude from review queue
-        const intervalDays = getReviewIntervalDays(score);
+        if (score <= 0 && !w.srsLastReview && !w.lastReviewedAt) return false;
+
+        // If word has explicit SM-2 nextReviewAt date
+        if (w.srsNextReview) {
+          const nextTime = new Date(w.srsNextReview).getTime();
+          if (!isNaN(nextTime) && nextTime > 0) {
+            return now >= nextTime;
+          }
+        }
+
+        const intervalDays = getReviewIntervalDays(w);
         const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         if (!lastTime) return false;
         const diffDays = (now - lastTime) / msPerDay;
@@ -33982,12 +34119,54 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       return toggleSpeakingRecord();
     }
 
+    function recordSpeakingWeakPhonemes(data, word) {
+      if (!data) return;
+      try {
+        const foundWeak = [];
+        const diag = data.phonemeDiagnostics || data.accuracyDetails;
+        const ending = (diag?.endingSounds || diag?.endingSound || '').toLowerCase();
+        const stress = (diag?.stress || '').toLowerCase();
+        const feedback = (data.feedbackVi || '').toLowerCase();
+
+        if (ending.includes('thiếu') || ending.includes('nuốt') || ending.includes('sai') || ending.includes('chưa') || ending.includes('yếu')) {
+          if (word && word.term) {
+            const lastChar = word.term.slice(-1).toLowerCase();
+            if (['s', 't', 'd', 'k', 'p', 'z'].includes(lastChar)) {
+              foundWeak.push(`Âm đuôi /${lastChar}/ (từ "${word.term}")`);
+            } else {
+              foundWeak.push(`Âm đuôi từ "${word.term}"`);
+            }
+          }
+        }
+        if (stress.includes('sai') || stress.includes('chưa đúng') || stress.includes('lệch')) {
+          if (word && word.term) foundWeak.push(`Trọng âm từ "${word.term}"`);
+        }
+        if (feedback.includes('âm bồi')) {
+          foundWeak.push('Đọc kiểu âm bồi tiếng Việt');
+        }
+
+        if (foundWeak.length > 0) {
+          let existing = [];
+          try {
+            existing = JSON.parse(localStorage.getItem('vocaflow_speaking_weak_phonemes') || '[]');
+          } catch (e) { existing = []; }
+          if (!Array.isArray(existing)) existing = [];
+          foundWeak.forEach(item => {
+            if (!existing.includes(item)) existing.unshift(item);
+          });
+          existing = existing.slice(0, 10);
+          localStorage.setItem('vocaflow_speaking_weak_phonemes', JSON.stringify(existing));
+        }
+      } catch (e) {}
+    }
+
     function renderDiagnosticResult(data, countAsTake = true) {
       speakingFlowState = 'evaluated';
       const currentWord = speakingWordsList[currentSpeakingIndex];
       let score = Math.max(0, Math.min(100, Math.round(Number(data.score) || 0)));
 
       if (countAsTake) {
+        recordSpeakingWeakPhonemes(data, currentWord);
         speakingTakes.push(score);
         speakingCurrentTakeIndex = speakingTakes.length;
         const isFloor = score >= speakingFloorScore;
@@ -34445,6 +34624,31 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         renderAutoCardOnly(autoFlashcardIndex);
       }
     }
+
+    function rateAutoFlashcardRecall(rating) {
+      if (!autoFlashcardList || autoFlashcardList.length === 0) return;
+      const word = autoFlashcardList[autoFlashcardIndex];
+      if (!word) return;
+
+      const sm2 = typeof applySm2RatingToWord === 'function' ? applySm2RatingToWord(word, rating) : null;
+      const intervalDays = sm2 ? sm2.interval : (rating === 3 ? 6 : rating === 2 ? 3 : 1);
+
+      const labels = {
+        1: '❌ Chưa rõ (Lặp lại ôn sớm)',
+        2: `🤔 Mang máng (Chu kỳ: ${intervalDays} ngày)`,
+        3: `✅ Đã thuộc (Chu kỳ: ${intervalDays} ngày)`
+      };
+      showToast(labels[rating] || '🎯 Đã ghi nhận đánh giá SM-2!');
+
+      const btn = document.getElementById('btn-autofc-rate-' + rating);
+      if (btn) {
+        btn.style.transform = 'scale(0.92)';
+        setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 140);
+      }
+
+      nextAutoFlashcard();
+    }
+    window.rateAutoFlashcardRecall = rateAutoFlashcardRecall;
 
     function exitAutoFlashcard(force = false) {
       // v0.10.9-alpha-30: Auto Flashcard allows free exit anytime without interruption/penalty modal
@@ -37733,6 +37937,54 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       };
     }
 
+    function getLearnerProfileContext() {
+      const items = [];
+      if (currentUser && currentUser.displayName) {
+        items.push(`Tên học viên: ${currentUser.displayName}`);
+      }
+      const streak = (typeof getFlowStreakCount === 'function') ? getFlowStreakCount() : (parseInt(localStorage.getItem('vocaflow_flow_streak') || '0', 10));
+      if (streak > 0) {
+        items.push(`Chuỗi học tập liên tục: ${streak} ngày.`);
+      }
+
+      // Struggling words / low mastery words
+      const weakWords = words.filter(w => {
+        if (currentDeckId && w.deckId !== currentDeckId) return false;
+        const score = typeof getWordScore === 'function' ? getWordScore(w) : (w.masteryScore || 0);
+        return score > 0 && score < 60;
+      }).slice(0, 8);
+
+      if (weakWords.length > 0) {
+        const str = weakWords.map(w => `"${w.term}" (${w.definitionVi || w.definition || ''})`).join(', ');
+        items.push(`Từ vựng học viên đang gặp khó khăn (điểm thấp): ${str}`);
+      }
+
+      // Starred words in active deck
+      const starredWords = words.filter(w => {
+        if (currentDeckId && w.deckId !== currentDeckId) return false;
+        return !!w.isStarred;
+      }).slice(0, 8);
+
+      if (starredWords.length > 0) {
+        const str = starredWords.map(w => `"${w.term}" (${w.definitionVi || w.definition || ''})`).join(', ');
+        items.push(`Từ vựng trọng tâm được đánh dấu sao ⭐: ${str}`);
+      }
+
+      // Common speaking errors (e.g. dropped endings /s/, /t/, /d/)
+      try {
+        const rawPhonemes = localStorage.getItem('vocaflow_speaking_weak_phonemes');
+        if (rawPhonemes) {
+          const arr = JSON.parse(rawPhonemes);
+          if (Array.isArray(arr) && arr.length > 0) {
+            items.push(`Các âm học viên hay phát âm chưa chuẩn / nuốt âm đuôi: ${arr.slice(0, 6).join(', ')}`);
+          }
+        }
+      } catch (e) {}
+
+      if (items.length === 0) return '';
+      return `\n[HỒ SƠ NĂNG LỰC & LỊCH SỬ HỌC VIÊN]:\n- ${items.join('\n- ')}\n(Hãy chủ động ghi nhớ các điểm yếu, từ vựng khó trên để cá nhân hóa lời khuyên, bài tập và ví dụ phù hợp nhất!)\n`;
+    }
+
     function updateAiMentorContextUI() {
       try {
         const ctx = getCurrentStudyContext();
@@ -37752,6 +38004,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             badgeEl.style.color = '#a5b4fc';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Kể chuyện với từ này</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_deep')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Giải thích sâu</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_compare')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">⚔️ Phân biệt từ</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_examples')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">📝 3 câu ví dụ</button>
@@ -37767,6 +38020,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             badgeEl.style.color = '#34d399';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Kể chuyện với từ khó</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_summary')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt VocaDeck</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_quiz')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz bộ này</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_roleplay')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay hội thoại</button>
@@ -37780,6 +38034,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             badgeEl.style.color = '#38bdf8';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Viết truyện từ vựng</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('grammar')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('translate')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Dịch bản xứ</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('read')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
@@ -37805,6 +38060,25 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         promptText = '🎙️ Giúp tao luyện đọc câu tiếng Anh này: ';
       } else if (chipKey === 'quiz_free') {
         promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm chủ đề: ';
+      } else if (chipKey === 'deck_story') {
+        let targetWords = [];
+        if (ctx.deck) {
+          const deckWords = words.filter(w => w.deckId === ctx.deck.id);
+          const starredOrWeak = deckWords.filter(w => w.isStarred || getWordScore(w) < 70);
+          targetWords = (starredOrWeak.length > 0 ? starredOrWeak : deckWords).slice(0, 8);
+        } else if (ctx.word) {
+          targetWords = [ctx.word];
+          const sameDeckWords = words.filter(w => w.deckId === ctx.word.deckId && w.id !== ctx.word.id).slice(0, 5);
+          targetWords = [...targetWords, ...sameDeckWords];
+        } else {
+          const starredOrWeak = words.filter(w => w.isStarred || (getWordScore(w) > 0 && getWordScore(w) < 70)).slice(0, 8);
+          targetWords = (starredOrWeak.length > 0 ? starredOrWeak : words).slice(0, 6);
+        }
+
+        const wordTerms = targetWords.map(w => w.term).filter(Boolean);
+        const wordsListStr = wordTerms.join(', ');
+
+        promptText = `📖 Hãy viết một mẩu truyện ngắn hoặc bài báo sinh động (khoảng 120-180 từ) lồng ghép tự nhiên các từ vựng này: ${wordsListStr}. Hãy in đậm **từ vựng** kèm nghĩa tiếng Việt trong ngoặc và đặt 1 câu hỏi tương tác để tôi trả lời nhé!`;
       } else if (chipKey === 'deck_summary') {
         const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
         promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong VocaDeck "${title}"`;
@@ -38513,6 +38787,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const systemInstruction = `Bạn là VocaMentor AI - Cố vấn học tập tiếng Anh kiêm chuyên gia phân tích hình ảnh/ngữ liệu của ứng dụng VocaFlow, vận hành trên mô hình Gemini 2.0 Flash Multimodal.
 ${contextInfo}
+${getLearnerProfileContext()}
 Quy tắc phản hồi quan trọng:
 1. Nếu người dùng đính kèm ảnh (ảnh chụp bài tập, trang sách, đề thi, bảng từ vựng...): Hãy phân tích kỹ nội dung trong ảnh, giải thích các câu hỏi/từ vựng liên quan, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết bằng tiếng Việt.
 2. Giải thích ngắn gọn, trực diện, dễ hiểu bằng tiếng Việt, dùng Markdown in đậm **từ vựng/cấu trúc**.
@@ -55307,6 +55582,15 @@ Quy tắc phản hồi quan trọng:
         if (e.code === 'Space') {
           e.preventDefault();
           toggleAutoFlashcardPlayPause();
+        } else if (e.key === '1' || e.code === 'Digit1' || e.code === 'Numpad1') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(1);
+        } else if (e.key === '2' || e.code === 'Digit2' || e.code === 'Numpad2') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(2);
+        } else if (e.key === '3' || e.code === 'Digit3' || e.code === 'Numpad3') {
+          e.preventDefault();
+          if (typeof rateAutoFlashcardRecall === 'function') rateAutoFlashcardRecall(3);
         } else if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
           nextAutoFlashcard();

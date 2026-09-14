@@ -616,6 +616,54 @@
       };
     }
 
+    function getLearnerProfileContext() {
+      const items = [];
+      if (currentUser && currentUser.displayName) {
+        items.push(`Tên học viên: ${currentUser.displayName}`);
+      }
+      const streak = (typeof getFlowStreakCount === 'function') ? getFlowStreakCount() : (parseInt(localStorage.getItem('vocaflow_flow_streak') || '0', 10));
+      if (streak > 0) {
+        items.push(`Chuỗi học tập liên tục: ${streak} ngày.`);
+      }
+
+      // Struggling words / low mastery words
+      const weakWords = words.filter(w => {
+        if (currentDeckId && w.deckId !== currentDeckId) return false;
+        const score = typeof getWordScore === 'function' ? getWordScore(w) : (w.masteryScore || 0);
+        return score > 0 && score < 60;
+      }).slice(0, 8);
+
+      if (weakWords.length > 0) {
+        const str = weakWords.map(w => `"${w.term}" (${w.definitionVi || w.definition || ''})`).join(', ');
+        items.push(`Từ vựng học viên đang gặp khó khăn (điểm thấp): ${str}`);
+      }
+
+      // Starred words in active deck
+      const starredWords = words.filter(w => {
+        if (currentDeckId && w.deckId !== currentDeckId) return false;
+        return !!w.isStarred;
+      }).slice(0, 8);
+
+      if (starredWords.length > 0) {
+        const str = starredWords.map(w => `"${w.term}" (${w.definitionVi || w.definition || ''})`).join(', ');
+        items.push(`Từ vựng trọng tâm được đánh dấu sao ⭐: ${str}`);
+      }
+
+      // Common speaking errors (e.g. dropped endings /s/, /t/, /d/)
+      try {
+        const rawPhonemes = localStorage.getItem('vocaflow_speaking_weak_phonemes');
+        if (rawPhonemes) {
+          const arr = JSON.parse(rawPhonemes);
+          if (Array.isArray(arr) && arr.length > 0) {
+            items.push(`Các âm học viên hay phát âm chưa chuẩn / nuốt âm đuôi: ${arr.slice(0, 6).join(', ')}`);
+          }
+        }
+      } catch (e) {}
+
+      if (items.length === 0) return '';
+      return `\n[HỒ SƠ NĂNG LỰC & LỊCH SỬ HỌC VIÊN]:\n- ${items.join('\n- ')}\n(Hãy chủ động ghi nhớ các điểm yếu, từ vựng khó trên để cá nhân hóa lời khuyên, bài tập và ví dụ phù hợp nhất!)\n`;
+    }
+
     function updateAiMentorContextUI() {
       try {
         const ctx = getCurrentStudyContext();
@@ -635,6 +683,7 @@
             badgeEl.style.color = '#a5b4fc';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Kể chuyện với từ này</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_deep')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Giải thích sâu</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_compare')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">⚔️ Phân biệt từ</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('word_examples')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">📝 3 câu ví dụ</button>
@@ -650,6 +699,7 @@
             badgeEl.style.color = '#34d399';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Kể chuyện với từ khó</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_summary')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">💡 Tóm tắt VocaDeck</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_quiz')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Mini Quiz bộ này</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_roleplay')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎭 Roleplay hội thoại</button>
@@ -663,6 +713,7 @@
             badgeEl.style.color = '#38bdf8';
           }
           chipsHtml = `
+            <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('deck_story')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.4); font-weight: 700;">📖 Viết truyện từ vựng</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('grammar')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🧐 Sửa ngữ pháp</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('translate')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎯 Dịch bản xứ</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="triggerAiQuickChip('read')" style="font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;">🎙️ Luyện phát âm</button>
@@ -688,6 +739,25 @@
         promptText = '🎙️ Giúp tao luyện đọc câu tiếng Anh này: ';
       } else if (chipKey === 'quiz_free') {
         promptText = '🎯 Tạo cho tao 1 câu đố trắc nghiệm chủ đề: ';
+      } else if (chipKey === 'deck_story') {
+        let targetWords = [];
+        if (ctx.deck) {
+          const deckWords = words.filter(w => w.deckId === ctx.deck.id);
+          const starredOrWeak = deckWords.filter(w => w.isStarred || getWordScore(w) < 70);
+          targetWords = (starredOrWeak.length > 0 ? starredOrWeak : deckWords).slice(0, 8);
+        } else if (ctx.word) {
+          targetWords = [ctx.word];
+          const sameDeckWords = words.filter(w => w.deckId === ctx.word.deckId && w.id !== ctx.word.id).slice(0, 5);
+          targetWords = [...targetWords, ...sameDeckWords];
+        } else {
+          const starredOrWeak = words.filter(w => w.isStarred || (getWordScore(w) > 0 && getWordScore(w) < 70)).slice(0, 8);
+          targetWords = (starredOrWeak.length > 0 ? starredOrWeak : words).slice(0, 6);
+        }
+
+        const wordTerms = targetWords.map(w => w.term).filter(Boolean);
+        const wordsListStr = wordTerms.join(', ');
+
+        promptText = `📖 Hãy viết một mẩu truyện ngắn hoặc bài báo sinh động (khoảng 120-180 từ) lồng ghép tự nhiên các từ vựng này: ${wordsListStr}. Hãy in đậm **từ vựng** kèm nghĩa tiếng Việt trong ngoặc và đặt 1 câu hỏi tương tác để tôi trả lời nhé!`;
       } else if (chipKey === 'deck_summary') {
         const title = ctx.deck ? ctx.deck.title : 'VocaDeck này';
         promptText = `💡 Tóm tắt các chủ điểm từ vựng và cấu trúc quan trọng nhất trong VocaDeck "${title}"`;
@@ -1396,6 +1466,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ (không markdown block, khô
 
       const systemInstruction = `Bạn là VocaMentor AI - Cố vấn học tập tiếng Anh kiêm chuyên gia phân tích hình ảnh/ngữ liệu của ứng dụng VocaFlow, vận hành trên mô hình Gemini 2.0 Flash Multimodal.
 ${contextInfo}
+${getLearnerProfileContext()}
 Quy tắc phản hồi quan trọng:
 1. Nếu người dùng đính kèm ảnh (ảnh chụp bài tập, trang sách, đề thi, bảng từ vựng...): Hãy phân tích kỹ nội dung trong ảnh, giải thích các câu hỏi/từ vựng liên quan, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết bằng tiếng Việt.
 2. Giải thích ngắn gọn, trực diện, dễ hiểu bằng tiếng Việt, dùng Markdown in đậm **từ vựng/cấu trúc**.

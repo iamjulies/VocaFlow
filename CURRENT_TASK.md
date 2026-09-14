@@ -1,37 +1,39 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-5 (Build 306)`  
+> **Phiên bản mục tiêu:** `v0.10.10-6 (Build 307)`  
 > **Cập nhật lần cuối:** 2026-09-14  
 > **Trạng thái:** ✅ **HOÀN TẤT KIỂM THỬ CDP & ĐÃ XUẤT BẢN ĐA NỀN TẢNG (100%)**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-5 Build 306)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-6 Build 307)
 
-- [x] **Khắc Phục Luồng Thanh Toán VietQR VocaVIP & Mua VocaSpin - Lưu Trực Tiếp Lên Firebase RTDB (08-wallet-economy.js & modal-vip-pricing.html)**:
-  - Xóa bỏ hoàn toàn cơ chế bắn lỗi giả mạo sau 150s (`checkPendingVipPaymentStatus`) gây hoang mang cho người dùng đã chuyển khoản thực tế.
-  - Nâng cấp hàm `confirmVipPaymentSubmitted()` và `confirmSpinTransferSent()`: tự động khởi tạo đơn hàng với mã định danh duy nhất (`orderId`), đầy đủ thông tin tài khoản, số tiền, cú pháp chuyển khoản và thời gian.
-  - Gửi và lưu trữ đơn hàng trực tiếp lên Firebase Realtime Database tại `/vip_orders/${orderId}.json`, `/spin_orders/${orderId}.json` và danh mục đơn cá nhân `/users/${uid}/orders/${orderId}.json` để Admin đối soát và phê duyệt.
-  - Cung cấp thông tin đối soát minh bạch kèm thông tin liên hệ Admin NONG DUC HAO (Zalo: 0876048326) trên Notification Center.
+- [x] **Nâng Cấp Thuật Toán Lặp Lại Ngắt Quãng SRS Chuẩn SuperMemo-2 / Ebbinghaus (04-decks-manager.js & 07-speaking-engine.js)**:
+  - Chuyển đổi từ 5 mốc phân loại cứng sơ sài sang thuật toán Spaced Repetition System (SRS) SM-2 chuẩn hóa.
+  - Tính toán chu kỳ giãn cách động (`srsInterval`) dựa trên Hệ số dễ (`srsEaseFactor`), Số lần lặp lại liên tiếp (`srsRepetition`) và độ quên lãng Ebbinghaus.
+  - Cung cấp các hàm nòng cốt `calculateSm2Review(word, rating)` và `applySm2RatingToWord(word, rating)` tự động co giãn chu kỳ ngày ôn tập chính xác cho từng từ vựng.
+  - Cập nhật `getReviewIntervalDays(word)` và `getDueReviewWords()` hỗ trợ ưu tiên mốc thời gian `srsNextReview` chính xác đến từng mili-giây.
+  - Thêm thanh đánh giá 3 mức độ nhớ nhanh trong chế độ Auto Flashcard (`screen-autofc.html`): `[1] Chưa Rõ` (1 ngày), `[2] Mang Máng` (3-5 ngày), `[3] Nhớ Rồi` (SM-2).
+  - Hỗ trợ phím tắt siêu tốc `1`, `2`, `3` trên bàn phím (`app.js`).
+  - Cơ chế nghe thụ động trung tính: Khi người dùng để Auto Flashcard chạy tự động mà không nhấn đánh giá, hệ thống vẫn chuyển thẻ mượt mà mà không phạt điểm hay phá vỡ chu kỳ ôn tập.
 
-- [x] **Khắc Phục Mâu Thuẫn Quyền Hạn VocaMentor AI Giữa Bảng Giá Và Code Thực Tế (09-ai-mentor.js & modal-ai-mentor.html)**:
-  - Xóa bỏ đoạn mã khóa cứng `if (isGuest || !isVip) { vView.style.display = 'flex'; return; }` chặn hoàn toàn tài khoản Free.
-  - Triển khai đúng cam kết trong bảng giá gói Flower Free (0đ): Người dùng tài khoản thường đăng nhập được sử dụng 5 tin nhắn/ngày cùng Trợ lý AI VocaMentor.
-  - Người dùng Guest chưa đăng nhập được hiển thị thông báo hướng dẫn đăng nhập nhận 5 tin nhắn miễn phí mỗi ngày.
-  - Cập nhật huy hiệu hiển thị hạn ngạch (`X/5 lượt free` / `👑 VocaVIP Vô Hạn`) và thanh thông báo rõ ràng, chuyên nghiệp.
+- [x] **VocaMentor AI Trí Nhớ Dài Hạn & Hồ Sơ Năng Lực Học Viên (09-ai-mentor.js & 07-speaking-engine.js)**:
+  - Hồ sơ năng lực học viên (Learner Profile Context):
+    - Tự động tổng hợp và truyền ngữ cảnh dài hạn cho AI qua `getLearnerProfileContext()`: Tên học viên, chuỗi ngày học Streak, các từ vựng đang gặp khó khăn (điểm ghi nhớ thấp < 60%), các từ trọng tâm được đánh dấu sao ⭐.
+    - Tích hợp cơ chế ghi nhận lỗi phát âm âm vị `recordSpeakingWeakPhonemes()` (ví dụ hay nuốt ending sound /s/, /t/, /d/, lệch trọng âm, âm bồi) từ phòng Speaking Lab vào trí nhớ để AI Mentor nhắc nhở và thiết kế bài tập cá nhân hóa.
+    - Nạp ngữ cảnh hồ sơ năng lực trực tiếp vào `systemInstruction` của Gemini AI trong `handleSendAiChatMessage()`.
+  - Tính năng "Trò chuyện với Bộ từ" (`deck_story`):
+    - Bổ sung Chip hành động nhanh `📖 Viết truyện từ vựng` / `📖 Kể chuyện với từ khó` trong mọi ngữ cảnh học (Thẻ từ, VocaDeck, Tự do).
+    - Khi nhấn chip, AI tự động lấy 5-8 từ vựng yếu / đánh dấu sao trong bộ từ hiện tại và khởi tạo prompt yêu cầu VocaMentor AI viết một mẩu truyện/bài báo sinh động, in đậm từ vựng và đặt câu hỏi đọc hiểu tương tác.
 
-- [x] **Loại Bỏ Lưu Trữ Trùng Lặp (Double Storage) Lịch Sử Chat AI (09-ai-mentor.js)**:
-  - Tinh gọn cơ chế lưu trữ lịch sử chat AI: Chỉ lưu duy nhất vào key người dùng `vocaflow_ai_chat_history_${uid}` (hoặc `vocaflow_ai_chat_history_guest` đối với khách).
-  - Tự động di chuyển dữ liệu cũ và xóa sạch key thừa `vocaflow_ai_chat_history`, tiết kiệm 50% dung lượng localStorage trình duyệt.
-
-- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-5 Build 306)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-5 (Build 306)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-5 (Build 306)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-5 (Build 306)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-5 Build 306`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-5'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-5 (Build 306)'`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` & `GITHUB_RELEASE/VocaFlow_Windows_App/sw.js` (`vocaflow-pwa-v0.10.10-5`)
-  - `pubspec.yaml` (`version: 0.10.10+306`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-5`)
-  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.10-5_Windows_Portable.zip`, commit `feat: Release v0.10.10-5 (Build 306)`)
-  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.10-5 (Build 306)`)
+- [x] **Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-6 Build 307)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-6 (Build 307)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-6 (Build 307)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-6 (Build 307)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-6 Build 307`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-6'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-6 (Build 307)'`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` & `GITHUB_RELEASE/VocaFlow_Windows_App/sw.js` (`vocaflow-pwa-v0.10.10-6`)
+  - `pubspec.yaml` (`version: 0.10.10+307`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-6`)
+  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.10-6_Windows_Portable.zip`, commit `feat: Release v0.10.10-6 (Build 307)`)
+  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.10-6 (Build 307)`)

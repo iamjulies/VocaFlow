@@ -1969,17 +1969,117 @@
     }
 
     // =========================================================================
-    // SPACED REPETITION SYSTEM (SRS) REVIEW QUEUE ENGINE (v0.0.10.0)
+    // SUPERMEMO-2 (SM-2) / FSRS SPACED REPETITION ENGINE (v0.10.10-6)
     // =========================================================================
     let reviewDueWordsList = [];
 
-    function getReviewIntervalDays(score) {
+    function calculateSm2Review(word, rating) {
+      // rating: 1 (Chưa rõ / Quên), 2 (Mang máng), 3 (Nhớ rồi / Đã thuộc)
+      let grade = 4; // default neutral
+      if (rating === 1 || rating === 'forgot') grade = 1;
+      else if (rating === 2 || rating === 'vague') grade = 3;
+      else if (rating === 3 || rating === 'good') grade = 5;
+      else if (typeof rating === 'number') grade = rating;
+
+      let rep = typeof word.srsRepetition === 'number' ? word.srsRepetition : (word.masteryScore >= 80 ? 3 : word.masteryScore >= 50 ? 2 : word.masteryScore >= 20 ? 1 : 0);
+      let ef = typeof word.srsEaseFactor === 'number' ? word.srsEaseFactor : 2.5;
+      let interval = typeof word.srsInterval === 'number' && word.srsInterval > 0 ? word.srsInterval : getReviewIntervalDays(getWordScore(word));
+
+      // SM-2 Ease Factor formula: EF' = EF + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02))
+      ef = ef + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
+      if (ef < 1.3) ef = 1.3;
+
+      if (grade >= 3) {
+        if (rep === 0) {
+          interval = 1;
+        } else if (rep === 1) {
+          interval = (grade === 5) ? 6 : 3;
+        } else {
+          interval = Math.round(interval * ef);
+        }
+        rep++;
+      } else {
+        // Forgot: reset repetition, restart at 1 day
+        rep = 0;
+        interval = 1;
+      }
+
+      // Cap interval between 1 and 365 days
+      interval = Math.max(1, Math.min(365, interval));
+
+      const now = Date.now();
+      const nextReviewTime = now + (interval * 24 * 60 * 60 * 1000);
+
+      return {
+        repetition: rep,
+        easeFactor: Math.round(ef * 100) / 100,
+        interval: interval,
+        lastReviewedAt: new Date(now).toISOString(),
+        nextReviewAt: new Date(nextReviewTime).toISOString()
+      };
+    }
+    window.calculateSm2Review = calculateSm2Review;
+
+    function applySm2RatingToWord(word, rating) {
+      if (!word || !word.id) return null;
+      const sm2 = calculateSm2Review(word, rating);
+
+      word.srsRepetition = sm2.repetition;
+      word.srsEaseFactor = sm2.easeFactor;
+      word.srsInterval = sm2.interval;
+      word.srsLastReview = sm2.lastReviewedAt;
+      word.srsNextReview = sm2.nextReviewAt;
+      word.lastReviewedAt = sm2.lastReviewedAt;
+      word.updatedAt = sm2.lastReviewedAt;
+
+      // Adjust mastery score accordingly
+      let currentScore = getWordScore(word);
+      if (rating === 3) {
+        word.masteryScore = Math.min(100, Math.max(currentScore + 15, 60));
+      } else if (rating === 2) {
+        word.masteryScore = Math.min(100, Math.max(currentScore + 5, 30));
+      } else if (rating === 1) {
+        word.masteryScore = Math.max(10, currentScore - 15);
+      }
+
+      // Sync into master words list
+      const wIdx = words.findIndex(w => w.id === word.id);
+      if (wIdx !== -1) {
+        words[wIdx].srsRepetition = sm2.repetition;
+        words[wIdx].srsEaseFactor = sm2.easeFactor;
+        words[wIdx].srsInterval = sm2.interval;
+        words[wIdx].srsLastReview = sm2.lastReviewedAt;
+        words[wIdx].srsNextReview = sm2.nextReviewAt;
+        words[wIdx].lastReviewedAt = sm2.lastReviewedAt;
+        words[wIdx].updatedAt = sm2.lastReviewedAt;
+        words[wIdx].masteryScore = word.masteryScore;
+      }
+
+      saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
+
+      return sm2;
+    }
+    window.applySm2RatingToWord = applySm2RatingToWord;
+
+    function getReviewIntervalDays(wordOrScore) {
+      if (typeof wordOrScore === 'object' && wordOrScore !== null) {
+        if (typeof wordOrScore.srsInterval === 'number' && wordOrScore.srsInterval > 0) {
+          return wordOrScore.srsInterval;
+        }
+        const score = getWordScore(wordOrScore);
+        return getReviewIntervalDays(score);
+      }
+      const score = typeof wordOrScore === 'number' ? wordOrScore : 0;
       if (score >= 100) return 30;
       if (score >= 76) return 14;
       if (score >= 51) return 7;
       if (score >= 26) return 3;
       return 1; // 0 - 25%
     }
+    window.getReviewIntervalDays = getReviewIntervalDays;
 
     // =========================================================================
     // SRS REVIEW QUEUE & SUBSET SELECTION ENGINE (v0.10.9-56)
@@ -2036,8 +2136,17 @@
       return words.filter(w => {
         if (archivedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
-        if (score <= 0) return false; // Words with 0% mastery have not been learned yet, exclude from review queue
-        const intervalDays = getReviewIntervalDays(score);
+        if (score <= 0 && !w.srsLastReview && !w.lastReviewedAt) return false;
+
+        // If word has explicit SM-2 nextReviewAt date
+        if (w.srsNextReview) {
+          const nextTime = new Date(w.srsNextReview).getTime();
+          if (!isNaN(nextTime) && nextTime > 0) {
+            return now >= nextTime;
+          }
+        }
+
+        const intervalDays = getReviewIntervalDays(w);
         const lastTime = new Date(w.lastReviewedAt || w.updatedAt || w.createdAt || 0).getTime();
         if (!lastTime) return false;
         const diffDays = (now - lastTime) / msPerDay;
