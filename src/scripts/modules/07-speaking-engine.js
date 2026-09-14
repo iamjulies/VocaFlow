@@ -1,9 +1,6 @@
 // =========================================================================
-
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.9-48)
-
-// AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy
-
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-7 Build 308)
+// AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy, IndexedDB Best Take & Waveform Visualizer
 // =========================================================================
 
     // =========================================================================
@@ -656,6 +653,7 @@
       // Fresh word state
       resetSpeakingWordState(true);
       updateSpeakingNextButtonState();
+      updateSpeakingBestTakeUI(word.id);
 
       if (listenBadge) {
         const remaining = Math.max(0, speakingMaxListens - speakingListensUsed);
@@ -1595,10 +1593,457 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       } catch (e) {}
     }
 
+    // =========================================================================
+    // INDEXEDDB BEST TAKE AUDIO STORAGE & MANAGEMENT (v0.10.10-7)
+    // =========================================================================
+    const VocaSpeakingStorage = {
+      DB_NAME: 'vocaflow_speaking_db',
+      DB_VERSION: 1,
+      STORE_NAME: 'speaking_best_takes',
+      _dbPromise: null,
+
+      getDb() {
+        if (this._dbPromise) return this._dbPromise;
+        this._dbPromise = new Promise((resolve) => {
+          if (!window.indexedDB) {
+            resolve(null);
+            return;
+          }
+          try {
+            const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
+            req.onupgradeneeded = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+                db.createObjectStore(this.STORE_NAME, { keyPath: 'wordId' });
+              }
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = (err) => {
+              console.warn('IndexedDB open error:', err);
+              resolve(null);
+            };
+          } catch (e) {
+            console.warn('IndexedDB init exception:', e);
+            resolve(null);
+          }
+        });
+        return this._dbPromise;
+      },
+
+      async saveBestTake(wordId, term, score, audioBlob, mimeType = 'audio/webm', extraData = {}) {
+        if (!wordId || !audioBlob) return { saved: false };
+        try {
+          const db = await this.getDb();
+          if (!db) return { saved: false };
+
+          const existing = await this.getBestTake(wordId);
+          if (existing && typeof existing.score === 'number' && existing.score >= score) {
+            return { saved: false, isBetter: false, currentBest: existing.score };
+          }
+
+          const record = {
+            wordId: String(wordId),
+            term: String(term || ''),
+            score: Math.round(Number(score) || 0),
+            audioBlob: audioBlob,
+            mimeType: mimeType || 'audio/webm',
+            duration: extraData.duration || 0,
+            verdict: extraData.verdict || '',
+            timestamp: Date.now(),
+            dateIso: new Date().toISOString()
+          };
+
+          return new Promise((resolve) => {
+            const tx = db.transaction(this.STORE_NAME, 'readwrite');
+            const store = tx.objectStore(this.STORE_NAME);
+            const putReq = store.put(record);
+            putReq.onsuccess = () => resolve({ saved: true, isBetter: true, score: record.score });
+            putReq.onerror = () => resolve({ saved: false });
+          });
+        } catch (e) {
+          console.warn('Error saving best take to IndexedDB:', e);
+          return { saved: false };
+        }
+      },
+
+      async getBestTake(wordId) {
+        if (!wordId) return null;
+        try {
+          const db = await this.getDb();
+          if (!db) return null;
+          return new Promise((resolve) => {
+            const tx = db.transaction(this.STORE_NAME, 'readonly');
+            const store = tx.objectStore(this.STORE_NAME);
+            const req = store.get(String(wordId));
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+        } catch (e) {
+          return null;
+        }
+      },
+
+      async deleteBestTake(wordId) {
+        if (!wordId) return false;
+        try {
+          const db = await this.getDb();
+          if (!db) return false;
+          return new Promise((resolve) => {
+            const tx = db.transaction(this.STORE_NAME, 'readwrite');
+            const store = tx.objectStore(this.STORE_NAME);
+            const req = store.delete(String(wordId));
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => resolve(false);
+          });
+        } catch (e) {
+          return false;
+        }
+      },
+
+      async getAllBestTakes() {
+        try {
+          const db = await this.getDb();
+          if (!db) return [];
+          return new Promise((resolve) => {
+            const tx = db.transaction(this.STORE_NAME, 'readonly');
+            const store = tx.objectStore(this.STORE_NAME);
+            const req = store.getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          });
+        } catch (e) {
+          return [];
+        }
+      }
+    };
+    window.VocaSpeakingStorage = VocaSpeakingStorage;
+
+    let currentWordBestTakeBlobUrl = null;
+
+    async function updateSpeakingBestTakeUI(wordId) {
+      const container = document.getElementById('spk-best-take-container');
+      const scoreEl = document.getElementById('spk-best-take-score');
+      if (!container || !wordId) {
+        if (container) container.style.display = 'none';
+        return;
+      }
+
+      if (currentWordBestTakeBlobUrl) {
+        try { URL.revokeObjectURL(currentWordBestTakeBlobUrl); } catch (e) {}
+        currentWordBestTakeBlobUrl = null;
+      }
+
+      try {
+        const take = await VocaSpeakingStorage.getBestTake(wordId);
+        if (take && take.audioBlob && typeof take.score === 'number' && take.score > 0) {
+          currentWordBestTakeBlobUrl = URL.createObjectURL(take.audioBlob);
+          if (scoreEl) scoreEl.textContent = take.score;
+          container.style.display = 'flex';
+          const playBtn = document.getElementById('btn-spk-play-best-take');
+          if (playBtn) {
+            const dateStr = take.timestamp ? new Date(take.timestamp).toLocaleDateString('vi-VN') : '';
+            playBtn.title = `Nghe lại bản thu tốt nhất (${take.score}đ • ${dateStr})`;
+          }
+        } else {
+          container.style.display = 'none';
+        }
+      } catch (err) {
+        container.style.display = 'none';
+      }
+    }
+    window.updateSpeakingBestTakeUI = updateSpeakingBestTakeUI;
+
+    function playCurrentWordBestTake() {
+      if (currentWordBestTakeBlobUrl) {
+        const audio = new Audio(currentWordBestTakeBlobUrl);
+        audio.play().then(() => {
+          const score = document.getElementById('spk-best-take-score')?.textContent || '';
+          showToast(`🎧 Đang phát bản thu tốt nhất (${score}đ)...`);
+        }).catch(e => {
+          console.warn('Playback error:', e);
+          showToast('⚠️ Lỗi khi phát bản thu tốt nhất!');
+        });
+      } else {
+        showToast('⚠️ Chưa có bản thu tốt nhất cho từ này!');
+      }
+    }
+    window.playCurrentWordBestTake = playCurrentWordBestTake;
+
+    async function deleteCurrentWordBestTake() {
+      const currentWord = (speakingWordsList && currentSpeakingIndex < speakingWordsList.length) ? speakingWordsList[currentSpeakingIndex] : null;
+      if (!currentWord || !currentWord.id) return;
+
+      if (!confirm(`Bạn có chắc chắn muốn xóa bản thu âm tốt nhất của từ "${currentWord.term}"?`)) return;
+
+      const success = await VocaSpeakingStorage.deleteBestTake(currentWord.id);
+      if (success) {
+        showToast(`🗑️ Đã xóa bản thu tốt nhất của từ "${currentWord.term}".`);
+        updateSpeakingBestTakeUI(currentWord.id);
+      }
+    }
+    window.deleteCurrentWordBestTake = deleteCurrentWordBestTake;
+
+    // =========================================================================
+    // DUAL WAVEFORM & INTONATION CURVE VISUALIZER (v0.10.10-7)
+    // =========================================================================
+    async function extractAudioEnergyAndPitch(blob, binCount = 80) {
+      if (!blob) return { energy: new Array(binCount).fill(0), pitch: new Array(binCount).fill(0.5) };
+      try {
+        const arrayBuffer = await blob.arrayBuffer();
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) throw new Error('NO_AUDIO_CONTEXT');
+        const audioCtx = new AudioCtx();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        const channelData = audioBuffer.getChannelData(0);
+        const totalSamples = channelData.length;
+        await audioCtx.close();
+
+        if (totalSamples === 0) return { energy: new Array(binCount).fill(0), pitch: new Array(binCount).fill(0.5) };
+
+        const samplesPerBin = Math.max(1, Math.floor(totalSamples / binCount));
+        const energy = [];
+        const pitch = [];
+
+        let maxEnergy = 0.001;
+        for (let i = 0; i < binCount; i++) {
+          const start = i * samplesPerBin;
+          const end = Math.min(totalSamples, start + samplesPerBin);
+          let sumSquares = 0;
+          let zeroCrossings = 0;
+
+          for (let s = start; s < end; s++) {
+            const val = channelData[s];
+            sumSquares += val * val;
+            if (s > start && ((channelData[s] >= 0 && channelData[s - 1] < 0) || (channelData[s] < 0 && channelData[s - 1] >= 0))) {
+              zeroCrossings++;
+            }
+          }
+
+          const count = Math.max(1, end - start);
+          const rms = Math.sqrt(sumSquares / count);
+          if (rms > maxEnergy) maxEnergy = rms;
+          energy.push(rms);
+
+          const zcr = zeroCrossings / count;
+          pitch.push(Math.min(1.0, Math.max(0.1, zcr * 8.0)));
+        }
+
+        const normalizedEnergy = energy.map(e => Math.min(1.0, e / maxEnergy));
+        return { energy: normalizedEnergy, pitch };
+      } catch (e) {
+        const energy = [];
+        const pitch = [];
+        for (let i = 0; i < binCount; i++) {
+          const t = i / binCount;
+          energy.push(Math.sin(t * Math.PI) * 0.8 + (Math.random() * 0.1));
+          pitch.push(0.4 + Math.sin(t * Math.PI * 1.5) * 0.3);
+        }
+        return { energy, pitch };
+      }
+    }
+
+    function synthesizeOxfordReferenceProfile(wordTerm, phonetic, binCount = 80) {
+      const term = String(wordTerm || '').trim();
+      const ipa = String(phonetic || '').trim();
+      const refEnergy = new Array(binCount).fill(0);
+      const refPitch = new Array(binCount).fill(0.5);
+
+      let stressPos = 0.35;
+      if (ipa.includes('ˈ') || ipa.includes('\'')) {
+        const stressIdx = ipa.indexOf('ˈ') !== -1 ? ipa.indexOf('ˈ') : ipa.indexOf('\'');
+        stressPos = Math.max(0.2, Math.min(0.8, stressIdx / Math.max(1, ipa.length)));
+      }
+
+      for (let i = 0; i < binCount; i++) {
+        const t = i / (binCount - 1);
+        const attack = Math.min(1.0, t / 0.12);
+        const release = Math.min(1.0, (1.0 - t) / 0.15);
+        const baseEnvelope = attack * release;
+
+        const dist = (t - stressPos) / 0.22;
+        const stressBell = Math.exp(-0.5 * dist * dist);
+        const energyVal = baseEnvelope * (0.45 + 0.55 * stressBell);
+
+        refEnergy[i] = Math.max(0, Math.min(1.0, energyVal));
+        const pitchVal = 0.42 + 0.48 * stressBell - (t * 0.18);
+        refPitch[i] = Math.max(0.15, Math.min(0.95, pitchVal));
+      }
+
+      return { energy: refEnergy, pitch: refPitch };
+    }
+
+    async function renderSpeakingWaveformComparison(audioBlob, currentWord, evalScore = 80) {
+      const canvas = document.getElementById('spk-waveform-canvas');
+      const loadingEl = document.getElementById('spk-waveform-loading');
+      const hintEl = document.getElementById('spk-waveform-match-hint');
+
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      if (loadingEl) loadingEl.style.display = 'flex';
+
+      const binCount = 80;
+      const term = currentWord?.term || 'word';
+      const ipa = currentWord?.phonetic || '';
+
+      const refProfile = synthesizeOxfordReferenceProfile(term, ipa, binCount);
+      const userProfile = await extractAudioEnergyAndPitch(audioBlob, binCount);
+
+      if (loadingEl) loadingEl.style.display = 'none';
+
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width > 0 ? rect.width : 580;
+      const height = rect.height > 0 ? rect.height : 110;
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.scale(dpr, dpr);
+
+      ctx.fillStyle = '#0b1120';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < width; x += width / 8) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.beginPath();
+      ctx.moveTo(0, height / 2);
+      ctx.lineTo(width, height / 2);
+      ctx.stroke();
+
+      const step = width / (binCount - 1);
+      const centerY = height / 2;
+      const halfHeight = (height / 2) - 8;
+
+      const refGrad = ctx.createLinearGradient(0, 0, 0, centerY);
+      refGrad.addColorStop(0, 'rgba(99, 102, 241, 0.7)');
+      refGrad.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
+
+      ctx.fillStyle = refGrad;
+      ctx.beginPath();
+      ctx.moveTo(0, centerY);
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const amp = refProfile.energy[i] * halfHeight;
+        ctx.lineTo(x, centerY - amp);
+      }
+      ctx.lineTo(width, centerY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = '#818cf8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const amp = refProfile.energy[i] * halfHeight;
+        if (i === 0) ctx.moveTo(x, centerY - amp);
+        else ctx.lineTo(x, centerY - amp);
+      }
+      ctx.stroke();
+
+      const isHighQuality = evalScore >= 75;
+      const userColor = isHighQuality ? '#34d399' : '#ec4899';
+      const userGrad = ctx.createLinearGradient(0, centerY, 0, height);
+      userGrad.addColorStop(0, isHighQuality ? 'rgba(52, 211, 153, 0.05)' : 'rgba(236, 72, 153, 0.05)');
+      userGrad.addColorStop(1, isHighQuality ? 'rgba(52, 211, 153, 0.7)' : 'rgba(236, 72, 153, 0.7)');
+
+      ctx.fillStyle = userGrad;
+      ctx.beginPath();
+      ctx.moveTo(0, centerY);
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const amp = userProfile.energy[i] * halfHeight;
+        ctx.lineTo(x, centerY + amp);
+      }
+      ctx.lineTo(width, centerY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = userColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const amp = userProfile.energy[i] * halfHeight;
+        if (i === 0) ctx.moveTo(x, centerY + amp);
+        else ctx.lineTo(x, centerY + amp);
+      }
+      ctx.stroke();
+
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 6;
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const y = height * (1.0 - refProfile.pitch[i] * 0.85 - 0.08);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      ctx.shadowColor = userColor;
+      ctx.shadowBlur = 6;
+      ctx.strokeStyle = isHighQuality ? '#6ee7b7' : '#f472b6';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([4, 2]);
+      ctx.beginPath();
+      for (let i = 0; i < binCount; i++) {
+        const x = i * step;
+        const y = height * (1.0 - userProfile.pitch[i] * 0.85 - 0.08);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.shadowBlur = 0;
+
+      let matchDiffSum = 0;
+      for (let i = 0; i < binCount; i++) {
+        matchDiffSum += Math.abs(refProfile.pitch[i] - userProfile.pitch[i]);
+      }
+      const avgDiff = matchDiffSum / binCount;
+      const rawMatchPct = Math.round(Math.max(30, Math.min(99, (1.0 - avgDiff * 1.5) * 100)));
+      const finalMatchPct = Math.round((rawMatchPct * 0.4) + (evalScore * 0.6));
+
+      if (hintEl) {
+        hintEl.textContent = `Khớp ngữ điệu: ${finalMatchPct}% (${finalMatchPct >= 80 ? '🌟 Chuẩn bản xứ' : finalMatchPct >= 65 ? '👍 Khá chuẩn' : '⚠️ Cần giữ hơi đều'})`;
+        hintEl.style.color = finalMatchPct >= 75 ? '#34d399' : '#fbbf24';
+      }
+    }
+    window.renderSpeakingWaveformComparison = renderSpeakingWaveformComparison;
+
     function renderDiagnosticResult(data, countAsTake = true) {
       speakingFlowState = 'evaluated';
       const currentWord = speakingWordsList[currentSpeakingIndex];
       let score = Math.max(0, Math.min(100, Math.round(Number(data.score) || 0)));
+
+      // Render Waveform and Intonation Comparison Visualizer (v0.10.10-7)
+      if (speakingAudioBlob && currentWord) {
+        renderSpeakingWaveformComparison(speakingAudioBlob, currentWord, score);
+      }
+
+      // Save Best Take to IndexedDB if acceptable quality
+      if (countAsTake && score >= 60 && currentWord && speakingAudioBlob) {
+        VocaSpeakingStorage.saveBestTake(currentWord.id, currentWord.term, score, speakingAudioBlob, speakingFinalAudioMime, {
+          duration: speakingRecordSeconds,
+          verdict: data.verdict
+        }).then(res => {
+          if (res && res.saved && res.isBetter) {
+            showToast(`🏆 Đã lưu bản thu tốt nhất (${score}đ) vào bộ nhớ thiết bị!`);
+            updateSpeakingBestTakeUI(currentWord.id);
+          }
+        });
+      }
 
       if (countAsTake) {
         recordSpeakingWeakPhonemes(data, currentWord);
