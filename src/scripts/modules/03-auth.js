@@ -6913,8 +6913,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       if (uid && reg[uid]) return reg[uid];
 
-      const cleanName = (name || '').trim().toLowerCase();
-      const cleanHandle = (handle || '').trim().toLowerCase().replace(/^@/, '');
       if (cleanName && nameMap[cleanName]) return nameMap[cleanName];
       if (cleanHandle && nameMap[cleanHandle]) return nameMap[cleanHandle];
 
