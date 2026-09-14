@@ -36,9 +36,9 @@
         }
       }
 
-      // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
+      // v0.10.10-9: Anti-Cheat Isolation for AI Study Mentor FAB & Study Screens
       const fab = document.getElementById('btn-ai-mentor-fab');
-      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(screenId);
       if (fab) {
         fab.style.display = isExamScreen ? 'none' : 'flex';
       }
@@ -61,11 +61,11 @@
 
     // MODAL CONTROL
     function openModal(id) {
-      if (id === 'modal-mistake-notebook') {
+      if (id === 'modal-mistake-notebook' || id === 'modal-ai-mentor') {
         const activeStudyScreen = document.querySelector('.screen.active');
-        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
           if (typeof showToast === 'function') {
-            showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+            showToast(`⚠️ Bạn đang trong phiên làm bài tập, không thể mở ${id === 'modal-ai-mentor' ? 'VocaMentor AI' : 'Sổ Tay Lỗi Sai'}!`);
           }
           return;
         }

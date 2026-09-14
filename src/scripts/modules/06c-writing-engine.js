@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-8 - SENTENCE WRITING LAB β)
-// AI-Powered Writing Lab with Thematic Word Linking & Band 8.0+ Native Polish
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-9 - SENTENCE WRITING LAB β)
+// AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
 let writingQuestionsList = [];
@@ -14,8 +14,8 @@ let writingSetupCustomWordList = null;
 let writingSessionPointsEarned = 0;
 let writingSessionWrongWords = [];
 let writingGradedQuestionIds = new Set();
-let writingHintsLeft = 5;
-let writingSkipsLeft = 3;
+let writingHintsUsed = 0;
+let writingSkipsUsed = 0;
 let writingStartTime = 0;
 let writingActiveTimeMs = 0;
 let writingIsCompleted = false;
@@ -250,8 +250,8 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   writingSessionPointsEarned = 0;
   writingSessionWrongWords = [];
   writingGradedQuestionIds.clear();
-  writingHintsLeft = 5;
-  writingSkipsLeft = 3;
+  writingHintsUsed = 0;
+  writingSkipsUsed = 0;
   writingStartTime = Date.now();
   writingIsCompleted = false;
   writingPolishedSentence = '';
@@ -260,8 +260,23 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
 
   updateWritingDifficultyBadge();
+  updateWritingWalletUI();
   showScreen('screen-writing');
   renderWritingCurrentQuestion();
+}
+
+function updateWritingWalletUI() {
+  const hintCountEl = document.getElementById('writing-hints-count');
+  const skipBtn = document.getElementById('btn-writing-skip');
+  const curHints = typeof getUserHints === 'function' ? getUserHints() : 0;
+  const curSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+  if (hintCountEl) {
+    hintCountEl.textContent = curHints > 0 ? curHints : '50đ';
+    hintCountEl.style.opacity = curHints > 0 ? '1' : '0.85';
+  }
+  if (skipBtn) {
+    skipBtn.textContent = `⏭️ VocaSkip (${curSkips > 0 ? curSkips : '100đ'})`;
+  }
 }
 
 function updateWritingDifficultyBadge() {
@@ -362,13 +377,8 @@ function renderWritingCurrentQuestion() {
     }
   }
 
-  // Update Skip button
-  const skipBtn = document.getElementById('btn-writing-skip');
-  if (skipBtn) skipBtn.textContent = `⏭️ VocaSkip (${writingSkipsLeft})`;
-
-  // Update Hints count
-  const hintCountEl = document.getElementById('writing-hints-count');
-  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+  // Update wallet UI (Hints & Skips counts)
+  updateWritingWalletUI();
 
   // Auto focus textarea
   setTimeout(() => {
@@ -470,8 +480,15 @@ async function evaluateWritingSentenceWithGemini(userSentence, question) {
   const wordDetails = question.targetWords.map(w => `${w.term} (${w.partOfSpeech || 'word'}): ${w.definitionVi || w.definition || ''}`).join('\n');
   const cfg = getWritingDifficultyConfig(question.difficulty);
 
-  const prompt = `You are an elite IELTS Writing Examiner and Native English Stylist (Band 8.5+).
+  const curBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+  const targetBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+
+  const prompt = `You are an elite IELTS Writing Evaluator and English Stylist.
 Evaluate the following student sentence written for a vocabulary mastery challenge.
+
+[LEARNER PROFILE]
+- Current English Proficiency: ${curBand !== 'none' ? `Band ${curBand}` : 'Intermediate (B1-B2)'}
+- Target Aim: Band ${targetBand}
 
 [TASK REQUIREMENTS]
 - Target words MUST be used: [${targetTerms}]
@@ -489,6 +506,8 @@ Evaluate thoroughly across 4 Pillars:
 3. Naturalness & Coherence (Native phrasing, flow, punctuation)
 4. Length & Task Compliance (Complied with target words and length)
 
+Calibrate your scoring standards, Vietnamese diagnostic advice, and polished rewrite specifically to help this learner progress towards their target (Band ${targetBand}). The polished rewrite should exemplify a natural, idiomatic Band ${targetBand} sentence incorporating the target words smoothly.
+
 Output MUST be valid JSON only (no markdown quotes, no triple backticks) matching this structure:
 {
   "score": 85,
@@ -499,8 +518,8 @@ Output MUST be valid JSON only (no markdown quotes, no triple backticks) matchin
     "naturalness": { "status": "pass", "note": "Cách diễn đạt tự nhiên, mạch lạc" },
     "length": { "status": "pass", "note": "Độ dài câu hợp lý và đáp ứng yêu cầu" }
   },
-  "polishedRewrite": "A refined Band 8.5+ native rewrite of the student's thought using the target words gracefully.",
-  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp từ vựng hoặc cấu trúc).",
+  "polishedRewrite": "A refined Band ${targetBand} rewrite of the student's thought using the target words gracefully.",
+  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp để hướng tới Band ${targetBand}).",
   "grammarNotesVi": "Ghi chú cấu trúc ngữ pháp quan trọng hoặc sửa lỗi sai nếu có.",
   "targetWordsComplied": true
 }`;
@@ -686,6 +705,11 @@ function renderWritingEvaluationResult(evalData, question) {
 
   // Render Polished Rewrite
   writingPolishedSentence = evalData.polishedRewrite || '';
+  const polishedTitleEl = document.getElementById('writing-polished-title-text') || document.getElementById('writing-polished-title');
+  if (polishedTitleEl) {
+    const targetBand = (currentUser && currentUser.targetBand) ? ` (Aim Band ${currentUser.targetBand})` : '';
+    polishedTitleEl.textContent = `Phiên Bản Viết Lại Chuẩn Mục Tiêu${targetBand}:`;
+  }
   const polishedTextEl = document.getElementById('writing-polished-text');
   if (polishedTextEl) {
     polishedTextEl.textContent = `"${writingPolishedSentence}"`;
@@ -780,14 +804,26 @@ function useWritingHint() {
   const q = writingQuestionsList[currentWritingIndex];
   if (!q) return;
 
-  if (writingHintsLeft <= 0) {
-    showToast('⚠️ Bạn đã dùng hết lượt gợi ý VocaHint cho phiên này!');
+  const curHints = typeof getUserHints === 'function' ? getUserHints() : 0;
+  const curPts = typeof getUserPoints === 'function' ? getUserPoints() : 0;
+  const hintCost = 50;
+
+  if (curHints <= 0 && curPts < hintCost) {
+    showToast('🪙 Bạn không đủ VoCoin (cần 50 VoCoin để đổi 1 Gợi ý)');
+    if (typeof openShopModal === 'function') openShopModal();
     return;
   }
 
-  writingHintsLeft--;
-  const hintCountEl = document.getElementById('writing-hints-count');
-  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+  if (curHints > 0) {
+    if (typeof setUserHints === 'function') setUserHints(curHints - 1);
+    showToast('💡 Đã dùng 1 VocaHint (còn ' + (typeof getUserHints === 'function' ? getUserHints() : 0) + ' lượt).');
+  } else {
+    if (typeof setUserPoints === 'function') setUserPoints(curPts - hintCost);
+    showToast('💡 Đã dùng 50 VoCoin để đổi 1 gợi ý VocaHint.');
+  }
+
+  writingHintsUsed++;
+  updateWritingWalletUI();
 
   const hintBox = document.getElementById('writing-hint-box');
   if (hintBox) {
@@ -801,15 +837,31 @@ function useWritingHint() {
     const randomHint = templates[Math.floor(Math.random() * templates.length)];
     hintBox.innerHTML = `💡 <strong>VocaHint:</strong> ${randomHint}`;
   }
-
-  showToast(`💡 Đã mở gợi ý ý tưởng! (Còn ${writingHintsLeft} lượt)`);
 }
 
 function useWritingSkip() {
-  if (writingSkipsLeft <= 0) {
-    showToast('⚠️ Bạn đã hết lượt VocaSkip cho phiên này!');
+  const curSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+  const curPts = typeof getUserPoints === 'function' ? getUserPoints() : 0;
+  const skipCost = 100;
+
+  if (curSkips <= 0 && curPts < skipCost) {
+    showToast('🪙 Bạn không đủ VoCoin (cần 100 VoCoin để đổi 1 VocaSkip)');
+    if (typeof openShopModal === 'function') openShopModal();
     return;
   }
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('skip');
+
+  if (curSkips > 0) {
+    if (typeof setUserSkips === 'function') setUserSkips(curSkips - 1);
+    showToast('⏭️ Đã dùng 1 VocaSkip miễn phí (còn ' + (typeof getUserSkips === 'function' ? getUserSkips() : 0) + ' lượt).');
+  } else {
+    if (typeof setUserPoints === 'function') setUserPoints(curPts - skipCost);
+    showToast('⏭️ Đã dùng 100 VoCoin để đổi 1 VocaSkip.');
+  }
+
+  writingSkipsUsed++;
+  updateWritingWalletUI();
 
   const q = writingQuestionsList[currentWritingIndex];
   if (q) {
@@ -825,8 +877,6 @@ function useWritingSkip() {
     });
   }
 
-  writingSkipsLeft--;
-  showToast(`⏭️ Đã bỏ qua câu này (Còn ${writingSkipsLeft} lượt skip)`);
   nextWritingQuestion();
 }
 
@@ -881,7 +931,7 @@ function finishWritingSession() {
   if (ratioEl) ratioEl.textContent = `${passedQuestions}/${totalQuestions} (${passedRatio}%)`;
   if (pointsEl) pointsEl.textContent = `${writingSessionPointsEarned >= 0 ? '+' : ''}${writingSessionPointsEarned} VoCoin`;
   if (avgEl) avgEl.textContent = `${avgScore} / 100`;
-  if (hintsSkipsEl) hintsSkipsEl.textContent = `${5 - writingHintsLeft} gợi ý • ${3 - writingSkipsLeft} skip`;
+  if (hintsSkipsEl) hintsSkipsEl.textContent = `${writingHintsUsed} gợi ý • ${writingSkipsUsed} skip`;
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
 
   const cfg = getWritingDifficultyConfig(currentWritingDifficulty);
@@ -902,11 +952,12 @@ function finishWritingSession() {
     if (wrongBanner) wrongBanner.style.display = 'none';
   }
 
-  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks');
+  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks', true);
   openModal('modal-writing-result');
 }
 
 function closeWritingResultModal() {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeModal('modal-writing-result');
 }
 
@@ -921,13 +972,35 @@ function retryWritingWrongWordsOnly() {
 }
 
 function exitWritingMode() {
-  if (writingSessionPointsEarned !== 0) {
-    const total = writingQuestionsList.length || 1;
-    const done = writingQuestionsList.filter(q => q.evaluated).length;
-    const isComp = done >= total && total > 0;
+  const total = writingQuestionsList.length || 1;
+  const done = writingQuestionsList.filter(q => q.evaluated || q.status === 'skipped').length;
 
+  if (!writingIsCompleted && (done > 0 || writingSessionPointsEarned !== 0 || currentWritingIndex > 0)) {
+    if (typeof promptStudyEarlyExit === 'function') {
+      promptStudyEarlyExit({
+        mode: 'writing',
+        done,
+        total,
+        basePoints: writingSessionPointsEarned,
+        onConfirmExit: () => doExecuteExitWriting(done, total)
+      });
+      return;
+    }
+  }
+  doExecuteExitWriting(done, total);
+}
+
+function doExecuteExitWriting(done, total) {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
+  closeWritingResultModal();
+
+  if (writingSessionPointsEarned !== 0) {
+    const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
-    if (typeof calculateSessionFinalPoints === 'function') {
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      const res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
+      finalPts = res.finalPts;
+    } else if (typeof calculateSessionFinalPoints === 'function') {
       const res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     }

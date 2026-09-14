@@ -809,6 +809,14 @@
 
     function openAiMentorModal() {
       try {
+        const activeStudyScreen = document.querySelector('.screen.active');
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
+          if (typeof showToast === 'function') {
+            showToast('⚠️ Không thể mở VocaMentor AI khi đang trong phiên làm bài tập!');
+          }
+          return;
+        }
+
         const isGuest = !currentUser || !currentUser.email;
         const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
         const vView = document.getElementById('aimentor-vip-lock-view');

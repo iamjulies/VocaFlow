@@ -69,6 +69,7 @@
           <div class="ig-chips-row">
             <span class="ig-chip chip-coin" title="Số dư VoCoin">💰 <span id="profile-user-points">0 VoCoin</span></span>
             <span class="ig-chip chip-flow" title="Chuỗi ngày học liên tục">🌊 <span id="profile-flow-count">0 Ngày</span></span>
+            <span class="ig-chip" id="profile-band-chip" style="background: rgba(236,72,153,0.12); color: #f472b6; border-color: rgba(236,72,153,0.35);" title="Mục tiêu IELTS / Tiếng Anh">🎯 <span id="profile-band-text">Aim: Band 8.0</span></span>
             <span class="ig-chip" id="profile-email-chip" style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="Email tài khoản">📧 <span id="profile-email">Offline</span></span>
           </div>
         </div>
@@ -116,6 +117,37 @@
             <div id="profile-handle-live-feedback" style="font-size: 11px; margin-top: 4px; display: none; font-weight: 600;"></div>
             <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
               * Chỉ gồm chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (_), từ 3 - 20 ký tự.
+            </div>
+          </div>
+          <!-- v0.10.10-9: Current Band & Target Aim Band Selectors -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>📊</span> Trình Độ Hiện Tại:
+              </label>
+              <select id="profile-current-band-select" class="form-select" style="font-size: 12px; padding: 7px 8px; width: 100%; border-radius: 8px; background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border);">
+                <option value="none">Chưa xác định</option>
+                <option value="4.0">Band 3.5 - 4.0 (A2)</option>
+                <option value="5.0">Band 4.5 - 5.0 (B1)</option>
+                <option value="6.0" selected>Band 5.5 - 6.0 (B2)</option>
+                <option value="7.0">Band 6.5 - 7.0 (C1)</option>
+                <option value="8.0">Band 7.5 - 8.0 (C1+)</option>
+                <option value="8.5">Band 8.5+ (C2 Master)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #ec4899; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>🎯</span> Mục Tiêu Aim:
+              </label>
+              <select id="profile-target-band-select" class="form-select" style="font-size: 12px; padding: 7px 8px; width: 100%; border-radius: 8px; background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border);">
+                <option value="5.5">Band 5.5 (Giao tiếp tốt)</option>
+                <option value="6.0">Band 6.0 (Xét tuyển ĐH)</option>
+                <option value="6.5">Band 6.5 (Chuẩn đầu ra ĐH)</option>
+                <option value="7.0">Band 7.0 (Du học / Học bổng)</option>
+                <option value="7.5">Band 7.5 (Học thuật nâng cao)</option>
+                <option value="8.0" selected>Band 8.0 (Chuẩn Bản Xứ)</option>
+                <option value="8.5">Band 8.5+ (Mastery IELTS)</option>
+              </select>
             </div>
           </div>
           <div>

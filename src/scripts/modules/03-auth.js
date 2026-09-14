@@ -3393,6 +3393,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         bioDisplayEl.style.fontStyle = hasBio ? 'normal' : 'italic';
       }
 
+      // v0.10.10-9: Update Band Chip in Profile Bio
+      const bandChip = document.getElementById('profile-band-chip');
+      const bandText = document.getElementById('profile-band-text');
+      const curBand = (currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+      const aimBand = (currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+      if (bandText) {
+        const curLabel = curBand !== 'none' ? ` (${curBand})` : '';
+        bandText.textContent = `Aim: Band ${aimBand}${curLabel}`;
+      }
+      if (bandChip) {
+        bandChip.title = `Mục tiêu tiếng Anh: Band ${aimBand} (Hiện tại: ${curBand !== 'none' ? 'Band ' + curBand : 'Chưa đặt'})`;
+      }
+
       // Update metrics
       const isRegisteredUser = !!(currentUser && currentUser.email && currentUser.uid && !currentUser.uid.startsWith('guest_'));
       const followerCountEl = document.getElementById('profile-follower-count');
@@ -3451,8 +3464,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const nameInput = document.getElementById('profile-display-name-input');
         const bioInput = document.getElementById('profile-bio-input');
         const usernameInput = document.getElementById('profile-username-input');
+        const curBandSelect = document.getElementById('profile-current-band-select');
+        const tgtBandSelect = document.getElementById('profile-target-band-select');
         if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
         if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
+        if (curBandSelect) curBandSelect.value = (currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+        if (tgtBandSelect) tgtBandSelect.value = (currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+
         const cooldown = getUsernameCooldownStatus(currentUser ? currentUser.lastUsernameChangeTimestamp : 0);
         if (usernameInput) {
           usernameInput.value = (currentUser && currentUser.username) || '';
@@ -3546,20 +3564,29 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const nameInput = document.getElementById('profile-display-name-input');
       const bioInput = document.getElementById('profile-bio-input');
       const usernameInput = document.getElementById('profile-username-input');
+      const curBandSelect = document.getElementById('profile-current-band-select');
+      const tgtBandSelect = document.getElementById('profile-target-band-select');
+
       const newName = (nameInput?.value || '').trim() || 'Người dùng VocaFlow';
       const newBio = (bioInput?.value || '').trim();
       const rawUsername = (usernameInput?.value || '').trim().toLowerCase();
+      const newCurBand = curBandSelect?.value || 'none';
+      const newTgtBand = tgtBandSelect?.value || '8.0';
 
       if (!currentUser) {
         currentUser = {
           displayName: newName,
           bio: newBio,
+          currentBand: newCurBand,
+          targetBand: newTgtBand,
           email: '',
           uid: 'guest_' + Date.now()
         };
       } else {
         currentUser.displayName = newName;
         currentUser.bio = newBio;
+        currentUser.currentBand = newCurBand;
+        currentUser.targetBand = newTgtBand;
       }
 
       // v0.10.7a: Handle username modification
@@ -3572,6 +3599,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       localStorage.setItem('vocaflow_user_bio', newBio);
+      localStorage.setItem('vocaflow_user_current_band', newCurBand);
+      localStorage.setItem('vocaflow_user_target_band', newTgtBand);
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       updateAuthUI();
       toggleProfileEditSection(false);
@@ -3605,6 +3634,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newBio)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/currentBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCurBand)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/targetBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newTgtBand)
         }).catch(() => {});
 
         // 2. Cascade update all public library decks published by this user!

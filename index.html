@@ -5455,7 +5455,7 @@
             <div id="writing-polished-card" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <span style="font-size: 11.5px; font-weight: 800; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
-                  <span>✨</span> <span>Phiên bản viết lại chuẩn bản xứ (Band 8.0+):</span>
+                  <span>✨</span> <span id="writing-polished-title-text">Phiên bản viết lại chuẩn mục tiêu:</span>
                 </span>
                 <button type="button" class="btn btn-outline btn-icon btn-sm" onclick="speakPolishedSentence()" title="Nghe câu mẫu bản xứ" style="width: 26px; height: 26px; border-radius: 50%; color: #818cf8; border-color: rgba(99,102,241,0.3); padding: 0;">
                   <svg class="icon" style="width: 13px; height: 13px;"><use href="#i-volume"/></svg>
@@ -6299,7 +6299,7 @@
       </div>
     </div>
   </div>
-  <!-- MODAL: WRITING RESULT CELEBRATION (v0.10.10-8 - SENTENCE WRITING LAB β) -->
+  <!-- MODAL: WRITING RESULT CELEBRATION (v0.10.10-9 - SENTENCE WRITING LAB β) -->
   <div class="modal-overlay" id="modal-writing-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -6522,7 +6522,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span style="font-size: 15px;">🌟</span>
-            <strong style="font-size: 13px; color: #34d399;">Thực Nhận Theo Balance v2 (Chính thức):</strong>
+            <strong id="study-exit-v2-title-label" style="font-size: 13px; color: #34d399;">Thực Nhận Theo Balance v2 (Chính thức):</strong>
           </div>
           <span id="study-exit-v2-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 800; font-size: 12.5px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.35);">+0 VoCoin</span>
         </div>
@@ -9258,6 +9258,7 @@
           <div class="ig-chips-row">
             <span class="ig-chip chip-coin" title="Số dư VoCoin">💰 <span id="profile-user-points">0 VoCoin</span></span>
             <span class="ig-chip chip-flow" title="Chuỗi ngày học liên tục">🌊 <span id="profile-flow-count">0 Ngày</span></span>
+            <span class="ig-chip" id="profile-band-chip" style="background: rgba(236,72,153,0.12); color: #f472b6; border-color: rgba(236,72,153,0.35);" title="Mục tiêu IELTS / Tiếng Anh">🎯 <span id="profile-band-text">Aim: Band 8.0</span></span>
             <span class="ig-chip" id="profile-email-chip" style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="Email tài khoản">📧 <span id="profile-email">Offline</span></span>
           </div>
         </div>
@@ -9305,6 +9306,37 @@
             <div id="profile-handle-live-feedback" style="font-size: 11px; margin-top: 4px; display: none; font-weight: 600;"></div>
             <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
               * Chỉ gồm chữ thường (a-z), chữ số (0-9) và dấu gạch dưới (_), từ 3 - 20 ký tự.
+            </div>
+          </div>
+          <!-- v0.10.10-9: Current Band & Target Aim Band Selectors -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>📊</span> Trình Độ Hiện Tại:
+              </label>
+              <select id="profile-current-band-select" class="form-select" style="font-size: 12px; padding: 7px 8px; width: 100%; border-radius: 8px; background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border);">
+                <option value="none">Chưa xác định</option>
+                <option value="4.0">Band 3.5 - 4.0 (A2)</option>
+                <option value="5.0">Band 4.5 - 5.0 (B1)</option>
+                <option value="6.0" selected>Band 5.5 - 6.0 (B2)</option>
+                <option value="7.0">Band 6.5 - 7.0 (C1)</option>
+                <option value="8.0">Band 7.5 - 8.0 (C1+)</option>
+                <option value="8.5">Band 8.5+ (C2 Master)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #ec4899; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                <span>🎯</span> Mục Tiêu Aim:
+              </label>
+              <select id="profile-target-band-select" class="form-select" style="font-size: 12px; padding: 7px 8px; width: 100%; border-radius: 8px; background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border);">
+                <option value="5.5">Band 5.5 (Giao tiếp tốt)</option>
+                <option value="6.0">Band 6.0 (Xét tuyển ĐH)</option>
+                <option value="6.5">Band 6.5 (Chuẩn đầu ra ĐH)</option>
+                <option value="7.0">Band 7.0 (Du học / Học bổng)</option>
+                <option value="7.5">Band 7.5 (Học thuật nâng cao)</option>
+                <option value="8.0" selected>Band 8.0 (Chuẩn Bản Xứ)</option>
+                <option value="8.5">Band 8.5+ (Mastery IELTS)</option>
+              </select>
             </div>
           </div>
           <div>
@@ -10313,7 +10345,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-8 (Build 309)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-9 (Build 310)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11440,7 +11472,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-8 Build 309)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-9 Build 310)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11893,15 +11925,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-8 Build 309)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-9 Build 310)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-8 Build 309)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-9 Build 310)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-8';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-8 (Build 309)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-9';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-9 (Build 310)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -12404,19 +12436,29 @@ window.initSpaRouter = initSpaRouter;
       }
     }
 
+    const activeSfxClones = {};
+
     function playVocaSfx(name, loop = false) {
       if (!sfxEnabledSetting) return;
       try {
         const baseAudio = VOCA_SFX[name];
         if (baseAudio) {
-          if (loop) {
-            baseAudio.loop = true;
+          if (loop || name === 'fireworks') {
+            baseAudio.loop = !!loop;
             baseAudio.volume = sfxVolumeSetting;
             baseAudio.currentTime = 0;
             baseAudio.play().catch(() => {});
           } else {
             const snd = baseAudio.cloneNode();
             snd.volume = sfxVolumeSetting;
+            if (!activeSfxClones[name]) activeSfxClones[name] = [];
+            activeSfxClones[name].push(snd);
+            snd.onended = () => {
+              if (activeSfxClones[name]) {
+                const idx = activeSfxClones[name].indexOf(snd);
+                if (idx !== -1) activeSfxClones[name].splice(idx, 1);
+              }
+            };
             snd.play().catch(() => {});
           }
         }
@@ -12429,6 +12471,16 @@ window.initSpaRouter = initSpaRouter;
         if (snd) {
           snd.pause();
           snd.currentTime = 0;
+          snd.loop = false;
+        }
+        if (activeSfxClones[name] && activeSfxClones[name].length > 0) {
+          activeSfxClones[name].forEach(clone => {
+            try {
+              clone.pause();
+              clone.currentTime = 0;
+            } catch (e) {}
+          });
+          activeSfxClones[name] = [];
         }
       } catch (e) {}
     }
@@ -12445,36 +12497,24 @@ window.initSpaRouter = initSpaRouter;
     let spellingIsCompleted = false;
 
     // =========================================================================
-    // STUDY SESSION ECONOMY: DECK SIZE SCALING & QUIT PENALTY (v0.0.10.3l)
+    // BALANCE V2 & V3 MULTI-TIER REWARD SETTLEMENT ENGINE (v0.10.10-9)
     // =========================================================================
-    function getSessionDeckSizeMultiplier(learnedCount) {
-      const n = learnedCount || 0;
-      if (n <= 5) return 0.8;
-      if (n <= 10) return 0.9;
-      if (n <= 25) return 1.0;
-      if (n <= 45) return 1.1;
-      if (n <= 70) return 1.2;
-      return 1.3; // > 70 words
+    function getIncompleteSessionMultiplier(done, total) {
+      if (total <= 0 || done <= 0) return 0.25;
+      const ratio = done / total;
+      if (ratio < 0.3) return 0.25;
+      if (ratio < 0.6) return 0.50;
+      if (ratio < 0.9) return 0.75;
+      return 0.90;
     }
 
-    function getIncompleteSessionMultiplier(doneCount, totalCount) {
-      const total = totalCount || 1;
-      const done = Math.max(0, doneCount || 0);
-
-      if (studySourceContext === 'review-queue' || (total >= 50 && done >= 15)) {
-        return 1.0;
-      }
-
-      if (done >= 30) return 1.0;
-      if (done >= 15) return 0.85;
-      if (done >= 8) return 0.7;
-      if (done >= 4) return 0.5;
-
-      const ratio = done / total;
-      if (ratio >= 0.8) return 0.9;
-      if (ratio >= 0.5) return 0.75;
-      if (ratio >= 0.33) return 0.5;
-      return 0.25;
+    function getSessionDeckSizeMultiplier(doneCount) {
+      if (doneCount >= 100) return 1.5;
+      if (doneCount >= 70) return 1.35;
+      if (doneCount >= 50) return 1.25;
+      if (doneCount >= 30) return 1.15;
+      if (doneCount >= 15) return 1.05;
+      return 1.0;
     }
 
     function getSessionMilestoneBonus(doneCount) {
@@ -12532,12 +12572,90 @@ window.initSpaRouter = initSpaRouter;
         milestoneBonus,
         isVipBonus: isVip,
         done,
-        total
+        total,
+        balanceVersion: 'v2'
       };
     }
+    window.calculateSessionFinalPoints = calculateSessionFinalPoints;
 
     // =========================================================================
-    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.9-alpha-23)
+    // BALANCE V3: EXTENDED LEARNING MODES ENGINE (v0.10.10-9)
+    // For high-challenge skills: Writing β, Cloze β, Dictation β
+    // =========================================================================
+    function getExtendedSessionMilestoneBonus(doneCount) {
+      if (doneCount >= 20) return 80;
+      if (doneCount >= 10) return 40;
+      if (doneCount >= 5) return 15;
+      return 0;
+    }
+
+    function getExtendedSessionScaleMultiplier(doneCount) {
+      if (doneCount >= 20) return 1.25;
+      if (doneCount >= 10) return 1.15;
+      if (doneCount >= 5) return 1.05;
+      return 1.0;
+    }
+
+    function getExtendedIncompleteSessionMultiplier(done, total) {
+      if (total <= 0 || done <= 0) return 0.15;
+      const ratio = done / total;
+      if (ratio < 0.25) return 0.15; // Strict anti-farming penalty on high-reward AI prompts
+      if (ratio < 0.50) return 0.35;
+      if (ratio < 0.75) return 0.60;
+      if (ratio < 1.0) return 0.80;
+      return 1.0;
+    }
+
+    function calculateSessionFinalPointsV3(basePoints, doneCount, totalCount, isCompleted = false) {
+      const total = totalCount || 1;
+      const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
+
+      let completionMult = isCompleted ? 1.0 : getExtendedIncompleteSessionMultiplier(done, total);
+      let scaleMult = getExtendedSessionScaleMultiplier(done);
+      let milestoneBonus = (basePoints > 0) ? getExtendedSessionMilestoneBonus(done) : 0;
+
+      const isVip = isUserVip();
+      if (isVip) {
+        completionMult = Math.round((completionMult + 0.1) * 1000) / 1000;
+        scaleMult = Math.round((scaleMult + 0.1) * 1000) / 1000;
+        if (milestoneBonus > 0) {
+          milestoneBonus = Math.round(milestoneBonus * 1.15);
+        }
+      }
+
+      const combinedMult = Math.round((completionMult * scaleMult) * 1000) / 1000;
+
+      let finalPts = 0;
+      if (basePoints > 0) {
+        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        if (isVip) {
+          finalPts = Math.round(finalPts * 1.5);
+        }
+      } else if (basePoints < 0) {
+        const ratio = total > 0 ? (done / total) : 0;
+        const multiplier = Math.max(1.1, 1.6 - ratio);
+        finalPts = Math.min(basePoints, Math.round(basePoints * multiplier));
+        if (isVip) {
+          finalPts = Math.round(finalPts / 1.25);
+        }
+      }
+
+      return {
+        finalPts,
+        completionMult,
+        deckLengthMult: scaleMult,
+        combinedMult,
+        milestoneBonus,
+        isVipBonus: isVip,
+        done,
+        total,
+        balanceVersion: 'v3'
+      };
+    }
+    window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
+
+    // =========================================================================
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-9)
     // =========================================================================
     let pendingStudyEarlyExitCallback = null;
 
@@ -12548,11 +12666,15 @@ window.initSpaRouter = initSpaRouter;
         return;
       }
 
-      // Calculate Balance v2 / VIP (Official)
-      const resV2 = calculateSessionFinalPoints(basePoints, done, total, false);
+      const isExtended = ['writing', 'cloze', 'dictation'].includes(mode);
+
+      // Calculate Official Balance (v3 for Extended Modes, v2 for Core Modes)
+      const resApplied = isExtended 
+        ? calculateSessionFinalPointsV3(basePoints, done, total, false)
+        : calculateSessionFinalPoints(basePoints, done, total, false);
 
       // Calculate Balance v1 (Legacy comparison)
-      const v1Mult = getIncompleteSessionMultiplier(done, total);
+      const v1Mult = isExtended ? getExtendedIncompleteSessionMultiplier(done, total) : getIncompleteSessionMultiplier(done, total);
       let v1Pts = 0;
       if (basePoints > 0) {
         v1Pts = Math.round(basePoints * v1Mult);
@@ -12567,11 +12689,12 @@ window.initSpaRouter = initSpaRouter;
       const modal = document.getElementById('modal-study-exit-confirm');
       if (!modal) {
         // Fallback: If modal element not found, use friendly native confirm
-        const signV2 = resV2.finalPts >= 0 ? '+' : '';
+        const signApplied = resApplied.finalPts >= 0 ? '+' : '';
         const signV1 = v1Pts >= 0 ? '+' : '';
-        const vipPerkText = resV2.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
-        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} từ)!\n\n` +
-          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
+        const vipPerkText = resApplied.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
+        const balLabel = isExtended ? 'Balance v3 (Extended Lab β)' : 'Balance v2 (Chính thức)';
+        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} ${isExtended ? 'câu' : 'từ'})!\n\n` +
+          `• Theo ${balLabel}: Bạn sẽ nhận ${signApplied}${resApplied.finalPts} VoCoin (Hoàn thành x${resApplied.completionMult}, Quy mô x${resApplied.deckLengthMult}${resApplied.milestoneBonus > 0 ? ', Thưởng mốc +' + resApplied.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
           `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
           `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
         if (window.confirm(msg)) {
@@ -12584,14 +12707,17 @@ window.initSpaRouter = initSpaRouter;
         quiz: 'bài Trắc Nghiệm (Quiz)',
         spelling: 'bài Luyện Viết (Spelling)',
         speaking: 'bài Luyện Nói (Speaking)',
-        autofc: 'phiên Auto Flashcard'
+        autofc: 'phiên Auto Flashcard',
+        writing: 'bài Luyện Viết Câu (Writing β)',
+        cloze: 'bài Điền Đoạn Văn (Cloze β)',
+        dictation: 'bài Nghe Chép Câu (Dictation β)'
       };
       const titleEl = document.getElementById('study-exit-modal-title');
       if (titleEl) titleEl.textContent = `Bạn Đang Làm Dở ${modeTitles[mode] || 'Bài Học'}!`;
 
       const pct = Math.round((done / total) * 100);
       const progEl = document.getElementById('study-exit-progress-text');
-      if (progEl) progEl.textContent = `${done} / ${total} ${mode === 'quiz' ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
+      if (progEl) progEl.textContent = `${done} / ${total} ${(['quiz', 'writing', 'cloze', 'dictation'].includes(mode)) ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
 
       const basePtsEl = document.getElementById('study-exit-base-points-text');
       if (basePtsEl) {
@@ -12601,22 +12727,27 @@ window.initSpaRouter = initSpaRouter;
 
       const v2Badge = document.getElementById('study-exit-v2-badge');
       if (v2Badge) {
-        v2Badge.textContent = `${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} VoCoin`;
-        v2Badge.style.background = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
-        v2Badge.style.color = resV2.finalPts >= 0 ? '#34d399' : '#f87171';
-        v2Badge.style.borderColor = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+        v2Badge.textContent = `${resApplied.finalPts >= 0 ? '+' : ''}${resApplied.finalPts} VoCoin`;
+        v2Badge.style.background = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+        v2Badge.style.color = resApplied.finalPts >= 0 ? '#34d399' : '#f87171';
+        v2Badge.style.borderColor = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+      }
+
+      const v2TitleLabel = document.getElementById('study-exit-v2-title-label');
+      if (v2TitleLabel) {
+        v2TitleLabel.textContent = isExtended ? 'Thực Nhận Theo Balance v3 (Extended Lab β):' : 'Thực Nhận Theo Balance v2 (Chính thức):';
       }
 
       const multEl = document.getElementById('study-exit-v2-mult');
-      if (multEl) multEl.textContent = `x${resV2.completionMult}`;
+      if (multEl) multEl.textContent = `x${resApplied.completionMult}`;
 
       const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
-      if (deckMultEl) deckMultEl.textContent = `x${resV2.deckLengthMult}`;
+      if (deckMultEl) deckMultEl.textContent = `x${resApplied.deckLengthMult}`;
 
       const milestoneEl = document.getElementById('study-exit-v2-milestone');
       if (milestoneEl) {
-        const vipNote = resV2.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
-        milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin${vipNote}`;
+        const vipNote = resApplied.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
+        milestoneEl.textContent = `+${resApplied.milestoneBonus} VoCoin${vipNote}`;
       }
 
       const v1ResEl = document.getElementById('study-exit-v1-result');
@@ -12626,10 +12757,10 @@ window.initSpaRouter = initSpaRouter;
 
       const confirmBtn = document.getElementById('btn-study-confirm-exit');
       if (confirmBtn) {
-        if (resV2.finalPts < 0) {
-          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resV2.finalPts)} Xu)`;
-        } else if (resV2.finalPts > 0) {
-          confirmBtn.textContent = `🚪 Thoát (Nhận +${resV2.finalPts} Xu)`;
+        if (resApplied.finalPts < 0) {
+          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resApplied.finalPts)} Xu)`;
+        } else if (resApplied.finalPts > 0) {
+          confirmBtn.textContent = `🚪 Thoát (Nhận +${resApplied.finalPts} Xu)`;
         } else {
           confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
         }
@@ -19218,6 +19349,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         bioDisplayEl.style.fontStyle = hasBio ? 'normal' : 'italic';
       }
 
+      // v0.10.10-9: Update Band Chip in Profile Bio
+      const bandChip = document.getElementById('profile-band-chip');
+      const bandText = document.getElementById('profile-band-text');
+      const curBand = (currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+      const aimBand = (currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+      if (bandText) {
+        const curLabel = curBand !== 'none' ? ` (${curBand})` : '';
+        bandText.textContent = `Aim: Band ${aimBand}${curLabel}`;
+      }
+      if (bandChip) {
+        bandChip.title = `Mục tiêu tiếng Anh: Band ${aimBand} (Hiện tại: ${curBand !== 'none' ? 'Band ' + curBand : 'Chưa đặt'})`;
+      }
+
       // Update metrics
       const isRegisteredUser = !!(currentUser && currentUser.email && currentUser.uid && !currentUser.uid.startsWith('guest_'));
       const followerCountEl = document.getElementById('profile-follower-count');
@@ -19276,8 +19420,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const nameInput = document.getElementById('profile-display-name-input');
         const bioInput = document.getElementById('profile-bio-input');
         const usernameInput = document.getElementById('profile-username-input');
+        const curBandSelect = document.getElementById('profile-current-band-select');
+        const tgtBandSelect = document.getElementById('profile-target-band-select');
         if (nameInput) nameInput.value = (currentUser && currentUser.displayName) || '';
         if (bioInput) bioInput.value = (currentUser && currentUser.bio) || '';
+        if (curBandSelect) curBandSelect.value = (currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+        if (tgtBandSelect) tgtBandSelect.value = (currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+
         const cooldown = getUsernameCooldownStatus(currentUser ? currentUser.lastUsernameChangeTimestamp : 0);
         if (usernameInput) {
           usernameInput.value = (currentUser && currentUser.username) || '';
@@ -19371,20 +19520,29 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const nameInput = document.getElementById('profile-display-name-input');
       const bioInput = document.getElementById('profile-bio-input');
       const usernameInput = document.getElementById('profile-username-input');
+      const curBandSelect = document.getElementById('profile-current-band-select');
+      const tgtBandSelect = document.getElementById('profile-target-band-select');
+
       const newName = (nameInput?.value || '').trim() || 'Người dùng VocaFlow';
       const newBio = (bioInput?.value || '').trim();
       const rawUsername = (usernameInput?.value || '').trim().toLowerCase();
+      const newCurBand = curBandSelect?.value || 'none';
+      const newTgtBand = tgtBandSelect?.value || '8.0';
 
       if (!currentUser) {
         currentUser = {
           displayName: newName,
           bio: newBio,
+          currentBand: newCurBand,
+          targetBand: newTgtBand,
           email: '',
           uid: 'guest_' + Date.now()
         };
       } else {
         currentUser.displayName = newName;
         currentUser.bio = newBio;
+        currentUser.currentBand = newCurBand;
+        currentUser.targetBand = newTgtBand;
       }
 
       // v0.10.7a: Handle username modification
@@ -19397,6 +19555,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       localStorage.setItem('vocaflow_user_bio', newBio);
+      localStorage.setItem('vocaflow_user_current_band', newCurBand);
+      localStorage.setItem('vocaflow_user_target_band', newTgtBand);
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       updateAuthUI();
       toggleProfileEditSection(false);
@@ -19430,6 +19590,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newBio)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/currentBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCurBand)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/targetBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newTgtBand)
         }).catch(() => {});
 
         // 2. Cascade update all public library decks published by this user!
@@ -30998,8 +31170,8 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-8 - SENTENCE WRITING LAB β)
-// AI-Powered Writing Lab with Thematic Word Linking & Band 8.0+ Native Polish
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-9 - SENTENCE WRITING LAB β)
+// AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
 let writingQuestionsList = [];
@@ -31013,8 +31185,8 @@ let writingSetupCustomWordList = null;
 let writingSessionPointsEarned = 0;
 let writingSessionWrongWords = [];
 let writingGradedQuestionIds = new Set();
-let writingHintsLeft = 5;
-let writingSkipsLeft = 3;
+let writingHintsUsed = 0;
+let writingSkipsUsed = 0;
 let writingStartTime = 0;
 let writingActiveTimeMs = 0;
 let writingIsCompleted = false;
@@ -31249,8 +31421,8 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   writingSessionPointsEarned = 0;
   writingSessionWrongWords = [];
   writingGradedQuestionIds.clear();
-  writingHintsLeft = 5;
-  writingSkipsLeft = 3;
+  writingHintsUsed = 0;
+  writingSkipsUsed = 0;
   writingStartTime = Date.now();
   writingIsCompleted = false;
   writingPolishedSentence = '';
@@ -31259,8 +31431,23 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
 
   updateWritingDifficultyBadge();
+  updateWritingWalletUI();
   showScreen('screen-writing');
   renderWritingCurrentQuestion();
+}
+
+function updateWritingWalletUI() {
+  const hintCountEl = document.getElementById('writing-hints-count');
+  const skipBtn = document.getElementById('btn-writing-skip');
+  const curHints = typeof getUserHints === 'function' ? getUserHints() : 0;
+  const curSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+  if (hintCountEl) {
+    hintCountEl.textContent = curHints > 0 ? curHints : '50đ';
+    hintCountEl.style.opacity = curHints > 0 ? '1' : '0.85';
+  }
+  if (skipBtn) {
+    skipBtn.textContent = `⏭️ VocaSkip (${curSkips > 0 ? curSkips : '100đ'})`;
+  }
 }
 
 function updateWritingDifficultyBadge() {
@@ -31361,13 +31548,8 @@ function renderWritingCurrentQuestion() {
     }
   }
 
-  // Update Skip button
-  const skipBtn = document.getElementById('btn-writing-skip');
-  if (skipBtn) skipBtn.textContent = `⏭️ VocaSkip (${writingSkipsLeft})`;
-
-  // Update Hints count
-  const hintCountEl = document.getElementById('writing-hints-count');
-  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+  // Update wallet UI (Hints & Skips counts)
+  updateWritingWalletUI();
 
   // Auto focus textarea
   setTimeout(() => {
@@ -31469,8 +31651,15 @@ async function evaluateWritingSentenceWithGemini(userSentence, question) {
   const wordDetails = question.targetWords.map(w => `${w.term} (${w.partOfSpeech || 'word'}): ${w.definitionVi || w.definition || ''}`).join('\n');
   const cfg = getWritingDifficultyConfig(question.difficulty);
 
-  const prompt = `You are an elite IELTS Writing Examiner and Native English Stylist (Band 8.5+).
+  const curBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
+  const targetBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
+
+  const prompt = `You are an elite IELTS Writing Evaluator and English Stylist.
 Evaluate the following student sentence written for a vocabulary mastery challenge.
+
+[LEARNER PROFILE]
+- Current English Proficiency: ${curBand !== 'none' ? `Band ${curBand}` : 'Intermediate (B1-B2)'}
+- Target Aim: Band ${targetBand}
 
 [TASK REQUIREMENTS]
 - Target words MUST be used: [${targetTerms}]
@@ -31488,6 +31677,8 @@ Evaluate thoroughly across 4 Pillars:
 3. Naturalness & Coherence (Native phrasing, flow, punctuation)
 4. Length & Task Compliance (Complied with target words and length)
 
+Calibrate your scoring standards, Vietnamese diagnostic advice, and polished rewrite specifically to help this learner progress towards their target (Band ${targetBand}). The polished rewrite should exemplify a natural, idiomatic Band ${targetBand} sentence incorporating the target words smoothly.
+
 Output MUST be valid JSON only (no markdown quotes, no triple backticks) matching this structure:
 {
   "score": 85,
@@ -31498,8 +31689,8 @@ Output MUST be valid JSON only (no markdown quotes, no triple backticks) matchin
     "naturalness": { "status": "pass", "note": "Cách diễn đạt tự nhiên, mạch lạc" },
     "length": { "status": "pass", "note": "Độ dài câu hợp lý và đáp ứng yêu cầu" }
   },
-  "polishedRewrite": "A refined Band 8.5+ native rewrite of the student's thought using the target words gracefully.",
-  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp từ vựng hoặc cấu trúc).",
+  "polishedRewrite": "A refined Band ${targetBand} rewrite of the student's thought using the target words gracefully.",
+  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp để hướng tới Band ${targetBand}).",
   "grammarNotesVi": "Ghi chú cấu trúc ngữ pháp quan trọng hoặc sửa lỗi sai nếu có.",
   "targetWordsComplied": true
 }`;
@@ -31685,6 +31876,11 @@ function renderWritingEvaluationResult(evalData, question) {
 
   // Render Polished Rewrite
   writingPolishedSentence = evalData.polishedRewrite || '';
+  const polishedTitleEl = document.getElementById('writing-polished-title-text') || document.getElementById('writing-polished-title');
+  if (polishedTitleEl) {
+    const targetBand = (currentUser && currentUser.targetBand) ? ` (Aim Band ${currentUser.targetBand})` : '';
+    polishedTitleEl.textContent = `Phiên Bản Viết Lại Chuẩn Mục Tiêu${targetBand}:`;
+  }
   const polishedTextEl = document.getElementById('writing-polished-text');
   if (polishedTextEl) {
     polishedTextEl.textContent = `"${writingPolishedSentence}"`;
@@ -31779,14 +31975,26 @@ function useWritingHint() {
   const q = writingQuestionsList[currentWritingIndex];
   if (!q) return;
 
-  if (writingHintsLeft <= 0) {
-    showToast('⚠️ Bạn đã dùng hết lượt gợi ý VocaHint cho phiên này!');
+  const curHints = typeof getUserHints === 'function' ? getUserHints() : 0;
+  const curPts = typeof getUserPoints === 'function' ? getUserPoints() : 0;
+  const hintCost = 50;
+
+  if (curHints <= 0 && curPts < hintCost) {
+    showToast('🪙 Bạn không đủ VoCoin (cần 50 VoCoin để đổi 1 Gợi ý)');
+    if (typeof openShopModal === 'function') openShopModal();
     return;
   }
 
-  writingHintsLeft--;
-  const hintCountEl = document.getElementById('writing-hints-count');
-  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+  if (curHints > 0) {
+    if (typeof setUserHints === 'function') setUserHints(curHints - 1);
+    showToast('💡 Đã dùng 1 VocaHint (còn ' + (typeof getUserHints === 'function' ? getUserHints() : 0) + ' lượt).');
+  } else {
+    if (typeof setUserPoints === 'function') setUserPoints(curPts - hintCost);
+    showToast('💡 Đã dùng 50 VoCoin để đổi 1 gợi ý VocaHint.');
+  }
+
+  writingHintsUsed++;
+  updateWritingWalletUI();
 
   const hintBox = document.getElementById('writing-hint-box');
   if (hintBox) {
@@ -31800,15 +32008,31 @@ function useWritingHint() {
     const randomHint = templates[Math.floor(Math.random() * templates.length)];
     hintBox.innerHTML = `💡 <strong>VocaHint:</strong> ${randomHint}`;
   }
-
-  showToast(`💡 Đã mở gợi ý ý tưởng! (Còn ${writingHintsLeft} lượt)`);
 }
 
 function useWritingSkip() {
-  if (writingSkipsLeft <= 0) {
-    showToast('⚠️ Bạn đã hết lượt VocaSkip cho phiên này!');
+  const curSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+  const curPts = typeof getUserPoints === 'function' ? getUserPoints() : 0;
+  const skipCost = 100;
+
+  if (curSkips <= 0 && curPts < skipCost) {
+    showToast('🪙 Bạn không đủ VoCoin (cần 100 VoCoin để đổi 1 VocaSkip)');
+    if (typeof openShopModal === 'function') openShopModal();
     return;
   }
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('skip');
+
+  if (curSkips > 0) {
+    if (typeof setUserSkips === 'function') setUserSkips(curSkips - 1);
+    showToast('⏭️ Đã dùng 1 VocaSkip miễn phí (còn ' + (typeof getUserSkips === 'function' ? getUserSkips() : 0) + ' lượt).');
+  } else {
+    if (typeof setUserPoints === 'function') setUserPoints(curPts - skipCost);
+    showToast('⏭️ Đã dùng 100 VoCoin để đổi 1 VocaSkip.');
+  }
+
+  writingSkipsUsed++;
+  updateWritingWalletUI();
 
   const q = writingQuestionsList[currentWritingIndex];
   if (q) {
@@ -31824,8 +32048,6 @@ function useWritingSkip() {
     });
   }
 
-  writingSkipsLeft--;
-  showToast(`⏭️ Đã bỏ qua câu này (Còn ${writingSkipsLeft} lượt skip)`);
   nextWritingQuestion();
 }
 
@@ -31880,7 +32102,7 @@ function finishWritingSession() {
   if (ratioEl) ratioEl.textContent = `${passedQuestions}/${totalQuestions} (${passedRatio}%)`;
   if (pointsEl) pointsEl.textContent = `${writingSessionPointsEarned >= 0 ? '+' : ''}${writingSessionPointsEarned} VoCoin`;
   if (avgEl) avgEl.textContent = `${avgScore} / 100`;
-  if (hintsSkipsEl) hintsSkipsEl.textContent = `${5 - writingHintsLeft} gợi ý • ${3 - writingSkipsLeft} skip`;
+  if (hintsSkipsEl) hintsSkipsEl.textContent = `${writingHintsUsed} gợi ý • ${writingSkipsUsed} skip`;
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
 
   const cfg = getWritingDifficultyConfig(currentWritingDifficulty);
@@ -31901,11 +32123,12 @@ function finishWritingSession() {
     if (wrongBanner) wrongBanner.style.display = 'none';
   }
 
-  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks');
+  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks', true);
   openModal('modal-writing-result');
 }
 
 function closeWritingResultModal() {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeModal('modal-writing-result');
 }
 
@@ -31920,13 +32143,35 @@ function retryWritingWrongWordsOnly() {
 }
 
 function exitWritingMode() {
-  if (writingSessionPointsEarned !== 0) {
-    const total = writingQuestionsList.length || 1;
-    const done = writingQuestionsList.filter(q => q.evaluated).length;
-    const isComp = done >= total && total > 0;
+  const total = writingQuestionsList.length || 1;
+  const done = writingQuestionsList.filter(q => q.evaluated || q.status === 'skipped').length;
 
+  if (!writingIsCompleted && (done > 0 || writingSessionPointsEarned !== 0 || currentWritingIndex > 0)) {
+    if (typeof promptStudyEarlyExit === 'function') {
+      promptStudyEarlyExit({
+        mode: 'writing',
+        done,
+        total,
+        basePoints: writingSessionPointsEarned,
+        onConfirmExit: () => doExecuteExitWriting(done, total)
+      });
+      return;
+    }
+  }
+  doExecuteExitWriting(done, total);
+}
+
+function doExecuteExitWriting(done, total) {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
+  closeWritingResultModal();
+
+  if (writingSessionPointsEarned !== 0) {
+    const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
-    if (typeof calculateSessionFinalPoints === 'function') {
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      const res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
+      finalPts = res.finalPts;
+    } else if (typeof calculateSessionFinalPoints === 'function') {
       const res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     }
@@ -39990,6 +40235,14 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
     function openAiMentorModal() {
       try {
+        const activeStudyScreen = document.querySelector('.screen.active');
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
+          if (typeof showToast === 'function') {
+            showToast('⚠️ Không thể mở VocaMentor AI khi đang trong phiên làm bài tập!');
+          }
+          return;
+        }
+
         const isGuest = !currentUser || !currentUser.email;
         const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
         const vView = document.getElementById('aimentor-vip-lock-view');
@@ -57171,9 +57424,9 @@ Quy tắc phản hồi quan trọng:
         }
       }
 
-      // v0.10.7g: Anti-Cheat Isolation for AI Study Mentor FAB
+      // v0.10.10-9: Anti-Cheat Isolation for AI Study Mentor FAB & Study Screens
       const fab = document.getElementById('btn-ai-mentor-fab');
-      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(screenId);
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(screenId);
       if (fab) {
         fab.style.display = isExamScreen ? 'none' : 'flex';
       }
@@ -57196,11 +57449,11 @@ Quy tắc phản hồi quan trọng:
 
     // MODAL CONTROL
     function openModal(id) {
-      if (id === 'modal-mistake-notebook') {
+      if (id === 'modal-mistake-notebook' || id === 'modal-ai-mentor') {
         const activeStudyScreen = document.querySelector('.screen.active');
-        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc'].includes(activeStudyScreen.id)) {
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
           if (typeof showToast === 'function') {
-            showToast('⚠️ Bạn đang trong phiên luyện tập, không thể mở Sổ Tay Lỗi Sai!');
+            showToast(`⚠️ Bạn đang trong phiên làm bài tập, không thể mở ${id === 'modal-ai-mentor' ? 'VocaMentor AI' : 'Sổ Tay Lỗi Sai'}!`);
           }
           return;
         }

@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-8 Build 309)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-9 Build 310)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-8 Build 309)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-9 Build 310)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-8';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-8 (Build 309)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-9';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-9 (Build 310)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -509,19 +509,29 @@
       }
     }
 
+    const activeSfxClones = {};
+
     function playVocaSfx(name, loop = false) {
       if (!sfxEnabledSetting) return;
       try {
         const baseAudio = VOCA_SFX[name];
         if (baseAudio) {
-          if (loop) {
-            baseAudio.loop = true;
+          if (loop || name === 'fireworks') {
+            baseAudio.loop = !!loop;
             baseAudio.volume = sfxVolumeSetting;
             baseAudio.currentTime = 0;
             baseAudio.play().catch(() => {});
           } else {
             const snd = baseAudio.cloneNode();
             snd.volume = sfxVolumeSetting;
+            if (!activeSfxClones[name]) activeSfxClones[name] = [];
+            activeSfxClones[name].push(snd);
+            snd.onended = () => {
+              if (activeSfxClones[name]) {
+                const idx = activeSfxClones[name].indexOf(snd);
+                if (idx !== -1) activeSfxClones[name].splice(idx, 1);
+              }
+            };
             snd.play().catch(() => {});
           }
         }
@@ -534,6 +544,16 @@
         if (snd) {
           snd.pause();
           snd.currentTime = 0;
+          snd.loop = false;
+        }
+        if (activeSfxClones[name] && activeSfxClones[name].length > 0) {
+          activeSfxClones[name].forEach(clone => {
+            try {
+              clone.pause();
+              clone.currentTime = 0;
+            } catch (e) {}
+          });
+          activeSfxClones[name] = [];
         }
       } catch (e) {}
     }
@@ -550,36 +570,24 @@
     let spellingIsCompleted = false;
 
     // =========================================================================
-    // STUDY SESSION ECONOMY: DECK SIZE SCALING & QUIT PENALTY (v0.0.10.3l)
+    // BALANCE V2 & V3 MULTI-TIER REWARD SETTLEMENT ENGINE (v0.10.10-9)
     // =========================================================================
-    function getSessionDeckSizeMultiplier(learnedCount) {
-      const n = learnedCount || 0;
-      if (n <= 5) return 0.8;
-      if (n <= 10) return 0.9;
-      if (n <= 25) return 1.0;
-      if (n <= 45) return 1.1;
-      if (n <= 70) return 1.2;
-      return 1.3; // > 70 words
+    function getIncompleteSessionMultiplier(done, total) {
+      if (total <= 0 || done <= 0) return 0.25;
+      const ratio = done / total;
+      if (ratio < 0.3) return 0.25;
+      if (ratio < 0.6) return 0.50;
+      if (ratio < 0.9) return 0.75;
+      return 0.90;
     }
 
-    function getIncompleteSessionMultiplier(doneCount, totalCount) {
-      const total = totalCount || 1;
-      const done = Math.max(0, doneCount || 0);
-
-      if (studySourceContext === 'review-queue' || (total >= 50 && done >= 15)) {
-        return 1.0;
-      }
-
-      if (done >= 30) return 1.0;
-      if (done >= 15) return 0.85;
-      if (done >= 8) return 0.7;
-      if (done >= 4) return 0.5;
-
-      const ratio = done / total;
-      if (ratio >= 0.8) return 0.9;
-      if (ratio >= 0.5) return 0.75;
-      if (ratio >= 0.33) return 0.5;
-      return 0.25;
+    function getSessionDeckSizeMultiplier(doneCount) {
+      if (doneCount >= 100) return 1.5;
+      if (doneCount >= 70) return 1.35;
+      if (doneCount >= 50) return 1.25;
+      if (doneCount >= 30) return 1.15;
+      if (doneCount >= 15) return 1.05;
+      return 1.0;
     }
 
     function getSessionMilestoneBonus(doneCount) {
@@ -637,12 +645,90 @@
         milestoneBonus,
         isVipBonus: isVip,
         done,
-        total
+        total,
+        balanceVersion: 'v2'
       };
     }
+    window.calculateSessionFinalPoints = calculateSessionFinalPoints;
 
     // =========================================================================
-    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.9-alpha-23)
+    // BALANCE V3: EXTENDED LEARNING MODES ENGINE (v0.10.10-9)
+    // For high-challenge skills: Writing β, Cloze β, Dictation β
+    // =========================================================================
+    function getExtendedSessionMilestoneBonus(doneCount) {
+      if (doneCount >= 20) return 80;
+      if (doneCount >= 10) return 40;
+      if (doneCount >= 5) return 15;
+      return 0;
+    }
+
+    function getExtendedSessionScaleMultiplier(doneCount) {
+      if (doneCount >= 20) return 1.25;
+      if (doneCount >= 10) return 1.15;
+      if (doneCount >= 5) return 1.05;
+      return 1.0;
+    }
+
+    function getExtendedIncompleteSessionMultiplier(done, total) {
+      if (total <= 0 || done <= 0) return 0.15;
+      const ratio = done / total;
+      if (ratio < 0.25) return 0.15; // Strict anti-farming penalty on high-reward AI prompts
+      if (ratio < 0.50) return 0.35;
+      if (ratio < 0.75) return 0.60;
+      if (ratio < 1.0) return 0.80;
+      return 1.0;
+    }
+
+    function calculateSessionFinalPointsV3(basePoints, doneCount, totalCount, isCompleted = false) {
+      const total = totalCount || 1;
+      const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
+
+      let completionMult = isCompleted ? 1.0 : getExtendedIncompleteSessionMultiplier(done, total);
+      let scaleMult = getExtendedSessionScaleMultiplier(done);
+      let milestoneBonus = (basePoints > 0) ? getExtendedSessionMilestoneBonus(done) : 0;
+
+      const isVip = isUserVip();
+      if (isVip) {
+        completionMult = Math.round((completionMult + 0.1) * 1000) / 1000;
+        scaleMult = Math.round((scaleMult + 0.1) * 1000) / 1000;
+        if (milestoneBonus > 0) {
+          milestoneBonus = Math.round(milestoneBonus * 1.15);
+        }
+      }
+
+      const combinedMult = Math.round((completionMult * scaleMult) * 1000) / 1000;
+
+      let finalPts = 0;
+      if (basePoints > 0) {
+        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        if (isVip) {
+          finalPts = Math.round(finalPts * 1.5);
+        }
+      } else if (basePoints < 0) {
+        const ratio = total > 0 ? (done / total) : 0;
+        const multiplier = Math.max(1.1, 1.6 - ratio);
+        finalPts = Math.min(basePoints, Math.round(basePoints * multiplier));
+        if (isVip) {
+          finalPts = Math.round(finalPts / 1.25);
+        }
+      }
+
+      return {
+        finalPts,
+        completionMult,
+        deckLengthMult: scaleMult,
+        combinedMult,
+        milestoneBonus,
+        isVipBonus: isVip,
+        done,
+        total,
+        balanceVersion: 'v3'
+      };
+    }
+    window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
+
+    // =========================================================================
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-9)
     // =========================================================================
     let pendingStudyEarlyExitCallback = null;
 
@@ -653,11 +739,15 @@
         return;
       }
 
-      // Calculate Balance v2 / VIP (Official)
-      const resV2 = calculateSessionFinalPoints(basePoints, done, total, false);
+      const isExtended = ['writing', 'cloze', 'dictation'].includes(mode);
+
+      // Calculate Official Balance (v3 for Extended Modes, v2 for Core Modes)
+      const resApplied = isExtended 
+        ? calculateSessionFinalPointsV3(basePoints, done, total, false)
+        : calculateSessionFinalPoints(basePoints, done, total, false);
 
       // Calculate Balance v1 (Legacy comparison)
-      const v1Mult = getIncompleteSessionMultiplier(done, total);
+      const v1Mult = isExtended ? getExtendedIncompleteSessionMultiplier(done, total) : getIncompleteSessionMultiplier(done, total);
       let v1Pts = 0;
       if (basePoints > 0) {
         v1Pts = Math.round(basePoints * v1Mult);
@@ -672,11 +762,12 @@
       const modal = document.getElementById('modal-study-exit-confirm');
       if (!modal) {
         // Fallback: If modal element not found, use friendly native confirm
-        const signV2 = resV2.finalPts >= 0 ? '+' : '';
+        const signApplied = resApplied.finalPts >= 0 ? '+' : '';
         const signV1 = v1Pts >= 0 ? '+' : '';
-        const vipPerkText = resV2.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
-        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} từ)!\n\n` +
-          `• Theo Balance v2 (Chính thức): Bạn sẽ nhận ${signV2}${resV2.finalPts} VoCoin (Hoàn thành x${resV2.completionMult}, Quy mô x${resV2.deckLengthMult}${resV2.milestoneBonus > 0 ? ', Thưởng mốc +' + resV2.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
+        const vipPerkText = resApplied.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
+        const balLabel = isExtended ? 'Balance v3 (Extended Lab β)' : 'Balance v2 (Chính thức)';
+        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} ${isExtended ? 'câu' : 'từ'})!\n\n` +
+          `• Theo ${balLabel}: Bạn sẽ nhận ${signApplied}${resApplied.finalPts} VoCoin (Hoàn thành x${resApplied.completionMult}, Quy mô x${resApplied.deckLengthMult}${resApplied.milestoneBonus > 0 ? ', Thưởng mốc +' + resApplied.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
           `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
           `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
         if (window.confirm(msg)) {
@@ -689,14 +780,17 @@
         quiz: 'bài Trắc Nghiệm (Quiz)',
         spelling: 'bài Luyện Viết (Spelling)',
         speaking: 'bài Luyện Nói (Speaking)',
-        autofc: 'phiên Auto Flashcard'
+        autofc: 'phiên Auto Flashcard',
+        writing: 'bài Luyện Viết Câu (Writing β)',
+        cloze: 'bài Điền Đoạn Văn (Cloze β)',
+        dictation: 'bài Nghe Chép Câu (Dictation β)'
       };
       const titleEl = document.getElementById('study-exit-modal-title');
       if (titleEl) titleEl.textContent = `Bạn Đang Làm Dở ${modeTitles[mode] || 'Bài Học'}!`;
 
       const pct = Math.round((done / total) * 100);
       const progEl = document.getElementById('study-exit-progress-text');
-      if (progEl) progEl.textContent = `${done} / ${total} ${mode === 'quiz' ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
+      if (progEl) progEl.textContent = `${done} / ${total} ${(['quiz', 'writing', 'cloze', 'dictation'].includes(mode)) ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
 
       const basePtsEl = document.getElementById('study-exit-base-points-text');
       if (basePtsEl) {
@@ -706,22 +800,27 @@
 
       const v2Badge = document.getElementById('study-exit-v2-badge');
       if (v2Badge) {
-        v2Badge.textContent = `${resV2.finalPts >= 0 ? '+' : ''}${resV2.finalPts} VoCoin`;
-        v2Badge.style.background = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
-        v2Badge.style.color = resV2.finalPts >= 0 ? '#34d399' : '#f87171';
-        v2Badge.style.borderColor = resV2.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+        v2Badge.textContent = `${resApplied.finalPts >= 0 ? '+' : ''}${resApplied.finalPts} VoCoin`;
+        v2Badge.style.background = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+        v2Badge.style.color = resApplied.finalPts >= 0 ? '#34d399' : '#f87171';
+        v2Badge.style.borderColor = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
+      }
+
+      const v2TitleLabel = document.getElementById('study-exit-v2-title-label');
+      if (v2TitleLabel) {
+        v2TitleLabel.textContent = isExtended ? 'Thực Nhận Theo Balance v3 (Extended Lab β):' : 'Thực Nhận Theo Balance v2 (Chính thức):';
       }
 
       const multEl = document.getElementById('study-exit-v2-mult');
-      if (multEl) multEl.textContent = `x${resV2.completionMult}`;
+      if (multEl) multEl.textContent = `x${resApplied.completionMult}`;
 
       const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
-      if (deckMultEl) deckMultEl.textContent = `x${resV2.deckLengthMult}`;
+      if (deckMultEl) deckMultEl.textContent = `x${resApplied.deckLengthMult}`;
 
       const milestoneEl = document.getElementById('study-exit-v2-milestone');
       if (milestoneEl) {
-        const vipNote = resV2.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
-        milestoneEl.textContent = `+${resV2.milestoneBonus} VoCoin${vipNote}`;
+        const vipNote = resApplied.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
+        milestoneEl.textContent = `+${resApplied.milestoneBonus} VoCoin${vipNote}`;
       }
 
       const v1ResEl = document.getElementById('study-exit-v1-result');
@@ -731,10 +830,10 @@
 
       const confirmBtn = document.getElementById('btn-study-confirm-exit');
       if (confirmBtn) {
-        if (resV2.finalPts < 0) {
-          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resV2.finalPts)} Xu)`;
-        } else if (resV2.finalPts > 0) {
-          confirmBtn.textContent = `🚪 Thoát (Nhận +${resV2.finalPts} Xu)`;
+        if (resApplied.finalPts < 0) {
+          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resApplied.finalPts)} Xu)`;
+        } else if (resApplied.finalPts > 0) {
+          confirmBtn.textContent = `🚪 Thoát (Nhận +${resApplied.finalPts} Xu)`;
         } else {
           confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
         }
