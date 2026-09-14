@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-10 Build 311)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-11 Build 312)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-10 Build 311)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-11 Build 312)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-10';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-10 (Build 311)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-11';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-11 (Build 312)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -1150,11 +1150,19 @@
         const isVipActive = (userIsVip === true || userIsVip === 'true' || (typeof currentUser !== 'undefined' && currentUser && currentUser.isVip === true));
         memeGroup.style.display = isVipActive ? 'block' : 'none';
       }
-      // Dynamically sync app version in settings modal (v0.10.9-alpha-7)
+      // Dynamically sync app version in settings modal and footers (v0.10.10-11)
       const verLabel = document.getElementById('settings-app-version-label');
       if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
+      document.querySelectorAll('.mini-footer-version').forEach(el => el.textContent = VOCAFLOW_APP_FULL_TITLE);
       openModal('modal-settings');
     }
+
+    function updateAppVersionLabels() {
+      const verLabel = document.getElementById('settings-app-version-label');
+      if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
+      document.querySelectorAll('.mini-footer-version').forEach(el => el.textContent = VOCAFLOW_APP_FULL_TITLE);
+    }
+    window.updateAppVersionLabels = updateAppVersionLabels;
 
     function updateSpeechRateEn(val) {
       currentSpeechRateEn = parseFloat(val) || 0.9;

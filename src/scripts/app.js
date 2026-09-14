@@ -397,8 +397,11 @@
 
   // Horizontal mouse-wheel scroll for guide tabs nav on PC
   window.addEventListener('DOMContentLoaded', () => {
-    const verLabel = document.getElementById('settings-app-version-label');
-    if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
+    if (typeof updateAppVersionLabels === 'function') updateAppVersionLabels();
+    else {
+      const verLabel = document.getElementById('settings-app-version-label');
+      if (verLabel) verLabel.textContent = VOCAFLOW_APP_FULL_TITLE;
+    }
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();

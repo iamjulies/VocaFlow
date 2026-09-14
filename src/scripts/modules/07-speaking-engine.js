@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-8 Build 309)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-11 Build 312)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy, IndexedDB Best Take & Waveform Visualizer
 // =========================================================================
 
@@ -1801,8 +1801,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         if (totalSamples === 0) return { energy: new Array(binCount).fill(0), pitch: new Array(binCount).fill(0.5) };
 
         const samplesPerBin = Math.max(1, Math.floor(totalSamples / binCount));
-        const energy = [];
-        const pitch = [];
+        const rawEnergy = [];
+        const rawPitch = [];
 
         let maxEnergy = 0.001;
         for (let i = 0; i < binCount; i++) {
@@ -1822,21 +1822,50 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           const count = Math.max(1, end - start);
           const rms = Math.sqrt(sumSquares / count);
           if (rms > maxEnergy) maxEnergy = rms;
-          energy.push(rms);
+          rawEnergy.push(rms);
 
           const zcr = zeroCrossings / count;
-          pitch.push(Math.min(1.0, Math.max(0.1, zcr * 8.0)));
+          // Initial raw pitch estimation with baseline clamp
+          rawPitch.push(Math.min(0.9, Math.max(0.2, 0.25 + zcr * 4.5)));
         }
 
-        const normalizedEnergy = energy.map(e => Math.min(1.0, e / maxEnergy));
-        return { energy: normalizedEnergy, pitch };
+        // Normalize energy
+        const normalizedEnergy = rawEnergy.map(e => Math.min(1.0, e / maxEnergy));
+
+        // Gate pitch by energy to remove unvoiced/silent noise spikes
+        for (let i = 0; i < binCount; i++) {
+          if (normalizedEnergy[i] < 0.08) {
+            rawPitch[i] = 0.35; // neutral flat baseline during silence/breath
+          }
+        }
+
+        // Multi-pass smoothing filter (moving average) to eliminate jitter
+        const smoothArray = (arr, windowSize = 5) => {
+          const half = Math.floor(windowSize / 2);
+          return arr.map((val, idx) => {
+            let sum = 0, count = 0;
+            for (let w = -half; w <= half; w++) {
+              const k = idx + w;
+              if (k >= 0 && k < arr.length) {
+                sum += arr[k];
+                count++;
+              }
+            }
+            return count > 0 ? sum / count : val;
+          });
+        };
+
+        const smoothedEnergy = smoothArray(smoothArray(normalizedEnergy, 5), 3);
+        const smoothedPitch = smoothArray(smoothArray(rawPitch, 5), 5);
+
+        return { energy: smoothedEnergy, pitch: smoothedPitch };
       } catch (e) {
         const energy = [];
         const pitch = [];
         for (let i = 0; i < binCount; i++) {
           const t = i / binCount;
-          energy.push(Math.sin(t * Math.PI) * 0.8 + (Math.random() * 0.1));
-          pitch.push(0.4 + Math.sin(t * Math.PI * 1.5) * 0.3);
+          energy.push(Math.sin(t * Math.PI) * 0.8 + 0.05);
+          pitch.push(0.4 + Math.sin(t * Math.PI) * 0.25);
         }
         return { energy, pitch };
       }
@@ -1901,9 +1930,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       canvas.height = Math.floor(height * dpr);
       ctx.scale(dpr, dpr);
 
+      // Background
       ctx.fillStyle = '#0b1120';
       ctx.fillRect(0, 0, width, height);
 
+      // Faint Grid
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.lineWidth = 1;
       for (let x = 0; x < width; x += width / 8) {
@@ -1922,9 +1953,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       const centerY = height / 2;
       const halfHeight = (height / 2) - 8;
 
+      // 1. Oxford Reference Waveform (Upper Area - Sky Blue #38bdf8)
       const refGrad = ctx.createLinearGradient(0, 0, 0, centerY);
-      refGrad.addColorStop(0, 'rgba(99, 102, 241, 0.7)');
-      refGrad.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
+      refGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+      refGrad.addColorStop(1, 'rgba(56, 189, 248, 0.02)');
 
       ctx.fillStyle = refGrad;
       ctx.beginPath();
@@ -1938,7 +1970,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       ctx.closePath();
       ctx.fill();
 
-      ctx.strokeStyle = '#818cf8';
+      ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       for (let i = 0; i < binCount; i++) {
@@ -1949,11 +1981,10 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
       ctx.stroke();
 
-      const isHighQuality = evalScore >= 75;
-      const userColor = isHighQuality ? '#34d399' : '#ec4899';
+      // 2. Learner Waveform (Lower Area - Pink #ec4899)
       const userGrad = ctx.createLinearGradient(0, centerY, 0, height);
-      userGrad.addColorStop(0, isHighQuality ? 'rgba(52, 211, 153, 0.05)' : 'rgba(236, 72, 153, 0.05)');
-      userGrad.addColorStop(1, isHighQuality ? 'rgba(52, 211, 153, 0.7)' : 'rgba(236, 72, 153, 0.7)');
+      userGrad.addColorStop(0, 'rgba(236, 72, 153, 0.02)');
+      userGrad.addColorStop(1, 'rgba(236, 72, 153, 0.45)');
 
       ctx.fillStyle = userGrad;
       ctx.beginPath();
@@ -1967,7 +1998,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       ctx.closePath();
       ctx.fill();
 
-      ctx.strokeStyle = userColor;
+      ctx.strokeStyle = '#ec4899';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       for (let i = 0; i < binCount; i++) {
@@ -1978,35 +2009,52 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
       ctx.stroke();
 
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 6;
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
+      // Helper for smooth spline drawing
+      const drawSmoothCurve = (points, strokeStyle, lineWidth, isDashed = false, shadowColor = null) => {
+        if (!points || points.length < 2) return;
+        ctx.save();
+        if (shadowColor) {
+          ctx.shadowColor = shadowColor;
+          ctx.shadowBlur = 6;
+        }
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth;
+        if (isDashed) {
+          ctx.setLineDash([5, 3]);
+        } else {
+          ctx.setLineDash([]);
+        }
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 0; i < points.length - 1; i++) {
+          const xc = (points[i].x + points[i + 1].x) / 2;
+          const yc = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        }
+        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        ctx.stroke();
+        ctx.restore();
+      };
+
+      // 3. Oxford Pitch Curve (Solid Sky Blue #38bdf8 with Cyan Glow)
+      const refPoints = [];
       for (let i = 0; i < binCount; i++) {
         const x = i * step;
         const y = height * (1.0 - refProfile.pitch[i] * 0.85 - 0.08);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        refPoints.push({ x, y });
       }
-      ctx.stroke();
+      drawSmoothCurve(refPoints, '#38bdf8', 2.5, false, '#0284c7');
 
-      ctx.shadowColor = userColor;
-      ctx.shadowBlur = 6;
-      ctx.strokeStyle = isHighQuality ? '#6ee7b7' : '#f472b6';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([4, 2]);
-      ctx.beginPath();
+      // 4. Learner Pitch Curve (Dashed Pink #f472b6 with Rose Glow)
+      const userPoints = [];
       for (let i = 0; i < binCount; i++) {
         const x = i * step;
         const y = height * (1.0 - userProfile.pitch[i] * 0.85 - 0.08);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        userPoints.push({ x, y });
       }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.shadowBlur = 0;
+      drawSmoothCurve(userPoints, '#f472b6', 2.5, true, '#ec4899');
 
+      // 5. Intonation Match Score Calculation
       let matchDiffSum = 0;
       for (let i = 0; i < binCount; i++) {
         matchDiffSum += Math.abs(refProfile.pitch[i] - userProfile.pitch[i]);
@@ -2017,7 +2065,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       if (hintEl) {
         hintEl.textContent = `Khớp ngữ điệu: ${finalMatchPct}% (${finalMatchPct >= 80 ? '🌟 Chuẩn bản xứ' : finalMatchPct >= 65 ? '👍 Khá chuẩn' : '⚠️ Cần giữ hơi đều'})`;
-        hintEl.style.color = finalMatchPct >= 75 ? '#34d399' : '#fbbf24';
+        hintEl.style.color = finalMatchPct >= 75 ? '#38bdf8' : '#fbbf24';
       }
     }
     window.renderSpeakingWaveformComparison = renderSpeakingWaveformComparison;

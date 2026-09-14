@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-11 (Build 312) - Ẩn Nghĩa Tiếng Việt Cấp Độ Siêu Khó (Writing Lab), Khắc Phục Danh Sách Từ Vựng Bắt Buộc, Đồng Bộ Chuỗi Phiên Bản Footer & Làm Mịn Đồng Bộ Biểu Đồ Sóng Âm Speaking Lab
+================================================================================
+1. [Luyện Viết AI - Cấp Độ Siêu Khó Ẩn Nghĩa Tiếng Việt (modal-writing-setup.html & 06c-writing-engine.js)]:
+   - Chế độ Siêu Khó (Super Hard / Expert x4.0) trong Writing Lab: Cập nhật thành KHÔNG hiển thị nghĩa tiếng Việt (`[Ẩn nghĩa TV]`), buộc người học phải nhớ ngữ nghĩa và áp dụng từ vựng vào đoạn văn (30-65 từ) để tôi luyện tư duy Anh - Anh.
+   - Thẻ thiết lập độ khó trong modal setup được cập nhật mô tả chính xác `Ẩn nghĩa TV.`
+
+2. [Đồng Bộ Chuỗi Phiên Bản Footer & Màn Hình Cài Đặt (02-state-core.js, app.js, screen-decks.html, screen-deck-detail.html, modal-settings.html)]:
+   - Khắc phục triệt để tình trạng nhãn footer phiên bản bị kẹt chuỗi cũ trên giao diện danh sách bộ từ và chi tiết bộ từ.
+   - Bổ sung hàm `updateAppVersionLabels()` tự động đồng bộ hóa tất cả các phần tử `.mini-footer-version` và `#settings-app-version-label` theo hằng số phiên bản `v0.10.10-11 (Build 312)`.
+
+3. [Khắc Phục Lỗi Hiển Thị Danh Sách Từ Vựng Bắt Buộc Sử Dụng Trong Writing Lab (06c-writing-engine.js)]:
+   - Khắc phục sự cố không hiển thị thẻ từ vựng mục tiêu trong Writing Lab do không đồng bộ ID phần tử container (`writing-target-words-list` vs `writing-target-words-container`).
+   - Đảm bảo danh sách từ vựng mục tiêu luôn hiển thị đầy đủ, rõ ràng các thẻ từ với loại từ, cấp độ CEFR và nghĩa tiếng Việt tương ứng trên cả 4 cấp độ.
+
+4. [Đồng Bộ Màu Sắc & Làm Mịn Đường Ngữ Điệu Waveform So Sánh Trong Speaking Lab (screen-speaking.html & 07-speaking-engine.js)]:
+   - Đồng bộ nhất quán 100% màu sắc giữa Legend và Biểu đồ: Giọng mẫu Oxford là Xanh Da Trời (`#38bdf8`), Giọng học viên là Hồng Phấn (`#ec4899` / `#f472b6`).
+   - Thuật toán trích xuất cao độ (pitch extraction) được nâng cấp với bộ lọc ngưỡng năng lượng giọng nói và bộ lọc trung bình trượt 2 lớp, triệt tiêu hoàn toàn gai nhiễu tại các đoạn nghỉ/lấy hơi.
+   - Vẽ đường biểu diễn ngữ điệu bằng đường cong Bezier/Spline siêu mượt với hiệu ứng phát sáng Cyan/Rose sang trọng.
+
+================================================================================
 Phiên bản: v0.10.10-10 (Build 311) - Ghi Nhận Thời Gian Học & Thống Kê Spaced Repetition Cho Writing Lab, Cấp Độ Siêu Khó (Expert x4.0), Dịch Tiếng Việt Polished Rewrite, Định Dạng Nhận Xét Đậm Trực Quan & Giám Khảo IELTS AI Nghiêm Khắc Tuyệt Đối
 ================================================================================
 1. [Ghi Nhận Thời Gian Học, Hành Động Học Tập & Tiến Độ Lặp Lại Ngắt Quãng Spaced Repetition Cho Luyện Viết (08-wallet-economy.js & 06c-writing-engine.js)]:

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-10 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-11 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -366,18 +366,24 @@ function renderWritingCurrentQuestion() {
     counterEl.textContent = `Câu ${currentWritingIndex + 1} / ${writingQuestionsList.length}`;
   }
 
-  // Render Target Words Chips (Dễ, Trung bình, Khó, Siêu khó: hiện nghĩa tiếng Việt)
-  const targetCardsContainer = document.getElementById('writing-target-words-container');
+  // Render Target Words Chips (Dễ, Trung bình, Khó: hiện nghĩa TV; Siêu khó: ẩn nghĩa TV)
+  const targetCardsContainer = document.getElementById('writing-target-words-list') || document.getElementById('writing-target-words-container');
   if (targetCardsContainer) {
-    targetCardsContainer.innerHTML = q.targetWords.map((w, idx) => `
+    const isExpert = q.difficulty === 'expert';
+    targetCardsContainer.innerHTML = q.targetWords.map((w, idx) => {
+      const defContent = isExpert 
+        ? '<span style="color: var(--text-muted); opacity: 0.6; font-style: italic;">[Ẩn nghĩa TV]</span>'
+        : `<em>${escapeHtml(w.definitionVi || w.definition || '')}</em>`;
+      return `
       <div class="writing-target-chip" id="target-chip-${idx}" style="background: var(--surface-elevated); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
         <span style="font-size: 16px;">🔤</span>
         <div>
           <div style="font-weight: 800; font-size: 14px; color: #fbbf24;">${escapeHtml(w.term || '')}</div>
-          <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(w.phonetic || '')} • <em>${escapeHtml(w.definitionVi || w.definition || '')}</em></div>
+          <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(w.phonetic || '')} • ${defContent}</div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   // Render Requirement Banner
