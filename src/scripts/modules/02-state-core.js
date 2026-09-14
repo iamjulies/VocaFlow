@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-9 Build 310)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-10 Build 311)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-9 Build 310)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-10 Build 311)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-9';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-9 (Build 310)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-10';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-10 (Build 311)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)

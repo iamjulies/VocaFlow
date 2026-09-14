@@ -1,4 +1,39 @@
 ================================================================================
+Phiên bản: v0.10.10-10 (Build 311) - Ghi Nhận Thời Gian Học & Thống Kê Spaced Repetition Cho Writing Lab, Cấp Độ Siêu Khó (Expert x4.0), Dịch Tiếng Việt Polished Rewrite, Định Dạng Nhận Xét Đậm Trực Quan & Giám Khảo IELTS AI Nghiêm Khắc Tuyệt Đối
+================================================================================
+1. [Ghi Nhận Thời Gian Học, Hành Động Học Tập & Tiến Độ Lặp Lại Ngắt Quãng Spaced Repetition Cho Luyện Viết (08-wallet-economy.js & 06c-writing-engine.js)]:
+   - Ghi nhận thời gian thực tế học tập mỗi phiên vào thống kê ngày: `addDailyStudySeconds(durationSec, 'writing')`.
+   - Ghi nhận hành động học tập vào luồng học Study Flow (`recordStudyFlowAction('writing')`) và hoàn thành bài học (`recordLessonCompleted('writing')`).
+   - Cập nhật tiến độ Spaced Repetition cho tất cả các từ vựng xuất hiện trong phiên luyện viết (`recordStudySessionWordReviews(reviewedWords)`).
+   - Quyết toán thưởng VoCoin / Xu công bằng thông qua cơ chế Balance v3 (`calculateSessionFinalPointsV3`), ghi sổ cái `STUDY_WRITING` và đồng bộ tức thì lên Cloud.
+
+2. [Tái Cấu Trúc & Bổ Sung Cấp Độ Siêu Khó (Super Hard / Expert x4.0) (modal-writing-setup.html & 06c-writing-engine.js)]:
+   - Cấp độ Dễ (Easy): 1 từ đơn lẻ, tự do độ dài, hiển thị nghĩa tiếng Việt, điểm sàn 70, x1.0 (+8~16 Xu).
+   - Cấp độ Trung bình (Medium): 2-3 từ liên kết, tự do độ dài, hiển thị nghĩa tiếng Việt, điểm sàn 80, x1.8 (+25~45 Xu).
+   - Cấp độ Khó (Hard): 2-4 từ kết hợp, yêu cầu đoạn văn ngắn-vừa với ràng buộc linh hoạt (15-35 từ), hiển thị nghĩa tiếng Việt, điểm sàn 90, x2.8 (+55~90 Xu).
+   - Cấp độ Siêu Khó (Super Hard / Expert): 2-5 từ nâng cao, yêu cầu đoạn văn vừa (30-65 từ), hiển thị nghĩa tiếng Việt, điểm sàn 95, x4.0 (+85~150 Xu).
+   - Tự động bảo vệ và yêu cầu đăng nhập đối với các cấp độ từ Trung bình trở lên.
+
+3. [Đồng Bộ 2 Chiều Tuyệt Đối Cho Trình Độ Hiện Tại & Mục Tiêu Band (Current & Target Band) (03-auth.js)]:
+   - Đảm bảo đồng bộ 2 chiều toàn diện giữa Local Database và Cloud Realtime Database cho cả `currentBand` và `targetBand`.
+   - Lưu trữ trực tiếp vào root path `/users/${uid}/currentBand.json` và `/users/${uid}/targetBand.json` qua `saveUserProfileCustomFields()`.
+   - Tự động nạp, gộp và cập nhật đồng bộ qua `pushCurrentDatabaseToCloud()` và `mergeCloudDataIntoLocal()`.
+
+4. [Bổ Sung Bản Dịch Tiếng Việt Cho Polished Rewrite & Nâng Cấp Định Dạng Nhận Xét (screen-writing.html & 06c-writing-engine.js)]:
+   - Bổ sung trường `polishedRewriteVi` trong phản hồi AI và hiển thị thẻ dịch nghĩa tiếng Việt trực quan ngay bên dưới câu viết lại tiếng Anh (`#writing-polished-translation-vi`).
+   - Định dạng Markdown Bold (`**...**`) trong nhận xét AI Mentor Feedback (`#writing-feedback-text`) với màu sắc nổi bật rõ nét và ngắt dòng tự nhiên.
+   - Nâng cấp Thẻ Ghi Chú Ngữ Pháp (`#writing-grammar-card`) thành một thẻ chuyên biệt, hiển thị từng quy tắc ngữ pháp dưới dạng gạch đầu dòng rõ ràng, tương phát cao.
+
+5. [Thiết Lập Persona Giám Khảo Bản Ngữ IELTS Khắt Khe Tuyệt Đối & Chấm Điểm Không Khoan Nhượng (06c-writing-engine.js)]:
+   - Persona Examiner: Giám khảo bản ngữ chấm IELTS Writing Task 2 chuyên nghiệp, công tâm và không nể nang/không điểm thương hại (zero pity points).
+   - Phạt nghiêm khắc các lỗi ngữ pháp cơ bản (thì động từ, hòa hợp chủ vị, mạo từ, giới từ, dấu câu, chính tả). Bất kỳ câu nào dính lỗi ngữ pháp căn bản đều bị hạ điểm dưới mức điểm sàn (<70) bất kể từ vựng trau chuốt.
+   - Kiểm soát nghiêm ngặt việc sử dụng đầy đủ các từ vựng bắt buộc và giới hạn độ dài số lượng từ theo từng cấp độ.
+
+6. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-10 Build 311)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file (`02-state-core.js`, `01-router.js`, `modal-settings.html`, `sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`).
+   - Biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-10_Windows_Portable.zip và sẵn sàng đồng bộ 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-9 (Build 310) - Đồng Bộ Túi Đồ VocaHint/VocaSkip, Cơ Chế Balance v3 Phạt Bỏ Cuộc Giữa Chừng & Cá Nhân Hóa Aim Band (Current & Target Band)
 ================================================================================
 1. [Đồng Bộ Kho Đồ Toàn Cục VocaHint & VocaSkip Cho Luyện Viết (06c-writing-engine.js & screen-writing.html)]:

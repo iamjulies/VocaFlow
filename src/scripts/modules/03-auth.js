@@ -3642,7 +3642,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           body: JSON.stringify(newCurBand)
         }).catch(() => {});
 
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/currentBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCurBand)
+        }).catch(() => {});
+
         fetch(rtdbUrl + '/users/' + currentUser.uid + '/profile/targetBand.json' + authParam, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newTgtBand)
+        }).catch(() => {});
+
+        fetch(rtdbUrl + '/users/' + currentUser.uid + '/targetBand.json' + authParam, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newTgtBand)
@@ -7873,6 +7885,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             username: currentUser.username || '',
             lastUsernameChangeTimestamp: currentUser.lastUsernameChangeTimestamp || 0,
             bio: currentUser.bio || '',
+            currentBand: currentUser.currentBand || localStorage.getItem('vocaflow_user_current_band') || 'none',
+            targetBand: currentUser.targetBand || localStorage.getItem('vocaflow_user_target_band') || '8.0',
             email: currentUser.email || '',
             avatar: avToSave,
             avatarTime: avTimeToSave,
@@ -8403,6 +8417,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const remoteUsername = remoteProf.username || cloudData.username;
       const remoteLastChange = (remoteProf.lastUsernameChangeTimestamp !== undefined) ? remoteProf.lastUsernameChangeTimestamp : cloudData.lastUsernameChangeTimestamp;
       const remoteBio = (remoteProf.bio !== undefined) ? remoteProf.bio : cloudData.bio;
+      const remoteCurrentBand = (remoteProf.currentBand !== undefined) ? remoteProf.currentBand : cloudData.currentBand;
+      const remoteTargetBand = (remoteProf.targetBand !== undefined) ? remoteProf.targetBand : cloudData.targetBand;
+
       if (remoteBio !== undefined && remoteBio !== null) {
         localStorage.setItem('vocaflow_user_bio', remoteBio);
         const bioDisplay = document.getElementById('profile-bio-display');
@@ -8410,6 +8427,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const bioInput = document.getElementById('profile-bio-input');
         if (bioInput) bioInput.value = (typeof remoteBio === 'string') ? remoteBio : '';
       }
+      if (remoteCurrentBand) {
+        localStorage.setItem('vocaflow_user_current_band', remoteCurrentBand);
+        const curBandSelect = document.getElementById('profile-current-band-select');
+        if (curBandSelect) curBandSelect.value = remoteCurrentBand;
+      }
+      if (remoteTargetBand) {
+        localStorage.setItem('vocaflow_user_target_band', remoteTargetBand);
+        const tgtBandSelect = document.getElementById('profile-target-band-select');
+        if (tgtBandSelect) tgtBandSelect.value = remoteTargetBand;
+      }
+
       if (currentUser) {
         let profChanged = false;
         if (remoteName && remoteName.trim().length > 0 && remoteName !== currentUser.displayName) {
@@ -8426,6 +8454,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
         if (remoteBio !== undefined && remoteBio !== currentUser.bio) {
           currentUser.bio = remoteBio;
+          profChanged = true;
+        }
+        if (remoteCurrentBand && remoteCurrentBand !== currentUser.currentBand) {
+          currentUser.currentBand = remoteCurrentBand;
+          profChanged = true;
+        }
+        if (remoteTargetBand && remoteTargetBand !== currentUser.targetBand) {
+          currentUser.targetBand = remoteTargetBand;
           profChanged = true;
         }
         if (profChanged) {

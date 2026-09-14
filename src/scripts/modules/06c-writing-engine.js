@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-9 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-10 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -23,9 +23,21 @@ let writingPolishedSentence = '';
 let writingIsEvaluating = false;
 
 // =========================================================================
-// 1. DIFFICULTY CONFIG & REWARDS ENGINE (BALANCE_V2)
+// 1. DIFFICULTY CONFIG & REWARDS ENGINE (BALANCE_V2 & V3)
 // =========================================================================
 function getWritingDifficultyConfig(diff) {
+  if (diff === 'expert') {
+    return {
+      floorScore: 95,
+      diffMult: 4.0,
+      wordsCount: [2, 5],
+      minLen: 30,
+      maxLen: 65,
+      baseXuRange: [85, 150],
+      masteryBonus: 30,
+      label: '🔥 Siêu Khó'
+    };
+  }
   if (diff === 'hard') {
     return {
       floorScore: 90,
@@ -67,16 +79,16 @@ function getWritingDifficultyConfig(diff) {
 // =========================================================================
 function selectWritingSetupDifficulty(diff) {
   if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
-    alert('🔒 Cấp độ Trung Bình và Khó yêu cầu đăng nhập tài khoản để mở khóa!');
+    alert('🔒 Cấp độ Trung Bình, Khó và Siêu Khó yêu cầu đăng nhập tài khoản để mở khóa!');
     if (typeof openAuthModal === 'function') openAuthModal('login');
     return;
   }
   selectedWritingSetupDifficulty = diff;
-  ['easy', 'medium', 'hard'].forEach(d => {
+  ['easy', 'medium', 'hard', 'expert'].forEach(d => {
     const card = document.getElementById('writing-diff-card-' + d);
     if (card) {
       if (d === diff) {
-        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444' };
+        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444', expert: '#ec4899' };
         card.style.borderColor = colors[d];
       } else {
         card.style.borderColor = 'var(--border)';
@@ -163,8 +175,15 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
 
     let cluster = [primary];
 
-    if (diff === 'medium' || diff === 'hard') {
-      const requiredCount = diff === 'medium' ? (Math.random() > 0.5 ? 3 : 2) : (Math.random() > 0.4 ? 3 : 2);
+    if (diff === 'medium' || diff === 'hard' || diff === 'expert') {
+      let requiredCount = 2;
+      if (diff === 'medium') {
+        requiredCount = Math.floor(Math.random() * 2) + 2; // 2 or 3
+      } else if (diff === 'hard') {
+        requiredCount = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4
+      } else if (diff === 'expert') {
+        requiredCount = Math.floor(Math.random() * 4) + 2; // 2, 3, 4, or 5
+      }
       
       // Look for candidate partners in the deck
       const candidates = pool.filter(w => w.id !== primary.id && !cluster.some(c => c.id === w.id));
@@ -192,7 +211,9 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
           { term: 'crucial', phonetic: '/ˈkruːʃl/', definitionVi: 'quan trọng, thiết yếu', partOfSpeech: 'adjective', isDeckWord: false },
           { term: 'opportunity', phonetic: '/ˌɒpəˈtjuːnəti/', definitionVi: 'cơ hội', partOfSpeech: 'noun', isDeckWord: false },
           { term: 'improve', phonetic: '/ɪmˈpruːv/', definitionVi: 'cải thiện, nâng cao', partOfSpeech: 'verb', isDeckWord: false },
-          { term: 'perspective', phonetic: '/pəˈspektɪv/', definitionVi: 'góc nhìn, quan điểm', partOfSpeech: 'noun', isDeckWord: false }
+          { term: 'perspective', phonetic: '/pəˈspektɪv/', definitionVi: 'góc nhìn, quan điểm', partOfSpeech: 'noun', isDeckWord: false },
+          { term: 'demonstrate', phonetic: '/ˈdemənstreɪt/', definitionVi: 'chứng minh, thể hiện', partOfSpeech: 'verb', isDeckWord: false },
+          { term: 'significant', phonetic: '/sɪɡˈnɪfɪkənt/', definitionVi: 'đáng kể, có ý nghĩa', partOfSpeech: 'adjective', isDeckWord: false }
         ];
         const extra = fallbacks.find(f => !cluster.some(c => c.term.toLowerCase() === f.term.toLowerCase())) || fallbacks[0];
         cluster.push({ ...extra, id: 'extra_' + Date.now() + '_' + Math.random() });
@@ -319,9 +340,15 @@ function resetWritingQuestionUI() {
   if (submitBtn) {
     submitBtn.style.display = 'flex';
     submitBtn.disabled = false;
-    submitBtn.innerHTML = '<span>🧠 Chấm Điểm AI</span>';
   }
   if (nextBtn) nextBtn.style.display = 'none';
+
+  const wNumEl = document.getElementById('writing-word-count-num');
+  const cNumEl = document.getElementById('writing-char-count-num');
+  const statusBadge = document.getElementById('writing-count-status-badge');
+  if (wNumEl) wNumEl.textContent = '0';
+  if (cNumEl) cNumEl.textContent = '0';
+  if (statusBadge) statusBadge.style.display = 'none';
 
   handleWritingInput('');
 }
@@ -333,13 +360,16 @@ function renderWritingCurrentQuestion() {
 
   resetWritingQuestionUI();
 
+  // Render Counter
   const counterEl = document.getElementById('writing-counter');
-  if (counterEl) counterEl.textContent = `Câu ${currentWritingIndex + 1} / ${writingQuestionsList.length}`;
+  if (counterEl) {
+    counterEl.textContent = `Câu ${currentWritingIndex + 1} / ${writingQuestionsList.length}`;
+  }
 
-  // Render Target Words Chips
-  const wordsListEl = document.getElementById('writing-target-words-list');
-  if (wordsListEl) {
-    wordsListEl.innerHTML = q.targetWords.map((w, idx) => `
+  // Render Target Words Chips (Dễ, Trung bình, Khó, Siêu khó: hiện nghĩa tiếng Việt)
+  const targetCardsContainer = document.getElementById('writing-target-words-container');
+  if (targetCardsContainer) {
+    targetCardsContainer.innerHTML = q.targetWords.map((w, idx) => `
       <div class="writing-target-chip" id="target-chip-${idx}" style="background: var(--surface-elevated); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
         <span style="font-size: 16px;">🔤</span>
         <div>
@@ -354,8 +384,15 @@ function renderWritingCurrentQuestion() {
   const reqText = document.getElementById('writing-requirement-text');
   const reqBadge = document.getElementById('writing-target-length-badge');
 
-  if (q.difficulty === 'hard') {
-    if (reqText) reqText.innerHTML = `💡 Hãy viết đoạn ngắn kết hợp <strong>${q.targetWords.length} từ</strong> trên và độ dài từ <strong>${q.minWords} - ${q.maxWords} từ</strong>.`;
+  if (q.difficulty === 'expert') {
+    if (reqText) reqText.innerHTML = `💡 Hãy viết câu hoặc đoạn văn kết hợp cả <strong>${q.targetWords.length} từ</strong> trên và độ dài từ <strong>${q.minWords} - ${q.maxWords} từ</strong>.`;
+    if (reqBadge) {
+      reqBadge.textContent = `${q.minWords} - ${q.maxWords} từ`;
+      reqBadge.style.background = 'rgba(236, 72, 153, 0.15)';
+      reqBadge.style.color = '#ec4899';
+    }
+  } else if (q.difficulty === 'hard') {
+    if (reqText) reqText.innerHTML = `💡 Hãy viết câu hoặc đoạn ngắn kết hợp <strong>${q.targetWords.length} từ</strong> trên và độ dài từ <strong>${q.minWords} - ${q.maxWords} từ</strong>.`;
     if (reqBadge) {
       reqBadge.textContent = `${q.minWords} - ${q.maxWords} từ`;
       reqBadge.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -404,7 +441,7 @@ function handleWritingInput(text) {
   if (cNumEl) cNumEl.textContent = charCount;
 
   const q = writingQuestionsList[currentWritingIndex];
-  if (q && q.difficulty === 'hard' && statusBadge) {
+  if (q && (q.difficulty === 'hard' || q.difficulty === 'expert') && statusBadge) {
     statusBadge.style.display = 'inline-block';
     if (wordCount < q.minWords) {
       statusBadge.textContent = `Thiếu ${q.minWords - wordCount} từ`;
@@ -483,35 +520,35 @@ async function evaluateWritingSentenceWithGemini(userSentence, question) {
   const curBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
   const targetBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
 
-  const prompt = `You are an elite IELTS Writing Evaluator and English Stylist.
-Evaluate the following student sentence written for a vocabulary mastery challenge.
+  const prompt = `You are an elite, uncompromising IELTS Writing Task 2 Native Senior Examiner and Stylistic Editor.
+You evaluate student sentences with rigorous precision, zero leniency, and zero pity points.
 
 [LEARNER PROFILE]
 - Current English Proficiency: ${curBand !== 'none' ? `Band ${curBand}` : 'Intermediate (B1-B2)'}
-- Target Aim: Band ${targetBand}
+- Target Goal: Band ${targetBand}
 
 [TASK REQUIREMENTS]
-- Target words MUST be used: [${targetTerms}]
-- Vocabulary details:
+- Target words MUST be used accurately: [${targetTerms}]
+- Vocabulary context details:
 ${wordDetails}
-- Difficulty Level: ${question.difficulty.toUpperCase()} (Floor score: ${cfg.floorScore}/100)
-- Word count constraints: ${question.minWords > 0 ? `${question.minWords} to ${question.maxWords} words` : 'No strict word count constraint'}
+- Challenge Level: ${question.difficulty.toUpperCase()} (Floor score: ${cfg.floorScore}/100)
+- Word count constraints: ${question.minWords > 0 ? `${question.minWords} to ${question.maxWords} words` : 'Free length (1 complete sentence)'}
 
-[STUDENT SENTENCE]
+[STUDENT SUBMISSION]
 "${userSentence}"
 
-Evaluate thoroughly across 4 Pillars:
-1. Grammar & Syntax (0-100)
-2. Vocabulary & Collocations (Proper usage of target words: ${targetTerms})
-3. Naturalness & Coherence (Native phrasing, flow, punctuation)
-4. Length & Task Compliance (Complied with target words and length)
+[EXAMINER EVALUATION RULES]
+1. Grammar & Syntax Strictness: Heavily penalize any grammar flaws (verb tenses, subject-verb agreement, prepositions, articles, dangling modifiers, word order, comma splices, misspelling, capitalization, punctuation). Any sentence with fundamental grammatical errors MUST score BELOW the floor score (<${cfg.floorScore}).
+2. Vocabulary & Collocations: All required target words [${targetTerms}] must be present and used in natural, idiomatic collocations. Missing any target word or misusing its meaning incurs a severe penalty.
+3. Length Compliance: If word count is outside ${question.minWords > 0 ? `[${question.minWords} - ${question.maxWords}]` : '[min 1 valid sentence]'}, mark length pillar as 'fail' and deduct score heavily.
+4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix.
+5. Vietnamese Translation of Polished Rewrite (polishedRewriteVi): You MUST provide a natural, accurate Vietnamese translation of your polished Band ${targetBand} rewrite.
+6. Structured Grammar Notes (grammarNotesVi): List 1-3 crisp, practical grammar rules or corrections in bullet points (using • at start of each line) in Vietnamese.
 
-Calibrate your scoring standards, Vietnamese diagnostic advice, and polished rewrite specifically to help this learner progress towards their target (Band ${targetBand}). The polished rewrite should exemplify a natural, idiomatic Band ${targetBand} sentence incorporating the target words smoothly.
-
-Output MUST be valid JSON only (no markdown quotes, no triple backticks) matching this structure:
+Output MUST be valid JSON only (no markdown code blocks, no backticks) matching this exact schema:
 {
   "score": 85,
-  "verdict": "Rất tự nhiên / Chuẩn xác / Khá tốt / Cần trau chuốt",
+  "verdict": "Rất tự nhiên / Chuẩn xác / Khá tốt / Cần trau chuốt / Sai ngữ pháp nghiêm trọng",
   "pillars": {
     "grammar": { "status": "pass", "note": "Ngữ pháp chuẩn, thì câu chính xác" },
     "vocabulary": { "status": "pass", "note": "Sử dụng từ vựng đúng ngữ cảnh và chuẩn collocations" },
@@ -519,8 +556,9 @@ Output MUST be valid JSON only (no markdown quotes, no triple backticks) matchin
     "length": { "status": "pass", "note": "Độ dài câu hợp lý và đáp ứng yêu cầu" }
   },
   "polishedRewrite": "A refined Band ${targetBand} rewrite of the student's thought using the target words gracefully.",
-  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp để hướng tới Band ${targetBand}).",
-  "grammarNotesVi": "Ghi chú cấu trúc ngữ pháp quan trọng hoặc sửa lỗi sai nếu có.",
+  "polishedRewriteVi": "Bản dịch tiếng Việt tự nhiên và chuẩn xác của câu viết lại mẫu trên.",
+  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt. Dùng **chữ in đậm** để nhấn mạnh lỗi sai hoặc điểm cần nâng cấp.",
+  "grammarNotesVi": "• Quy tắc 1: ...\\n• Quy tắc 2: ...",
   "targetWordsComplied": true
 }`;
 
@@ -610,19 +648,21 @@ function generateOfflineWritingEvaluation(userSentence, question) {
   baseScore = Math.max(30, Math.min(95, baseScore));
 
   const polished = `Naturally speaking, ${userSentence.replace(/[.!?]$/, '')}, which effectively illustrates the mastery of the target vocabulary.`;
+  const polishedVi = `Nói một cách tự nhiên, ${userSentence.replace(/[.!?]$/, '')}, điều này minh họa hiệu quả khả năng làm chủ vốn từ vựng mục tiêu.`;
 
   return {
     score: baseScore,
     verdict: baseScore >= 80 ? 'Khá tốt!' : 'Cần hoàn thiện',
     pillars: {
-      grammar: { status: hasCapital && hasPunctuation ? 'pass' : 'warning', note: hasCapital && hasPunctuation ? 'Cấu trúc câu hoàn chỉnh' : 'Cần chú ý viết hoa đầu câu và dấu chấm câu' },
-      vocabulary: { status: targetComplied ? 'pass' : 'fail', note: targetComplied ? 'Đã sử dụng đủ từ vựng yêu cầu' : 'Chưa sử dụng đầy đủ các từ vựng bắt buộc' },
+      grammar: { status: hasCapital && hasPunctuation ? 'pass' : 'warning', note: hasCapital && hasPunctuation ? 'Cấu trúc câu hoàn chỉnh' : 'Cần chú ý **viết hoa đầu câu** và **dấu chấm câu**' },
+      vocabulary: { status: targetComplied ? 'pass' : 'fail', note: targetComplied ? 'Đã sử dụng đủ từ vựng yêu cầu' : 'Chưa sử dụng đầy đủ các **từ vựng bắt buộc**' },
       naturalness: { status: 'pass', note: 'Hành văn tương đối tự nhiên' },
       length: { status: 'pass', note: `${wordCount} từ` }
     },
     polishedRewrite: polished,
-    feedbackVi: targetComplied ? 'Bạn đã áp dụng thành công các từ vựng mục tiêu vào ngữ cảnh câu hoàn chỉnh.' : 'Hãy đảm bảo gõ đúng chính tả và đưa đầy đủ các từ vựng mục tiêu vào trong câu nhé!',
-    grammarNotesVi: 'Chú ý kết hợp liên từ (e.g. although, because, therefore) để câu văn mạch lạc và đạt điểm cao hơn.',
+    polishedRewriteVi: polishedVi,
+    feedbackVi: targetComplied ? 'Bạn đã áp dụng thành công các từ vựng mục tiêu vào ngữ cảnh câu hoàn chỉnh. Hãy tiếp tục nâng cấp thêm **tính liên kết** giữa các vế câu.' : 'Hãy đảm bảo gõ đúng chính tả và đưa **đầy đủ các từ vựng mục tiêu** vào trong câu nhé!',
+    grammarNotesVi: '• Chú ý kết hợp **liên từ** (e.g. although, because, therefore) để câu văn mạch lạc và đạt điểm cao hơn.\n• Đảm bảo sự hòa hợp **chủ vị** (Subject-Verb Agreement) và chia thì chính xác.',
     targetWordsComplied: targetComplied
   };
 }
@@ -715,16 +755,51 @@ function renderWritingEvaluationResult(evalData, question) {
     polishedTextEl.textContent = `"${writingPolishedSentence}"`;
   }
 
-  // Render Feedback & Grammar notes
-  const feedbackEl = document.getElementById('writing-feedback-text');
-  if (feedbackEl) feedbackEl.innerHTML = escapeHtml(evalData.feedbackVi || 'Câu viết tốt, áp dụng đúng ngữ pháp.');
+  // Render Vietnamese Translation of Polished Rewrite
+  const polishedViCont = document.getElementById('writing-polished-translation-vi');
+  const polishedViText = document.getElementById('writing-polished-translation-text');
+  if (evalData.polishedRewriteVi) {
+    if (polishedViCont) polishedViCont.style.display = 'flex';
+    if (polishedViText) polishedViText.textContent = evalData.polishedRewriteVi;
+  } else {
+    if (polishedViCont) polishedViCont.style.display = 'none';
+  }
 
+  // Render Feedback with Markdown Bold formatting
+  const feedbackEl = document.getElementById('writing-feedback-text');
+  if (feedbackEl) {
+    let fbRaw = evalData.feedbackVi || 'Câu viết tốt, áp dụng đúng ngữ pháp.';
+    let safeFb = (typeof escapeHtml === 'function') ? escapeHtml(fbRaw) : fbRaw;
+    safeFb = safeFb.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #38bdf8; font-weight: 700;">$1</strong>');
+    safeFb = safeFb.replace(/\n/g, '<br>');
+    feedbackEl.innerHTML = safeFb;
+  }
+
+  // Render Dedicated Grammar Notes Card with distinct structured bullets
+  const grammarCard = document.getElementById('writing-grammar-card');
   const grammarNotesEl = document.getElementById('writing-grammar-notes');
   if (grammarNotesEl) {
-    if (evalData.grammarNotesVi) {
+    const gnText = evalData.grammarNotesVi || '';
+    if (gnText.trim()) {
+      if (grammarCard) grammarCard.style.display = 'block';
       grammarNotesEl.style.display = 'block';
-      grammarNotesEl.innerHTML = `<strong>💡 Ghi chú ngữ pháp:</strong> ${escapeHtml(evalData.grammarNotesVi)}`;
+      const rawLines = gnText.split('\n')
+        .map(s => s.trim().replace(/^[\s•\-\*]+\s*/, ''))
+        .filter(Boolean);
+      if (rawLines.length > 1) {
+        grammarNotesEl.innerHTML = `<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">` +
+          rawLines.map(line => {
+            let safeLine = (typeof escapeHtml === 'function') ? escapeHtml(line) : line;
+            safeLine = safeLine.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #a78bfa; font-weight: 700;">$1</strong>');
+            return `<li style="line-height: 1.5; color: var(--text); font-size: 13px;">${safeLine}</li>`;
+          }).join('') + `</ul>`;
+      } else if (rawLines.length === 1) {
+        let safeLine = (typeof escapeHtml === 'function') ? escapeHtml(rawLines[0]) : rawLines[0];
+        safeLine = safeLine.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #a78bfa; font-weight: 700;">$1</strong>');
+        grammarNotesEl.innerHTML = `<div style="line-height: 1.5; color: var(--text); font-size: 13px;">${safeLine}</div>`;
+      }
     } else {
+      if (grammarCard) grammarCard.style.display = 'none';
       grammarNotesEl.style.display = 'none';
     }
   }
@@ -916,9 +991,35 @@ function finishWritingSession() {
   const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
 
   // Duration
-  const durationSec = Math.floor((Date.now() - writingStartTime) / 1000);
+  const durationSec = Math.max(1, Math.floor((Date.now() - writingStartTime) / 1000));
   const mins = String(Math.floor(durationSec / 60)).padStart(2, '0');
   const secs = String(durationSec % 60).padStart(2, '0');
+
+  // Issue 6: Record daily study time, study flow, and lesson completion
+  if (typeof addDailyStudySeconds === 'function') {
+    addDailyStudySeconds(durationSec, 'writing');
+  }
+  if (typeof recordStudyFlowAction === 'function') {
+    recordStudyFlowAction('writing');
+  }
+  if (passedQuestions > 0 && typeof recordLessonCompleted === 'function') {
+    recordLessonCompleted('writing');
+  }
+
+  // Record spaced repetition word reviews for all reviewed words
+  const reviewedWords = [];
+  writingQuestionsList.forEach(q => {
+    if (q.evaluated || q.status === 'passed' || q.status === 'failed' || q.status === 'skipped') {
+      q.targetWords.forEach(w => {
+        if (w.id && !w.id.startsWith('extra_') && !reviewedWords.some(rw => rw.id === w.id)) {
+          reviewedWords.push(w);
+        }
+      });
+    }
+  });
+  if (reviewedWords.length > 0 && typeof recordStudySessionWordReviews === 'function') {
+    recordStudySessionWordReviews(reviewedWords);
+  }
 
   // Update Result Modal Elements
   const ratioEl = document.getElementById('writing-res-floor-ratio');
@@ -994,14 +1095,42 @@ function doExecuteExitWriting(done, total) {
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeWritingResultModal();
 
+  // Record study time on exit if session was underway
+  const durationSec = Math.max(1, Math.floor((Date.now() - writingStartTime) / 1000));
+  if (done > 0 && typeof addDailyStudySeconds === 'function') {
+    addDailyStudySeconds(durationSec, 'writing');
+  }
+  if (done > 0 && typeof recordStudyFlowAction === 'function') {
+    recordStudyFlowAction('writing');
+  }
+  if (done >= total && total > 0 && typeof recordLessonCompleted === 'function') {
+    recordLessonCompleted('writing');
+  }
+
+  // Record spaced repetition word reviews for all reviewed words
+  const reviewedWords = [];
+  writingQuestionsList.forEach(q => {
+    if (q.evaluated || q.status === 'passed' || q.status === 'failed' || q.status === 'skipped') {
+      q.targetWords.forEach(w => {
+        if (w.id && !w.id.startsWith('extra_') && !reviewedWords.some(rw => rw.id === w.id)) {
+          reviewedWords.push(w);
+        }
+      });
+    }
+  });
+  if (reviewedWords.length > 0 && typeof recordStudySessionWordReviews === 'function') {
+    recordStudySessionWordReviews(reviewedWords);
+  }
+
   if (writingSessionPointsEarned !== 0) {
     const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
+    let res = null;
     if (typeof calculateSessionFinalPointsV3 === 'function') {
-      const res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
+      res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     } else if (typeof calculateSessionFinalPoints === 'function') {
-      const res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
+      res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     }
 
@@ -1010,7 +1139,8 @@ function doExecuteExitWriting(done, total) {
       const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
       if (typeof setUserPoints === 'function') setUserPoints(Math.max(0, getUserPoints() + finalPts));
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_WRITING', finalPts, `Luyện viết câu AI "${deckTitle}" (${done}/${total} câu)`);
+        const bonusMsg = (res && res.milestoneBonus > 0) ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
+        addLedgerEntry('STUDY_WRITING', finalPts, `Luyện viết câu AI "${deckTitle}" (${done}/${total} câu${bonusMsg})`);
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();

@@ -777,6 +777,10 @@
         if (!userAchievements['first_speaking']) userAchievements['first_speaking'] = { unlocked: false, progress: 0, unlockedAt: null, claimedReward: false };
         userAchievements['first_speaking'].progress = 1;
         checkAndUnlockAchievement('first_speaking');
+      } else if (mode === 'writing') {
+        if (!userAchievements['first_writing']) userAchievements['first_writing'] = { unlocked: false, progress: 0, unlockedAt: null, claimedReward: false };
+        userAchievements['first_writing'].progress = 1;
+        checkAndUnlockAchievement('first_writing');
       }
 
       recordStudyFlowAction(mode);
