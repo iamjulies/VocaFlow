@@ -1,44 +1,43 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-13 (Build 314)`  
+> **Phiên bản mục tiêu:** `v0.10.10-14 (Build 315)`  
 > **Cập nhật lần cuối:** 2026-09-14  
 > **Trạng thái:** 🚀 **HOÀN TẤT TRIỂN KHAI & TIẾN HÀNH BUILD/KIỂM THỬ CDP (100%)**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-13 Build 314)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-14 Build 315)
 
-- [x] **Issue 20 (Bảng Tin Cộng Đồng - Luôn Hiển Thị Bài Đăng @official Ở Bộ Lọc Tất Cả)**:
-  - Mở rộng `renderCommunityCenterFeed()` trong `03-auth.js` với `isOfficialPost()`.
-  - Bộ lọc "Tất Cả" (`all`) luôn tự động tải và hiển thị mọi bài viết từ `@official` bất kể người dùng có follow hay chưa.
+- [x] **Vấn đề 24 (Quản lý Sửa/Xóa Bình Luận & Bia Mộ Tombstone Bảo Toàn Dữ Liệu)**:
+  - Bổ sung nút ✏️ Chỉnh sửa và 🗑️ Xóa cho bình luận của chính người dùng (`c.authorUid === myUid`).
+  - Khi xóa bình luận cha, hệ thống đánh dấu `isDeleted = true`, chuyển nội dung sang `🪦 [Bình luận này đã bị xóa]` giúp chuỗi phản hồi cấp con bên dưới không bị đứt đoạn hay biến mất.
 
-- [x] **Issue 21 (Tự Động Đăng Bài & Phát Thông Báo Vào Các Dịp Siêu Sale & Ngày Lễ Đặc Biệt)**:
-  - Bổ sung hàm `checkAndSeedOfficialEventPosts()` tự động nhận diện ngày hiện tại: Siêu sale ngày đôi (1/1..12/12), Sinh nhật creator (10/08), Tết Dương Lịch, Valentine 14/2, 8/3, 30/4-1/5, Quốc khánh 2/9, 20/10, Halloween 31/10, 20/11, Giáng Sinh Noel 24-25/12.
-  - Tự động đăng bài từ `@official` lên Bảng Tin Cộng Đồng kèm thông báo tím phát sáng (`isSpecialGlowing: true`) và kích hoạt giảm giá Cửa Hàng VocaShop / VocaVIP.
+- [x] **Vấn đề 25 (Trạng Thái Hoạt Động & Thời Gian Online Gần Nhất Trong Hồ Sơ Cá Nhân)**:
+  - Thêm chấm xanh phát sáng (`🟢`) trên avatar và dòng trạng thái `🟢 Đang hoạt động` / `⚪ Hoạt động X phút/giờ/ngày trước` (làm tròn chuẩn xác phong cách Facebook) trong `modal-public-profile.html`.
+  - Tích hợp `heartbeatUserOnlineStatus()` định kỳ cập nhật `lastActiveAt`.
 
-- [x] **Issue 22 (Khắc Phục Triệt Để Ảo Giác AI Mentor Khi Giải Thích Lỗi Chính Tả Trong Writing Lab)**:
-  - Bổ sung quy tắc bắt buộc `[SPELLING & TYPO CORRECTION PROTOCOL - ZERO HALLUCINATION MANDATE]` vào Gemini System Prompt trong `06c-writing-engine.js`.
-  - Nghiêm cấm AI giải thích thêm/bớt ký tự theo kiểu suy luận toán học (không còn lỗi "thêm chữ c thành accidentally").
-  - Chuẩn hóa định dạng đối chiếu trực tiếp `[từ sai] -> [từ đúng]`.
+- [x] **Vấn đề 26 (Khắc Phục Lỗi Reset Thời Gian Bài Đăng @official Về "Vừa Xong")**:
+  - Chuẩn hóa mốc thời gian phát hành cố định `VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-14T18:00:00.000Z'`.
+  - Kiểm tra dữ liệu bài viết đã tồn tại trên Cloud/Local trước khi seed, không bao giờ ghi đè timestamp và bảo toàn 100% số lượt thích và bình luận.
 
-- [x] **Issue 23 (Chuẩn Hóa Nhận Diện & Điều Hướng Hồ Sơ @official Chuẩn)**:
-  - Sửa lỗi tạo hồ sơ fallback tạm `@vocaflow_offici` khi người dùng chạm vào thông báo hoặc liên kết profile.
-  - Mở rộng toàn diện `isVocaFlowOfficial` và `getLiveUserRegistryEntry` trong `03-auth.js` để định danh chính xác "VocaFlow Chuẩn" (@official, 9,999 Followers, 999,999 VoCoin, 365 Ngày Flow, huy hiệu Đội Ngũ Phát Triển).
+- [x] **Vấn đề 27 (Hệ Thống Bình Luận Phân Cấp & Tag Mention @ Thông Minh)**:
+  - **27a**: Phân cấp cây bình luận trực quan với phản hồi (`reply`) được thụt lề 26px sang phải kèm thanh nối dọc (`border-left: 2px solid rgba(99,102,241,0.3)`).
+  - **27b**: Sửa triệt để lỗi lặp `@username @username` khi trả lời bình luận; dọn dẹp handle thừa khi gửi.
+  - **27c**: Tự động chuyển đổi mọi `@username` trong bài viết và bình luận thành liên kết mở hồ sơ cá nhân; gợi ý tự động (Autocomplete) khi gõ `@` hỗ trợ `@followers` (thông báo đến toàn bộ người theo dõi), `@official` và bạn bè/người đang theo dõi.
+  - **27d**: Thông báo Realtime tức thì: Bắn thông báo tương tác ngay lập tức không cần F5 tải lại trang, đồng bộ đa tab qua `BroadcastChannel` và poller nền 12s.
 
-- [x] **Chuẩn Hóa Phân Danh Mục "Extended Learning Modes (β)"**:
-  - Đánh dấu và phân định rõ ràng giữa 4 Chế độ học cơ bản (Learning Modes) và Chế độ học mở rộng (Extended Learning Modes β: Viết Câu / Writing Lab β; dự kiến: Cloze Test β, Dictation β, Dịch Thuật β).
-
-- [x] **Đồng Bộ Toàn Diện Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-13 Build 314)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-13 (Build 314)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-13 (Build 314)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-13 (Build 314)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-13 Build 314`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-13'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-13 (Build 314)'`)
-  - `src/scripts/modules/03-auth.js` (`VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-13'`)
-  - `src/scripts/modules/06c-writing-engine.js` (`v0.10.10-13 Build 314`)
-  - `src/scripts/modules/07-speaking-engine.js` (`v0.10.10-13 Build 314`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-13`)
-  - `pubspec.yaml` (`version: 0.10.10+314`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-13`)
-  - `GITHUB_RELEASE/push_github.ps1` (`VocaFlow_v0.10.10-13_Windows_Portable.zip`, commit `feat: Release v0.10.10-13 (Build 314)`)
-  - `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md` (`v0.10.10-13 (Build 314)`)
+- [x] **Đồng Bộ Toàn Diện Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-14 Build 315)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-14 (Build 315)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-14 (Build 315)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-14 (Build 315)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-14 Build 315`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-14'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-14 (Build 315)'`)
+  - `src/scripts/modules/03-auth.js` (`VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-14'`)
+  - `src/scripts/modules/06c-writing-engine.js` (`v0.10.10-14 Build 315`)
+  - `src/scripts/modules/07-speaking-engine.js` (`v0.10.10-14 Build 315`)
+  - `src/scripts/modules/08-wallet-economy.js` (`v0.10.10-14 Build 315`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-14`)
+  - `pubspec.yaml` (`version: 0.10.10+315`)
+  - `VocaFlow_Desktop/Program.cs` (`v0.10.10-14`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-14 (Build 315)`)
+  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`

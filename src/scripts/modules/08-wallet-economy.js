@@ -7,7 +7,7 @@
 // =========================================================================
 
     // =========================================================================
-    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-13 / Build 314)
+    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-14 / Build 315)
     // =========================================================================
     function getStoreActiveDiscount() {
       if (typeof getActiveSpecialEventInfo === 'function') {

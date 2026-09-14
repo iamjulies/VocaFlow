@@ -1,4 +1,29 @@
 ================================================================================
+Phiên bản: v0.10.10-14 (Build 315) - Hệ Thống Bình Luận Đa Cấp Facebook-Style, Quản Lý Sửa & Xóa Giữ Bia Mộ, Trạng Thái Online & Last Seen Hồ Sơ, Bảo Toàn Mốc Thời Gian @official, Mention @ Thông Minh & Thông Báo Realtime Tức Thì
+================================================================================
+1. [Hệ Thống Bình Luận Đa Cấp Facebook-Style & Quản Lý Sửa/Xóa Bình Luận (03-auth.js)]:
+   - Phân cấp cây bình luận trực quan: Bình luận phản hồi (`reply`) được thụt lề 26px sang phải kèm đường kẻ nối dọc sang trọng (`border-left: 2px solid rgba(99,102,241,0.3)`) tương tự giao diện Facebook (Issue 27a).
+   - Nút Chỉnh sửa (✏️) & Xóa (🗑️) cho bình luận của chính người dùng (Issue 24).
+   - Cơ chế Bia mộ dữ liệu (🪦 Tombstone): Khi tác giả xóa bình luận cha, nội dung hiển thị `🪦 Bình luận này đã bị xóa` dạng chữ nghiêng xám, giúp toàn bộ chuỗi phản hồi cấp dưới không bị đứt gãy hay mất mát.
+
+2. [Trạng Thái Hoạt Động & Thời Gian Online Gần Nhất Trong Hồ Sơ Cá Nhân (modal-public-profile.html & 03-auth.js)]:
+   - Bổ sung chấm xanh phát sáng (`🟢`) trên avatar và dòng chữ trạng thái `🟢 Đang hoạt động` / `⚪ Hoạt động X phút/giờ/ngày trước` (làm tròn chuẩn xác phong cách Facebook) trong cửa sổ xem hồ sơ công khai (Issue 25).
+   - Heartbeat online status định kỳ cập nhật `lastActiveAt` khi người dùng tương tác với ứng dụng.
+
+3. [Bảo Toàn Mốc Thời Gian Bài Viết Chính Thức @official (03-auth.js)]:
+   - Khắc phục triệt để lỗi khi người dùng mới truy cập thì bài viết của `@official` bị ghi đè thời gian về "vừa xong" (Issue 26).
+   - Chuẩn hóa hằng số `VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-14T18:00:00.000Z'` và kiểm tra dữ liệu bài viết đã tồn tại trên Cloud/Local trước khi seed, bảo toàn 100% lượt thích và bình luận cũ.
+
+4. [Tag Mention @ Thông Minh & Khắc Phục Lỗi Lặp Username (03-auth.js)]:
+   - Khắc phục lỗi hiển thị trùng `@username @username` khi trả lời bình luận (Issue 27b).
+   - Tự động chuyển đổi mọi `@username` trong bài viết và bình luận thành liên kết có thể nhấp để mở trực tiếp Hồ sơ cá nhân của người đó (Issue 27c).
+   - Menu gợi ý tự động (Autocomplete Dropdown) khi gõ `@`: Hỗ trợ `@followers` (thông báo đến toàn bộ người theo dõi), `@official` (VocaFlow Chuẩn) và danh sách người dùng bạn bè/đang theo dõi.
+
+5. [Thông Báo Realtime Tức Thì Không Cần Tải Lại Trang (03-auth.js & 12-achievements.js)]:
+   - Đẩy thông báo tương tác (bình luận, trả lời, nhắc tên @mention, @followers) lập tức vào thanh chuông thông báo trong phiên hiện tại (Issue 27d).
+   - Tích hợp `BroadcastChannel('vocaflow_notifications')` đồng bộ đa tab và trình lắng nghe nền `pullCloudNotificationsSilently()` 12s, cập nhật số lượng unread badge và pop-up toast tức thì mà không cần nhấn F5.
+
+================================================================================
 Phiên bản: v0.10.10-13 (Build 314) - Phân Hệ Học Mở Rộng Extended Learning Modes (β), Bài Đăng @official Trên Tab Tất Cả, Tự Động Đăng Bài & Phát Thông Báo Siêu Sale / Ngày Lễ, Sửa Lỗi AI Giải Thích Chính Tả & Chuẩn Hóa Hồ Sơ @official
 ================================================================================
 1. [Bảng Tin Cộng Đồng - Luôn Hiển Thị Bài Đăng @official Ở Bộ Lọc Tất Cả (03-auth.js)]:

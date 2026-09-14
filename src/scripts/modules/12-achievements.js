@@ -503,9 +503,9 @@
           }
           if (currentNotificationFilter === 'NEW_FOLLOWER') {
             return type === 'NEW_FOLLOWER' || type === 'VOCAMAIL' || actionType === 'VIEW_PROFILE' ||
-                   type === 'post_like' || type === 'post_comment' || type === 'like' || type === 'comment' ||
+                   type === 'post_like' || type === 'post_comment' || type === 'like' || type === 'comment' || type === 'mention' ||
                    actionType === 'VIEW_COMMUNITY_POST' || title.includes('theo dõi') ||
-                   title.includes('thích bài viết') || title.includes('bình luận');
+                   title.includes('thích bài viết') || title.includes('bình luận') || title.includes('nhắc đến') || title.includes('tag');
           }
           if (currentNotificationFilter === 'SYSTEM') {
             return type === 'SYSTEM' || type === 'BUG_REPORT' || title.includes('báo cáo') ||
@@ -544,6 +544,11 @@
           typeColor = '#c084fc';
           typeBg = 'rgba(168,85,247,0.22)';
           typeBorder = 'rgba(168,85,247,0.5)';
+        } else if (n.type === 'mention' || tLower.includes('nhắc đến') || tLower.includes('tag') || tLower.includes('followers')) {
+          typeIcon = '🏷️';
+          typeColor = '#ec4899';
+          typeBg = 'rgba(236,72,153,0.15)';
+          typeBorder = 'rgba(236,72,153,0.4)';
         } else if (n.type === 'post_like' || n.type === 'like' || tLower.includes('thích bài viết') || tLower.includes('thả tim')) {
           typeIcon = '❤️';
           typeColor = '#ec4899';

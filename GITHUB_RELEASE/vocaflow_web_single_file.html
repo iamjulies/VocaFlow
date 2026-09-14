@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-13 (Build 314)</span>
+            <span class="mini-footer-version">v0.10.10-14 (Build 315)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4863,7 +4863,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-13 (Build 314)</span>
+            <span class="mini-footer-version">v0.10.10-14 (Build 315)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -8105,10 +8105,11 @@
 
         <!-- INSTAGRAM HERO SECTION: AVATAR + 3 STATS COLUMNS -->
         <div class="ig-hero-row">
-          <div class="ig-avatar-ring-container">
+          <div class="ig-avatar-ring-container" style="position: relative;">
             <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default; background: transparent; border: 2.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
               <div class="ig-avatar-inner" style="border: none;">👤</div>
             </div>
+            <span id="pub-view-online-dot" style="position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; background: #10b981; border: 2.5px solid var(--surface-elevated); box-shadow: 0 0 8px rgba(16,185,129,0.7); display: inline-block;"></span>
           </div>
 
           <!-- 3 STATS COLUMNS (Instagram Standard) -->
@@ -8133,6 +8134,11 @@
           <div class="ig-bio-name-row">
             <span class="ig-bio-name" id="pub-view-name">Flower VocaFlow</span>
             <span id="pub-view-sub-badge" class="badge" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Flower VocaFlow</span>
+          </div>
+          <!-- ONLINE / LAST SEEN STATUS (v0.10.10-14 Issue 25) -->
+          <div id="pub-view-online-status-row" style="display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #34d399; margin-top: 2px; margin-bottom: 2px; font-weight: 600;">
+            <span id="pub-view-online-status-icon">🟢</span>
+            <span id="pub-view-online-status-text">Đang hoạt động</span>
           </div>
           <div id="pub-view-bio-text" class="ig-bio-text" style="display: none;"></div>
 
@@ -10342,7 +10348,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-13 (Build 314)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-14 (Build 315)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11469,7 +11475,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-13 Build 314)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-14 Build 315)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11922,15 +11928,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-13 Build 314)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-14 Build 315)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-13 Build 314)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-14 Build 315)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-13';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-13 (Build 314)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-14';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-14 (Build 315)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -20461,6 +20467,44 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.openPublicProfileByStudent = openPublicProfileByStudent;
 
+    // ONLINE PRESENCE & LAST SEEN ENGINE (v0.10.10-14 Issue 25)
+    function formatLastActiveTime(lastActiveAt) {
+      if (!lastActiveAt) return { isOnline: false, text: 'Hoạt động gần đây' };
+      const time = typeof lastActiveAt === 'number' ? lastActiveAt : new Date(lastActiveAt).getTime();
+      if (isNaN(time) || time <= 0) return { isOnline: false, text: 'Hoạt động gần đây' };
+      const diff = Math.max(0, Date.now() - time);
+      const mins = Math.floor(diff / 60000);
+      if (mins < 5) return { isOnline: true, text: 'Đang hoạt động' };
+      if (mins < 60) return { isOnline: false, text: `Hoạt động ${mins} phút trước` };
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return { isOnline: false, text: `Hoạt động ${hours} giờ trước` };
+      const days = Math.floor(hours / 24);
+      if (days === 1) return { isOnline: false, text: 'Hoạt động hôm qua' };
+      if (days < 7) return { isOnline: false, text: `Hoạt động ${days} ngày trước` };
+      const weeks = Math.floor(days / 7);
+      if (weeks < 4) return { isOnline: false, text: `Hoạt động ${weeks} tuần trước` };
+      return { isOnline: false, text: `Hoạt động ${new Date(time).toLocaleDateString('vi-VN')}` };
+    }
+    window.formatLastActiveTime = formatLastActiveTime;
+
+    function heartbeatUserOnlineStatus() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      currentUser.lastActiveAt = Date.now();
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        Promise.resolve(token).then(t => {
+          const authParam = t ? `?auth=${t}` : '';
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/lastActiveAt.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Date.now())
+          }).catch(() => {});
+        });
+      } catch (e) {}
+    }
+    window.heartbeatUserOnlineStatus = heartbeatUserOnlineStatus;
+
     async function openPublicProfileModal(authorName, arg2 = '', arg3 = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
       let uid = '';
@@ -20477,7 +20521,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.openPublicProfileModal = openPublicProfileModal;
 
     async function openPublicProfileByAuthor(authorName, authorUid = '', deckId = '') {
-      if (!authorName || authorName === 'Ẩn danh') return;
+      let resolvedAuthorName = authorName;
+      if (!resolvedAuthorName && deckId) resolvedAuthorName = deckId;
+      if (!resolvedAuthorName && authorUid && !authorUid.startsWith('user_') && !authorUid.startsWith('auth_') && !authorUid.startsWith('deck_') && !authorUid.startsWith('lib_deck_')) {
+        resolvedAuthorName = authorUid;
+      }
+      if (!resolvedAuthorName || resolvedAuthorName === '\u1ea8n danh') return;
+      authorName = resolvedAuthorName;
+
       let targetUid = authorUid || '';
       let targetDeckId = deckId || '';
       if (authorUid && (authorUid.startsWith('deck_') || authorUid.startsWith('lib_deck_'))) {
@@ -20548,10 +20599,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetDailyStudyTime = {};
         let targetLedger = [];
         let targetDailyStats = {};
+        let targetLastActiveAt = null;
 
         let uDataFound = false;
 
         if (isVocaFlowOfficial) {
+          targetLastActiveAt = Date.now();
           resolvedName = 'VocaFlow Chuẩn';
           resolvedHandle = 'official';
           resolvedAvatar = 'icons/vocaflow_official_avatar.png';
@@ -20578,6 +20631,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             };
           }
         } else if (isCurrentUser) {
+          targetLastActiveAt = Date.now();
           targetUid = currentUid;
           resolvedName = currentUser.displayName || authorName;
           resolvedHandle = currentUser.username || (currentUser.email ? currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_') : 'guest');
@@ -20650,6 +20704,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 const uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
                   uDataFound = true;
+                  targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
                   if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
                   else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
@@ -20929,6 +20984,37 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             pubBadgeEl.style.boxShadow = 'none';
           }
         }
+
+        // ONLINE / LAST SEEN STATUS CALCULATION (v0.10.10-14 Issue 25)
+        const onlineDotEl = document.getElementById('pub-view-online-dot');
+        const onlineStatusRow = document.getElementById('pub-view-online-status-row');
+        const onlineStatusIcon = document.getElementById('pub-view-online-status-icon');
+        const onlineStatusText = document.getElementById('pub-view-online-status-text');
+
+        let isOnline = false;
+        let statusText = 'Đang hoạt động';
+
+        if (isVocaFlowOfficial || isCurrentUser) {
+          isOnline = true;
+          statusText = 'Đang hoạt động';
+        } else {
+          const activeRes = formatLastActiveTime(targetLastActiveAt);
+          isOnline = activeRes.isOnline;
+          statusText = activeRes.text;
+        }
+
+        if (onlineDotEl) {
+          onlineDotEl.style.display = 'inline-block';
+          onlineDotEl.style.background = isOnline ? '#10b981' : '#94a3b8';
+          onlineDotEl.style.boxShadow = isOnline ? '0 0 8px rgba(16,185,129,0.7)' : 'none';
+        }
+        if (onlineStatusRow && onlineStatusText && onlineStatusIcon) {
+          onlineStatusRow.style.display = 'flex';
+          onlineStatusIcon.textContent = isOnline ? '🟢' : '⚪';
+          onlineStatusText.textContent = statusText;
+          onlineStatusRow.style.color = isOnline ? '#34d399' : 'var(--text-muted)';
+        }
+
         if (bioEl) {
           const cleanBio = (resolvedBio || '').trim();
           if (!cleanBio || cleanBio.startsWith('Tác giả đóng góp') || cleanBio.startsWith('Chưa có')) {
@@ -22373,10 +22459,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-13 / Build 314)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-14 / Build 315)
     // =========================================================================
-    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-13';
-    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_13';
+    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-14';
+    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_14';
+    const VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-14T18:00:00.000Z';
 
     function getActiveSpecialEventInfo() {
       const now = new Date();
@@ -22498,6 +22585,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const seededKey = `vocaflow_seeded_event_${eventInfo.eventId}`;
       const notifiedKey = `vocaflow_notified_event_${eventInfo.eventId}`;
 
+      const now = new Date();
+      const eventStartTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+
+      let existingEventPost = null;
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        existingEventPost = communityPosts.find(p => p && p.id === eventPostId);
+      }
+
       const eventPostObj = {
         id: eventPostId,
         isOfficialEvent: true,
@@ -22509,12 +22604,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         authorVipTier: 'diamond',
         content: `${eventInfo.title}\n\n${eventInfo.content}`,
         image: null,
-        likesCount: 288,
-        commentsCount: 0,
-        likes: {},
-        comments: {},
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        likesCount: existingEventPost?.likesCount || 288,
+        commentsCount: existingEventPost?.commentsCount || 0,
+        likes: existingEventPost?.likes || {},
+        comments: existingEventPost?.comments || {},
+        createdAt: existingEventPost?.createdAt || eventStartTimestamp,
+        updatedAt: eventStartTimestamp,
         type: 'community',
         tags: ['event', 'sale', 'official', eventInfo.eventId]
       };
@@ -22523,10 +22618,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const existingIdx = communityPosts.findIndex(p => p && p.id === eventPostId);
         if (existingIdx === -1) {
           communityPosts.unshift(eventPostObj);
-          try {
-            localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
-          } catch (e) {}
+        } else {
+          communityPosts[existingIdx] = {
+            ...eventPostObj,
+            createdAt: communityPosts[existingIdx].createdAt || eventStartTimestamp,
+            likes: communityPosts[existingIdx].likes || {},
+            comments: communityPosts[existingIdx].comments || {}
+          };
         }
+        try {
+          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        } catch (e) {}
       }
 
       if (!localStorage.getItem(seededKey)) {
@@ -22557,7 +22659,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           authorUid: 'official',
           postId: eventPostId,
           isSpecialGlowing: true,
-          timestamp: new Date().toISOString(),
+          timestamp: eventStartTimestamp,
           isRead: false
         };
 
@@ -22598,7 +22700,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const seededPostKey = `vocaflow_seeded_post_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
       const notifiedKey = `vocaflow_notified_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
 
-      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n🌟 Định hình Phân Hệ Học Mở Rộng: Đánh dấu danh mục Extended Learning Modes (β) với chế độ Viết Câu (Writing Lab β) trọng tâm.\n🧠 AI Writing Mentor Không Ảo Giác: Chuẩn hóa cơ chế chỉ dẫn lỗi chính tả chuẩn xác [từ sai -> từ đúng], nghiêm cấm suy luận ký tự sai lệch.\n🌐 Bảng Tin Cộng Đồng: Luôn ưu tiên hiển thị bài viết chính thức từ @official cho toàn bộ người dùng ở tab Tất Cả.\n👑 Nhận diện thương hiệu @official: Chuẩn hóa hồ sơ chính thức VocaFlow Chuẩn (@official) đồng nhất trên toàn hệ sinh thái.\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`;
+      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n💬 Bình Luận Đa Cấp & Quản Lý Bình Luận: Thụt lề câu trả lời trực quan như Facebook, hỗ trợ Sửa & Xóa bình luận của bản thân (giữ bia mộ 🪦 an toàn dữ liệu).\n🟢 Trạng Thái Hoạt Động (Online Status): Thể hiện trạng thái Đang hoạt động & Thời gian online gần nhất (làm tròn chuẩn xác kiểu Facebook) trong Hồ Sơ Cá Nhân.\n🏷️ Tag Mention @ Thông Minh: Gợi ý autocomplete @followers, @official và bạn bè; chuyển @username thành liên kết hồ sơ có thể nhấp; gửi thông báo nhắc tên đến người được tag.\n⚡ Thông Báo Realtime Tức Thì: Nhận thông báo tương tác, bình luận, nhắc tên ngay lập tức trong phiên học mà không cần tải lại trang.\n🛡️ Bảo toàn mốc thời gian phát hành: Chuẩn hóa thời gian phát hành bài viết chính thức @official vĩnh viễn không bị reset về "vừa xong".\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`;
+
+      let existingPost = null;
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        existingPost = communityPosts.find(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
+      }
 
       const officialPostObj = {
         id: VOCAFLOW_OFFICIAL_POST_ID,
@@ -22612,12 +22719,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         authorVipTier: 'diamond',
         content: officialPostContent,
         image: null,
-        likesCount: 199,
-        commentsCount: 0,
-        likes: {},
-        comments: {},
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        likesCount: existingPost?.likesCount || 215,
+        commentsCount: existingPost?.commentsCount || 0,
+        likes: existingPost?.likes || {},
+        comments: existingPost?.comments || {},
+        createdAt: existingPost?.createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
+        updatedAt: VOCAFLOW_OFFICIAL_RELEASE_TIME,
         type: 'community',
         tags: ['update', 'official', VOCAFLOW_OFFICIAL_VERSION_KEY]
       };
@@ -22627,10 +22734,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const existingIdx = communityPosts.findIndex(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
         if (existingIdx === -1) {
           communityPosts.unshift(officialPostObj);
-          try {
-            localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
-          } catch (e) {}
+        } else {
+          communityPosts[existingIdx] = {
+            ...officialPostObj,
+            createdAt: communityPosts[existingIdx].createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
+            likes: communityPosts[existingIdx].likes || {},
+            comments: communityPosts[existingIdx].comments || {}
+          };
         }
+        try {
+          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        } catch (e) {}
       }
 
       // 2. Push to RTDB in background if online & not yet flagged
@@ -22657,13 +22771,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           type: 'OFFICIAL_ANNOUNCEMENT',
           actionType: 'VIEW_COMMUNITY_POST',
           title: '⭐ VocaFlow Official',
-          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay các nâng cấp nổi bật cho Extended Learning Modes (β) & AI Mentor.`,
+          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay Bình luận đa cấp, Trạng thái Online, Mention @ & Realtime Notification.`,
           authorHandle: 'official',
           authorName: 'VocaFlow Chuẩn',
           authorUid: 'official',
           postId: VOCAFLOW_OFFICIAL_POST_ID,
           isSpecialGlowing: true,
-          timestamp: new Date().toISOString(),
+          timestamp: VOCAFLOW_OFFICIAL_RELEASE_TIME,
           isRead: false
         };
 
@@ -22989,7 +23103,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.highlightAndScrollToPost = highlightAndScrollToPost;
 
-    // UNIFIED POST CARD HTML GENERATOR
+    // MENTION FORMATTER & CLICKABLE PROFILE LINKS (v0.10.10-14 Build 315)
+    function renderCommentContentWithMentions(content) {
+      if (!content) return '';
+      let safe = escapeHtml(content);
+      // Replace @followers special tag
+      safe = safe.replace(/@followers\b/gi, '<span class="mention-tag mention-special" style="color: #ec4899; font-weight: 700; background: rgba(236,72,153,0.15); padding: 1px 6px; border-radius: 4px;">@followers</span>');
+      // Replace @official special tag
+      safe = safe.replace(/@official\b/gi, '<span class="mention-tag mention-official" onclick="openPublicProfileByAuthor(\'VocaFlow Chu\u1ea9n\', \'official\'); event.stopPropagation();" style="color: #38bdf8; font-weight: 700; cursor: pointer; text-decoration: underline; background: rgba(56,189,248,0.15); padding: 1px 6px; border-radius: 4px;" title="Xem h\u1ed3 s\u01a1 VocaFlow Chu\u1ea9n">@official</span>');
+      // Replace @username with clickable profile link
+      safe = safe.replace(/@([a-zA-Z0-9_\.\-]+)/g, (match, handle) => {
+        return `<span class="mention-tag" onclick="openPublicProfileByAuthor('${handle}', '', '${handle}'); event.stopPropagation();" style="color: #818cf8; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;" title="Xem h\u1ed3 s\u01a1 @${handle}">@${handle}</span>`;
+      });
+      return safe;
+    }
+    window.renderCommentContentWithMentions = renderCommentContentWithMentions;
+
+    // UNIFIED POST CARD HTML GENERATOR (v0.10.10-14: Hierarchical Comments & Tombstone Support)
     function buildCommunityPostCardHtml(post, context = 'cc') {
       const myUid = currentUser?.uid;
       const isAuthor = myUid && post.authorUid === myUid;
@@ -23000,6 +23130,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const commentsMap = post.comments || {};
       const commentsList = Object.values(commentsMap).sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
       const commentsCount = commentsList.length;
+
+      // Group comments into root comments and nested replies
+      const rootComments = [];
+      const repliesByParentId = {};
+      commentsList.forEach(c => {
+        if (c.replyToCommentId && commentsMap[c.replyToCommentId]) {
+          if (!repliesByParentId[c.replyToCommentId]) repliesByParentId[c.replyToCommentId] = [];
+          repliesByParentId[c.replyToCommentId].push(c);
+        } else {
+          rootComments.push(c);
+        }
+      });
 
       const postDate = new Date(post.createdAt || Date.now());
       const timeAgo = formatTimeAgo(postDate);
@@ -23012,6 +23154,64 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
       const isCommentsOpen = (activePostCommentsMap[context] === post.id);
+
+      // Single comment renderer (used for both root comments & indented replies)
+      const renderSingleCommentHtml = (c, isReply = false) => {
+        const commentDate = new Date(c.timestamp || Date.now());
+        const cAuthorName = getCommunityCommentAuthorName(c);
+        const cAuthorHandle = getCommunityCommentAuthorHandle(c);
+        const cAuthorAvatar = getCommunityCommentAuthorAvatar(c);
+        const isCommentAuthor = myUid && c.authorUid === myUid;
+        const isDeleted = !!c.isDeleted;
+        const replyAuthorHandleClean = (c.replyToAuthorHandle || '').replace(/^@/, '');
+
+        return `
+          <div class="community-comment-item ${isReply ? 'community-comment-reply' : ''}" id="comment-item-${c.id}" style="${isReply ? 'margin-left: 26px; border-left: 2px solid rgba(99,102,241,0.3); padding-left: 10px; margin-top: 6px;' : 'margin-bottom: 8px;'}">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; position: relative;">
+              <!-- COMMENT HEADER -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid || ''}', '${escapeHtml(cAuthorHandle)}')">
+                  <div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface-elevated); font-size: 11px;">
+                    ${renderAvatarHtml(cAuthorAvatar, 20, 10)}
+                  </div>
+                  <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle.replace(/^@/, ''))}</strong>
+                  <span style="font-size: 10px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
+                  ${c.isEdited ? '<span style="font-size: 9.5px; color: var(--text-muted); font-style: italic;">(đã chỉnh sửa)</span>' : ''}
+                </div>
+
+                <!-- ACTION BUTTONS: REPLY + EDIT/DELETE FOR AUTHOR -->
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToCommunityPostComment('${post.id}', '${c.id}', '${escapeHtml(cAuthorHandle.replace(/^@/, ''))}', '${context}')" style="font-size: 10px; padding: 1px 5px;" title="Trả lời bình luận này">↩️ Trả lời</button>
+                  ${isCommentAuthor && !isDeleted ? `
+                    <button type="button" class="btn btn-xs btn-outline" onclick="editCommunityPostComment('${post.id}', '${c.id}', '${context}')" style="font-size: 10px; padding: 1px 5px;" title="Chỉnh sửa bình luận">✏️</button>
+                    <button type="button" class="btn btn-xs btn-outline" onclick="deleteCommunityPostComment('${post.id}', '${c.id}', '${context}')" style="font-size: 10px; padding: 1px 5px; color: #f87171; border-color: rgba(248,113,113,0.3);" title="Xóa bình luận">🗑️</button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- COMMENT CONTENT -->
+              ${isDeleted ? `
+                <div style="color: var(--text-muted); font-style: italic; font-size: 12px; display: flex; align-items: center; gap: 6px; padding: 2px 0;">
+                  <span>🪦</span>
+                  <span>Bình luận này đã bị xóa</span>
+                </div>
+              ` : `
+                <div style="color: var(--text); line-height: 1.45; word-break: break-word;">
+                  ${replyAuthorHandleClean ? `<span class="mention-tag" onclick="openPublicProfileByAuthor('', '', '${escapeHtml(replyAuthorHandleClean)}'); event.stopPropagation();" style="color: #818cf8; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;">@${escapeHtml(replyAuthorHandleClean)}</span> ` : ''}
+                  ${renderCommentContentWithMentions(c.content)}
+                </div>
+              `}
+            </div>
+
+            <!-- NESTED REPLIES UNDER ROOT COMMENT (v0.10.10-14 Issue 27a) -->
+            ${!isReply && repliesByParentId[c.id] && repliesByParentId[c.id].length > 0 ? `
+              <div class="community-comment-replies-thread" style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                ${repliesByParentId[c.id].map(replyComment => renderSingleCommentHtml(replyComment, true)).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      };
 
       return `
         <div class="community-post-card" id="${idPrefix}post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -23097,26 +23297,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           <div id="${idPrefix}post-comments-section-${post.id}" style="display: ${isCommentsOpen ? 'block' : 'none'}; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
             
             <!-- COMMENTS LIST -->
-            <div id="${idPrefix}post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+            <div id="${idPrefix}post-comments-list-${post.id}" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
               ${commentsList.length === 0 ? `
                 <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 4px 0;">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</div>
-              ` : commentsList.map(c => {
-                const commentDate = new Date(c.timestamp || Date.now());
-                const cAuthorName = getCommunityCommentAuthorName(c);
-                const cAuthorHandle = getCommunityCommentAuthorHandle(c);
-                return `
-                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid}')">
-                      <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml((cAuthorHandle || 'user').replace(/^@/, ''))}</strong>
-                      <span style="font-size: 10.5px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
-                    </div>
-                    <button type="button" class="btn btn-xs btn-outline" onclick="setReplyingToCommunityPostComment('${post.id}', '${c.id}', '${escapeHtml((cAuthorHandle || 'user').replace(/^@/, ''))}', '${context}')" style="font-size: 10.5px; padding: 1px 6px;">↩️ Trả lời</button>
-                  </div>
-                  ${c.replyToAuthorHandle ? `<span style="color: #818cf8; font-size: 11.5px; font-weight: 600;">@${escapeHtml(c.replyToAuthorHandle.replace(/^@/, ''))} </span>` : ''}
-                  <span style="color: var(--text); line-height: 1.4; word-break: break-word;">${escapeHtml(c.content)}</span>
-                </div>
-              `;}).join('')}
+              ` : rootComments.map(c => renderSingleCommentHtml(c, false)).join('')}
             </div>
 
             <!-- COMMENT INPUT -->
@@ -23126,7 +23310,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 <button type="button" onclick="cancelReplyingToCommunityPostComment('${post.id}', '${context}')" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">✕</button>
               </div>
               <div style="display: flex; gap: 6px;">
-                <input type="text" id="${idPrefix}post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitCommunityPostComment('${post.id}', '${context}')">
+                <input type="text" id="${idPrefix}post-comment-input-${post.id}" class="form-input" placeholder="Viết bình luận (gõ @ để tag)..." style="font-size: 12px; padding: 6px 10px; flex: 1;" onkeydown="if(event.key === 'Enter') submitCommunityPostComment('${post.id}', '${context}')">
                 <button type="button" class="btn btn-primary btn-sm" onclick="submitCommunityPostComment('${post.id}', '${context}')" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">Gửi</button>
               </div>
             </div>
@@ -23351,15 +23535,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.toggleCommunityCenterPostCommentsSection = (postId) => toggleCommunityPostCommentsSection(postId, 'cc');
 
     function setReplyingToCommunityPostComment(postId, commentId, authorHandle, context = 'cc') {
-      activeReplyingCommentMap[context] = { postId, commentId, authorHandle };
+      const cleanHandle = (authorHandle || 'user').replace(/^@/, '');
+      activeReplyingCommentMap[context] = { postId, commentId, authorHandle: cleanHandle };
       const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
       const ind = document.getElementById(`${idPrefix}reply-indicator-${postId}`);
       const txt = document.getElementById(`${idPrefix}reply-indicator-text-${postId}`);
       const inp = document.getElementById(`${idPrefix}post-comment-input-${postId}`);
       if (ind) ind.style.display = 'flex';
-      if (txt) txt.textContent = `Đang trả lời @${authorHandle}`;
+      if (txt) txt.textContent = `Đang trả lời @${cleanHandle}`;
       if (inp) {
-        inp.value = `@${authorHandle} `;
+        // v0.10.10-14 Issue 27b: Do NOT set inp.value to '@' + authorHandle to avoid duplicate '@handle @handle' bug!
         inp.focus();
       }
     }
@@ -23379,6 +23564,220 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.cancelReplyingToComment = (p) => cancelReplyingToCommunityPostComment(p, 'me');
     window.cancelPubReplyingToComment = (p) => cancelReplyingToCommunityPostComment(p, 'pub');
 
+    // EDIT COMMENT (v0.10.10-14 Issue 24)
+    async function editCommunityPostComment(postId, commentId, context = 'cc') {
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || !post.comments || !post.comments[commentId]) return;
+      const comment = post.comments[commentId];
+      if (comment.authorUid !== currentUser?.uid || comment.isDeleted) return;
+
+      const newText = prompt('Chỉnh sửa bình luận của bạn:', comment.content || '');
+      if (newText === null) return;
+      const trimmed = newText.trim();
+      if (!trimmed) {
+        showToast('⚠️ Nội dung bình luận không thể để trống!');
+        return;
+      }
+      if (trimmed === comment.content) return;
+
+      comment.content = trimmed;
+      comment.isEdited = true;
+      comment.updatedAt = new Date().toISOString();
+
+      if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}/comments/${commentId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(comment)
+        });
+        showToast('✏️ Đã cập nhật bình luận!');
+      } catch (err) {
+        console.warn('Edit comment sync error:', err);
+      }
+    }
+    window.editCommunityPostComment = editCommunityPostComment;
+
+    // DELETE COMMENT WITH TOMBSTONE SUPPORT (v0.10.10-14 Issue 24)
+    async function deleteCommunityPostComment(postId, commentId, context = 'cc') {
+      const post = communityPosts.find(p => p.id === postId);
+      if (!post || !post.comments || !post.comments[commentId]) return;
+      const comment = post.comments[commentId];
+      if (comment.authorUid !== currentUser?.uid) return;
+
+      if (!confirm('Bạn có chắc chắn muốn xóa bình luận này không?')) return;
+
+      // Mark as tombstone to preserve nested reply thread hierarchy
+      comment.isDeleted = true;
+      comment.content = '[Bình luận này đã bị xóa]';
+      comment.deletedAt = new Date().toISOString();
+
+      if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
+      if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
+      if (typeof renderPubProfileCommunityPosts === 'function') renderPubProfileCommunityPosts();
+
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+        const authParam = token ? `?auth=${token}` : '';
+
+        await fetch(`${rtdbUrl}/community_posts/${postId}/comments/${commentId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(comment)
+        });
+        showToast('🗑️ Đã xóa bình luận!');
+      } catch (err) {
+        console.warn('Delete comment sync error:', err);
+      }
+    }
+    window.deleteCommunityPostComment = deleteCommunityPostComment;
+
+    // DISPATCH NOTIFICATIONS FOR COMMENTS, REPLIES & MENTIONS (v0.10.10-14 Issue 27c, 27d)
+    async function dispatchCommentAndMentionNotifications(post, commentObj, text, postId, commentId) {
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+      const myUid = currentUser?.uid;
+      const myHandle = commentObj.authorHandle || 'user';
+      const myName = commentObj.authorName || 'Flower';
+
+      const notifiedUids = new Set();
+      if (myUid) notifiedUids.add(myUid); // Don't notify self
+
+      // 1. Notify Post Author (if not self)
+      if (post.authorUid && !notifiedUids.has(post.authorUid)) {
+        notifiedUids.add(post.authorUid);
+        const notifId = 'notif_comment_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+        const notifObj = {
+          id: notifId,
+          type: 'post_comment',
+          actionType: 'VIEW_COMMUNITY_POST',
+          title: '💬 Bình luận mới',
+          message: `@${myHandle} đã bình luận bài viết của bạn: "${text.slice(0, 60)}"`,
+          postId: postId,
+          commentId: commentId,
+          authorUid: myUid,
+          authorName: myName,
+          authorHandle: myHandle,
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          read: false
+        };
+        fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(notifObj)
+        }).catch(e => console.warn(e));
+      }
+
+      // 2. Notify Reply Target (if replied to comment and target is not self or post author)
+      if (commentObj.replyToCommentId && post.comments && post.comments[commentObj.replyToCommentId]) {
+        const targetComment = post.comments[commentObj.replyToCommentId];
+        if (targetComment && targetComment.authorUid && !notifiedUids.has(targetComment.authorUid)) {
+          notifiedUids.add(targetComment.authorUid);
+          const replyNotifId = 'notif_reply_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+          const replyNotifObj = {
+            id: replyNotifId,
+            type: 'post_comment',
+            actionType: 'VIEW_COMMUNITY_POST',
+            title: '💬 Phản hồi bình luận mới',
+            message: `@${myHandle} đã trả lời bình luận của bạn: "${text.slice(0, 60)}"`,
+            postId: postId,
+            commentId: commentId,
+            authorUid: myUid,
+            authorName: myName,
+            authorHandle: myHandle,
+            timestamp: new Date().toISOString(),
+            isRead: false,
+            read: false
+          };
+          fetch(`${rtdbUrl}/users/${targetComment.authorUid}/notifications/${replyNotifId}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(replyNotifObj)
+          }).catch(e => console.warn(e));
+        }
+      }
+
+      // 3. Scan text for @mentions (@followers and @username)
+      // Check @followers
+      if (/@followers\b/i.test(text)) {
+        if (typeof myFollowersMap !== 'undefined' && myFollowersMap) {
+          Object.keys(myFollowersMap).forEach(followerUid => {
+            if (!notifiedUids.has(followerUid)) {
+              notifiedUids.add(followerUid);
+              const fNotifId = 'notif_mention_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+              const fNotifObj = {
+                id: fNotifId,
+                type: 'mention',
+                actionType: 'VIEW_COMMUNITY_POST',
+                title: '📢 Nhắc đến bạn (@followers)',
+                message: `@${myHandle} đã nhắc đến bạn trong một bình luận: "${text.slice(0, 60)}"`,
+                postId: postId,
+                commentId: commentId,
+                authorUid: myUid,
+                authorName: myName,
+                authorHandle: myHandle,
+                timestamp: new Date().toISOString(),
+                isRead: false,
+                read: false
+              };
+              fetch(`${rtdbUrl}/users/${followerUid}/notifications/${fNotifId}.json${authParam}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fNotifObj)
+              }).catch(e => console.warn(e));
+            }
+          });
+        }
+      }
+
+      // Check specific @username mentions
+      const mentionMatches = text.match(/@([a-zA-Z0-9_\.\-]+)/g);
+      if (mentionMatches && mentionMatches.length > 0) {
+        mentionMatches.forEach(rawTag => {
+          const tagHandle = rawTag.replace(/^@/, '').toLowerCase();
+          if (tagHandle === 'followers' || tagHandle === 'official') return;
+
+          const entry = getLiveUserRegistryEntry('', '', tagHandle);
+          const targetUid = entry?.uid;
+          if (targetUid && !notifiedUids.has(targetUid)) {
+            notifiedUids.add(targetUid);
+            const mNotifId = 'notif_mention_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            const mNotifObj = {
+              id: mNotifId,
+              type: 'mention',
+              actionType: 'VIEW_COMMUNITY_POST',
+              title: '🏷️ Bạn được nhắc đến',
+              message: `@${myHandle} đã nhắc đến bạn trong một bình luận: "${text.slice(0, 60)}"`,
+              postId: postId,
+              commentId: commentId,
+              authorUid: myUid,
+              authorName: myName,
+              authorHandle: myHandle,
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              read: false
+            };
+            fetch(`${rtdbUrl}/users/${targetUid}/notifications/${mNotifId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(mNotifObj)
+            }).catch(e => console.warn(e));
+          }
+        });
+      }
+    }
+    window.dispatchCommentAndMentionNotifications = dispatchCommentAndMentionNotifications;
+
     async function submitCommunityPostComment(postId, context = 'cc') {
       if (isGuest()) {
         alert('🔒 Vui lòng đăng nhập để bình luận!');
@@ -23387,7 +23786,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
       const idPrefix = (context === 'cc') ? 'cc-' : ((context === 'pub') ? 'pub-' : '');
       const inp = document.getElementById(`${idPrefix}post-comment-input-${postId}`) || document.getElementById(`post-comment-input-${postId}`) || document.getElementById(`pub-post-comment-input-${postId}`);
-      const text = (inp?.value || '').trim();
+      let text = (inp?.value || '').trim();
       if (!text) return;
 
       const post = communityPosts.find(p => p.id === postId);
@@ -23396,8 +23795,18 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
       const replyState = activeReplyingCommentMap[context];
       const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-      const replyHandle = replyState?.postId === postId ? replyState.authorHandle : null;
+      const replyHandle = (replyState?.postId === postId && replyState.authorHandle) ? replyState.authorHandle.replace(/^@/, '') : null;
       const replyCommentId = replyState?.postId === postId ? replyState.commentId : null;
+
+      // v0.10.10-14 Issue 27b: If user typed redundant leading `@${replyHandle}`, strip it from content!
+      if (replyHandle) {
+        const redundantPrefixRegex = new RegExp(`^@${replyHandle}\\s*`, 'i');
+        text = text.replace(redundantPrefixRegex, '').trim();
+        if (!text) {
+          showToast('⚠️ Vui lòng nhập nội dung bình luận!');
+          return;
+        }
+      }
 
       const commentObj = {
         id: commentId,
@@ -23430,60 +23839,262 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           body: JSON.stringify(commentObj)
         });
 
-        if (post.authorUid && post.authorUid !== currentUser.uid) {
-          const notifId = 'notif_comment_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-          fetch(`${rtdbUrl}/users/${post.authorUid}/notifications/${notifId}.json${authParam}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: notifId,
-              type: 'post_comment',
-              actionType: 'VIEW_COMMUNITY_POST',
-              title: '💬 Bình luận mới',
-              message: `@${commentObj.authorHandle} đã bình luận: "${text.slice(0, 60)}"`,
-              postId: postId,
-              commentId: commentId,
-              authorUid: currentUser.uid,
-              authorName: commentObj.authorName,
-              authorHandle: commentObj.authorHandle,
-              timestamp: new Date().toISOString(),
-              isRead: false,
-              read: false
-            })
-          }).catch(e => console.warn(e));
-        }
+        // Dispatch instant notifications
+        dispatchCommentAndMentionNotifications(post, commentObj, text, postId, commentId);
 
-        if (replyCommentId && post.comments && post.comments[replyCommentId]) {
-          const targetComment = post.comments[replyCommentId];
-          if (targetComment && targetComment.authorUid && targetComment.authorUid !== currentUser.uid && targetComment.authorUid !== post.authorUid) {
-            const replyNotifId = 'notif_reply_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            fetch(`${rtdbUrl}/users/${targetComment.authorUid}/notifications/${replyNotifId}.json${authParam}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                id: replyNotifId,
-                type: 'post_comment',
-                actionType: 'VIEW_COMMUNITY_POST',
-                title: '💬 Phản hồi bình luận mới',
-                message: `@${commentObj.authorHandle} đã trả lời bình luận của bạn: "${text.slice(0, 60)}"`,
-                postId: postId,
-                commentId: commentId,
-                authorUid: currentUser.uid,
-                authorName: commentObj.authorName,
-                authorHandle: commentObj.authorHandle,
-                timestamp: new Date().toISOString(),
-                isRead: false,
-                read: false
-              })
-            }).catch(e => console.warn(e));
-          }
-        }
       } catch (err) {
         console.warn('Comment sync error:', err);
       }
     }
     window.submitCommunityPostComment = submitCommunityPostComment;
     window.submitPostComment = (postId) => submitCommunityPostComment(postId, 'me');
+
+    // =========================================================================
+    // MENTION AUTOCOMPLETE & REALTIME NOTIFICATIONS (v0.10.10-14 Build 315)
+    // =========================================================================
+    let activeMentionInputElement = null;
+    let activeMentionQuery = '';
+    let activeMentionStartIndex = -1;
+    let vocaflowNotifBroadcastChannel = null;
+    let realtimeNotificationPollTimer = null;
+
+    function setupMentionAutocompleteListener() {
+      document.addEventListener('input', (e) => {
+        const target = e.target;
+        if (!target) return;
+        if (target.classList?.contains('form-input') || target.id?.includes('comment-input') || target.id === 'community-post-content' || target.id === 'community-post-rich-content') {
+          handleMentionInput(target);
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        const popup = document.getElementById('vocaflow-mention-autocomplete-popup');
+        if (popup && !popup.contains(e.target) && e.target !== activeMentionInputElement) {
+          popup.style.display = 'none';
+        }
+      });
+    }
+
+    function handleMentionInput(inputEl) {
+      let val = '';
+      let cursorPos = 0;
+      if (inputEl.isContentEditable) {
+        val = inputEl.textContent || '';
+        const sel = window.getSelection();
+        cursorPos = sel ? sel.focusOffset : val.length;
+      } else {
+        val = inputEl.value || '';
+        cursorPos = inputEl.selectionStart || val.length;
+      }
+
+      const textBeforeCursor = val.slice(0, cursorPos);
+      const atMatch = textBeforeCursor.match(/@([a-zA-Z0-9_\.]*)$/);
+
+      if (!atMatch) {
+        const popup = document.getElementById('vocaflow-mention-autocomplete-popup');
+        if (popup) popup.style.display = 'none';
+        return;
+      }
+
+      activeMentionInputElement = inputEl;
+      activeMentionQuery = atMatch[1].toLowerCase();
+      activeMentionStartIndex = atMatch.index;
+
+      showMentionAutocompletePopup(inputEl, activeMentionQuery);
+    }
+
+    function showMentionAutocompletePopup(inputEl, query) {
+      let popup = document.getElementById('vocaflow-mention-autocomplete-popup');
+      if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'vocaflow-mention-autocomplete-popup';
+        popup.style.position = 'absolute';
+        popup.style.zIndex = '99999';
+        popup.style.background = 'var(--surface-elevated, #1e293b)';
+        popup.style.border = '1px solid var(--border, #334155)';
+        popup.style.borderRadius = '10px';
+        popup.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
+        popup.style.padding = '6px';
+        popup.style.minWidth = '220px';
+        popup.style.maxWidth = '300px';
+        popup.style.maxHeight = '200px';
+        popup.style.overflowY = 'auto';
+        document.body.appendChild(popup);
+      }
+
+      const rect = inputEl.getBoundingClientRect();
+      popup.style.top = `${window.scrollY + rect.top - Math.min(200, 180)}px`;
+      popup.style.left = `${window.scrollX + rect.left}px`;
+      popup.style.display = 'block';
+
+      const candidates = [];
+      if ('followers'.includes(query)) {
+        candidates.push({ handle: 'followers', name: 'Tất cả người theo dõi', avatar: '👥', badge: '📢 Thông báo tất cả' });
+      }
+      if ('official'.includes(query) || 'vocaflow'.includes(query)) {
+        candidates.push({ handle: 'official', name: 'VocaFlow Chuẩn', avatar: 'icons/vocaflow_official_avatar.png', badge: '⭐ Official' });
+      }
+
+      if (typeof myFollowingMap !== 'undefined' && myFollowingMap) {
+        Object.keys(myFollowingMap).forEach(uid => {
+          const entry = getLiveUserRegistryEntry(uid);
+          if (entry) {
+            const handle = (entry.handle || entry.username || 'user').replace(/^@/, '');
+            const name = entry.name || entry.displayName || handle;
+            if (handle.toLowerCase().includes(query) || name.toLowerCase().includes(query)) {
+              if (!candidates.some(c => c.handle.toLowerCase() === handle.toLowerCase())) {
+                candidates.push({ handle, name, avatar: entry.avatar || '👤', uid });
+              }
+            }
+          }
+        });
+      }
+
+      if (typeof liveUserRegistry !== 'undefined' && liveUserRegistry) {
+        Object.values(liveUserRegistry).forEach(entry => {
+          if (entry && (entry.handle || entry.username)) {
+            const handle = (entry.handle || entry.username).replace(/^@/, '');
+            const name = entry.name || entry.displayName || handle;
+            if (handle.toLowerCase().includes(query) || name.toLowerCase().includes(query)) {
+              if (!candidates.some(c => c.handle.toLowerCase() === handle.toLowerCase())) {
+                candidates.push({ handle, name, avatar: entry.avatar || '👤', uid: entry.uid });
+              }
+            }
+          }
+        });
+      }
+
+      if (candidates.length === 0) {
+        popup.innerHTML = `<div style="font-size: 11.5px; color: var(--text-muted); padding: 8px 10px; text-align: center;">Không tìm thấy người dùng phù hợp</div>`;
+        return;
+      }
+
+      popup.innerHTML = candidates.slice(0, 6).map(c => `
+        <div class="mention-autocomplete-item" onclick="insertMentionHandle('${escapeHtml(c.handle)}')" style="display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='rgba(99,102,241,0.15)'" onmouseout="this.style.background='transparent'">
+          <div style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface); font-size: 12px; flex-shrink: 0;">
+            ${renderAvatarHtml(c.avatar, 24, 12)}
+          </div>
+          <div style="overflow: hidden; flex: 1;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${escapeHtml(c.name)} ${c.badge ? `<span class="badge" style="font-size: 9px; padding: 1px 4px; background: rgba(236,72,153,0.2); color: #f472b6;">${c.badge}</span>` : ''}</div>
+            <div style="font-size: 10.5px; color: #818cf8;">@${escapeHtml(c.handle)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function insertMentionHandle(handle) {
+      if (!activeMentionInputElement) return;
+      const inputEl = activeMentionInputElement;
+      if (inputEl.isContentEditable) {
+        const text = inputEl.innerText || '';
+        const before = text.slice(0, activeMentionStartIndex);
+        const after = text.slice(activeMentionStartIndex + activeMentionQuery.length + 1);
+        inputEl.innerText = `${before}@${handle} ${after}`;
+      } else {
+        const text = inputEl.value;
+        const before = text.slice(0, activeMentionStartIndex);
+        const after = text.slice(activeMentionStartIndex + activeMentionQuery.length + 1);
+        inputEl.value = `${before}@${handle} ${after}`;
+        inputEl.focus();
+        inputEl.selectionStart = inputEl.selectionEnd = (before + '@' + handle + ' ').length;
+      }
+      const popup = document.getElementById('vocaflow-mention-autocomplete-popup');
+      if (popup) popup.style.display = 'none';
+    }
+    window.insertMentionHandle = insertMentionHandle;
+
+    function startRealtimeNotificationListener() {
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          vocaflowNotifBroadcastChannel = new BroadcastChannel('vocaflow_notifications');
+          vocaflowNotifBroadcastChannel.onmessage = (event) => {
+            if (event.data && event.data.type === 'NEW_NOTIFICATION' && event.data.notif) {
+              receiveInstantNotification(event.data.notif);
+            }
+          };
+        }
+      } catch (e) {
+        console.warn('BroadcastChannel error:', e);
+      }
+
+      if (realtimeNotificationPollTimer) clearInterval(realtimeNotificationPollTimer);
+      realtimeNotificationPollTimer = setInterval(() => {
+        pullCloudNotificationsSilently();
+      }, 12000);
+    }
+    window.startRealtimeNotificationListener = startRealtimeNotificationListener;
+
+    function dispatchInstantNotification(notif) {
+      if (!notif || !notif.id) return;
+      receiveInstantNotification(notif);
+      if (vocaflowNotifBroadcastChannel) {
+        try {
+          vocaflowNotifBroadcastChannel.postMessage({ type: 'NEW_NOTIFICATION', notif });
+        } catch (e) {}
+      }
+    }
+    window.dispatchInstantNotification = dispatchInstantNotification;
+
+    function receiveInstantNotification(notif) {
+      if (typeof userNotifications === 'undefined' || !Array.isArray(userNotifications)) return;
+      const exists = userNotifications.some(n => n.id === notif.id);
+      if (exists) return;
+
+      userNotifications.unshift(notif);
+      if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100);
+      try {
+        localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+      } catch (e) {}
+
+      if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+      if (typeof renderNotificationsList === 'function') renderNotificationsList();
+      if (typeof playVocaSfx === 'function') playVocaSfx('bell');
+    }
+
+    async function pullCloudNotificationsSilently() {
+      if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+      const authParam = token ? `?auth=${token}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || typeof data !== 'object') return;
+
+        const cloudNotifs = Object.values(data).filter(n => n && n.id);
+        let hasNew = false;
+        let newestNotif = null;
+
+        if (typeof userNotifications === 'undefined' || !Array.isArray(userNotifications)) userNotifications = [];
+
+        const existingIds = new Set(userNotifications.map(n => n.id));
+
+        cloudNotifs.forEach(cn => {
+          if (!existingIds.has(cn.id)) {
+            userNotifications.unshift(cn);
+            existingIds.add(cn.id);
+            hasNew = true;
+            if (!cn.isRead && !newestNotif) newestNotif = cn;
+          }
+        });
+
+        if (hasNew) {
+          userNotifications.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+          if (userNotifications.length > 100) userNotifications = userNotifications.slice(0, 100);
+          localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+          if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+          if (typeof renderNotificationsList === 'function') renderNotificationsList();
+          if (newestNotif && typeof showToast === 'function') {
+            showToast(`🔔 ${newestNotif.title || 'Thông báo mới'}: ${newestNotif.message || ''}`);
+          }
+        }
+      } catch (e) {
+        // Silent fail in background
+      }
+    }
+    window.pullCloudNotificationsSilently = pullCloudNotificationsSilently;
 
     function navigateToCommunityPost(postId) {
       if (!postId) return;
@@ -25490,6 +26101,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearInterval(periodicBidirectionalSyncTimer);
         periodicBidirectionalSyncTimer = null;
       }
+    }
+
+    // Auto initialize mention autocomplete & realtime notifications
+    try {
+      if (typeof window !== 'undefined') {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            if (typeof setupMentionAutocompleteListener === 'function') setupMentionAutocompleteListener();
+            if (typeof startRealtimeNotificationListener === 'function') startRealtimeNotificationListener();
+          });
+        } else {
+          if (typeof setupMentionAutocompleteListener === 'function') setupMentionAutocompleteListener();
+          if (typeof startRealtimeNotificationListener === 'function') startRealtimeNotificationListener();
+        }
+      }
+    } catch (e) {
+      console.warn('Init listeners error:', e);
     }
 
 // =========================================================================
@@ -31574,7 +32202,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-13 Build 314 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-14 Build 315 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -34822,7 +35450,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-13 Build 314)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-14 Build 315)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -37426,7 +38054,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 // =========================================================================
 
     // =========================================================================
-    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-13 / Build 314)
+    // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-14 / Build 315)
     // =========================================================================
     function getStoreActiveDiscount() {
       if (typeof getActiveSpecialEventInfo === 'function') {
@@ -55487,9 +56115,9 @@ Quy tắc phản hồi quan trọng:
           }
           if (currentNotificationFilter === 'NEW_FOLLOWER') {
             return type === 'NEW_FOLLOWER' || type === 'VOCAMAIL' || actionType === 'VIEW_PROFILE' ||
-                   type === 'post_like' || type === 'post_comment' || type === 'like' || type === 'comment' ||
+                   type === 'post_like' || type === 'post_comment' || type === 'like' || type === 'comment' || type === 'mention' ||
                    actionType === 'VIEW_COMMUNITY_POST' || title.includes('theo dõi') ||
-                   title.includes('thích bài viết') || title.includes('bình luận');
+                   title.includes('thích bài viết') || title.includes('bình luận') || title.includes('nhắc đến') || title.includes('tag');
           }
           if (currentNotificationFilter === 'SYSTEM') {
             return type === 'SYSTEM' || type === 'BUG_REPORT' || title.includes('báo cáo') ||
@@ -55528,6 +56156,11 @@ Quy tắc phản hồi quan trọng:
           typeColor = '#c084fc';
           typeBg = 'rgba(168,85,247,0.22)';
           typeBorder = 'rgba(168,85,247,0.5)';
+        } else if (n.type === 'mention' || tLower.includes('nhắc đến') || tLower.includes('tag') || tLower.includes('followers')) {
+          typeIcon = '🏷️';
+          typeColor = '#ec4899';
+          typeBg = 'rgba(236,72,153,0.15)';
+          typeBorder = 'rgba(236,72,153,0.4)';
         } else if (n.type === 'post_like' || n.type === 'like' || tLower.includes('thích bài viết') || tLower.includes('thả tim')) {
           typeIcon = '❤️';
           typeColor = '#ec4899';

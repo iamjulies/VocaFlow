@@ -1,21 +1,10 @@
 v0.10.10-14
-[ĐỌC KĨ PHẦN SAU]
-=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
-[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
-1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing
-
-
-2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading
-Dùng gemini 3.5 flashlite để tạo đoạn văn từ các từ -> Khuyết các từ -> User kéo thả -> AI chấm hoặc chấm theo đáp án AI tạo sẵn
-- Dễ: Tạo 1 đoạn/bài văn ngắn-trung, khuyết 1 vài chỗ và các từ cần điền thì 100% là các từ có trong bộ từ, cách điền là kéo thả các ô từ vựng có sẵn
-- Trung bình: Tạo 1 đoạn/bài văn tầm trung, khuyết 1 vài chỗ (nhiều hơn dễ) và các từ cần điền thì phần lớn là các từ có trong bộ từ, 1 phần nhỏ là các từ không có trong bộ từ, cách điền là kéo thả các ô từ vựng có sẵn
-- Khó: Tạo 1 đoạn/bài văn tầm trung-dài , khuyết 1 vài chỗ (nhiều hơn trung bình) và các từ cần điền thì là các từ có trong bộ từ và các từ không có trong bộ từ với tỉ lệ gần bằng nhau, cách điền là kéo thả các ô từ vựng
-- Siêu Khó: Tạo 1 bài văn dài, khuyết 1 vài chỗ (nhiều hơn khó) và các từ cần điền thì là các từ có trong bộ từ và các từ không có trong bộ từ với tỉ lệ ngẫu nhiên, cách điền là kéo thả và sẽ có từ không phải phương án để điền (phương án thừa, chiếm tầm 20-30% số phương án)
-Đối với điểm rèn luyện và xu nhận được thì sẽ nên cao hơn chế độ học thông thường từ vì dạng này khó hơn khá nhiều (cho m quyết, miễn sao cân bằng là được)
-Đối với màn hình tổng kết phiên học thì cũng dùng bố cục và định dạng giống như mấy chế độ khác.
-Còn gì nữa không nhỉ? (Mày báo cáo cả cái này nhé)
-
-3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (sẽ được yêu cầu triển khai ở các ver. sau)
-4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng (sẽ được yêu cầu triển khai ở các ver. sau)
+- Vấn đề 24: Chưa có nút xóa/sửa các bình luận của bản thân (nhớ thêm cả bia mộ nữa)
+- Vấn đề 25: Thêm 1 cái gì đó vào pub profile của mỗi người thể hiện xem người đó có online hay là không. Đồng thời thì thể hiện cả thời gian online gần nhất nữa (làm tròn như bên facebook).
+- Vấn đề 26: Lỗi khi 1 user nào đó truy cập vào app thì @official đăng lại post 1 lần nữa làm cho thời gian bị set về "vừa xong"
+- Vấn đề 27 ("C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-14 180928.png"):
++ Vấn đề 27a: Comment trả lời không thụt dòng như bên fb
++ Vấn đề 27b: Bị lỗi lặp lại @<username> hai lần
++ Vấn đề 27c: Không nhấn được và @<username> ở nội dung bình luận trả lời -> t muốn nâng cấp hẳn lên cái kiểu "@" tag được username của user mà mình đã follow ấy, thêm cả mấy cái như @followers (tag tất cả followers của mình -> thông báo đến mọi user)
++ Vấn đề 27d: Khi được comment hay trả lời không hiện thông báo ngay -> nâng cấp: có thông báo gì thì hiện ngay và lập tức ở kênh thông báo mà không phải nhấn f5 tải lại trang rất phiền và tốn thời gian
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
-

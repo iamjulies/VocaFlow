@@ -17,10 +17,11 @@
 
         <!-- INSTAGRAM HERO SECTION: AVATAR + 3 STATS COLUMNS -->
         <div class="ig-hero-row">
-          <div class="ig-avatar-ring-container">
+          <div class="ig-avatar-ring-container" style="position: relative;">
             <div id="pub-view-avatar" class="ig-avatar-ring" style="cursor: default; background: transparent; border: 2.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
               <div class="ig-avatar-inner" style="border: none;">👤</div>
             </div>
+            <span id="pub-view-online-dot" style="position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; background: #10b981; border: 2.5px solid var(--surface-elevated); box-shadow: 0 0 8px rgba(16,185,129,0.7); display: inline-block;"></span>
           </div>
 
           <!-- 3 STATS COLUMNS (Instagram Standard) -->
@@ -45,6 +46,11 @@
           <div class="ig-bio-name-row">
             <span class="ig-bio-name" id="pub-view-name">Flower VocaFlow</span>
             <span id="pub-view-sub-badge" class="badge" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">🎓 Flower VocaFlow</span>
+          </div>
+          <!-- ONLINE / LAST SEEN STATUS (v0.10.10-14 Issue 25) -->
+          <div id="pub-view-online-status-row" style="display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #34d399; margin-top: 2px; margin-bottom: 2px; font-weight: 600;">
+            <span id="pub-view-online-status-icon">🟢</span>
+            <span id="pub-view-online-status-text">Đang hoạt động</span>
           </div>
           <div id="pub-view-bio-text" class="ig-bio-text" style="display: none;"></div>
 
