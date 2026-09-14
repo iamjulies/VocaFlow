@@ -120,10 +120,55 @@
     }
 
     function confirmSpinTransferSent() {
+      const pack = currentSpinPurchasePack || { code: 'SPIN_PACK', name: 'Gói VocaSpin', amount: 0, spins: 0 };
+      const rawUid = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
+      const syntax = `VOCA ${getShortUidUpper(rawUid)} ${pack.code}`;
+      const orderId = 'spin_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      const userEmail = (currentUser && currentUser.email) ? currentUser.email : '';
+      const userName = (currentUser && (currentUser.displayName || currentUser.name)) ? (currentUser.displayName || currentUser.name) : '';
+
+      const spinOrder = {
+        orderId: orderId,
+        type: 'SPIN_PACKAGE',
+        packCode: pack.code,
+        packName: pack.name,
+        amount: pack.amount,
+        spins: pack.spins,
+        syntax: syntax,
+        userId: rawUid,
+        userEmail: userEmail,
+        userName: userName,
+        timestamp: Date.now(),
+        createdAt: new Date().toISOString(),
+        status: 'pending_verification'
+      };
+
+      // Push to Firebase RTDB for Admin verification
+      const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+      fetch(`${rtdbUrl}/spin_orders/${orderId}.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(spinOrder)
+      }).catch(err => console.warn('Could not push spin order to /spin_orders:', err));
+
+      if (rawUid && !rawUid.startsWith('guest_') && rawUid !== 'GUEST') {
+        fetch(`${rtdbUrl}/users/${rawUid}/orders/${orderId}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(spinOrder)
+        }).catch(err => console.warn('Could not push spin order to user orders:', err));
+      }
+
       closeModal('modal-spin-purchase-payment');
-      showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Admin sẽ duyệt và cộng VocaSpin cho bạn ngay!');
+      showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Admin sẽ đối soát và cộng VocaSpin cho bạn ngay!');
       if (typeof addNotification === 'function') {
-        addNotification('FINANCIAL', '💳 Yêu Cầu Mua VocaSpin', `Đã ghi nhận thanh toán gói ${currentSpinPurchasePack.name}. Hệ thống đang kiểm tra giao dịch.`);
+        addNotification(
+          'FINANCIAL',
+          `💳 Yêu Cầu Mua ${pack.name}`,
+          `Đã gửi yêu cầu đối soát đơn hàng #${orderId} (${pack.amount.toLocaleString('vi-VN')}đ, ${pack.spins} lượt quay, cú pháp "${syntax}"). Hệ thống đã ghi nhận lên Server. Admin NONG DUC HAO (Zalo: 0876048326) sẽ duyệt và cộng VocaSpin cho bạn sớm nhất!`
+        );
       }
     }
 
@@ -2238,35 +2283,62 @@
   }
 
   function confirmVipPaymentSubmitted() {
-    const syntax = currentSelectedVipPlan.syntax || getCleanTransferSyntax(currentSelectedVipPlan.tier);
+    const plan = currentSelectedVipPlan || { tier: '1m', name: 'VocaVIP 1 Tháng', priceStr: '299.000đ', amount: 299000 };
+    const syntax = plan.syntax || getCleanTransferSyntax(plan.tier);
+    const orderId = 'vip_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    const userId = (currentUser && currentUser.uid) ? currentUser.uid : 'GUEST';
+    const userEmail = (currentUser && currentUser.email) ? currentUser.email : '';
+    const userName = (currentUser && (currentUser.displayName || currentUser.name)) ? (currentUser.displayName || currentUser.name) : '';
+
     const pendingPayment = {
-      id: 'pay_' + Date.now(),
-      tier: currentSelectedVipPlan.tier,
-      planName: currentSelectedVipPlan.name,
-      priceStr: currentSelectedVipPlan.priceStr,
-      amount: currentSelectedVipPlan.amount,
+      id: orderId,
+      orderId: orderId,
+      type: 'VIP_UPGRADE',
+      tier: plan.tier,
+      planName: plan.name,
+      priceStr: plan.priceStr,
+      amount: plan.amount || 299000,
       syntax: syntax,
+      userId: userId,
+      userEmail: userEmail,
+      userName: userName,
       timestamp: Date.now(),
-      status: 'pending'
+      createdAt: new Date().toISOString(),
+      status: 'pending_verification'
     };
     localStorage.setItem('vocaflow_pending_vip_payment', JSON.stringify(pendingPayment));
 
-    // 1. Send Pending Notification to Notification Center
+    // Push order to Firebase RTDB for Admin verification
+    const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+    const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+    // 1. Push to global pending VIP orders queue
+    fetch(`${rtdbUrl}/vip_orders/${orderId}.json${authParam}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pendingPayment)
+    }).catch(err => console.warn('Could not push order to /vip_orders:', err));
+
+    // 2. Push to user's private orders node if logged in
+    if (userId && !userId.startsWith('guest_') && userId !== 'GUEST') {
+      fetch(`${rtdbUrl}/users/${userId}/orders/${orderId}.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pendingPayment)
+      }).catch(err => console.warn('Could not push order to user orders:', err));
+    }
+
+    // 3. Send Notification to Notification Center
     if (typeof addNotification === 'function') {
       addNotification(
         'FINANCIAL',
-        `⏳ Đang Đối Soát Chuyển Khoản ${currentSelectedVipPlan.name}`,
-        `Hệ thống đã ghi nhận yêu cầu nâng cấp gói ${currentSelectedVipPlan.name} (${currentSelectedVipPlan.priceStr}) với cú pháp "${syntax}". Thời gian đối soát thông thường từ 1 - 5 phút.`
+        `⏳ Đã Ghi Nhận Đơn Hàng ${pendingPayment.planName}`,
+        `Đơn hàng #${orderId} (${pendingPayment.priceStr}, cú pháp "${syntax}") đã được gửi đến Server. Admin NONG DUC HAO (Zalo: 0876048326) sẽ đối soát và kích hoạt VocaVIP cho bạn trong thời gian sớm nhất!`
       );
     }
 
-    showToast('⏳ Đã gửi yêu cầu đối soát! Hệ thống đang kiểm tra giao dịch (1-5 phút).');
+    showToast('🎉 Đã ghi nhận thông tin chuyển khoản! Đơn hàng đang được gửi đến Admin đối soát.');
     closeModal('modal-vip-pricing');
-
-    // 2. Schedule verification check after 2.5 minutes
-    setTimeout(() => {
-      checkPendingVipPaymentStatus();
-    }, 150000);
   }
 
   function checkPendingVipPaymentStatus() {
@@ -2274,10 +2346,10 @@
     if (!rawPending) return;
     try {
       const pending = JSON.parse(rawPending);
-      if (pending.status === 'pending') {
+      if (pending.status === 'pending' || pending.status === 'pending_verification') {
         const isVipNow = isUserVip();
         const currentTier = getUserVipTier();
-        if (isVipNow && (currentTier === pending.tier || currentTier === 'lifetime')) {
+        if (isVipNow && (currentTier === pending.tier || currentTier === 'lifetime' || isUserVip())) {
           // Activated by admin or verified
           localStorage.removeItem('vocaflow_pending_vip_payment');
           if (typeof addNotification === 'function') {
@@ -2285,16 +2357,6 @@
               'FINANCIAL',
               `👑 Kích Hoạt ${pending.planName} Thành Công!`,
               `Hệ thống đã xác nhận thanh toán thành công. Toàn bộ đặc quyền VocaVIP của bạn đã được kích hoạt!`
-            );
-          }
-        } else {
-          // Not received / unverified after window
-          localStorage.removeItem('vocaflow_pending_vip_payment');
-          if (typeof addNotification === 'function') {
-            addNotification(
-              'FINANCIAL',
-              `⚠️ Đối Soát Chưa Thành Công (${pending.planName})`,
-              `Hệ thống chưa tìm thấy giao dịch ${pending.priceStr} với cú pháp "${pending.syntax}". Nếu bạn đã chuyển tiền thực tế, vui lòng liên hệ Admin NONG DUC HAO (SĐT/Zalo: 0876048326) kèm ảnh biên lai để được kích hoạt ngay nhé!`
             );
           }
         }

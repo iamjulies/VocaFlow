@@ -327,13 +327,18 @@
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         return `vocaflow_ai_chat_history_${currentUser.uid}`;
       }
-      return 'vocaflow_ai_chat_history';
+      return 'vocaflow_ai_chat_history_guest';
     }
 
     function loadAiChatHistory() {
       try {
         const key = getAiChatStorageKey();
-        const savedHistory = localStorage.getItem(key) || localStorage.getItem('vocaflow_ai_chat_history');
+        let savedHistory = localStorage.getItem(key);
+        // Migration from legacy generic key if found
+        if (!savedHistory && localStorage.getItem('vocaflow_ai_chat_history')) {
+          savedHistory = localStorage.getItem('vocaflow_ai_chat_history');
+          localStorage.removeItem('vocaflow_ai_chat_history');
+        }
         if (savedHistory) aiChatHistory = JSON.parse(savedHistory) || [];
       } catch (e) {
         aiChatHistory = [];
@@ -366,6 +371,10 @@
 
     function saveAiChatHistoryToStorage() {
       const key = getAiChatStorageKey();
+      // Remove legacy double-storage key to prevent wasting storage
+      if (key !== 'vocaflow_ai_chat_history') {
+        localStorage.removeItem('vocaflow_ai_chat_history');
+      }
       try {
         const sanitized = sanitizeAiChatHistoryForLocal(aiChatHistory, 20);
         localStorage.setItem(key, JSON.stringify(sanitized));
@@ -736,15 +745,27 @@
         const kView = document.getElementById('aimentor-apikey-lock-view');
         const aView = document.getElementById('aimentor-main-authenticated-view');
 
-        // Requirement 5: Lock completely for Guest and Non-VIP users
-        if (isGuest || !isVip) {
-          if (vView) vView.style.display = 'flex';
+        // If Guest: Prompt user to login/register to receive 5 free daily messages
+        if (isGuest) {
+          if (vView) {
+            vView.style.display = 'flex';
+            const lockTitle = vView.querySelector('h3');
+            const lockDesc = vView.querySelector('p');
+            const ctaBtn = vView.querySelector('.btn-primary');
+            if (lockTitle) lockTitle.textContent = 'Đăng Nhập Để Trò Chuyện Cùng VocaMentor AI';
+            if (lockDesc) lockDesc.innerHTML = 'Đăng nhập tài khoản miễn phí để nhận ngay <strong>5 tin nhắn/ngày cùng Trợ lý AI VocaMentor</strong>, hoặc nâng cấp <strong>VocaVIP</strong> để mở khóa trò chuyện không giới hạn!';
+            if (ctaBtn) {
+              ctaBtn.innerHTML = '🔑 Đăng Nhập / Đăng Ký Ngay';
+              ctaBtn.onclick = () => { closeModal('modal-ai-mentor'); openAuthModal('login'); };
+            }
+          }
           if (kView) kView.style.display = 'none';
           if (aView) aView.style.display = 'none';
           openModal('modal-ai-mentor');
           return;
         }
 
+        // If Logged-in user has not configured Gemini API key
         if (!hasAtLeastOneApiKey()) {
           if (vView) vView.style.display = 'none';
           if (kView) kView.style.display = 'flex';
@@ -753,6 +774,7 @@
           return;
         }
 
+        // Free and VIP users with API Key can enter chat (Free has 5 daily turns, VIP is unlimited)
         if (vView) vView.style.display = 'none';
         if (kView) kView.style.display = 'none';
         if (aView) aView.style.display = 'flex';
