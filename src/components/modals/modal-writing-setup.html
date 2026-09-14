@@ -77,14 +77,17 @@
         <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
           2. Số Lượng Câu Luyện Viết:
         </label>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-          <button type="button" class="btn btn-outline writing-qcount-btn active" id="writing-qc-5" onclick="selectWritingSetupQuestionCount(5)" style="border-radius: 10px; padding: 8px 4px; font-weight: 700; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text);">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button type="button" class="btn btn-outline writing-qcount-btn active" id="writing-qc-5" onclick="selectWritingSetupQuestionCount(5)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center;">
             5 Câu
           </button>
-          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-10" onclick="selectWritingSetupQuestionCount(10)" style="border-radius: 10px; padding: 8px 4px; font-weight: 700;">
+          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-10" onclick="selectWritingSetupQuestionCount(10)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
             10 Câu
           </button>
-          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-all" onclick="selectWritingSetupQuestionCount('all')" style="border-radius: 10px; padding: 8px 4px; font-weight: 700;">
+          <div class="writing-qcount-btn" id="writing-qc-custom" style="border-radius: 10px; padding: 4px 6px; font-weight: 700; font-size: 12px; border: 1px solid var(--border); background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('writing-qc-custom-input')?.focus()">
+            <input type="number" id="writing-qc-custom-input" min="1" max="999" placeholder="Tự nhập..." oninput="handleWritingCustomQuestionCountInput(this.value)" onfocus="selectWritingSetupQuestionCount('custom')" style="width: 100%; border: none; background: transparent; color: var(--text); font-weight: 700; text-align: center; font-size: 11.5px; outline: none; padding: 4px 0;">
+          </div>
+          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-all" onclick="selectWritingSetupQuestionCount('all')" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
             Toàn Bộ
           </button>
         </div>

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-11 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-12 Build 313 - SENTENCE WRITING LAB β)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -7,7 +7,8 @@ let writingQuestionsList = [];
 let currentWritingIndex = 0;
 let currentWritingDifficulty = localStorage.getItem('vocaflow_writing_difficulty') || 'easy';
 let selectedWritingSetupDifficulty = 'easy';
-let writingSetupQuestionCount = 'all'; // 5 | 10 | 'all'
+let writingSetupQuestionCount = 'all'; // 5 | 10 | 'custom' | 'all'
+let writingSetupCustomCountValue = null;
 let writingSetupUseSelection = false;
 let writingSetupCustomWordList = null;
 
@@ -97,9 +98,30 @@ function selectWritingSetupDifficulty(diff) {
   });
 }
 
+function handleWritingCustomQuestionCountInput(val) {
+  let num = parseInt(val, 10);
+  let maxWords = 999;
+  if (writingSetupCustomWordList) maxWords = writingSetupCustomWordList.length;
+  else if (writingSetupUseSelection && selectedWordIds.size > 0) maxWords = selectedWordIds.size;
+  else if (currentDeckId) maxWords = words.filter(w => w.deckId === currentDeckId).length;
+
+  if (isNaN(num) || num < 1) {
+    num = 1;
+  }
+  if (num > maxWords && maxWords > 0) {
+    num = maxWords;
+    const inp = document.getElementById('writing-qc-custom-input');
+    if (inp) inp.value = num;
+    if (typeof showToast === 'function') showToast(`⚠️ Số lượng tối đa trong bộ từ này là ${maxWords} câu!`);
+  }
+  writingSetupCustomCountValue = num;
+  selectWritingSetupQuestionCount('custom');
+}
+window.handleWritingCustomQuestionCountInput = handleWritingCustomQuestionCountInput;
+
 function selectWritingSetupQuestionCount(count) {
   writingSetupQuestionCount = count;
-  ['5', '10', 'all'].forEach(c => {
+  ['5', '10', 'custom', 'all'].forEach(c => {
     const btn = document.getElementById('writing-qc-' + c);
     if (btn) {
       if (String(c) === String(count)) {
@@ -110,12 +132,13 @@ function selectWritingSetupQuestionCount(count) {
       } else {
         btn.classList.remove('active');
         btn.style.borderColor = 'var(--border)';
-        btn.style.background = 'transparent';
+        btn.style.background = c === 'custom' ? 'var(--surface-elevated)' : 'transparent';
         btn.style.color = 'var(--text-muted)';
       }
     }
   });
 }
+window.selectWritingSetupQuestionCount = selectWritingSetupQuestionCount;
 
 function openWritingSetupModal(useSelection = false, customWordList = null) {
   writingSetupUseSelection = useSelection;
@@ -132,6 +155,14 @@ function openWritingSetupModal(useSelection = false, customWordList = null) {
   if (customWordList) wordCount = customWordList.length;
   else if (useSelection && selectedWordIds.size > 0) wordCount = selectedWordIds.size;
   else wordCount = words.filter(w => w.deckId === currentDeckId).length;
+
+  const customInput = document.getElementById('writing-qc-custom-input');
+  if (customInput) {
+    customInput.max = wordCount || 999;
+    if (writingSetupQuestionCount === 'custom' && writingSetupCustomCountValue) {
+      customInput.value = writingSetupCustomCountValue;
+    }
+  }
 
   const sub = document.getElementById('writing-setup-subtitle');
   if (sub) sub.textContent = `${wordCount} từ vựng sẵn sàng cho phiên luyện viết`;
@@ -166,8 +197,15 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
   }
 
   let limit = pool.length;
-  if (maxQuestions === 5) limit = Math.min(5, pool.length);
-  else if (maxQuestions === 10) limit = Math.min(10, pool.length);
+  if (maxQuestions === 'custom' && writingSetupCustomCountValue) {
+    limit = Math.min(writingSetupCustomCountValue, pool.length);
+  } else if (typeof maxQuestions === 'number' && maxQuestions > 0) {
+    limit = Math.min(maxQuestions, pool.length);
+  } else if (maxQuestions === 5) {
+    limit = Math.min(5, pool.length);
+  } else if (maxQuestions === 10) {
+    limit = Math.min(10, pool.length);
+  }
 
   for (let i = 0; i < limit; i++) {
     const primary = pool[i];
@@ -526,8 +564,8 @@ async function evaluateWritingSentenceWithGemini(userSentence, question) {
   const curBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.currentBand) || localStorage.getItem('vocaflow_user_current_band') || 'none';
   const targetBand = (typeof currentUser !== 'undefined' && currentUser && currentUser.targetBand) || localStorage.getItem('vocaflow_user_target_band') || '8.0';
 
-  const prompt = `You are an elite, uncompromising IELTS Writing Task 2 Native Senior Examiner and Stylistic Editor.
-You evaluate student sentences with rigorous precision, zero leniency, and zero pity points.
+  const prompt = `You are an elite, perceptive Native English Senior Evaluator, Stylistic Editor, and Linguistic Register Expert.
+You evaluate student sentences with rigorous precision, keen context-awareness, and zero unearned pity points.
 
 [LEARNER PROFILE]
 - Current English Proficiency: ${curBand !== 'none' ? `Band ${curBand}` : 'Intermediate (B1-B2)'}
@@ -543,12 +581,26 @@ ${wordDetails}
 [STUDENT SUBMISSION]
 "${userSentence}"
 
+[SMART LINGUISTIC REGISTER & CONTEXT ADAPTATION - CRITICAL]
+Analyze the vocabulary domain and nature of the target words [${targetTerms}]:
+• REGISTER A (Conversational / Casual / Colloquial / Slang / Daily Communication):
+  If the target words belong to everyday conversation, daily life, informal phrasal verbs, idioms, or colloquial expressions (e.g. chat, buddy, chill, grab a coffee, hangover, daily chores, etc.):
+  - DO NOT penalize the student for writing a casual or conversational sentence.
+  - DO NOT force artificial, stiff academic jargon (e.g. do not turn "hang out with friends" into "engage in communal peer socialization").
+  - Evaluate based on NATIVE CASUAL NATURALNESS, authentic conversational fluency, vivid daily context, and grammatical correctness within informal English.
+  - The "polishedRewrite" must be a natural, punchy, native-sounding sentence in spoken/informal English.
+
+• REGISTER B (Academic / Formal / Professional / Advanced C1-C2):
+  If the target words are formal, scholarly, technical, or advanced academic terms (e.g. exacerbate, perpetuate, paradigm, infrastructure, socioeconomic, etc.):
+  - Evaluate against rigorous IELTS Task 2 / academic standards with sophisticated sentence structures, precise collocations, and formal cohesion.
+  - The "polishedRewrite" must be an elegant Band ${targetBand} academic sentence.
+
 [EXAMINER EVALUATION RULES]
-1. Grammar & Syntax Strictness: Heavily penalize any grammar flaws (verb tenses, subject-verb agreement, prepositions, articles, dangling modifiers, word order, comma splices, misspelling, capitalization, punctuation). Any sentence with fundamental grammatical errors MUST score BELOW the floor score (<${cfg.floorScore}).
-2. Vocabulary & Collocations: All required target words [${targetTerms}] must be present and used in natural, idiomatic collocations. Missing any target word or misusing its meaning incurs a severe penalty.
-3. Length Compliance: If word count is outside ${question.minWords > 0 ? `[${question.minWords} - ${question.maxWords}]` : '[min 1 valid sentence]'}, mark length pillar as 'fail' and deduct score heavily.
+1. Grammar & Syntax: Penalize grammar flaws (verb tenses, subject-verb agreement, prepositions, articles, punctuation, word order). Sentences with severe grammatical breakdown MUST score BELOW the floor score (<${cfg.floorScore}).
+2. Vocabulary & Collocations: All required target words [${targetTerms}] must be present and used in natural, context-appropriate collocations according to the detected Register.
+3. Length Compliance: If word count is outside ${question.minWords > 0 ? `[${question.minWords} - ${question.maxWords}]` : '[min 1 complete sentence]'}, mark length pillar as 'fail' and deduct score appropriately.
 4. Vietnamese Mentor Feedback (feedbackVi): Provide crystal-clear, constructive feedback in Vietnamese. Highlight specific erroneous words or phrases in Markdown bold **...** so the student instantly sees what to fix.
-5. Vietnamese Translation of Polished Rewrite (polishedRewriteVi): You MUST provide a natural, accurate Vietnamese translation of your polished Band ${targetBand} rewrite.
+5. Vietnamese Translation of Polished Rewrite (polishedRewriteVi): You MUST provide a natural, accurate Vietnamese translation of your polished rewrite.
 6. Structured Grammar Notes (grammarNotesVi): List 1-3 crisp, practical grammar rules or corrections in bullet points (using • at start of each line) in Vietnamese.
 
 Output MUST be valid JSON only (no markdown code blocks, no backticks) matching this exact schema:
@@ -558,10 +610,10 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
   "pillars": {
     "grammar": { "status": "pass", "note": "Ngữ pháp chuẩn, thì câu chính xác" },
     "vocabulary": { "status": "pass", "note": "Sử dụng từ vựng đúng ngữ cảnh và chuẩn collocations" },
-    "naturalness": { "status": "pass", "note": "Cách diễn đạt tự nhiên, mạch lạc" },
+    "naturalness": { "status": "pass", "note": "Cách diễn đạt tự nhiên, mạch lạc theo đúng phong cách ngữ cảnh" },
     "length": { "status": "pass", "note": "Độ dài câu hợp lý và đáp ứng yêu cầu" }
   },
-  "polishedRewrite": "A refined Band ${targetBand} rewrite of the student's thought using the target words gracefully.",
+  "polishedRewrite": "A refined, native rewrite of the student's thought matching the appropriate register (casual or academic) using the target words gracefully.",
   "polishedRewriteVi": "Bản dịch tiếng Việt tự nhiên và chuẩn xác của câu viết lại mẫu trên.",
   "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt. Dùng **chữ in đậm** để nhấn mạnh lỗi sai hoặc điểm cần nâng cấp.",
   "grammarNotesVi": "• Quy tắc 1: ...\\n• Quy tắc 2: ...",

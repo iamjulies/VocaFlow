@@ -6402,6 +6402,116 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
+    // AUTO-SEED OFFICIAL UPDATE POST & GLOWING NOTIFICATION (v0.10.10-12 / Issue 16)
+    // =========================================================================
+    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-12';
+    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_12';
+
+    async function checkAndSeedOfficialUpdatePost() {
+      const seededPostKey = `vocaflow_seeded_post_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
+      const notifiedKey = `vocaflow_notified_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
+
+      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n🎙️ Speaking Lab được tinh gọn tối đa: Giao diện gọn gàng, vừa vặn tuyệt đối trên điện thoại giúp bạn tập trung trọn vẹn vào từng âm phát ra.\n✍️ Chế độ Viết Câu (β): Bổ sung ô tự nhập số lượng câu hỏi linh hoạt, kết hợp AI thông minh tự nhận diện phong cách ngữ cảnh (giao tiếp đời thường tự nhiên & học thuật IELTS) để chấm điểm công tâm nhất!\n📢 Kênh @official chính thức đồng hành cùng bạn trong mọi cột mốc mới.\n\nHãy trải nghiệm ngay và chia sẻ cảm nghĩ cùng cộng đồng nhé! 🚀`;
+
+      const officialPostObj = {
+        id: VOCAFLOW_OFFICIAL_POST_ID,
+        targetVersion: VOCAFLOW_OFFICIAL_VERSION_KEY,
+        isOfficialUpdate: true,
+        authorUid: 'official',
+        authorName: 'VocaFlow Official',
+        authorHandle: 'official',
+        authorAvatar: 'icons/vocaflow_official_avatar.png',
+        authorVip: true,
+        authorVipTier: 'diamond',
+        content: officialPostContent,
+        image: null,
+        likesCount: 168,
+        commentsCount: 0,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        type: 'community',
+        tags: ['update', 'official', VOCAFLOW_OFFICIAL_VERSION_KEY]
+      };
+
+      // 1. Ensure Post is in communityPosts array & cache
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        const existingIdx = communityPosts.findIndex(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
+        if (existingIdx === -1) {
+          communityPosts.unshift(officialPostObj);
+          try {
+            localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+          } catch (e) {}
+        }
+      }
+
+      // 2. Push to RTDB in background if online & not yet flagged
+      if (!localStorage.getItem(seededPostKey)) {
+        try {
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+          const authParam = token ? `?auth=${token}` : '';
+          fetch(`${rtdbUrl}/community_posts/${VOCAFLOW_OFFICIAL_POST_ID}.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(officialPostObj)
+          }).then(() => {
+            localStorage.setItem(seededPostKey, 'true');
+          }).catch(() => {});
+        } catch (e) {}
+      }
+
+      // 3. Dispatch Purple Glowing Notification to Local State / RTDB
+      if (!localStorage.getItem(notifiedKey)) {
+        const notifId = `notif_official_${VOCAFLOW_OFFICIAL_VERSION_KEY.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+        const officialNotif = {
+          id: notifId,
+          type: 'OFFICIAL_ANNOUNCEMENT',
+          actionType: 'VIEW_COMMUNITY_POST',
+          title: '⭐ VocaFlow Official',
+          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay các nâng cấp nổi bật cho Speaking Lab & Viết Câu.`,
+          authorHandle: 'official',
+          authorName: 'VocaFlow Official',
+          authorUid: 'official',
+          postId: VOCAFLOW_OFFICIAL_POST_ID,
+          isSpecialGlowing: true,
+          timestamp: new Date().toISOString(),
+          isRead: false
+        };
+
+        if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
+          const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === VOCAFLOW_OFFICIAL_POST_ID));
+          if (!hasNotif) {
+            userNotifications.unshift(officialNotif);
+            try {
+              localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+            } catch (e) {}
+            if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+            if (typeof renderNotificationsList === 'function') renderNotificationsList();
+          }
+        }
+
+        // Save to RTDB for logged-in user
+        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+          try {
+            const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+            const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+            const authParam = token ? `?auth=${token}` : '';
+            fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(officialNotif)
+            }).catch(() => {});
+          } catch (e) {}
+        }
+
+        localStorage.setItem(notifiedKey, 'true');
+      }
+    }
+    window.checkAndSeedOfficialUpdatePost = checkAndSeedOfficialUpdatePost;
+
+    // =========================================================================
     // COMMUNITY CENTER & PROFILE COMMUNITY CONTROLLERS (v0.10.9-63)
     // =========================================================================
 
@@ -6410,6 +6520,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       updateCommunityCenterFilterPillsUI();
       openModal('modal-community-center');
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
+      checkAndSeedOfficialUpdatePost();
       fetchAndRenderCommunityCenterFeed();
       if (typeof updateAppUrlRoute === 'function') {
         updateAppUrlRoute('/communitycenter', 'Trung Tâm Cộng Đồng - VocaFlow');
@@ -6444,6 +6555,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     async function fetchAndRenderCommunityCenterFeed(force = false) {
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
+      checkAndSeedOfficialUpdatePost();
       const container = document.getElementById('community-center-posts-container');
       if (!container) return;
 
@@ -6465,10 +6577,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             const data = await res.json();
             if (data && typeof data === 'object') {
               communityPosts = Object.values(data).filter(p => p && p.id);
+              checkAndSeedOfficialUpdatePost();
               communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
               localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
             } else {
               communityPosts = [];
+              checkAndSeedOfficialUpdatePost();
             }
           }
         } catch (err) {
@@ -6477,6 +6591,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (cached) {
             try { communityPosts = JSON.parse(cached); } catch (e) {}
           }
+          checkAndSeedOfficialUpdatePost();
         }
       }
 

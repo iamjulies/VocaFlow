@@ -535,7 +535,16 @@
         let typeBorder = 'rgba(56,189,248,0.3)';
 
         const tLower = (n.title || '').toLowerCase();
-        if (n.type === 'post_like' || n.type === 'like' || tLower.includes('thích bài viết') || tLower.includes('thả tim')) {
+        const aHandleLower = (n.authorHandle || '').toLowerCase().replace(/^@/, '');
+        const aNameLower = (n.authorName || '').toLowerCase();
+        const isOfficialNotif = n.isSpecialGlowing || n.type === 'OFFICIAL_ANNOUNCEMENT' || aHandleLower === 'official' || aNameLower.includes('official') || tLower.includes('official');
+
+        if (isOfficialNotif) {
+          typeIcon = '⭐';
+          typeColor = '#c084fc';
+          typeBg = 'rgba(168,85,247,0.22)';
+          typeBorder = 'rgba(168,85,247,0.5)';
+        } else if (n.type === 'post_like' || n.type === 'like' || tLower.includes('thích bài viết') || tLower.includes('thả tim')) {
           typeIcon = '❤️';
           typeColor = '#ec4899';
           typeBg = 'rgba(236,72,153,0.12)';
@@ -545,12 +554,17 @@
           typeColor = '#38bdf8';
           typeBg = 'rgba(56,189,248,0.12)';
           typeBorder = 'rgba(56,189,248,0.35)';
+        } else if (n.type === 'milestone' || tLower.includes('cột mốc') || tLower.includes('milestone')) {
+          typeIcon = '🏆';
+          typeColor = '#fbbf24';
+          typeBg = 'rgba(245,158,11,0.15)';
+          typeBorder = 'rgba(245,158,11,0.4)';
         } else if (n.type === 'NEW_DECK' || (n.actionType === 'PREVIEW_DECK' && !tLower.includes('mua'))) {
           typeIcon = '📘';
           typeColor = '#818cf8';
           typeBg = 'rgba(99,102,241,0.12)';
           typeBorder = 'rgba(99,102,241,0.3)';
-        } else if (n.type === 'NEW_FOLLOWER' || n.actionType === 'VIEW_PROFILE') {
+        } else if (n.type === 'NEW_FOLLOWER' || n.actionType === 'VIEW_PROFILE' || n.type === 'community') {
           typeIcon = '👥';
           typeColor = '#34d399';
           typeBg = 'rgba(16,185,129,0.12)';
@@ -584,15 +598,32 @@
 
         const timeStr = formatRelativeTime(n.timestamp);
 
+        let itemBg = isUnread ? 'rgba(99,102,241,0.08)' : 'var(--surface-elevated)';
+        let itemBorder = isUnread ? '1px solid rgba(99,102,241,0.4)' : '1px solid var(--border)';
+        let itemBoxShadow = 'none';
+
+        if (isOfficialNotif) {
+          itemBg = isUnread
+            ? 'linear-gradient(135deg, rgba(168,85,247,0.18), rgba(99,102,241,0.12))'
+            : 'linear-gradient(135deg, rgba(168,85,247,0.1), rgba(99,102,241,0.05))';
+          itemBorder = '1.5px solid #a855f7';
+          itemBoxShadow = '0 0 16px rgba(168,85,247,0.45), 0 0 4px rgba(168,85,247,0.3)';
+        }
+
+        const unreadDotColor = isOfficialNotif ? '#c084fc' : '#38bdf8';
+
         html += `
-          <div class="notification-item" onclick="handleNotificationClick('${n.id}')" style="background: ${isUnread ? 'rgba(99,102,241,0.08)' : 'var(--surface-elevated)'}; border: 1px solid ${isUnread ? 'rgba(99,102,241,0.4)' : 'var(--border)'}; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; transition: all 0.2s; position: relative;">
-            ${isUnread ? '<div style="position: absolute; top: 12px; right: 36px; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></div>' : ''}
+          <div class="notification-item" onclick="handleNotificationClick('${n.id}')" style="background: ${itemBg}; border: ${itemBorder}; box-shadow: ${itemBoxShadow}; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; transition: all 0.2s; position: relative;">
+            ${isUnread ? `<div style="position: absolute; top: 12px; right: 36px; width: 8px; height: 8px; border-radius: 50%; background: ${unreadDotColor}; box-shadow: 0 0 8px ${unreadDotColor};"></div>` : ''}
             <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 10px; background: ${typeBg}; border: 1px solid ${typeBorder}; display: flex; align-items: center; justify-content: center; font-size: 18px;">
               ${typeIcon}
             </div>
             <div style="flex: 1; min-width: 0; padding-right: 28px;">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 2px;">
-                <div style="font-weight: 700; font-size: 13px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'};">${escapeHtml(n.title)}</div>
+                <div style="font-weight: 700; font-size: 13px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'}; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+                  <span>${escapeHtml(n.title)}</span>
+                  ${isOfficialNotif ? '<span class="badge" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 6px; box-shadow: 0 0 8px rgba(168,85,247,0.4);">✨ CHÍNH THỨC</span>' : ''}
+                </div>
               </div>
               <div style="font-size: 12px; color: ${isUnread ? 'var(--text)' : 'var(--text-muted)'}; line-height: 1.4; margin-bottom: 4px;">
                 ${escapeHtml(n.message || n.content || '')}
@@ -604,7 +635,7 @@
               ` : ''}
               <div style="font-size: 10.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
                 <span>🕒</span> <span>${timeStr}</span>
-                <span style="color: #38bdf8; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>
+                <span style="color: ${isOfficialNotif ? '#c084fc' : '#38bdf8'}; margin-left: 6px; font-weight: 600;">• Chạm để xem</span>
               </div>
             </div>
             <button type="button" class="btn btn-outline btn-icon" onclick="deleteSingleNotification('${n.id}', event)" title="Xóa thông báo này" style="position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; border: none; background: transparent; color: var(--text-muted); font-size: 13px; opacity: 0.6;" onmouseenter="this.style.opacity='1'; this.style.color='#f87171'" onmouseleave="this.style.opacity='0.6'; this.style.color='var(--text-muted)'">
@@ -657,12 +688,38 @@
       const title = (notif.title || '').toLowerCase();
       const message = (notif.message || notif.content || '').toLowerCase();
 
-      // 0. Community Post Interaction (Like / Comment / Reply)
+      // 0. Official Announcement & Community Post Interaction (Like / Comment / Reply / Milestone / Community Feed)
       const targetPostId = notif.postId || (notif.actionData && notif.actionData.postId) || notif.targetPostId;
-      if (aType === 'VIEW_COMMUNITY_POST' || nType === 'post_like' || nType === 'post_comment' || nType === 'like' || nType === 'comment' || (targetPostId && (title.includes('bài viết') || title.includes('bình luận') || title.includes('thích')))) {
-        if (typeof navigateToCommunityPost === 'function' && targetPostId) {
+      if (
+        nType === 'OFFICIAL_ANNOUNCEMENT' ||
+        notif.isSpecialGlowing ||
+        notif.authorHandle === 'official' ||
+        aType === 'VIEW_COMMUNITY_POST' ||
+        nType === 'post_like' ||
+        nType === 'post_comment' ||
+        nType === 'like' ||
+        nType === 'comment' ||
+        nType === 'milestone' ||
+        nType === 'community' ||
+        targetPostId ||
+        title.includes('bài viết') ||
+        title.includes('bình luận') ||
+        title.includes('thích') ||
+        title.includes('cột mốc') ||
+        title.includes('cộng đồng')
+      ) {
+        if (targetPostId && typeof navigateToCommunityPost === 'function') {
           navigateToCommunityPost(targetPostId);
           return;
+        }
+        if ((notif.authorUid || notif.authorHandle) && notif.authorUid !== currentUser?.uid) {
+          const aName = notif.authorName || notif.title || 'Thành viên';
+          const aUid = notif.authorUid || '';
+          const aHandle = notif.authorHandle || '';
+          if (typeof openPublicProfileModal === 'function') {
+            openPublicProfileModal(aName, aUid, aHandle, 'modal-notifications');
+            return;
+          }
         }
         if (typeof openCommunityCenter === 'function') {
           openCommunityCenter('all');

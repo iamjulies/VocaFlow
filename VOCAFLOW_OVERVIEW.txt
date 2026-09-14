@@ -1,4 +1,29 @@
 ================================================================================
+Phiên bản: v0.10.10-12 (Build 313) - Tinh Gọn Speaking Lab, Tự Động Đăng Bài & Phát Thông Báo Phát Sáng Tím @official, Điều Hướng Thông Báo Cột Mốc, Tùy Chỉnh Số Lượng Câu Luyện Viết & AI Nhận Diện Ngữ Cảnh Đời Thường vs Học Thuật
+================================================================================
+1. [Tinh Gọn Speaking Lab - Bỏ Biểu Đồ Sóng Âm (screen-speaking.html & 07-speaking-engine.js)]:
+   - Bỏ hoàn toàn khối biểu đồ sóng âm / đường cong ngữ điệu dạng đường (Waveform / Pitch Curve), giải phóng không gian màn hình giúp Speaking Lab gọn gàng, vừa vặn hoàn hảo trên điện thoại mà không cần phải cuộn trang.
+   - Loại bỏ các tính toán xử lý AudioContext waveform dư thừa, tối ưu hóa hiệu năng render chớp nhoáng.
+
+2. [Tự Động Đăng Bài Cộng Đồng & Phát Thông Báo Viền Phát Sáng Tím Từ @official (03-auth.js & 12-achievements.js)]:
+   - Bổ sung hàm `checkAndSeedOfficialUpdatePost()` tự động tạo bài viết giới thiệu tính năng mới súc tích, hấp dẫn, dễ hiểu từ tài khoản `@official` lên bảng tin Cộng Đồng mỗi khi cập nhật phiên bản mới.
+   - Phát thông báo toàn hệ thống có viền phát sáng tím (`isSpecialGlowing: true`, `border: 1.5px solid #a855f7`, `box-shadow: 0 0 16px rgba(168,85,247,0.45)`) và huy hiệu ✨ CHÍNH THỨC nổi bật.
+
+3. [Hoàn Thiện Điều Hướng Khi Chạm Vào Thông Báo (12-achievements.js)]:
+   - Khắc phục sự cố không điều hướng khi nhấn vào thông báo cột mốc (`milestone`), tương tác cộng đồng hoặc bài viết chính thức.
+   - Khi chạm vào thông báo, ứng dụng tự động mở và cuộn tới chính xác bài viết cộng đồng tương ứng thông qua `navigateToCommunityPost(targetPostId)` hoặc mở trang cá nhân công khai của tác giả.
+
+4. [Ô Nhập Tùy Chỉnh Số Lượng Câu Hỏi Trong Thiết Lập Luyện Viết (modal-writing-setup.html & 06c-writing-engine.js)]:
+   - Bổ sung ô input tự nhập số lượng câu hỏi tùy chỉnh (`id="writing-qc-custom-input"`) vào lưới số lượng câu hỏi (5 Câu, 10 Câu, Tự nhập, Toàn bộ).
+   - Tự động kiểm tra và giới hạn số lượng câu hỏi 1 <= count <= tổng số từ trong deck, hỗ trợ xáo trộn ngẫu nhiên linh hoạt.
+
+5. [AI Chấm Viết Câu Nhận Diện Phong Cách Ngữ Cảnh (06c-writing-engine.js)]:
+   - Nâng cấp Gemini AI với cơ chế Smart Linguistic Register & Context Adaptation:
+     + Register A (Từ vựng giao tiếp / thông tục / khẩu ngữ / đời thường): Đánh giá dựa trên tính tự nhiên, sinh động, chuẩn văn phong đời thường, không ép buộc cấu trúc học thuật gượng gạo.
+     + Register B (Từ vựng học thuật / formal / C1-C2): Đánh giá theo chuẩn mực học thuật IELTS Task 2 nghiêm ngặt.
+   - Cung cấp gợi ý viết lại mẫu (polishedRewrite) và bản dịch tiếng Việt chuẩn xác theo đúng phong cách từ vựng.
+
+================================================================================
 Phiên bản: v0.10.10-11 (Build 312) - Ẩn Nghĩa Tiếng Việt Cấp Độ Siêu Khó (Writing Lab), Khắc Phục Danh Sách Từ Vựng Bắt Buộc, Đồng Bộ Chuỗi Phiên Bản Footer & Làm Mịn Đồng Bộ Biểu Đồ Sóng Âm Speaking Lab
 ================================================================================
 1. [Luyện Viết AI - Cấp Độ Siêu Khó Ẩn Nghĩa Tiếng Việt (modal-writing-setup.html & 06c-writing-engine.js)]:
