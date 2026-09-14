@@ -4661,7 +4661,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-7 (Build 308)</span>
+            <span class="mini-footer-version">v0.10.10-8 (Build 309)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4749,7 +4749,7 @@
             </button>
           </div>
           
-          <div class="selection-study-actions">
+          <div class="selection-study-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>
@@ -4757,10 +4757,13 @@
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
-              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span><span id="spelling-count-label"></span>
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab β)">
+              <span>✍️</span> <span>Viết Câu (β)</span><span id="writing-count-label"></span>
             </button>
           </div>
         </div>
@@ -4860,7 +4863,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-7 (Build 308)</span>
+            <span class="mini-footer-version">v0.10.10-8 (Build 309)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5312,6 +5315,185 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="screen-writing" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitWritingMode()" title="Quay lại danh sách từ">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div id="writing-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Câu 1 / 5</div>
+          <span id="writing-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🟢 Dễ (x1.0)</span>
+          <span class="badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 800; font-size: 11px; padding: 2px 7px;">✍️ Viết Câu (β)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentWriting()" title="Xáo trộn ngẫu nhiên các câu còn lại phía sau">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <div id="writing-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="writing-container" style="max-width: 720px; margin: 16px auto; padding: 0 16px;">
+        
+        <!-- CARD 1: TỪ VỰNG MỤC TIÊU & YÊU CẦU ĐỀ BÀI -->
+        <div class="writing-prompt-card" id="writing-prompt-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px 20px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); position: relative;">
+          
+          <!-- VocaSkip Button ở góc phải trên -->
+          <button class="btn btn-outline btn-sm" id="btn-writing-skip" onclick="useWritingSkip()" style="position: absolute; top: 14px; right: 14px; padding: 4px 10px; font-weight: 700; font-size: 11.5px; border-color: rgba(245,158,11,0.4); color: #fbbf24; background: rgba(245,158,11,0.08); border-radius: 20px; z-index: 2;" title="VocaSkip câu hỏi này">
+            ⏭️ VocaSkip (3)
+          </button>
+
+          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <span>🎯</span> <span>TỪ VỰNG BẮT BUỘC SỬ DỤNG:</span>
+          </div>
+
+          <!-- Danh sách từ mục tiêu dạng thẻ Chip sinh động -->
+          <div id="writing-target-words-list" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Yêu cầu & Ràng buộc đề bài -->
+          <div id="writing-requirement-banner" style="background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 10px 14px; font-size: 12.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div id="writing-requirement-text" style="line-height: 1.4;">
+              💡 Hãy viết 1 câu hoàn chỉnh có nghĩa bằng tiếng Anh chứa từ vựng trên.
+            </div>
+            <span id="writing-target-length-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700; font-size: 11px;">
+              Tự do độ dài
+            </span>
+          </div>
+        </div>
+
+        <!-- CARD 2: KHU VỰC NHẬP CÂU & CÔNG CỤ TRỢ GIÚP -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 20px; padding: 18px 18px; margin-bottom: 18px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label for="writing-sentence-input" style="font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>✍️</span> <span>Câu của bạn:</span>
+            </label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button class="btn btn-outline btn-sm" id="btn-writing-hint" onclick="useWritingHint()" title="VocaHint gợi ý mẫu câu hoặc collocation (50 VoCoin hoặc 1 VocaHint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>💡 Gợi ý ý tưởng</span>
+                <span id="writing-hints-count" style="font-size: 10.5px; background: rgba(245,158,11,0.2); color: #fbbf24; padding: 1px 5px; border-radius: 10px;">5</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Gợi ý VocaHint (nếu đã dùng) -->
+          <div id="writing-hint-box" style="display: none; margin-bottom: 10px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 12px; font-size: 12.5px; color: #fbbf24; text-align: left;">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Ô Textarea Viết Câu -->
+          <div style="position: relative; margin-bottom: 8px;">
+            <textarea id="writing-sentence-input" class="form-input" rows="3" placeholder="Nhập câu tiếng Anh của bạn tại đây... (Nhấn Ctrl + Enter để gửi chấm điểm)" oninput="handleWritingInput(this.value)" style="width: 100%; resize: vertical; min-height: 90px; font-size: 14.5px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; font-family: inherit; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Toolbar Đếm Từ & Trạng Thái -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+            <div id="writing-live-count" style="display: flex; align-items: center; gap: 8px;">
+              <span>Số từ: <strong id="writing-word-count-num" style="color: var(--text);">0</strong> từ</span>
+              <span>•</span>
+              <span><strong id="writing-char-count-num" style="color: var(--text-muted);">0</strong> ký tự</span>
+              <span id="writing-count-status-badge" class="badge" style="display: none; font-size: 10px; padding: 1px 6px;"></span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Phím tắt: <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Ctrl</kbd> + <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Enter</kbd>
+            </div>
+          </div>
+
+          <!-- NÚT CHẤM ĐIỂM AI -->
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 14px;">
+            <button class="btn btn-primary" id="btn-writing-submit" onclick="submitWritingEvaluation()" style="width: 100%; max-width: 340px; padding: 11px 20px; font-size: 14px; font-weight: 800; border-radius: 24px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 16px rgba(245,158,11,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+              <span>🧠 Chấm Điểm AI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: BẢNG KẾT QUẢ ĐÁNH GIÁ HÀNH VĂN GEMINI AI (RESULT PANEL) -->
+        <div id="writing-result-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px 18px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          
+          <!-- AI Loading State -->
+          <div id="writing-ai-loading" style="display: none; text-align: center; padding: 20px 10px;">
+            <div style="font-size: 32px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 10px;">🧠</div>
+            <div style="font-size: 14px; font-weight: 700; color: #f59e0b; margin-bottom: 4px;">Gemini AI đang phân tích ngữ pháp & hành văn...</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Đánh giá ngữ cảnh dùng từ, ngữ pháp, độ tự nhiên và quy chuẩn bản xứ</div>
+          </div>
+
+          <!-- AI Evaluation Content -->
+          <div id="writing-ai-content" style="display: none;">
+            
+            <!-- Floor / Fail / Mistake Banners -->
+            <div id="writing-floor-banner" style="display: none; margin-bottom: 12px;"></div>
+            <div id="writing-fail-banner" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Header: Score Badge & Verdict -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div id="writing-score-circle" style="width: 58px; height: 58px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 21px; color: white; background: #34d399; box-shadow: 0 4px 14px rgba(52,211,153,0.35); flex-shrink: 0;">
+                  <span id="writing-score-num">88</span>
+                  <span style="font-size: 8.5px; font-weight: 600; line-height: 1; opacity: 0.9;">ĐIỂM</span>
+                </div>
+                <div>
+                  <div id="writing-verdict-text" style="font-size: 16px; font-weight: 800; color: #34d399;">Rất tự nhiên!</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted);">Điểm sàn: <strong id="writing-floor-label" style="color: var(--text);">70đ</strong></div>
+                </div>
+              </div>
+
+              <!-- 4 Pillar Badges -->
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="writing-pillars-container">
+                <span id="writing-pillar-grammar" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🎯 Ngữ pháp: Chuẩn</span>
+                <span id="writing-pillar-vocab" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🔤 Dùng từ: Chính xác</span>
+                <span id="writing-pillar-naturalness" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🌟 Mạch lạc: Tự nhiên</span>
+                <span id="writing-pillar-length" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">📏 Độ dài: Đạt</span>
+              </div>
+            </div>
+
+            <!-- PHIÊN BẢN VIẾT LẠI CHUẨN BẢN XỨ (POLISHED NATIVE REWRITE) -->
+            <div id="writing-polished-card" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11.5px; font-weight: 800; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
+                  <span>✨</span> <span>Phiên bản viết lại chuẩn bản xứ (Band 8.0+):</span>
+                </span>
+                <button type="button" class="btn btn-outline btn-icon btn-sm" onclick="speakPolishedSentence()" title="Nghe câu mẫu bản xứ" style="width: 26px; height: 26px; border-radius: 50%; color: #818cf8; border-color: rgba(99,102,241,0.3); padding: 0;">
+                  <svg class="icon" style="width: 13px; height: 13px;"><use href="#i-volume"/></svg>
+                </button>
+              </div>
+              <div id="writing-polished-text" style="font-size: 14px; font-weight: 600; color: #e2e8f0; line-height: 1.5; font-style: italic;">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Nhận xét chi tiết & Giải thích ngữ pháp tiếng Việt -->
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
+              <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                📝 Nhận xét hành văn từ AI Mentor:
+              </div>
+              <div id="writing-feedback-text" style="font-size: 13.5px; color: var(--text); line-height: 1.6; margin-bottom: 8px;">
+                <!-- Feedback text -->
+              </div>
+              <div id="writing-grammar-notes" style="font-size: 12px; color: var(--text-muted); line-height: 1.5; border-top: 1px dashed var(--border); padding-top: 8px; display: none;">
+                <!-- Grammar notes -->
+              </div>
+            </div>
+
+            <!-- Reward Container -->
+            <div id="writing-reward-container" style="display: none; justify-content: center; align-items: center; margin-top: 10px;">
+              <!-- Reward badges -->
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NÚT TIẾP THEO -->
+        <div id="writing-action-buttons-container" style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 24px;">
+          <button class="btn btn-primary" id="btn-writing-next" onclick="nextWritingQuestion()" style="width: 100%; max-width: 360px; justify-content: center; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 12px 18px; font-size: 14px; border-radius: 24px; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: none;">
+            Câu Tiếp Theo ⏭️ [Enter ↵]
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -6021,6 +6203,194 @@
     </div>
   </div>
 
+  <!-- MODAL: WRITING SETUP (v0.10.10-8 - SENTENCE WRITING LAB β) -->
+  <div class="modal-overlay" id="modal-writing-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">✍️</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Luyện Viết Câu (Writing Lab β)</strong>
+            <div id="writing-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách và độ dài câu/đoạn văn</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-writing-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          1. Chọn Cấp Độ Thử Thách:
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="writing-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="writing-diff-card" id="writing-diff-card-easy" onclick="selectWritingSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.0 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #34d399; font-weight: 700;">+8 ~ 16 Xu/câu</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đề bài yêu cầu <strong>1 từ</strong> vựng. Tự do độ dài. Điểm sàn 70đ. Thích hợp luyện phản xạ đặt câu nhanh.</p>
+          </div>
+
+          <!-- TRUNG BÌNH -->
+          <div class="writing-diff-card" id="writing-diff-card-medium" onclick="selectWritingSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x1.8 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #fbbf24; font-weight: 700;">+25 ~ 45 Xu/câu</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đề bài yêu cầu kết hợp <strong>2 - 3 từ</strong> liên quan chủ đề. Tự do độ dài. Điểm sàn 80đ. Luyện tư duy liên kết từ.</p>
+          </div>
+
+          <!-- KHÓ -->
+          <div class="writing-diff-card" id="writing-diff-card-hard" onclick="selectWritingSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard / Mastery)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.8 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #f87171; font-weight: 700;">+55 ~ 90 Xu/câu</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đề bài yêu cầu kết hợp <strong>2 - 4 từ</strong> và giới hạn số từ linh động (15 - 35 từ). Điểm sàn 90đ. Thử thách viết đoạn mạch lạc!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SỐ LƯỢNG CÂU HỎI TRONG PHIÊN HỌC -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          2. Số Lượng Câu Luyện Viết:
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <button type="button" class="btn btn-outline writing-qcount-btn active" id="writing-qc-5" onclick="selectWritingSetupQuestionCount(5)" style="border-radius: 10px; padding: 8px 4px; font-weight: 700; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text);">
+            5 Câu
+          </button>
+          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-10" onclick="selectWritingSetupQuestionCount(10)" style="border-radius: 10px; padding: 8px 4px; font-weight: 700;">
+            10 Câu
+          </button>
+          <button type="button" class="btn btn-outline writing-qcount-btn" id="writing-qc-all" onclick="selectWritingSetupQuestionCount('all')" style="border-radius: 10px; padding: 8px 4px; font-weight: 700;">
+            Toàn Bộ
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. TÙY CHỌN TRỘN BỘ TỪ -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="writing-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ trong bộ từ</span>
+        </label>
+        <input type="checkbox" id="writing-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-writing-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartWritingFromModal()" style="flex: 2; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
+          🚀 Bắt Đầu Luyện Viết
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: WRITING RESULT CELEBRATION (v0.10.10-8 - SENTENCE WRITING LAB β) -->
+  <div class="modal-overlay" id="modal-writing-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="writing-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="writing-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));">🏆</div>
+        <h2 id="writing-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Luyện Viết Câu!</h2>
+        <p id="writing-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành phiên luyện viết và được Gemini AI chấm điểm hành văn.</p>
+
+        <div style="margin-bottom: 16px;">
+          <span id="writing-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">✍️ Cấp độ: Dễ (x1.0)</span>
+        </div>
+
+        <!-- 5-Tile Stats Dashboard -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Tỉ lệ đạt điểm sàn -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Tỉ lệ đạt sàn
+            </div>
+            <div id="writing-res-floor-ratio" style="font-size: 15px; font-weight: 800; color: #10b981; font-family: monospace;">0/0 (0%)</div>
+          </div>
+
+          <!-- 2. VoCoin nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> VoCoin nhận được
+            </div>
+            <div id="writing-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+          </div>
+
+          <!-- 3. Điểm hành văn TB -->
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #818cf8; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Điểm hành văn TB
+            </div>
+            <div id="writing-res-avg-score" style="font-size: 15px; font-weight: 800; color: #6366f1; font-family: monospace;">0 / 100</div>
+          </div>
+
+          <!-- 4. VocaHint / Skip đã dùng -->
+          <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💡</span> Trợ giúp đã dùng
+            </div>
+            <div id="writing-res-hints-skips" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0 gợi ý</div>
+          </div>
+
+          <!-- 5. Tổng thời gian (Span 2 cols) -->
+          <div style="grid-column: span 2; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 11.5px; color: #60a5fa; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="writing-res-duration" style="font-size: 14px; font-weight: 800; color: #3b82f6; font-family: monospace;">00:00</div>
+          </div>
+        </div>
+
+        <!-- Bonus breakdown pill -->
+        <div id="writing-res-bonus-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px dashed rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 8px 12px; font-size: 11.5px; color: #a5b4fc; margin-bottom: 12px; text-align: center;">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- UNPASSED WORDS RETRY BANNER -->
+        <div id="writing-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px;">
+              <span>❌</span> <span>Từ chưa đạt chuẩn: <strong id="writing-res-wrong-count">0 từ</strong></span>
+            </div>
+            <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 10px; font-weight: 700;">Đã lưu vào Sổ Từ Sai</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+            Luyện viết lại ngay những từ chưa đạt điểm sàn để rèn luyện tư duy đặt câu và ngữ pháp!
+          </div>
+          <button class="btn btn-primary" onclick="retryWritingWrongWordsOnly()" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; font-weight: 700; padding: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+            <svg class="icon icon-sm"><use href="#i-repeat"/></svg> <span>Luyện Viết Lại Riêng <span id="writing-res-wrong-btn-label">0 từ</span></span>
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button class="btn btn-outline" onclick="closeWritingResultModal(); openWritingSetupModal(writingSetupUseSelection, writingSetupCustomWordList);" style="flex: 1; justify-content: center; font-weight: 700;">
+            🔁 Luyện Lại
+          </button>
+          <button class="btn btn-primary" onclick="closeWritingResultModal(); exitWritingMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);">
+            🚪 Về VocaDeck
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal-overlay" id="modal-spelling-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
       <!-- Canvas for dynamic fireworks particles -->
@@ -7575,18 +7945,21 @@
       </div>
 
       <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px;">
-        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
+        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
           <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
         </button>
-        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
           <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
         </button>
-        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Luyện Viết</span>
+        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Chính Tả</span>
         </button>
-        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12.5px; padding: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
           <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
+        </button>
+        <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
+          <span>✍️</span> <span id="label-review-writing">Viết Câu (β)</span>
         </button>
       </div>
 
@@ -9940,7 +10313,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-7 (Build 308)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-8 (Build 309)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11067,7 +11440,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-7 Build 308)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-8 Build 309)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11326,6 +11699,10 @@ function navigateToRoute(route, isPopState = false) {
         startSpeakingMode();
         return;
       }
+      if ((secondSegment === 'writing' || secondSegment === 'write') && typeof startWritingMode === 'function') {
+        startWritingMode();
+        return;
+      }
     }
 
     // 7. Clean primary navigation and modal routes
@@ -11516,15 +11893,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-7 Build 308)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-8 Build 309)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-7 Build 308)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-8 Build 309)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-7';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-7 (Build 308)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-8';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-8 (Build 309)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -27078,7 +27455,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       closeModal('modal-review-queue');
       showToast(`🚀 Bắt đầu ôn tập ${targetList.length} từ đã chọn!`);
 
-      if (mode === 'speaking') {
+      if (mode === 'writing') {
+        openWritingSetupModal(false, targetList);
+      } else if (mode === 'speaking') {
         openSpeakingSetupModal(false, targetList);
       } else if (mode === 'autofc') {
         startAutoFlashcardMode(false, targetList);
@@ -27090,6 +27469,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           return;
         }
         openQuizSetupModal(false, targetList);
+      } else if (mode === 'cloze') {
+        showToast('📖 Tính năng Cloze Test (Điền đoạn văn có bối cảnh β) đang được hoàn thiện!');
+      } else if (mode === 'dictation') {
+        showToast('🎧 Tính năng Full Sentence Dictation (Nghe chép chính tả cả câu β) đang được hoàn thiện!');
       }
     }
 
@@ -30615,6 +30998,998 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-8 - SENTENCE WRITING LAB β)
+// AI-Powered Writing Lab with Thematic Word Linking & Band 8.0+ Native Polish
+// =========================================================================
+
+let writingQuestionsList = [];
+let currentWritingIndex = 0;
+let currentWritingDifficulty = localStorage.getItem('vocaflow_writing_difficulty') || 'easy';
+let selectedWritingSetupDifficulty = 'easy';
+let writingSetupQuestionCount = 'all'; // 5 | 10 | 'all'
+let writingSetupUseSelection = false;
+let writingSetupCustomWordList = null;
+
+let writingSessionPointsEarned = 0;
+let writingSessionWrongWords = [];
+let writingGradedQuestionIds = new Set();
+let writingHintsLeft = 5;
+let writingSkipsLeft = 3;
+let writingStartTime = 0;
+let writingActiveTimeMs = 0;
+let writingIsCompleted = false;
+let writingPolishedSentence = '';
+let writingIsEvaluating = false;
+
+// =========================================================================
+// 1. DIFFICULTY CONFIG & REWARDS ENGINE (BALANCE_V2)
+// =========================================================================
+function getWritingDifficultyConfig(diff) {
+  if (diff === 'hard') {
+    return {
+      floorScore: 90,
+      diffMult: 2.8,
+      wordsCount: [2, 4],
+      minLen: 15,
+      maxLen: 35,
+      baseXuRange: [55, 90],
+      masteryBonus: 22,
+      label: '🔴 Khó'
+    };
+  }
+  if (diff === 'medium') {
+    return {
+      floorScore: 80,
+      diffMult: 1.8,
+      wordsCount: [2, 3],
+      minLen: 0,
+      maxLen: 0,
+      baseXuRange: [25, 45],
+      masteryBonus: 14,
+      label: '🟡 Trung Bình'
+    };
+  }
+  return {
+    floorScore: 70,
+    diffMult: 1.0,
+    wordsCount: [1, 1],
+    minLen: 0,
+    maxLen: 0,
+    baseXuRange: [8, 16],
+    masteryBonus: 8,
+    label: '🟢 Dễ'
+  };
+}
+
+// =========================================================================
+// 2. SETUP MODAL HANDLERS
+// =========================================================================
+function selectWritingSetupDifficulty(diff) {
+  if (diff !== 'easy' && (!currentUser || !currentUser.email)) {
+    alert('🔒 Cấp độ Trung Bình và Khó yêu cầu đăng nhập tài khoản để mở khóa!');
+    if (typeof openAuthModal === 'function') openAuthModal('login');
+    return;
+  }
+  selectedWritingSetupDifficulty = diff;
+  ['easy', 'medium', 'hard'].forEach(d => {
+    const card = document.getElementById('writing-diff-card-' + d);
+    if (card) {
+      if (d === diff) {
+        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444' };
+        card.style.borderColor = colors[d];
+      } else {
+        card.style.borderColor = 'var(--border)';
+      }
+    }
+  });
+}
+
+function selectWritingSetupQuestionCount(count) {
+  writingSetupQuestionCount = count;
+  ['5', '10', 'all'].forEach(c => {
+    const btn = document.getElementById('writing-qc-' + c);
+    if (btn) {
+      if (String(c) === String(count)) {
+        btn.classList.add('active');
+        btn.style.borderColor = '#6366f1';
+        btn.style.background = 'rgba(99,102,241,0.15)';
+        btn.style.color = 'var(--text)';
+      } else {
+        btn.classList.remove('active');
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+      }
+    }
+  });
+}
+
+function openWritingSetupModal(useSelection = false, customWordList = null) {
+  writingSetupUseSelection = useSelection;
+  writingSetupCustomWordList = customWordList;
+  selectedWritingSetupDifficulty = currentWritingDifficulty;
+
+  selectWritingSetupDifficulty(selectedWritingSetupDifficulty);
+  selectWritingSetupQuestionCount(writingSetupQuestionCount);
+
+  const shuffleCb = document.getElementById('writing-setup-shuffle-checkbox');
+  if (shuffleCb) shuffleCb.checked = isStudyShuffle;
+
+  let wordCount = 0;
+  if (customWordList) wordCount = customWordList.length;
+  else if (useSelection && selectedWordIds.size > 0) wordCount = selectedWordIds.size;
+  else wordCount = words.filter(w => w.deckId === currentDeckId).length;
+
+  const sub = document.getElementById('writing-setup-subtitle');
+  if (sub) sub.textContent = `${wordCount} từ vựng sẵn sàng cho phiên luyện viết`;
+
+  openModal('modal-writing-setup');
+}
+
+function confirmStartWritingFromModal() {
+  currentWritingDifficulty = selectedWritingSetupDifficulty;
+  localStorage.setItem('vocaflow_writing_difficulty', currentWritingDifficulty);
+
+  const shuffleCb = document.getElementById('writing-setup-shuffle-checkbox');
+  if (shuffleCb) {
+    isStudyShuffle = shuffleCb.checked;
+    localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false');
+  }
+
+  closeModal('modal-writing-setup');
+  startWritingMode(writingSetupUseSelection, writingSetupCustomWordList);
+}
+
+// =========================================================================
+// 3. THEMATIC CLUSTERING ALGORITHM
+// =========================================================================
+function buildThematicWordClusters(targetWords, diff, maxQuestions) {
+  const cfg = getWritingDifficultyConfig(diff);
+  const questions = [];
+  const pool = [...targetWords];
+
+  if (isStudyShuffle) {
+    pool.sort(() => Math.random() - 0.5);
+  }
+
+  let limit = pool.length;
+  if (maxQuestions === 5) limit = Math.min(5, pool.length);
+  else if (maxQuestions === 10) limit = Math.min(10, pool.length);
+
+  for (let i = 0; i < limit; i++) {
+    const primary = pool[i];
+    if (!primary) continue;
+
+    let cluster = [primary];
+
+    if (diff === 'medium' || diff === 'hard') {
+      const requiredCount = diff === 'medium' ? (Math.random() > 0.5 ? 3 : 2) : (Math.random() > 0.4 ? 3 : 2);
+      
+      // Look for candidate partners in the deck
+      const candidates = pool.filter(w => w.id !== primary.id && !cluster.some(c => c.id === w.id));
+      
+      // Heuristic: matching partOfSpeech context or similar tags
+      const sortedCandidates = candidates.sort((a, b) => {
+        let scoreA = 0;
+        let scoreB = 0;
+        if (a.partOfSpeech && primary.partOfSpeech && a.partOfSpeech !== primary.partOfSpeech) scoreA += 2; // mix noun + verb
+        if (b.partOfSpeech && primary.partOfSpeech && b.partOfSpeech !== primary.partOfSpeech) scoreB += 2;
+        if (a.cefrLevel === primary.cefrLevel) scoreA += 1;
+        if (b.cefrLevel === primary.cefrLevel) scoreB += 1;
+        return scoreB - scoreA;
+      });
+
+      for (const cand of sortedCandidates) {
+        if (cluster.length >= requiredCount) break;
+        cluster.push(cand);
+      }
+
+      // If deck doesn't have enough words, supplement algorithmic context words
+      while (cluster.length < requiredCount) {
+        const fallbacks = [
+          { term: 'effectively', phonetic: '/ɪˈfektɪvli/', definitionVi: 'một cách hiệu quả', partOfSpeech: 'adverb', isDeckWord: false },
+          { term: 'crucial', phonetic: '/ˈkruːʃl/', definitionVi: 'quan trọng, thiết yếu', partOfSpeech: 'adjective', isDeckWord: false },
+          { term: 'opportunity', phonetic: '/ˌɒpəˈtjuːnəti/', definitionVi: 'cơ hội', partOfSpeech: 'noun', isDeckWord: false },
+          { term: 'improve', phonetic: '/ɪmˈpruːv/', definitionVi: 'cải thiện, nâng cao', partOfSpeech: 'verb', isDeckWord: false },
+          { term: 'perspective', phonetic: '/pəˈspektɪv/', definitionVi: 'góc nhìn, quan điểm', partOfSpeech: 'noun', isDeckWord: false }
+        ];
+        const extra = fallbacks.find(f => !cluster.some(c => c.term.toLowerCase() === f.term.toLowerCase())) || fallbacks[0];
+        cluster.push({ ...extra, id: 'extra_' + Date.now() + '_' + Math.random() });
+      }
+    }
+
+    questions.push({
+      id: 'wq_' + i + '_' + Date.now(),
+      primaryWord: primary,
+      targetWords: cluster,
+      difficulty: diff,
+      minWords: cfg.minLen,
+      maxWords: cfg.maxLen,
+      floorScore: cfg.floorScore,
+      userSentence: '',
+      evaluated: false,
+      evalData: null,
+      status: 'pending'
+    });
+  }
+
+  return questions;
+}
+
+// =========================================================================
+// 4. START & RENDER WRITING SESSION
+// =========================================================================
+function startWritingMode(fromSelection = false, customWordList = null) {
+  if (!currentDeckId && !customWordList) return;
+  const deck = decks.find(d => d.id === currentDeckId);
+  if (!deck && !customWordList) return;
+
+  studySourceContext = customWordList ? 'review-queue' : 'deck';
+  let targetWords = [];
+  if (customWordList) {
+    targetWords = customWordList;
+  } else if (fromSelection && selectedWordIds.size > 0) {
+    targetWords = words.filter(w => selectedWordIds.has(w.id));
+  } else {
+    targetWords = words.filter(w => w.deckId === currentDeckId);
+  }
+
+  if (targetWords.length === 0) {
+    alert('Bộ từ này chưa có từ vựng nào để luyện viết câu!');
+    return;
+  }
+
+  writingQuestionsList = buildThematicWordClusters(targetWords, currentWritingDifficulty, writingSetupQuestionCount);
+  if (writingQuestionsList.length === 0) {
+    alert('Không thể tạo câu hỏi luyện viết. Vui lòng kiểm tra lại bộ từ!');
+    return;
+  }
+
+  currentWritingIndex = 0;
+  writingSessionPointsEarned = 0;
+  writingSessionWrongWords = [];
+  writingGradedQuestionIds.clear();
+  writingHintsLeft = 5;
+  writingSkipsLeft = 3;
+  writingStartTime = Date.now();
+  writingIsCompleted = false;
+  writingPolishedSentence = '';
+
+  const scoreBadge = document.getElementById('writing-score-badge');
+  if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
+
+  updateWritingDifficultyBadge();
+  showScreen('screen-writing');
+  renderWritingCurrentQuestion();
+}
+
+function updateWritingDifficultyBadge() {
+  const badge = document.getElementById('writing-difficulty-badge');
+  if (!badge) return;
+  const cfg = getWritingDifficultyConfig(currentWritingDifficulty);
+  badge.textContent = `${cfg.label} (x${cfg.diffMult})`;
+  badge.title = `Cấp độ: ${currentWritingDifficulty} • Điểm sàn: ${cfg.floorScore} • Hệ số: x${cfg.diffMult}`;
+}
+
+function resetWritingQuestionUI() {
+  const inputEl = document.getElementById('writing-sentence-input');
+  if (inputEl) {
+    inputEl.value = '';
+    inputEl.disabled = false;
+  }
+
+  const hintBox = document.getElementById('writing-hint-box');
+  if (hintBox) {
+    hintBox.style.display = 'none';
+    hintBox.innerHTML = '';
+  }
+
+  const resultPanel = document.getElementById('writing-result-panel');
+  const aiLoading = document.getElementById('writing-ai-loading');
+  const aiContent = document.getElementById('writing-ai-content');
+  const submitBtn = document.getElementById('btn-writing-submit');
+  const nextBtn = document.getElementById('btn-writing-next');
+  const floorBanner = document.getElementById('writing-floor-banner');
+  const failBanner = document.getElementById('writing-fail-banner');
+  const rewardCont = document.getElementById('writing-reward-container');
+
+  if (resultPanel) resultPanel.style.display = 'none';
+  if (aiLoading) aiLoading.style.display = 'none';
+  if (aiContent) aiContent.style.display = 'none';
+  if (floorBanner) floorBanner.style.display = 'none';
+  if (failBanner) failBanner.style.display = 'none';
+  if (rewardCont) rewardCont.style.display = 'none';
+
+  if (submitBtn) {
+    submitBtn.style.display = 'flex';
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span>🧠 Chấm Điểm AI</span>';
+  }
+  if (nextBtn) nextBtn.style.display = 'none';
+
+  handleWritingInput('');
+}
+
+function renderWritingCurrentQuestion() {
+  if (writingQuestionsList.length === 0) return;
+  const q = writingQuestionsList[currentWritingIndex];
+  if (!q) return;
+
+  resetWritingQuestionUI();
+
+  const counterEl = document.getElementById('writing-counter');
+  if (counterEl) counterEl.textContent = `Câu ${currentWritingIndex + 1} / ${writingQuestionsList.length}`;
+
+  // Render Target Words Chips
+  const wordsListEl = document.getElementById('writing-target-words-list');
+  if (wordsListEl) {
+    wordsListEl.innerHTML = q.targetWords.map((w, idx) => `
+      <div class="writing-target-chip" id="target-chip-${idx}" style="background: var(--surface-elevated); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+        <span style="font-size: 16px;">🔤</span>
+        <div>
+          <div style="font-weight: 800; font-size: 14px; color: #fbbf24;">${escapeHtml(w.term || '')}</div>
+          <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(w.phonetic || '')} • <em>${escapeHtml(w.definitionVi || w.definition || '')}</em></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render Requirement Banner
+  const reqText = document.getElementById('writing-requirement-text');
+  const reqBadge = document.getElementById('writing-target-length-badge');
+
+  if (q.difficulty === 'hard') {
+    if (reqText) reqText.innerHTML = `💡 Hãy viết đoạn ngắn kết hợp <strong>${q.targetWords.length} từ</strong> trên và độ dài từ <strong>${q.minWords} - ${q.maxWords} từ</strong>.`;
+    if (reqBadge) {
+      reqBadge.textContent = `${q.minWords} - ${q.maxWords} từ`;
+      reqBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+      reqBadge.style.color = '#f87171';
+    }
+  } else if (q.difficulty === 'medium') {
+    if (reqText) reqText.innerHTML = `💡 Hãy viết 1 câu hoàn chỉnh kết hợp cả <strong>${q.targetWords.length} từ</strong> vựng trên một cách tự nhiên.`;
+    if (reqBadge) {
+      reqBadge.textContent = 'Tự do độ dài';
+      reqBadge.style.background = 'rgba(245, 158, 11, 0.15)';
+      reqBadge.style.color = '#fbbf24';
+    }
+  } else {
+    if (reqText) reqText.innerHTML = `💡 Hãy viết 1 câu hoàn chỉnh có nghĩa bằng tiếng Anh chứa từ <strong>"${escapeHtml(q.targetWords[0]?.term || '')}"</strong>.`;
+    if (reqBadge) {
+      reqBadge.textContent = 'Tự do độ dài';
+      reqBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+      reqBadge.style.color = '#34d399';
+    }
+  }
+
+  // Update Skip button
+  const skipBtn = document.getElementById('btn-writing-skip');
+  if (skipBtn) skipBtn.textContent = `⏭️ VocaSkip (${writingSkipsLeft})`;
+
+  // Update Hints count
+  const hintCountEl = document.getElementById('writing-hints-count');
+  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+
+  // Auto focus textarea
+  setTimeout(() => {
+    const inputEl = document.getElementById('writing-sentence-input');
+    if (inputEl) inputEl.focus();
+  }, 100);
+}
+
+// =========================================================================
+// 5. LIVE WORD COUNTER & CHIP HIGHLIGHTING
+// =========================================================================
+function handleWritingInput(text) {
+  const clean = text || '';
+  const wordsArr = clean.trim().split(/\s+/).filter(Boolean);
+  const wordCount = wordsArr.length;
+  const charCount = clean.length;
+
+  const wNumEl = document.getElementById('writing-word-count-num');
+  const cNumEl = document.getElementById('writing-char-count-num');
+  const statusBadge = document.getElementById('writing-count-status-badge');
+
+  if (wNumEl) wNumEl.textContent = wordCount;
+  if (cNumEl) cNumEl.textContent = charCount;
+
+  const q = writingQuestionsList[currentWritingIndex];
+  if (q && q.difficulty === 'hard' && statusBadge) {
+    statusBadge.style.display = 'inline-block';
+    if (wordCount < q.minWords) {
+      statusBadge.textContent = `Thiếu ${q.minWords - wordCount} từ`;
+      statusBadge.style.background = 'rgba(245, 158, 11, 0.15)';
+      statusBadge.style.color = '#fbbf24';
+    } else if (wordCount > q.maxWords) {
+      statusBadge.textContent = `Vượt quá ${wordCount - q.maxWords} từ`;
+      statusBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+      statusBadge.style.color = '#f87171';
+    } else {
+      statusBadge.textContent = '✓ Đạt chuẩn độ dài';
+      statusBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+      statusBadge.style.color = '#34d399';
+    }
+  } else if (statusBadge) {
+    statusBadge.style.display = 'none';
+  }
+
+  // Highlight matched target words in chips
+  if (q && q.targetWords) {
+    const lowerText = clean.toLowerCase();
+    q.targetWords.forEach((tw, idx) => {
+      const chip = document.getElementById('target-chip-' + idx);
+      if (!chip) return;
+      const termLower = (tw.term || '').toLowerCase().trim();
+      const isPresent = lowerText.includes(termLower);
+      if (isPresent) {
+        chip.style.borderColor = '#10b981';
+        chip.style.background = 'rgba(16, 185, 129, 0.12)';
+      } else {
+        chip.style.borderColor = 'var(--border)';
+        chip.style.background = 'var(--surface-elevated)';
+      }
+    });
+  }
+}
+
+// =========================================================================
+// 6. GEMINI AI WRITING EVALUATION ENGINE
+// =========================================================================
+async function submitWritingEvaluation() {
+  if (writingIsEvaluating) return;
+
+  const inputEl = document.getElementById('writing-sentence-input');
+  const userSentence = (inputEl ? inputEl.value : '').trim();
+
+  if (!userSentence || userSentence.length < 3) {
+    showToast('⚠️ Vui lòng viết ít nhất 1 câu hoàn chỉnh trước khi gửi chấm điểm!');
+    return;
+  }
+
+  const q = writingQuestionsList[currentWritingIndex];
+  if (!q) return;
+
+  q.userSentence = userSentence;
+  writingIsEvaluating = true;
+
+  const resultPanel = document.getElementById('writing-result-panel');
+  const aiLoading = document.getElementById('writing-ai-loading');
+  const aiContent = document.getElementById('writing-ai-content');
+  const submitBtn = document.getElementById('btn-writing-submit');
+
+  if (resultPanel) resultPanel.style.display = 'block';
+  if (aiLoading) aiLoading.style.display = 'block';
+  if (aiContent) aiContent.style.display = 'none';
+  if (submitBtn) submitBtn.disabled = true;
+
+  await evaluateWritingSentenceWithGemini(userSentence, q);
+}
+
+async function evaluateWritingSentenceWithGemini(userSentence, question) {
+  const targetTerms = question.targetWords.map(w => w.term).join(', ');
+  const wordDetails = question.targetWords.map(w => `${w.term} (${w.partOfSpeech || 'word'}): ${w.definitionVi || w.definition || ''}`).join('\n');
+  const cfg = getWritingDifficultyConfig(question.difficulty);
+
+  const prompt = `You are an elite IELTS Writing Examiner and Native English Stylist (Band 8.5+).
+Evaluate the following student sentence written for a vocabulary mastery challenge.
+
+[TASK REQUIREMENTS]
+- Target words MUST be used: [${targetTerms}]
+- Vocabulary details:
+${wordDetails}
+- Difficulty Level: ${question.difficulty.toUpperCase()} (Floor score: ${cfg.floorScore}/100)
+- Word count constraints: ${question.minWords > 0 ? `${question.minWords} to ${question.maxWords} words` : 'No strict word count constraint'}
+
+[STUDENT SENTENCE]
+"${userSentence}"
+
+Evaluate thoroughly across 4 Pillars:
+1. Grammar & Syntax (0-100)
+2. Vocabulary & Collocations (Proper usage of target words: ${targetTerms})
+3. Naturalness & Coherence (Native phrasing, flow, punctuation)
+4. Length & Task Compliance (Complied with target words and length)
+
+Output MUST be valid JSON only (no markdown quotes, no triple backticks) matching this structure:
+{
+  "score": 85,
+  "verdict": "Rất tự nhiên / Chuẩn xác / Khá tốt / Cần trau chuốt",
+  "pillars": {
+    "grammar": { "status": "pass", "note": "Ngữ pháp chuẩn, thì câu chính xác" },
+    "vocabulary": { "status": "pass", "note": "Sử dụng từ vựng đúng ngữ cảnh và chuẩn collocations" },
+    "naturalness": { "status": "pass", "note": "Cách diễn đạt tự nhiên, mạch lạc" },
+    "length": { "status": "pass", "note": "Độ dài câu hợp lý và đáp ứng yêu cầu" }
+  },
+  "polishedRewrite": "A refined Band 8.5+ native rewrite of the student's thought using the target words gracefully.",
+  "feedbackVi": "Chi tiết nhận xét hành văn bằng tiếng Việt (khen điểm tốt, chỉ ra chỗ có thể nâng cấp từ vựng hoặc cấu trúc).",
+  "grammarNotesVi": "Ghi chú cấu trúc ngữ pháp quan trọng hoặc sửa lỗi sai nếu có.",
+  "targetWordsComplied": true
+}`;
+
+  let evalSuccess = false;
+  let evalData = null;
+
+  try {
+    const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+    const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+
+    for (const k of keys) {
+      if (evalSuccess) break;
+      for (const m of modelsToTry) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 16000);
+
+          const res = await fetch(url, {
+            method: 'POST',
+            signal: controller.signal,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                temperature: 0.2,
+                maxOutputTokens: 1024
+              }
+            })
+          });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            const resJson = await res.json();
+            const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (rawText) {
+              evalData = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
+              if (typeof saveWorkingGeminiModel === 'function') {
+                saveWorkingGeminiModel(m, 'deep');
+              }
+              evalSuccess = true;
+              break;
+            }
+          }
+        } catch (e) {
+          console.warn(`Gemini writing eval failed with model ${m}:`, e);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Gemini Writing Evaluation outer error:', err);
+  }
+
+  // Fallback heuristic if API failed or offline
+  if (!evalSuccess || !evalData) {
+    evalData = generateOfflineWritingEvaluation(userSentence, question);
+  }
+
+  renderWritingEvaluationResult(evalData, question);
+}
+
+// Offline fallback evaluation engine
+function generateOfflineWritingEvaluation(userSentence, question) {
+  const wordsArr = userSentence.trim().split(/\s+/).filter(Boolean);
+  const wordCount = wordsArr.length;
+  const lowerSentence = userSentence.toLowerCase();
+
+  let targetUsedCount = 0;
+  question.targetWords.forEach(tw => {
+    if (lowerSentence.includes((tw.term || '').toLowerCase().trim())) {
+      targetUsedCount++;
+    }
+  });
+
+  const hasCapital = /^[A-Z]/.test(userSentence.trim());
+  const hasPunctuation = /[.!?]$/.test(userSentence.trim());
+  const targetComplied = targetUsedCount === question.targetWords.length;
+
+  let baseScore = 75;
+  if (targetComplied) baseScore += 15;
+  else baseScore -= 20;
+
+  if (hasCapital && hasPunctuation) baseScore += 10;
+  if (wordCount >= 5) baseScore += 5;
+
+  baseScore = Math.max(30, Math.min(95, baseScore));
+
+  const polished = `Naturally speaking, ${userSentence.replace(/[.!?]$/, '')}, which effectively illustrates the mastery of the target vocabulary.`;
+
+  return {
+    score: baseScore,
+    verdict: baseScore >= 80 ? 'Khá tốt!' : 'Cần hoàn thiện',
+    pillars: {
+      grammar: { status: hasCapital && hasPunctuation ? 'pass' : 'warning', note: hasCapital && hasPunctuation ? 'Cấu trúc câu hoàn chỉnh' : 'Cần chú ý viết hoa đầu câu và dấu chấm câu' },
+      vocabulary: { status: targetComplied ? 'pass' : 'fail', note: targetComplied ? 'Đã sử dụng đủ từ vựng yêu cầu' : 'Chưa sử dụng đầy đủ các từ vựng bắt buộc' },
+      naturalness: { status: 'pass', note: 'Hành văn tương đối tự nhiên' },
+      length: { status: 'pass', note: `${wordCount} từ` }
+    },
+    polishedRewrite: polished,
+    feedbackVi: targetComplied ? 'Bạn đã áp dụng thành công các từ vựng mục tiêu vào ngữ cảnh câu hoàn chỉnh.' : 'Hãy đảm bảo gõ đúng chính tả và đưa đầy đủ các từ vựng mục tiêu vào trong câu nhé!',
+    grammarNotesVi: 'Chú ý kết hợp liên từ (e.g. although, because, therefore) để câu văn mạch lạc và đạt điểm cao hơn.',
+    targetWordsComplied: targetComplied
+  };
+}
+
+// =========================================================================
+// 7. RENDER EVALUATION RESULT & SETTLEMENT
+// =========================================================================
+function renderWritingEvaluationResult(evalData, question) {
+  writingIsEvaluating = false;
+  question.evaluated = true;
+  question.evalData = evalData;
+
+  const aiLoading = document.getElementById('writing-ai-loading');
+  const aiContent = document.getElementById('writing-ai-content');
+  const submitBtn = document.getElementById('btn-writing-submit');
+  const nextBtn = document.getElementById('btn-writing-next');
+
+  if (aiLoading) aiLoading.style.display = 'none';
+  if (aiContent) aiContent.style.display = 'block';
+  if (submitBtn) submitBtn.style.display = 'none';
+  if (nextBtn) nextBtn.style.display = 'flex';
+
+  const score = Math.max(0, Math.min(100, parseInt(evalData.score) || 0));
+  const cfg = getWritingDifficultyConfig(question.difficulty);
+  const floorScore = cfg.floorScore;
+  const isPassed = score >= floorScore;
+
+  // Render Score Circle & Verdict
+  const scoreNumEl = document.getElementById('writing-score-num');
+  const scoreCircle = document.getElementById('writing-score-circle');
+  const verdictText = document.getElementById('writing-verdict-text');
+  const floorLabel = document.getElementById('writing-floor-label');
+
+  if (scoreNumEl) scoreNumEl.textContent = score;
+  if (floorLabel) floorLabel.textContent = `${floorScore}đ`;
+
+  if (scoreCircle) {
+    if (score >= 85) {
+      scoreCircle.style.background = '#10b981';
+      scoreCircle.style.boxShadow = '0 4px 14px rgba(16,185,129,0.35)';
+    } else if (score >= floorScore) {
+      scoreCircle.style.background = '#f59e0b';
+      scoreCircle.style.boxShadow = '0 4px 14px rgba(245,158,11,0.35)';
+    } else {
+      scoreCircle.style.background = '#ef4444';
+      scoreCircle.style.boxShadow = '0 4px 14px rgba(239,68,68,0.35)';
+    }
+  }
+
+  if (verdictText) {
+    verdictText.textContent = evalData.verdict || (isPassed ? 'Đạt chuẩn!' : 'Chưa đạt điểm sàn');
+    verdictText.style.color = isPassed ? '#34d399' : '#f87171';
+  }
+
+  // Render 4 Pillar Badges
+  const renderPillar = (id, label, icon, pillarObj) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const st = pillarObj?.status || 'pass';
+    if (st === 'pass') {
+      el.style.background = 'rgba(16, 185, 129, 0.15)';
+      el.style.color = '#34d399';
+      el.textContent = `${icon} ${label}: Chuẩn`;
+    } else if (st === 'warning') {
+      el.style.background = 'rgba(245, 158, 11, 0.15)';
+      el.style.color = '#fbbf24';
+      el.textContent = `${icon} ${label}: Khá`;
+    } else {
+      el.style.background = 'rgba(239, 68, 68, 0.15)';
+      el.style.color = '#f87171';
+      el.textContent = `${icon} ${label}: Cần sửa`;
+    }
+    el.title = `${label}: ${pillarObj?.note || ''}`;
+  };
+
+  renderPillar('writing-pillar-grammar', 'Ngữ pháp', '🎯', evalData.pillars?.grammar);
+  renderPillar('writing-pillar-vocab', 'Dùng từ', '🔤', evalData.pillars?.vocabulary);
+  renderPillar('writing-pillar-naturalness', 'Mạch lạc', '🌟', evalData.pillars?.naturalness);
+  renderPillar('writing-pillar-length', 'Độ dài', '📏', evalData.pillars?.length);
+
+  // Render Polished Rewrite
+  writingPolishedSentence = evalData.polishedRewrite || '';
+  const polishedTextEl = document.getElementById('writing-polished-text');
+  if (polishedTextEl) {
+    polishedTextEl.textContent = `"${writingPolishedSentence}"`;
+  }
+
+  // Render Feedback & Grammar notes
+  const feedbackEl = document.getElementById('writing-feedback-text');
+  if (feedbackEl) feedbackEl.innerHTML = escapeHtml(evalData.feedbackVi || 'Câu viết tốt, áp dụng đúng ngữ pháp.');
+
+  const grammarNotesEl = document.getElementById('writing-grammar-notes');
+  if (grammarNotesEl) {
+    if (evalData.grammarNotesVi) {
+      grammarNotesEl.style.display = 'block';
+      grammarNotesEl.innerHTML = `<strong>💡 Ghi chú ngữ pháp:</strong> ${escapeHtml(evalData.grammarNotesVi)}`;
+    } else {
+      grammarNotesEl.style.display = 'none';
+    }
+  }
+
+  // Economic Settlement & Mistake List Sync
+  const floorBanner = document.getElementById('writing-floor-banner');
+  const failBanner = document.getElementById('writing-fail-banner');
+  const rewardCont = document.getElementById('writing-reward-container');
+
+  if (isPassed) {
+    question.status = 'passed';
+    const [minXu, maxXu] = cfg.baseXuRange;
+    const scoreFactor = score / 100;
+    const earnedXu = Math.round((minXu + (maxXu - minXu) * scoreFactor) * cfg.diffMult);
+
+    writingSessionPointsEarned += earnedXu;
+    const scoreBadge = document.getElementById('writing-score-badge');
+    if (scoreBadge) scoreBadge.textContent = `Bài: +${writingSessionPointsEarned}đ`;
+
+    // Update mastery & clear mistake list for deck words
+    question.targetWords.forEach(w => {
+      if (w.id && !w.id.startsWith('extra_')) {
+        if (typeof updateWordMasteryScore === 'function') updateWordMasteryScore(w, cfg.masteryBonus);
+        if (typeof removeWordFromMistakeList === 'function') removeWordFromMistakeList(w, true);
+      }
+    });
+
+    if (floorBanner) {
+      floorBanner.style.display = 'block';
+      floorBanner.innerHTML = `<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12.5px; color: #34d399; font-weight: 700;">🎉 Đạt điểm sàn (${score}đ >= ${floorScore}đ) • +${earnedXu} VoCoin • +${cfg.masteryBonus}% Thuộc từ</div>`;
+    }
+
+    if (rewardCont) {
+      rewardCont.style.display = 'flex';
+      rewardCont.innerHTML = `<span class="badge" style="font-size: 13px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">💰 +${earnedXu} VoCoin • 📈 +${cfg.masteryBonus}% Mastery</span>`;
+    }
+
+    if (typeof playVocaSfx === 'function') playVocaSfx('success');
+
+  } else {
+    question.status = 'failed';
+    const penalty = -Math.round(10 * cfg.diffMult);
+    writingSessionPointsEarned += penalty;
+
+    const scoreBadge = document.getElementById('writing-score-badge');
+    if (scoreBadge) scoreBadge.textContent = `Bài: ${writingSessionPointsEarned}đ`;
+
+    // Add unpassed words to mistake list & session wrong list
+    question.targetWords.forEach(w => {
+      if (w.id && !w.id.startsWith('extra_')) {
+        if (typeof updateWordMasteryScore === 'function') updateWordMasteryScore(w, -5);
+        if (typeof addWordToMistakeList === 'function') addWordToMistakeList(w, 'writing');
+        if (!writingSessionWrongWords.some(sw => sw.id === w.id)) {
+          writingSessionWrongWords.push(w);
+        }
+      }
+    });
+
+    if (failBanner) {
+      failBanner.style.display = 'block';
+      failBanner.innerHTML = `<div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 10px 14px; text-align: center; font-size: 12.5px; color: #f87171; font-weight: 700;">⚠️ Chưa đạt điểm sàn (${score}đ < ${floorScore}đ) → Đã lưu từ vào Sổ từ sai • ${penalty} VoCoin</div>`;
+    }
+
+    if (rewardCont) {
+      rewardCont.style.display = 'flex';
+      rewardCont.innerHTML = `<span class="badge" style="font-size: 13px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">💸 ${penalty} VoCoin • 📉 -5% Thuộc từ</span>`;
+    }
+
+    if (typeof playVocaSfx === 'function') playVocaSfx('wrong');
+  }
+}
+
+// =========================================================================
+// 8. VOCAHINT, VOCASKIP & AUDIO PLAYBACK
+// =========================================================================
+function useWritingHint() {
+  const q = writingQuestionsList[currentWritingIndex];
+  if (!q) return;
+
+  if (writingHintsLeft <= 0) {
+    showToast('⚠️ Bạn đã dùng hết lượt gợi ý VocaHint cho phiên này!');
+    return;
+  }
+
+  writingHintsLeft--;
+  const hintCountEl = document.getElementById('writing-hints-count');
+  if (hintCountEl) hintCountEl.textContent = writingHintsLeft;
+
+  const hintBox = document.getElementById('writing-hint-box');
+  if (hintBox) {
+    hintBox.style.display = 'block';
+    const primary = q.primaryWord || q.targetWords[0];
+    const templates = [
+      `Gợi ý ý tưởng: Bắt đầu câu với trạng từ hoặc mệnh đề chỉ mục đích (e.g. "In order to ${primary.term}...", "Although it is ${primary.term}...")`,
+      `Gợi ý cấu trúc câu: "It is widely believed that ${primary.term} plays a crucial role in..."`,
+      `Gợi ý collocation: Kết hợp ${primary.term} với các động từ mạnh như (demonstrate, enhance, facilitate, emphasize)...`
+    ];
+    const randomHint = templates[Math.floor(Math.random() * templates.length)];
+    hintBox.innerHTML = `💡 <strong>VocaHint:</strong> ${randomHint}`;
+  }
+
+  showToast(`💡 Đã mở gợi ý ý tưởng! (Còn ${writingHintsLeft} lượt)`);
+}
+
+function useWritingSkip() {
+  if (writingSkipsLeft <= 0) {
+    showToast('⚠️ Bạn đã hết lượt VocaSkip cho phiên này!');
+    return;
+  }
+
+  const q = writingQuestionsList[currentWritingIndex];
+  if (q) {
+    q.status = 'skipped';
+    // Add words to mistake list on skip
+    q.targetWords.forEach(w => {
+      if (w.id && !w.id.startsWith('extra_')) {
+        if (typeof addWordToMistakeList === 'function') addWordToMistakeList(w, 'writing');
+        if (!writingSessionWrongWords.some(sw => sw.id === w.id)) {
+          writingSessionWrongWords.push(w);
+        }
+      }
+    });
+  }
+
+  writingSkipsLeft--;
+  showToast(`⏭️ Đã bỏ qua câu này (Còn ${writingSkipsLeft} lượt skip)`);
+  nextWritingQuestion();
+}
+
+function speakPolishedSentence() {
+  if (writingPolishedSentence && typeof speakText === 'function') {
+    speakText(writingPolishedSentence);
+  }
+}
+
+function shuffleCurrentWriting() {
+  if (writingQuestionsList.length <= 1) return;
+  const remaining = writingQuestionsList.slice(currentWritingIndex + 1);
+  remaining.sort(() => Math.random() - 0.5);
+  writingQuestionsList = writingQuestionsList.slice(0, currentWritingIndex + 1).concat(remaining);
+  showToast('🔀 Đã xáo trộn ngẫu nhiên các câu còn lại!');
+}
+
+function nextWritingQuestion() {
+  if (currentWritingIndex < writingQuestionsList.length - 1) {
+    currentWritingIndex++;
+    renderWritingCurrentQuestion();
+  } else {
+    finishWritingSession();
+  }
+}
+
+// =========================================================================
+// 9. FINISH SESSION & SETTLEMENT
+// =========================================================================
+function finishWritingSession() {
+  writingIsCompleted = true;
+  const totalQuestions = writingQuestionsList.length;
+  const passedQuestions = writingQuestionsList.filter(q => q.status === 'passed').length;
+  const passedRatio = totalQuestions > 0 ? Math.round((passedQuestions / totalQuestions) * 100) : 0;
+
+  const scores = writingQuestionsList.filter(q => q.evalData?.score).map(q => q.evalData.score);
+  const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+
+  // Duration
+  const durationSec = Math.floor((Date.now() - writingStartTime) / 1000);
+  const mins = String(Math.floor(durationSec / 60)).padStart(2, '0');
+  const secs = String(durationSec % 60).padStart(2, '0');
+
+  // Update Result Modal Elements
+  const ratioEl = document.getElementById('writing-res-floor-ratio');
+  const pointsEl = document.getElementById('writing-res-points');
+  const avgEl = document.getElementById('writing-res-avg-score');
+  const hintsSkipsEl = document.getElementById('writing-res-hints-skips');
+  const durationEl = document.getElementById('writing-res-duration');
+  const diffBadge = document.getElementById('writing-res-difficulty-badge');
+
+  if (ratioEl) ratioEl.textContent = `${passedQuestions}/${totalQuestions} (${passedRatio}%)`;
+  if (pointsEl) pointsEl.textContent = `${writingSessionPointsEarned >= 0 ? '+' : ''}${writingSessionPointsEarned} VoCoin`;
+  if (avgEl) avgEl.textContent = `${avgScore} / 100`;
+  if (hintsSkipsEl) hintsSkipsEl.textContent = `${5 - writingHintsLeft} gợi ý • ${3 - writingSkipsLeft} skip`;
+  if (durationEl) durationEl.textContent = `${mins}:${secs}`;
+
+  const cfg = getWritingDifficultyConfig(currentWritingDifficulty);
+  if (diffBadge) {
+    diffBadge.textContent = `✍️ Cấp độ: ${cfg.label} (x${cfg.diffMult})`;
+  }
+
+  // Wrong words banner
+  const wrongBanner = document.getElementById('writing-res-wrong-banner');
+  const wrongCountEl = document.getElementById('writing-res-wrong-count');
+  const wrongBtnLabel = document.getElementById('writing-res-wrong-btn-label');
+
+  if (writingSessionWrongWords.length > 0) {
+    if (wrongBanner) wrongBanner.style.display = 'block';
+    if (wrongCountEl) wrongCountEl.textContent = `${writingSessionWrongWords.length} từ`;
+    if (wrongBtnLabel) wrongBtnLabel.textContent = `${writingSessionWrongWords.length} từ`;
+  } else {
+    if (wrongBanner) wrongBanner.style.display = 'none';
+  }
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks');
+  openModal('modal-writing-result');
+}
+
+function closeWritingResultModal() {
+  closeModal('modal-writing-result');
+}
+
+function retryWritingWrongWordsOnly() {
+  closeWritingResultModal();
+  if (writingSessionWrongWords.length === 0) {
+    showToast('🎉 Tuyệt vời! Bạn không có từ nào bị lỗi trong phiên này.');
+    return;
+  }
+  const retryList = [...writingSessionWrongWords];
+  startWritingMode(true, retryList);
+}
+
+function exitWritingMode() {
+  if (writingSessionPointsEarned !== 0) {
+    const total = writingQuestionsList.length || 1;
+    const done = writingQuestionsList.filter(q => q.evaluated).length;
+    const isComp = done >= total && total > 0;
+
+    let finalPts = writingSessionPointsEarned;
+    if (typeof calculateSessionFinalPoints === 'function') {
+      const res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
+      finalPts = res.finalPts;
+    }
+
+    if (finalPts !== 0) {
+      const curDeck = decks.find(d => d.id === currentDeckId);
+      const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
+      if (typeof setUserPoints === 'function') setUserPoints(Math.max(0, getUserPoints() + finalPts));
+      if (typeof addLedgerEntry === 'function') {
+        addLedgerEntry('STUDY_WRITING', finalPts, `Luyện viết câu AI "${deckTitle}" (${done}/${total} câu)`);
+      }
+      if (typeof saveDatabase === 'function') saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+      showToast(`🎉 Viết Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
+    }
+    writingSessionPointsEarned = 0;
+  }
+
+  if (studySourceContext === 'review-queue' || !currentDeckId) {
+    showScreen('screen-decks');
+    if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+  } else {
+    showScreen('screen-deck-detail');
+    if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+  }
+}
+
+// Hotkey listener: Ctrl + Enter to submit writing
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'Enter') {
+    const screen = document.getElementById('screen-writing');
+    if (screen && screen.classList.contains('active')) {
+      const submitBtn = document.getElementById('btn-writing-submit');
+      const nextBtn = document.getElementById('btn-writing-next');
+      if (nextBtn && nextBtn.style.display !== 'none') {
+        nextWritingQuestion();
+      } else if (submitBtn && submitBtn.style.display !== 'none' && !submitBtn.disabled) {
+        submitWritingEvaluation();
+      }
+    }
+  }
+});
+
+// Export to window
+window.openWritingSetupModal = openWritingSetupModal;
+window.confirmStartWritingFromModal = confirmStartWritingFromModal;
+window.selectWritingSetupDifficulty = selectWritingSetupDifficulty;
+window.selectWritingSetupQuestionCount = selectWritingSetupQuestionCount;
+window.startWritingMode = startWritingMode;
+window.exitWritingMode = exitWritingMode;
+window.renderWritingCurrentQuestion = renderWritingCurrentQuestion;
+window.handleWritingInput = handleWritingInput;
+window.submitWritingEvaluation = submitWritingEvaluation;
+window.useWritingHint = useWritingHint;
+window.useWritingSkip = useWritingSkip;
+window.speakPolishedSentence = speakPolishedSentence;
+window.shuffleCurrentWriting = shuffleCurrentWriting;
+window.nextWritingQuestion = nextWritingQuestion;
+window.finishWritingSession = finishWritingSession;
+window.closeWritingResultModal = closeWritingResultModal;
+window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
+
+// =========================================================================
 
 // VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.9-48)
 
@@ -32604,7 +33979,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-7 Build 308)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-8 Build 309)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy, IndexedDB Best Take & Waveform Visualizer
 // =========================================================================
 

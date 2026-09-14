@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-8 (Build 309) - Phân Loại Chế Độ Học (Core vs Extended β) & Động Cơ Luyện Viết Câu (Sentence Writing Lab β) Đánh Giá Hành Văn Gemini AI
+================================================================================
+1. [Phân Loại Chế Độ Học & Bộ Ba Kỹ Năng Mở Rộng Extended Learning Modes (β)]:
+   - Phân loại rõ ràng thành 2 nhóm:
+     * Chế Độ Học Cốt Lõi (Core Learning Modes): 🎴 Auto Flashcard, 📝 Trắc Nghiệm (Quiz), ✍️ Chính Tả (Spelling), 🎙️ Luyện Nói (Speaking Lab).
+     * Chế Độ Học Mở Rộng (Extended Learning Modes - β): ✍️ Luyện Viết Câu (Sentence Writing Lab β - Đã hoàn thiện), 📖 Cloze Test (Reading β - Sẵn sàng kiến trúc), 🎧 Full Sentence Dictation (Listening β - Sẵn sàng kiến trúc).
+
+2. [Động Cơ & Giao Diện Luyện Viết Câu Thông Minh (06c-writing-engine.js & screen-writing.html)]:
+   - 3 Cấp độ thử thách:
+     * 🟢 DỄ (Easy): 1 từ vựng trong bộ từ, tự do độ dài câu, điểm sàn 70đ, hệ số x1.0 (+8 ~ 16 Xu/câu).
+     * 🟡 TRUNG BÌNH (Medium): 2 - 3 từ liên kết ngữ nghĩa, tự do độ dài, điểm sàn 80đ, hệ số x1.8 (+25 ~ 45 Xu/câu).
+     * 🔴 KHÓ (Hard / Mastery): 2 - 4 từ kết hợp, ràng buộc số lượng từ linh động (15 - 35 từ), điểm sàn 90đ, hệ số x2.8 (+55 ~ 90 Xu/câu).
+   - Thuật toán Thematic Word Association: Tự động nhóm các từ có liên quan trong deck hoặc tự động tạo từ bổ trợ phù hợp khi deck thiếu từ liên quan.
+   - Chấm điểm & Đánh giá hành văn đa tầng qua Gemini AI (Band 8.0+ Native Evaluator):
+     * Chấm điểm 0-100 theo 4 Trụ Cột: Ngữ pháp, Dùng từ & Collocation, Mạch lạc tự nhiên, Độ dài & Quy tắc đề bài.
+     * Phiên bản viết lại chuẩn bản xứ (Polished Native Rewrite) kèm nút nghe phát âm âm thanh mẫu.
+     * Nhận xét chi tiết bằng tiếng Việt và ghi chú ngữ pháp nâng cao.
+   - Bộ đếm từ & ký tự trực tiếp (Live Counter) và tự động phát sáng chip từ vựng khi gõ.
+   - Kinh tế phần thưởng VoCoin cao hơn Spelling & đồng bộ Sổ từ sai khi điểm < sàn.
+   - VocaHint gợi ý mẫu câu / ý tưởng và VocaSkip tiện lợi.
+
+3. [Đồng Bộ Toàn Diện 7 Vị Trí Phiên Bản & Đóng Gói Multi-Deploy (v0.10.10-8 Build 309)]:
+   - Đồng bộ 7 điểm phiên bản trên toàn bộ hệ thống file (`02-state-core.js`, `01-router.js`, `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`).
+   - Biên dịch VocaFlow.exe, đóng gói VocaFlow_v0.10.10-8_Windows_Portable.zip và tự động đồng bộ đa nhánh GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-7 (Build 308) - Lưu Trữ Bản Thu Âm Tốt Nhất (Best Take) Vào IndexedDB & Biểu Đồ Phổ Sóng Âm / Ngữ Điệu Chuẩn Oxford Cho Speaking Lab
 ================================================================================
 1. [Lưu Trữ Bản Thu Âm Tốt Nhất (Best Take) Vào IndexedDB (07-speaking-engine.js & screen-speaking.html)]:

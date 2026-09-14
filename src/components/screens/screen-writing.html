@@ -1,0 +1,178 @@
+    <section id="screen-writing" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitWritingMode()" title="Quay lại danh sách từ">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div id="writing-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Câu 1 / 5</div>
+          <span id="writing-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🟢 Dễ (x1.0)</span>
+          <span class="badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 800; font-size: 11px; padding: 2px 7px;">✍️ Viết Câu (β)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentWriting()" title="Xáo trộn ngẫu nhiên các câu còn lại phía sau">
+            🔀 <span class="hide-on-mobile">Trộn</span>
+          </button>
+          <div id="writing-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="writing-container" style="max-width: 720px; margin: 16px auto; padding: 0 16px;">
+        
+        <!-- CARD 1: TỪ VỰNG MỤC TIÊU & YÊU CẦU ĐỀ BÀI -->
+        <div class="writing-prompt-card" id="writing-prompt-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px 20px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); position: relative;">
+          
+          <!-- VocaSkip Button ở góc phải trên -->
+          <button class="btn btn-outline btn-sm" id="btn-writing-skip" onclick="useWritingSkip()" style="position: absolute; top: 14px; right: 14px; padding: 4px 10px; font-weight: 700; font-size: 11.5px; border-color: rgba(245,158,11,0.4); color: #fbbf24; background: rgba(245,158,11,0.08); border-radius: 20px; z-index: 2;" title="VocaSkip câu hỏi này">
+            ⏭️ VocaSkip (3)
+          </button>
+
+          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <span>🎯</span> <span>TỪ VỰNG BẮT BUỘC SỬ DỤNG:</span>
+          </div>
+
+          <!-- Danh sách từ mục tiêu dạng thẻ Chip sinh động -->
+          <div id="writing-target-words-list" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Yêu cầu & Ràng buộc đề bài -->
+          <div id="writing-requirement-banner" style="background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 10px 14px; font-size: 12.5px; color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div id="writing-requirement-text" style="line-height: 1.4;">
+              💡 Hãy viết 1 câu hoàn chỉnh có nghĩa bằng tiếng Anh chứa từ vựng trên.
+            </div>
+            <span id="writing-target-length-badge" class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700; font-size: 11px;">
+              Tự do độ dài
+            </span>
+          </div>
+        </div>
+
+        <!-- CARD 2: KHU VỰC NHẬP CÂU & CÔNG CỤ TRỢ GIÚP -->
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 20px; padding: 18px 18px; margin-bottom: 18px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label for="writing-sentence-input" style="font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+              <span>✍️</span> <span>Câu của bạn:</span>
+            </label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button class="btn btn-outline btn-sm" id="btn-writing-hint" onclick="useWritingHint()" title="VocaHint gợi ý mẫu câu hoặc collocation (50 VoCoin hoặc 1 VocaHint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>💡 Gợi ý ý tưởng</span>
+                <span id="writing-hints-count" style="font-size: 10.5px; background: rgba(245,158,11,0.2); color: #fbbf24; padding: 1px 5px; border-radius: 10px;">5</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Gợi ý VocaHint (nếu đã dùng) -->
+          <div id="writing-hint-box" style="display: none; margin-bottom: 10px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 12px; font-size: 12.5px; color: #fbbf24; text-align: left;">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Ô Textarea Viết Câu -->
+          <div style="position: relative; margin-bottom: 8px;">
+            <textarea id="writing-sentence-input" class="form-input" rows="3" placeholder="Nhập câu tiếng Anh của bạn tại đây... (Nhấn Ctrl + Enter để gửi chấm điểm)" oninput="handleWritingInput(this.value)" style="width: 100%; resize: vertical; min-height: 90px; font-size: 14.5px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; font-family: inherit; box-sizing: border-box;"></textarea>
+          </div>
+
+          <!-- Toolbar Đếm Từ & Trạng Thái -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+            <div id="writing-live-count" style="display: flex; align-items: center; gap: 8px;">
+              <span>Số từ: <strong id="writing-word-count-num" style="color: var(--text);">0</strong> từ</span>
+              <span>•</span>
+              <span><strong id="writing-char-count-num" style="color: var(--text-muted);">0</strong> ký tự</span>
+              <span id="writing-count-status-badge" class="badge" style="display: none; font-size: 10px; padding: 1px 6px;"></span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Phím tắt: <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Ctrl</kbd> + <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Enter</kbd>
+            </div>
+          </div>
+
+          <!-- NÚT CHẤM ĐIỂM AI -->
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 14px;">
+            <button class="btn btn-primary" id="btn-writing-submit" onclick="submitWritingEvaluation()" style="width: 100%; max-width: 340px; padding: 11px 20px; font-size: 14px; font-weight: 800; border-radius: 24px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 16px rgba(245,158,11,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+              <span>🧠 Chấm Điểm AI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: BẢNG KẾT QUẢ ĐÁNH GIÁ HÀNH VĂN GEMINI AI (RESULT PANEL) -->
+        <div id="writing-result-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px 18px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          
+          <!-- AI Loading State -->
+          <div id="writing-ai-loading" style="display: none; text-align: center; padding: 20px 10px;">
+            <div style="font-size: 32px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 10px;">🧠</div>
+            <div style="font-size: 14px; font-weight: 700; color: #f59e0b; margin-bottom: 4px;">Gemini AI đang phân tích ngữ pháp & hành văn...</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Đánh giá ngữ cảnh dùng từ, ngữ pháp, độ tự nhiên và quy chuẩn bản xứ</div>
+          </div>
+
+          <!-- AI Evaluation Content -->
+          <div id="writing-ai-content" style="display: none;">
+            
+            <!-- Floor / Fail / Mistake Banners -->
+            <div id="writing-floor-banner" style="display: none; margin-bottom: 12px;"></div>
+            <div id="writing-fail-banner" style="display: none; margin-bottom: 12px;"></div>
+
+            <!-- Header: Score Badge & Verdict -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div id="writing-score-circle" style="width: 58px; height: 58px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 21px; color: white; background: #34d399; box-shadow: 0 4px 14px rgba(52,211,153,0.35); flex-shrink: 0;">
+                  <span id="writing-score-num">88</span>
+                  <span style="font-size: 8.5px; font-weight: 600; line-height: 1; opacity: 0.9;">ĐIỂM</span>
+                </div>
+                <div>
+                  <div id="writing-verdict-text" style="font-size: 16px; font-weight: 800; color: #34d399;">Rất tự nhiên!</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted);">Điểm sàn: <strong id="writing-floor-label" style="color: var(--text);">70đ</strong></div>
+                </div>
+              </div>
+
+              <!-- 4 Pillar Badges -->
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="writing-pillars-container">
+                <span id="writing-pillar-grammar" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🎯 Ngữ pháp: Chuẩn</span>
+                <span id="writing-pillar-vocab" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🔤 Dùng từ: Chính xác</span>
+                <span id="writing-pillar-naturalness" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">🌟 Mạch lạc: Tự nhiên</span>
+                <span id="writing-pillar-length" class="badge" style="font-size: 10px; background: rgba(52,211,153,0.15); color: #34d399; font-weight: 700; padding: 3px 8px;">📏 Độ dài: Đạt</span>
+              </div>
+            </div>
+
+            <!-- PHIÊN BẢN VIẾT LẠI CHUẨN BẢN XỨ (POLISHED NATIVE REWRITE) -->
+            <div id="writing-polished-card" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11.5px; font-weight: 800; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
+                  <span>✨</span> <span>Phiên bản viết lại chuẩn bản xứ (Band 8.0+):</span>
+                </span>
+                <button type="button" class="btn btn-outline btn-icon btn-sm" onclick="speakPolishedSentence()" title="Nghe câu mẫu bản xứ" style="width: 26px; height: 26px; border-radius: 50%; color: #818cf8; border-color: rgba(99,102,241,0.3); padding: 0;">
+                  <svg class="icon" style="width: 13px; height: 13px;"><use href="#i-volume"/></svg>
+                </button>
+              </div>
+              <div id="writing-polished-text" style="font-size: 14px; font-weight: 600; color: #e2e8f0; line-height: 1.5; font-style: italic;">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Nhận xét chi tiết & Giải thích ngữ pháp tiếng Việt -->
+            <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;">
+              <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                📝 Nhận xét hành văn từ AI Mentor:
+              </div>
+              <div id="writing-feedback-text" style="font-size: 13.5px; color: var(--text); line-height: 1.6; margin-bottom: 8px;">
+                <!-- Feedback text -->
+              </div>
+              <div id="writing-grammar-notes" style="font-size: 12px; color: var(--text-muted); line-height: 1.5; border-top: 1px dashed var(--border); padding-top: 8px; display: none;">
+                <!-- Grammar notes -->
+              </div>
+            </div>
+
+            <!-- Reward Container -->
+            <div id="writing-reward-container" style="display: none; justify-content: center; align-items: center; margin-top: 10px;">
+              <!-- Reward badges -->
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NÚT TIẾP THEO -->
+        <div id="writing-action-buttons-container" style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 24px;">
+          <button class="btn btn-primary" id="btn-writing-next" onclick="nextWritingQuestion()" style="width: 100%; max-width: 360px; justify-content: center; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 12px 18px; font-size: 14px; border-radius: 24px; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: none;">
+            Câu Tiếp Theo ⏭️ [Enter ↵]
+          </button>
+        </div>
+
+      </div>
+    </section>

@@ -67,7 +67,7 @@
             </button>
           </div>
           
-          <div class="selection-study-actions">
+          <div class="selection-study-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
               <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
             </button>
@@ -75,10 +75,13 @@
               <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
-              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Luyện Viết</span><span id="spelling-count-label"></span>
+              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
             </button>
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab β)">
+              <span>✍️</span> <span>Viết Câu (β)</span><span id="writing-count-label"></span>
             </button>
           </div>
         </div>
@@ -178,7 +181,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-7 (Build 308)</span>
+            <span class="mini-footer-version">v0.10.10-8 (Build 309)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">

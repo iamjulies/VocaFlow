@@ -2537,7 +2537,9 @@
       closeModal('modal-review-queue');
       showToast(`🚀 Bắt đầu ôn tập ${targetList.length} từ đã chọn!`);
 
-      if (mode === 'speaking') {
+      if (mode === 'writing') {
+        openWritingSetupModal(false, targetList);
+      } else if (mode === 'speaking') {
         openSpeakingSetupModal(false, targetList);
       } else if (mode === 'autofc') {
         startAutoFlashcardMode(false, targetList);
@@ -2549,6 +2551,10 @@
           return;
         }
         openQuizSetupModal(false, targetList);
+      } else if (mode === 'cloze') {
+        showToast('📖 Tính năng Cloze Test (Điền đoạn văn có bối cảnh β) đang được hoàn thiện!');
+      } else if (mode === 'dictation') {
+        showToast('🎧 Tính năng Full Sentence Dictation (Nghe chép chính tả cả câu β) đang được hoàn thiện!');
       }
     }
 
