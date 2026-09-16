@@ -1,4 +1,4 @@
-  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-16) -->
+  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-17) -->
   <div class="modal-overlay" id="modal-cloze-result">
     <div class="modal" style="max-width: 500px; text-align: center;">
       <div class="modal-title" style="justify-content: center;">
@@ -51,10 +51,10 @@
       </div>
 
       <div class="modal-actions" style="margin-top: 10px;">
-        <button class="btn btn-outline" onclick="closeModal('modal-cloze-result'); exitClozeMode();" style="flex: 1;">
+        <button class="btn btn-outline" onclick="if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks'); closeModal('modal-cloze-result'); exitClozeMode();" style="flex: 1;">
           🏠 Về Danh Sách
         </button>
-        <button class="btn btn-primary" onclick="closeModal('modal-cloze-result'); confirmStartClozeFromModal();" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+        <button class="btn btn-primary" onclick="if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks'); closeModal('modal-cloze-result'); confirmStartClozeFromModal();" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
           🔄 Luyện Thêm Bài Khác
         </button>
       </div>

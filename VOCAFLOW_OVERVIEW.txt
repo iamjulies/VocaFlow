@@ -1,4 +1,33 @@
 ================================================================================
+Phiên bản: v0.10.10-17 (Build 318) - Tối Ưu Toàn Diện Điền Từ Cloze Test β (Đồng Bộ Ví VocaHint/VocaSkip, Chấm Điểm Song Hành Giao Hoán "and/or", Đánh Dấu Đỏ/Xanh Trực Quan Đoạn Văn, Nâng Cấp Dịch Thuật Báo Chí Mượt Mà & Tắt SFX Pháo Hoa)
+================================================================================
+1. [Đồng Bộ Số Lượng VocaHint & VocaSkip Với Ví Thực Tế (06d-cloze-engine.js)]:
+   - Khắc phục triệt để lỗi hiển thị số đếm mặc định (5 gợi ý / 3 bỏ qua) sang đọc và ghi trực tiếp từ các hàm nguồn chân lý `getUserHints()` và `getUserSkips()`.
+   - Cơ chế trừ lượt và mua thêm bằng VoCoin được lưu DB và đồng bộ lên Cloud Realtime an toàn.
+
+2. [Loại Bỏ Nút "Làm Lại Bài Này" Ngăn Chặn Farm Điểm/Xu (screen-cloze.html)]:
+   - Xóa bỏ nút retry tại khung kết quả bài làm, chỉ giữ nút "Tiếp Tục (Bài Sau)" / "Hoàn Tất & Tổng Kết", ngăn chặn người dùng làm đi làm lại cùng một bài đọc để tích lũy điểm/Xu nhiều lần.
+
+3. [Nâng Cấp Chiều Sâu Phân Tích Ngữ Nghĩa & Đáp Án Chi Tiết (06d-cloze-engine.js)]:
+   - Bổ sung cấu trúc 3 phần trong Prompt Gemini cho `explanationVi`: (a) Phân tích vai trò ngữ pháp & từ loại yêu cầu tại vị trí ô trống, (b) Collocation & giới từ đi kèm, (c) Sắc thái ngữ cảnh tại sao từ này là lựa chọn tối ưu nhất.
+   - Nâng cấp bộ sinh Offline Fallback với phân tích ngữ pháp chuyên sâu cho từng câu.
+
+4. [Tắt Âm Thanh Pháo Hoa Khi Đóng Modal Hoặc Thoát Màn Hình (modal-cloze-result.html, 06d-cloze-engine.js)]:
+   - Gọi `stopVocaSfx('fireworks')` tức thì khi người dùng đóng Modal kết quả hoặc nhấn nút thoát/luyện tiếp bài khác, triệt tiêu hoàn toàn âm thanh phát kéo dài ngoài ý muốn.
+
+5. [Hỗ Trợ Chấm Điểm Ô Trống Song Hành Giao Hoán Có Liên Từ "and" / "or" (06d-cloze-engine.js)]:
+   - Giải quyết bài toán ngữ pháp song hành: Khi hai ô trống nằm ở hai vế song hành đẳng lập nối bởi "and", "or", "as well as" (ví dụ: `[automation] and [artificial intelligence]`), cả 2 vị trí đều có thể hoán vị cho nhau mà ngữ pháp và ý nghĩa vẫn chuẩn 100%.
+   - Thuật toán đồ thị ghép cặp song ánh (bipartite matching) tự động nhận diện các cặp ô trống song hành và chấm ĐÚNG 100% khi người học điền từ của ô này vào ô kia.
+
+6. [Đánh Dấu Màu Đỏ/Xanh Trực Quan Trên Các Ô Trống Của Đoạn Văn (app.css, 06d-cloze-engine.js)]:
+   - Thêm style `.cloze-blank-zone.correct-eval` (viền xanh `#10b981`, nền xanh nhạt, icon `✓`) và `.cloze-blank-zone.wrong-eval` (viền đỏ `#ef4444`, nền đỏ nhạt, icon `✕`).
+   - Ô điền sai hiển thị từ sai có gạch ngang kèm đáp án đúng màu xanh ngay trong bài đọc để người học đối chiếu trực quan.
+
+7. [Nâng Cấp Chất Lượng Dịch Thuật Tiếng Việt Mượt Mà (06d-cloze-engine.js)]:
+   - Thiết lập bộ tiêu chuẩn dịch thuật văn phong báo chí hiện đại và bài đọc hiểu mẫu mực trong Prompt Gemini.
+   - Dịch thoát ý, tự nhiên, loại bỏ hoàn toàn các cấu trúc dịch thô cứng từng từ (word-by-word) hay dịch máy gượng gạo.
+
+================================================================================
 Phiên bản: v0.10.10-16 (Build 317) - Tính Năng Học Điền Từ Đoạn Văn Ngữ Cảnh (Cloze Test Reading Skill β), Phân Loại Chế Độ Học Mở Rộng (Extended Learning Modes β), Tích Hợp Gemini 3.5 Flash-Lite, Kéo Thả Trực Quan & Phím Tắt 1-9/a-z
 ================================================================================
 1. [Tính Năng Học Mới: Điền Từ Đoạn Văn Cloze Test (06d-cloze-engine.js, screen-cloze.html, modal-cloze-setup.html, modal-cloze-result.html)]:

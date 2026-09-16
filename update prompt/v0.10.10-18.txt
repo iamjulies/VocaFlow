@@ -1,0 +1,15 @@
+v0.10.10-18
+[ĐỌC KĨ PHẦN SAU]
+=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
+[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
+2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading
+- Vấn đề 8: Các từ làm sai ở chế độ điền từ chưa được cho vào bộ từ sai
+- Vấn đề 9: Chưa có nút học chế độ điền từ ở hàng đợi ôn tập hôm nay
+- Vấn đề 10: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 224325.png" bỏ nút nghe bài đọc vì đây là chế độ đọc hiểu chứ không phải nghe rồi điền từ
+- Vấn đề 11: t kh nghĩ màn hình tổng kết là như này "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 224514.png", t nghĩ là như này mới đúng 
+
+3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (sẽ được yêu cầu triển khai ở các ver. sau)
+4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng (sẽ được yêu cầu triển khai ở các ver. sau)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+

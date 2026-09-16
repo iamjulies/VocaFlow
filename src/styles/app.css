@@ -4396,6 +4396,30 @@
       background: rgba(16, 185, 129, 0.3);
       color: #34d399;
     }
+    .cloze-blank-zone.correct-eval {
+      border-color: #10b981 !important;
+      border-style: solid !important;
+      background: rgba(16, 185, 129, 0.18) !important;
+      color: #34d399 !important;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+    }
+    .cloze-blank-zone.correct-eval .cloze-blank-num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-weight: 800;
+    }
+    .cloze-blank-zone.wrong-eval {
+      border-color: #ef4444 !important;
+      border-style: solid !important;
+      background: rgba(239, 68, 68, 0.18) !important;
+      color: #f87171 !important;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.3) !important;
+    }
+    .cloze-blank-zone.wrong-eval .cloze-blank-num {
+      background: #ef4444 !important;
+      color: #ffffff !important;
+      font-weight: 800;
+    }
 
     .cloze-word-bank-chips {
       display: flex;

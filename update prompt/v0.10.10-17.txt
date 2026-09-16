@@ -4,7 +4,13 @@ v0.10.10-17
 [Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
 1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
 2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading
-- Vấn đề 1: 
+- Vấn đề 1: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 221837.png" số lượng vocahint và vocaskip chưa được đồng bộ đúng với số lượng thực đang có.
+- Vấn đề 2: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222045.png" loại bỏ nút này vì nếu lại làm sẽ được cộng xu và điểm nhiều lần
+- Vấn đè 3: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222045.png" mấy cái Phân Tích Ngữ Nghĩa chưa chuẩn và hay lắm
+- Vấn đề 4: Khi nhấn thoát màn hình tổng kết thì tiếng pháo hoa kh tắt phụt theo.
+- Vấn đề 5: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222848.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222914.png", ở đây là điền 2 từ vào hai bên của từ "and" vậy thì từ nào điền trước hay sau đều được mà nhỉ? hay là t kh biết? nếu là app sai thì sửa, nếu t sai thì giải thích hộ t nhó
+- Vấn đề 6: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222848.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 222914.png", đánh cả màu đỏ lên các ô từ trên đoạn văn sau khi chấm điểm nếu ô đó sai?
+- Vấn đề 7: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 223412.png" phải cải thiện khả năng dịch thuật của con AI này, hiện tại đọc rất kì í
 
 3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (sẽ được yêu cầu triển khai ở các ver. sau)
 4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng (sẽ được yêu cầu triển khai ở các ver. sau)

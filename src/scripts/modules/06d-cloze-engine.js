@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-16 Build 317 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-17 Build 318 - EXTENDED LEARNING MODE BETA)
 // AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
 // =========================================================================
 
@@ -170,6 +170,7 @@ function openClozeSetupModal(useSelection = false, customWordList = null) {
 }
 
 async function confirmStartClozeFromModal() {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   currentClozeDifficulty = selectedClozeSetupDifficulty;
   localStorage.setItem('vocaflow_cloze_difficulty', currentClozeDifficulty);
 
@@ -194,6 +195,7 @@ async function confirmStartClozeFromModal() {
 // 3. START & INITIALIZE CLOZE MODE
 // =========================================================================
 async function startClozeMode(fromSelection = false, customWordList = null, totalPassagesToGenerate = 1) {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   if (typeof currentDeckId === 'undefined' && !customWordList) return;
   const deck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
   if (!deck && !customWordList) return;
@@ -340,8 +342,8 @@ async function generateClozePassageWithGemini(targetWords, difficulty) {
   const wordsPromptList = sampleWords.map(w => `- ${w.term} (${w.pos}): ${w.def}`).join('\n');
   const targetTermsList = sampleWords.map(w => w.term).join(', ');
 
-  const prompt = `You are an expert Native English Curriculum Designer and Reading Assessment Specialist.
-Create a high-quality, natural English reading comprehension passage with contextual CLOZE blanks (fill-in-the-blank test) based on the given vocabulary list.
+  const prompt = `You are an elite Native English Curriculum Designer and Reading Assessment Specialist.
+Create a high-quality, engaging English reading comprehension passage with contextual CLOZE blanks (fill-in-the-blank test) based on the provided vocabulary list.
 
 [DIFFICULTY LEVEL: ${difficulty.toUpperCase()}]
 - Passage Length: ${cfg.passageLenDesc}
@@ -353,19 +355,26 @@ Create a high-quality, natural English reading comprehension passage with contex
 ${wordsPromptList}
 
 [INSTRUCTIONS FOR CLOZE PASSAGE]
-1. Write a coherent, engaging passage on a relevant real-world topic (e.g. technology, culture, personal development, science, daily life).
+1. Write an insightful, well-structured, coherent passage on an interesting real-world topic (e.g. technology, science, psychology, culture, environment, personal growth, education).
 2. Insert blanks using the exact token format: [[blank_1]], [[blank_2]], [[blank_3]], etc. consecutively.
-3. Every blank must have ONE clear, unambiguous correct word based on surrounding grammar and context collocations.
-4. For each blank, provide:
+3. Every blank must have ONE clear, unambiguous correct word based on surrounding grammar, collocations, and contextual clues.
+4. PARALLEL / COORDINATE WORDS RULE: If two blanks are placed in a symmetric coordinate structure joined by 'and' or 'or' (e.g., 'the growth of [[blank_1]] and [[blank_2]]'), specify "interchangeableWith": [other_blank_index] for both blanks if either word order is equally natural and valid.
+5. For each blank, provide:
    - "id": "blank_1", "blank_2", etc.
    - "index": 1, 2, etc. (number)
    - "correctWord": exact word in base or appropriate inflected form (lowercase)
    - "partOfSpeech": "noun" | "verb" | "adjective" | "adverb" | "preposition" | "phrase"
    - "hintVi": Helpful Vietnamese clue (e.g. "Tính từ: thiết yếu, quan trọng (bắt đầu bằng 'e')")
-   - "explanationVi": Clear grammatical & contextual reason in Vietnamese why this word fits best.
-5. In "options", provide an array of all word choices (including all blank correctWords plus any decoy distractors). Each option has { "id": "opt_1", "word": "example", "isDecoy": false }.
-6. Provide "fullTextOriginal": the complete English passage without blanks.
-7. Provide "passageTranslationVi": complete, fluent Vietnamese translation of the entire passage.
+   - "explanationVi": Thorough, pedagogical Vietnamese explanation detailing:
+       (a) Vị trí ngữ pháp & từ loại yêu cầu tại ô trống (đứng sau từ gì, giữ chức năng gì trong câu).
+       (b) Cụm từ cố định (collocation / giới từ đi kèm nếu có).
+       (c) Sắc thái ngữ cảnh tại sao từ này là lựa chọn tối ưu và chính xác nhất.
+   - "interchangeableWith": optional array of blank indices (numbers) that are interchangeable with this blank (e.g. [2]).
+6. In "options", provide an array of all word choices (including all blank correctWords plus any decoy distractors). Each option has { "id": "opt_1", "word": "example", "isDecoy": false }.
+7. Provide "fullTextOriginal": the complete English passage without blanks.
+8. CRITICAL VIETNAMESE TRANSLATION STANDARD ("passageTranslationVi"):
+   - Dịch toàn bộ bài đọc sang tiếng Việt với văn phong báo chí hiện đại, trau chuốt, tự nhiên, chuẩn mực văn phong đọc hiểu.
+   - Dịch thoát ý, diễn đạt mượt mà, thuần Việt. TUYỆT ĐỐI KHÔNG DỊCH THÔ CỨNG TỪNG TỪ (word-by-word) hay dịch máy gượng gạo (tránh các từ ngô nghê như 'thử thách độc đáo', 'suất học sinh giỏi cạnh tranh', 'tác động lớn lao').
 
 Output MUST be valid JSON only (no markdown code blocks, no backticks) matching this exact schema:
 {
@@ -379,13 +388,14 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
       "correctWord": "word",
       "partOfSpeech": "noun",
       "hintVi": "Gợi ý nghĩa tiếng Việt và từ loại...",
-      "explanationVi": "Giải thích ngữ pháp và ngữ cảnh tại sao từ này chính xác..."
+      "explanationVi": "Phân tích ngữ pháp chuyên sâu, cụm collocation và ngữ cảnh...",
+      "interchangeableWith": []
     }
   ],
   "options": [
     { "id": "opt_1", "word": "word", "isDecoy": false }
   ],
-  "passageTranslationVi": "Bản dịch toàn văn tiếng Việt mượt mà..."
+  "passageTranslationVi": "Bản dịch tiếng Việt mượt mà, thoát ý, chuẩn văn phong báo chí hiện đại..."
 }`;
 
   let genSuccess = false;
@@ -473,18 +483,52 @@ function generateOfflineClozePassage(targetWords, difficulty) {
   const blanksCount = Math.min(wordsToUse.length, Math.max(3, cfg.minBlanks));
   const selectedWords = wordsToUse.slice(0, blanksCount);
 
-  const sentences = [];
   const blanks = [];
   const options = [];
 
   const templates = [
-    { prefix: "Learning a new language requires deep", suffix: "and continuous dedication to achieve mastery.", defaultPos: "noun" },
-    { prefix: "Students must regularly", suffix: "speaking and writing to build natural confidence.", defaultPos: "verb" },
-    { prefix: "Using spaced repetition is an extremely", suffix: "strategy for long-term memory retention.", defaultPos: "adjective" },
-    { prefix: "Consistent daily effort will significantly", suffix: "your communication skills over time.", defaultPos: "verb" },
-    { prefix: "Reaching a high level of", suffix: "allows you to express complex ideas effortlessly.", defaultPos: "noun" },
-    { prefix: "Language learners should embrace every", suffix: "to interact with native speakers directly.", defaultPos: "noun" },
-    { prefix: "Developing a rich vocabulary is an", suffix: "foundation for academic and professional success.", defaultPos: "adjective" }
+    { 
+      prefix: "Acquiring a deep understanding of a new domain requires structured", 
+      suffix: "and continuous dedication to achieve true expertise.", 
+      defaultPos: "noun",
+      analysis: "Vị trí sau tính từ 'structured' cần một danh từ chỉ đối tượng tri thức để hoàn thiện tân ngữ cho động từ 'requires'." 
+    },
+    { 
+      prefix: "Language learners must consistently", 
+      suffix: "their communicative skills in authentic real-world contexts.", 
+      defaultPos: "verb",
+      analysis: "Đứng sau trợ động từ khuyết thiếu 'must consistently' nên bắt buộc cần một động từ nguyên thể để diễn tả hành động thực hành rèn luyện." 
+    },
+    { 
+      prefix: "Spaced repetition has been scientifically proven to be an exceptionally", 
+      suffix: "strategy for long-term memory retention and recall.", 
+      defaultPos: "adjective",
+      analysis: "Đứng sau trạng từ chỉ mức độ 'exceptionally' và trước danh từ 'strategy', vị trí này cần một tính từ bổ nghĩa cho chiến lược học tập." 
+    },
+    { 
+      prefix: "Regular exposure to diverse vocabulary will significantly", 
+      suffix: "your reading comprehension and expressive confidence over time.", 
+      defaultPos: "verb",
+      analysis: "Sau trạng từ 'significantly' và trợ động từ tương lai 'will' cần một động từ nguyên thể chỉ sự tiến bộ, nâng cao năng lực." 
+    },
+    { 
+      prefix: "Developing natural language", 
+      suffix: "enables speakers to convey nuanced perspectives effortlessly without hesitation.", 
+      defaultPos: "noun",
+      analysis: "Vị trí tạo thành cụm danh từ 'natural language [noun]' làm chủ ngữ cho câu, biểu thị sự lưu loát, trôi chảy trong giao tiếp." 
+    },
+    { 
+      prefix: "Embracing new technological tools creates a valuable", 
+      suffix: "to collaborate seamlessly with global experts across borders.", 
+      defaultPos: "noun",
+      analysis: "Sau mạo từ và tính từ 'a valuable' cần một danh từ đếm được số ít biểu thị cơ hội hoặc nền tảng học tập." 
+    },
+    { 
+      prefix: "A comprehensive grasp of terminology forms an", 
+      suffix: "foundation for academic growth and professional excellence.", 
+      defaultPos: "adjective",
+      analysis: "Đứng sau mạo từ 'an' và trước danh từ 'foundation' cần một tính từ bắt đầu bằng nguyên âm, chỉ tính chất then chốt, cốt lõi." 
+    }
   ];
 
   let fullOriginalParts = [];
@@ -505,7 +549,7 @@ function generateOfflineClozePassage(targetWords, difficulty) {
       correctWord: termClean,
       partOfSpeech: w.partOfSpeech || tpl.defaultPos,
       hintVi: `${w.partOfSpeech || tpl.defaultPos}: ${w.definitionVi || w.definition || termClean}`,
-      explanationVi: `Từ '${termClean}' (${w.partOfSpeech || tpl.defaultPos}) phù hợp ngữ cảnh và ngữ pháp của câu ${bIndex}.`
+      explanationVi: `Vị trí ô [${bIndex}]: ${tpl.analysis} Từ '${termClean}' (${w.partOfSpeech || tpl.defaultPos}) hoàn toàn chuẩn xác về cả ngữ pháp và ngữ cảnh bài viết.`
     });
 
     options.push({
@@ -528,12 +572,12 @@ function generateOfflineClozePassage(targetWords, difficulty) {
   }
 
   return {
-    title: "Mastering Language Through Context & Daily Practice",
+    title: "Mastering Academic & Practical Vocabulary Through Context",
     fullTextOriginal: fullOriginalParts.join(' '),
     passageWithBlanks: passageBlankParts.join(' '),
     blanks: blanks,
     options: options.sort(() => Math.random() - 0.5),
-    passageTranslationVi: "Học một ngôn ngữ mới đòi hỏi sự kiên trì và thực hành liên tục. Sử dụng các phương pháp học khoa học sẽ giúp bạn nâng cao năng lực diễn đạt và đạt được sự lưu loát."
+    passageTranslationVi: "Việc tiếp thu kiến thức và làm chủ ngôn ngữ đòi hỏi sự kiên trì cùng phương pháp rèn luyện có hệ thống. Khi kết hợp các kỹ thuật học tập khoa học và tiếp xúc thường xuyên với ngữ cảnh thực tế, người học sẽ nâng cao rõ rệt độ trôi chảy và khả năng diễn đạt học thuật chuyên sâu."
   };
 }
 
@@ -885,8 +929,8 @@ function updateClozePowerupBadges() {
   const hintsCountEl = document.getElementById('cloze-hints-count');
   const skipsCountEl = document.getElementById('cloze-skips-count');
 
-  const hintsVal = (typeof currentUser !== 'undefined' && currentUser && currentUser.hints !== undefined) ? currentUser.hints : 5;
-  const skipsVal = (typeof currentUser !== 'undefined' && currentUser && currentUser.skips !== undefined) ? currentUser.skips : 3;
+  const hintsVal = typeof getUserHints === 'function' ? getUserHints() : ((typeof currentUser !== 'undefined' && currentUser && currentUser.hints !== undefined) ? currentUser.hints : 5);
+  const skipsVal = typeof getUserSkips === 'function' ? getUserSkips() : ((typeof currentUser !== 'undefined' && currentUser && currentUser.skips !== undefined) ? currentUser.skips : 3);
 
   if (hintsCountEl) hintsCountEl.textContent = hintsVal;
   if (skipsCountEl) skipsCountEl.textContent = skipsVal;
@@ -897,19 +941,19 @@ function useClozeHint() {
   const blank = clozeCurrentPassage.blanks.find(b => b.index === clozeActiveBlankIndex);
   if (!blank) return;
 
+  const currentHints = typeof getUserHints === 'function' ? getUserHints() : 0;
   let hasHintResource = false;
-  if (typeof currentUser !== 'undefined' && currentUser) {
-    if (currentUser.hints > 0) {
-      currentUser.hints--;
-      hasHintResource = true;
-      if (typeof addLedgerEntry === 'function') addLedgerEntry('HINT_USED', 0, `Dùng VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
-    } else if (typeof getUserPoints === 'function' && getUserPoints() >= 50) {
-      setUserPoints(getUserPoints() - 50);
-      hasHintResource = true;
-      if (typeof addLedgerEntry === 'function') addLedgerEntry('BUY_HINT', -50, `Mua 1 VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
-    }
-  } else {
-    hasHintResource = true; // Guest test mode
+
+  if (currentHints > 0) {
+    if (typeof setUserHints === 'function') setUserHints(currentHints - 1);
+    hasHintResource = true;
+    if (typeof addLedgerEntry === 'function') addLedgerEntry('HINT_USED', 0, `Dùng VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
+    if (typeof showToast === 'function') showToast(`💡 Đã dùng 1 VocaHint (còn ${typeof getUserHints === 'function' ? getUserHints() : 0} lượt)`);
+  } else if (typeof getUserPoints === 'function' && getUserPoints() >= 50) {
+    setUserPoints(getUserPoints() - 50);
+    hasHintResource = true;
+    if (typeof addLedgerEntry === 'function') addLedgerEntry('BUY_HINT', -50, `Mua 1 VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
+    if (typeof showToast === 'function') showToast(`💡 Đã dùng 50 VoCoin mua 1 VocaHint (còn ${getUserPoints()} Xu)`);
   }
 
   if (!hasHintResource) {
@@ -919,7 +963,7 @@ function useClozeHint() {
 
   clozeHintsUsed++;
   updateClozePowerupBadges();
-  if (typeof saveDatabase === 'function') saveDatabase();
+  if (typeof saveDatabase === 'function') saveDatabase(true);
 
   const hintBox = document.getElementById('cloze-hint-box');
   if (hintBox) {
@@ -940,15 +984,13 @@ function useClozeSkip() {
   const blank = clozeCurrentPassage.blanks.find(b => b.index === clozeActiveBlankIndex);
   if (!blank) return;
 
+  const currentSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
   let hasSkipResource = false;
-  if (typeof currentUser !== 'undefined' && currentUser) {
-    if (currentUser.skips > 0) {
-      currentUser.skips--;
-      hasSkipResource = true;
-      if (typeof addLedgerEntry === 'function') addLedgerEntry('SKIP_USED', 0, `Dùng VocaSkip điền tự động ô ${clozeActiveBlankIndex}`);
-    }
-  } else {
+
+  if (currentSkips > 0) {
+    if (typeof setUserSkips === 'function') setUserSkips(currentSkips - 1);
     hasSkipResource = true;
+    if (typeof addLedgerEntry === 'function') addLedgerEntry('SKIP_USED', 0, `Dùng VocaSkip điền tự động ô ${clozeActiveBlankIndex}`);
   }
 
   if (!hasSkipResource) {
@@ -958,13 +1000,13 @@ function useClozeSkip() {
 
   clozeSkipsUsed++;
   updateClozePowerupBadges();
-  if (typeof saveDatabase === 'function') saveDatabase();
+  if (typeof saveDatabase === 'function') saveDatabase(true);
 
   // Find matching option for this correct word
   const matchOpt = clozeCurrentPassage.options.find(o => o.word.toLowerCase() === blank.correctWord.toLowerCase());
   if (matchOpt) {
     placeWordInBlank(clozeActiveBlankIndex, matchOpt.id);
-    if (typeof showToast === 'function') showToast(`⏭️ VocaSkip đã điền: '${matchOpt.word}'`);
+    if (typeof showToast === 'function') showToast(`⏭️ VocaSkip đã điền: '${matchOpt.word}' (còn ${typeof getUserSkips === 'function' ? getUserSkips() : 0} lượt)`);
   }
 }
 
@@ -1084,12 +1126,124 @@ function evaluateClozeResults() {
   let correctCount = 0;
   const detailedFeedback = [];
 
+  // =========================================================================
+  // PARALLEL / COORDINATE INTERCHANGEABLE BLANKS GRAPH & BIPARTITE MATCHING
+  // =========================================================================
+  const interchangeableGraph = {};
   blanks.forEach(b => {
-    const placedOptId = clozePlacements[b.index];
-    const userWord = placedOptId ? getClozeOptionWordById(placedOptId) : '';
-    const cleanUser = userWord.toLowerCase().trim();
-    const cleanCorrect = b.correctWord.toLowerCase().trim();
-    const isCorrect = (cleanUser === cleanCorrect);
+    interchangeableGraph[b.index] = new Set([b.index]);
+  });
+
+  // 1. Explicit interchangeableWith from Gemini JSON
+  blanks.forEach(b => {
+    if (b.interchangeableWith) {
+      const list = Array.isArray(b.interchangeableWith) ? b.interchangeableWith : [b.interchangeableWith];
+      list.forEach(otherIdx => {
+        const oNum = parseInt(otherIdx, 10);
+        if (!isNaN(oNum) && interchangeableGraph[oNum] && interchangeableGraph[b.index]) {
+          interchangeableGraph[b.index].add(oNum);
+          interchangeableGraph[oNum].add(b.index);
+        }
+      });
+    }
+  });
+
+  // 2. Automatic text coordinate pair detection (e.g. [[blank_1]] and [[blank_2]])
+  if (clozeCurrentPassage.passageWithBlanks) {
+    const coordRegex = /\[\[blank_(\d+)\]\]\s*(?:,|và|cùng\s+với|hoặc|\/|and|or|as\s+well\s+as)\s*\[\[blank_(\d+)\]\]/gi;
+    let match;
+    while ((match = coordRegex.exec(clozeCurrentPassage.passageWithBlanks)) !== null) {
+      const idx1 = parseInt(match[1], 10);
+      const idx2 = parseInt(match[2], 10);
+      if (interchangeableGraph[idx1] && interchangeableGraph[idx2]) {
+        interchangeableGraph[idx1].add(idx2);
+        interchangeableGraph[idx2].add(idx1);
+      }
+    }
+  }
+
+  // Find connected components
+  const visitedBlanks = new Set();
+  const blankGroups = [];
+  blanks.forEach(b => {
+    if (!visitedBlanks.has(b.index)) {
+      const group = [];
+      const queue = [b.index];
+      visitedBlanks.add(b.index);
+      while (queue.length > 0) {
+        const cur = queue.shift();
+        const bObj = blanks.find(x => x.index === cur);
+        if (bObj) group.push(bObj);
+        if (interchangeableGraph[cur]) {
+          interchangeableGraph[cur].forEach(neighbor => {
+            if (!visitedBlanks.has(neighbor)) {
+              visitedBlanks.add(neighbor);
+              queue.push(neighbor);
+            }
+          });
+        }
+      }
+      blankGroups.push(group);
+    }
+  });
+
+  // Evaluate each group with bipartite matching
+  const blankResults = {}; // index -> { isCorrect, userWord, matchedTarget, isCoordinateSwap }
+  blankGroups.forEach(group => {
+    const remainingTargets = group.map(b => b.correctWord.toLowerCase().trim());
+
+    // Pass 1: Exact slot matches
+    group.forEach(b => {
+      const placedOptId = clozePlacements[b.index];
+      const rawUserWord = placedOptId ? getClozeOptionWordById(placedOptId) : '';
+      const uWord = rawUserWord.toLowerCase().trim();
+      const cWord = b.correctWord.toLowerCase().trim();
+
+      if (uWord && uWord === cWord) {
+        blankResults[b.index] = {
+          isCorrect: true,
+          userWord: rawUserWord,
+          matchedTarget: b.correctWord,
+          isCoordinateSwap: false
+        };
+        const tIdx = remainingTargets.indexOf(uWord);
+        if (tIdx !== -1) remainingTargets.splice(tIdx, 1);
+      }
+    });
+
+    // Pass 2: Coordinate interchangeable matches
+    group.forEach(b => {
+      if (!blankResults[b.index]) {
+        const placedOptId = clozePlacements[b.index];
+        const rawUserWord = placedOptId ? getClozeOptionWordById(placedOptId) : '';
+        const uWord = rawUserWord.toLowerCase().trim();
+        const tIdx = uWord ? remainingTargets.indexOf(uWord) : -1;
+
+        if (tIdx !== -1) {
+          blankResults[b.index] = {
+            isCorrect: true,
+            userWord: rawUserWord,
+            matchedTarget: remainingTargets[tIdx],
+            isCoordinateSwap: true
+          };
+          remainingTargets.splice(tIdx, 1);
+        } else {
+          blankResults[b.index] = {
+            isCorrect: false,
+            userWord: rawUserWord,
+            matchedTarget: b.correctWord,
+            isCoordinateSwap: false
+          };
+        }
+      }
+    });
+  });
+
+  // Build feedback and update blank DOM elements on the passage
+  blanks.forEach(b => {
+    const res = blankResults[b.index];
+    const isCorrect = res ? res.isCorrect : false;
+    const userWord = res ? res.userWord : '';
 
     if (isCorrect) {
       correctCount++;
@@ -1102,13 +1256,40 @@ function evaluateClozeResults() {
       });
     }
 
+    // Apply visual red/green coloring to the blank zone on passage text (Issue 6)
+    const zoneEl = document.getElementById('cloze-blank-zone-' + b.index);
+    const valEl = document.getElementById('cloze-blank-val-' + b.index);
+    if (zoneEl) {
+      zoneEl.classList.remove('correct-eval', 'wrong-eval', 'active-blank');
+      if (isCorrect) {
+        zoneEl.classList.add('correct-eval');
+        if (valEl) {
+          valEl.innerHTML = `${userWord || b.correctWord} <span style="font-size: 11px; margin-left: 2px;">✓</span>`;
+        }
+      } else {
+        zoneEl.classList.add('wrong-eval');
+        if (valEl) {
+          if (userWord) {
+            valEl.innerHTML = `<span style="text-decoration: line-through; opacity: 0.85;">${userWord}</span> <span style="color: #34d399; font-weight: 800; margin-left: 3px;">(${b.correctWord})</span> <span style="font-size: 11px;">✕</span>`;
+          } else {
+            valEl.innerHTML = `<span style="color: #f87171;">(trống)</span> <span style="color: #34d399; font-weight: 800; margin-left: 3px;">[${b.correctWord}]</span> <span style="font-size: 11px;">✕</span>`;
+          }
+        }
+      }
+    }
+
+    let explanation = b.explanationVi || `Từ '${b.correctWord}' phù hợp ngữ cảnh câu.`;
+    if (res && res.isCoordinateSwap) {
+      explanation = `✨ <em>(Vị trí song hành hợp lệ):</em> Bạn đã điền từ '${res.userWord}' trong cấu trúc song hành liên từ. Cả hai vị trí đều tương đương nhau về ngữ pháp và ngữ nghĩa. ` + explanation;
+    }
+
     detailedFeedback.push({
       index: b.index,
       isCorrect: isCorrect,
       userWord: userWord || '(Chưa điền)',
       correctWord: b.correctWord,
       partOfSpeech: b.partOfSpeech,
-      explanationVi: b.explanationVi || `Từ '${b.correctWord}' phù hợp ngữ cảnh câu.`
+      explanationVi: explanation
     });
   });
 
@@ -1185,7 +1366,7 @@ function evaluateClozeResults() {
             </div>
             <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10.5px;">${item.partOfSpeech || 'word'}</span>
           </div>
-          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">${item.explanationVi}</div>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">${item.explanationVi}</div>
         </div>
       </div>
     `).join('');
@@ -1209,30 +1390,6 @@ function evaluateClozeResults() {
   // Auto-scroll to result panel
   if (resultPanel) {
     resultPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-function retryCurrentClozePassage() {
-  clozePlacements = {};
-  clozeActiveBlankIndex = 1;
-  clozeIsEvaluating = false;
-
-  const resultPanel = document.getElementById('cloze-result-panel');
-  if (resultPanel) resultPanel.style.display = 'none';
-
-  const submitBtn = document.getElementById('btn-cloze-submit');
-  if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = '1';
-  }
-
-  if (clozeCurrentPassage) {
-    renderClozePassageUI(clozeCurrentPassage);
-  }
-
-  const passageCard = document.getElementById('cloze-passage-card');
-  if (passageCard) {
-    passageCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -1296,6 +1453,7 @@ function finishClozeSession() {
 
 function exitClozeMode() {
   stopClozePassageAudio();
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
 
   if (typeof studySourceContext !== 'undefined' && (studySourceContext === 'review-queue' || !currentDeckId)) {
     if (typeof showScreen === 'function') showScreen('screen-decks');
