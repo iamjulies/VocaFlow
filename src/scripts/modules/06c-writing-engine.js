@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-14 Build 315 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-15 Build 316 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -141,6 +141,17 @@ function selectWritingSetupQuestionCount(count) {
 window.selectWritingSetupQuestionCount = selectWritingSetupQuestionCount;
 
 function openWritingSetupModal(useSelection = false, customWordList = null) {
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    if (!currentUser || !currentUser.email) {
+      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nVui lòng đăng nhập và nâng cấp VIP để mở khóa.');
+      if (typeof openAuthModal === 'function') openAuthModal('login');
+    } else {
+      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nHãy nâng cấp gói VIP để mở khóa phòng luyện viết câu AI.');
+      if (typeof openVipModal === 'function') openVipModal();
+    }
+    return;
+  }
+
   writingSetupUseSelection = useSelection;
   writingSetupCustomWordList = customWordList;
   selectedWritingSetupDifficulty = currentWritingDifficulty;
@@ -280,6 +291,12 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
 // 4. START & RENDER WRITING SESSION
 // =========================================================================
 function startWritingMode(fromSelection = false, customWordList = null) {
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    if (typeof openWritingSetupModal === 'function') {
+      openWritingSetupModal(fromSelection, customWordList);
+    }
+    return;
+  }
   if (!currentDeckId && !customWordList) return;
   const deck = decks.find(d => d.id === currentDeckId);
   if (!deck && !customWordList) return;

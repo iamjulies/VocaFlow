@@ -4762,8 +4762,8 @@
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
             </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab β)">
-              <span>✍️</span> <span>Viết Câu (β)</span><span id="writing-count-label"></span>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP)">
+              <span>👑</span> <span>Viết Câu (VIP)</span><span id="writing-count-label"></span>
             </button>
           </div>
         </div>
@@ -6184,15 +6184,15 @@
     </div>
   </div>
 
-  <!-- MODAL: WRITING SETUP (v0.10.10-8 - SENTENCE WRITING LAB β) -->
+  <!-- MODAL: WRITING SETUP (v0.10.10-15 - SENTENCE WRITING LAB VIP) -->
   <div class="modal-overlay" id="modal-writing-setup">
     <div class="modal" style="max-width: 540px;">
       <div class="modal-title">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 22px;">✍️</span>
+          <span style="font-size: 22px;">👑</span>
           <div>
-            <strong style="font-size: 16px;">Thiết Lập Luyện Viết Câu (Writing Lab β)</strong>
-            <div id="writing-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Chọn cấp độ thử thách và độ dài câu/đoạn văn</div>
+            <strong style="font-size: 16px;">Thiết Lập Luyện Viết Câu (Writing Lab VIP)</strong>
+            <div id="writing-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Đặc quyền VocaVIP: Luyện viết câu & đoạn văn AI chấm điểm chuyên sâu</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-writing-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -10348,7 +10348,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-14 (Build 315)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-15 (Build 316)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11928,15 +11928,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-14 Build 315)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-15 Build 316)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-14 Build 315)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-15 Build 316)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-14';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-14 (Build 315)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-15';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-15 (Build 316)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -15375,17 +15375,20 @@ window.initSpaRouter = initSpaRouter;
         localStorage.setItem(STORAGE_KEY_DAILY_STUDY_TIME, JSON.stringify(map));
       } catch (e) {}
 
-      // 2-way cloud sync to user profile
+      // 2-way cloud sync to user profile (v0.10.10-15 Token Freshness & Error Handling)
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         if (!currentUser.dailyStudyTime) currentUser.dailyStudyTime = {};
         currentUser.dailyStudyTime[todayStr] = map[todayStr];
         try {
           const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-          fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(map[todayStr])
+          const tokenPromise = (typeof getFreshCloudAuthToken === 'function') ? getFreshCloudAuthToken() : Promise.resolve(currentUser?.idToken || '');
+          Promise.resolve(tokenPromise).then(token => {
+            const authParam = token ? `?auth=${token}` : '';
+            fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(map[todayStr])
+            }).catch(() => {});
           }).catch(() => {});
         } catch (err) {}
       }
@@ -15409,7 +15412,7 @@ window.initSpaRouter = initSpaRouter;
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-1)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-15)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
@@ -15435,8 +15438,16 @@ window.initSpaRouter = initSpaRouter;
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Study time in minutes (Real recorded study time across 4 study modes)
-        let screenMinutes = typeof studyTimeMap[dateStr] === 'number' ? studyTimeMap[dateStr] : 0;
+        // Study time in minutes (Real recorded study time across 5 study modes)
+        let screenMinutes = 0;
+        const rawMins = studyTimeMap ? studyTimeMap[dateStr] : 0;
+        if (typeof rawMins === 'number') {
+          screenMinutes = rawMins;
+        } else if (typeof rawMins === 'string') {
+          screenMinutes = parseFloat(rawMins) || 0;
+        } else if (rawMins && typeof rawMins === 'object' && typeof rawMins.minutes === 'number') {
+          screenMinutes = rawMins.minutes;
+        }
 
         // VoCoins earned & study points
         let vocoinsEarned = 0;
@@ -20487,23 +20498,49 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.formatLastActiveTime = formatLastActiveTime;
 
+    let lastHeartbeatTimestamp = 0;
     function heartbeatUserOnlineStatus() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
-      currentUser.lastActiveAt = Date.now();
+      const now = Date.now();
+      currentUser.lastActiveAt = now;
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const token = typeof getFreshCloudAuthToken === 'function' ? getFreshCloudAuthToken() : (currentUser?.idToken || '');
-        Promise.resolve(token).then(t => {
+        const tokenPromise = typeof getFreshCloudAuthToken === 'function' ? getFreshCloudAuthToken() : Promise.resolve(currentUser?.idToken || '');
+        Promise.resolve(tokenPromise).then(t => {
           const authParam = t ? `?auth=${t}` : '';
           fetch(`${rtdbUrl}/users/${currentUser.uid}/lastActiveAt.json${authParam}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(Date.now())
+            body: JSON.stringify(now)
           }).catch(() => {});
-        });
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/lastActiveAt.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(now)
+          }).catch(() => {});
+        }).catch(() => {});
       } catch (e) {}
     }
     window.heartbeatUserOnlineStatus = heartbeatUserOnlineStatus;
+
+    function triggerThrottledUserHeartbeat() {
+      const now = Date.now();
+      if (now - lastHeartbeatTimestamp < 90000) return; // At most once every 90 seconds
+      lastHeartbeatTimestamp = now;
+      heartbeatUserOnlineStatus();
+    }
+    window.triggerThrottledUserHeartbeat = triggerThrottledUserHeartbeat;
+
+    try {
+      if (typeof window !== 'undefined') {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+          window.addEventListener(evt, triggerThrottledUserHeartbeat, { passive: true });
+        });
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) triggerThrottledUserHeartbeat();
+        });
+      }
+    } catch (e) {}
 
     async function openPublicProfileModal(authorName, arg2 = '', arg3 = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
@@ -20704,7 +20741,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 const uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
                   uDataFound = true;
-                  targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
+                  targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.profile?.lastSync || uData.lastSync || uData.economy?.updatedAt || uData.flow?.updatedAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
                   if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
                   else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
@@ -22854,6 +22891,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityCenterFeed = filterCommunityCenterFeed;
 
+    let lastCommunityCenterFetchTime = 0;
     async function fetchAndRenderCommunityCenterFeed(force = false) {
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       checkAndSeedOfficialUpdatePost();
@@ -22865,13 +22903,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
       }
 
-      if (communityPosts.length === 0 || force) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+      const isCacheValid = !force && communityPosts.length > 0 && (Date.now() - lastCommunityCenterFetchTime < 300000);
+      if (!isCacheValid) {
+        if (communityPosts.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+        }
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          const res = await fetch(`${rtdbUrl}/community_posts.json?orderBy="$key"&limitToLast=50`, { signal: controller.signal });
           clearTimeout(timeoutId);
 
           if (res.ok) {
@@ -22881,9 +22922,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               checkAndSeedOfficialUpdatePost();
               communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
               localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+              lastCommunityCenterFetchTime = Date.now();
             } else {
               communityPosts = [];
               checkAndSeedOfficialUpdatePost();
+              lastCommunityCenterFetchTime = Date.now();
             }
           }
         } catch (err) {
@@ -22909,13 +22952,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
       }
 
-      if (communityPosts.length === 0 || force) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết của bạn...</div>';
+      const isCacheValid = !force && communityPosts.length > 0 && (Date.now() - lastCommunityCenterFetchTime < 300000);
+      if (!isCacheValid) {
+        if (communityPosts.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết của bạn...</div>';
+        }
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          const res = await fetch(`${rtdbUrl}/community_posts.json?orderBy="$key"&limitToLast=50`, { signal: controller.signal });
           clearTimeout(timeoutId);
 
           if (res.ok) {
@@ -22924,8 +22970,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               communityPosts = Object.values(data).filter(p => p && p.id);
               communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
               localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+              lastCommunityCenterFetchTime = Date.now();
             } else {
               communityPosts = [];
+              lastCommunityCenterFetchTime = Date.now();
             }
           }
         } catch (err) {
@@ -24005,7 +24053,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     function startRealtimeNotificationListener() {
       try {
-        if (typeof BroadcastChannel !== 'undefined') {
+        if (typeof BroadcastChannel !== 'undefined' && !vocaflowNotifBroadcastChannel) {
           vocaflowNotifBroadcastChannel = new BroadcastChannel('vocaflow_notifications');
           vocaflowNotifBroadcastChannel.onmessage = (event) => {
             if (event.data && event.data.type === 'NEW_NOTIFICATION' && event.data.notif) {
@@ -24018,9 +24066,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       if (realtimeNotificationPollTimer) clearInterval(realtimeNotificationPollTimer);
+      const pollMs = (typeof document !== 'undefined' && document.hidden) ? 180000 : 60000;
       realtimeNotificationPollTimer = setInterval(() => {
         pullCloudNotificationsSilently();
-      }, 12000);
+      }, pollMs);
     }
     window.startRealtimeNotificationListener = startRealtimeNotificationListener;
 
@@ -24055,10 +24104,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
-      const authParam = token ? `?auth=${token}` : '';
+      const authParam = token ? `auth=${token}` : '';
+      const queryParams = [authParam, 'orderBy="$key"', 'limitToLast=15'].filter(Boolean).join('&');
+      const url = `${rtdbUrl}/users/${currentUser.uid}/notifications.json${queryParams ? '?' + queryParams : ''}`;
 
       try {
-        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`);
+        const res = await fetch(url);
         if (!res.ok) return;
         const data = await res.json();
         if (!data || typeof data !== 'object') return;
@@ -24835,6 +24886,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             isVip: isUserVip(),
             vipTier: getUserVipTier(),
             vipExpiresAt: userVipExpiresAt,
+            lastActiveAt: Date.now(),
             lastSync: new Date().toISOString()
           },
           following: myFollowingMap,
@@ -24908,6 +24960,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5') || 2.5,
             updatedAt: new Date().toISOString()
           },
+          lastActiveAt: Date.now(),
           lastSync: new Date().toISOString()
         };
 
@@ -26081,7 +26134,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // PERIODIC 30-SECOND BIDIRECTIONAL AUTO-SYNC ENGINE (v0.10.9-32)
+    // PERIODIC BANDWIDTH-OPTIMIZED CLOUD SYNC ENGINE (v0.10.10-15)
     // =========================================================================
     let periodicBidirectionalSyncTimer = null;
     function startPeriodicBidirectionalSync() {
@@ -26089,11 +26142,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearInterval(periodicBidirectionalSyncTimer);
         periodicBidirectionalSyncTimer = null;
       }
-      periodicBidirectionalSyncTimer = setInterval(() => {
-        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && navigator.onLine) {
-          handleManualSync(true); // silent background 2-way sync every 30s
+      periodicBidirectionalSyncTimer = setInterval(async () => {
+        if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
+        if (isSyncing) return;
+
+        // Bandwidth Optimization: Only check tiny lastSync timestamp first (30 bytes vs 2-4MB)
+        try {
+          const userId = currentUser.uid;
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+          const authParam = token ? `?auth=${token}` : '';
+
+          const lastLocalSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+          const lastLocalSyncTime = lastLocalSync ? new Date(lastLocalSync).getTime() : 0;
+
+          const checkRes = await fetch(`${rtdbUrl}/users/${userId}/lastSync.json${authParam}`);
+          if (checkRes.ok) {
+            const remoteLastSync = await checkRes.json();
+            const remoteSyncTime = remoteLastSync ? new Date(remoteLastSync).getTime() : 0;
+            if (remoteSyncTime > lastLocalSyncTime + 1000) {
+              // Remote device made newer updates, trigger silent pull & sync
+              handleManualSync(true);
+            }
+          }
+        } catch (e) {
+          // Silent catch
         }
-      }, 30000);
+      }, 120000); // Check every 2 minutes
     }
 
     function stopPeriodicBidirectionalSync() {
@@ -32202,7 +32277,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-14 Build 315 - SENTENCE WRITING LAB β)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-15 Build 316 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -32344,6 +32419,17 @@ function selectWritingSetupQuestionCount(count) {
 window.selectWritingSetupQuestionCount = selectWritingSetupQuestionCount;
 
 function openWritingSetupModal(useSelection = false, customWordList = null) {
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    if (!currentUser || !currentUser.email) {
+      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nVui lòng đăng nhập và nâng cấp VIP để mở khóa.');
+      if (typeof openAuthModal === 'function') openAuthModal('login');
+    } else {
+      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nHãy nâng cấp gói VIP để mở khóa phòng luyện viết câu AI.');
+      if (typeof openVipModal === 'function') openVipModal();
+    }
+    return;
+  }
+
   writingSetupUseSelection = useSelection;
   writingSetupCustomWordList = customWordList;
   selectedWritingSetupDifficulty = currentWritingDifficulty;
@@ -32483,6 +32569,12 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
 // 4. START & RENDER WRITING SESSION
 // =========================================================================
 function startWritingMode(fromSelection = false, customWordList = null) {
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    if (typeof openWritingSetupModal === 'function') {
+      openWritingSetupModal(fromSelection, customWordList);
+    }
+    return;
+  }
   if (!currentDeckId && !customWordList) return;
   const deck = decks.find(d => d.id === currentDeckId);
   if (!deck && !customWordList) return;
@@ -54596,7 +54688,13 @@ Quy tắc phản hồi quan trọng:
       });
     }
 
-    async function fetchCloudLibraryDecks() {
+    let lastCloudLibraryFetchTime = 0;
+    async function fetchCloudLibraryDecks(force = false) {
+      if (!force && cloudLibraryDecks.length > 0 && (Date.now() - lastCloudLibraryFetchTime < 300000)) {
+        renderLibraryDecks();
+        if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+        return;
+      }
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       try {
         const res = await fetch(`${rtdbUrl}/publicLibraryDecks.json`);
@@ -54604,6 +54702,7 @@ Quy tắc phản hồi quan trọng:
           const data = await res.json();
           if (data && typeof data === 'object') {
             cloudLibraryDecks = Object.values(data).filter(d => d && d.title && Array.isArray(d.words));
+            lastCloudLibraryFetchTime = Date.now();
             checkFollowedCreatorsNewDecks();
             
             // v0.10.7b: Auto-patch legacy cloud decks for current logged in user
@@ -55665,7 +55764,8 @@ Quy tắc phản hồi quan trọng:
     }
     window.registerAuthorToVipRegistry = registerAuthorToVipRegistry;
 
-    function initGlobalVipRegistry() {
+    let lastGlobalVipRegistryFetchTime = 0;
+    function initGlobalVipRegistry(force = false) {
       // 1. Seed current user into registry
       if (currentUser && currentUser.uid) {
         registerAuthorToVipRegistry({
@@ -55680,6 +55780,10 @@ Quy tắc phản hồi quan trọng:
       }
 
       if (!firebaseConfig.databaseURL) return;
+      if (!force && Object.keys(globalVipRegistry).length > 1 && (Date.now() - lastGlobalVipRegistryFetchTime < 300000)) {
+        return;
+      }
+      lastGlobalVipRegistryFetchTime = Date.now();
 
       // 2. Fetch lightweight VIP index only (avoids downloading entire bulk database)
       fetch(`${firebaseConfig.databaseURL}/vip_users_index.json`)

@@ -4520,23 +4520,49 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.formatLastActiveTime = formatLastActiveTime;
 
+    let lastHeartbeatTimestamp = 0;
     function heartbeatUserOnlineStatus() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
-      currentUser.lastActiveAt = Date.now();
+      const now = Date.now();
+      currentUser.lastActiveAt = now;
       try {
         const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-        const token = typeof getFreshCloudAuthToken === 'function' ? getFreshCloudAuthToken() : (currentUser?.idToken || '');
-        Promise.resolve(token).then(t => {
+        const tokenPromise = typeof getFreshCloudAuthToken === 'function' ? getFreshCloudAuthToken() : Promise.resolve(currentUser?.idToken || '');
+        Promise.resolve(tokenPromise).then(t => {
           const authParam = t ? `?auth=${t}` : '';
           fetch(`${rtdbUrl}/users/${currentUser.uid}/lastActiveAt.json${authParam}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(Date.now())
+            body: JSON.stringify(now)
           }).catch(() => {});
-        });
+          fetch(`${rtdbUrl}/users/${currentUser.uid}/profile/lastActiveAt.json${authParam}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(now)
+          }).catch(() => {});
+        }).catch(() => {});
       } catch (e) {}
     }
     window.heartbeatUserOnlineStatus = heartbeatUserOnlineStatus;
+
+    function triggerThrottledUserHeartbeat() {
+      const now = Date.now();
+      if (now - lastHeartbeatTimestamp < 90000) return; // At most once every 90 seconds
+      lastHeartbeatTimestamp = now;
+      heartbeatUserOnlineStatus();
+    }
+    window.triggerThrottledUserHeartbeat = triggerThrottledUserHeartbeat;
+
+    try {
+      if (typeof window !== 'undefined') {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+          window.addEventListener(evt, triggerThrottledUserHeartbeat, { passive: true });
+        });
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) triggerThrottledUserHeartbeat();
+        });
+      }
+    } catch (e) {}
 
     async function openPublicProfileModal(authorName, arg2 = '', arg3 = '') {
       if (!authorName || authorName === 'Ẩn danh') return;
@@ -4737,7 +4763,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 const uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
                   uDataFound = true;
-                  targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
+                  targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.profile?.lastSync || uData.lastSync || uData.economy?.updatedAt || uData.flow?.updatedAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
                   if (uData.economy && typeof uData.economy.points === 'number') targetPoints = uData.economy.points;
                   else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
@@ -6887,6 +6913,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityCenterFeed = filterCommunityCenterFeed;
 
+    let lastCommunityCenterFetchTime = 0;
     async function fetchAndRenderCommunityCenterFeed(force = false) {
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       checkAndSeedOfficialUpdatePost();
@@ -6898,13 +6925,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
       }
 
-      if (communityPosts.length === 0 || force) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+      const isCacheValid = !force && communityPosts.length > 0 && (Date.now() - lastCommunityCenterFetchTime < 300000);
+      if (!isCacheValid) {
+        if (communityPosts.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bảng tin cộng đồng...</div>';
+        }
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          const res = await fetch(`${rtdbUrl}/community_posts.json?orderBy="$key"&limitToLast=50`, { signal: controller.signal });
           clearTimeout(timeoutId);
 
           if (res.ok) {
@@ -6914,9 +6944,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               checkAndSeedOfficialUpdatePost();
               communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
               localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+              lastCommunityCenterFetchTime = Date.now();
             } else {
               communityPosts = [];
               checkAndSeedOfficialUpdatePost();
+              lastCommunityCenterFetchTime = Date.now();
             }
           }
         } catch (err) {
@@ -6942,13 +6974,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         compAv.innerHTML = renderAvatarHtml(getUserAvatar() || currentUser?.displayName || '👤', 38, 16);
       }
 
-      if (communityPosts.length === 0 || force) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết của bạn...</div>';
+      const isCacheValid = !force && communityPosts.length > 0 && (Date.now() - lastCommunityCenterFetchTime < 300000);
+      if (!isCacheValid) {
+        if (communityPosts.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">⏳ Đang tải bài viết của bạn...</div>';
+        }
         try {
           const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`${rtdbUrl}/community_posts.json`, { signal: controller.signal });
+          const res = await fetch(`${rtdbUrl}/community_posts.json?orderBy="$key"&limitToLast=50`, { signal: controller.signal });
           clearTimeout(timeoutId);
 
           if (res.ok) {
@@ -6957,8 +6992,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               communityPosts = Object.values(data).filter(p => p && p.id);
               communityPosts.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
               localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+              lastCommunityCenterFetchTime = Date.now();
             } else {
               communityPosts = [];
+              lastCommunityCenterFetchTime = Date.now();
             }
           }
         } catch (err) {
@@ -8038,7 +8075,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     function startRealtimeNotificationListener() {
       try {
-        if (typeof BroadcastChannel !== 'undefined') {
+        if (typeof BroadcastChannel !== 'undefined' && !vocaflowNotifBroadcastChannel) {
           vocaflowNotifBroadcastChannel = new BroadcastChannel('vocaflow_notifications');
           vocaflowNotifBroadcastChannel.onmessage = (event) => {
             if (event.data && event.data.type === 'NEW_NOTIFICATION' && event.data.notif) {
@@ -8051,9 +8088,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       if (realtimeNotificationPollTimer) clearInterval(realtimeNotificationPollTimer);
+      const pollMs = (typeof document !== 'undefined' && document.hidden) ? 180000 : 60000;
       realtimeNotificationPollTimer = setInterval(() => {
         pullCloudNotificationsSilently();
-      }, 12000);
+      }, pollMs);
     }
     window.startRealtimeNotificationListener = startRealtimeNotificationListener;
 
@@ -8088,10 +8126,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
-      const authParam = token ? `?auth=${token}` : '';
+      const authParam = token ? `auth=${token}` : '';
+      const queryParams = [authParam, 'orderBy="$key"', 'limitToLast=15'].filter(Boolean).join('&');
+      const url = `${rtdbUrl}/users/${currentUser.uid}/notifications.json${queryParams ? '?' + queryParams : ''}`;
 
       try {
-        const res = await fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications.json${authParam}`);
+        const res = await fetch(url);
         if (!res.ok) return;
         const data = await res.json();
         if (!data || typeof data !== 'object') return;
@@ -8868,6 +8908,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             isVip: isUserVip(),
             vipTier: getUserVipTier(),
             vipExpiresAt: userVipExpiresAt,
+            lastActiveAt: Date.now(),
             lastSync: new Date().toISOString()
           },
           following: myFollowingMap,
@@ -8941,6 +8982,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             vipCatMemesDuration: parseFloat(localStorage.getItem('vocaflow_vip_cat_memes_duration') || '2.5') || 2.5,
             updatedAt: new Date().toISOString()
           },
+          lastActiveAt: Date.now(),
           lastSync: new Date().toISOString()
         };
 
@@ -10114,7 +10156,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // PERIODIC 30-SECOND BIDIRECTIONAL AUTO-SYNC ENGINE (v0.10.9-32)
+    // PERIODIC BANDWIDTH-OPTIMIZED CLOUD SYNC ENGINE (v0.10.10-15)
     // =========================================================================
     let periodicBidirectionalSyncTimer = null;
     function startPeriodicBidirectionalSync() {
@@ -10122,11 +10164,33 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearInterval(periodicBidirectionalSyncTimer);
         periodicBidirectionalSyncTimer = null;
       }
-      periodicBidirectionalSyncTimer = setInterval(() => {
-        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_') && navigator.onLine) {
-          handleManualSync(true); // silent background 2-way sync every 30s
+      periodicBidirectionalSyncTimer = setInterval(async () => {
+        if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
+        if (isSyncing) return;
+
+        // Bandwidth Optimization: Only check tiny lastSync timestamp first (30 bytes vs 2-4MB)
+        try {
+          const userId = currentUser.uid;
+          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+          const authParam = token ? `?auth=${token}` : '';
+
+          const lastLocalSync = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+          const lastLocalSyncTime = lastLocalSync ? new Date(lastLocalSync).getTime() : 0;
+
+          const checkRes = await fetch(`${rtdbUrl}/users/${userId}/lastSync.json${authParam}`);
+          if (checkRes.ok) {
+            const remoteLastSync = await checkRes.json();
+            const remoteSyncTime = remoteLastSync ? new Date(remoteLastSync).getTime() : 0;
+            if (remoteSyncTime > lastLocalSyncTime + 1000) {
+              // Remote device made newer updates, trigger silent pull & sync
+              handleManualSync(true);
+            }
+          }
+        } catch (e) {
+          // Silent catch
         }
-      }, 30000);
+      }, 120000); // Check every 2 minutes
     }
 
     function stopPeriodicBidirectionalSync() {

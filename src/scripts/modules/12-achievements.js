@@ -53,7 +53,8 @@
     }
     window.registerAuthorToVipRegistry = registerAuthorToVipRegistry;
 
-    function initGlobalVipRegistry() {
+    let lastGlobalVipRegistryFetchTime = 0;
+    function initGlobalVipRegistry(force = false) {
       // 1. Seed current user into registry
       if (currentUser && currentUser.uid) {
         registerAuthorToVipRegistry({
@@ -68,6 +69,10 @@
       }
 
       if (!firebaseConfig.databaseURL) return;
+      if (!force && Object.keys(globalVipRegistry).length > 1 && (Date.now() - lastGlobalVipRegistryFetchTime < 300000)) {
+        return;
+      }
+      lastGlobalVipRegistryFetchTime = Date.now();
 
       // 2. Fetch lightweight VIP index only (avoids downloading entire bulk database)
       fetch(`${firebaseConfig.databaseURL}/vip_users_index.json`)

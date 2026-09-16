@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-14 Build 315)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-15 Build 316)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-14 Build 315)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-15 Build 316)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-14';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-14 (Build 315)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-15';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-15 (Build 316)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -3445,17 +3445,20 @@
         localStorage.setItem(STORAGE_KEY_DAILY_STUDY_TIME, JSON.stringify(map));
       } catch (e) {}
 
-      // 2-way cloud sync to user profile
+      // 2-way cloud sync to user profile (v0.10.10-15 Token Freshness & Error Handling)
       if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
         if (!currentUser.dailyStudyTime) currentUser.dailyStudyTime = {};
         currentUser.dailyStudyTime[todayStr] = map[todayStr];
         try {
           const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
-          fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(map[todayStr])
+          const tokenPromise = (typeof getFreshCloudAuthToken === 'function') ? getFreshCloudAuthToken() : Promise.resolve(currentUser?.idToken || '');
+          Promise.resolve(tokenPromise).then(token => {
+            const authParam = token ? `?auth=${token}` : '';
+            fetch(`${rtdbUrl}/users/${currentUser.uid}/dailyStudyTime/${todayStr}.json${authParam}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(map[todayStr])
+            }).catch(() => {});
           }).catch(() => {});
         } catch (err) {}
       }
@@ -3479,7 +3482,7 @@
     window.getDailyScreenTimeMap = getDailyScreenTimeMap;
 
     // =========================================================================
-    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-1)
+    // 7-DAY ACTIVITY & PERFORMANCE COMBO CHART ENGINE (v0.10.10-15)
     // =========================================================================
     function get7DayPerformanceData(targetAuthor = null) {
       const days = [];
@@ -3505,8 +3508,16 @@
         const dayOfWeek = i === 0 ? 'Hôm nay' : (dayNames[d.getDay()] || '');
         const fullDayName = i === 0 ? `Hôm nay (${shortDate})` : `${dayNames[d.getDay()]}, ${shortDate}`;
 
-        // Study time in minutes (Real recorded study time across 4 study modes)
-        let screenMinutes = typeof studyTimeMap[dateStr] === 'number' ? studyTimeMap[dateStr] : 0;
+        // Study time in minutes (Real recorded study time across 5 study modes)
+        let screenMinutes = 0;
+        const rawMins = studyTimeMap ? studyTimeMap[dateStr] : 0;
+        if (typeof rawMins === 'number') {
+          screenMinutes = rawMins;
+        } else if (typeof rawMins === 'string') {
+          screenMinutes = parseFloat(rawMins) || 0;
+        } else if (rawMins && typeof rawMins === 'object' && typeof rawMins.minutes === 'number') {
+          screenMinutes = rawMins.minutes;
+        }
 
         // VoCoins earned & study points
         let vocoinsEarned = 0;

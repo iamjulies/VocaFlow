@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.9-48)
 
@@ -11513,7 +11513,13 @@
       });
     }
 
-    async function fetchCloudLibraryDecks() {
+    let lastCloudLibraryFetchTime = 0;
+    async function fetchCloudLibraryDecks(force = false) {
+      if (!force && cloudLibraryDecks.length > 0 && (Date.now() - lastCloudLibraryFetchTime < 300000)) {
+        renderLibraryDecks();
+        if (typeof renderPurchasedDecksList === 'function') renderPurchasedDecksList();
+        return;
+      }
       const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
       try {
         const res = await fetch(`${rtdbUrl}/publicLibraryDecks.json`);
@@ -11521,6 +11527,7 @@
           const data = await res.json();
           if (data && typeof data === 'object') {
             cloudLibraryDecks = Object.values(data).filter(d => d && d.title && Array.isArray(d.words));
+            lastCloudLibraryFetchTime = Date.now();
             checkFollowedCreatorsNewDecks();
             
             // v0.10.7b: Auto-patch legacy cloud decks for current logged in user

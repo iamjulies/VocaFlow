@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-15 (Build 316) - Cột Thời Gian Học Biểu Đồ Hồ Sơ, Tối Ưu Triệt Để Băng Thông Firebase RTDB, Chuẩn Hóa Trạng Thái Online/Offline Đa Tài Khoản & Khóa VIP Chế Độ Luyện Viết Câu
+================================================================================
+1. [Khắc Phục Cột Số Liệu Thời Gian Học Biểu Đồ Hồ Sơ & Thống Kê (02-state-core.js, 03-auth.js)]:
+   - Ghi nhận và đồng bộ tức thì `dailyStudyTime` lên Cloud sau mọi phiên học (Flashcard, Auto FC, Quiz, Spelling, Speaking, Writing) với cơ chế xác thực token tự làm mới (Issue 28).
+   - Chuẩn hóa hàm phân tích biểu đồ `get7DayPerformanceData` bóc tách dữ liệu thời lượng dạng số/chuỗi linh hoạt, hiển thị chính xác các cột thời gian học tập khi xem hồ sơ công khai của người dùng khác.
+
+2. [Tối Ưu Triệt Để Băng Thông Firebase RTDB Chống Tràn Hạn Mức Free Spark (03-auth.js, 11-publisher-studio.js, 12-achievements.js)]:
+   - Loại bỏ hoàn toàn vòng lặp kéo toàn bộ database 30 giây: Chuyển sang cơ chế kiểm tra node siêu nhẹ `/users/${uid}/lastSync.json` (30 bytes thay vì 2-4MB) mỗi 2 phút, chỉ tải toàn bộ khi có thay đổi từ thiết bị khác (Issue 29).
+   - Tối ưu trình kéo thông báo `pullCloudNotificationsSilently`: Tăng chu kỳ từ 12s lên 60s khi tab đang mở, giãn cách 180s khi tab ẩn và bổ sung `limitToLast=15`.
+   - Bổ sung bộ nhớ đệm Cache TTL 5 phút cho `publicLibraryDecks`, `community_posts` và `vip_users_index`, ngăn chặn việc tải lại liên tục khi chuyển tab hoặc mở modal.
+
+3. [Chuẩn Hóa Đồng Bộ Trạng Thái Online/Offline Giữa Các Tài Khoản (03-auth.js)]:
+   - Tự động kích hoạt `heartbeatUserOnlineStatus` theo hành vi người dùng (click chuột, gõ phím, chuyển tab) giới hạn 90 giây/lần, liên tục cập nhật `lastActiveAt` (Issue 30).
+   - Đảm bảo tài khoản phụ xem tài khoản chính thấy ngay chấm xanh `🟢 Đang hoạt động` chuẩn xác theo thời gian thực mà không bị lệch 9 giờ.
+
+4. [Khóa VIP Chế Độ Luyện Viết Câu AI Writing Lab (06c-writing-engine.js, screen-deck-detail.html, modal-writing-setup.html)]:
+   - Thiết lập phòng Luyện Viết Câu (Writing Lab) thành đặc quyền VIP độc quyền (Issue 31).
+   - Hiển thị thông báo và mở Modal nâng cấp VIP khi người dùng Guest hoặc tài khoản thường cố gắng truy cập.
+
+================================================================================
 Phiên bản: v0.10.10-14 (Build 315) - Hệ Thống Bình Luận Đa Cấp Facebook-Style, Quản Lý Sửa & Xóa Giữ Bia Mộ, Trạng Thái Online & Last Seen Hồ Sơ, Bảo Toàn Mốc Thời Gian @official, Mention @ Thông Minh & Thông Báo Realtime Tức Thì
 ================================================================================
 1. [Hệ Thống Bình Luận Đa Cấp Facebook-Style & Quản Lý Sửa/Xóa Bình Luận (03-auth.js)]:

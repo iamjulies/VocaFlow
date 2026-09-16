@@ -1,4 +1,4 @@
-v0,10,10-15
+v0.10.10-16
 [ĐỌC KĨ PHẦN SAU]
 => Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
 [Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]

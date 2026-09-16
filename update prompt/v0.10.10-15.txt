@@ -1,0 +1,7 @@
+v0.10.10-15
+- Vấn đề 28 ("C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-15 160826.png"): lỗi không hiện cột số liệu thời gian. -> tao nghĩ là do app đang bắt user phải mở biểu đồ ra mới cập nhật cái này lên hay sao ý, chứ t xem acc chính bằng acc phụ thấy bình thường mà t xem acc user khác thì kh được.
+- Vấn đề 29 ("C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-14 203333.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-14 203408.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-14 203425.png"): lỗi tràn bộ nhớ hay gì đó ở Firebase, t kh hiểu, m sửa được không? "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 100423.png" "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 100432.png" "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 100438.png"
+- Vấn đề 30: ảnh này "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-15 161734.png" xem ở acc chính, còn ảnh này "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-15 161837.png" xem ở acc phụ, hai ảnh chụp cùng lúc -> lỗi cái nút xanh-trắng online-offline rồi.
+- Vấn đề 31: Chế độ "Luyện viết câu" chỉ dành cho vip user -> Khóa đối với guest và user thường
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+
