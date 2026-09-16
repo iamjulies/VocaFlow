@@ -103,6 +103,12 @@
 
     function openSpellingSetupModal(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+        alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để luyện viết chính tả (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+        return;
+      }
+
       spellingSetupUseSelection = useSelectionOnly;
       spellingSetupCustomWordList = customWordList;
 
@@ -113,8 +119,8 @@
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
-      if (deckWords.length === 0) {
-        alert('Không có từ vựng nào để luyện viết!');
+      if (deckWords.length < 5) {
+        alert(`⚠️ Chế độ Luyện Viết (Spelling) yêu cầu tối thiểu 5 từ vựng (hiện chỉ có ${deckWords.length} từ)! Hãy thêm từ vào bộ từ trước nhé.`);
         return;
       }
 

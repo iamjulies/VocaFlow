@@ -140,6 +140,32 @@ function selectWritingSetupQuestionCount(count) {
 }
 window.selectWritingSetupQuestionCount = selectWritingSetupQuestionCount;
 
+// Helper: Automatically supplement thematic vocabulary if word count < 5 (Issue 15)
+function ensureMinimumWritingWords(targetWords) {
+  if (!targetWords) targetWords = [];
+  if (targetWords.length >= 5) return targetWords;
+  const needed = 5 - targetWords.length;
+  const supplementaryPool = [
+    { id: 'supp_wrt_1', term: 'effective', phonetic: '/ɪˈfektɪv/', definitionVi: 'hiệu quả', partOfSpeech: 'adjective', isAiSupplements: true, isDeckWord: false },
+    { id: 'supp_wrt_2', term: 'perspective', phonetic: '/pəˈspektɪv/', definitionVi: 'góc nhìn, quan điểm', partOfSpeech: 'noun', isAiSupplements: true, isDeckWord: false },
+    { id: 'supp_wrt_3', term: 'collaborate', phonetic: '/kəˈlæbəreɪt/', definitionVi: 'hợp tác, cộng tác', partOfSpeech: 'verb', isAiSupplements: true, isDeckWord: false },
+    { id: 'supp_wrt_4', term: 'sustainable', phonetic: '/səˈsteɪnəbl/', definitionVi: 'bền vững', partOfSpeech: 'adjective', isAiSupplements: true, isDeckWord: false },
+    { id: 'supp_wrt_5', term: 'innovation', phonetic: '/ˌɪnəˈveɪʃn/', definitionVi: 'sự đổi mới', partOfSpeech: 'noun', isAiSupplements: true, isDeckWord: false }
+  ];
+  const existingTerms = new Set(targetWords.map(w => (w.term || '').toLowerCase().trim()));
+  const added = [];
+  for (const sup of supplementaryPool) {
+    if (!existingTerms.has(sup.term.toLowerCase())) {
+      added.push(sup);
+      if (added.length >= needed) break;
+    }
+  }
+  if (typeof showToast === 'function' && targetWords.length > 0) {
+    showToast(`✨ AI đã bổ sung ${added.length} từ vựng chủ đề để đủ tối thiểu 5 từ luyện viết!`);
+  }
+  return [...targetWords, ...added];
+}
+
 function openWritingSetupModal(useSelection = false, customWordList = null) {
   if (typeof isUserVip === 'function' && !isUserVip()) {
     if (!currentUser || !currentUser.email) {
@@ -149,6 +175,11 @@ function openWritingSetupModal(useSelection = false, customWordList = null) {
       alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nHãy nâng cấp gói VIP để mở khóa phòng luyện viết câu AI.');
       if (typeof openVipModal === 'function') openVipModal();
     }
+    return;
+  }
+
+  if (useSelection && selectedWordIds && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+    alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để luyện viết câu (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
     return;
   }
 
@@ -176,7 +207,13 @@ function openWritingSetupModal(useSelection = false, customWordList = null) {
   }
 
   const sub = document.getElementById('writing-setup-subtitle');
-  if (sub) sub.textContent = `${wordCount} từ vựng sẵn sàng cho phiên luyện viết`;
+  if (sub) {
+    if (wordCount < 5 && wordCount > 0) {
+      sub.textContent = `${wordCount} từ gốc (AI sẽ bổ sung thêm để đủ 5 từ luyện viết)`;
+    } else {
+      sub.textContent = `${wordCount} từ vựng sẵn sàng cho phiên luyện viết`;
+    }
+  }
 
   openModal('modal-writing-setup');
 }
@@ -302,9 +339,15 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   if (!deck && !customWordList) return;
 
   studySourceContext = customWordList ? 'review-queue' : 'deck';
+  
+  if (fromSelection && selectedWordIds && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+    alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để bắt đầu luyện viết câu (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+    return;
+  }
+
   let targetWords = [];
   if (customWordList) {
-    targetWords = customWordList;
+    targetWords = [...customWordList];
   } else if (fromSelection && selectedWordIds.size > 0) {
     targetWords = words.filter(w => selectedWordIds.has(w.id));
   } else {
@@ -315,6 +358,9 @@ function startWritingMode(fromSelection = false, customWordList = null) {
     alert('Bộ từ này chưa có từ vựng nào để luyện viết câu!');
     return;
   }
+
+  // Issue 15: If total words < 5 in deck/queue, supplement words automatically
+  targetWords = ensureMinimumWritingWords(targetWords);
 
   writingQuestionsList = buildThematicWordClusters(targetWords, currentWritingDifficulty, writingSetupQuestionCount);
   if (writingQuestionsList.length === 0) {

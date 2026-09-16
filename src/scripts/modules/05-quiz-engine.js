@@ -60,6 +60,12 @@
 
     function openQuizSetupModal(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+        alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để tạo bài trắc nghiệm Quiz (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+        return;
+      }
+
       quizSetupUseSelection = useSelectionOnly;
       quizSetupCustomWordList = customWordList;
 
@@ -70,8 +76,8 @@
         deckWords = words.filter(w => selectedWordIds.has(w.id));
       }
 
-      if (deckWords.length < 2) {
-        alert('Cần tối thiểu 2 từ vựng để tạo bài trắc nghiệm Quiz!');
+      if (deckWords.length < 5) {
+        alert(`⚠️ Chế độ Trắc nghiệm Quiz yêu cầu tối thiểu 5 từ vựng (hiện chỉ có ${deckWords.length} từ)! Hãy thêm từ vào bộ từ trước nhé.`);
         return;
       }
 

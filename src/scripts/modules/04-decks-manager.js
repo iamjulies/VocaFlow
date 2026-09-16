@@ -2521,7 +2521,8 @@
 
     function launchReviewDueWords(mode) {
       let targetList = [];
-      if (reviewQueueSelectedWordIds.size > 0) {
+      const hasManualSelection = reviewQueueSelectedWordIds.size > 0;
+      if (hasManualSelection) {
         targetList = reviewQueueMasterList.filter(w => reviewQueueSelectedWordIds.has(w.id));
       } else if (reviewQueueFilteredList.length > 0) {
         targetList = reviewQueueFilteredList;
@@ -2531,6 +2532,36 @@
 
       if (!targetList || targetList.length === 0) {
         alert('Không có từ vựng nào được chọn để ôn tập!');
+        return;
+      }
+
+      // Issue 15: Manual selection minimum 5 words
+      if (hasManualSelection && targetList.length < 5) {
+        alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để ôn tập (hiện đang chọn ${targetList.length} từ)!`);
+        return;
+      }
+
+      // Issue 15: Existing queue < 5 words for core modes
+      const isCoreMode = ['autofc', 'speaking', 'spelling', 'quiz'].includes(mode);
+      if (isCoreMode && targetList.length < 5) {
+        alert(`⚠️ Chế độ ôn tập này yêu cầu tối thiểu 5 từ vựng (hiện hàng đợi chỉ có ${targetList.length} từ)! Hãy hoàn thành thêm các bộ từ khác để tăng lượng từ ôn tập nhé.`);
+        return;
+      }
+
+      // Issue 13: Cloze Mode VIP Check
+      if (mode === 'cloze' && typeof isUserVip === 'function' && !isUserVip()) {
+        closeModal('modal-review-queue');
+        const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
+        if (isGuest && typeof openGuestFeatureLockModal === 'function') {
+          openGuestFeatureLockModal('cloze', 'Chế độ Điền Từ Đoạn Văn (β)', '🧩 🔒', 'Tính Năng Độc Quyền VocaVIP');
+        } else if (typeof openVipPricingModal === 'function') {
+          if (typeof showToast === 'function') {
+            showToast('👑 Chế độ Điền Từ (β) là tính năng nâng cao độc quyền dành riêng cho VocaVIP!');
+          }
+          openVipPricingModal();
+        } else {
+          alert('🔒 Chế độ Điền Từ Đoạn Văn (β) là tính năng độc quyền dành riêng cho thành viên VocaVIP!');
+        }
         return;
       }
 
@@ -2546,10 +2577,6 @@
       } else if (mode === 'spelling') {
         openSpellingSetupModal(false, targetList);
       } else if (mode === 'quiz') {
-        if (targetList.length < 2) {
-          alert('Cần tối thiểu 2 từ vựng để tạo bài Trắc nghiệm!');
-          return;
-        }
         openQuizSetupModal(false, targetList);
       } else if (mode === 'cloze') {
         if (typeof openClozeSetupModal === 'function') {

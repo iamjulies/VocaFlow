@@ -1,4 +1,26 @@
 ================================================================================
+Phiên bản: v0.10.10-19 (Build 320) - Khóa VIP Độc Quyền Điền Từ Cloze Test β, Nâng Cấp Model Flash Gemini Cho Chế Độ Khó & Siêu Khó, Quy Tắc Tối Thiểu 5 Từ Vựng Kèm Mở Rộng Từ Ngữ Cảnh Tự Động & Hoạt Họa AI Spinner Đa Vòng Sáng Tạo
+================================================================================
+1. [Khóa VIP Độc Quyền Tính Năng Điền Từ Cloze Test β (06d-cloze-engine.js, 04-decks-manager.js, screen-deck-detail.html, modal-review-queue.html)]:
+   - Quy hoạch phân loại chế độ học tập: 4 Chế Độ Cốt Lõi (Learning Modes) gồm Flashcard, Auto Flashcard, Spelling, Speaking, Quiz và Extended Learning Modes (β) gồm Sentence Writing Lab β, Cloze Test β (sắp tới: Dictation β, Translation β).
+   - Thiết lập rào chắn VIP độc quyền cho Cloze Test β: Người dùng chưa đăng nhập (Guest) hoặc người dùng thường (Free) bị chặn truy cập với thông báo modal nâng cấp VocaVIP.
+   - Thêm huy hiệu vương miện VIP: `👑 Điền Từ (VIP β)` tại Deck Detail và Hàng Đợi Ôn Tập (Review Queue).
+
+2. [Nâng Cấp Model Tier Cao Cấp & Timeout 16s Cho Cloze Test Khó & Siêu Khó (06d-cloze-engine.js)]:
+   - Khi tạo đoạn văn ở cấp độ `hard` (Khó) và `expert` (Siêu Khó), hệ thống ưu tiên các model Flash có năng lực lập luận cao (`gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.8-flash`, `gemini-3.5-flash`) thay vì dùng lite models.
+   - Bổ sung cơ chế timeout 16s mỗi model request và tự động fallback nhanh, ngăn chặn triệt để tình trạng treo màn hình chờ >1 phút.
+
+3. [Thiết Lập Quy Tắc Tối Thiểu 5 Từ Vựng & Mở Rộng Từ Ngữ Cảnh AI Tự Động (06d-cloze-engine.js, 06c-writing-engine.js, 04-decks-manager.js, 05-quiz-engine.js, 06-spelling-engine.js, 07-speaking-engine.js)]:
+   - Khi người học tự chọn từ vựng thủ công mà số lượng < 5 từ: Chặn khởi tạo trên tất cả 8 chế độ học tập với cảnh báo "⚠️ Vui lòng chọn tối thiểu 5 từ vựng để bắt đầu phiên học tập!".
+   - Khi bộ từ hoặc hàng đợi có sẵn < 5 từ hiện hữu:
+     + 4 chế độ cốt lõi (Flashcard, Auto Flashcard, Spelling, Speaking, Quiz): Chặn khởi tạo và yêu cầu thêm từ vào bộ từ.
+     + 2 chế độ mở rộng nâng cao (Writing Lab β, Cloze Test β): AI tự động bổ sung thêm các từ vựng mở rộng cùng chủ đề (`ensureMinimumClozeWords`, `ensureMinimumWritingWords`) để đạt tối thiểu >= 5 từ, giúp tạo đoạn văn phong phú và hấp dẫn.
+
+4. [Nâng Cấp Giao Diện Chờ Tạo Bài Đọc Với AI Loading Spinner Đa Vòng Sáng Tạo (app.css, screen-cloze.html, 06d-cloze-engine.js)]:
+   - Thay thế icon tĩnh 🧩 bằng vòng xoay AI đa tầng phát sáng (`.ai-spinner-container`, `.ai-spinner-outer-ring`, `.ai-spinner-inner-ring`, `.ai-spinner-center-icon`) kết hợp sóng hiệu ứng chấm nhảy (`.ai-loading-dots`).
+   - Đem lại trải nghiệm trực quan sống động, xóa tan cảm giác chờ đợi và không gây hiểu nhầm là lỗi mạng.
+
+================================================================================
 Phiên bản: v0.10.10-18 (Build 319) - Hoàn Thiện Extended Learning Modes (β), Ghi Nhận Lỗi Sai Cloze Vào Sổ Từ Sai, Mở Khóa Cloze Trong Hàng Đợi Ôn Tập, Tối Ưu Đọc Hiểu & Tái Thiết Kế Modal Tổng Kết Chuẩn 5-Tile Dashboard
 ================================================================================
 1. [Ghi Nhận Từ Làm Sai Ở Chế Độ Điền Từ Cloze Vào Sổ Tay Lỗi Sai (06d-cloze-engine.js, 05-quiz-engine.js)]:

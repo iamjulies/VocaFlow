@@ -302,6 +302,11 @@
         openSettingsModal();
         return;
       }
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+        alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để luyện phát âm (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+        return;
+      }
+
       speakingSetupUseSelection = useSelectionOnly;
       speakingSetupCustomWordList = customWordList;
 
@@ -314,8 +319,8 @@
         deckWords = words.filter(w => w.deckId === currentDeckId);
       }
 
-      if (!deckWords || deckWords.length === 0) {
-        alert('Không có từ vựng nào để luyện phát âm!');
+      if (!deckWords || deckWords.length < 5) {
+        alert(`⚠️ Chế độ Luyện Nói (Speaking) yêu cầu tối thiểu 5 từ vựng (hiện chỉ có ${deckWords ? deckWords.length : 0} từ)! Hãy thêm từ vào bộ từ trước nhé.`);
         return;
       }
 
@@ -2109,14 +2114,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (miniEl) miniEl.style.display = 'none';
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
-      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0) {
-        deckWords = words.filter(w => selectedWordIds.has(w.id));
-      } else if (!customWordList && selectedWordIds.size > 0) {
-        deckWords = words.filter(w => selectedWordIds.has(w.id));
+      if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+        alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để chạy Auto Flashcard (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+        return;
       }
 
-      if (deckWords.length === 0) {
-        alert('Không có từ vựng nào để chạy Auto Flashcard!');
+      if (!deckWords || deckWords.length < 5) {
+        alert(`⚠️ Chế độ Auto Flashcard yêu cầu tối thiểu 5 từ vựng (hiện chỉ có ${deckWords ? deckWords.length : 0} từ)! Hãy thêm từ vào bộ từ trước nhé.`);
         return;
       }
 

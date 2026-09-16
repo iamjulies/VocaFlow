@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-18 Build 319 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-19 Build 320 - EXTENDED LEARNING MODE BETA)
 // AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
 // =========================================================================
 
@@ -147,7 +147,57 @@ function handleClozeCustomPassageCountInput(val) {
   }
 }
 
+// Helper: Automatically supplement thematic vocabulary if word count < 5 (Issue 15)
+function ensureMinimumClozeWords(targetWords) {
+  if (!targetWords) targetWords = [];
+  if (targetWords.length >= 5) return targetWords;
+  const needed = 5 - targetWords.length;
+  const supplementaryPool = [
+    { id: 'supp_cloze_1', term: 'innovation', partOfSpeech: 'noun', definitionVi: 'sự đổi mới, sáng tạo', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_2', term: 'perspective', partOfSpeech: 'noun', definitionVi: 'góc nhìn, quan điểm', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_3', term: 'sustainable', partOfSpeech: 'adjective', definitionVi: 'bền vững, lâu dài', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_4', term: 'collaborate', partOfSpeech: 'verb', definitionVi: 'hợp tác, cộng tác', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_5', term: 'comprehend', partOfSpeech: 'verb', definitionVi: 'thấu hiểu, lĩnh hội', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_6', term: 'resilient', partOfSpeech: 'adjective', definitionVi: 'kiên cường, bền bỉ', isAiSupplements: true, isAiGenerated: true },
+    { id: 'supp_cloze_7', term: 'initiative', partOfSpeech: 'noun', definitionVi: 'sáng kiến, sự chủ động', isAiSupplements: true, isAiGenerated: true }
+  ];
+  const existingTerms = new Set(targetWords.map(w => (w.term || '').toLowerCase().trim()));
+  const added = [];
+  for (const sup of supplementaryPool) {
+    if (!existingTerms.has(sup.term.toLowerCase())) {
+      added.push(sup);
+      if (added.length >= needed) break;
+    }
+  }
+  if (typeof showToast === 'function' && targetWords.length > 0) {
+    showToast(`✨ AI đã bổ sung ${added.length} từ vựng chủ đề để đủ tối thiểu 5 từ tạo bài đọc!`);
+  }
+  return [...targetWords, ...added];
+}
+
 function openClozeSetupModal(useSelection = false, customWordList = null) {
+  // Issue 13: Cloze Mode is strictly for VIP members
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
+    if (isGuest && typeof openGuestFeatureLockModal === 'function') {
+      openGuestFeatureLockModal('cloze', 'Chế độ Điền Từ Đoạn Văn (β)', '🧩 🔒', 'Tính Năng Độc Quyền VocaVIP');
+    } else if (typeof openVipPricingModal === 'function') {
+      if (typeof showToast === 'function') {
+        showToast('👑 Chế độ Điền Từ (β) là tính năng nâng cao độc quyền dành riêng cho VocaVIP!');
+      }
+      openVipPricingModal();
+    } else {
+      alert('🔒 Chế độ Điền Từ Đoạn Văn (β) là tính năng độc quyền dành riêng cho thành viên VocaVIP!');
+    }
+    return;
+  }
+
+  // Issue 15: Check manual selection minimum (>= 5 words)
+  if (useSelection && typeof selectedWordIds !== 'undefined' && selectedWordIds && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+    alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để tạo bài tập Điền Từ Đoạn Văn (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+    return;
+  }
+
   clozeSetupUseSelection = useSelection;
   clozeSetupCustomWordList = customWordList;
   selectedClozeSetupDifficulty = currentClozeDifficulty;
@@ -165,7 +215,13 @@ function openClozeSetupModal(useSelection = false, customWordList = null) {
   else if (typeof words !== 'undefined' && typeof currentDeckId !== 'undefined') wordCount = words.filter(w => w.deckId === currentDeckId).length;
 
   const sub = document.getElementById('cloze-setup-subtitle');
-  if (sub) sub.textContent = `${wordCount} từ vựng sẵn sàng làm ngữ liệu sinh bài đọc`;
+  if (sub) {
+    if (wordCount < 5 && wordCount > 0) {
+      sub.textContent = `${wordCount} từ gốc (AI sẽ bổ sung thêm để đủ 5 từ sinh bài đọc)`;
+    } else {
+      sub.textContent = `${wordCount} từ vựng sẵn sàng làm ngữ liệu sinh bài đọc`;
+    }
+  }
 
   if (typeof openModal === 'function') openModal('modal-cloze-setup');
 }
@@ -197,12 +253,30 @@ async function confirmStartClozeFromModal() {
 // =========================================================================
 async function startClozeMode(fromSelection = false, customWordList = null, totalPassagesToGenerate = 1) {
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
+
+  // Issue 13: Cloze Mode VIP Check
+  if (typeof isUserVip === 'function' && !isUserVip()) {
+    const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
+    if (isGuest && typeof openGuestFeatureLockModal === 'function') {
+      openGuestFeatureLockModal('cloze', 'Chế độ Điền Từ Đoạn Văn (β)', '🧩 🔒', 'Tính Năng Độc Quyền VocaVIP');
+    } else if (typeof openVipPricingModal === 'function') {
+      openVipPricingModal();
+    }
+    return;
+  }
+
   if (typeof currentDeckId === 'undefined' && !customWordList) return;
   const deck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
   if (!deck && !customWordList) return;
 
   if (typeof studySourceContext !== 'undefined') {
     studySourceContext = customWordList ? 'review-queue' : 'deck';
+  }
+
+  // Issue 15: Check manual selection minimum
+  if (fromSelection && typeof selectedWordIds !== 'undefined' && selectedWordIds && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
+    alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để bắt đầu phiên học (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
+    return;
   }
 
   let targetWords = [];
@@ -217,6 +291,11 @@ async function startClozeMode(fromSelection = false, customWordList = null, tota
   if (targetWords.length === 0) {
     alert('Bộ từ này chưa có từ vựng nào để tạo bài tập điền từ Cloze Test!');
     return;
+  }
+
+  // Issue 15: AI Word Supplement if total words in deck/queue < 5
+  if (targetWords.length < 5) {
+    targetWords = ensureMinimumClozeWords(targetWords);
   }
 
   if (typeof isStudyShuffle !== 'undefined' && isStudyShuffle) {
@@ -310,10 +389,18 @@ async function loadAndRenderClozePassage(index) {
     // Show AI Generation Loading Placeholder
     if (passageBody) {
       passageBody.innerHTML = `
-        <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
-          <div style="font-size: 36px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 12px;">🧩</div>
-          <h4 style="margin: 0 0 6px 0; color: var(--text);">Gemini AI đang kiến tạo bài đọc ngữ cảnh...</h4>
-          <p style="font-size: 12.5px; margin: 0;">Lồng ghép từ vựng vào đoạn văn mạch lạc chuẩn văn phong bản ngữ</p>
+        <div style="text-align: center; padding: 45px 10px; color: var(--text-muted);">
+          <div class="ai-spinner-container">
+            <div class="ai-spinner-outer-ring"></div>
+            <div class="ai-spinner-inner-ring"></div>
+            <div class="ai-spinner-center-icon">🧩</div>
+          </div>
+          <h4 style="margin: 0 0 6px 0; color: var(--text); font-size: 16px; font-weight: 700;">
+            Gemini AI đang kiến tạo bài đọc ngữ cảnh<span class="ai-loading-dots"><span>.</span><span>.</span><span>.</span></span>
+          </h4>
+          <p style="font-size: 12.5px; margin: 0; color: var(--text-muted);">
+            Lồng ghép từ vựng vào đoạn văn mạch lạc chuẩn văn phong bản ngữ
+          </p>
         </div>
       `;
     }
@@ -405,8 +492,14 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
 
   try {
     const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
-    // Prioritize fast flash-lite models for ultra fast cloze generation
-    const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash'];
+    
+    // Issue 14: Use Deep / High-Reasoning Flash models for Hard & Expert to ensure superior quality and speed
+    const isHardOrExpert = (difficulty === 'hard' || difficulty === 'expert');
+    const modelsToTry = isHardOrExpert
+      ? ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash']
+      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-3.7-flash']);
+
+    const timeoutMs = isHardOrExpert ? 16000 : 12000;
 
     for (const k of keys) {
       if (genSuccess) break;
@@ -414,7 +507,7 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
         try {
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 18000);
+          const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
           const res = await fetch(url, {
             method: 'POST',
@@ -435,12 +528,13 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
             const resJson = await res.json();
             const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
             if (rawText) {
-              const parsed = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
+              const cleanJsonStr = rawText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+              const parsed = JSON.parse(cleanJsonStr);
               if (parsed && parsed.blanks && parsed.blanks.length > 0 && parsed.passageWithBlanks) {
                 resultData = parsed;
                 genSuccess = true;
                 if (typeof saveWorkingGeminiModel === 'function') {
-                  saveWorkingGeminiModel(m, 'fast');
+                  saveWorkingGeminiModel(m, isHardOrExpert ? 'deep' : 'fast');
                 }
                 break;
               }
