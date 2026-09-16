@@ -1,4 +1,28 @@
 ================================================================================
+Phiên bản: v0.10.10-20 (Build 321) - Tự Động Đăng Bài & Phát Thông Báo Phát Sáng @official Định Kỳ Theo Build (Issue 17), Thanh Chọn Chế Độ Học Phân Trang 2 Lượt Page 1 (Core) / Page 2 (Extended β) (Issue 18) & Tái Thiết Kế Thẻ Giải Thích Điền Từ 3 Tầng Trực Quan (Issue 19)
+================================================================================
+1. [Khắc Phục @official Tự Động Đăng Bài Thông Báo Cập Nhật Sau Mỗi Bản Build & Gửi Thông Báo Tím Phát Sáng (Issue 17) (03-auth.js)]:
+   - Xây dựng bảng đăng ký bản phát hành chính thức `VOCAFLOW_OFFICIAL_RELEASES_REGISTRY` tự động kiểm tra và đăng bài viết công bố tính năng mới từ tài khoản hệ thống `@official` lên VocaFlow Social Feed mỗi khi người dùng cập nhật lên build mới.
+   - Tự động kích hoạt thông báo hệ thống phát sáng màu tím (`isGlowing: true`, `type: 'system'`) dẫn trực tiếp đến bài viết của `@official`.
+   - Hỗ trợ lưu trữ idempotency qua `localStorage` và Firebase RTDB, đảm bảo mỗi build chỉ đăng duy nhất một bài viết và không bị nhân bản bài đăng.
+
+2. [Thanh Điều Hướng Chế Độ Học Phân Trang 2 Lượt Cốt Lõi vs Mở Rộng (Issue 18) (screen-deck-detail.html, modal-review-queue.html, 04-decks-manager.js, app.css)]:
+   - Tái cấu trúc thanh chọn chế độ học tại Header Bộ Từ (Deck Detail) và Hàng Đợi Ôn Tập (Review Queue) thành 2 trang trượt gọn gàng, tránh tràn viền giao diện:
+     + Trang 1 (Chế độ cốt lõi): Luyện Nói, Auto Flashcard, Chính Tả, Trắc Nghiệm kèm nút `Nâng cao (β) ➡️`.
+     + Trang 2 (Chế độ mở rộng nâng cao β): Nút `⬅️ Cơ bản`, Viết Câu (VIP β), Điền Từ (VIP β), Nghe Gõ Câu (VIP β, Sắp ra mắt), Dịch Thuật (VIP β, Sắp ra mắt).
+   - Tự động lưu và khôi phục trạng thái trang đã chọn qua `localStorage.getItem('vocaflow_deck_study_mode_page')`.
+
+3. [Tái Thiết Kế Thẻ Giải Thích Điền Từ Đoạn Văn Cloze 3 Tầng Trực Quan (Issue 19) (06d-cloze-engine.js, app.css)]:
+   - Nâng cấp phần giải thích sau khi chấm điểm Cloze Test từ dạng văn bản liền dòng thành 3 thẻ chuyên biệt (`.cloze-explanation-card`) với viền màu và icon sinh động:
+     + 🏛️ Vị Trí Ngữ Pháp & Cấu Trúc (Card xanh dương `.cloze-card-grammar`)
+     + 🔗 Cụm Từ & Collocation Cố Định (Card tím `.cloze-card-colloc`)
+     + 💡 Sắc Thái Ngữ Cảnh & Ý Nghĩa (Card vàng kim `.cloze-card-context`)
+   - Bổ sung huy hiệu thông báo cấu trúc song hành liên từ (and/or) hợp lệ khi người học đảo vị trí từ tương đương.
+
+4. [Đồng Bộ Toàn Diện 7-Point Version Consistency & 1-Click Multi-Deploy (v0.10.10-20 Build 321)]:
+   - Đồng bộ hóa 11 file hệ thống sang `v0.10.10-20 (Build 321)`, biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-20_Windows_Portable.zip` và đẩy mã nguồn lên 3 kho GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
+
+================================================================================
 Phiên bản: v0.10.10-19 (Build 320) - Khóa VIP Độc Quyền Điền Từ Cloze Test β, Nâng Cấp Model Flash Gemini Cho Chế Độ Khó & Siêu Khó, Quy Tắc Tối Thiểu 5 Từ Vựng Kèm Mở Rộng Từ Ngữ Cảnh Tự Động & Hoạt Họa AI Spinner Đa Vòng Sáng Tạo
 ================================================================================
 1. [Khóa VIP Độc Quyền Tính Năng Điền Từ Cloze Test β (06d-cloze-engine.js, 04-decks-manager.js, screen-deck-detail.html, modal-review-queue.html)]:

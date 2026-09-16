@@ -6518,11 +6518,50 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-14 / Build 315)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-20 / Build 321)
     // =========================================================================
-    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-14';
-    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_14';
-    const VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-14T18:00:00.000Z';
+    const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-20': {
+        postId: 'official_update_v0_10_10_20',
+        releaseTime: '2026-09-17T00:00:00.000Z',
+        title: '🚀 Ra mắt VocaFlow v0.10.10-20 (Build 321)!',
+        summary: 'Thanh điều hướng phân trang 2 trang chế độ học tập (4 Core Modes ↔ 4 Extended Modes β), Tái thiết kế giải thích ngữ pháp 3 tầng màu ô khuyết Cloze Test, và Tự động đăng bài định kỳ @official mỗi bản Build mới.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-20 (Build 321)!\n\n✨ Những điểm mới nổi bật:\n🗂️ Thanh Điều Hướng Phân Trang Chế Độ Học: Tách biệt gọn gàng giữa 4 Chế Độ Cốt Lõi (Luyện Nói, Auto Flashcard, Chính Tả, Trắc Nghiệm) và 4 Chế Độ Nâng Cao (Viết Câu VIP β, Điền Từ VIP β, Nghe Gõ Câu VIP β, Dịch Thuật VIP β) với nút mũi tên chuyển trang ⬅️/➡️ mượt mà.\n🎨 Tái Thiết Kế Thẻ Phân Tích 3 Tầng Màu Ô Khuyết: Bóc tách rõ ràng 3 thành phần (🏛️ Vị trí ngữ pháp, 🔗 Cụm từ/Collocation, 💡 Ngữ cảnh & Ý nghĩa) giúp người học nắm bắt bản chất ngữ liệu nhanh chóng và hứng thú.\n📢 Hệ Thống Đăng Bài Định Kỳ @official: Tự động cập nhật bài viết thông báo tính năng mới và phát thông báo tím sau mỗi bản cập nhật phần mềm.\n\nHãy trải nghiệm ngay phiên bản mới và cùng thảo luận bên dưới nhé! 🚀📚`
+      },
+      'v0.10.10-19': {
+        postId: 'official_update_v0_10_10_19',
+        releaseTime: '2026-09-16T23:30:00.000Z',
+        title: '👑 Ra mắt VocaFlow v0.10.10-19 (Build 320)!',
+        summary: 'Khóa VIP độc quyền Điền từ Cloze Test β, Nâng cấp Model Flash Gemini cho chế độ Khó & Siêu Khó, Quy tắc tối thiểu 5 từ vựng kèm AI mở rộng từ ngữ cảnh.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-19 (Build 320)!\n\n✨ Những điểm mới nổi bật:\n👑 Khóa VIP Độc Quyền Điền Từ Cloze Test β: Phân định Extended Learning Modes dành riêng cho VocaVIP.\n⚡ Model Flash Gemini Cao Cấp & Timeout 16s: Tăng tốc sinh đoạn văn đọc hiểu cho chế độ Khó & Siêu Khó, loại bỏ tình trạng chờ đợi quá lâu.\n🎯 Quy Tắc 5 Từ Tối Thiểu & AI Bổ Sung Từ Tự Động: Đảm bảo bài đọc và bài viết luôn có đủ dữ liệu phong phú.\n🌀 Vòng Xoay Đa Tầng Neon AI Spinner: Hiệu ứng trực quan chuyển động phát sáng khi AI đang soạn bài.\n\nChúc bạn có những giờ học tập hiệu quả cùng VocaFlow! 🌟`
+      },
+      'v0.10.10-18': {
+        postId: 'official_update_v0_10_10_18',
+        releaseTime: '2026-09-16T16:00:00.000Z',
+        title: '🧩 Hoàn thiện Điền Từ Cloze Test β & Sổ Tay Lỗi Sai (v0.10.10-18)!',
+        summary: 'Ghi nhận từ làm sai vào Sổ Tay Lỗi Sai, Mở khóa Cloze trong Hàng Đợi Ôn Tập, Modal tổng kết 5-Tile Dashboard chuẩn mực.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-18!\n\n✨ Những điểm mới nổi bật:\n📕 Tự động ghi nhận các ô khuyết điền sai vào Sổ Tay Lỗi Sai để ôn tập lại sau.\n🔔 Mở khóa tính năng Điền Từ (β) ngay trong Hàng Đợi Ôn Tập Hôm Nay.\n📊 Modal tổng kết hoàn thành bài học chuẩn 5-Tile Dashboard chuyên nghiệp.\n\nHãy trải nghiệm và nâng cao kỹ năng đọc hiểu nhé! 🚀`
+      },
+      'v0.10.10-17': {
+        postId: 'official_update_v0_10_10_17',
+        releaseTime: '2026-09-16T15:00:00.000Z',
+        title: '🚀 Tối ưu Cloze Test β & Chấm Điểm Song Hành (v0.10.10-17)!',
+        summary: 'Đồng bộ Ví VocaHint/Skip, Chấm điểm song hành giao hoán "and/or", Đánh dấu màu đỏ/xanh trực quan.',
+        content: `🎉 Bản cập nhật VocaFlow v0.10.10-17 mang đến những cải tiến vượt bậc:\n✨ Thuật toán ghép cặp song hành thông minh cho các cặp từ nối bởi and/or.\n🎨 Đánh dấu màu đỏ/xanh trực quan trên đoạn văn kèm đối chiếu đáp án.\n💰 Đồng bộ số lượng gợi ý và bỏ qua từ Ví thực tế.\n\nCùng khám phá ngay! 💫`
+      },
+      'v0.10.10-14': {
+        postId: 'official_update_v0_10_10_14',
+        releaseTime: '2026-09-14T18:00:00.000Z',
+        title: '🎉 Ra mắt VocaFlow v0.10.10-14!',
+        summary: 'Bình luận đa cấp, Trạng thái online, Mention @ thông minh, Realtime Notifications.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-14!\n\n✨ Những điểm mới nổi bật:\n💬 Bình Luận Đa Cấp & Quản Lý Bình Luận: Thụt lề câu trả lời trực quan như Facebook, hỗ trợ Sửa & Xóa bình luận của bản thân.\n🟢 Trạng Thái Hoạt Động (Online Status): Thể hiện trạng thái Đang hoạt động & Thời gian online gần nhất trong Hồ Sơ Cá Nhân.\n🏷️ Tag Mention @ Thông Minh: Gợi ý autocomplete @followers, @official và bạn bè.\n⚡ Thông Báo Realtime Tức Thì: Nhận thông báo tương tác, bình luận ngay lập tức.\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`
+      }
+    };
+    window.VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = VOCAFLOW_OFFICIAL_RELEASES_REGISTRY;
+
+    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-20';
+    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_20';
+    const VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-17T00:00:00.000Z';
 
     function getActiveSpecialEventInfo() {
       const now = new Date();
@@ -6756,117 +6795,133 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       // Also seed any active special sale/holiday events
       checkAndSeedOfficialEventPosts();
 
-      const seededPostKey = `vocaflow_seeded_post_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
-      const notifiedKey = `vocaflow_notified_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
+      const currentVerKey = (typeof VOCAFLOW_APP_VERSION !== 'undefined') ? VOCAFLOW_APP_VERSION : 'v0.10.10-20';
+      const releases = VOCAFLOW_OFFICIAL_RELEASES_REGISTRY || {};
+      const verKeys = Object.keys(releases);
 
-      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n💬 Bình Luận Đa Cấp & Quản Lý Bình Luận: Thụt lề câu trả lời trực quan như Facebook, hỗ trợ Sửa & Xóa bình luận của bản thân (giữ bia mộ 🪦 an toàn dữ liệu).\n🟢 Trạng Thái Hoạt Động (Online Status): Thể hiện trạng thái Đang hoạt động & Thời gian online gần nhất (làm tròn chuẩn xác kiểu Facebook) trong Hồ Sơ Cá Nhân.\n🏷️ Tag Mention @ Thông Minh: Gợi ý autocomplete @followers, @official và bạn bè; chuyển @username thành liên kết hồ sơ có thể nhấp; gửi thông báo nhắc tên đến người được tag.\n⚡ Thông Báo Realtime Tức Thì: Nhận thông báo tương tác, bình luận, nhắc tên ngay lập tức trong phiên học mà không cần tải lại trang.\n🛡️ Bảo toàn mốc thời gian phát hành: Chuẩn hóa thời gian phát hành bài viết chính thức @official vĩnh viễn không bị reset về "vừa xong".\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`;
+      // Iterate through registered versions (newest first)
+      for (const verKey of verKeys) {
+        const rel = releases[verKey];
+        if (!rel) continue;
 
-      let existingPost = null;
-      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
-        existingPost = communityPosts.find(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
-      }
+        const postId = rel.postId || `official_update_${verKey.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+        const releaseTime = rel.releaseTime || new Date().toISOString();
+        const seededPostKey = `vocaflow_seeded_post_${verKey}`;
+        const notifiedKey = `vocaflow_notified_${verKey}`;
 
-      const officialPostObj = {
-        id: VOCAFLOW_OFFICIAL_POST_ID,
-        targetVersion: VOCAFLOW_OFFICIAL_VERSION_KEY,
-        isOfficialUpdate: true,
-        authorUid: 'official',
-        authorName: 'VocaFlow Chuẩn',
-        authorHandle: 'official',
-        authorAvatar: 'icons/vocaflow_official_avatar.png',
-        authorVip: true,
-        authorVipTier: 'diamond',
-        content: officialPostContent,
-        image: null,
-        likesCount: existingPost?.likesCount || 215,
-        commentsCount: existingPost?.commentsCount || 0,
-        likes: existingPost?.likes || {},
-        comments: existingPost?.comments || {},
-        createdAt: existingPost?.createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
-        updatedAt: VOCAFLOW_OFFICIAL_RELEASE_TIME,
-        type: 'community',
-        tags: ['update', 'official', VOCAFLOW_OFFICIAL_VERSION_KEY]
-      };
-
-      // 1. Ensure Post is in communityPosts array & cache
-      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
-        const existingIdx = communityPosts.findIndex(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
-        if (existingIdx === -1) {
-          communityPosts.unshift(officialPostObj);
-        } else {
-          communityPosts[existingIdx] = {
-            ...officialPostObj,
-            createdAt: communityPosts[existingIdx].createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
-            likes: communityPosts[existingIdx].likes || {},
-            comments: communityPosts[existingIdx].comments || {}
-          };
+        let existingPost = null;
+        if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+          existingPost = communityPosts.find(p => p && (p.id === postId || p.targetVersion === verKey));
         }
-        try {
-          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
-        } catch (e) {}
-      }
 
-      // 2. Push to RTDB in background if online & not yet flagged
-      if (!localStorage.getItem(seededPostKey)) {
-        try {
-          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
-          const authParam = token ? `?auth=${token}` : '';
-          fetch(`${rtdbUrl}/community_posts/${VOCAFLOW_OFFICIAL_POST_ID}.json${authParam}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(officialPostObj)
-          }).then(() => {
-            localStorage.setItem(seededPostKey, 'true');
-          }).catch(() => {});
-        } catch (e) {}
-      }
-
-      // 3. Dispatch Purple Glowing Notification to Local State / RTDB
-      if (!localStorage.getItem(notifiedKey)) {
-        const notifId = `notif_official_${VOCAFLOW_OFFICIAL_VERSION_KEY.replace(/[^a-zA-Z0-9_]/g, '_')}`;
-        const officialNotif = {
-          id: notifId,
-          type: 'OFFICIAL_ANNOUNCEMENT',
-          actionType: 'VIEW_COMMUNITY_POST',
-          title: '⭐ VocaFlow Official',
-          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay Bình luận đa cấp, Trạng thái Online, Mention @ & Realtime Notification.`,
-          authorHandle: 'official',
-          authorName: 'VocaFlow Chuẩn',
+        const officialPostObj = {
+          id: postId,
+          targetVersion: verKey,
+          isOfficialUpdate: true,
           authorUid: 'official',
-          postId: VOCAFLOW_OFFICIAL_POST_ID,
-          isSpecialGlowing: true,
-          timestamp: VOCAFLOW_OFFICIAL_RELEASE_TIME,
-          isRead: false
+          authorName: 'VocaFlow Chuẩn',
+          authorHandle: 'official',
+          authorAvatar: 'icons/vocaflow_official_avatar.png',
+          authorVip: true,
+          authorVipTier: 'diamond',
+          content: rel.content,
+          image: null,
+          likesCount: existingPost?.likesCount || (verKey === currentVerKey ? 288 : 150),
+          commentsCount: existingPost?.commentsCount || 0,
+          likes: existingPost?.likes || {},
+          comments: existingPost?.comments || {},
+          createdAt: existingPost?.createdAt || releaseTime,
+          updatedAt: releaseTime,
+          type: 'community',
+          tags: ['update', 'official', verKey]
         };
 
-        if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
-          const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === VOCAFLOW_OFFICIAL_POST_ID));
-          if (!hasNotif) {
-            userNotifications.unshift(officialNotif);
-            try {
-              localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-            } catch (e) {}
-            if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
-            if (typeof renderNotificationsList === 'function') renderNotificationsList();
+        // 1. Ensure Post is in communityPosts array & cache
+        if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+          const existingIdx = communityPosts.findIndex(p => p && (p.id === postId || p.targetVersion === verKey));
+          if (existingIdx === -1) {
+            if (verKey === currentVerKey) {
+              communityPosts.unshift(officialPostObj);
+            } else {
+              communityPosts.push(officialPostObj);
+            }
+          } else {
+            communityPosts[existingIdx] = {
+              ...officialPostObj,
+              createdAt: communityPosts[existingIdx].createdAt || releaseTime,
+              likes: communityPosts[existingIdx].likes || {},
+              comments: communityPosts[existingIdx].comments || {}
+            };
           }
         }
 
-        // Save to RTDB for logged-in user
-        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        // 2. Push to RTDB in background if online & not yet flagged
+        if (!localStorage.getItem(seededPostKey)) {
           try {
             const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
             const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
             const authParam = token ? `?auth=${token}` : '';
-            fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+            fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(officialNotif)
+              body: JSON.stringify(officialPostObj)
+            }).then(() => {
+              localStorage.setItem(seededPostKey, 'true');
             }).catch(() => {});
           } catch (e) {}
         }
 
-        localStorage.setItem(notifiedKey, 'true');
+        // 3. Dispatch Purple Glowing Notification for active version
+        if (verKey === currentVerKey && !localStorage.getItem(notifiedKey)) {
+          const notifId = `notif_official_${verKey.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+          const officialNotif = {
+            id: notifId,
+            type: 'OFFICIAL_ANNOUNCEMENT',
+            actionType: 'VIEW_COMMUNITY_POST',
+            title: '⭐ VocaFlow Official',
+            message: `🚀 Bản cập nhật mới ${verKey} đã ra mắt! ${rel.summary || 'Khám phá ngay các tính năng học tập mới!'}`,
+            authorHandle: 'official',
+            authorName: 'VocaFlow Chuẩn',
+            authorUid: 'official',
+            postId: postId,
+            isSpecialGlowing: true,
+            timestamp: releaseTime,
+            isRead: false
+          };
+
+          if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
+            const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === postId));
+            if (!hasNotif) {
+              userNotifications.unshift(officialNotif);
+              try {
+                localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+              } catch (e) {}
+              if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+              if (typeof renderNotificationsList === 'function') renderNotificationsList();
+            }
+          }
+
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            try {
+              const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+              const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+              const authParam = token ? `?auth=${token}` : '';
+              fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(officialNotif)
+              }).catch(() => {});
+            } catch (e) {}
+          }
+
+          localStorage.setItem(notifiedKey, 'true');
+        }
+      }
+
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        try {
+          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        } catch (e) {}
       }
     }
     window.checkAndSeedOfficialUpdatePost = checkAndSeedOfficialUpdatePost;

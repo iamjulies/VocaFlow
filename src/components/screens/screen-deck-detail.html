@@ -68,24 +68,43 @@
           </div>
           
           <div class="selection-study-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
-              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
-              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
-              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
-              <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
-              <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
-            </button>
+            <!-- PAGE 1: 4 CORE LEARNING MODES -->
+            <div id="deck-study-page-1" class="study-modes-page" style="display: flex;">
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
+                <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
+                <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
+                <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
+                <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
+              </button>
+              <button class="study-mode-nav-btn nav-btn-next" id="btn-deck-study-page-next" onclick="switchDeckStudyModePage(2)" title="Chuyển sang 4 chế độ mở rộng nâng cao (VIP β)">
+                <span>Nâng cao (β)</span> <span>➡️</span>
+              </button>
+            </div>
+
+            <!-- PAGE 2: 4 EXTENDED LEARNING MODES (β) -->
+            <div id="deck-study-page-2" class="study-modes-page" style="display: none;">
+              <button class="study-mode-nav-btn nav-btn-prev" id="btn-deck-study-page-prev" onclick="switchDeckStudyModePage(1)" title="Quay lại 4 chế độ học cơ bản">
+                <span>⬅️</span> <span>Cơ bản</span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
+                <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+                <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;" id="btn-study-dictation-selected" onclick="showToast('🎧 Chế độ Nghe Gõ Câu (VIP β) đang được phát triển!')" title="Nghe cả câu và gõ lại (Sắp ra mắt)">
+                <span>🎧</span> <span>Nghe Gõ (β)</span>
+              </button>
+              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #059669, #047857); border: none;" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
+                <span>🌐</span> <span>Dịch Thuật (β)</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -184,7 +203,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-19 (Build 320)</span>
+            <span class="mini-footer-version">v0.10.10-20 (Build 321)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">

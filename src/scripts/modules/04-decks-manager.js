@@ -659,6 +659,59 @@
       }
     }
 
+    // =========================================================================
+    // 2-PAGE PAGINATED STUDY MODES NAVIGATOR (v0.10.10-20)
+    // =========================================================================
+    function switchDeckStudyModePage(page) {
+      const page1 = document.getElementById('deck-study-page-1');
+      const page2 = document.getElementById('deck-study-page-2');
+      if (!page1 || !page2) return;
+      const targetPage = page === 2 ? 2 : 1;
+      if (targetPage === 2) {
+        page1.style.display = 'none';
+        page2.style.display = 'flex';
+      } else {
+        page1.style.display = 'flex';
+        page2.style.display = 'none';
+      }
+      try {
+        localStorage.setItem('vocaflow_deck_study_mode_page', targetPage.toString());
+      } catch (e) {}
+    }
+
+    function initDeckStudyModePage() {
+      let savedPage = 1;
+      try {
+        savedPage = localStorage.getItem('vocaflow_deck_study_mode_page') === '2' ? 2 : 1;
+      } catch (e) {}
+      switchDeckStudyModePage(savedPage);
+    }
+
+    function switchReviewQueueStudyModePage(page) {
+      const page1 = document.getElementById('rq-study-page-1');
+      const page2 = document.getElementById('rq-study-page-2');
+      if (!page1 || !page2) return;
+      const targetPage = page === 2 ? 2 : 1;
+      if (targetPage === 2) {
+        page1.style.display = 'none';
+        page2.style.display = 'grid';
+      } else {
+        page1.style.display = 'grid';
+        page2.style.display = 'none';
+      }
+      try {
+        localStorage.setItem('vocaflow_rq_study_mode_page', targetPage.toString());
+      } catch (e) {}
+    }
+
+    function initReviewQueueStudyModePage() {
+      let savedPage = 1;
+      try {
+        savedPage = localStorage.getItem('vocaflow_rq_study_mode_page') === '2' ? 2 : 1;
+      } catch (e) {}
+      switchReviewQueueStudyModePage(savedPage);
+    }
+
     function deleteSelectedWords() {
       if (selectedWordIds.size === 0) return;
       if (!confirm('Bạn có chắc chắn muốn xóa ' + selectedWordIds.size + ' từ vựng đã chọn?')) return;
@@ -1203,6 +1256,7 @@
       applyUiFilterSettings();
       renderWordList();
       updateSelectionUI();
+      initDeckStudyModePage();
       showScreen('screen-deck-detail');
     }
 
@@ -2267,6 +2321,7 @@
         filterAndRenderReviewQueue();
       }
 
+      initReviewQueueStudyModePage();
       openModal('modal-review-queue');
     }
 

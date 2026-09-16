@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-19 Build 320 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-20 Build 321 - EXTENDED LEARNING MODE BETA)
 // AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
 // =========================================================================
 
@@ -1466,23 +1466,111 @@ function evaluateClozeResults() {
   const scoreBadge = document.getElementById('cloze-score-badge');
   if (scoreBadge) scoreBadge.textContent = `Bài: +${clozeSessionPointsEarned}đ`;
 
+    // =========================================================================
+    // 3-TIER STRUCTURED CLOZE EXPLANATION CARDS FORMATTER (v0.10.10-20)
+    // =========================================================================
+    function formatClozeExplanationHTML(explanationText) {
+      if (!explanationText || typeof explanationText !== 'string') return '';
+      
+      let text = explanationText.trim();
+      let coordinatePrefix = '';
+
+      // Extract coordinate swap notice if present
+      if (text.includes('Vị trí song hành hợp lệ')) {
+        coordinatePrefix = `
+          <div style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.35); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 12px; color: #d8b4fe; display: flex; align-items: center; gap: 6px;">
+            <span>✨</span> <span><strong>Vị trí song hành hợp lệ:</strong> Bạn đã điền từ này trong cấu trúc song hành liên từ (and/or). Vị trí này hoàn toàn chính xác!</span>
+          </div>
+        `;
+        text = text.replace(/✨\s*<em>\(Vị trí song hành hợp lệ\):<\/em>[^.]*\.\s*/i, '').replace(/✨\s*\(Vị trí song hành hợp lệ\):[^.]*\.\s*/i, '');
+      }
+
+      // Regex for (a)/(b)/(c) or 1./2./3. or a./b./c. or •
+      let grammar = '', colloc = '', context = '';
+
+      // Try matching standard (a), (b), (c)
+      const matchABC = text.match(/(?:(?:\(a\)|(?:^|\s)a[\.\)]|Vị trí ngữ pháp:?|1[\.\)]))\s*([\s\S]*?)(?=(?:\(b\)|(?:^|\s)b[\.\)]|Cụm từ:?|2[\.\)]|$))(?:(?:\(b\)|(?:^|\s)b[\.\)]|Cụm từ:?|2[\.\)]))\s*([\s\S]*?)(?=(?:\(c\)|(?:^|\s)c[\.\)]|Ngữ cảnh:?|3[\.\)]|$))(?:(?:\(c\)|(?:^|\s)c[\.\)]|Ngữ cảnh:?|3[\.\)]))\s*([\s\S]*?)$/i);
+
+      if (matchABC) {
+        grammar = matchABC[1].trim().replace(/^[-:•]\s*/, '');
+        colloc = matchABC[2].trim().replace(/^[-:•]\s*/, '');
+        context = matchABC[3].trim().replace(/^[-:•]\s*/, '');
+      } else {
+        // If not matched fully, let's look for (a), (b), (c) individually
+        const matchA = text.match(/(?:\(a\)|a[\.\)]|Vị trí ngữ pháp:?)\s*([^()]+?)(?=(?:\([bc]\)|[bc][\.\)]|Cụm từ:|Ngữ cảnh:|$))/i);
+        const matchB = text.match(/(?:\(b\)|b[\.\)]|Cụm từ:?)\s*([^()]+?)(?=(?:\([ac]\)|[ac][\.\)]|Vị trí ngữ pháp:|Ngữ cảnh:|$))/i);
+        const matchC = text.match(/(?:\(c\)|c[\.\)]|Ngữ cảnh:?)\s*([\s\S]+?)$/i);
+
+        if (matchA || matchB || matchC) {
+          if (matchA) grammar = matchA[1].trim().replace(/^[-:•]\s*/, '');
+          if (matchB) colloc = matchB[1].trim().replace(/^[-:•]\s*/, '');
+          if (matchC) context = matchC[1].trim().replace(/^[-:•]\s*/, '');
+        }
+      }
+
+      if (grammar || colloc || context) {
+        return `
+          ${coordinatePrefix}
+          <div class="cloze-explanation-container">
+            ${grammar ? `
+              <div class="cloze-explanation-card cloze-card-grammar">
+                <div class="cloze-card-title">
+                  <span>🏛️</span> <span>Vị Trí Ngữ Pháp & Cấu Trúc</span>
+                </div>
+                <div class="cloze-card-body">${grammar}</div>
+              </div>
+            ` : ''}
+            ${colloc ? `
+              <div class="cloze-explanation-card cloze-card-colloc">
+                <div class="cloze-card-title">
+                  <span>🔗</span> <span>Cụm Từ & Collocation Cố Định</span>
+                </div>
+                <div class="cloze-card-body">${colloc}</div>
+              </div>
+            ` : ''}
+            ${context ? `
+              <div class="cloze-explanation-card cloze-card-context">
+                <div class="cloze-card-title">
+                  <span>💡</span> <span>Sắc Thái Ngữ Cảnh & Ý Nghĩa</span>
+                </div>
+                <div class="cloze-card-body">${context}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      // Fallback for general text
+      return `
+        ${coordinatePrefix}
+        <div class="cloze-explanation-container">
+          <div class="cloze-explanation-card cloze-card-context">
+            <div class="cloze-card-title">
+              <span>💡</span> <span>Phân Tích & Giải Thích Chi Tiết</span>
+            </div>
+            <div class="cloze-card-body">${text}</div>
+          </div>
+        </div>
+      `;
+    }
+
   // Render detailed blank-by-blank feedback
   const feedbackList = document.getElementById('cloze-blanks-feedback-list');
   if (feedbackList) {
     feedbackList.innerHTML = detailedFeedback.map(item => `
-      <div style="background: var(--surface-elevated); border: 1px solid ${item.isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px;">
-        <span style="font-size: 16px; margin-top: 1px;">${item.isCorrect ? '✅' : '❌'}</span>
-        <div style="flex: 1;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-wrap: wrap; gap: 6px;">
+      <div style="background: var(--surface-elevated); border: 1px solid ${item.isCorrect ? 'rgba(16,185,129,0.35)' : 'rgba(239,68,68,0.35)'}; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">${item.isCorrect ? '✅' : '❌'}</span>
             <div>
-              <strong style="color: var(--text); font-size: 13px;">Ô [${item.index}]: </strong>
-              <span style="color: ${item.isCorrect ? '#34d399' : '#f87171'}; font-weight: 700; font-size: 13.5px;">${item.userWord}</span>
-              ${!item.isCorrect ? `<span style="color: var(--text-muted); font-size: 12px;"> -> Đáp án đúng: <strong style="color: #34d399;">${item.correctWord}</strong></span>` : ''}
+              <strong style="color: var(--text); font-size: 13.5px;">Ô [${item.index}]: </strong>
+              <span style="color: ${item.isCorrect ? '#34d399' : '#f87171'}; font-weight: 800; font-size: 14px;">${item.userWord}</span>
+              ${!item.isCorrect ? `<span style="color: var(--text-muted); font-size: 12.5px; margin-left: 4px;"> ➜ Đáp án đúng: <strong style="color: #34d399; font-size: 13.5px;">${item.correctWord}</strong></span>` : ''}
             </div>
-            <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10.5px;">${item.partOfSpeech || 'word'}</span>
           </div>
-          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">${item.explanationVi}</div>
+          <span class="badge" style="background: rgba(99,102,241,0.18); color: #a5b4fc; font-size: 11px; font-weight: 700; border: 1px solid rgba(99,102,241,0.3); padding: 2px 8px;">${item.partOfSpeech || 'word'}</span>
         </div>
+        ${formatClozeExplanationHTML(item.explanationVi)}
       </div>
     `).join('');
   }

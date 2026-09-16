@@ -1,43 +1,43 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-19 (Build 320)`  
-> **Cập nhật lần cuối:** 2026-09-16  
+> **Phiên bản mục tiêu:** `v0.10.10-20 (Build 321)`  
+> **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **HOÀN TẤT TRIỂN KHAI & KIỂM THỬ CDP 100% [PASS] -> TIẾN HÀNH MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-19 Build 320)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-20 Build 321)
 
 - [x] **Quy hoạch Chế độ Học tập & Đánh dấu Extended Learning Modes (β)**:
-  - 4 Chế độ cốt lõi (Learning Modes): Flashcard, Auto Flashcard, Spelling, Speaking, Quiz.
-  - 4 Chế độ mở rộng nâng cao (Extended Learning Modes β): Sentence Writing Lab β, Cloze Test β (sắp tới: Dictation β, Translation β).
+  - 4 Chế độ cốt lõi (Learning Modes): Luyện Nói (Speaking), Auto Flashcard, Chính Tả (Spelling), Trắc Nghiệm (Quiz).
+  - 4 Chế độ mở rộng nâng cao (Extended Learning Modes β): Viết Câu (VIP β), Điền Từ (VIP β), Nghe Gõ Câu (VIP β - Sắp ra mắt), Dịch Thuật (VIP β - Sắp ra mắt).
 
-- [x] **Vấn đề 13: Khóa VIP Độc Quyền Cho Chế Độ Điền Từ Cloze Test β (`06d-cloze-engine.js`, `04-decks-manager.js`, `screen-deck-detail.html`, `modal-review-queue.html`)**:
-  - Gated tính năng Cloze Test qua `isUserVip()`. Người dùng chưa đăng nhập (Guest) hoặc người dùng thường (Free) bị chặn truy cập với thông báo modal nâng cấp VocaVIP (`openVipPricingModal()` / `openGuestFeatureLockModal()`).
-  - Thêm huy hiệu vương miện VIP: `👑 Điền Từ (VIP β)` tại Deck Detail và Hàng Đợi Ôn Tập (Review Queue).
+- [x] **Vấn đề 17: Tự Động Đăng Bài & Phát Thông Báo Phát Sáng @official Định Kỳ Theo Build (`03-auth.js`)**:
+  - Triển khai `VOCAFLOW_OFFICIAL_RELEASES_REGISTRY` chứa danh mục bài đăng cho tất cả các build (từ v0.10.10-14 đến v0.10.10-20).
+  - Khi người dùng cập nhật lên build mới, hệ thống tự động kiểm tra `localStorage` và Firebase RTDB để tạo bài viết công bố từ `@official` nếu chưa có, đồng thời gửi thông báo hệ thống phát sáng tím (`isGlowing: true`).
 
-- [x] **Vấn đề 14: Model Tiers Cao Cấp & Cơ Chế Timeout 16s Cho Cloze Test Khó & Siêu Khó (`06d-cloze-engine.js`)**:
-  - Khi tạo đoạn văn ở cấp độ `hard` và `expert`, hệ thống ưu tiên các model Flash có năng lực lập luận cao (`gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.8-flash`, `gemini-3.5-flash`) thay vì dùng lite models.
-  - Bổ sung cơ chế timeout 16s mỗi model request và tự động fallback nhanh, ngăn chặn triệt để tình trạng treo màn hình chờ >1 phút.
+- [x] **Vấn đề 18: Thanh Chọn Chế Độ Học Phân Trang 2 Lượt Cốt Lõi vs Mở Rộng (`screen-deck-detail.html`, `modal-review-queue.html`, `04-decks-manager.js`, `app.css`)**:
+  - Tách header chế độ học dài thành 2 trang trượt:
+    + Trang 1: 4 Chế độ cốt lõi + Nút `Nâng cao (β) ➡️` (`#btn-deck-study-page-next`).
+    + Trang 2: Nút `⬅️ Cơ bản` (`#btn-deck-study-page-prev`) + 4 Chế độ mở rộng nâng cao (Viết Câu, Điền Từ, Nghe Gõ Câu, Dịch Thuật).
+  - Trạng thái trang được lưu trong `localStorage.getItem('vocaflow_deck_study_mode_page')`.
 
-- [x] **Vấn đề 15: Quy Tắc Tối Thiểu 5 Từ Vựng & Mở Rộng Từ Ngữ Cảnh AI Tự Động (`06d-cloze-engine.js`, `06c-writing-engine.js`, `04-decks-manager.js`, `05-quiz-engine.js`, `06-spelling-engine.js`, `07-speaking-engine.js`)**:
-  - Khi người học tự chọn từ vựng thủ công mà số lượng < 5 từ: Chặn khởi tạo trên tất cả 8 chế độ học tập với cảnh báo `⚠️ Vui lòng chọn tối thiểu 5 từ vựng để bắt đầu phiên học tập!`.
-  - Khi bộ từ hoặc hàng đợi có sẵn < 5 từ hiện hữu:
-    + 4 chế độ cốt lõi (Flashcard, Auto Flashcard, Spelling, Speaking, Quiz): Chặn khởi tạo và yêu cầu thêm từ vào bộ từ.
-    + 2 chế độ mở rộng nâng cao (Writing Lab β, Cloze Test β): AI tự động bổ sung thêm các từ vựng mở rộng cùng chủ đề (`ensureMinimumClozeWords`, `ensureMinimumWritingWords`) để đạt tối thiểu >= 5 từ, giúp tạo đoạn văn phong phú và hấp dẫn.
+- [x] **Vấn đề 19: Tái Thiết Kế Thẻ Giải Thích Điền Từ Đoạn Văn Cloze 3 Tầng Trực Quan (`06d-cloze-engine.js`, `app.css`)**:
+  - Thay thế văn bản giải thích liền mạch bằng 3 thẻ (`.cloze-explanation-card`) có viền màu sắc và biểu tượng trực quan:
+    + 🏛️ Vị Trí Ngữ Pháp & Cấu Trúc (`.cloze-card-grammar`)
+    + 🔗 Cụm Từ & Collocation Cố Định (`.cloze-card-colloc`)
+    + 💡 Sắc Thái Ngữ Cảnh & Ý Nghĩa (`.cloze-card-context`)
+  - Tự động hiển thị huy hiệu thông báo cấu trúc song hành liên từ (and/or) hợp lệ.
 
-- [x] **Vấn đề 16: Dynamic Animated AI Loading Spinner Đa Vòng Sáng Tạo (`app.css`, `screen-cloze.html`, `06d-cloze-engine.js`)**:
-  - Thay thế icon tĩnh 🧩 bằng vòng xoay AI đa tầng phát sáng (`.ai-spinner-container`, `.ai-spinner-outer-ring`, `.ai-spinner-inner-ring`, `.ai-spinner-center-icon`) kết hợp sóng hiệu ứng chấm nhảy (`.ai-loading-dots`).
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-19 Build 320`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-19 (Build 320)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-19 (Build 320)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-19 (Build 320)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-19 Build 320`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-19'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-19 (Build 320)'`)
-  - `src/scripts/modules/06d-cloze-engine.js` (`v0.10.10-19 Build 320`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-19`)
-  - `pubspec.yaml` (`version: 0.10.10+320`)
-  - `VocaFlow_Desktop/Program.cs` (`v0.10.10-19`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-19 (Build 320)`)
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-20 Build 321`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-20 (Build 321)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-20 (Build 321)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-20 (Build 321)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-20 Build 321`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-20'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-20 (Build 321)'`)
+  - `src/scripts/modules/06d-cloze-engine.js` (`v0.10.10-20 Build 321`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-20`)
+  - `pubspec.yaml` (`version: 0.10.10+321`)
+  - `VocaFlow_Desktop/Program.cs` (`v0.10.10-20`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-20 (Build 321)`)
   - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`

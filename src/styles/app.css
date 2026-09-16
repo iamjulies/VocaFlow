@@ -4540,6 +4540,176 @@
     .ai-loading-dots span:nth-child(2) { animation-delay: -0.16s; }
     .ai-loading-dots span:nth-child(3) { animation-delay: 0s; }
 
+    /* ========================================================================= */
+    /* 2-PAGE PAGINATED HEADER FOR LEARNING MODES (v0.10.10-20)                   */
+    /* ========================================================================= */
+    .study-modes-page {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .study-mode-nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      height: 30px;
+      box-sizing: border-box;
+    }
+
+    .study-mode-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .study-mode-nav-btn.nav-btn-next {
+      border-color: rgba(168, 85, 247, 0.45);
+      color: #c084fc;
+      background: rgba(168, 85, 247, 0.14);
+    }
+
+    .study-mode-nav-btn.nav-btn-next:hover {
+      background: rgba(168, 85, 247, 0.28);
+      border-color: #a855f7;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+    }
+
+    .study-mode-nav-btn.nav-btn-prev {
+      border-color: rgba(99, 102, 241, 0.45);
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.14);
+    }
+
+    .study-mode-nav-btn.nav-btn-prev:hover {
+      background: rgba(99, 102, 241, 0.28);
+      border-color: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .study-mode-btn-disabled {
+      opacity: 0.55;
+      cursor: not-allowed !important;
+      filter: grayscale(0.2);
+    }
+
+    .study-mode-btn-disabled:hover {
+      transform: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .study-modes-page {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .study-modes-page .btn,
+      .study-modes-page .study-mode-nav-btn {
+        width: 100%;
+        min-width: 0;
+        padding: 4px 2px;
+        font-size: 11px;
+        font-weight: 700;
+        justify-content: center;
+        height: 28px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+        border-radius: 6px;
+      }
+      .study-modes-page .nav-btn-next,
+      .study-modes-page .nav-btn-prev {
+        grid-column: span 2;
+      }
+    }
+
+    /* ========================================================================= */
+    /* 3-TIER STRUCTURED CLOZE EXPLANATION CARDS (v0.10.10-20)                    */
+    /* ========================================================================= */
+    .cloze-explanation-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .cloze-explanation-card {
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: var(--surface-elevated, rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s ease;
+    }
+
+    .cloze-explanation-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .cloze-card-grammar {
+      border-left: 4px solid #38bdf8;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.09), rgba(14, 165, 233, 0.02));
+    }
+
+    .cloze-card-colloc {
+      border-left: 4px solid #c084fc;
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.09), rgba(168, 85, 247, 0.02));
+    }
+
+    .cloze-card-context {
+      border-left: 4px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.09), rgba(245, 158, 11, 0.02));
+    }
+
+    .cloze-card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cloze-card-grammar .cloze-card-title {
+      color: #38bdf8;
+    }
+
+    .cloze-card-colloc .cloze-card-title {
+      color: #c084fc;
+    }
+
+    .cloze-card-context .cloze-card-title {
+      color: #fbbf24;
+    }
+
+    .cloze-card-body {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text, #e2e8f0);
+    }
+
+
 
 
 

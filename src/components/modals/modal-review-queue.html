@@ -9,25 +9,44 @@
       </div>
 
       <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
-        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
-          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
-          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Chính Tả</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
-          <span>✍️</span> <span id="label-review-writing">Viết Câu (β)</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(2,132,199,0.3);" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
-          <span>👑</span> <span id="label-review-cloze">Điền Từ (VIP β)</span>
-        </button>
+      <div style="margin-bottom: 14px;">
+        <!-- PAGE 1: 4 CORE MODES -->
+        <div id="rq-study-page-1" class="study-modes-page" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+          <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+            <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+            <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+            <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Chính Tả</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+            <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
+          </button>
+          <button class="study-mode-nav-btn nav-btn-next" id="btn-rq-study-page-next" onclick="switchReviewQueueStudyModePage(2)" style="height: auto; padding: 8px;" title="Chuyển sang các chế độ mở rộng nâng cao (VIP β)">
+            <span>Nâng cao (β)</span> <span>➡️</span>
+          </button>
+        </div>
+
+        <!-- PAGE 2: 4 EXTENDED MODES (β) -->
+        <div id="rq-study-page-2" class="study-modes-page" style="display: none; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+          <button class="study-mode-nav-btn nav-btn-prev" id="btn-rq-study-page-prev" onclick="switchReviewQueueStudyModePage(1)" style="height: auto; padding: 8px;" title="Quay lại các chế độ cơ bản">
+            <span>⬅️</span> <span>Cơ bản</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
+            <span>👑</span> <span id="label-review-writing">Viết Câu (VIP β)</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(2,132,199,0.3);" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+            <span>👑</span> <span id="label-review-cloze">Điền Từ (VIP β)</span>
+          </button>
+          <button class="btn btn-primary study-mode-btn-disabled" id="btn-review-dictation" onclick="showToast('🎧 Chế độ Nghe Gõ Câu (VIP β) đang được phát triển!')" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Nghe cả câu và gõ lại (Sắp ra mắt)">
+            <span>🎧</span> <span>Nghe Gõ (β)</span>
+          </button>
+          <button class="btn btn-primary study-mode-btn-disabled" id="btn-review-translation" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" style="background: linear-gradient(135deg, #059669, #047857); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Dịch thuật song phương (Sắp ra mắt)">
+            <span>🌐</span> <span>Dịch Thuật (β)</span>
+          </button>
+        </div>
       </div>
 
       <!-- Quick Preset Batch Pills (Subset Review) -->

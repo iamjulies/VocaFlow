@@ -4566,6 +4566,176 @@
     .ai-loading-dots span:nth-child(2) { animation-delay: -0.16s; }
     .ai-loading-dots span:nth-child(3) { animation-delay: 0s; }
 
+    /* ========================================================================= */
+    /* 2-PAGE PAGINATED HEADER FOR LEARNING MODES (v0.10.10-20)                   */
+    /* ========================================================================= */
+    .study-modes-page {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .study-mode-nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      height: 30px;
+      box-sizing: border-box;
+    }
+
+    .study-mode-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .study-mode-nav-btn.nav-btn-next {
+      border-color: rgba(168, 85, 247, 0.45);
+      color: #c084fc;
+      background: rgba(168, 85, 247, 0.14);
+    }
+
+    .study-mode-nav-btn.nav-btn-next:hover {
+      background: rgba(168, 85, 247, 0.28);
+      border-color: #a855f7;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+    }
+
+    .study-mode-nav-btn.nav-btn-prev {
+      border-color: rgba(99, 102, 241, 0.45);
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.14);
+    }
+
+    .study-mode-nav-btn.nav-btn-prev:hover {
+      background: rgba(99, 102, 241, 0.28);
+      border-color: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .study-mode-btn-disabled {
+      opacity: 0.55;
+      cursor: not-allowed !important;
+      filter: grayscale(0.2);
+    }
+
+    .study-mode-btn-disabled:hover {
+      transform: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .study-modes-page {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .study-modes-page .btn,
+      .study-modes-page .study-mode-nav-btn {
+        width: 100%;
+        min-width: 0;
+        padding: 4px 2px;
+        font-size: 11px;
+        font-weight: 700;
+        justify-content: center;
+        height: 28px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+        border-radius: 6px;
+      }
+      .study-modes-page .nav-btn-next,
+      .study-modes-page .nav-btn-prev {
+        grid-column: span 2;
+      }
+    }
+
+    /* ========================================================================= */
+    /* 3-TIER STRUCTURED CLOZE EXPLANATION CARDS (v0.10.10-20)                    */
+    /* ========================================================================= */
+    .cloze-explanation-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .cloze-explanation-card {
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: var(--surface-elevated, rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s ease;
+    }
+
+    .cloze-explanation-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .cloze-card-grammar {
+      border-left: 4px solid #38bdf8;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.09), rgba(14, 165, 233, 0.02));
+    }
+
+    .cloze-card-colloc {
+      border-left: 4px solid #c084fc;
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.09), rgba(168, 85, 247, 0.02));
+    }
+
+    .cloze-card-context {
+      border-left: 4px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.09), rgba(245, 158, 11, 0.02));
+    }
+
+    .cloze-card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cloze-card-grammar .cloze-card-title {
+      color: #38bdf8;
+    }
+
+    .cloze-card-colloc .cloze-card-title {
+      color: #c084fc;
+    }
+
+    .cloze-card-context .cloze-card-title {
+      color: #fbbf24;
+    }
+
+    .cloze-card-body {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text, #e2e8f0);
+    }
+
+
 
 
 
@@ -4878,7 +5048,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-19 (Build 320)</span>
+            <span class="mini-footer-version">v0.10.10-20 (Build 321)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4967,24 +5137,43 @@
           </div>
           
           <div class="selection-study-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
-              <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
-              <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
-              <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
-              <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
-              <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
-            </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
-              <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
-            </button>
+            <!-- PAGE 1: 4 CORE LEARNING MODES -->
+            <div id="deck-study-page-1" class="study-modes-page" style="display: flex;">
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none;" onclick="openSpeakingSetupModal(true)" id="btn-study-speaking-selected" title="Luyện phát âm & chấm điểm bằng AI (Speaking Lab)">
+                <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span>Luyện Nói</span><span id="speaking-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); border: none;" onclick="startAutoFlashcardMode(true)" id="btn-study-autofc-selected" title="Auto Flashcard đọc tự động rảnh tay">
+                <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span>Auto Flashcard</span><span id="autofc-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openSpellingSetupModal(true)" id="btn-study-spelling-selected" title="Luyện viết chính tả & điền khuyết (Spelling)">
+                <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span>Chính Tả</span><span id="spelling-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
+                <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
+              </button>
+              <button class="study-mode-nav-btn nav-btn-next" id="btn-deck-study-page-next" onclick="switchDeckStudyModePage(2)" title="Chuyển sang 4 chế độ mở rộng nâng cao (VIP β)">
+                <span>Nâng cao (β)</span> <span>➡️</span>
+              </button>
+            </div>
+
+            <!-- PAGE 2: 4 EXTENDED LEARNING MODES (β) -->
+            <div id="deck-study-page-2" class="study-modes-page" style="display: none;">
+              <button class="study-mode-nav-btn nav-btn-prev" id="btn-deck-study-page-prev" onclick="switchDeckStudyModePage(1)" title="Quay lại 4 chế độ học cơ bản">
+                <span>⬅️</span> <span>Cơ bản</span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
+                <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+                <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
+              </button>
+              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;" id="btn-study-dictation-selected" onclick="showToast('🎧 Chế độ Nghe Gõ Câu (VIP β) đang được phát triển!')" title="Nghe cả câu và gõ lại (Sắp ra mắt)">
+                <span>🎧</span> <span>Nghe Gõ (β)</span>
+              </button>
+              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #059669, #047857); border: none;" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
+                <span>🌐</span> <span>Dịch Thuật (β)</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -5083,7 +5272,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-19 (Build 320)</span>
+            <span class="mini-footer-version">v0.10.10-20 (Build 321)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -8330,25 +8519,44 @@
       </div>
 
       <!-- Quick Action Buttons for Due Words with Dynamic Word Count -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
-        <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
-          <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
-          <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
-          <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Chính Tả</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
-          <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
-          <span>✍️</span> <span id="label-review-writing">Viết Câu (β)</span>
-        </button>
-        <button class="btn btn-primary" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(2,132,199,0.3);" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
-          <span>👑</span> <span id="label-review-cloze">Điền Từ (VIP β)</span>
-        </button>
+      <div style="margin-bottom: 14px;">
+        <!-- PAGE 1: 4 CORE MODES -->
+        <div id="rq-study-page-1" class="study-modes-page" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+          <button class="btn btn-primary" id="btn-review-speaking" onclick="launchReviewDueWords('speaking')" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(236,72,153,0.3);">
+            <svg class="icon icon-sm"><use href="#i-mic"/></svg> <span id="label-review-speaking">Luyện Nói</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-autofc" onclick="launchReviewDueWords('autofc')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+            <svg class="icon icon-sm"><use href="#i-headphones"/></svg> <span id="label-review-autofc">Auto Flashcard</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-spelling" onclick="launchReviewDueWords('spelling')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(245,158,11,0.3);">
+            <svg class="icon icon-sm"><use href="#i-edit"/></svg> <span id="label-review-spelling">Chính Tả</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-quiz" onclick="launchReviewDueWords('quiz')" style="background: linear-gradient(135deg, #6366f1, #ec4899); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+            <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span id="label-review-quiz">Trắc Nghiệm</span>
+          </button>
+          <button class="study-mode-nav-btn nav-btn-next" id="btn-rq-study-page-next" onclick="switchReviewQueueStudyModePage(2)" style="height: auto; padding: 8px;" title="Chuyển sang các chế độ mở rộng nâng cao (VIP β)">
+            <span>Nâng cao (β)</span> <span>➡️</span>
+          </button>
+        </div>
+
+        <!-- PAGE 2: 4 EXTENDED MODES (β) -->
+        <div id="rq-study-page-2" class="study-modes-page" style="display: none; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+          <button class="study-mode-nav-btn nav-btn-prev" id="btn-rq-study-page-prev" onclick="switchReviewQueueStudyModePage(1)" style="height: auto; padding: 8px;" title="Quay lại các chế độ cơ bản">
+            <span>⬅️</span> <span>Cơ bản</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
+            <span>👑</span> <span id="label-review-writing">Viết Câu (VIP β)</span>
+          </button>
+          <button class="btn btn-primary" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(2,132,199,0.3);" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+            <span>👑</span> <span id="label-review-cloze">Điền Từ (VIP β)</span>
+          </button>
+          <button class="btn btn-primary study-mode-btn-disabled" id="btn-review-dictation" onclick="showToast('🎧 Chế độ Nghe Gõ Câu (VIP β) đang được phát triển!')" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Nghe cả câu và gõ lại (Sắp ra mắt)">
+            <span>🎧</span> <span>Nghe Gõ (β)</span>
+          </button>
+          <button class="btn btn-primary study-mode-btn-disabled" id="btn-review-translation" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" style="background: linear-gradient(135deg, #059669, #047857); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Dịch thuật song phương (Sắp ra mắt)">
+            <span>🌐</span> <span>Dịch Thuật (β)</span>
+          </button>
+        </div>
       </div>
 
       <!-- Quick Preset Batch Pills (Subset Review) -->
@@ -10739,7 +10947,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-19 (Build 320)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-20 (Build 321)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12072,7 +12280,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-19 Build 320)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-20 Build 321)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -12525,15 +12733,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-19 Build 320)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-20 Build 321)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-19 Build 320)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-20 Build 321)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-19';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-19 (Build 320)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-20';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-20 (Build 321)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -23104,11 +23312,50 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-14 / Build 315)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-20 / Build 321)
     // =========================================================================
-    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-14';
-    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_14';
-    const VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-14T18:00:00.000Z';
+    const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-20': {
+        postId: 'official_update_v0_10_10_20',
+        releaseTime: '2026-09-17T00:00:00.000Z',
+        title: '🚀 Ra mắt VocaFlow v0.10.10-20 (Build 321)!',
+        summary: 'Thanh điều hướng phân trang 2 trang chế độ học tập (4 Core Modes ↔ 4 Extended Modes β), Tái thiết kế giải thích ngữ pháp 3 tầng màu ô khuyết Cloze Test, và Tự động đăng bài định kỳ @official mỗi bản Build mới.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-20 (Build 321)!\n\n✨ Những điểm mới nổi bật:\n🗂️ Thanh Điều Hướng Phân Trang Chế Độ Học: Tách biệt gọn gàng giữa 4 Chế Độ Cốt Lõi (Luyện Nói, Auto Flashcard, Chính Tả, Trắc Nghiệm) và 4 Chế Độ Nâng Cao (Viết Câu VIP β, Điền Từ VIP β, Nghe Gõ Câu VIP β, Dịch Thuật VIP β) với nút mũi tên chuyển trang ⬅️/➡️ mượt mà.\n🎨 Tái Thiết Kế Thẻ Phân Tích 3 Tầng Màu Ô Khuyết: Bóc tách rõ ràng 3 thành phần (🏛️ Vị trí ngữ pháp, 🔗 Cụm từ/Collocation, 💡 Ngữ cảnh & Ý nghĩa) giúp người học nắm bắt bản chất ngữ liệu nhanh chóng và hứng thú.\n📢 Hệ Thống Đăng Bài Định Kỳ @official: Tự động cập nhật bài viết thông báo tính năng mới và phát thông báo tím sau mỗi bản cập nhật phần mềm.\n\nHãy trải nghiệm ngay phiên bản mới và cùng thảo luận bên dưới nhé! 🚀📚`
+      },
+      'v0.10.10-19': {
+        postId: 'official_update_v0_10_10_19',
+        releaseTime: '2026-09-16T23:30:00.000Z',
+        title: '👑 Ra mắt VocaFlow v0.10.10-19 (Build 320)!',
+        summary: 'Khóa VIP độc quyền Điền từ Cloze Test β, Nâng cấp Model Flash Gemini cho chế độ Khó & Siêu Khó, Quy tắc tối thiểu 5 từ vựng kèm AI mở rộng từ ngữ cảnh.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-19 (Build 320)!\n\n✨ Những điểm mới nổi bật:\n👑 Khóa VIP Độc Quyền Điền Từ Cloze Test β: Phân định Extended Learning Modes dành riêng cho VocaVIP.\n⚡ Model Flash Gemini Cao Cấp & Timeout 16s: Tăng tốc sinh đoạn văn đọc hiểu cho chế độ Khó & Siêu Khó, loại bỏ tình trạng chờ đợi quá lâu.\n🎯 Quy Tắc 5 Từ Tối Thiểu & AI Bổ Sung Từ Tự Động: Đảm bảo bài đọc và bài viết luôn có đủ dữ liệu phong phú.\n🌀 Vòng Xoay Đa Tầng Neon AI Spinner: Hiệu ứng trực quan chuyển động phát sáng khi AI đang soạn bài.\n\nChúc bạn có những giờ học tập hiệu quả cùng VocaFlow! 🌟`
+      },
+      'v0.10.10-18': {
+        postId: 'official_update_v0_10_10_18',
+        releaseTime: '2026-09-16T16:00:00.000Z',
+        title: '🧩 Hoàn thiện Điền Từ Cloze Test β & Sổ Tay Lỗi Sai (v0.10.10-18)!',
+        summary: 'Ghi nhận từ làm sai vào Sổ Tay Lỗi Sai, Mở khóa Cloze trong Hàng Đợi Ôn Tập, Modal tổng kết 5-Tile Dashboard chuẩn mực.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-18!\n\n✨ Những điểm mới nổi bật:\n📕 Tự động ghi nhận các ô khuyết điền sai vào Sổ Tay Lỗi Sai để ôn tập lại sau.\n🔔 Mở khóa tính năng Điền Từ (β) ngay trong Hàng Đợi Ôn Tập Hôm Nay.\n📊 Modal tổng kết hoàn thành bài học chuẩn 5-Tile Dashboard chuyên nghiệp.\n\nHãy trải nghiệm và nâng cao kỹ năng đọc hiểu nhé! 🚀`
+      },
+      'v0.10.10-17': {
+        postId: 'official_update_v0_10_10_17',
+        releaseTime: '2026-09-16T15:00:00.000Z',
+        title: '🚀 Tối ưu Cloze Test β & Chấm Điểm Song Hành (v0.10.10-17)!',
+        summary: 'Đồng bộ Ví VocaHint/Skip, Chấm điểm song hành giao hoán "and/or", Đánh dấu màu đỏ/xanh trực quan.',
+        content: `🎉 Bản cập nhật VocaFlow v0.10.10-17 mang đến những cải tiến vượt bậc:\n✨ Thuật toán ghép cặp song hành thông minh cho các cặp từ nối bởi and/or.\n🎨 Đánh dấu màu đỏ/xanh trực quan trên đoạn văn kèm đối chiếu đáp án.\n💰 Đồng bộ số lượng gợi ý và bỏ qua từ Ví thực tế.\n\nCùng khám phá ngay! 💫`
+      },
+      'v0.10.10-14': {
+        postId: 'official_update_v0_10_10_14',
+        releaseTime: '2026-09-14T18:00:00.000Z',
+        title: '🎉 Ra mắt VocaFlow v0.10.10-14!',
+        summary: 'Bình luận đa cấp, Trạng thái online, Mention @ thông minh, Realtime Notifications.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-14!\n\n✨ Những điểm mới nổi bật:\n💬 Bình Luận Đa Cấp & Quản Lý Bình Luận: Thụt lề câu trả lời trực quan như Facebook, hỗ trợ Sửa & Xóa bình luận của bản thân.\n🟢 Trạng Thái Hoạt Động (Online Status): Thể hiện trạng thái Đang hoạt động & Thời gian online gần nhất trong Hồ Sơ Cá Nhân.\n🏷️ Tag Mention @ Thông Minh: Gợi ý autocomplete @followers, @official và bạn bè.\n⚡ Thông Báo Realtime Tức Thì: Nhận thông báo tương tác, bình luận ngay lập tức.\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`
+      }
+    };
+    window.VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = VOCAFLOW_OFFICIAL_RELEASES_REGISTRY;
+
+    const VOCAFLOW_OFFICIAL_VERSION_KEY = 'v0.10.10-20';
+    const VOCAFLOW_OFFICIAL_POST_ID = 'official_update_v0_10_10_20';
+    const VOCAFLOW_OFFICIAL_RELEASE_TIME = '2026-09-17T00:00:00.000Z';
 
     function getActiveSpecialEventInfo() {
       const now = new Date();
@@ -23342,117 +23589,133 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       // Also seed any active special sale/holiday events
       checkAndSeedOfficialEventPosts();
 
-      const seededPostKey = `vocaflow_seeded_post_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
-      const notifiedKey = `vocaflow_notified_${VOCAFLOW_OFFICIAL_VERSION_KEY}`;
+      const currentVerKey = (typeof VOCAFLOW_APP_VERSION !== 'undefined') ? VOCAFLOW_APP_VERSION : 'v0.10.10-20';
+      const releases = VOCAFLOW_OFFICIAL_RELEASES_REGISTRY || {};
+      const verKeys = Object.keys(releases);
 
-      const officialPostContent = `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow ${VOCAFLOW_OFFICIAL_VERSION_KEY}!\n\n✨ Những điểm mới nổi bật:\n💬 Bình Luận Đa Cấp & Quản Lý Bình Luận: Thụt lề câu trả lời trực quan như Facebook, hỗ trợ Sửa & Xóa bình luận của bản thân (giữ bia mộ 🪦 an toàn dữ liệu).\n🟢 Trạng Thái Hoạt Động (Online Status): Thể hiện trạng thái Đang hoạt động & Thời gian online gần nhất (làm tròn chuẩn xác kiểu Facebook) trong Hồ Sơ Cá Nhân.\n🏷️ Tag Mention @ Thông Minh: Gợi ý autocomplete @followers, @official và bạn bè; chuyển @username thành liên kết hồ sơ có thể nhấp; gửi thông báo nhắc tên đến người được tag.\n⚡ Thông Báo Realtime Tức Thì: Nhận thông báo tương tác, bình luận, nhắc tên ngay lập tức trong phiên học mà không cần tải lại trang.\n🛡️ Bảo toàn mốc thời gian phát hành: Chuẩn hóa thời gian phát hành bài viết chính thức @official vĩnh viễn không bị reset về "vừa xong".\n\nHãy trải nghiệm ngay và cùng chia sẻ cảm nghĩ nhé! 🚀`;
+      // Iterate through registered versions (newest first)
+      for (const verKey of verKeys) {
+        const rel = releases[verKey];
+        if (!rel) continue;
 
-      let existingPost = null;
-      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
-        existingPost = communityPosts.find(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
-      }
+        const postId = rel.postId || `official_update_${verKey.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+        const releaseTime = rel.releaseTime || new Date().toISOString();
+        const seededPostKey = `vocaflow_seeded_post_${verKey}`;
+        const notifiedKey = `vocaflow_notified_${verKey}`;
 
-      const officialPostObj = {
-        id: VOCAFLOW_OFFICIAL_POST_ID,
-        targetVersion: VOCAFLOW_OFFICIAL_VERSION_KEY,
-        isOfficialUpdate: true,
-        authorUid: 'official',
-        authorName: 'VocaFlow Chuẩn',
-        authorHandle: 'official',
-        authorAvatar: 'icons/vocaflow_official_avatar.png',
-        authorVip: true,
-        authorVipTier: 'diamond',
-        content: officialPostContent,
-        image: null,
-        likesCount: existingPost?.likesCount || 215,
-        commentsCount: existingPost?.commentsCount || 0,
-        likes: existingPost?.likes || {},
-        comments: existingPost?.comments || {},
-        createdAt: existingPost?.createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
-        updatedAt: VOCAFLOW_OFFICIAL_RELEASE_TIME,
-        type: 'community',
-        tags: ['update', 'official', VOCAFLOW_OFFICIAL_VERSION_KEY]
-      };
-
-      // 1. Ensure Post is in communityPosts array & cache
-      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
-        const existingIdx = communityPosts.findIndex(p => p && (p.id === VOCAFLOW_OFFICIAL_POST_ID || p.targetVersion === VOCAFLOW_OFFICIAL_VERSION_KEY));
-        if (existingIdx === -1) {
-          communityPosts.unshift(officialPostObj);
-        } else {
-          communityPosts[existingIdx] = {
-            ...officialPostObj,
-            createdAt: communityPosts[existingIdx].createdAt || VOCAFLOW_OFFICIAL_RELEASE_TIME,
-            likes: communityPosts[existingIdx].likes || {},
-            comments: communityPosts[existingIdx].comments || {}
-          };
+        let existingPost = null;
+        if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+          existingPost = communityPosts.find(p => p && (p.id === postId || p.targetVersion === verKey));
         }
-        try {
-          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
-        } catch (e) {}
-      }
 
-      // 2. Push to RTDB in background if online & not yet flagged
-      if (!localStorage.getItem(seededPostKey)) {
-        try {
-          const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
-          const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
-          const authParam = token ? `?auth=${token}` : '';
-          fetch(`${rtdbUrl}/community_posts/${VOCAFLOW_OFFICIAL_POST_ID}.json${authParam}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(officialPostObj)
-          }).then(() => {
-            localStorage.setItem(seededPostKey, 'true');
-          }).catch(() => {});
-        } catch (e) {}
-      }
-
-      // 3. Dispatch Purple Glowing Notification to Local State / RTDB
-      if (!localStorage.getItem(notifiedKey)) {
-        const notifId = `notif_official_${VOCAFLOW_OFFICIAL_VERSION_KEY.replace(/[^a-zA-Z0-9_]/g, '_')}`;
-        const officialNotif = {
-          id: notifId,
-          type: 'OFFICIAL_ANNOUNCEMENT',
-          actionType: 'VIEW_COMMUNITY_POST',
-          title: '⭐ VocaFlow Official',
-          message: `🚀 Bản cập nhật mới ${VOCAFLOW_OFFICIAL_VERSION_KEY} đã ra mắt! Khám phá ngay Bình luận đa cấp, Trạng thái Online, Mention @ & Realtime Notification.`,
-          authorHandle: 'official',
-          authorName: 'VocaFlow Chuẩn',
+        const officialPostObj = {
+          id: postId,
+          targetVersion: verKey,
+          isOfficialUpdate: true,
           authorUid: 'official',
-          postId: VOCAFLOW_OFFICIAL_POST_ID,
-          isSpecialGlowing: true,
-          timestamp: VOCAFLOW_OFFICIAL_RELEASE_TIME,
-          isRead: false
+          authorName: 'VocaFlow Chuẩn',
+          authorHandle: 'official',
+          authorAvatar: 'icons/vocaflow_official_avatar.png',
+          authorVip: true,
+          authorVipTier: 'diamond',
+          content: rel.content,
+          image: null,
+          likesCount: existingPost?.likesCount || (verKey === currentVerKey ? 288 : 150),
+          commentsCount: existingPost?.commentsCount || 0,
+          likes: existingPost?.likes || {},
+          comments: existingPost?.comments || {},
+          createdAt: existingPost?.createdAt || releaseTime,
+          updatedAt: releaseTime,
+          type: 'community',
+          tags: ['update', 'official', verKey]
         };
 
-        if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
-          const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === VOCAFLOW_OFFICIAL_POST_ID));
-          if (!hasNotif) {
-            userNotifications.unshift(officialNotif);
-            try {
-              localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-            } catch (e) {}
-            if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
-            if (typeof renderNotificationsList === 'function') renderNotificationsList();
+        // 1. Ensure Post is in communityPosts array & cache
+        if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+          const existingIdx = communityPosts.findIndex(p => p && (p.id === postId || p.targetVersion === verKey));
+          if (existingIdx === -1) {
+            if (verKey === currentVerKey) {
+              communityPosts.unshift(officialPostObj);
+            } else {
+              communityPosts.push(officialPostObj);
+            }
+          } else {
+            communityPosts[existingIdx] = {
+              ...officialPostObj,
+              createdAt: communityPosts[existingIdx].createdAt || releaseTime,
+              likes: communityPosts[existingIdx].likes || {},
+              comments: communityPosts[existingIdx].comments || {}
+            };
           }
         }
 
-        // Save to RTDB for logged-in user
-        if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        // 2. Push to RTDB in background if online & not yet flagged
+        if (!localStorage.getItem(seededPostKey)) {
           try {
             const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
             const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
             const authParam = token ? `?auth=${token}` : '';
-            fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+            fetch(`${rtdbUrl}/community_posts/${postId}.json${authParam}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(officialNotif)
+              body: JSON.stringify(officialPostObj)
+            }).then(() => {
+              localStorage.setItem(seededPostKey, 'true');
             }).catch(() => {});
           } catch (e) {}
         }
 
-        localStorage.setItem(notifiedKey, 'true');
+        // 3. Dispatch Purple Glowing Notification for active version
+        if (verKey === currentVerKey && !localStorage.getItem(notifiedKey)) {
+          const notifId = `notif_official_${verKey.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+          const officialNotif = {
+            id: notifId,
+            type: 'OFFICIAL_ANNOUNCEMENT',
+            actionType: 'VIEW_COMMUNITY_POST',
+            title: '⭐ VocaFlow Official',
+            message: `🚀 Bản cập nhật mới ${verKey} đã ra mắt! ${rel.summary || 'Khám phá ngay các tính năng học tập mới!'}`,
+            authorHandle: 'official',
+            authorName: 'VocaFlow Chuẩn',
+            authorUid: 'official',
+            postId: postId,
+            isSpecialGlowing: true,
+            timestamp: releaseTime,
+            isRead: false
+          };
+
+          if (typeof userNotifications !== 'undefined' && Array.isArray(userNotifications)) {
+            const hasNotif = userNotifications.some(n => n.id === notifId || (n.postId === postId));
+            if (!hasNotif) {
+              userNotifications.unshift(officialNotif);
+              try {
+                localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
+              } catch (e) {}
+              if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+              if (typeof renderNotificationsList === 'function') renderNotificationsList();
+            }
+          }
+
+          if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+            try {
+              const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+              const token = typeof getFreshCloudAuthToken === 'function' ? await getFreshCloudAuthToken() : (currentUser?.idToken || '');
+              const authParam = token ? `?auth=${token}` : '';
+              fetch(`${rtdbUrl}/users/${currentUser.uid}/notifications/${notifId}.json${authParam}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(officialNotif)
+              }).catch(() => {});
+            } catch (e) {}
+          }
+
+          localStorage.setItem(notifiedKey, 'true');
+        }
+      }
+
+      if (typeof communityPosts !== 'undefined' && Array.isArray(communityPosts)) {
+        try {
+          localStorage.setItem('vocaflow_community_posts_cache', JSON.stringify(communityPosts.slice(0, 50)));
+        } catch (e) {}
       }
     }
     window.checkAndSeedOfficialUpdatePost = checkAndSeedOfficialUpdatePost;
@@ -27464,6 +27727,59 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
 
+    // =========================================================================
+    // 2-PAGE PAGINATED STUDY MODES NAVIGATOR (v0.10.10-20)
+    // =========================================================================
+    function switchDeckStudyModePage(page) {
+      const page1 = document.getElementById('deck-study-page-1');
+      const page2 = document.getElementById('deck-study-page-2');
+      if (!page1 || !page2) return;
+      const targetPage = page === 2 ? 2 : 1;
+      if (targetPage === 2) {
+        page1.style.display = 'none';
+        page2.style.display = 'flex';
+      } else {
+        page1.style.display = 'flex';
+        page2.style.display = 'none';
+      }
+      try {
+        localStorage.setItem('vocaflow_deck_study_mode_page', targetPage.toString());
+      } catch (e) {}
+    }
+
+    function initDeckStudyModePage() {
+      let savedPage = 1;
+      try {
+        savedPage = localStorage.getItem('vocaflow_deck_study_mode_page') === '2' ? 2 : 1;
+      } catch (e) {}
+      switchDeckStudyModePage(savedPage);
+    }
+
+    function switchReviewQueueStudyModePage(page) {
+      const page1 = document.getElementById('rq-study-page-1');
+      const page2 = document.getElementById('rq-study-page-2');
+      if (!page1 || !page2) return;
+      const targetPage = page === 2 ? 2 : 1;
+      if (targetPage === 2) {
+        page1.style.display = 'none';
+        page2.style.display = 'grid';
+      } else {
+        page1.style.display = 'grid';
+        page2.style.display = 'none';
+      }
+      try {
+        localStorage.setItem('vocaflow_rq_study_mode_page', targetPage.toString());
+      } catch (e) {}
+    }
+
+    function initReviewQueueStudyModePage() {
+      let savedPage = 1;
+      try {
+        savedPage = localStorage.getItem('vocaflow_rq_study_mode_page') === '2' ? 2 : 1;
+      } catch (e) {}
+      switchReviewQueueStudyModePage(savedPage);
+    }
+
     function deleteSelectedWords() {
       if (selectedWordIds.size === 0) return;
       if (!confirm('Bạn có chắc chắn muốn xóa ' + selectedWordIds.size + ' từ vựng đã chọn?')) return;
@@ -28008,6 +28324,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       applyUiFilterSettings();
       renderWordList();
       updateSelectionUI();
+      initDeckStudyModePage();
       showScreen('screen-deck-detail');
     }
 
@@ -29072,6 +29389,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         filterAndRenderReviewQueue();
       }
 
+      initReviewQueueStudyModePage();
       openModal('modal-review-queue');
     }
 
@@ -34244,7 +34562,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-19 Build 320 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-20 Build 321 - EXTENDED LEARNING MODE BETA)
 // AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
 // =========================================================================
 
@@ -35711,23 +36029,111 @@ function evaluateClozeResults() {
   const scoreBadge = document.getElementById('cloze-score-badge');
   if (scoreBadge) scoreBadge.textContent = `Bài: +${clozeSessionPointsEarned}đ`;
 
+    // =========================================================================
+    // 3-TIER STRUCTURED CLOZE EXPLANATION CARDS FORMATTER (v0.10.10-20)
+    // =========================================================================
+    function formatClozeExplanationHTML(explanationText) {
+      if (!explanationText || typeof explanationText !== 'string') return '';
+      
+      let text = explanationText.trim();
+      let coordinatePrefix = '';
+
+      // Extract coordinate swap notice if present
+      if (text.includes('Vị trí song hành hợp lệ')) {
+        coordinatePrefix = `
+          <div style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.35); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 12px; color: #d8b4fe; display: flex; align-items: center; gap: 6px;">
+            <span>✨</span> <span><strong>Vị trí song hành hợp lệ:</strong> Bạn đã điền từ này trong cấu trúc song hành liên từ (and/or). Vị trí này hoàn toàn chính xác!</span>
+          </div>
+        `;
+        text = text.replace(/✨\s*<em>\(Vị trí song hành hợp lệ\):<\/em>[^.]*\.\s*/i, '').replace(/✨\s*\(Vị trí song hành hợp lệ\):[^.]*\.\s*/i, '');
+      }
+
+      // Regex for (a)/(b)/(c) or 1./2./3. or a./b./c. or •
+      let grammar = '', colloc = '', context = '';
+
+      // Try matching standard (a), (b), (c)
+      const matchABC = text.match(/(?:(?:\(a\)|(?:^|\s)a[\.\)]|Vị trí ngữ pháp:?|1[\.\)]))\s*([\s\S]*?)(?=(?:\(b\)|(?:^|\s)b[\.\)]|Cụm từ:?|2[\.\)]|$))(?:(?:\(b\)|(?:^|\s)b[\.\)]|Cụm từ:?|2[\.\)]))\s*([\s\S]*?)(?=(?:\(c\)|(?:^|\s)c[\.\)]|Ngữ cảnh:?|3[\.\)]|$))(?:(?:\(c\)|(?:^|\s)c[\.\)]|Ngữ cảnh:?|3[\.\)]))\s*([\s\S]*?)$/i);
+
+      if (matchABC) {
+        grammar = matchABC[1].trim().replace(/^[-:•]\s*/, '');
+        colloc = matchABC[2].trim().replace(/^[-:•]\s*/, '');
+        context = matchABC[3].trim().replace(/^[-:•]\s*/, '');
+      } else {
+        // If not matched fully, let's look for (a), (b), (c) individually
+        const matchA = text.match(/(?:\(a\)|a[\.\)]|Vị trí ngữ pháp:?)\s*([^()]+?)(?=(?:\([bc]\)|[bc][\.\)]|Cụm từ:|Ngữ cảnh:|$))/i);
+        const matchB = text.match(/(?:\(b\)|b[\.\)]|Cụm từ:?)\s*([^()]+?)(?=(?:\([ac]\)|[ac][\.\)]|Vị trí ngữ pháp:|Ngữ cảnh:|$))/i);
+        const matchC = text.match(/(?:\(c\)|c[\.\)]|Ngữ cảnh:?)\s*([\s\S]+?)$/i);
+
+        if (matchA || matchB || matchC) {
+          if (matchA) grammar = matchA[1].trim().replace(/^[-:•]\s*/, '');
+          if (matchB) colloc = matchB[1].trim().replace(/^[-:•]\s*/, '');
+          if (matchC) context = matchC[1].trim().replace(/^[-:•]\s*/, '');
+        }
+      }
+
+      if (grammar || colloc || context) {
+        return `
+          ${coordinatePrefix}
+          <div class="cloze-explanation-container">
+            ${grammar ? `
+              <div class="cloze-explanation-card cloze-card-grammar">
+                <div class="cloze-card-title">
+                  <span>🏛️</span> <span>Vị Trí Ngữ Pháp & Cấu Trúc</span>
+                </div>
+                <div class="cloze-card-body">${grammar}</div>
+              </div>
+            ` : ''}
+            ${colloc ? `
+              <div class="cloze-explanation-card cloze-card-colloc">
+                <div class="cloze-card-title">
+                  <span>🔗</span> <span>Cụm Từ & Collocation Cố Định</span>
+                </div>
+                <div class="cloze-card-body">${colloc}</div>
+              </div>
+            ` : ''}
+            ${context ? `
+              <div class="cloze-explanation-card cloze-card-context">
+                <div class="cloze-card-title">
+                  <span>💡</span> <span>Sắc Thái Ngữ Cảnh & Ý Nghĩa</span>
+                </div>
+                <div class="cloze-card-body">${context}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      // Fallback for general text
+      return `
+        ${coordinatePrefix}
+        <div class="cloze-explanation-container">
+          <div class="cloze-explanation-card cloze-card-context">
+            <div class="cloze-card-title">
+              <span>💡</span> <span>Phân Tích & Giải Thích Chi Tiết</span>
+            </div>
+            <div class="cloze-card-body">${text}</div>
+          </div>
+        </div>
+      `;
+    }
+
   // Render detailed blank-by-blank feedback
   const feedbackList = document.getElementById('cloze-blanks-feedback-list');
   if (feedbackList) {
     feedbackList.innerHTML = detailedFeedback.map(item => `
-      <div style="background: var(--surface-elevated); border: 1px solid ${item.isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px;">
-        <span style="font-size: 16px; margin-top: 1px;">${item.isCorrect ? '✅' : '❌'}</span>
-        <div style="flex: 1;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-wrap: wrap; gap: 6px;">
+      <div style="background: var(--surface-elevated); border: 1px solid ${item.isCorrect ? 'rgba(16,185,129,0.35)' : 'rgba(239,68,68,0.35)'}; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">${item.isCorrect ? '✅' : '❌'}</span>
             <div>
-              <strong style="color: var(--text); font-size: 13px;">Ô [${item.index}]: </strong>
-              <span style="color: ${item.isCorrect ? '#34d399' : '#f87171'}; font-weight: 700; font-size: 13.5px;">${item.userWord}</span>
-              ${!item.isCorrect ? `<span style="color: var(--text-muted); font-size: 12px;"> -> Đáp án đúng: <strong style="color: #34d399;">${item.correctWord}</strong></span>` : ''}
+              <strong style="color: var(--text); font-size: 13.5px;">Ô [${item.index}]: </strong>
+              <span style="color: ${item.isCorrect ? '#34d399' : '#f87171'}; font-weight: 800; font-size: 14px;">${item.userWord}</span>
+              ${!item.isCorrect ? `<span style="color: var(--text-muted); font-size: 12.5px; margin-left: 4px;"> ➜ Đáp án đúng: <strong style="color: #34d399; font-size: 13.5px;">${item.correctWord}</strong></span>` : ''}
             </div>
-            <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10.5px;">${item.partOfSpeech || 'word'}</span>
           </div>
-          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">${item.explanationVi}</div>
+          <span class="badge" style="background: rgba(99,102,241,0.18); color: #a5b4fc; font-size: 11px; font-weight: 700; border: 1px solid rgba(99,102,241,0.3); padding: 2px 8px;">${item.partOfSpeech || 'word'}</span>
         </div>
+        ${formatClozeExplanationHTML(item.explanationVi)}
       </div>
     `).join('');
   }
