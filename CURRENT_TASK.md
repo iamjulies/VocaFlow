@@ -1,12 +1,28 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-20 (Build 321)`  
+> **Phiên bản mục tiêu:** `v0.10.10-21 (Build 322)`  
 > **Cập nhật lần cuối:** 2026-09-17  
-> **Trạng thái:** 🚀 **HOÀN TẤT TRIỂN KHAI & KIỂM THỬ CDP 100% [PASS] -> TIẾN HÀNH MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-20 Build 321)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-21 Build 322)
+
+- [x] **Ra mắt Chế độ Nghe Gõ Câu (Full Sentence Dictation VIP β - Luyện Kỹ Năng Listening)**:
+  - Triển khai `06e-dictation-engine.js`, `screen-dictation.html`, `modal-dictation-setup.html`, `modal-dictation-result.html`.
+  - Sinh câu văn tự nhiên theo 4 cấp độ (Dễ, TB, Khó, Siêu Khó).
+  - Tích hợp điều tốc giọng đọc tự nhiên (0.5x - 1.25x), đệm an toàn âm thanh 250ms, và khóa cứng khi hết lượt nghe.
+  - Thuật toán so khớp Levenshtein Token-by-Token Diff đối chiếu trực quan sinh động.
+  - Tự động lưu từ sai vào Sổ Tay Lỗi Sai (`modal-mistake-notebook`).
+  - Tắt phụt tiếng pháo hoa khi đóng modal kết thúc bài học.
+  - Đồng bộ số lượng VocaHint & VocaSkip theo ví thực tế.
+  - Phân quyền VIP độc quyền cho chế độ Nghe Gõ Câu.
+
+- [x] **Vấn đề 20: Tối Ưu Hóa Giao Diện Deck Header Cho Thiết Bị Màn Hình Hẹp / Mobile (`app.css`, `screen-deck-detail.html`)**:
+  - Bố trí lưới 2 cột gọn nhẹ cho `.study-modes-page` và tinh giản padding header, tiết kiệm >60% chiều cao dọc trên mobile.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-21 Build 322`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-21 (Build 322)`.
 
 - [x] **Quy hoạch Chế độ Học tập & Đánh dấu Extended Learning Modes (β)**:
   - 4 Chế độ cốt lõi (Learning Modes): Luyện Nói (Speaking), Auto Flashcard, Chính Tả (Spelling), Trắc Nghiệm (Quiz).

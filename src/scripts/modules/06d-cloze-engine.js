@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-20 Build 321 - EXTENDED LEARNING MODE BETA)
-// AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-21 Build 322 - EXTENDED LEARNING MODE BETA)
+// Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
 let clozePassagesList = [];

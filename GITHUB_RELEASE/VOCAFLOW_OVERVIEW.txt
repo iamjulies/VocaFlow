@@ -1,4 +1,35 @@
 ================================================================================
+Phiên bản: v0.10.10-21 (Build 322) - Ra Mắt Chế Độ Nghe Gõ Câu (Full Sentence Dictation VIP β - Luyện Listening), Tối Ưu Hóa Giao Diện Deck Header Cho Thiết Bị Màn Hình Hẹp / Mobile (Issue 20), Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai, Tắt Phụt Tiếng Pháo Hoa Khi Đóng Modal & Đồng Bộ Ví Thực VocaHint / Skip
+================================================================================
+1. [Ra Mắt Chế Độ Học Mới: Nghe Gõ Câu (Full Sentence Dictation VIP β) (06e-dictation-engine.js, screen-dictation.html, modal-dictation-setup.html, modal-dictation-result.html)]:
+   - Triển khai chế độ học tập Extended Learning Mode thứ 3 chuyên sâu cho kỹ năng Nghe (Listening Comprehension & Transcription).
+   - Quy trình: Lựa chọn từ vựng -> Sinh câu văn tự nhiên chuẩn ngữ cảnh (Dễ, Trung bình, Khó, Siêu Khó) -> Phát âm thanh giọng đọc tiếng Anh tự nhiên (Google TTS / Web Speech) -> Người học nghe và gõ lại toàn bộ câu -> AI so khớp từng từ bằng thuật toán Levenshtein Token-by-Token Diff và đối chiếu trực quan sinh động (xanh = đúng, vàng = lỗi chính tả nhỏ, đỏ = thiếu/sai từ).
+   - Tích hợp thanh trượt & nút điều chỉnh tốc độ đọc tức thì (`0.5x`, `0.75x`, `0.9x`, `1.0x`, `1.25x`).
+   - Giới hạn lượt nghe nghiêm ngặt theo độ khó: Dễ (5 lần nghe, sàn 70đ, x1.0), Trung bình (4 lần nghe, sàn 80đ, x1.4), Khó (3 lần nghe, sàn 90đ, x1.8), Siêu khó (2 lần nghe, sàn 90đ, x2.2). Khi hết lượt nghe, nút nghe và phím tắt bị khóa cứng hoàn toàn.
+   - Cơ chế đệm an toàn âm thanh 250ms: Khi chuyển sang câu tiếp theo, chờ đúng 250ms im lặng trước khi tự động phát âm thanh mẫu đầu tiên, giúp câu nghe trọn vẹn và không bị nuốt âm đầu.
+
+2. [Tối Ưu Hóa Giao Diện Deck Header Cho Màn Hình Hẹp / Mobile (Issue 20) (app.css, screen-deck-detail.html, modal-review-queue.html)]:
+   - Khắc phục triệt để tình trạng thanh chọn chế độ học và nút thao tác bị xếp chồng đơn lẻ thành 5 hàng dọc chiếm hơn 50-65% chiều cao màn hình trên thiết bị di động.
+   - Tái cấu trúc `.study-modes-page` thành lưới 2 cột gọn nhẹ trên mobile (2 hàng 2x2 cho 4 nút chế độ + 1 nút chuyển trang mỏng 24px), kết hợp tối ưu padding hàng nút `.deck-detail-right`, giúp tiết kiệm hơn 60% không gian dọc và trả lại trọn vẹn màn hình cho danh sách từ vựng.
+
+3. [Tự Động Đưa "Từ Mẹ" Vào Sổ Tay Lỗi Sai (06e-dictation-engine.js, 05-quiz-engine.js)]:
+   - Mọi câu làm chưa đạt điểm sàn sẽ tự động đưa từ vựng gốc vào Sổ Tay Lỗi Sai (Mistake Notebook) qua `addWordToMistakeList(wordRef, 'dictation')` để phục vụ ôn tập chuyên sâu.
+
+4. [Tắt Phụt Tiếng Pháo Hoa & Âm Thanh Khi Đóng Modal Kết Thúc (06e-dictation-engine.js, modal-dictation-result.html)]:
+   - Khi người học nhấn "Về Bộ Từ", "Ôn Tập Lại" hoặc đóng modal kết thúc bài học, tiếng pháo hoa và toàn bộ âm thanh lập tức bị ngắt phụt ngay tức thì qua `stopVocaSfx('fireworks')` và `stopAllAudio()`.
+
+5. [Đồng Bộ Số Lượng VocaHint & VocaSkip Theo Đúng Ví Thực Tế (06e-dictation-engine.js, 02-state-core.js)]:
+   - Đồng bộ hiển thị và trừ trực tiếp số lượng gợi ý/bỏ qua từ `getUserHints()` / `getUserSkips()`, ghi nhận vào sổ cái `addLedgerEntry` và đồng bộ 2 chiều lên Cloud.
+   - Khi hết gợi ý / bỏ qua, tự động hiển thị thông báo và điều hướng sang Cửa Hàng (Shop).
+
+6. [Phân Quyền VIP & Điểm Truy Cập Toàn Diện]:
+   - Kích hoạt nút `👑 Nghe Gõ (VIP β)` tại cả Chi Tiết Bộ Từ (Deck Detail) và Hàng Đợi Ôn Tập (Review Queue).
+   - Rào chắn kiểm tra phân quyền VIP tự động hiển thị modal nâng cấp cho tài khoản Guest và Free.
+
+7. [Đồng Bộ Toàn Diện 7-Point Version Consistency & 1-Click Multi-Deploy (v0.10.10-21 Build 322)]:
+   - Đồng bộ hóa 11 file hệ thống sang `v0.10.10-21 (Build 322)`, biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-21_Windows_Portable.zip` và đẩy mã nguồn lên 3 kho GitHub (`main`, `gh-pages`, `iamjulies.github.io`).
+
+================================================================================
 Phiên bản: v0.10.10-20 (Build 321) - Tự Động Đăng Bài & Phát Thông Báo Phát Sáng @official Định Kỳ Theo Build (Issue 17), Thanh Chọn Chế Độ Học Phân Trang 2 Lượt Page 1 (Core) / Page 2 (Extended β) (Issue 18) & Tái Thiết Kế Thẻ Giải Thích Điền Từ 3 Tầng Trực Quan (Issue 19)
 ================================================================================
 1. [Khắc Phục @official Tự Động Đăng Bài Thông Báo Cập Nhật Sau Mỗi Bản Build & Gửi Thông Báo Tím Phát Sáng (Issue 17) (03-auth.js)]:

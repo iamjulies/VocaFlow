@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-20 / Build 321)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-21 / Build 322)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-21': {
+        postId: 'official_update_v0_10_10_21',
+        releaseTime: '2026-09-17T00:30:00.000Z',
+        title: '🎧 Ra mắt Chế Độ Nghe Gõ Câu (VIP β) & Tối Ưu Mobile (v0.10.10-21 Build 322)!',
+        summary: 'Chế độ Nghe Gõ Câu (Full Sentence Dictation VIP β) với điều tốc audio, giới hạn lượt nghe, đệm an toàn âm thanh 250ms, đồng bộ ví thực VocaHint/Skip, tự động đưa từ sai vào Sổ Tay Lỗi Sai và tối ưu hóa giao diện Deck Header cho thiết bị di động.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-21 (Build 322)!\n\n✨ Những điểm mới nổi bật:\n🎧 Chế Độ Nghe Gõ Câu (Full Sentence Dictation VIP β): Luyện kỹ năng Listening toàn diện với giọng đọc tự nhiên chuẩn Mỹ/Anh, hỗ trợ thanh trượt chỉnh tốc độ (0.5x - 1.25x), 4 cấp độ thử thách (Dễ, TB, Khó, Siêu Khó) và khóa cứng khi hết lượt nghe.\n⏱️ Đệm Âm Thanh An Toàn 250ms: Giúp khởi đầu câu nghe mượt mà, không bị nuốt âm đầu khi chuyển câu.\n📱 Tối Ưu Giao Diện Deck Header Cho Thiết Bị Màn Hình Hẹp (Vấn đề 20): Bố trí dạng lưới 2 cột gọn nhẹ giúp tiết kiệm hơn 60% không gian dọc, dành trọn màn hình cho danh sách từ vựng.\n📕 Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai: Mọi câu làm chưa đạt điểm sàn sẽ lập tức đưa từ gốc vào Sổ Tay Lỗi Sai để ôn luyện chuyên sâu.\n💰 Đồng Bộ Ví VocaHint & VocaSkip Thực Tế: Trừ trực tiếp và đồng bộ 2 chiều với Cloud.\n\nHãy trải nghiệm ngay tính năng Nghe Gõ Câu mới và chúc bạn có những giờ học bổ ích! 🚀📚`
+      },
       'v0.10.10-20': {
         postId: 'official_update_v0_10_10_20',
         releaseTime: '2026-09-17T00:00:00.000Z',

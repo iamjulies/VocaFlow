@@ -2603,19 +2603,21 @@
         return;
       }
 
-      // Issue 13: Cloze Mode VIP Check
-      if (mode === 'cloze' && typeof isUserVip === 'function' && !isUserVip()) {
+      // Issue 13 & 22: Cloze & Dictation Modes VIP Check
+      if ((mode === 'cloze' || mode === 'dictation') && typeof isUserVip === 'function' && !isUserVip()) {
         closeModal('modal-review-queue');
         const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
+        const modeTitle = mode === 'cloze' ? 'Chế độ Điền Từ Đoạn Văn (VIP β)' : 'Chế độ Nghe Gõ Câu (VIP β)';
+        const modeIcon = mode === 'cloze' ? '🧩 🔒' : '🎧 🔒';
         if (isGuest && typeof openGuestFeatureLockModal === 'function') {
-          openGuestFeatureLockModal('cloze', 'Chế độ Điền Từ Đoạn Văn (β)', '🧩 🔒', 'Tính Năng Độc Quyền VocaVIP');
+          openGuestFeatureLockModal(mode, modeTitle, modeIcon, 'Tính Năng Độc Quyền VocaVIP');
         } else if (typeof openVipPricingModal === 'function') {
           if (typeof showToast === 'function') {
-            showToast('👑 Chế độ Điền Từ (β) là tính năng nâng cao độc quyền dành riêng cho VocaVIP!');
+            showToast(`👑 ${modeTitle} là tính năng nâng cao độc quyền dành riêng cho VocaVIP!`);
           }
           openVipPricingModal();
         } else {
-          alert('🔒 Chế độ Điền Từ Đoạn Văn (β) là tính năng độc quyền dành riêng cho thành viên VocaVIP!');
+          alert(`🔒 ${modeTitle} là tính năng độc quyền dành riêng cho thành viên VocaVIP!`);
         }
         return;
       }
@@ -2640,7 +2642,11 @@
           showToast('⚠️ Chưa thể khởi chạy chế độ Điền Từ Cloze!');
         }
       } else if (mode === 'dictation') {
-        showToast('🎧 Tính năng Full Sentence Dictation (Nghe chép chính tả cả câu β) đang được hoàn thiện!');
+        if (typeof openDictationSetupModal === 'function') {
+          openDictationSetupModal(false, targetList);
+        } else {
+          showToast('⚠️ Chưa thể khởi chạy chế độ Nghe Gõ Câu Dictation!');
+        }
       }
     }
 

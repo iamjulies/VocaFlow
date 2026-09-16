@@ -98,8 +98,8 @@
               <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
                 <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
               </button>
-              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;" id="btn-study-dictation-selected" onclick="showToast('🎧 Chế độ Nghe Gõ Câu (VIP β) đang được phát triển!')" title="Nghe cả câu và gõ lại (Sắp ra mắt)">
-                <span>🎧</span> <span>Nghe Gõ (β)</span>
+              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;" onclick="openDictationSetupModal(true)" id="btn-study-dictation-selected" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
+                <span>👑</span> <span>Nghe Gõ (VIP β)</span><span id="dictation-count-label"></span>
               </button>
               <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #059669, #047857); border: none;" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
                 <span>🌐</span> <span>Dịch Thuật (β)</span>
@@ -203,7 +203,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-20 (Build 321)</span>
+            <span class="mini-footer-version">v0.10.10-21 (Build 322)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">

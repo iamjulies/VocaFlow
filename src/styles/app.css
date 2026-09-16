@@ -4613,31 +4613,71 @@
     }
 
     @media (max-width: 768px) {
-      .study-modes-page {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+      .deck-detail-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding-bottom: 6px;
+      }
+      .deck-detail-right {
+        display: flex;
+        flex-wrap: wrap;
         gap: 4px;
         width: 100%;
-        box-sizing: border-box;
+      }
+      .deck-detail-right .btn {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 0;
+        font-size: 11px;
+        padding: 5px 4px;
+        justify-content: center;
+      }
+      .selection-study-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 6px 8px;
+      }
+      .selection-bar-left {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .selection-study-actions {
+        width: 100%;
+      }
+      .study-modes-page {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 4px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .study-modes-page[style*="display: none"] {
+        display: none !important;
       }
       .study-modes-page .btn,
       .study-modes-page .study-mode-nav-btn {
         width: 100%;
         min-width: 0;
-        padding: 4px 2px;
+        padding: 5px 4px;
         font-size: 11px;
         font-weight: 700;
         justify-content: center;
-        height: 28px;
+        height: 32px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
-        border-radius: 6px;
+        border-radius: 8px;
       }
       .study-modes-page .nav-btn-next,
       .study-modes-page .nav-btn-prev {
         grid-column: span 2;
+        height: 26px;
+        font-size: 11px;
+        padding: 2px 6px;
       }
     }
 
@@ -4708,6 +4748,111 @@
       line-height: 1.5;
       color: var(--text, #e2e8f0);
     }
+
+    /* ========================================================================= */
+    /* FULL SENTENCE DICTATION (NGHE GÕ CÂU VIP β - v0.10.10-21)                  */
+    /* ========================================================================= */
+    .dictation-speed-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .dictation-speed-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 3px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dictation-speed-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .dictation-speed-btn.active {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: #ffffff;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.35);
+    }
+
+    .dictation-wave-bar {
+      width: 4px;
+      height: 16px;
+      background: #8b5cf6;
+      border-radius: 2px;
+      animation: dictationWave 1s ease-in-out infinite alternate;
+    }
+
+    .dictation-wave-bar:nth-child(2) { animation-delay: 0.15s; height: 24px; background: #a78bfa; }
+    .dictation-wave-bar:nth-child(3) { animation-delay: 0.3s; height: 32px; background: #c084fc; }
+    .dictation-wave-bar:nth-child(4) { animation-delay: 0.45s; height: 20px; background: #a78bfa; }
+    .dictation-wave-bar:nth-child(5) { animation-delay: 0.6s; height: 14px; background: #8b5cf6; }
+
+    @keyframes dictationWave {
+      0% { transform: scaleY(0.4); opacity: 0.5; }
+      100% { transform: scaleY(1.3); opacity: 1; }
+    }
+
+    .dictation-diff-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .dictation-token-exact {
+      color: #34d399;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.12);
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin: 0 2px;
+      border-bottom: 2px solid #10b981;
+    }
+
+    .dictation-token-typo {
+      color: #fbbf24;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin: 0 2px;
+      border-bottom: 2px solid #f59e0b;
+    }
+
+    .dictation-token-miss {
+      color: #f87171;
+      font-weight: 700;
+      background: rgba(239, 68, 68, 0.12);
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin: 0 2px;
+      text-decoration: line-through;
+      border-bottom: 2px solid #ef4444;
+    }
+
+    .dictation-token-extra {
+      color: #cbd5e1;
+      font-style: italic;
+      background: rgba(148, 163, 184, 0.1);
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin: 0 2px;
+    }
+
 
 
 
