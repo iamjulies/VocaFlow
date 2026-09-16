@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-21 Build 322 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-22 Build 323 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -453,7 +453,7 @@ ${wordsPromptList}
    - "index": 1, 2, etc. (number)
    - "correctWord": exact word in base or appropriate inflected form (lowercase)
    - "partOfSpeech": "noun" | "verb" | "adjective" | "adverb" | "preposition" | "phrase"
-   - "hintVi": Helpful Vietnamese clue (e.g. "Tính từ: thiết yếu, quan trọng (bắt đầu bằng 'e')")
+   - "hintVi": Subtle pedagogical Vietnamese clue focusing on contextual meaning and grammatical function (e.g. "Tính từ chỉ đặc tính quan trọng, thiết yếu"). DO NOT reveal the first letter or exact spelling.
    - "explanationVi": Thorough, pedagogical Vietnamese explanation detailing:
        (a) Vị trí ngữ pháp & từ loại yêu cầu tại ô trống (đứng sau từ gì, giữ chức năng gì trong câu).
        (b) Cụm từ cố định (collocation / giới từ đi kèm nếu có).
@@ -1068,11 +1068,19 @@ function useClozeHint() {
   const hintBox = document.getElementById('cloze-hint-box');
   if (hintBox) {
     hintBox.style.display = 'block';
-    const firstLetter = blank.correctWord ? blank.correctWord[0].toUpperCase() : '';
+    const cleanHint = (blank.hintVi || 'Xem xét kỹ ngữ cảnh câu và từ loại xung quanh ô trống.')
+      .replace(/\s*\([bB]ắt đầu bằng[^)]*\)/gi, '')
+      .replace(/\s*\([sS]tarts with[^)]*\)/gi, '')
+      .trim();
+    const posLabel = blank.partOfSpeech ? blank.partOfSpeech.toUpperCase() : 'TỪ LOẠI PHÙ HỢP';
     hintBox.innerHTML = `
-      <strong>💡 Gợi ý VocaHint cho ô [${clozeActiveBlankIndex}]:</strong><br>
-      • <strong>Từ loại & Nghĩa:</strong> ${blank.hintVi || 'Xem ngữ cảnh câu'}<br>
-      • <strong>Chữ cái đầu:</strong> <span style="background: rgba(245,158,11,0.25); padding: 1px 6px; border-radius: 4px; font-weight: 800; font-size: 14px;">${firstLetter}___</span> (${blank.correctWord.length} chữ cái)
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+        <strong style="color: #fbbf24; font-size: 13px;">💡 Gợi ý VocaHint cho ô [${clozeActiveBlankIndex}]:</strong>
+        <span class="badge" style="background: rgba(99,102,241,0.2); color: #818cf8; font-size: 10.5px; font-weight: 700;">${posLabel}</span>
+      </div>
+      <div style="color: var(--text); font-size: 12.5px; line-height: 1.5;">
+        • <strong>Gợi ý ngữ cảnh & ý nghĩa:</strong> ${cleanHint}
+      </div>
     `;
   }
 

@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-21 / Build 322)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-22 / Build 323)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-22': {
+        postId: 'official_update_v0_10_10_22',
+        releaseTime: '2026-09-17T01:00:00.000Z',
+        title: '🎧 Nâng cấp AI Chấm Nghe Gõ Câu (VIP β) & Cân Bằng Cloze Hint (v0.10.10-22 Build 323)!',
+        summary: 'Tích hợp Gemini AI & Thuật toán Needleman-Wunsch chống lệch từ trong Nghe Gõ Câu, cập nhật hệ số điểm siêu khó (x3.6) và ẩn từ gợi ý, nâng cấp VocaHint 3 tầng đa dạng, cân bằng gợi ý VocaHint trong Điền Từ Cloze Test.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-22 (Build 323)!\n\n✨ Những điểm mới nổi bật:\n🧠 Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Nghe Gõ Câu: Chấm điểm thông minh, không còn cứng nhắc. Đưa ra 3 thẻ nhận xét chuyên sâu: 👂 Phân tích bắt âm & từ nghe nhầm, ✍️ Ngữ pháp & cấu trúc câu, 💡 Mẹo luyện thính giác.\n🧬 Thuật Toán Đối Chiếu Chuỗi Needleman-Wunsch (Sequence Alignment): Khắc phục triệt để lỗi lệch dòng (index shift) khi gõ thừa hoặc thiếu từ, phân loại chính xác các từ đúng, sai chính tả nhẹ, sai từ, thiếu từ và thừa từ.\n🎯 Quy Chuẩn 4 Cấp Độ & Hệ Số Điểm Mới: Dễ (x1.2, hiện 1 từ), Trung Bình (x1.8, hiện 1 từ), Khó (x2.4, hiện 1-2 từ), Siêu Khó (x3.6, ẩn từ trọng tâm - thử thách 100% thính giác).\n💡 Nâng Cấp VocaHint Nghe Gõ Câu 3 Tầng: Dịch nghĩa toàn câu chuẩn xác 100%, cấu trúc ngữ pháp & từ khóa, và khung chữ cái đầu hỗ trợ tối đa khi gặp câu dài.\n🧩 Cân Bằng VocaHint Điền Từ Cloze Test: Tinh chỉnh gợi ý tập trung vào chức năng ngữ pháp và ngữ cảnh, loại bỏ gợi ý lộ chữ cái đầu để bảo toàn tính thử thách của bài đọc hiểu.\n🧹 Làm Sạch Giao Diện & Khắc Phục Lỗi Hiển Thị: Đảm bảo chuyển câu mượt mà, không còn lưu vết các khung kết quả cũ.\n\nChúc bạn có những giờ phút luyện nghe và gõ câu thật hiệu quả cùng VocaFlow! 🚀🎧`
+      },
       'v0.10.10-21': {
         postId: 'official_update_v0_10_10_21',
         releaseTime: '2026-09-17T00:30:00.000Z',

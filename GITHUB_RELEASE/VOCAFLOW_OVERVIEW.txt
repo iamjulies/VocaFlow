@@ -1,4 +1,36 @@
 ================================================================================
+Phiên bản: v0.10.10-22 (Build 323) - Tích Hợp Gemini AI Chấm Điểm & Phân Tích Bắt Âm Nghe Gõ Câu (VIP β), Thuật Toán Đối Chiếu Chuỗi Needleman-Wunsch Chống Lệch Dòng (Sequence Alignment), Quy Chuẩn 4 Cấp Độ Thử Thách & Hệ Số Siêu Khó x3.6 (Ẩn Từ Trọng Tâm), Nâng Cấp VocaHint Nghe Gõ 3 Tầng & Cân Bằng VocaHint Điền Từ Cloze Test (Issue 21)
+================================================================================
+1. [Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Nghe Gõ Câu (06e-dictation-engine.js, screen-dictation.html, app.css)]:
+   - Tích hợp Gemini AI chấm điểm thông minh, loại bỏ hoàn toàn cơ chế so sánh cứng nhắc.
+   - Bổ sung 3 thẻ nhận xét chuyên sâu trực quan:
+     + 👂 Phân Tích Bắt Âm & Nghe Nhầm: Chỉ ra cụ thể các hiện tượng nối âm, nuốt âm hoặc từ nghe nhầm ngữ nghĩa (ví dụ: nghe nhầm 'an immortal' thành 'a mortal', 'trade' thành 'fame').
+     + ✍️ Ngữ Pháp & Cấu Trúc Câu: Nhận xét tính mạch lạc, mạo từ (a/an/the) và liên từ nối.
+     + 💡 Mẹo Thính Giác & Lời Khuyên: Cung cấp lời khuyên cải thiện kỹ năng nghe thực tế.
+   - Thêm hiệu ứng phát sáng Neon AI Loading Spinner trong khi AI chấm bài.
+
+2. [Thuật Toán Đối Chiếu Chuỗi Needleman-Wunsch - Chống Lệch Dòng Sequence Alignment (06e-dictation-engine.js, app.css)]:
+   - Triển khai thuật toán quy hoạch động Needleman-Wunsch Sequence Alignment cho các token từ.
+   - Khắc phục triệt để lỗi lệch dòng (index shift) khi người học gõ thừa hoặc thiếu từ (ví dụ: gõ thêm từ 'and' không làm biến đổi đỏ tất cả các từ đúng phía sau).
+   - Phân loại rõ ràng 5 trạng thái: 🟢 Chính xác, 🟡 Lỗi chính tả nhỏ, 🔴 Sai từ / Nhầm âm, ⚪ Bỏ sót từ, 🟣 Thừa từ.
+
+3. [Quy Chuẩn 4 Cấp Độ Thử Thách & Hệ Số Điểm Mới (v0.10.10-22 Issue 1) (06e-dictation-engine.js, modal-dictation-setup.html)]:
+   - Dễ (Easy): Câu ngắn <= 10 từ, 5 lượt nghe, điểm sàn 70đ, dùng 1 từ trọng tâm (hiện từ), hệ số x1.2.
+   - Trung Bình (Medium): Câu vừa 10-15 từ, 4 lượt nghe, điểm sàn 80đ, dùng 1-2 từ (hiện 1 từ), hệ số x1.8.
+   - Khó (Hard): Câu trung bình-dài 12-20 từ, 3 lượt nghe, điểm sàn 90đ, dùng 1-3 từ (hiện 1-2 từ), hệ số x2.4.
+   - Siêu Khó (Master): Câu dài 20-30 từ, 2 lượt nghe, điểm sàn 90đ, dùng 1-3 từ (ẨN HOÀN TOÀN từ trọng tâm - thử thách 100% thính giác), hệ số x3.6.
+
+4. [Nâng Cấp VocaHint Nghe Gõ Câu 3 Tầng (06e-dictation-engine.js)]:
+   - Loại bỏ hoàn toàn câu dịch placeholder mẫu chung.
+   - Cung cấp 3 tầng gợi ý thông minh: Lần 1 (Dịch nghĩa chuẩn xác 100%), Lần 2 (Cấu trúc & Danh sách từ khóa), Lần 3 (Khung chữ cái đầu dạng Masked Sentence).
+
+5. [Cân Bằng Gợi Ý VocaHint Trong Điền Từ Đoạn Văn Cloze Test (Issue 21) (06d-cloze-engine.js)]:
+   - Tinh chỉnh gợi ý tập trung vào chức năng ngữ pháp và sắc thái ngữ cảnh, loại bỏ chữ cái đầu và số lượng ký tự để bảo toàn tính thử thách và nâng cao năng lực đọc hiểu.
+
+6. [Làm Sạch Giao Diện & Khắc Phục Lỗi Dính Khung Kết Quả Cũ (Issue 4) (06e-dictation-engine.js, screen-dictation.html)]:
+   - Xóa sạch và ẩn hoàn toàn toàn bộ kết quả, diff box, nhận xét cũ khi chuyển câu tiếp theo.
+
+================================================================================
 Phiên bản: v0.10.10-21 (Build 322) - Ra Mắt Chế Độ Nghe Gõ Câu (Full Sentence Dictation VIP β - Luyện Listening), Tối Ưu Hóa Giao Diện Deck Header Cho Thiết Bị Màn Hình Hẹp / Mobile (Issue 20), Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai, Tắt Phụt Tiếng Pháo Hoa Khi Đóng Modal & Đồng Bộ Ví Thực VocaHint / Skip
 ================================================================================
 1. [Ra Mắt Chế Độ Học Mới: Nghe Gõ Câu (Full Sentence Dictation VIP β) (06e-dictation-engine.js, screen-dictation.html, modal-dictation-setup.html, modal-dictation-result.html)]:

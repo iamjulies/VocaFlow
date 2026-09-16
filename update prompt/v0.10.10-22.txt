@@ -4,8 +4,17 @@ v0.10.10-22
 [Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
 1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
 2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading (đã hoàn thành)
+- Vấn đề 21: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 010131.png" gợi ý này overpower quá kh đc đâuuuu 
 3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening
-- Vấn đề 1: 
+- Vấn đề 1: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 004600.png" kh hiện từ vựng trọng tâm cho chế độ siêu khó -> đưa hệ số siêu khó về mức thông thường như mức độ siêu khó của các chế độ khác:
++ Dễ: Câu ngắn <=10 từ. Được nghe mẫu tổng cộng 5 lần. Điểm sàn 70. Dùng 1 từ trọng tâm. Hiện từ trọng tâm. hệ số x1.2
++ Trung bình: Câu trung bình 10-15 từ. Được nghe mẫu tổng cộng 4 lần. Điểm sàn 80. Dùng 1 hoặc 2 từ trọng tâm. Hiện 1 từ trọng tâm. hệ số x1.8
++ Khó: Câu trung bình-dài 12-20 từ, được nghe mẫu 3 lần, điểm sàn 90. Dùng 1 - 3 từ trọng tâm. Hiện 1-2 từ trọng tâm. hệ số x2.4
++ Siêu khó: câu dài 20-30 từ, được nghe mẫu 2 lần, điểm sàn 90. Dùng 1 - 3 từ trọng tâm. Hiện 0 từ trọng tâm. hệ số x3.6
+- Vấn đề 2: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 004600.png" điểm cao dù viết sai từ? đối chiếu kh đúng! nhận xét quá ngắn và kh đầy đủ, dễ nhìn... "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 005632.png" cái cơ chế so sánh quá cứng nhắc trong khi có thể dùng AI để chấm thay thế rất tiện lợi mà?
+- Vấn đề 3: vocahint này vô dụng quá "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 005748.png"
+- Vấn đè 4: hiện cái lỗi gì mà như này kh biết nói sao "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 005823.png"
+
 4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng (sẽ được yêu cầu triển khai ở các ver. sau)
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
 

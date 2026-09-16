@@ -4750,7 +4750,7 @@
     }
 
     /* ========================================================================= */
-    /* FULL SENTENCE DICTATION (NGHE GÕ CÂU VIP β - v0.10.10-21)                  */
+    /* FULL SENTENCE DICTATION (NGHE GÕ CÂU VIP β - v0.10.10-22)                  */
     /* ========================================================================= */
     .dictation-speed-bar {
       display: flex;
@@ -4833,6 +4833,16 @@
       border-bottom: 2px solid #f59e0b;
     }
 
+    .dictation-token-wrong {
+      color: #f87171;
+      font-weight: 700;
+      background: rgba(239, 68, 68, 0.18);
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin: 0 2px;
+      border-bottom: 2px solid #ef4444;
+    }
+
     .dictation-token-miss {
       color: #f87171;
       font-weight: 700;
@@ -4847,11 +4857,61 @@
     .dictation-token-extra {
       color: #cbd5e1;
       font-style: italic;
-      background: rgba(148, 163, 184, 0.1);
+      background: rgba(148, 163, 184, 0.15);
       padding: 2px 6px;
       border-radius: 5px;
       margin: 0 2px;
+      border-bottom: 2px dashed #94a3b8;
     }
+
+    .dictation-feedback-card {
+      background: var(--surface-elevated, #1e293b);
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s ease;
+    }
+
+    .dictation-feedback-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .dictation-card-phonetics {
+      border-left: 4px solid #38bdf8;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.09), rgba(14, 165, 233, 0.02));
+    }
+
+    .dictation-card-grammar {
+      border-left: 4px solid #c084fc;
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.09), rgba(168, 85, 247, 0.02));
+    }
+
+    .dictation-card-advice {
+      border-left: 4px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.09), rgba(245, 158, 11, 0.02));
+    }
+
+    .dictation-card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .dictation-card-phonetics .dictation-card-title { color: #38bdf8; }
+    .dictation-card-grammar .dictation-card-title { color: #c084fc; }
+    .dictation-card-advice .dictation-card-title { color: #fbbf24; }
+
+    .dictation-card-body {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text, #e2e8f0);
+    }
+
 
 
 
