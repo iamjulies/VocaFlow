@@ -1,62 +1,92 @@
-  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-17) -->
-  <div class="modal-overlay" id="modal-cloze-result">
-    <div class="modal" style="max-width: 500px; text-align: center;">
-      <div class="modal-title" style="justify-content: center;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 26px;">🎉</span>
-          <strong style="font-size: 17px;">Hoàn Thành Phiên Điền Từ Đoạn Văn!</strong>
-        </div>
-      </div>
+  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-18 - CLOZE READING COMPREHENSION β) -->
+  <div class="modal-overlay" id="modal-cloze-result" style="z-index: 10000;">
+    <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+      <!-- Canvas for dynamic fireworks particles -->
+      <canvas id="cloze-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
 
-      <div style="margin: 16px 0 20px 0;">
-        <div style="font-size: 44px; margin-bottom: 8px; animation: bounce 1s infinite alternate;">🏆</div>
-        <h3 id="cloze-res-celebration-title" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #10b981;">Xuất Sắc Hoàn Thành!</h3>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Bạn đã hoàn thành bài tập đọc hiểu và rèn luyện từ vựng trong ngữ cảnh.</p>
-      </div>
+      <div style="position: relative; z-index: 1;">
+        <!-- Top Icon & Header -->
+        <div id="cloze-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.4));">🏆</div>
+        <h2 id="cloze-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Điền Từ Đoạn Văn!</h2>
+        <p id="cloze-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành bài tập đọc hiểu và rèn luyện từ vựng trong ngữ cảnh.</p>
 
-      <!-- Thống kê kết quả phiên -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;">
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Số Bài Đọc</div>
-          <strong id="cloze-res-total-passages" style="font-size: 16px; color: var(--text);">1 bài</strong>
+        <div style="margin-bottom: 16px;">
+          <span id="cloze-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">🧩 Cấp độ: 🟢 Dễ (x1.5)</span>
         </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Độ Chính Xác</div>
-          <strong id="cloze-res-accuracy" style="font-size: 16px; color: #34d399;">100%</strong>
-        </div>
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Thưởng Xu</div>
-          <strong id="cloze-res-total-coins" style="font-size: 16px; color: #fbbf24;">+0 Xu</strong>
-        </div>
-      </div>
 
-      <!-- Cấp độ và Thống kê lỗi (nếu có) -->
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-size: 12px; color: var(--text-muted);">
-          Cấp độ thử thách: <strong id="cloze-res-difficulty" style="color: var(--text);">🟢 Dễ</strong>
-        </div>
-        <div id="cloze-res-streak-bonus" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-size: 11px;">
-          🔥 +1 Ngày Streak Flow
-        </div>
-      </div>
+        <!-- 5-Tile Stats Dashboard -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Tỉ lệ chính xác -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>🎯</span> Tỉ lệ chính xác
+            </div>
+            <div id="cloze-res-floor-ratio" style="font-size: 15px; font-weight: 800; color: #10b981; font-family: monospace;">0/0 (0%)</div>
+          </div>
 
-      <!-- Danh sách từ cần ôn lại nếu có làm sai -->
-      <div id="cloze-res-wrong-container" style="display: none; margin-bottom: 18px; text-align: left;">
-        <div style="font-size: 12px; font-weight: 700; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
-          <span>📕</span> <span>Các vị trí cần ôn luyện thêm:</span>
-        </div>
-        <div id="cloze-res-wrong-list" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 100px; overflow-y: auto; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
-          <!-- Wrong words chips -->
-        </div>
-      </div>
+          <!-- 2. VoCoin nhận được -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💰</span> VoCoin nhận được
+            </div>
+            <div id="cloze-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+          </div>
 
-      <div class="modal-actions" style="margin-top: 10px;">
-        <button class="btn btn-outline" onclick="if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks'); closeModal('modal-cloze-result'); exitClozeMode();" style="flex: 1;">
-          🏠 Về Danh Sách
-        </button>
-        <button class="btn btn-primary" onclick="if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks'); closeModal('modal-cloze-result'); confirmStartClozeFromModal();" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
-          🔄 Luyện Thêm Bài Khác
-        </button>
+          <!-- 3. Số từ đúng / Điểm TB -->
+          <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #818cf8; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Số từ chính xác
+            </div>
+            <div id="cloze-res-avg-score" style="font-size: 15px; font-weight: 800; color: #6366f1; font-family: monospace;">0 / 0 từ</div>
+          </div>
+
+          <!-- 4. Trợ giúp đã dùng (VocaHint / Skip) -->
+          <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+            <div style="font-size: 11px; color: #c084fc; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>💡</span> Trợ giúp đã dùng
+            </div>
+            <div id="cloze-res-hints-skips" style="font-size: 15px; font-weight: 800; color: #a855f7; font-family: monospace;">0 gợi ý • 0 skip</div>
+          </div>
+
+          <!-- 5. Tổng thời gian (Span 2 cols) -->
+          <div style="grid-column: span 2; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 11.5px; color: #60a5fa; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+              <span>⏱️</span> Tổng thời gian
+            </div>
+            <div id="cloze-res-duration" style="font-size: 14px; font-weight: 800; color: #3b82f6; font-family: monospace;">00:00</div>
+          </div>
+        </div>
+
+        <!-- Bonus breakdown pill -->
+        <div id="cloze-res-bonus-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px dashed rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 8px 12px; font-size: 11.5px; color: #a5b4fc; margin-bottom: 12px; text-align: center;">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- UNPASSED / WRONG WORDS RETRY BANNER -->
+        <div id="cloze-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px;">
+              <span>❌</span> <span>Từ chưa điền đúng: <strong id="cloze-res-wrong-count">0 từ</strong></span>
+            </div>
+            <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 10px; font-weight: 700;">Đã lưu vào Sổ Từ Sai</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+            Luyện lại ngay những từ điền sai để củng cố khả năng nhận diện ngữ cảnh và ngữ pháp!
+          </div>
+          <button class="btn btn-primary" onclick="retryClozeWrongWordsOnly()" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; font-weight: 700; padding: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+            <svg class="icon icon-sm"><use href="#i-repeat"/></svg> <span>Luyện Lại Riêng <span id="cloze-res-wrong-btn-label">0 từ</span></span>
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button class="btn btn-outline" onclick="closeClozeResultModal(); openClozeSetupModal(clozeSetupUseSelection, clozeSetupCustomWordList);" style="flex: 1; justify-content: center; font-weight: 700;">
+            🔁 Luyện Lại
+          </button>
+          <button class="btn btn-primary" onclick="closeClozeResultModal(); exitClozeMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);">
+            🚪 Về VocaDeck
+          </button>
+        </div>
       </div>
     </div>
   </div>

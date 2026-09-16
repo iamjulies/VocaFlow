@@ -1,4 +1,36 @@
 ================================================================================
+Phiên bản: v0.10.10-18 (Build 319) - Hoàn Thiện Extended Learning Modes (β), Ghi Nhận Lỗi Sai Cloze Vào Sổ Từ Sai, Mở Khóa Cloze Trong Hàng Đợi Ôn Tập, Tối Ưu Đọc Hiểu & Tái Thiết Kế Modal Tổng Kết Chuẩn 5-Tile Dashboard
+================================================================================
+1. [Ghi Nhận Từ Làm Sai Ở Chế Độ Điền Từ Cloze Vào Sổ Tay Lỗi Sai (06d-cloze-engine.js, 05-quiz-engine.js)]:
+   - Khi đánh giá bài đọc Cloze Test, mọi ô khuyết trả lời sai được trích xuất thông tin từ vựng và tự động thêm vào Sổ Tay Lỗi Sai (Mistake Notebook) qua `addWordToMistakeList(wordObj, 'cloze')`.
+   - Nếu từ đó đã tồn tại trong Sổ lỗi sai và người học điền đúng trong bài đọc, hệ thống tự động xóa khỏi sổ qua `removeWordFromMistakeList(wordObj, true)`.
+   - Hỗ trợ lưu trữ danh sách từ sai trong phiên `clozeSessionWrongWords` và hiển thị Banner Luyện Lại Riêng Từ Sai (`retryClozeWrongWordsOnly()`).
+
+2. [Mở Khóa Chế Độ Điền Từ (β) Trong Hàng Đợi Ôn Tập Hôm Nay (modal-review-queue.html, 04-decks-manager.js)]:
+   - Thêm nút hành động nhanh `Điền Từ (β)` (`#btn-review-cloze`) trong modal Hàng Đợi Ôn Tập (`modal-review-queue.html`).
+   - Kết nối trực tiếp `launchReviewDueWords('cloze')` với `openClozeSetupModal(false, targetList)` để người học có thể ôn tập các từ đến hạn qua phương pháp đọc hiểu ngữ cảnh.
+
+3. [Loại Bỏ Nút "Nghe Bài Đọc" Trên Màn Hình Điền Từ (screen-cloze.html, 06d-cloze-engine.js)]:
+   - Gỡ bỏ nút `#btn-cloze-tts` và chỉ báo sóng âm `#cloze-audio-playing-indicator` khỏi màn hình `screen-cloze.html` theo đúng định hướng kỹ năng Đọc Hiểu Ngữ Cảnh (Reading Comprehension).
+
+4. [Tái Thiết Kế Modal Tổng Kết Cloze Test Theo Chuẩn 5-Tile Dashboard (modal-cloze-result.html, 06d-cloze-engine.js)]:
+   - Nâng cấp giao diện Modal hoàn thành phiên học `modal-cloze-result.html` đồng nhất với Luyện Viết Câu (Writing Lab):
+     + 🏆 Cúp vinh danh có hiệu ứng glow sang trọng.
+     + 🏷️ Huy hiệu cấp độ thử thách: `🧩 Cấp độ: 🟢 Dễ (x1.5)`.
+     + 🎯 Tỉ lệ chính xác: `12/12 (100%)`.
+     + 💰 VoCoin nhận được: `+35 VoCoin`.
+     + ⚡ Số từ chính xác: `12 / 12 từ`.
+     + 💡 Trợ giúp đã dùng: `0 gợi ý • 0 skip`.
+     + ⏱️ Tổng thời gian: `00:29` (mm:ss).
+     + ❌ Banner luyện lại riêng các từ chưa điền đúng (`retryClozeWrongWordsOnly()`).
+     + 🚪 Bộ nút hành động chuẩn: `🔁 Luyện Lại` (bên trái) và `🚪 Về VocaDeck` (nút gradient cam `#f59e0b, #d97706` bên phải).
+
+5. [Tích Hợp Xu, Điểm Rèn Luyện & Thời Gian Học Cloze Vào Biểu Đồ 7 Ngày (06d-cloze-engine.js, 08-wallet-economy.js)]:
+   - Ghi nhận thời gian học thực tế (`Date.now() - clozeStartTime`) vào `addDailyStudySeconds(durationSec, 'cloze')`.
+   - Ghi nhận `recordStudyFlowAction('cloze')`, `recordLessonCompleted('cloze')`, và `recordStudySessionWordReviews(reviewedWords)`.
+   - Đồng bộ realtime điểm rèn luyện và Xu lên biểu đồ 7 ngày `get7DayPerformanceData()`.
+
+================================================================================
 Phiên bản: v0.10.10-17 (Build 318) - Tối Ưu Toàn Diện Điền Từ Cloze Test β (Đồng Bộ Ví VocaHint/VocaSkip, Chấm Điểm Song Hành Giao Hoán "and/or", Đánh Dấu Đỏ/Xanh Trực Quan Đoạn Văn, Nâng Cấp Dịch Thuật Báo Chí Mượt Mà & Tắt SFX Pháo Hoa)
 ================================================================================
 1. [Đồng Bộ Số Lượng VocaHint & VocaSkip Với Ví Thực Tế (06d-cloze-engine.js)]:

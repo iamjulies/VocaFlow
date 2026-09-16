@@ -796,6 +796,10 @@
         if (!userAchievements['first_writing']) userAchievements['first_writing'] = { unlocked: false, progress: 0, unlockedAt: null, claimedReward: false };
         userAchievements['first_writing'].progress = 1;
         checkAndUnlockAchievement('first_writing');
+      } else if (mode === 'cloze') {
+        if (!userAchievements['first_cloze']) userAchievements['first_cloze'] = { unlocked: false, progress: 0, unlockedAt: null, claimedReward: false };
+        userAchievements['first_cloze'].progress = 1;
+        checkAndUnlockAchievement('first_cloze');
       }
 
       recordStudyFlowAction(mode);

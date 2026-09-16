@@ -1,0 +1,15 @@
+v0.10.10-19
+[ĐỌC KĨ PHẦN SAU]
+=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
+[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
+2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading
+- Vấn đề 13: Chế độ "Điền từ" chỉ dành cho vip user -> Khóa đối với guest và user thường
+- Vấn đề 14: Khi tạo đoạn văn ở chế độ khó và siêu khó, AI mất rất nhiều thời gian, nhất là với chế độ khó hơn 1 phút chưa tạo xong (t nghĩ là lỗi rồi)... ê AI hơi chập chờn thật... hay là đối với mấy cái dài và hơi phức tạp hơn thế này thì dùng model cao hơn, ví dụ dùng gemini-3.6-flash/gemini-3.7-flash? (dùng cho khó và siêu khó thôi)
+- Vấn để 15: Đối với tất cả các chế độ học (4 chế độ thường và 4 chế độ nâng cao) ở bộ từ và queue học tập thì đều yêu cầu ít nhất 5 từ để có thể tạo được phiên học tập. tức là nếu deck hoặc queue có số từ hiện hữu >=5 mà user tự chọn số từ <5 thì không được, nhưng đối với các deck hoặc queue có số từ hiện hữu là <5 thì đối với 4 chế độ thường thì nhất quyết kh tạo được phiên học, còn đối với chế độ viết câu và điền từ nếu cần số từ nhiều hơn số từ có thể chọn (>=5) thì sẽ có AI tạo thêm từ để đủ... hmm idk
+- Vấn đề 16: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-16 230626.png" thêm cái hình gì động vào đây đi, ví dụ là cái kiểu load xoay xoay ấy chứ để im như này bị chán và dễ bị nhầm là đang lỗi mạng ấy.
+
+3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (sẽ được yêu cầu triển khai ở các ver. sau)
+4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng (sẽ được yêu cầu triển khai ở các ver. sau)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+

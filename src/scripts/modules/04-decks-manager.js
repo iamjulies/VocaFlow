@@ -2552,7 +2552,11 @@
         }
         openQuizSetupModal(false, targetList);
       } else if (mode === 'cloze') {
-        showToast('📖 Tính năng Cloze Test (Điền đoạn văn có bối cảnh β) đang được hoàn thiện!');
+        if (typeof openClozeSetupModal === 'function') {
+          openClozeSetupModal(false, targetList);
+        } else {
+          showToast('⚠️ Chưa thể khởi chạy chế độ Điền Từ Cloze!');
+        }
       } else if (mode === 'dictation') {
         showToast('🎧 Tính năng Full Sentence Dictation (Nghe chép chính tả cả câu β) đang được hoàn thiện!');
       }

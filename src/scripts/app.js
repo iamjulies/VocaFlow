@@ -124,10 +124,10 @@
         openModal(parentToRestore);
       }
       if (id === 'modal-user-guide') {
-        guideReturnContext = null;
-      } else if (typeof guideReturnContext !== 'undefined' && guideReturnContext && guideReturnContext.targetModalId === id) {
-        const ctx = guideReturnContext;
-        guideReturnContext = null;
+        window.guideReturnContext = null;
+      } else if (window.guideReturnContext && window.guideReturnContext.targetModalId === id) {
+        const ctx = window.guideReturnContext;
+        window.guideReturnContext = null;
         setTimeout(() => {
           if (typeof openUserGuideModal === 'function') {
             openUserGuideModal(ctx.category, ctx.starterStep, ctx.scrollTop);

@@ -2646,7 +2646,7 @@
   let currentGuideCategory = 'starter';
   let currentGuideStarterStep = 0;
   const guideStarterStepsCount = 5;
-  let guideReturnContext = null;
+  window.guideReturnContext = null;
 
   const guideStarterTitles = [
     'Đăng Ký & Đăng Nhập Tài Khoản',
@@ -2772,7 +2772,7 @@
 
   function navigateFromGuide(openActionFn, targetModalId) {
     const contentArea = document.getElementById('guide-content-area');
-    guideReturnContext = {
+    window.guideReturnContext = {
       category: currentGuideCategory,
       starterStep: currentGuideStarterStep,
       scrollTop: contentArea ? contentArea.scrollTop : 0,

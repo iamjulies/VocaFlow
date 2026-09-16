@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-17 Build 318 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-18 Build 319 - EXTENDED LEARNING MODE BETA)
 // AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
 // =========================================================================
 
@@ -17,6 +17,7 @@ let clozePlacements = {};       // blankIndex (1-based) -> optionId
 let clozeActiveBlankIndex = 1;  // 1-based index of focused blank
 let clozeSessionPointsEarned = 0;
 let clozeSessionWrongBlanks = [];
+let clozeSessionWrongWords = [];
 let clozeSessionTotalBlanksCount = 0;
 let clozeSessionCorrectBlanksCount = 0;
 let clozeHintsUsed = 0;
@@ -227,6 +228,7 @@ async function startClozeMode(fromSelection = false, customWordList = null, tota
   currentClozeIndex = 0;
   clozeSessionPointsEarned = 0;
   clozeSessionWrongBlanks = [];
+  clozeSessionWrongWords = [];
   clozeSessionTotalBlanksCount = 0;
   clozeSessionCorrectBlanksCount = 0;
   clozeHintsUsed = 0;
@@ -1245,8 +1247,25 @@ function evaluateClozeResults() {
     const isCorrect = res ? res.isCorrect : false;
     const userWord = res ? res.userWord : '';
 
+    // Find full word object from words in deck or construct one
+    const cleanWord = b.correctWord.toLowerCase().trim();
+    const matchedWord = (typeof words !== 'undefined' && Array.isArray(words))
+      ? words.find(w => (w.deckId === currentDeckId || !w.deckId) && (w.term || '').trim().toLowerCase() === cleanWord)
+      : null;
+    const wordObj = matchedWord || {
+      id: 'cloze_w_' + encodeURIComponent(b.correctWord).replace(/%/g, '_'),
+      term: b.correctWord,
+      partOfSpeech: b.partOfSpeech || 'word',
+      definitionVi: b.hintVi ? b.hintVi.replace(/^[^:]+:\s*/, '') : b.correctWord,
+      definition: b.hintVi || b.correctWord,
+      deckId: currentDeckId || ''
+    };
+
     if (isCorrect) {
       correctCount++;
+      if (typeof removeWordFromMistakeList === 'function') {
+        removeWordFromMistakeList(wordObj, true);
+      }
     } else {
       clozeSessionWrongBlanks.push({
         word: b.correctWord,
@@ -1254,6 +1273,12 @@ function evaluateClozeResults() {
         blankIndex: b.index,
         hintVi: b.hintVi
       });
+      if (!clozeSessionWrongWords.some(w => (w.term || '').toLowerCase() === cleanWord)) {
+        clozeSessionWrongWords.push(wordObj);
+      }
+      if (typeof addWordToMistakeList === 'function') {
+        addWordToMistakeList(wordObj, 'cloze');
+      }
     }
 
     // Apply visual red/green coloring to the blank zone on passage text (Issue 6)
@@ -1307,14 +1332,6 @@ function evaluateClozeResults() {
     earnedXu = Math.round(earnedXu * 0.4); // Partial credit if below floor score
   }
   clozeSessionPointsEarned += earnedXu;
-
-  // Record daily study time & streak flow
-  if (typeof addDailyStudySeconds === 'function') {
-    addDailyStudySeconds(45);
-  }
-  if (typeof recordStudyFlowAction === 'function') {
-    recordStudyFlowAction();
-  }
 
   // Render Result UI
   const aiLoading = document.getElementById('cloze-ai-loading');
@@ -1405,6 +1422,41 @@ function finishClozeSession() {
   clozeIsCompleted = true;
   stopClozePassageAudio();
 
+  // Study time in seconds and mm:ss format
+  const durationSec = Math.max(1, Math.floor((Date.now() - clozeStartTime) / 1000));
+  const mins = String(Math.floor(durationSec / 60)).padStart(2, '0');
+  const secs = String(durationSec % 60).padStart(2, '0');
+
+  // Record daily study time & activity (Issue 12)
+  if (typeof addDailyStudySeconds === 'function') {
+    addDailyStudySeconds(durationSec, 'cloze');
+  }
+  if (typeof recordStudyFlowAction === 'function') {
+    recordStudyFlowAction('cloze');
+  }
+  if (typeof recordLessonCompleted === 'function') {
+    recordLessonCompleted('cloze');
+  }
+
+  // Record spaced repetition review for words
+  const reviewedWords = [];
+  clozePassagesList.forEach(p => {
+    if (p.passageData && p.passageData.blanks) {
+      p.passageData.blanks.forEach(b => {
+        const cleanWord = b.correctWord.toLowerCase().trim();
+        const matched = (typeof words !== 'undefined' && Array.isArray(words))
+          ? words.find(w => (w.deckId === currentDeckId || !w.deckId) && (w.term || '').trim().toLowerCase() === cleanWord)
+          : null;
+        if (matched && !reviewedWords.some(rw => rw.id === matched.id)) {
+          reviewedWords.push(matched);
+        }
+      });
+    }
+  });
+  if (reviewedWords.length > 0 && typeof recordStudySessionWordReviews === 'function') {
+    recordStudySessionWordReviews(reviewedWords);
+  }
+
   // Final session points settlement
   if (clozeSessionPointsEarned > 0 && typeof setUserPoints === 'function') {
     const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
@@ -1418,42 +1470,71 @@ function finishClozeSession() {
     if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
   }
 
-  // Populate Celebration Modal
-  const totalPassagesEl = document.getElementById('cloze-res-total-passages');
-  const accuracyEl = document.getElementById('cloze-res-accuracy');
-  const totalCoinsEl = document.getElementById('cloze-res-total-coins');
-  const diffEl = document.getElementById('cloze-res-difficulty');
-  const wrongCont = document.getElementById('cloze-res-wrong-container');
-  const wrongList = document.getElementById('cloze-res-wrong-list');
+  // Populate Celebration Modal (Issue 11 - 5-tile dashboard layout)
+  const ratioEl = document.getElementById('cloze-res-floor-ratio');
+  const pointsEl = document.getElementById('cloze-res-points');
+  const avgEl = document.getElementById('cloze-res-avg-score');
+  const hintsSkipsEl = document.getElementById('cloze-res-hints-skips');
+  const durationEl = document.getElementById('cloze-res-duration');
+  const diffBadge = document.getElementById('cloze-res-difficulty-badge');
 
   const overallAccuracy = clozeSessionTotalBlanksCount > 0 ? Math.round((clozeSessionCorrectBlanksCount / clozeSessionTotalBlanksCount) * 100) : 100;
   const diffCfg = getClozeDifficultyConfig(currentClozeDifficulty);
 
-  if (totalPassagesEl) totalPassagesEl.textContent = `${clozePassagesList.length} bài`;
-  if (accuracyEl) accuracyEl.textContent = `${overallAccuracy}%`;
-  if (totalCoinsEl) totalCoinsEl.textContent = `+${clozeSessionPointsEarned} Xu`;
-  if (diffEl) diffEl.textContent = diffCfg.label;
+  if (ratioEl) ratioEl.textContent = `${clozeSessionCorrectBlanksCount}/${clozeSessionTotalBlanksCount} (${overallAccuracy}%)`;
+  if (pointsEl) pointsEl.textContent = `+${clozeSessionPointsEarned} VoCoin`;
+  if (avgEl) avgEl.textContent = `${clozeSessionCorrectBlanksCount} / ${clozeSessionTotalBlanksCount} từ`;
+  if (hintsSkipsEl) hintsSkipsEl.textContent = `${clozeHintsUsed} gợi ý • ${clozeSkipsUsed} skip`;
+  if (durationEl) durationEl.textContent = `${mins}:${secs}`;
+  if (diffBadge) diffBadge.textContent = `🧩 Cấp độ: ${diffCfg.label} (x${diffCfg.diffMult})`;
 
-  if (wrongCont && wrongList) {
-    if (clozeSessionWrongBlanks.length > 0) {
-      wrongCont.style.display = 'block';
-      wrongList.innerHTML = clozeSessionWrongBlanks.map(w => `
-        <span class="chip" style="background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.3); font-size: 11px;">
-          ${w.word} (đã điền: ${w.userWord})
-        </span>
-      `).join('');
-    } else {
-      wrongCont.style.display = 'none';
-    }
+  // Wrong words retry banner (Issue 8 & 11)
+  const wrongBanner = document.getElementById('cloze-res-wrong-banner');
+  const wrongCountEl = document.getElementById('cloze-res-wrong-count');
+  const wrongBtnLabel = document.getElementById('cloze-res-wrong-btn-label');
+
+  if (clozeSessionWrongWords.length > 0) {
+    if (wrongBanner) wrongBanner.style.display = 'block';
+    if (wrongCountEl) wrongCountEl.textContent = `${clozeSessionWrongWords.length} từ`;
+    if (wrongBtnLabel) wrongBtnLabel.textContent = `${clozeSessionWrongWords.length} từ`;
+  } else {
+    if (wrongBanner) wrongBanner.style.display = 'none';
   }
 
   if (typeof playVocaSfx === 'function') playVocaSfx('fireworks');
   if (typeof openModal === 'function') openModal('modal-cloze-result');
 }
 
+function closeClozeResultModal() {
+  if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
+  if (typeof closeModal === 'function') closeModal('modal-cloze-result');
+}
+
+function retryClozeWrongWordsOnly() {
+  closeClozeResultModal();
+  if (clozeSessionWrongWords.length === 0) {
+    if (typeof showToast === 'function') showToast('🎉 Tuyệt vời! Bạn không có từ nào bị lỗi trong phiên này.');
+    return;
+  }
+  const retryList = [...clozeSessionWrongWords];
+  startClozeMode(true, retryList, 1);
+}
+
 function exitClozeMode() {
   stopClozePassageAudio();
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
+  closeClozeResultModal();
+
+  // Record study time on early exit if session was active
+  if (!clozeIsCompleted && clozeStartTime > 0) {
+    const durationSec = Math.max(1, Math.floor((Date.now() - clozeStartTime) / 1000));
+    if (clozeSessionCorrectBlanksCount > 0 && typeof addDailyStudySeconds === 'function') {
+      addDailyStudySeconds(durationSec, 'cloze');
+    }
+    if (clozeSessionCorrectBlanksCount > 0 && typeof recordStudyFlowAction === 'function') {
+      recordStudyFlowAction('cloze');
+    }
+  }
 
   if (typeof studySourceContext !== 'undefined' && (studySourceContext === 'review-queue' || !currentDeckId)) {
     if (typeof showScreen === 'function') showScreen('screen-decks');
@@ -1463,3 +1544,31 @@ function exitClozeMode() {
     if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
   }
 }
+
+// Window Bindings for Global Access
+window.openClozeSetupModal = openClozeSetupModal;
+window.confirmStartClozeFromModal = confirmStartClozeFromModal;
+window.selectClozeSetupDifficulty = selectClozeSetupDifficulty;
+window.selectClozeSetupPassageCount = selectClozeSetupPassageCount;
+window.handleClozeCustomPassageCountInput = handleClozeCustomPassageCountInput;
+window.startClozeMode = startClozeMode;
+window.exitClozeMode = exitClozeMode;
+window.shuffleCurrentCloze = shuffleCurrentCloze;
+window.toggleClozePassageAudio = toggleClozePassageAudio;
+window.stopClozePassageAudio = stopClozePassageAudio;
+window.handleClozeBlankClick = handleClozeBlankClick;
+window.handleClozeBlankDragOver = handleClozeBlankDragOver;
+window.handleClozeBlankDragLeave = handleClozeBlankDragLeave;
+window.handleClozeBlankDrop = handleClozeBlankDrop;
+window.handleClozeChipClick = handleClozeChipClick;
+window.handleClozeChipDragStart = handleClozeChipDragStart;
+window.handleClozeChipDragEnd = handleClozeChipDragEnd;
+window.unplaceWordFromBlank = unplaceWordFromBlank;
+window.useClozeHint = useClozeHint;
+window.useClozeSkip = useClozeSkip;
+window.submitClozeEvaluation = submitClozeEvaluation;
+window.nextClozePassage = nextClozePassage;
+window.finishClozeSession = finishClozeSession;
+window.closeClozeResultModal = closeClozeResultModal;
+window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
+
