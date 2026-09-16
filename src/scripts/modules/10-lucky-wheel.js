@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 
 // VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.9-48)
 
@@ -609,8 +609,8 @@
     // =========================================================================
     // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-12)
     // =========================================================================
-    const MONETAG_INPAGE_ZONE = '11730204';
-    const MONETAG_VIGNETTE_ZONE = '11730208';
+    var MONETAG_INPAGE_ZONE = window.MONETAG_INPAGE_ZONE || '11730204';
+    var MONETAG_VIGNETTE_ZONE = window.MONETAG_VIGNETTE_ZONE || '11730208';
     let monetagInPageScriptEl = null;
     let monetagVignetteScriptEl = null;
     let lastRewardedAdTriggerTime = 0;

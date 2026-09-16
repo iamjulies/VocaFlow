@@ -851,6 +851,10 @@ function handleClozeChipDragStart(event, optionId) {
   }
 }
 
+function handleClozeChipDragEnd(event) {
+  document.querySelectorAll('.cloze-blank-zone').forEach(el => el.classList.remove('drag-over'));
+}
+
 function handleClozeBlankDragOver(event) {
   event.preventDefault();
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';

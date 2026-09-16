@@ -56,6 +56,17 @@
     window.GEMINI_STANDARD_MODELS = GEMINI_STANDARD_MODELS;
     window.GEMINI_VISION_MODELS = GEMINI_VISION_MODELS;
 
+    // Global VIP Registry & Monetag Zone Declarations (Prevents TDZ across modules)
+    var globalVipRegistry = window.globalVipRegistry || {};
+    var globalVipRegistryNameMap = window.globalVipRegistryNameMap || {};
+    window.globalVipRegistry = globalVipRegistry;
+    window.globalVipRegistryNameMap = globalVipRegistryNameMap;
+
+    var MONETAG_INPAGE_ZONE = '11730204';
+    var MONETAG_VIGNETTE_ZONE = '11730208';
+    window.MONETAG_INPAGE_ZONE = MONETAG_INPAGE_ZONE;
+    window.MONETAG_VIGNETTE_ZONE = MONETAG_VIGNETTE_ZONE;
+
     function getGeminiModelsForTier(tier = 'deep') {
       const isFast = (tier === 'fast' || tier === 'lite' || tier === 'micro');
       const baseModels = isFast ? GEMINI_MODELS_FAST : GEMINI_MODELS_DEEP;

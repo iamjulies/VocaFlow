@@ -19,8 +19,8 @@
     }
 
     // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-3 Lightweight Index)
-    let globalVipRegistry = {};
-    let globalVipRegistryNameMap = {};
+    var globalVipRegistry = window.globalVipRegistry || {};
+    var globalVipRegistryNameMap = window.globalVipRegistryNameMap || {};
 
     function registerAuthorToVipRegistry(authorObj) {
       if (!authorObj || typeof authorObj !== 'object') return;

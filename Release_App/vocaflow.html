@@ -12515,6 +12515,17 @@ window.initSpaRouter = initSpaRouter;
     window.GEMINI_STANDARD_MODELS = GEMINI_STANDARD_MODELS;
     window.GEMINI_VISION_MODELS = GEMINI_VISION_MODELS;
 
+    // Global VIP Registry & Monetag Zone Declarations (Prevents TDZ across modules)
+    var globalVipRegistry = window.globalVipRegistry || {};
+    var globalVipRegistryNameMap = window.globalVipRegistryNameMap || {};
+    window.globalVipRegistry = globalVipRegistry;
+    window.globalVipRegistryNameMap = globalVipRegistryNameMap;
+
+    var MONETAG_INPAGE_ZONE = '11730204';
+    var MONETAG_VIGNETTE_ZONE = '11730208';
+    window.MONETAG_INPAGE_ZONE = MONETAG_INPAGE_ZONE;
+    window.MONETAG_VIGNETTE_ZONE = MONETAG_VIGNETTE_ZONE;
+
     function getGeminiModelsForTier(tier = 'deep') {
       const isFast = (tier === 'fast' || tier === 'lite' || tier === 'micro');
       const baseModels = isFast ? GEMINI_MODELS_FAST : GEMINI_MODELS_DEEP;
@@ -34938,6 +34949,10 @@ function handleClozeChipDragStart(event, optionId) {
   }
 }
 
+function handleClozeChipDragEnd(event) {
+  document.querySelectorAll('.cloze-blank-zone').forEach(el => el.classList.remove('drag-over'));
+}
+
 function handleClozeBlankDragOver(event) {
   event.preventDefault();
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
@@ -44852,8 +44867,8 @@ Quy tắc phản hồi quan trọng:
     // =========================================================================
     // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-12)
     // =========================================================================
-    const MONETAG_INPAGE_ZONE = '11730204';
-    const MONETAG_VIGNETTE_ZONE = '11730208';
+    var MONETAG_INPAGE_ZONE = window.MONETAG_INPAGE_ZONE || '11730204';
+    var MONETAG_VIGNETTE_ZONE = window.MONETAG_VIGNETTE_ZONE || '11730208';
     let monetagInPageScriptEl = null;
     let monetagVignetteScriptEl = null;
     let lastRewardedAdTriggerTime = 0;
@@ -57842,8 +57857,8 @@ Quy tắc phản hồi quan trọng:
     }
 
     // Global Realtime VIP Registry (v0.10.8-alpha-10.3 / v0.10.10-3 Lightweight Index)
-    let globalVipRegistry = {};
-    let globalVipRegistryNameMap = {};
+    var globalVipRegistry = window.globalVipRegistry || {};
+    var globalVipRegistryNameMap = window.globalVipRegistryNameMap || {};
 
     function registerAuthorToVipRegistry(authorObj) {
       if (!authorObj || typeof authorObj !== 'object') return;
