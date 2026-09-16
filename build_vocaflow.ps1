@@ -45,6 +45,7 @@ $screensOrder = @(
     "screen-spelling.html",
     "screen-speaking.html",
     "screen-writing.html",
+    "screen-cloze.html",
     "screen-autofc.html"
 )
 $screensBuilder = [System.Text.StringBuilder]::new()

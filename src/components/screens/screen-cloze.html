@@ -1,0 +1,175 @@
+    <section id="screen-cloze" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitClozeMode()" title="Quay lại danh sách từ">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div id="cloze-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Bài 1 / 1</div>
+          <span id="cloze-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🟢 Dễ (x1.5)</span>
+          <span class="badge" style="background: rgba(99, 102, 241, 0.18); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); font-weight: 800; font-size: 11px; padding: 2px 7px;">🧩 Điền Từ Cloze (β)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" id="btn-cloze-tts" onclick="toggleClozePassageAudio()" title="Nghe đọc toàn bộ đoạn văn bằng AI Native Voice" style="display: inline-flex; align-items: center; gap: 4px; border-color: rgba(99,102,241,0.4); color: #818cf8;">
+            <span id="cloze-tts-icon">🔊</span> <span class="hide-on-mobile" id="cloze-tts-label">Nghe bài đọc</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentCloze()" title="Xáo trộn vị trí các từ trong ngân hàng từ">
+            🔀 <span class="hide-on-mobile">Trộn từ</span>
+          </button>
+          <div id="cloze-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="cloze-container" style="max-width: 820px; margin: 16px auto; padding: 0 16px;">
+        
+        <!-- CARD 1: ĐOẠN VĂN NGỮ CẢNH VÀ CÁC Ô TRỐNG (PASSAGE CARD) -->
+        <div class="cloze-passage-card" id="cloze-passage-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); position: relative;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">📖</span>
+              <div>
+                <h3 id="cloze-passage-title" style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text);">Reading Comprehension & Cloze Test</h3>
+                <div style="font-size: 11.5px; color: var(--text-muted);">Đọc kỹ ngữ cảnh và điền từ thích hợp vào các vị trí khuyết</div>
+              </div>
+            </div>
+            <span id="cloze-blanks-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 700; font-size: 11.5px; padding: 3px 9px;">
+              0 / 0 ô đã điền
+            </span>
+          </div>
+
+          <!-- Đoạn văn có các ô trống khuyết -->
+          <div id="cloze-passage-body" class="cloze-passage-body" style="font-size: 16px; line-height: 2.0; color: var(--text); user-select: text; min-height: 120px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Thanh sóng âm thanh khi đang phát đọc passage -->
+          <div id="cloze-audio-playing-indicator" style="display: none; margin-top: 14px; padding: 8px 12px; background: rgba(99, 102, 241, 0.12); border-radius: 10px; align-items: center; gap: 8px; font-size: 12px; color: #818cf8;">
+            <span style="animation: spkPulse 1s infinite alternate; display: inline-block;">🎙️</span>
+            <span>Đang phát giọng đọc bài văn... Bấm lại vào nút 🔊 để dừng</span>
+          </div>
+        </div>
+
+        <!-- CARD 2: NGÂN HÀNG TỪ VỰNG & PHÍM TẮT CHỌN NHANH (WORD BANK) -->
+        <div class="cloze-wordbank-card" id="cloze-wordbank-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; margin-bottom: 18px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🔤</span>
+              <strong style="font-size: 13px; color: var(--text);">Ngân hàng từ vựng (Word Bank):</strong>
+              <span id="cloze-available-words-count" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px;">0 từ</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <!-- VocaHint Button -->
+              <button class="btn btn-outline btn-sm" id="btn-cloze-hint" onclick="useClozeHint()" title="VocaHint gợi ý ô trống đang chọn (50 VoCoin hoặc 1 VocaHint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>💡 Gợi ý ô đang chọn</span>
+                <span id="cloze-hints-count" style="font-size: 10.5px; background: rgba(245,158,11,0.2); color: #fbbf24; padding: 1px 5px; border-radius: 10px;">5</span>
+              </button>
+
+              <!-- VocaSkip Button -->
+              <button class="btn btn-outline btn-sm" id="btn-cloze-skip" onclick="useClozeSkip()" title="VocaSkip tự động điền đáp án chuẩn vào ô đang chọn" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>⏭️ Điền tự động</span>
+                <span id="cloze-skips-count" style="font-size: 10.5px; background: rgba(99,102,241,0.2); color: #818cf8; padding: 1px 5px; border-radius: 10px;">3</span>
+              </button>
+
+              <!-- Clear all button -->
+              <button class="btn btn-outline btn-sm" onclick="clearAllClozeBlanks()" title="Gỡ tất cả từ khỏi các ô trống" style="border-radius: 20px; font-size: 11.5px; padding: 3px 9px;">
+                🔄 Gỡ tất cả
+              </button>
+            </div>
+          </div>
+
+          <!-- Gợi ý VocaHint (nếu đã dùng) -->
+          <div id="cloze-hint-box" style="display: none; margin-bottom: 12px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 12px; font-size: 12.5px; color: #fbbf24; text-align: left;">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Danh sách thẻ từ vựng Word Bank có thể kéo thả hoặc click chọn -->
+          <div id="cloze-word-bank-chips" class="cloze-word-bank-chips" style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 8px; background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; align-items: center;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Thanh trợ giúp phím tắt nhanh -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11.5px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+            <div>
+              <span>💡 Mẹo: Nhấp phím <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">1</kbd>-<kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">9</kbd> hoặc <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">a</kbd>-<kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">z</kbd> để chọn nhanh từ • Nhấp vào ô trống để gỡ từ</span>
+            </div>
+            <div>
+              <span>Phím nộp: <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Ctrl</kbd> + <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Enter</kbd></span>
+            </div>
+          </div>
+
+          <!-- NÚT NỘP BÀI CHẤM ĐIỂM -->
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 16px;">
+            <button class="btn btn-primary" id="btn-cloze-submit" onclick="submitClozeEvaluation()" style="width: 100%; max-width: 360px; padding: 11px 24px; font-size: 14px; font-weight: 800; border-radius: 24px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; box-shadow: 0 4px 16px rgba(99,102,241,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+              <span>✨ Nộp Bài & Chấm Điểm</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: BẢNG KẾT QUẢ & GIẢI THÍCH CHI TIẾT (RESULT PANEL) -->
+        <div id="cloze-result-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 20px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          
+          <!-- AI Loading State -->
+          <div id="cloze-ai-loading" style="display: none; text-align: center; padding: 24px 10px;">
+            <div style="font-size: 36px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 10px;">🧩</div>
+            <h4 style="margin: 0 0 6px 0; color: var(--text);">Đang phân tích & tổng hợp kết quả đọc hiểu...</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Kiểm tra ngữ cảnh, collocations và cấu trúc ngữ pháp</p>
+          </div>
+
+          <!-- AI Result Content -->
+          <div id="cloze-result-content" style="display: none;">
+            <!-- Header điểm số -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="cloze-score-circle" style="width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; background: rgba(52,211,153,0.15); color: #34d399; border: 2px solid #34d399;">
+                  100%
+                </div>
+                <div>
+                  <h4 id="cloze-result-verdict" style="margin: 0; font-size: 16px; font-weight: 800; color: #34d399;">Xuất Sắc!</h4>
+                  <div id="cloze-result-summary-text" style="font-size: 12px; color: var(--text-muted);">Bạn đã điền đúng 0/0 vị trí</div>
+                </div>
+              </div>
+              <div id="cloze-reward-badge" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 12px; font-weight: 700; padding: 6px 12px; border: 1px solid rgba(245,158,11,0.3);">
+                +0 Xu
+              </div>
+            </div>
+
+            <!-- Bảng phân tích chi tiết từng ô trống -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>📋</span> <span>Phân Tích Ngữ Nghĩa & Đáp Án Chi Tiết:</span>
+              </div>
+              <div id="cloze-blanks-feedback-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Bản dịch tiếng Việt hoàn chỉnh của bài đọc -->
+            <div style="margin-bottom: 18px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer;" onclick="toggleClozeTranslationView()">
+                <div style="font-size: 12.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                  <span>🇻🇳</span> <span>Bản Dịch Toàn Văn Tiếng Việt:</span>
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-toggle-cloze-trans" style="font-size: 11px; padding: 2px 8px;">
+                  👁️ Xem / Ẩn
+                </button>
+              </div>
+              <div id="cloze-full-translation-text" style="font-size: 13.5px; line-height: 1.7; color: var(--text-muted); display: block;">
+                <!-- Translation text -->
+              </div>
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-outline" onclick="retryCurrentClozePassage()" style="font-size: 13px; font-weight: 700; border-radius: 12px; padding: 8px 16px;">
+                🔄 Làm Lại Bài Này
+              </button>
+              <button class="btn btn-primary" id="btn-cloze-next" onclick="nextClozePassage()" style="font-size: 13px; font-weight: 700; border-radius: 12px; padding: 8px 20px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
+                🚀 Tiếp Tục (Bài Sau)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>

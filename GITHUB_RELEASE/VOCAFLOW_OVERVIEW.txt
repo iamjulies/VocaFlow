@@ -1,4 +1,23 @@
 ================================================================================
+Phiên bản: v0.10.10-16 (Build 317) - Tính Năng Học Điền Từ Đoạn Văn Ngữ Cảnh (Cloze Test Reading Skill β), Phân Loại Chế Độ Học Mở Rộng (Extended Learning Modes β), Tích Hợp Gemini 3.5 Flash-Lite, Kéo Thả Trực Quan & Phím Tắt 1-9/a-z
+================================================================================
+1. [Tính Năng Học Mới: Điền Từ Đoạn Văn Cloze Test (06d-cloze-engine.js, screen-cloze.html, modal-cloze-setup.html, modal-cloze-result.html)]:
+   - Luyện kỹ năng Đọc Hiểu (Reading Skill) qua phương pháp Cloze Test trong bối cảnh thực tế.
+   - Ứng dụng Gemini AI (mô hình `gemini-3.5-flash-lite` và pool mô hình tốc độ cao) tự động sinh đoạn văn ngữ cảnh mạch lạc dựa trên từ vựng trong bộ từ của người dùng.
+   - Hỗ trợ 4 cấp độ thử thách toàn diện:
+     + 🟢 Dễ: 50-80 từ, 3-5 ô khuyết, 100% từ trong bộ từ, x1.5 Điểm (+20~35 Xu).
+     + 🟡 Trung Bình: 80-130 từ, 5-8 ô khuyết, phần lớn từ trong bộ từ + từ ngữ cảnh, x2.0 Điểm (+40~70 Xu).
+     + 🔴 Khó: 120-180 từ, 8-12 ô khuyết, 50% từ trong bộ từ + 50% từ ngoài bộ từ, x2.8 Điểm (+80~130 Xu).
+     + 🔥 Siêu Khó: 160-250 từ, 10-15 ô khuyết, có thêm 20-30% từ bẫy thừa (Decoy Distractors), x4.0 Điểm (+150~250 Xu).
+   - Tương tác đa nền tảng: Kéo thả HTML5 mượt mà (Drag & Drop), nhấp chọn nhanh (Click-to-place) tối ưu thiết bị cảm ứng, và hệ thống phím tắt số 1-9 & chữ cái a-z.
+   - Tích hợp bảo bối học tập VocaHint (gợi ý nghĩa, từ loại, chữ cái đầu) và VocaSkip (tự động điền đáp án chuẩn).
+   - Tích hợp giọng đọc bản xứ AI Native TTS đọc toàn bộ bài văn, hiển thị giải thích ngữ pháp chi tiết cho từng ô khuyết và xem bản dịch tiếng Việt hoàn chỉnh.
+
+2. [Chuẩn Hóa Phân Loại Chế Độ Học Tập (Extended Learning Modes β)]:
+   - Phân biệt rõ ràng giữa Chế độ Học Tập Cốt Lõi (Core Learning Modes: Flashcard, Quiz, Chính Tả, Luyện Nói) và Chế độ Học Tập Mở Rộng (Extended Learning Modes β: Viết Câu VIP β, Điền Từ Cloze β, và các chế độ trong tương lai như Full Sentence Dictation β, Dịch Thuật Song Phương β).
+   - Gắn nhãn nhận diện `(β)` trực quan trên toàn bộ giao diện, nút bấm và modal thiết lập.
+
+================================================================================
 Phiên bản: v0.10.10-15 (Build 316) - Cột Thời Gian Học Biểu Đồ Hồ Sơ, Tối Ưu Triệt Để Băng Thông Firebase RTDB, Chuẩn Hóa Trạng Thái Online/Offline Đa Tài Khoản & Khóa VIP Chế Độ Luyện Viết Câu
 ================================================================================
 1. [Khắc Phục Cột Số Liệu Thời Gian Học Biểu Đồ Hồ Sơ & Thống Kê (02-state-core.js, 03-auth.js)]:

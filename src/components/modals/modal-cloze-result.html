@@ -1,0 +1,62 @@
+  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-16) -->
+  <div class="modal-overlay" id="modal-cloze-result">
+    <div class="modal" style="max-width: 500px; text-align: center;">
+      <div class="modal-title" style="justify-content: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 26px;">🎉</span>
+          <strong style="font-size: 17px;">Hoàn Thành Phiên Điền Từ Đoạn Văn!</strong>
+        </div>
+      </div>
+
+      <div style="margin: 16px 0 20px 0;">
+        <div style="font-size: 44px; margin-bottom: 8px; animation: bounce 1s infinite alternate;">🏆</div>
+        <h3 id="cloze-res-celebration-title" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #10b981;">Xuất Sắc Hoàn Thành!</h3>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Bạn đã hoàn thành bài tập đọc hiểu và rèn luyện từ vựng trong ngữ cảnh.</p>
+      </div>
+
+      <!-- Thống kê kết quả phiên -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Số Bài Đọc</div>
+          <strong id="cloze-res-total-passages" style="font-size: 16px; color: var(--text);">1 bài</strong>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Độ Chính Xác</div>
+          <strong id="cloze-res-accuracy" style="font-size: 16px; color: #34d399;">100%</strong>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Thưởng Xu</div>
+          <strong id="cloze-res-total-coins" style="font-size: 16px; color: #fbbf24;">+0 Xu</strong>
+        </div>
+      </div>
+
+      <!-- Cấp độ và Thống kê lỗi (nếu có) -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Cấp độ thử thách: <strong id="cloze-res-difficulty" style="color: var(--text);">🟢 Dễ</strong>
+        </div>
+        <div id="cloze-res-streak-bonus" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-size: 11px;">
+          🔥 +1 Ngày Streak Flow
+        </div>
+      </div>
+
+      <!-- Danh sách từ cần ôn lại nếu có làm sai -->
+      <div id="cloze-res-wrong-container" style="display: none; margin-bottom: 18px; text-align: left;">
+        <div style="font-size: 12px; font-weight: 700; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+          <span>📕</span> <span>Các vị trí cần ôn luyện thêm:</span>
+        </div>
+        <div id="cloze-res-wrong-list" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 100px; overflow-y: auto; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+          <!-- Wrong words chips -->
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-cloze-result'); exitClozeMode();" style="flex: 1;">
+          🏠 Về Danh Sách
+        </button>
+        <button class="btn btn-primary" onclick="closeModal('modal-cloze-result'); confirmStartClozeFromModal();" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+          🔄 Luyện Thêm Bài Khác
+        </button>
+      </div>
+    </div>
+  </div>

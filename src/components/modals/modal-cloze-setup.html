@@ -1,0 +1,112 @@
+  <!-- MODAL: CLOZE SETUP (v0.10.10-16 - CLOZE READING COMPREHENSION BETA) -->
+  <div class="modal-overlay" id="modal-cloze-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🧩</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Điền Từ Đoạn Văn (Cloze Test β)</strong>
+            <div id="cloze-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Luyện đọc hiểu ngữ cảnh & collocations chuyên sâu (Reading Skill)</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-cloze-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          1. Chọn Cấp Độ Thử Thách:
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="cloze-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-easy" onclick="selectClozeSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.5 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #34d399; font-weight: 700;">+20 ~ 35 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn ngắn (50-80 từ), 3-5 ô khuyết. <strong>100% từ cần điền có trong bộ từ</strong>. Kéo thả trực quan.</p>
+          </div>
+
+          <!-- TRUNG BÌNH -->
+          <div class="cloze-diff-card" id="cloze-diff-card-medium" onclick="selectClozeSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x2.0 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #fbbf24; font-weight: 700;">+40 ~ 70 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn vừa (80-130 từ), 5-8 ô khuyết. Phần lớn từ trong bộ từ + 1-2 từ ngữ cảnh bổ sung.</p>
+          </div>
+
+          <!-- KHÓ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-hard" onclick="selectClozeSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.8 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #f87171; font-weight: 700;">+80 ~ 130 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn dài vừa (120-180 từ), 8-12 ô khuyết. Tỉ lệ 50% từ trong bộ từ & 50% từ ngữ cảnh mở rộng.</p>
+          </div>
+
+          <!-- SIÊU KHÓ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-expert" onclick="selectClozeSetupDifficulty('expert')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔥</span>
+                <strong style="font-size: 13.5px; color: #ec4899;">Cấp độ SIÊU KHÓ (Master / Super Hard)</strong>
+                <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 10px;">x4.0 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #ec4899; font-weight: 700;">+150 ~ 250 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn dài (160-250 từ), 10-15 ô khuyết. <strong>Xuất hiện 20-30% từ bẫy thừa (Decoy Distractors)</strong>. Thử thách đỉnh cao!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SỐ LƯỢNG ĐOẠN VĂN TRONG PHIÊN HỌC -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          2. Số Lượng Bài Đọc Trong Phiên:
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button type="button" class="btn btn-outline cloze-pcount-btn active" id="cloze-pc-1" onclick="selectClozeSetupPassageCount(1)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center;">
+            1 Bài
+          </button>
+          <button type="button" class="btn btn-outline cloze-pcount-btn" id="cloze-pc-2" onclick="selectClozeSetupPassageCount(2)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+            2 Bài
+          </button>
+          <button type="button" class="btn btn-outline cloze-pcount-btn" id="cloze-pc-3" onclick="selectClozeSetupPassageCount(3)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+            3 Bài
+          </button>
+          <div class="cloze-pcount-btn" id="cloze-pc-custom" style="border-radius: 10px; padding: 4px 6px; font-weight: 700; font-size: 12px; border: 1px solid var(--border); background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('cloze-pc-custom-input')?.focus()">
+            <input type="number" id="cloze-pc-custom-input" min="1" max="10" placeholder="Tự nhập..." oninput="handleClozeCustomPassageCountInput(this.value)" onfocus="selectClozeSetupPassageCount('custom')" style="width: 100%; border: none; background: transparent; color: var(--text); font-weight: 700; text-align: center; font-size: 11.5px; outline: none; padding: 4px 0;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. TÙY CHỌN TRỘN BỘ TỪ -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="cloze-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ khi sinh đoạn văn</span>
+        </label>
+        <input type="checkbox" id="cloze-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-cloze-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartClozeFromModal()" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+          🚀 Bắt Đầu Điền Từ (β)
+        </button>
+      </div>
+    </div>
+  </div>

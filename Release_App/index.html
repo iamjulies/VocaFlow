@@ -4350,6 +4350,135 @@
         gap: 8px;
       }
     }
+    /* =========================================================================
+       CLOZE TEST ENGINE STYLES (v0.10.10-16 - EXTENDED LEARNING MODE BETA)
+       ========================================================================= */
+    .cloze-passage-body {
+      font-size: 16px;
+      line-height: 2.2;
+      color: var(--text, #f8fafc);
+    }
+    .cloze-blank-zone {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 90px;
+      padding: 2px 10px;
+      margin: 0 4px;
+      background: rgba(99, 102, 241, 0.08);
+      border: 2px dashed rgba(99, 102, 241, 0.4);
+      border-radius: 10px;
+      color: var(--text-muted, #94a3b8);
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+    .cloze-blank-zone:hover {
+      background: rgba(99, 102, 241, 0.16);
+      border-color: #6366f1;
+      transform: translateY(-1px);
+    }
+    .cloze-blank-zone.active-blank {
+      border-color: #6366f1;
+      border-style: solid;
+      background: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.45);
+      color: #818cf8;
+      transform: scale(1.03);
+    }
+    .cloze-blank-zone.drag-over {
+      border-color: #10b981;
+      border-style: dashed;
+      background: rgba(16, 185, 129, 0.25);
+      transform: scale(1.06);
+    }
+    .cloze-blank-zone.has-word {
+      border-color: #10b981;
+      border-style: solid;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-weight: 800;
+    }
+    .cloze-blank-zone.placed-anim {
+      animation: clozePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes clozePop {
+      0% { transform: scale(0.9); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1.0); }
+    }
+    .cloze-blank-num {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted, #94a3b8);
+      padding: 0 5px;
+      border-radius: 6px;
+      line-height: 1.4;
+    }
+    .cloze-blank-zone.has-word .cloze-blank-num {
+      background: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .cloze-word-bank-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .cloze-word-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface-elevated, rgba(255, 255, 255, 0.05));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text, #f8fafc);
+      cursor: grab;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .cloze-word-chip:hover:not(.placed) {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: #6366f1;
+      color: #a5b4fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+    .cloze-word-chip:active:not(.placed) {
+      cursor: grabbing;
+      transform: scale(0.96);
+    }
+    .cloze-word-chip.placed {
+      opacity: 0.35;
+      cursor: default;
+      border-style: dashed;
+      background: transparent;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    .cloze-chip-key {
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text-muted, #94a3b8);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .cloze-chip-check {
+      font-size: 11px;
+      color: #34d399;
+      font-weight: 900;
+    }
+
 
 
 
@@ -4661,7 +4790,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-14 (Build 315)</span>
+            <span class="mini-footer-version">v0.10.10-16 (Build 317)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -4762,8 +4891,11 @@
             <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none;" onclick="openQuizSetupModal(true)" id="btn-study-quiz-selected" title="Luyện trắc nghiệm 4 đáp án">
               <svg class="icon icon-sm"><use href="#i-quiz"/></svg> <span>Trắc Nghiệm</span><span id="quiz-count-label"></span>
             </button>
-            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP)">
-              <span>👑</span> <span>Viết Câu (VIP)</span><span id="writing-count-label"></span>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
+              <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test β)">
+              <span>🧩</span> <span>Điền Từ (β)</span><span id="cloze-count-label"></span>
             </button>
           </div>
         </div>
@@ -4863,7 +4995,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-14 (Build 315)</span>
+            <span class="mini-footer-version">v0.10.10-16 (Build 317)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5475,6 +5607,182 @@
           </button>
         </div>
 
+      </div>
+    </section>
+
+    <section id="screen-cloze" class="screen">
+      <div class="top-nav">
+        <button class="btn btn-outline btn-icon" onclick="exitClozeMode()" title="Quay lại danh sách từ">
+          <svg class="icon"><use href="#i-arrow-back"/></svg>
+        </button>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div id="cloze-counter" style="font-weight: 700; color: var(--text-muted); font-size: 13.5px;">Bài 1 / 1</div>
+          <span id="cloze-difficulty-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; font-size: 11px; padding: 2px 8px; border: 1px solid rgba(16, 185, 129, 0.3);">🟢 Dễ (x1.5)</span>
+          <span class="badge" style="background: rgba(99, 102, 241, 0.18); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); font-weight: 800; font-size: 11px; padding: 2px 7px;">🧩 Điền Từ Cloze (β)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-outline btn-sm" id="btn-cloze-tts" onclick="toggleClozePassageAudio()" title="Nghe đọc toàn bộ đoạn văn bằng AI Native Voice" style="display: inline-flex; align-items: center; gap: 4px; border-color: rgba(99,102,241,0.4); color: #818cf8;">
+            <span id="cloze-tts-icon">🔊</span> <span class="hide-on-mobile" id="cloze-tts-label">Nghe bài đọc</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="shuffleCurrentCloze()" title="Xáo trộn vị trí các từ trong ngân hàng từ">
+            🔀 <span class="hide-on-mobile">Trộn từ</span>
+          </button>
+          <div id="cloze-score-badge" style="font-weight: 700; color: #34d399; font-size: 13px; background: rgba(52,211,153,0.15); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3);">Bài: +0đ</div>
+        </div>
+      </div>
+
+      <div class="cloze-container" style="max-width: 820px; margin: 16px auto; padding: 0 16px;">
+        
+        <!-- CARD 1: ĐOẠN VĂN NGỮ CẢNH VÀ CÁC Ô TRỐNG (PASSAGE CARD) -->
+        <div class="cloze-passage-card" id="cloze-passage-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); position: relative;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">📖</span>
+              <div>
+                <h3 id="cloze-passage-title" style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text);">Reading Comprehension & Cloze Test</h3>
+                <div style="font-size: 11.5px; color: var(--text-muted);">Đọc kỹ ngữ cảnh và điền từ thích hợp vào các vị trí khuyết</div>
+              </div>
+            </div>
+            <span id="cloze-blanks-count-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 700; font-size: 11.5px; padding: 3px 9px;">
+              0 / 0 ô đã điền
+            </span>
+          </div>
+
+          <!-- Đoạn văn có các ô trống khuyết -->
+          <div id="cloze-passage-body" class="cloze-passage-body" style="font-size: 16px; line-height: 2.0; color: var(--text); user-select: text; min-height: 120px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Thanh sóng âm thanh khi đang phát đọc passage -->
+          <div id="cloze-audio-playing-indicator" style="display: none; margin-top: 14px; padding: 8px 12px; background: rgba(99, 102, 241, 0.12); border-radius: 10px; align-items: center; gap: 8px; font-size: 12px; color: #818cf8;">
+            <span style="animation: spkPulse 1s infinite alternate; display: inline-block;">🎙️</span>
+            <span>Đang phát giọng đọc bài văn... Bấm lại vào nút 🔊 để dừng</span>
+          </div>
+        </div>
+
+        <!-- CARD 2: NGÂN HÀNG TỪ VỰNG & PHÍM TẮT CHỌN NHANH (WORD BANK) -->
+        <div class="cloze-wordbank-card" id="cloze-wordbank-card" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; margin-bottom: 18px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🔤</span>
+              <strong style="font-size: 13px; color: var(--text);">Ngân hàng từ vựng (Word Bank):</strong>
+              <span id="cloze-available-words-count" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px;">0 từ</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <!-- VocaHint Button -->
+              <button class="btn btn-outline btn-sm" id="btn-cloze-hint" onclick="useClozeHint()" title="VocaHint gợi ý ô trống đang chọn (50 VoCoin hoặc 1 VocaHint)" style="border-radius: 20px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>💡 Gợi ý ô đang chọn</span>
+                <span id="cloze-hints-count" style="font-size: 10.5px; background: rgba(245,158,11,0.2); color: #fbbf24; padding: 1px 5px; border-radius: 10px;">5</span>
+              </button>
+
+              <!-- VocaSkip Button -->
+              <button class="btn btn-outline btn-sm" id="btn-cloze-skip" onclick="useClozeSkip()" title="VocaSkip tự động điền đáp án chuẩn vào ô đang chọn" style="border-radius: 20px; border-color: rgba(99, 102, 241, 0.4); color: #818cf8; background: rgba(99, 102, 241, 0.08); font-weight: 700; font-size: 11.5px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                <span>⏭️ Điền tự động</span>
+                <span id="cloze-skips-count" style="font-size: 10.5px; background: rgba(99,102,241,0.2); color: #818cf8; padding: 1px 5px; border-radius: 10px;">3</span>
+              </button>
+
+              <!-- Clear all button -->
+              <button class="btn btn-outline btn-sm" onclick="clearAllClozeBlanks()" title="Gỡ tất cả từ khỏi các ô trống" style="border-radius: 20px; font-size: 11.5px; padding: 3px 9px;">
+                🔄 Gỡ tất cả
+              </button>
+            </div>
+          </div>
+
+          <!-- Gợi ý VocaHint (nếu đã dùng) -->
+          <div id="cloze-hint-box" style="display: none; margin-bottom: 12px; padding: 10px 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 12px; font-size: 12.5px; color: #fbbf24; text-align: left;">
+            <!-- Generated by JS -->
+          </div>
+
+          <!-- Danh sách thẻ từ vựng Word Bank có thể kéo thả hoặc click chọn -->
+          <div id="cloze-word-bank-chips" class="cloze-word-bank-chips" style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 8px; background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; align-items: center;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Thanh trợ giúp phím tắt nhanh -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11.5px; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+            <div>
+              <span>💡 Mẹo: Nhấp phím <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">1</kbd>-<kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">9</kbd> hoặc <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">a</kbd>-<kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">z</kbd> để chọn nhanh từ • Nhấp vào ô trống để gỡ từ</span>
+            </div>
+            <div>
+              <span>Phím nộp: <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Ctrl</kbd> + <kbd style="background: rgba(255,255,255,0.08); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--border);">Enter</kbd></span>
+            </div>
+          </div>
+
+          <!-- NÚT NỘP BÀI CHẤM ĐIỂM -->
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 16px;">
+            <button class="btn btn-primary" id="btn-cloze-submit" onclick="submitClozeEvaluation()" style="width: 100%; max-width: 360px; padding: 11px 24px; font-size: 14px; font-weight: 800; border-radius: 24px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; box-shadow: 0 4px 16px rgba(99,102,241,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+              <span>✨ Nộp Bài & Chấm Điểm</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: BẢNG KẾT QUẢ & GIẢI THÍCH CHI TIẾT (RESULT PANEL) -->
+        <div id="cloze-result-panel" style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 20px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          
+          <!-- AI Loading State -->
+          <div id="cloze-ai-loading" style="display: none; text-align: center; padding: 24px 10px;">
+            <div style="font-size: 36px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 10px;">🧩</div>
+            <h4 style="margin: 0 0 6px 0; color: var(--text);">Đang phân tích & tổng hợp kết quả đọc hiểu...</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Kiểm tra ngữ cảnh, collocations và cấu trúc ngữ pháp</p>
+          </div>
+
+          <!-- AI Result Content -->
+          <div id="cloze-result-content" style="display: none;">
+            <!-- Header điểm số -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="cloze-score-circle" style="width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; background: rgba(52,211,153,0.15); color: #34d399; border: 2px solid #34d399;">
+                  100%
+                </div>
+                <div>
+                  <h4 id="cloze-result-verdict" style="margin: 0; font-size: 16px; font-weight: 800; color: #34d399;">Xuất Sắc!</h4>
+                  <div id="cloze-result-summary-text" style="font-size: 12px; color: var(--text-muted);">Bạn đã điền đúng 0/0 vị trí</div>
+                </div>
+              </div>
+              <div id="cloze-reward-badge" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 12px; font-weight: 700; padding: 6px 12px; border: 1px solid rgba(245,158,11,0.3);">
+                +0 Xu
+              </div>
+            </div>
+
+            <!-- Bảng phân tích chi tiết từng ô trống -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>📋</span> <span>Phân Tích Ngữ Nghĩa & Đáp Án Chi Tiết:</span>
+              </div>
+              <div id="cloze-blanks-feedback-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Bản dịch tiếng Việt hoàn chỉnh của bài đọc -->
+            <div style="margin-bottom: 18px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer;" onclick="toggleClozeTranslationView()">
+                <div style="font-size: 12.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                  <span>🇻🇳</span> <span>Bản Dịch Toàn Văn Tiếng Việt:</span>
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-toggle-cloze-trans" style="font-size: 11px; padding: 2px 8px;">
+                  👁️ Xem / Ẩn
+                </button>
+              </div>
+              <div id="cloze-full-translation-text" style="font-size: 13.5px; line-height: 1.7; color: var(--text-muted); display: block;">
+                <!-- Translation text -->
+              </div>
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-outline" onclick="retryCurrentClozePassage()" style="font-size: 13px; font-weight: 700; border-radius: 12px; padding: 8px 16px;">
+                🔄 Làm Lại Bài Này
+              </button>
+              <button class="btn btn-primary" id="btn-cloze-next" onclick="nextClozePassage()" style="font-size: 13px; font-weight: 700; border-radius: 12px; padding: 8px 20px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 14px rgba(16,185,129,0.3);">
+                🚀 Tiếp Tục (Bài Sau)
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -10348,7 +10656,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-15 (Build 316)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-16 (Build 317)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -11259,6 +11567,182 @@
     </div>
   </div>
 
+  <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-16) -->
+  <div class="modal-overlay" id="modal-cloze-result">
+    <div class="modal" style="max-width: 500px; text-align: center;">
+      <div class="modal-title" style="justify-content: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 26px;">🎉</span>
+          <strong style="font-size: 17px;">Hoàn Thành Phiên Điền Từ Đoạn Văn!</strong>
+        </div>
+      </div>
+
+      <div style="margin: 16px 0 20px 0;">
+        <div style="font-size: 44px; margin-bottom: 8px; animation: bounce 1s infinite alternate;">🏆</div>
+        <h3 id="cloze-res-celebration-title" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #10b981;">Xuất Sắc Hoàn Thành!</h3>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Bạn đã hoàn thành bài tập đọc hiểu và rèn luyện từ vựng trong ngữ cảnh.</p>
+      </div>
+
+      <!-- Thống kê kết quả phiên -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;">
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Số Bài Đọc</div>
+          <strong id="cloze-res-total-passages" style="font-size: 16px; color: var(--text);">1 bài</strong>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Độ Chính Xác</div>
+          <strong id="cloze-res-accuracy" style="font-size: 16px; color: #34d399;">100%</strong>
+        </div>
+        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px;">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Thưởng Xu</div>
+          <strong id="cloze-res-total-coins" style="font-size: 16px; color: #fbbf24;">+0 Xu</strong>
+        </div>
+      </div>
+
+      <!-- Cấp độ và Thống kê lỗi (nếu có) -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Cấp độ thử thách: <strong id="cloze-res-difficulty" style="color: var(--text);">🟢 Dễ</strong>
+        </div>
+        <div id="cloze-res-streak-bonus" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-size: 11px;">
+          🔥 +1 Ngày Streak Flow
+        </div>
+      </div>
+
+      <!-- Danh sách từ cần ôn lại nếu có làm sai -->
+      <div id="cloze-res-wrong-container" style="display: none; margin-bottom: 18px; text-align: left;">
+        <div style="font-size: 12px; font-weight: 700; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+          <span>📕</span> <span>Các vị trí cần ôn luyện thêm:</span>
+        </div>
+        <div id="cloze-res-wrong-list" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 100px; overflow-y: auto; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+          <!-- Wrong words chips -->
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-cloze-result'); exitClozeMode();" style="flex: 1;">
+          🏠 Về Danh Sách
+        </button>
+        <button class="btn btn-primary" onclick="closeModal('modal-cloze-result'); confirmStartClozeFromModal();" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+          🔄 Luyện Thêm Bài Khác
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CLOZE SETUP (v0.10.10-16 - CLOZE READING COMPREHENSION BETA) -->
+  <div class="modal-overlay" id="modal-cloze-setup">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🧩</span>
+          <div>
+            <strong style="font-size: 16px;">Thiết Lập Điền Từ Đoạn Văn (Cloze Test β)</strong>
+            <div id="cloze-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Luyện đọc hiểu ngữ cảnh & collocations chuyên sâu (Reading Skill)</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="closeModal('modal-cloze-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+
+      <!-- 1. CHỌN CẤP ĐỘ KHÓ -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          1. Chọn Cấp Độ Thử Thách:
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="cloze-difficulty-cards-container">
+          <!-- DỄ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-easy" onclick="selectClozeSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟢</span>
+                <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.5 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #34d399; font-weight: 700;">+20 ~ 35 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn ngắn (50-80 từ), 3-5 ô khuyết. <strong>100% từ cần điền có trong bộ từ</strong>. Kéo thả trực quan.</p>
+          </div>
+
+          <!-- TRUNG BÌNH -->
+          <div class="cloze-diff-card" id="cloze-diff-card-medium" onclick="selectClozeSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🟡</span>
+                <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x2.0 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #fbbf24; font-weight: 700;">+40 ~ 70 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn vừa (80-130 từ), 5-8 ô khuyết. Phần lớn từ trong bộ từ + 1-2 từ ngữ cảnh bổ sung.</p>
+          </div>
+
+          <!-- KHÓ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-hard" onclick="selectClozeSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔴</span>
+                <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.8 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #f87171; font-weight: 700;">+80 ~ 130 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn dài vừa (120-180 từ), 8-12 ô khuyết. Tỉ lệ 50% từ trong bộ từ & 50% từ ngữ cảnh mở rộng.</p>
+          </div>
+
+          <!-- SIÊU KHÓ -->
+          <div class="cloze-diff-card" id="cloze-diff-card-expert" onclick="selectClozeSetupDifficulty('expert')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 17px;">🔥</span>
+                <strong style="font-size: 13.5px; color: #ec4899;">Cấp độ SIÊU KHÓ (Master / Super Hard)</strong>
+                <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 10px;">x4.0 Điểm</span>
+              </div>
+              <span style="font-size: 11px; color: #ec4899; font-weight: 700;">+150 ~ 250 Xu/bài</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn văn dài (160-250 từ), 10-15 ô khuyết. <strong>Xuất hiện 20-30% từ bẫy thừa (Decoy Distractors)</strong>. Thử thách đỉnh cao!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SỐ LƯỢNG ĐOẠN VĂN TRONG PHIÊN HỌC -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+          2. Số Lượng Bài Đọc Trong Phiên:
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button type="button" class="btn btn-outline cloze-pcount-btn active" id="cloze-pc-1" onclick="selectClozeSetupPassageCount(1)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; border-color: #6366f1; background: rgba(99,102,241,0.15); color: var(--text); text-align: center;">
+            1 Bài
+          </button>
+          <button type="button" class="btn btn-outline cloze-pcount-btn" id="cloze-pc-2" onclick="selectClozeSetupPassageCount(2)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+            2 Bài
+          </button>
+          <button type="button" class="btn btn-outline cloze-pcount-btn" id="cloze-pc-3" onclick="selectClozeSetupPassageCount(3)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+            3 Bài
+          </button>
+          <div class="cloze-pcount-btn" id="cloze-pc-custom" style="border-radius: 10px; padding: 4px 6px; font-weight: 700; font-size: 12px; border: 1px solid var(--border); background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('cloze-pc-custom-input')?.focus()">
+            <input type="number" id="cloze-pc-custom-input" min="1" max="10" placeholder="Tự nhập..." oninput="handleClozeCustomPassageCountInput(this.value)" onfocus="selectClozeSetupPassageCount('custom')" style="width: 100%; border: none; background: transparent; color: var(--text); font-weight: 700; text-align: center; font-size: 11.5px; outline: none; padding: 4px 0;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. TÙY CHỌN TRỘN BỘ TỪ -->
+      <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+        <label for="cloze-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🔀</span>
+          <span>Trộn ngẫu nhiên thứ tự các từ khi sinh đoạn văn</span>
+        </label>
+        <input type="checkbox" id="cloze-setup-shuffle-checkbox" class="form-checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-cloze-setup')" style="flex: 1;">Hủy</button>
+        <button class="btn btn-primary" onclick="confirmStartClozeFromModal()" style="flex: 2; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(99,102,241,0.35);">
+          🚀 Bắt Đầu Điền Từ (β)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: EDIT COMMUNITY POST (v0.10.9-53) -->
   <div class="modal-overlay sub-modal-overlay" id="modal-edit-community-post" style="z-index: 10015;">
     <div class="modal" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
@@ -11475,7 +11959,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-14 Build 315)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-16 Build 317)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -11928,15 +12412,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-15 Build 316)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-16 Build 317)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-15 Build 316)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-16 Build 317)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-15';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-15 (Build 316)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-16';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-16 (Build 317)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -33551,6 +34035,1314 @@ window.nextWritingQuestion = nextWritingQuestion;
 window.finishWritingSession = finishWritingSession;
 window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
+
+// =========================================================================
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-16 Build 317 - EXTENDED LEARNING MODE BETA)
+// AI Cloze Test (Reading Comprehension & In-Context Vocabulary Lab)
+// =========================================================================
+
+let clozePassagesList = [];
+let currentClozeIndex = 0;
+let currentClozeDifficulty = localStorage.getItem('vocaflow_cloze_difficulty') || 'easy';
+let selectedClozeSetupDifficulty = 'easy';
+let clozeSetupPassageCount = 1; // 1 | 2 | 3 | 'custom'
+let clozeSetupCustomPassageCountValue = null;
+let clozeSetupUseSelection = false;
+let clozeSetupCustomWordList = null;
+
+let clozeCurrentPassage = null; // Current passage object
+let clozePlacements = {};       // blankIndex (1-based) -> optionId
+let clozeActiveBlankIndex = 1;  // 1-based index of focused blank
+let clozeSessionPointsEarned = 0;
+let clozeSessionWrongBlanks = [];
+let clozeSessionTotalBlanksCount = 0;
+let clozeSessionCorrectBlanksCount = 0;
+let clozeHintsUsed = 0;
+let clozeSkipsUsed = 0;
+let clozeStartTime = 0;
+let clozeIsEvaluating = false;
+let clozeIsAudioPlaying = false;
+let clozeSpeechUtterance = null;
+let clozeIsCompleted = false;
+
+// =========================================================================
+// 1. DIFFICULTY CONFIG & REWARDS ENGINE (BALANCE_V2 & V3)
+// =========================================================================
+function getClozeDifficultyConfig(diff) {
+  if (diff === 'expert') {
+    return {
+      floorScore: 95,
+      diffMult: 4.0,
+      minBlanks: 10,
+      maxBlanks: 15,
+      inDeckRatio: 0.5,
+      decoyRatio: 0.25, // 25% extra distractor decoy options
+      baseXuRange: [150, 250],
+      masteryBonus: 35,
+      label: '🔥 Siêu Khó',
+      passageLenDesc: '160 - 250 từ'
+    };
+  }
+  if (diff === 'hard') {
+    return {
+      floorScore: 90,
+      diffMult: 2.8,
+      minBlanks: 8,
+      maxBlanks: 12,
+      inDeckRatio: 0.5,
+      decoyRatio: 0.0,
+      baseXuRange: [80, 130],
+      masteryBonus: 25,
+      label: '🔴 Khó',
+      passageLenDesc: '120 - 180 từ'
+    };
+  }
+  if (diff === 'medium') {
+    return {
+      floorScore: 80,
+      diffMult: 2.0,
+      minBlanks: 5,
+      maxBlanks: 8,
+      inDeckRatio: 0.75,
+      decoyRatio: 0.0,
+      baseXuRange: [40, 70],
+      masteryBonus: 16,
+      label: '🟡 Trung Bình',
+      passageLenDesc: '80 - 130 từ'
+    };
+  }
+  return {
+    floorScore: 70,
+    diffMult: 1.5,
+    minBlanks: 3,
+    maxBlanks: 5,
+    inDeckRatio: 1.0, // 100% in-deck words
+    decoyRatio: 0.0,
+    baseXuRange: [20, 35],
+    masteryBonus: 10,
+    label: '🟢 Dễ',
+    passageLenDesc: '50 - 80 từ'
+  };
+}
+
+// =========================================================================
+// 2. SETUP MODAL HANDLERS
+// =========================================================================
+function selectClozeSetupDifficulty(diff) {
+  selectedClozeSetupDifficulty = diff;
+  ['easy', 'medium', 'hard', 'expert'].forEach(d => {
+    const card = document.getElementById('cloze-diff-card-' + d);
+    if (card) {
+      if (d === diff) {
+        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444', expert: '#ec4899' };
+        card.style.borderColor = colors[d];
+      } else {
+        card.style.borderColor = 'var(--border)';
+      }
+    }
+  });
+}
+
+function selectClozeSetupPassageCount(count) {
+  clozeSetupPassageCount = count;
+  ['1', '2', '3'].forEach(c => {
+    const btn = document.getElementById('cloze-pc-' + c);
+    if (btn) {
+      if (c === String(count)) {
+        btn.classList.add('active');
+        btn.style.borderColor = '#6366f1';
+        btn.style.background = 'rgba(99,102,241,0.15)';
+        btn.style.color = 'var(--text)';
+      } else {
+        btn.classList.remove('active');
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+      }
+    }
+  });
+
+  const customBtn = document.getElementById('cloze-pc-custom');
+  if (customBtn) {
+    if (count === 'custom') {
+      customBtn.style.borderColor = '#6366f1';
+      customBtn.style.background = 'rgba(99,102,241,0.15)';
+    } else {
+      customBtn.style.borderColor = 'var(--border)';
+      customBtn.style.background = 'var(--surface-elevated)';
+    }
+  }
+}
+
+function handleClozeCustomPassageCountInput(val) {
+  const num = parseInt(val, 10);
+  if (!isNaN(num) && num > 0) {
+    clozeSetupCustomPassageCountValue = Math.min(10, num);
+    selectClozeSetupPassageCount('custom');
+  } else {
+    clozeSetupCustomPassageCountValue = null;
+  }
+}
+
+function openClozeSetupModal(useSelection = false, customWordList = null) {
+  clozeSetupUseSelection = useSelection;
+  clozeSetupCustomWordList = customWordList;
+  selectedClozeSetupDifficulty = currentClozeDifficulty;
+
+  selectClozeSetupDifficulty(selectedClozeSetupDifficulty);
+  selectClozeSetupPassageCount(1);
+
+  const shuffleCb = document.getElementById('cloze-setup-shuffle-checkbox');
+  if (shuffleCb) shuffleCb.checked = (typeof isStudyShuffle !== 'undefined') ? isStudyShuffle : true;
+
+  // Subtitle info
+  let wordCount = 0;
+  if (customWordList) wordCount = customWordList.length;
+  else if (useSelection && selectedWordIds && selectedWordIds.size > 0) wordCount = selectedWordIds.size;
+  else if (typeof words !== 'undefined' && typeof currentDeckId !== 'undefined') wordCount = words.filter(w => w.deckId === currentDeckId).length;
+
+  const sub = document.getElementById('cloze-setup-subtitle');
+  if (sub) sub.textContent = `${wordCount} từ vựng sẵn sàng làm ngữ liệu sinh bài đọc`;
+
+  if (typeof openModal === 'function') openModal('modal-cloze-setup');
+}
+
+async function confirmStartClozeFromModal() {
+  currentClozeDifficulty = selectedClozeSetupDifficulty;
+  localStorage.setItem('vocaflow_cloze_difficulty', currentClozeDifficulty);
+
+  const shuffleCb = document.getElementById('cloze-setup-shuffle-checkbox');
+  if (shuffleCb && typeof isStudyShuffle !== 'undefined') {
+    isStudyShuffle = shuffleCb.checked;
+    localStorage.setItem('vocaflow_study_shuffle', isStudyShuffle ? 'true' : 'false');
+  }
+
+  let finalCount = 1;
+  if (clozeSetupPassageCount === 'custom' && clozeSetupCustomPassageCountValue) {
+    finalCount = clozeSetupCustomPassageCountValue;
+  } else if (typeof clozeSetupPassageCount === 'number') {
+    finalCount = clozeSetupPassageCount;
+  }
+
+  if (typeof closeModal === 'function') closeModal('modal-cloze-setup');
+  await startClozeMode(clozeSetupUseSelection, clozeSetupCustomWordList, finalCount);
+}
+
+// =========================================================================
+// 3. START & INITIALIZE CLOZE MODE
+// =========================================================================
+async function startClozeMode(fromSelection = false, customWordList = null, totalPassagesToGenerate = 1) {
+  if (typeof currentDeckId === 'undefined' && !customWordList) return;
+  const deck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+  if (!deck && !customWordList) return;
+
+  if (typeof studySourceContext !== 'undefined') {
+    studySourceContext = customWordList ? 'review-queue' : 'deck';
+  }
+
+  let targetWords = [];
+  if (customWordList) {
+    targetWords = [...customWordList];
+  } else if (fromSelection && selectedWordIds && selectedWordIds.size > 0) {
+    targetWords = words.filter(w => selectedWordIds.has(w.id));
+  } else if (typeof words !== 'undefined') {
+    targetWords = words.filter(w => w.deckId === currentDeckId);
+  }
+
+  if (targetWords.length === 0) {
+    alert('Bộ từ này chưa có từ vựng nào để tạo bài tập điền từ Cloze Test!');
+    return;
+  }
+
+  if (typeof isStudyShuffle !== 'undefined' && isStudyShuffle) {
+    targetWords = [...targetWords].sort(() => Math.random() - 0.5);
+  }
+
+  // Initialize session state
+  clozePassagesList = [];
+  currentClozeIndex = 0;
+  clozeSessionPointsEarned = 0;
+  clozeSessionWrongBlanks = [];
+  clozeSessionTotalBlanksCount = 0;
+  clozeSessionCorrectBlanksCount = 0;
+  clozeHintsUsed = 0;
+  clozeSkipsUsed = 0;
+  clozeStartTime = Date.now();
+  clozeIsCompleted = false;
+
+  // Show screen and initial loading state
+  if (typeof showScreen === 'function') showScreen('screen-cloze');
+
+  const diffCfg = getClozeDifficultyConfig(currentClozeDifficulty);
+  const diffBadge = document.getElementById('cloze-difficulty-badge');
+  if (diffBadge) {
+    diffBadge.textContent = `${diffCfg.label} (x${diffCfg.diffMult})`;
+  }
+
+  const scoreBadge = document.getElementById('cloze-score-badge');
+  if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
+
+  // Prepare passage plans
+  const totalPassages = Math.max(1, totalPassagesToGenerate || 1);
+  for (let p = 0; p < totalPassages; p++) {
+    // Slice or shuffle target words for each passage
+    let pWords = [...targetWords];
+    if (p > 0) pWords = [...targetWords].sort(() => Math.random() - 0.5);
+    clozePassagesList.push({
+      passageIndex: p,
+      targetWords: pWords,
+      difficulty: currentClozeDifficulty,
+      passageData: null, // Will be generated when loaded
+      isGraded: false
+    });
+  }
+
+  // Load and render first passage
+  await loadAndRenderClozePassage(0);
+}
+
+// =========================================================================
+// 4. GENERATE & LOAD PASSAGE
+// =========================================================================
+async function loadAndRenderClozePassage(index) {
+  if (index < 0 || index >= clozePassagesList.length) return;
+  currentClozeIndex = index;
+  const pItem = clozePassagesList[index];
+
+  // Stop any playing TTS audio
+  stopClozePassageAudio();
+
+  // Reset current passage interactive state
+  clozePlacements = {};
+  clozeActiveBlankIndex = 1;
+  clozeIsEvaluating = false;
+
+  // Update counter
+  const counterEl = document.getElementById('cloze-counter');
+  if (counterEl) counterEl.textContent = `Bài ${index + 1} / ${clozePassagesList.length}`;
+
+  // Reset cards & UI
+  const passageBody = document.getElementById('cloze-passage-body');
+  const passageTitle = document.getElementById('cloze-passage-title');
+  const wordBankChips = document.getElementById('cloze-word-bank-chips');
+  const blanksBadge = document.getElementById('cloze-blanks-count-badge');
+  const resultPanel = document.getElementById('cloze-result-panel');
+  const hintBox = document.getElementById('cloze-hint-box');
+  const submitBtn = document.getElementById('btn-cloze-submit');
+
+  if (resultPanel) resultPanel.style.display = 'none';
+  if (hintBox) hintBox.style.display = 'none';
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+  }
+
+  // Update hints and skips counters
+  updateClozePowerupBadges();
+
+  if (!pItem.passageData) {
+    // Show AI Generation Loading Placeholder
+    if (passageBody) {
+      passageBody.innerHTML = `
+        <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
+          <div style="font-size: 36px; animation: spkSpin 1.5s linear infinite; display: inline-block; margin-bottom: 12px;">🧩</div>
+          <h4 style="margin: 0 0 6px 0; color: var(--text);">Gemini AI đang kiến tạo bài đọc ngữ cảnh...</h4>
+          <p style="font-size: 12.5px; margin: 0;">Lồng ghép từ vựng vào đoạn văn mạch lạc chuẩn văn phong bản ngữ</p>
+        </div>
+      `;
+    }
+    if (wordBankChips) {
+      wordBankChips.innerHTML = `<span style="color: var(--text-muted); font-size: 12px;">Đang nạp từ vựng...</span>`;
+    }
+
+    // Generate via Gemini AI or Fallback
+    const generatedData = await generateClozePassageWithGemini(pItem.targetWords, pItem.difficulty);
+    pItem.passageData = generatedData;
+  }
+
+  clozeCurrentPassage = pItem.passageData;
+  renderClozePassageUI(clozeCurrentPassage);
+}
+
+// =========================================================================
+// 5. GEMINI AI PASSAGE GENERATION & OFFLINE FALLBACK
+// =========================================================================
+async function generateClozePassageWithGemini(targetWords, difficulty) {
+  const cfg = getClozeDifficultyConfig(difficulty);
+  const sampleWords = targetWords.slice(0, 15).map(w => ({
+    term: (w.term || '').trim(),
+    pos: w.partOfSpeech || 'word',
+    def: w.definitionVi || w.definition || ''
+  })).filter(w => w.term.length > 0);
+
+  const wordsPromptList = sampleWords.map(w => `- ${w.term} (${w.pos}): ${w.def}`).join('\n');
+  const targetTermsList = sampleWords.map(w => w.term).join(', ');
+
+  const prompt = `You are an expert Native English Curriculum Designer and Reading Assessment Specialist.
+Create a high-quality, natural English reading comprehension passage with contextual CLOZE blanks (fill-in-the-blank test) based on the given vocabulary list.
+
+[DIFFICULTY LEVEL: ${difficulty.toUpperCase()}]
+- Passage Length: ${cfg.passageLenDesc}
+- Number of Blanks: Between ${cfg.minBlanks} and ${cfg.maxBlanks} blanks.
+- In-Deck Vocabulary Ratio: ${difficulty === 'easy' ? '100% of blanks MUST be from the provided word list' : (difficulty === 'medium' ? 'Most blanks from word list, 1-2 contextual extra words' : '50% from word list and 50% contextual out-of-deck words')}
+- Extra Distractor Decoy Options: ${cfg.decoyRatio > 0 ? 'Include 2-4 plausible distractor word options in the "options" list that DO NOT fit any blank' : 'No extra decoy words needed'}
+
+[STUDENT VOCABULARY LIST]
+${wordsPromptList}
+
+[INSTRUCTIONS FOR CLOZE PASSAGE]
+1. Write a coherent, engaging passage on a relevant real-world topic (e.g. technology, culture, personal development, science, daily life).
+2. Insert blanks using the exact token format: [[blank_1]], [[blank_2]], [[blank_3]], etc. consecutively.
+3. Every blank must have ONE clear, unambiguous correct word based on surrounding grammar and context collocations.
+4. For each blank, provide:
+   - "id": "blank_1", "blank_2", etc.
+   - "index": 1, 2, etc. (number)
+   - "correctWord": exact word in base or appropriate inflected form (lowercase)
+   - "partOfSpeech": "noun" | "verb" | "adjective" | "adverb" | "preposition" | "phrase"
+   - "hintVi": Helpful Vietnamese clue (e.g. "Tính từ: thiết yếu, quan trọng (bắt đầu bằng 'e')")
+   - "explanationVi": Clear grammatical & contextual reason in Vietnamese why this word fits best.
+5. In "options", provide an array of all word choices (including all blank correctWords plus any decoy distractors). Each option has { "id": "opt_1", "word": "example", "isDecoy": false }.
+6. Provide "fullTextOriginal": the complete English passage without blanks.
+7. Provide "passageTranslationVi": complete, fluent Vietnamese translation of the entire passage.
+
+Output MUST be valid JSON only (no markdown code blocks, no backticks) matching this exact schema:
+{
+  "title": "Topic Title in English",
+  "fullTextOriginal": "Full English passage without blanks...",
+  "passageWithBlanks": "Passage text with [[blank_1]], [[blank_2]], etc. embedded...",
+  "blanks": [
+    {
+      "id": "blank_1",
+      "index": 1,
+      "correctWord": "word",
+      "partOfSpeech": "noun",
+      "hintVi": "Gợi ý nghĩa tiếng Việt và từ loại...",
+      "explanationVi": "Giải thích ngữ pháp và ngữ cảnh tại sao từ này chính xác..."
+    }
+  ],
+  "options": [
+    { "id": "opt_1", "word": "word", "isDecoy": false }
+  ],
+  "passageTranslationVi": "Bản dịch toàn văn tiếng Việt mượt mà..."
+}`;
+
+  let genSuccess = false;
+  let resultData = null;
+
+  try {
+    const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
+    // Prioritize fast flash-lite models for ultra fast cloze generation
+    const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash'];
+
+    for (const k of keys) {
+      if (genSuccess) break;
+      for (const m of modelsToTry) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 18000);
+
+          const res = await fetch(url, {
+            method: 'POST',
+            signal: controller.signal,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                temperature: 0.3,
+                maxOutputTokens: 2048
+              }
+            })
+          });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            const resJson = await res.json();
+            const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (rawText) {
+              const parsed = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/gi, '').trim());
+              if (parsed && parsed.blanks && parsed.blanks.length > 0 && parsed.passageWithBlanks) {
+                resultData = parsed;
+                genSuccess = true;
+                if (typeof saveWorkingGeminiModel === 'function') {
+                  saveWorkingGeminiModel(m, 'fast');
+                }
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn(`Gemini Cloze generation failed with model ${m}:`, e);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Gemini Cloze outer error:', err);
+  }
+
+  // Fallback if offline or API failed
+  if (!genSuccess || !resultData) {
+    resultData = generateOfflineClozePassage(targetWords, difficulty);
+  }
+
+  // Ensure options are shuffled and have IDs
+  if (resultData && resultData.options) {
+    resultData.options = resultData.options.sort(() => Math.random() - 0.5);
+    resultData.options.forEach((opt, idx) => {
+      if (!opt.id) opt.id = 'opt_' + (idx + 1);
+    });
+  }
+
+  return resultData;
+}
+
+// Offline fallback generator with pre-built contextual templates
+function generateOfflineClozePassage(targetWords, difficulty) {
+  const cfg = getClozeDifficultyConfig(difficulty);
+  const wordsToUse = (targetWords && targetWords.length > 0) ? targetWords.slice(0, 10) : [
+    { term: 'knowledge', partOfSpeech: 'noun', definitionVi: 'kiến thức' },
+    { term: 'practice', partOfSpeech: 'verb', definitionVi: 'thực hành' },
+    { term: 'effective', partOfSpeech: 'adjective', definitionVi: 'hiệu quả' },
+    { term: 'improve', partOfSpeech: 'verb', definitionVi: 'cải thiện' },
+    { term: 'fluency', partOfSpeech: 'noun', definitionVi: 'sự trôi chảy' }
+  ];
+
+  const blanksCount = Math.min(wordsToUse.length, Math.max(3, cfg.minBlanks));
+  const selectedWords = wordsToUse.slice(0, blanksCount);
+
+  const sentences = [];
+  const blanks = [];
+  const options = [];
+
+  const templates = [
+    { prefix: "Learning a new language requires deep", suffix: "and continuous dedication to achieve mastery.", defaultPos: "noun" },
+    { prefix: "Students must regularly", suffix: "speaking and writing to build natural confidence.", defaultPos: "verb" },
+    { prefix: "Using spaced repetition is an extremely", suffix: "strategy for long-term memory retention.", defaultPos: "adjective" },
+    { prefix: "Consistent daily effort will significantly", suffix: "your communication skills over time.", defaultPos: "verb" },
+    { prefix: "Reaching a high level of", suffix: "allows you to express complex ideas effortlessly.", defaultPos: "noun" },
+    { prefix: "Language learners should embrace every", suffix: "to interact with native speakers directly.", defaultPos: "noun" },
+    { prefix: "Developing a rich vocabulary is an", suffix: "foundation for academic and professional success.", defaultPos: "adjective" }
+  ];
+
+  let fullOriginalParts = [];
+  let passageBlankParts = [];
+
+  selectedWords.forEach((w, idx) => {
+    const bIndex = idx + 1;
+    const bId = 'blank_' + bIndex;
+    const tpl = templates[idx % templates.length];
+    const termClean = (w.term || 'word').toLowerCase().trim();
+
+    passageBlankParts.push(`${tpl.prefix} [[${bId}]] ${tpl.suffix}`);
+    fullOriginalParts.push(`${tpl.prefix} ${termClean} ${tpl.suffix}`);
+
+    blanks.push({
+      id: bId,
+      index: bIndex,
+      correctWord: termClean,
+      partOfSpeech: w.partOfSpeech || tpl.defaultPos,
+      hintVi: `${w.partOfSpeech || tpl.defaultPos}: ${w.definitionVi || w.definition || termClean}`,
+      explanationVi: `Từ '${termClean}' (${w.partOfSpeech || tpl.defaultPos}) phù hợp ngữ cảnh và ngữ pháp của câu ${bIndex}.`
+    });
+
+    options.push({
+      id: 'opt_' + bIndex,
+      word: termClean,
+      isDecoy: false
+    });
+  });
+
+  // If expert difficulty, add 2 decoy options
+  if (difficulty === 'expert') {
+    const decoys = ['arbitrary', 'meticulous', 'spontaneous', 'resilient'];
+    decoys.slice(0, 2).forEach((dw, dIdx) => {
+      options.push({
+        id: 'opt_decoy_' + (dIdx + 1),
+        word: dw,
+        isDecoy: true
+      });
+    });
+  }
+
+  return {
+    title: "Mastering Language Through Context & Daily Practice",
+    fullTextOriginal: fullOriginalParts.join(' '),
+    passageWithBlanks: passageBlankParts.join(' '),
+    blanks: blanks,
+    options: options.sort(() => Math.random() - 0.5),
+    passageTranslationVi: "Học một ngôn ngữ mới đòi hỏi sự kiên trì và thực hành liên tục. Sử dụng các phương pháp học khoa học sẽ giúp bạn nâng cao năng lực diễn đạt và đạt được sự lưu loát."
+  };
+}
+
+// =========================================================================
+// 6. RENDER PASSAGE UI & INTERACTIVE BLANKS
+// =========================================================================
+function renderClozePassageUI(passage) {
+  if (!passage) return;
+
+  // Title
+  const titleEl = document.getElementById('cloze-passage-title');
+  if (titleEl) titleEl.textContent = passage.title || 'Reading Comprehension & Cloze Test';
+
+  // Full Translation
+  const transEl = document.getElementById('cloze-full-translation-text');
+  if (transEl) transEl.textContent = passage.passageTranslationVi || '';
+
+  // Render Passage Body with interactive Blank Zones
+  const passageBody = document.getElementById('cloze-passage-body');
+  if (passageBody) {
+    let rawText = passage.passageWithBlanks || '';
+    
+    // Replace each [[blank_X]] with interactive drop zone span
+    if (passage.blanks) {
+      passage.blanks.forEach(b => {
+        const token = `[[${b.id}]]`;
+        const bIndex = b.index;
+        const placedOptId = clozePlacements[bIndex];
+        const placedWord = placedOptId ? getClozeOptionWordById(placedOptId) : '';
+
+        const blankSpan = `
+          <span class="cloze-blank-zone ${bIndex === clozeActiveBlankIndex ? 'active-blank' : ''} ${placedWord ? 'has-word' : ''}" 
+                id="cloze-blank-zone-${bIndex}" 
+                data-blank-index="${bIndex}"
+                onclick="handleClozeBlankClick(${bIndex})"
+                ondragover="handleClozeBlankDragOver(event)"
+                ondragleave="handleClozeBlankDragLeave(event)"
+                ondrop="handleClozeBlankDrop(event, ${bIndex})"
+                title="Ô trống ${bIndex}: Nhấp để chọn hoặc kéo từ thả vào">
+            <span class="cloze-blank-num">${bIndex}</span>
+            <span class="cloze-blank-content" id="cloze-blank-val-${bIndex}">${placedWord ? placedWord : `_____${bIndex}_____`}</span>
+          </span>
+        `;
+        rawText = rawText.split(token).join(blankSpan);
+      });
+    }
+
+    passageBody.innerHTML = rawText;
+  }
+
+  // Render Word Bank Chips
+  renderClozeWordBankChips();
+
+  // Update Blanks count badge
+  updateClozeBlanksCountBadge();
+}
+
+function getClozeOptionWordById(optId) {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.options) return '';
+  const opt = clozeCurrentPassage.options.find(o => o.id === optId);
+  return opt ? opt.word : '';
+}
+
+// Generate shortcut key representation (1-9, then a-z)
+function getClozeShortcutKey(index) {
+  if (index < 9) return String(index + 1);
+  const code = index - 9;
+  if (code < 26) return String.fromCharCode(97 + code); // 'a' - 'z'
+  return '';
+}
+
+function renderClozeWordBankChips() {
+  const container = document.getElementById('cloze-word-bank-chips');
+  if (!container || !clozeCurrentPassage || !clozeCurrentPassage.options) return;
+
+  const placedOptionIds = new Set(Object.values(clozePlacements));
+  let availableCount = 0;
+
+  const html = clozeCurrentPassage.options.map((opt, idx) => {
+    const isPlaced = placedOptionIds.has(opt.id);
+    if (!isPlaced) availableCount++;
+    const shortcut = getClozeShortcutKey(idx);
+
+    return `
+      <div class="cloze-word-chip ${isPlaced ? 'placed' : ''}" 
+           id="cloze-chip-${opt.id}" 
+           data-option-id="${opt.id}"
+           data-shortcut="${shortcut}"
+           draggable="${!isPlaced}"
+           ondragstart="handleClozeChipDragStart(event, '${opt.id}')"
+           onclick="handleClozeChipClick('${opt.id}')"
+           title="${isPlaced ? 'Đã được điền vào ô trống' : `Nhấp chọn hoặc nhấn phím [${shortcut}] để điền`}">
+        ${shortcut ? `<span class="cloze-chip-key">${shortcut}</span>` : ''}
+        <span class="cloze-chip-text">${opt.word}</span>
+        ${isPlaced ? '<span class="cloze-chip-check">✓</span>' : ''}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+
+  const availBadge = document.getElementById('cloze-available-words-count');
+  if (availBadge) availBadge.textContent = `${availableCount} từ còn lại`;
+}
+
+function updateClozeBlanksCountBadge() {
+  const badge = document.getElementById('cloze-blanks-count-badge');
+  if (!badge || !clozeCurrentPassage || !clozeCurrentPassage.blanks) return;
+
+  const total = clozeCurrentPassage.blanks.length;
+  const filled = Object.keys(clozePlacements).length;
+  badge.textContent = `${filled} / ${total} ô đã điền`;
+  if (filled === total && total > 0) {
+    badge.style.background = 'rgba(16, 185, 129, 0.15)';
+    badge.style.color = '#34d399';
+  } else {
+    badge.style.background = 'rgba(99, 102, 241, 0.15)';
+    badge.style.color = '#818cf8';
+  }
+}
+
+// =========================================================================
+// 7. DRAG-AND-DROP & CLICK-TO-PLACE INTERACTION HANDLERS
+// =========================================================================
+function handleClozeBlankClick(blankIndex) {
+  if (clozeIsEvaluating) return;
+
+  // If blank already has a word placed, clicking it removes/unplaces the word
+  if (clozePlacements[blankIndex]) {
+    unplaceWordFromBlank(blankIndex);
+    return;
+  }
+
+  // Otherwise, set this blank as active focused blank
+  selectClozeBlank(blankIndex);
+}
+
+function selectClozeBlank(blankIndex) {
+  clozeActiveBlankIndex = blankIndex;
+  
+  // Highlight active blank zone
+  if (clozeCurrentPassage && clozeCurrentPassage.blanks) {
+    clozeCurrentPassage.blanks.forEach(b => {
+      const el = document.getElementById('cloze-blank-zone-' + b.index);
+      if (el) {
+        if (b.index === blankIndex) {
+          el.classList.add('active-blank');
+        } else {
+          el.classList.remove('active-blank');
+        }
+      }
+    });
+  }
+
+  // Hide old hint box when switching blank
+  const hintBox = document.getElementById('cloze-hint-box');
+  if (hintBox) hintBox.style.display = 'none';
+}
+
+function handleClozeChipClick(optionId) {
+  if (clozeIsEvaluating || !clozeCurrentPassage) return;
+
+  const placedOptionIds = new Set(Object.values(clozePlacements));
+  // If already placed, find which blank has it and unplace it
+  if (placedOptionIds.has(optionId)) {
+    for (const [bIdx, oId] of Object.entries(clozePlacements)) {
+      if (oId === optionId) {
+        unplaceWordFromBlank(parseInt(bIdx, 10));
+        return;
+      }
+    }
+    return;
+  }
+
+  // Otherwise, place into active blank, or first empty blank
+  let targetBlank = clozeActiveBlankIndex;
+  if (clozePlacements[targetBlank]) {
+    // Find next empty blank
+    const emptyBlank = clozeCurrentPassage.blanks.find(b => !clozePlacements[b.index]);
+    if (emptyBlank) {
+      targetBlank = emptyBlank.index;
+    }
+  }
+
+  placeWordInBlank(targetBlank, optionId);
+}
+
+function placeWordInBlank(blankIndex, optionId) {
+  if (!clozeCurrentPassage) return;
+
+  // If this blank already had another word, release it
+  clozePlacements[blankIndex] = optionId;
+
+  // Update UI for the blank
+  const word = getClozeOptionWordById(optionId);
+  const valEl = document.getElementById('cloze-blank-val-' + blankIndex);
+  const zoneEl = document.getElementById('cloze-blank-zone-' + blankIndex);
+
+  if (valEl) valEl.textContent = word;
+  if (zoneEl) {
+    zoneEl.classList.add('has-word');
+    zoneEl.classList.add('placed-anim');
+    setTimeout(() => zoneEl.classList.remove('placed-anim'), 300);
+  }
+
+  // Update word bank chips
+  renderClozeWordBankChips();
+  updateClozeBlanksCountBadge();
+
+  // Play micro sound
+  if (typeof playVocaSfx === 'function') playVocaSfx('pop');
+
+  // Auto-focus next unfilled blank
+  const nextEmpty = clozeCurrentPassage.blanks.find(b => !clozePlacements[b.index]);
+  if (nextEmpty) {
+    selectClozeBlank(nextEmpty.index);
+  }
+}
+
+function unplaceWordFromBlank(blankIndex) {
+  if (!clozePlacements[blankIndex]) return;
+
+  delete clozePlacements[blankIndex];
+
+  const valEl = document.getElementById('cloze-blank-val-' + blankIndex);
+  const zoneEl = document.getElementById('cloze-blank-zone-' + blankIndex);
+
+  if (valEl) valEl.textContent = `_____${blankIndex}_____`;
+  if (zoneEl) zoneEl.classList.remove('has-word');
+
+  renderClozeWordBankChips();
+  updateClozeBlanksCountBadge();
+  selectClozeBlank(blankIndex);
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('click');
+}
+
+function clearAllClozeBlanks() {
+  if (clozeIsEvaluating || !clozeCurrentPassage) return;
+  clozePlacements = {};
+
+  if (clozeCurrentPassage.blanks) {
+    clozeCurrentPassage.blanks.forEach(b => {
+      const valEl = document.getElementById('cloze-blank-val-' + b.index);
+      const zoneEl = document.getElementById('cloze-blank-zone-' + b.index);
+      if (valEl) valEl.textContent = `_____${b.index}_____`;
+      if (zoneEl) zoneEl.classList.remove('has-word');
+    });
+  }
+
+  renderClozeWordBankChips();
+  updateClozeBlanksCountBadge();
+  selectClozeBlank(1);
+  if (typeof showToast === 'function') showToast('🔄 Đã gỡ tất cả các từ khỏi ô trống!');
+}
+
+function shuffleCurrentCloze() {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.options) return;
+  clozeCurrentPassage.options = clozeCurrentPassage.options.sort(() => Math.random() - 0.5);
+  renderClozeWordBankChips();
+  if (typeof showToast === 'function') showToast('🔀 Đã xáo trộn vị trí các từ!');
+}
+
+// Drag and drop event handlers
+function handleClozeChipDragStart(event, optionId) {
+  if (event.dataTransfer) {
+    event.dataTransfer.setData('text/plain', optionId);
+    event.dataTransfer.effectAllowed = 'move';
+  }
+}
+
+function handleClozeBlankDragOver(event) {
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+  event.currentTarget.classList.add('drag-over');
+}
+
+function handleClozeBlankDragLeave(event) {
+  event.currentTarget.classList.remove('drag-over');
+}
+
+function handleClozeBlankDrop(event, blankIndex) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('drag-over');
+  const optionId = event.dataTransfer ? event.dataTransfer.getData('text/plain') : null;
+  if (optionId) {
+    placeWordInBlank(blankIndex, optionId);
+  }
+}
+
+// =========================================================================
+// 8. KEYBOARD SHORTCUTS ENGINE (1-9, a-z, Backspace, Tab, Enter)
+// =========================================================================
+window.addEventListener('keydown', function handleClozeGlobalKeydown(e) {
+  const clozeScreen = document.getElementById('screen-cloze');
+  if (!clozeScreen || !clozeScreen.classList.contains('active') || clozeIsEvaluating) return;
+
+  // Avoid triggering if user is typing in an input/textarea inside a modal
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  // Enter or Ctrl+Enter -> Submit
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    submitClozeEvaluation();
+    return;
+  }
+
+  // Backspace or Delete -> Unplace active blank
+  if (e.key === 'Backspace' || e.key === 'Delete') {
+    e.preventDefault();
+    unplaceWordFromBlank(clozeActiveBlankIndex);
+    return;
+  }
+
+  // Tab or Arrow navigation
+  if (e.key === 'Tab' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (clozeCurrentPassage && clozeCurrentPassage.blanks) {
+      const nextIdx = (clozeActiveBlankIndex % clozeCurrentPassage.blanks.length) + 1;
+      selectClozeBlank(nextIdx);
+    }
+    return;
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (clozeCurrentPassage && clozeCurrentPassage.blanks) {
+      const prevIdx = clozeActiveBlankIndex > 1 ? clozeActiveBlankIndex - 1 : clozeCurrentPassage.blanks.length;
+      selectClozeBlank(prevIdx);
+    }
+    return;
+  }
+
+  // Match shortcut key for word bank chips: 1-9 or a-z
+  const keyChar = e.key.toLowerCase();
+  if (clozeCurrentPassage && clozeCurrentPassage.options) {
+    const chipIdx = clozeCurrentPassage.options.findIndex((opt, idx) => getClozeShortcutKey(idx) === keyChar);
+    if (chipIdx !== -1) {
+      e.preventDefault();
+      const opt = clozeCurrentPassage.options[chipIdx];
+      handleClozeChipClick(opt.id);
+    }
+  }
+});
+
+// =========================================================================
+// 9. POWER-UPS & ASSISTANCE (VOCAHINT & VOCASKIP)
+// =========================================================================
+function updateClozePowerupBadges() {
+  const hintsCountEl = document.getElementById('cloze-hints-count');
+  const skipsCountEl = document.getElementById('cloze-skips-count');
+
+  const hintsVal = (typeof currentUser !== 'undefined' && currentUser && currentUser.hints !== undefined) ? currentUser.hints : 5;
+  const skipsVal = (typeof currentUser !== 'undefined' && currentUser && currentUser.skips !== undefined) ? currentUser.skips : 3;
+
+  if (hintsCountEl) hintsCountEl.textContent = hintsVal;
+  if (skipsCountEl) skipsCountEl.textContent = skipsVal;
+}
+
+function useClozeHint() {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.blanks) return;
+  const blank = clozeCurrentPassage.blanks.find(b => b.index === clozeActiveBlankIndex);
+  if (!blank) return;
+
+  let hasHintResource = false;
+  if (typeof currentUser !== 'undefined' && currentUser) {
+    if (currentUser.hints > 0) {
+      currentUser.hints--;
+      hasHintResource = true;
+      if (typeof addLedgerEntry === 'function') addLedgerEntry('HINT_USED', 0, `Dùng VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
+    } else if (typeof getUserPoints === 'function' && getUserPoints() >= 50) {
+      setUserPoints(getUserPoints() - 50);
+      hasHintResource = true;
+      if (typeof addLedgerEntry === 'function') addLedgerEntry('BUY_HINT', -50, `Mua 1 VocaHint cho Cloze Test ô ${clozeActiveBlankIndex}`);
+    }
+  } else {
+    hasHintResource = true; // Guest test mode
+  }
+
+  if (!hasHintResource) {
+    if (typeof showToast === 'function') showToast('⚠️ Bạn không đủ VocaHint hoặc Xu (cần 50 Xu)!');
+    return;
+  }
+
+  clozeHintsUsed++;
+  updateClozePowerupBadges();
+  if (typeof saveDatabase === 'function') saveDatabase();
+
+  const hintBox = document.getElementById('cloze-hint-box');
+  if (hintBox) {
+    hintBox.style.display = 'block';
+    const firstLetter = blank.correctWord ? blank.correctWord[0].toUpperCase() : '';
+    hintBox.innerHTML = `
+      <strong>💡 Gợi ý VocaHint cho ô [${clozeActiveBlankIndex}]:</strong><br>
+      • <strong>Từ loại & Nghĩa:</strong> ${blank.hintVi || 'Xem ngữ cảnh câu'}<br>
+      • <strong>Chữ cái đầu:</strong> <span style="background: rgba(245,158,11,0.25); padding: 1px 6px; border-radius: 4px; font-weight: 800; font-size: 14px;">${firstLetter}___</span> (${blank.correctWord.length} chữ cái)
+    `;
+  }
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('pop');
+}
+
+function useClozeSkip() {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.blanks) return;
+  const blank = clozeCurrentPassage.blanks.find(b => b.index === clozeActiveBlankIndex);
+  if (!blank) return;
+
+  let hasSkipResource = false;
+  if (typeof currentUser !== 'undefined' && currentUser) {
+    if (currentUser.skips > 0) {
+      currentUser.skips--;
+      hasSkipResource = true;
+      if (typeof addLedgerEntry === 'function') addLedgerEntry('SKIP_USED', 0, `Dùng VocaSkip điền tự động ô ${clozeActiveBlankIndex}`);
+    }
+  } else {
+    hasSkipResource = true;
+  }
+
+  if (!hasSkipResource) {
+    if (typeof showToast === 'function') showToast('⚠️ Bạn đã hết lượt VocaSkip!');
+    return;
+  }
+
+  clozeSkipsUsed++;
+  updateClozePowerupBadges();
+  if (typeof saveDatabase === 'function') saveDatabase();
+
+  // Find matching option for this correct word
+  const matchOpt = clozeCurrentPassage.options.find(o => o.word.toLowerCase() === blank.correctWord.toLowerCase());
+  if (matchOpt) {
+    placeWordInBlank(clozeActiveBlankIndex, matchOpt.id);
+    if (typeof showToast === 'function') showToast(`⏭️ VocaSkip đã điền: '${matchOpt.word}'`);
+  }
+}
+
+// =========================================================================
+// 10. PASSAGE AUDIO TTS ENGINE
+// =========================================================================
+function toggleClozePassageAudio() {
+  if (clozeIsAudioPlaying) {
+    stopClozePassageAudio();
+  } else {
+    playClozePassageAudio();
+  }
+}
+
+function playClozePassageAudio() {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.fullTextOriginal) return;
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // Stop any pending speech
+    clozeSpeechUtterance = new SpeechSynthesisUtterance(clozeCurrentPassage.fullTextOriginal);
+    clozeSpeechUtterance.lang = 'en-US';
+    clozeSpeechUtterance.rate = 0.92;
+
+    clozeSpeechUtterance.onstart = () => {
+      clozeIsAudioPlaying = true;
+      const indicator = document.getElementById('cloze-audio-playing-indicator');
+      const icon = document.getElementById('cloze-tts-icon');
+      const label = document.getElementById('cloze-tts-label');
+      if (indicator) indicator.style.display = 'flex';
+      if (icon) icon.textContent = '⏹️';
+      if (label) label.textContent = 'Dừng đọc';
+    };
+
+    clozeSpeechUtterance.onend = () => {
+      stopClozePassageAudio();
+    };
+
+    clozeSpeechUtterance.onerror = () => {
+      stopClozePassageAudio();
+    };
+
+    window.speechSynthesis.speak(clozeSpeechUtterance);
+  } else {
+    if (typeof speakText === 'function') {
+      speakText(clozeCurrentPassage.fullTextOriginal);
+    }
+  }
+}
+
+function stopClozePassageAudio() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  clozeIsAudioPlaying = false;
+  clozeSpeechUtterance = null;
+  const indicator = document.getElementById('cloze-audio-playing-indicator');
+  const icon = document.getElementById('cloze-tts-icon');
+  const label = document.getElementById('cloze-tts-label');
+  if (indicator) indicator.style.display = 'none';
+  if (icon) icon.textContent = '🔊';
+  if (label) label.textContent = 'Nghe bài đọc';
+}
+
+function toggleClozeTranslationView() {
+  const transEl = document.getElementById('cloze-full-translation-text');
+  const btnEl = document.getElementById('btn-toggle-cloze-trans');
+  if (!transEl) return;
+  if (transEl.style.display === 'none') {
+    transEl.style.display = 'block';
+    if (btnEl) btnEl.textContent = '👁️ Ẩn dịch';
+  } else {
+    transEl.style.display = 'none';
+    if (btnEl) btnEl.textContent = '👁️ Xem dịch';
+  }
+}
+
+// =========================================================================
+// 11. SUBMIT, EVALUATION & SETTLEMENT
+// =========================================================================
+function submitClozeEvaluation() {
+  if (clozeIsEvaluating || !clozeCurrentPassage) return;
+
+  const totalBlanks = clozeCurrentPassage.blanks.length;
+  const filledBlanks = Object.keys(clozePlacements).length;
+
+  if (filledBlanks < totalBlanks) {
+    const confirmSubmit = confirm(`Bạn mới điền ${filledBlanks}/${totalBlanks} ô trống. Bạn có chắc chắn muốn nộp bài sớm không?`);
+    if (!confirmSubmit) return;
+  }
+
+  clozeIsEvaluating = true;
+  const submitBtn = document.getElementById('btn-cloze-submit');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.5';
+  }
+
+  const resultPanel = document.getElementById('cloze-result-panel');
+  const aiLoading = document.getElementById('cloze-ai-loading');
+  const aiContent = document.getElementById('cloze-result-content');
+
+  if (resultPanel) resultPanel.style.display = 'block';
+  if (aiLoading) aiLoading.style.display = 'block';
+  if (aiContent) aiContent.style.display = 'none';
+
+  // Evaluate after short UI pulse
+  setTimeout(() => {
+    evaluateClozeResults();
+  }, 400);
+}
+
+function evaluateClozeResults() {
+  if (!clozeCurrentPassage || !clozeCurrentPassage.blanks) return;
+
+  const diffCfg = getClozeDifficultyConfig(currentClozeDifficulty);
+  const blanks = clozeCurrentPassage.blanks;
+  let correctCount = 0;
+  const detailedFeedback = [];
+
+  blanks.forEach(b => {
+    const placedOptId = clozePlacements[b.index];
+    const userWord = placedOptId ? getClozeOptionWordById(placedOptId) : '';
+    const cleanUser = userWord.toLowerCase().trim();
+    const cleanCorrect = b.correctWord.toLowerCase().trim();
+    const isCorrect = (cleanUser === cleanCorrect);
+
+    if (isCorrect) {
+      correctCount++;
+    } else {
+      clozeSessionWrongBlanks.push({
+        word: b.correctWord,
+        userWord: userWord || '(Bỏ trống)',
+        blankIndex: b.index,
+        hintVi: b.hintVi
+      });
+    }
+
+    detailedFeedback.push({
+      index: b.index,
+      isCorrect: isCorrect,
+      userWord: userWord || '(Chưa điền)',
+      correctWord: b.correctWord,
+      partOfSpeech: b.partOfSpeech,
+      explanationVi: b.explanationVi || `Từ '${b.correctWord}' phù hợp ngữ cảnh câu.`
+    });
+  });
+
+  clozeSessionTotalBlanksCount += blanks.length;
+  clozeSessionCorrectBlanksCount += correctCount;
+
+  const accuracyPct = Math.round((correctCount / blanks.length) * 100);
+  const isFloorPassed = accuracyPct >= diffCfg.floorScore;
+
+  // Calculate Xu Reward
+  const minXu = diffCfg.baseXuRange[0];
+  const maxXu = diffCfg.baseXuRange[1];
+  let earnedXu = Math.round(minXu + (maxXu - minXu) * (accuracyPct / 100));
+  if (!isFloorPassed) {
+    earnedXu = Math.round(earnedXu * 0.4); // Partial credit if below floor score
+  }
+  clozeSessionPointsEarned += earnedXu;
+
+  // Record daily study time & streak flow
+  if (typeof addDailyStudySeconds === 'function') {
+    addDailyStudySeconds(45);
+  }
+  if (typeof recordStudyFlowAction === 'function') {
+    recordStudyFlowAction();
+  }
+
+  // Render Result UI
+  const aiLoading = document.getElementById('cloze-ai-loading');
+  const aiContent = document.getElementById('cloze-result-content');
+  if (aiLoading) aiLoading.style.display = 'none';
+  if (aiContent) aiContent.style.display = 'block';
+
+  const scoreCircle = document.getElementById('cloze-score-circle');
+  const verdictEl = document.getElementById('cloze-result-verdict');
+  const summaryEl = document.getElementById('cloze-result-summary-text');
+  const rewardBadge = document.getElementById('cloze-reward-badge');
+
+  if (scoreCircle) {
+    scoreCircle.textContent = `${accuracyPct}%`;
+    scoreCircle.style.borderColor = accuracyPct >= 80 ? '#34d399' : (accuracyPct >= 60 ? '#fbbf24' : '#f87171');
+    scoreCircle.style.color = accuracyPct >= 80 ? '#34d399' : (accuracyPct >= 60 ? '#fbbf24' : '#f87171');
+  }
+
+  if (verdictEl) {
+    if (accuracyPct === 100) verdictEl.textContent = '🎉 Hoàn Hảo! 100% Chính Xác';
+    else if (accuracyPct >= 80) verdictEl.textContent = '🌟 Xuất Sắc! Nắm Vững Ngữ Cảnh';
+    else if (accuracyPct >= 60) verdictEl.textContent = '👏 Khá Tốt! Cần Trau Chuốt Thêm';
+    else verdictEl.textContent = '⚠️ Cần Luyện Tập Thêm Về Collocations';
+  }
+
+  if (summaryEl) {
+    summaryEl.textContent = `Bạn đã điền đúng ${correctCount}/${blanks.length} vị trí (${accuracyPct}%)`;
+  }
+
+  if (rewardBadge) {
+    rewardBadge.textContent = `+${earnedXu} Xu`;
+  }
+
+  const scoreBadge = document.getElementById('cloze-score-badge');
+  if (scoreBadge) scoreBadge.textContent = `Bài: +${clozeSessionPointsEarned}đ`;
+
+  // Render detailed blank-by-blank feedback
+  const feedbackList = document.getElementById('cloze-blanks-feedback-list');
+  if (feedbackList) {
+    feedbackList.innerHTML = detailedFeedback.map(item => `
+      <div style="background: var(--surface-elevated); border: 1px solid ${item.isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px;">
+        <span style="font-size: 16px; margin-top: 1px;">${item.isCorrect ? '✅' : '❌'}</span>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-wrap: wrap; gap: 6px;">
+            <div>
+              <strong style="color: var(--text); font-size: 13px;">Ô [${item.index}]: </strong>
+              <span style="color: ${item.isCorrect ? '#34d399' : '#f87171'}; font-weight: 700; font-size: 13.5px;">${item.userWord}</span>
+              ${!item.isCorrect ? `<span style="color: var(--text-muted); font-size: 12px;"> -> Đáp án đúng: <strong style="color: #34d399;">${item.correctWord}</strong></span>` : ''}
+            </div>
+            <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 10.5px;">${item.partOfSpeech || 'word'}</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">${item.explanationVi}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Update Next button label if on last passage
+  const nextBtn = document.getElementById('btn-cloze-next');
+  if (nextBtn) {
+    if (currentClozeIndex < clozePassagesList.length - 1) {
+      nextBtn.textContent = '🚀 Bài Tiếp Theo';
+    } else {
+      nextBtn.textContent = '🏁 Hoàn Tất & Tổng Kết';
+    }
+  }
+
+  // Play sound
+  if (typeof playVocaSfx === 'function') {
+    playVocaSfx(accuracyPct >= 80 ? 'correct' : 'wrong');
+  }
+
+  // Auto-scroll to result panel
+  if (resultPanel) {
+    resultPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function retryCurrentClozePassage() {
+  clozePlacements = {};
+  clozeActiveBlankIndex = 1;
+  clozeIsEvaluating = false;
+
+  const resultPanel = document.getElementById('cloze-result-panel');
+  if (resultPanel) resultPanel.style.display = 'none';
+
+  const submitBtn = document.getElementById('btn-cloze-submit');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+  }
+
+  if (clozeCurrentPassage) {
+    renderClozePassageUI(clozeCurrentPassage);
+  }
+
+  const passageCard = document.getElementById('cloze-passage-card');
+  if (passageCard) {
+    passageCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+async function nextClozePassage() {
+  if (currentClozeIndex < clozePassagesList.length - 1) {
+    await loadAndRenderClozePassage(currentClozeIndex + 1);
+  } else {
+    finishClozeSession();
+  }
+}
+
+function finishClozeSession() {
+  clozeIsCompleted = true;
+  stopClozePassageAudio();
+
+  // Final session points settlement
+  if (clozeSessionPointsEarned > 0 && typeof setUserPoints === 'function') {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
+
+    setUserPoints(Math.max(0, getUserPoints() + clozeSessionPointsEarned));
+    if (typeof addLedgerEntry === 'function') {
+      addLedgerEntry('STUDY_CLOZE', clozeSessionPointsEarned, `Điền từ Cloze Test "${deckTitle}" (+${clozeSessionPointsEarned} Xu)`);
+    }
+    if (typeof saveDatabase === 'function') saveDatabase(true);
+    if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+  }
+
+  // Populate Celebration Modal
+  const totalPassagesEl = document.getElementById('cloze-res-total-passages');
+  const accuracyEl = document.getElementById('cloze-res-accuracy');
+  const totalCoinsEl = document.getElementById('cloze-res-total-coins');
+  const diffEl = document.getElementById('cloze-res-difficulty');
+  const wrongCont = document.getElementById('cloze-res-wrong-container');
+  const wrongList = document.getElementById('cloze-res-wrong-list');
+
+  const overallAccuracy = clozeSessionTotalBlanksCount > 0 ? Math.round((clozeSessionCorrectBlanksCount / clozeSessionTotalBlanksCount) * 100) : 100;
+  const diffCfg = getClozeDifficultyConfig(currentClozeDifficulty);
+
+  if (totalPassagesEl) totalPassagesEl.textContent = `${clozePassagesList.length} bài`;
+  if (accuracyEl) accuracyEl.textContent = `${overallAccuracy}%`;
+  if (totalCoinsEl) totalCoinsEl.textContent = `+${clozeSessionPointsEarned} Xu`;
+  if (diffEl) diffEl.textContent = diffCfg.label;
+
+  if (wrongCont && wrongList) {
+    if (clozeSessionWrongBlanks.length > 0) {
+      wrongCont.style.display = 'block';
+      wrongList.innerHTML = clozeSessionWrongBlanks.map(w => `
+        <span class="chip" style="background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.3); font-size: 11px;">
+          ${w.word} (đã điền: ${w.userWord})
+        </span>
+      `).join('');
+    } else {
+      wrongCont.style.display = 'none';
+    }
+  }
+
+  if (typeof playVocaSfx === 'function') playVocaSfx('fireworks');
+  if (typeof openModal === 'function') openModal('modal-cloze-result');
+}
+
+function exitClozeMode() {
+  stopClozePassageAudio();
+
+  if (typeof studySourceContext !== 'undefined' && (studySourceContext === 'review-queue' || !currentDeckId)) {
+    if (typeof showScreen === 'function') showScreen('screen-decks');
+    if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+  } else {
+    if (typeof showScreen === 'function') showScreen('screen-deck-detail');
+    if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+  }
+}
 
 // =========================================================================
 

@@ -2,8 +2,7 @@ v0.10.10-16
 [ĐỌC KĨ PHẦN SAU]
 => Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
 [Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
-1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing
-
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
 
 2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading
 Dùng gemini 3.5 flashlite để tạo đoạn văn từ các từ -> Khuyết các từ -> User kéo thả -> AI chấm hoặc chấm theo đáp án AI tạo sẵn
@@ -13,6 +12,8 @@ Dùng gemini 3.5 flashlite để tạo đoạn văn từ các từ -> Khuyết c
 - Siêu Khó: Tạo 1 bài văn dài, khuyết 1 vài chỗ (nhiều hơn khó) và các từ cần điền thì là các từ có trong bộ từ và các từ không có trong bộ từ với tỉ lệ ngẫu nhiên, cách điền là kéo thả và sẽ có từ không phải phương án để điền (phương án thừa, chiếm tầm 20-30% số phương án)
 Đối với điểm rèn luyện và xu nhận được thì sẽ nên cao hơn chế độ học thông thường từ vì dạng này khó hơn khá nhiều (cho m quyết, miễn sao cân bằng là được)
 Đối với màn hình tổng kết phiên học thì cũng dùng bố cục và định dạng giống như mấy chế độ khác.
+Gán nút bàn phím nhấn nhanh cho các ô từ 1->9, nếu hơn 9 thì đến a->z
+Dùng được VocaHint và VocaSkip
 Còn gì nữa không nhỉ? (Mày báo cáo cả cái này nhé)
 
 3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (sẽ được yêu cầu triển khai ở các ver. sau)
