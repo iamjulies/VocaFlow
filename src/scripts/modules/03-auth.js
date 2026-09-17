@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-22 / Build 323)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-23 / Build 324)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-23': {
+        postId: 'official_update_v0_10_10_23',
+        releaseTime: '2026-09-17T15:00:00.000Z',
+        title: '✨ Viền Neon VIP Chạy Màu Cho Chế Độ Mở Rộng & Cảnh Báo Thoát Giữa Chừng (v0.10.10-23 Build 324)!',
+        summary: 'Thêm hiệu ứng viền ánh sáng neon xoay tròn conic-gradient cho các nút Chế độ học mở rộng (β), tích hợp màn hình cảnh báo thoát giữa chừng kèm kết toán Balance v3 cho Điền Từ Cloze Test và Nghe Gõ Câu.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-23 (Build 324)!\n\n✨ Những điểm mới nổi bật:\n🌟 Viền Ánh Sáng Neon Xoay Tròn Đẳng Cấp: Toàn bộ các nút Chế độ học mở rộng (Viết Câu VIP β, Điền Từ VIP β, Nghe Gõ VIP β, Dịch Thuật β) được khoác lên lớp viền ánh sáng chạy màu neon xoay tròn liên tục phong cách VIP Deck và Huy hiệu trưng bày sang trọng.\n🚪 Màn Hình Cảnh Báo Thoát Giữa Chừng (Early Exit Modal): Bổ sung hộp thoại cảnh báo khi người học rời bài giữa chừng trong chế độ Điền Từ Cloze (β) và Nghe Gõ Câu (VIP β), hiển thị tiến độ và kết toán điểm thưởng/phạt chính xác theo chuẩn Balance v3 (Extended Lab β).\n⚡ Nâng Cao Trải Nghiệm & Ổn Định Dữ Liệu: Đảm bảo mọi tiến độ học tập dở dang đều được bảo lưu an toàn và kết toán công bằng trước khi chuyển trang.\n\nChúc bạn có những giờ phút học tập thú vị và tràn đầy năng lượng cùng VocaFlow! 🚀🌟`
+      },
       'v0.10.10-22': {
         postId: 'official_update_v0_10_10_22',
         releaseTime: '2026-09-17T01:00:00.000Z',

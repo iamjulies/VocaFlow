@@ -92,16 +92,16 @@
               <button class="study-mode-nav-btn nav-btn-prev" id="btn-deck-study-page-prev" onclick="switchDeckStudyModePage(1)" title="Quay lại 4 chế độ học cơ bản">
                 <span>⬅️</span> <span>Cơ bản</span>
               </button>
-              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #d97706, #b45309); border: none;" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
+              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-writing" onclick="openWritingSetupModal(true)" id="btn-study-writing-selected" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
                 <span>👑</span> <span>Viết Câu (VIP β)</span><span id="writing-count-label"></span>
               </button>
-              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none;" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-cloze" onclick="openClozeSetupModal(true)" id="btn-study-cloze-selected" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
                 <span>👑</span> <span>Điền Từ (VIP β)</span><span id="cloze-count-label"></span>
               </button>
-              <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none;" onclick="openDictationSetupModal(true)" id="btn-study-dictation-selected" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
+              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-dictation" onclick="openDictationSetupModal(true)" id="btn-study-dictation-selected" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
                 <span>👑</span> <span>Nghe Gõ (VIP β)</span><span id="dictation-count-label"></span>
               </button>
-              <button class="btn btn-primary btn-sm study-mode-btn-disabled" style="background: linear-gradient(135deg, #059669, #047857); border: none;" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
+              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-translation study-mode-btn-disabled" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
                 <span>🌐</span> <span>Dịch Thuật (β)</span>
               </button>
             </div>
@@ -203,7 +203,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-22 (Build 323)</span>
+            <span class="mini-footer-version">v0.10.10-23 (Build 324)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">

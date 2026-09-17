@@ -4612,6 +4612,112 @@
       transform: none !important;
     }
 
+    /* =========================================================================
+       EXTENDED LEARNING MODES (β) ANIMATED ROTATING VIP GLOW BORDER BUTTONS (v0.10.10-23)
+       ========================================================================= */
+    .btn-extended-mode {
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid transparent !important;
+      box-sizing: border-box !important;
+      isolation: isolate !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      height: 30px !important;
+      padding: 0 10px !important;
+      border-radius: 8px !important;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
+      z-index: 1 !important;
+    }
+
+    .btn-extended-mode::before {
+      content: '';
+      position: absolute;
+      top: -150%;
+      left: -150%;
+      width: 400%;
+      height: 400%;
+      animation: rotateLight 3s linear infinite;
+      z-index: 0;
+    }
+
+    .btn-extended-mode::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      border-radius: 6.5px;
+      z-index: 1;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn-extended-mode > * {
+      position: relative !important;
+      z-index: 2 !important;
+      pointer-events: none;
+    }
+
+    /* 1. Viết Câu (Writing VIP β) */
+    .btn-extended-writing::before {
+      background: conic-gradient(transparent, #ffd700, #ff8c00, #d97706, transparent 45%);
+    }
+    .btn-extended-writing::after {
+      background: linear-gradient(135deg, #d97706, #b45309);
+    }
+    .btn-extended-writing:hover {
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45) !important;
+      transform: translateY(-1.5px);
+    }
+    .btn-extended-writing:hover::after {
+      filter: brightness(1.12);
+    }
+
+    /* 2. Điền Từ (Cloze VIP β) */
+    .btn-extended-cloze::before {
+      background: conic-gradient(transparent, #38bdf8, #0284c7, #0369a1, transparent 45%);
+    }
+    .btn-extended-cloze::after {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+    }
+    .btn-extended-cloze:hover {
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.45) !important;
+      transform: translateY(-1.5px);
+    }
+    .btn-extended-cloze:hover::after {
+      filter: brightness(1.12);
+    }
+
+    /* 3. Nghe Gõ (Dictation VIP β) */
+    .btn-extended-dictation::before {
+      background: conic-gradient(transparent, #c084fc, #a855f7, #7c3aed, transparent 45%);
+    }
+    .btn-extended-dictation::after {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
+    .btn-extended-dictation:hover {
+      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.45) !important;
+      transform: translateY(-1.5px);
+    }
+    .btn-extended-dictation:hover::after {
+      filter: brightness(1.12);
+    }
+
+    /* 4. Dịch Thuật (Translation β) */
+    .btn-extended-translation::before {
+      background: conic-gradient(transparent, #34d399, #10b981, #059669, transparent 45%);
+    }
+    .btn-extended-translation::after {
+      background: linear-gradient(135deg, #059669, #047857);
+    }
+    .btn-extended-translation:hover {
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45) !important;
+      transform: translateY(-1.5px);
+    }
+    .btn-extended-translation:hover::after {
+      filter: brightness(1.12);
+    }
+
     @media (max-width: 768px) {
       .deck-detail-nav {
         flex-direction: column;

@@ -34,16 +34,16 @@
           <button class="study-mode-nav-btn nav-btn-prev" id="btn-rq-study-page-prev" onclick="switchReviewQueueStudyModePage(1)" style="height: auto; padding: 8px;" title="Quay lại các chế độ cơ bản">
             <span>⬅️</span> <span>Cơ bản</span>
           </button>
-          <button class="btn btn-primary" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="background: linear-gradient(135deg, #d97706, #b45309); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(217,119,6,0.3);">
+          <button class="btn btn-primary btn-extended-mode btn-extended-writing" id="btn-review-writing" onclick="launchReviewDueWords('writing')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Luyện viết câu / đoạn văn & AI chấm điểm hành văn (Writing Lab VIP β)">
             <span>👑</span> <span id="label-review-writing">Viết Câu (VIP β)</span>
           </button>
-          <button class="btn btn-primary" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(2,132,199,0.3);" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
+          <button class="btn btn-primary btn-extended-mode btn-extended-cloze" id="btn-review-cloze" onclick="launchReviewDueWords('cloze')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Luyện đọc hiểu & điền từ vào đoạn văn ngữ cảnh (Cloze Test VIP β)">
             <span>👑</span> <span id="label-review-cloze">Điền Từ (VIP β)</span>
           </button>
-          <button class="btn btn-primary" id="btn-review-dictation" onclick="launchReviewDueWords('dictation')" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(139,92,246,0.3);" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
+          <button class="btn btn-primary btn-extended-mode btn-extended-dictation" id="btn-review-dictation" onclick="launchReviewDueWords('dictation')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
             <span>👑</span> <span id="label-review-dictation">Nghe Gõ (VIP β)</span>
           </button>
-          <button class="btn btn-primary study-mode-btn-disabled" id="btn-review-translation" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" style="background: linear-gradient(135deg, #059669, #047857); border: none; font-weight: 700; font-size: 12px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px;" title="Dịch thuật song phương (Sắp ra mắt)">
+          <button class="btn btn-primary btn-extended-mode btn-extended-translation study-mode-btn-disabled" id="btn-review-translation" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Dịch thuật song phương (Sắp ra mắt)">
             <span>🌐</span> <span>Dịch Thuật (β)</span>
           </button>
         </div>

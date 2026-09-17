@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-22 Build 323 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-23 Build 324 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1186,12 +1186,68 @@ function closeDictationResultModal() {
 window.closeDictationResultModal = closeDictationResultModal;
 
 function exitDictationMode() {
+  const total = dictationQuestionsList.length || 1;
+  const done = dictationQuestionsList.filter(q => dictationGradedIndices.has(q.index)).length;
+
+  if (!dictationIsCompleted && (done > 0 || dictationSessionPointsEarned !== 0 || currentDictationIndex > 0)) {
+    if (typeof promptStudyEarlyExit === 'function') {
+      promptStudyEarlyExit({
+        mode: 'dictation',
+        done,
+        total,
+        basePoints: dictationSessionPointsEarned,
+        onConfirmExit: () => doExecuteExitDictation(done, total)
+      });
+      return;
+    }
+  }
+  doExecuteExitDictation(done, total);
+}
+
+function doExecuteExitDictation(done, total) {
   if (dictationAutoPlayTimeout) {
     clearTimeout(dictationAutoPlayTimeout);
     dictationAutoPlayTimeout = null;
   }
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   if (typeof stopAllAudio === 'function') stopAllAudio();
+  if (typeof closeModal === 'function') closeModal('modal-dictation-result');
+
+  // Early exit points settlement via Balance v3 (Extended Lab β)
+  if (!dictationIsCompleted && dictationSessionPointsEarned !== 0) {
+    const isComp = done >= total && total > 0;
+    const res = (typeof calculateSessionFinalPointsV3 === 'function')
+      ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
+      : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
+    const finalPts = res.finalPts;
+
+    if (finalPts !== 0 && typeof setUserPoints === 'function') {
+      const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+      const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
+      setUserPoints(Math.max(0, getUserPoints() + finalPts));
+      const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
+      if (typeof addLedgerEntry === 'function') {
+        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+      }
+      if (typeof saveDatabase === 'function') saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+      if (typeof showToast === 'function') {
+        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
+      }
+    }
+    dictationSessionPointsEarned = 0;
+  }
+
+  // Record study time on exit if session was active
+  if (dictationStartTime > 0) {
+    const durationSec = Math.max(1, Math.floor((Date.now() - dictationStartTime) / 1000));
+    if (done > 0 && typeof addDailyStudySeconds === 'function') {
+      addDailyStudySeconds(durationSec, 'dictation');
+    }
+    if (done > 0 && typeof recordStudyFlowAction === 'function') {
+      recordStudyFlowAction('dictation');
+    }
+  }
 
   if (dictationSetupCustomWordList || !currentDeckId) {
     showScreen('screen-decks');

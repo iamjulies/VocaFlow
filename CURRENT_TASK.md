@@ -1,39 +1,25 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-22 (Build 323)`  
+> **Phiên bản mục tiêu:** `v0.10.10-23 (Build 324)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-22 Build 323)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-23 Build 324)
 
-- [x] **Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Nghe Gõ Câu (`06e-dictation-engine.js`, `screen-dictation.html`, `app.css`)**:
-  - Tích hợp Gemini AI chấm điểm thông minh, loại bỏ so sánh cứng nhắc.
-  - Hiển thị 3 thẻ nhận xét trực quan: 👂 Phân tích bắt âm & nghe nhầm, ✍️ Ngữ pháp & cấu trúc câu, 💡 Mẹo luyện thính giác.
-  - Hiệu ứng phát sáng Neon AI Loading Spinner trong khi chờ AI chấm.
+- [x] **Hiệu Ứng Viền Ánh Sáng Neon Xoay Tròn Conic-Gradient Cho Cụm Nút Chế Độ Mở Rộng (β) (Issue 5) (`app.css`, `screen-deck-detail.html`, `modal-review-queue.html`)**:
+  - Thiết kế hệ thống class `.btn-extended-mode` (`.btn-extended-writing`, `.btn-extended-cloze`, `.btn-extended-dictation`, `.btn-extended-translation`) với viền xoay chuyển màu liên tục (`conic-gradient` + `@keyframes rotateLight 3s linear infinite`) phong cách VIP Deck và Huy hiệu trưng bày cao cấp.
+  - Mỗi chế độ mở rộng có dải gradient màu đặc trưng: Vàng kim (Viết câu), Xanh dương (Điền từ), Tím violet (Nghe gõ), Xanh lục bảo (Dịch thuật).
 
-- [x] **Thuật Toán Đối Chiếu Chuỗi Needleman-Wunsch Sequence Alignment (`06e-dictation-engine.js`, `app.css`)**:
-  - Thuật toán quy hoạch động tối ưu hóa đối chiếu token không bị lệch dòng (index shift) khi gõ thừa/thiếu từ.
-  - Phân loại 5 trạng thái trực quan: Chính xác, Lỗi gõ nhẹ, Sai từ, Bỏ sót, Thừa từ.
+- [x] **Màn Hình Cảnh Báo Thoát Giữa Chừng Cho Chế Độ Điền Từ Cloze Test (Issue 22) (`06d-cloze-engine.js`, `02-state-core.js`)**:
+  - Tích hợp kiểm tra phiên học dở dang trong `exitClozeMode()`, tự động kích hoạt modal cảnh báo `modal-study-exit-confirm` kèm bảng kết toán Xu chuẩn xác theo Balance v3 (Extended Lab β).
 
-- [x] **Quy Chuẩn 4 Cấp Độ & Hệ Số Điểm Mới (v0.10.10-22 Issue 1) (`06e-dictation-engine.js`, `modal-dictation-setup.html`)**:
-  - Dễ: x1.2, hiện 1 từ trọng tâm.
-  - Trung Bình: x1.8, hiện 1 từ trọng tâm.
-  - Khó: x2.4, hiện 1-2 từ trọng tâm.
-  - Siêu Khó: x3.6, ẩn 100% từ trọng tâm.
+- [x] **Màn Hình Cảnh Báo Thoát Giữa Chừng Cho Chế Độ Nghe Gõ Câu (Issue 6) (`06e-dictation-engine.js`, `02-state-core.js`)**:
+  - Tích hợp kiểm tra phiên học dở dang trong `exitDictationMode()`, tự động kích hoạt modal cảnh báo `modal-study-exit-confirm` kèm bảng kết toán Xu chuẩn xác theo Balance v3 (Extended Lab β).
 
-- [x] **Nâng Cấp VocaHint Nghe Gõ Câu 3 Tầng (`06e-dictation-engine.js`)**:
-  - Loại bỏ placeholder mẫu chung, cung cấp bản dịch câu 100% chuẩn xác, cấu trúc từ khóa và khung chữ cái đầu.
-
-- [x] **Vấn đề 21: Cân Bằng Gợi Ý VocaHint Trong Điền Từ Cloze Test (`06d-cloze-engine.js`)**:
-  - Tinh chỉnh gợi ý tập trung vào chức năng ngữ pháp và ngữ cảnh, loại bỏ lộ chữ cái đầu để bảo toàn tính thử thách của bài đọc hiểu.
-
-- [x] **Vấn đề 4: Làm Sạch Giao Diện & Khắc Phục Lỗi Hiển Thị Dính Khung Cũ (`06e-dictation-engine.js`, `screen-dictation.html`)**:
-  - Reset toàn bộ trạng thái giao diện và xóa sạch kết quả cũ khi chuyển câu.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-22 Build 323`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-22 (Build 323)`.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-23 Build 324`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-23 (Build 324)`.
 
 ---
 

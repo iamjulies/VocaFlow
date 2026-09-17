@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-23 (Build 324) - Viền Ánh Sáng Neon Xoay Tròn Conic-Gradient Cho Cụm Nút Chế Độ Mở Rộng (β) Phong Cách VIP Deck & Huy Hiệu Trưng Bày (Issue 5), Tích Hợp Màn Hình Cảnh Báo Thoát Giữa Chừng (Early Exit Modal) Cho Điền Từ Cloze (Issue 22) & Nghe Gõ Câu (Issue 6) Kèm Kết Toán Chuẩn Balance v3
+================================================================================
+1. [Hiệu Ứng Viền Ánh Sáng Neon Xoay Tròn Conic-Gradient Cho Cụm Nút Chế Độ Học Mở Rộng (β) (Issue 5) (app.css, screen-deck-detail.html, modal-review-queue.html)]:
+   - Thiết kế hệ thống class `.btn-extended-mode` (`.btn-extended-writing`, `.btn-extended-cloze`, `.btn-extended-dictation`, `.btn-extended-translation`) với viền xoay chuyển màu liên tục (`conic-gradient` + `@keyframes rotateLight 3s linear infinite`) phong cách VIP Deck và Huy hiệu trưng bày cao cấp.
+   - Mỗi chế độ mở rộng có dải gradient màu đặc trưng:
+     + ✍️ Viết Câu (VIP β): Vàng kim & Hổ phách hoàng gia (#ffd700, #ff8c00, #d97706).
+     + 📖 Điền Từ (VIP β): Xanh dương & Cyan đại dương (#38bdf8, #0ea5e9, #0284c7).
+     + 🎧 Nghe Gõ (VIP β): Tím Violet & Neon ánh tím (#c084fc, #a855f7, #7c3aed).
+     + 🌐 Dịch Thuật (β): Xanh ngọc lục bảo Emerald (#34d399, #10b981, #059669).
+   - Bảo toàn trọn vẹn văn bản, icon, và độ nhạy tương tác khi click.
+
+2. [Màn Hình Cảnh Báo Thoát Giữa Chừng Cho Chế Độ Điền Từ Cloze Test (Issue 22) (06d-cloze-engine.js, 02-state-core.js)]:
+   - Tích hợp kiểm tra phiên học dở dang trong `exitClozeMode()`, tự động kích hoạt modal cảnh báo `modal-study-exit-confirm` kèm bảng kết toán Xu chuẩn xác theo Balance v3 (Extended Lab β).
+   - Hiển thị đầy đủ số câu đã hoàn thành, điểm gốc, hệ số hoàn thành, hệ số quy mô bộ từ và thưởng mốc.
+
+3. [Màn Hình Cảnh Báo Thoát Giữa Chừng Cho Chế Độ Nghe Gõ Câu (Issue 6) (06e-dictation-engine.js, 02-state-core.js)]:
+   - Tích hợp kiểm tra phiên học dở dang trong `exitDictationMode()`, tự động kích hoạt modal cảnh báo `modal-study-exit-confirm` kèm bảng kết toán Xu chuẩn xác theo Balance v3 (Extended Lab β).
+   - Dọn dẹp an toàn các bộ đếm thời gian, luồng âm thanh và lưu trữ thời lượng học tập.
+
+================================================================================
 Phiên bản: v0.10.10-22 (Build 323) - Tích Hợp Gemini AI Chấm Điểm & Phân Tích Bắt Âm Nghe Gõ Câu (VIP β), Thuật Toán Đối Chiếu Chuỗi Needleman-Wunsch Chống Lệch Dòng (Sequence Alignment), Quy Chuẩn 4 Cấp Độ Thử Thách & Hệ Số Siêu Khó x3.6 (Ẩn Từ Trọng Tâm), Nâng Cấp VocaHint Nghe Gõ 3 Tầng & Cân Bằng VocaHint Điền Từ Cloze Test (Issue 21)
 ================================================================================
 1. [Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Nghe Gõ Câu (06e-dictation-engine.js, screen-dictation.html, app.css)]:

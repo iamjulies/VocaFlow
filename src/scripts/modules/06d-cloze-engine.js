@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-22 Build 323 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-23 Build 324 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1715,17 +1715,61 @@ function retryClozeWrongWordsOnly() {
 }
 
 function exitClozeMode() {
+  const total = clozePassagesList.length || 1;
+  const done = clozePassagesList.filter(p => p.isEvaluated || p.isSubmitted).length;
+
+  if (!clozeIsCompleted && (done > 0 || clozeSessionPointsEarned !== 0 || currentClozeIndex > 0)) {
+    if (typeof promptStudyEarlyExit === 'function') {
+      promptStudyEarlyExit({
+        mode: 'cloze',
+        done,
+        total,
+        basePoints: clozeSessionPointsEarned,
+        onConfirmExit: () => doExecuteExitCloze(done, total)
+      });
+      return;
+    }
+  }
+  doExecuteExitCloze(done, total);
+}
+
+function doExecuteExitCloze(done, total) {
   stopClozePassageAudio();
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeClozeResultModal();
 
-  // Record study time on early exit if session was active
-  if (!clozeIsCompleted && clozeStartTime > 0) {
+  // Early exit points settlement via Balance v3 (Extended Lab β)
+  if (!clozeIsCompleted && clozeSessionPointsEarned !== 0) {
+    const isComp = done >= total && total > 0;
+    const res = (typeof calculateSessionFinalPointsV3 === 'function')
+      ? calculateSessionFinalPointsV3(clozeSessionPointsEarned, done, total, isComp)
+      : calculateSessionFinalPoints(clozeSessionPointsEarned, done, total, isComp);
+    const finalPts = res.finalPts;
+
+    if (finalPts !== 0 && typeof setUserPoints === 'function') {
+      const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+      const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
+      setUserPoints(Math.max(0, getUserPoints() + finalPts));
+      const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} đoạn (+${res.milestoneBonus} Xu)` : '';
+      if (typeof addLedgerEntry === 'function') {
+        addLedgerEntry('STUDY_CLOZE', finalPts, `Điền từ Cloze Test "${deckTitle}" (${done}/${total} đoạn, x${res.combinedMult}${bonusText})`);
+      }
+      if (typeof saveDatabase === 'function') saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+      if (typeof showToast === 'function') {
+        showToast(`🎉 Cloze Test: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
+      }
+    }
+    clozeSessionPointsEarned = 0;
+  }
+
+  // Record study time on exit if session was active
+  if (clozeStartTime > 0) {
     const durationSec = Math.max(1, Math.floor((Date.now() - clozeStartTime) / 1000));
-    if (clozeSessionCorrectBlanksCount > 0 && typeof addDailyStudySeconds === 'function') {
+    if (done > 0 && typeof addDailyStudySeconds === 'function') {
       addDailyStudySeconds(durationSec, 'cloze');
     }
-    if (clozeSessionCorrectBlanksCount > 0 && typeof recordStudyFlowAction === 'function') {
+    if (done > 0 && typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('cloze');
     }
   }
