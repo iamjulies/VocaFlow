@@ -1167,6 +1167,30 @@ function finishWritingSession() {
     diffBadge.textContent = `✍️ Cấp độ: ${cfg.label} (x${cfg.diffMult})`;
   }
 
+  // Balance v3 Bonus Breakdown & Energy Indicator
+  const bonusBox = document.getElementById('writing-res-bonus-box');
+  let writingRes = null;
+  try {
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+    } else if (typeof calculateSessionFinalPoints === 'function') {
+      writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+    }
+  } catch (e) {}
+
+  if (bonusBox && writingRes) {
+    if (writingRes.completionMult > 1.0 || writingRes.deckLengthMult > 1.0 || writingRes.milestoneBonus > 0) {
+      bonusBox.style.display = 'block';
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.completionMult}</strong> • Quy mô: <strong>x${writingRes.deckLengthMult}</strong>${writingRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${writingRes.milestoneBonus} Xu</strong>` : ''}`;
+    } else {
+      bonusBox.style.display = 'none';
+    }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function' && writingRes) {
+    updateModalBrainEnergyIndicator('writing-res-energy-box', writingRes);
+  }
+
   // Wrong words banner
   const wrongBanner = document.getElementById('writing-res-wrong-banner');
   const wrongCountEl = document.getElementById('writing-res-wrong-count');

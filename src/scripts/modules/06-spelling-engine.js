@@ -1181,8 +1181,10 @@
       }
 
       let finalDeckMult = 1.0;
+      let spellingSettlementRes = null;
       try {
         const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        spellingSettlementRes = res;
         spellingPointsEarned = res.finalPts;
         finalDeckMult = res.deckLengthMult || 1.0;
         if (spellingPointsEarned !== 0) {
@@ -1225,6 +1227,10 @@
       if (hintsEl) hintsEl.textContent = (spellingHintsUsed || 0) + ' lượt';
       if (skipsEl) skipsEl.textContent = (spellingSkipCount || 0) + ' từ';
       if (wrongsEl) wrongsEl.textContent = (spellingWrongCount || 0) + ' lần';
+
+      if (typeof updateModalBrainEnergyIndicator === 'function') {
+        updateModalBrainEnergyIndicator('spelling-res-energy-box', spellingSettlementRes);
+      }
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('spelling-res-wrong-banner');

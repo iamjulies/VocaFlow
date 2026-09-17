@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-29 Build 330 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-30 Build 331 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1317,6 +1317,10 @@ function finishDictationSession() {
     } else {
       bonusBox.style.display = 'none';
     }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function') {
+    updateModalBrainEnergyIndicator('dictation-res-energy-box', res);
   }
 
   // Unpassed / Wrong words retry banner

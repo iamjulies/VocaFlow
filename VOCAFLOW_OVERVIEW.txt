@@ -1,4 +1,18 @@
 ================================================================================
+Phiên bản: v0.10.10-30 (Build 331) - Đột Phá Động Cơ Soft-Cap Logarit Trơn (Năng Lượng Tiếp Thu Não Bộ / Chống Lạm Phát VoCoin) Điều Tiết Thông Minh Khắp 7 Chế Độ Học Tập
+================================================================================
+1. [Triển Khai Động Cơ Soft-Cap Logarit Trơn (02-state-core.js, 03-auth.js)]:
+   - Ứng dụng công thức hàm logarit tự nhiên: \eta(E_today) = 1 / (1 + ln(1 + E_today / K))
+   - Hạn ngạch độ bão hòa K: Người dùng Miễn phí/Thường: K = 350 VoCoin/ngày; Người dùng VocaVIP: K = 700 VoCoin/ngày.
+   - Cơ chế hoạt động: Khi E_today = 0, hiệu suất tiếp thu là 100% (\eta = 1.0). Khi điểm thưởng học tập trong ngày tăng lên, hiệu suất giảm dần mượt mà theo đường cong logarit trơn (không sụt hẫng, không cliff-drop, không bao giờ về 0).
+2. [Khung Thuật Ngữ Nhân Văn & Tích Cực (02-state-core.js)]:
+   - Tuyệt đối không dùng các từ mang tính tiêu cực như "Thuế" (Tax), "Phạt" (Penalty) hay "Giảm trừ".
+   - Định danh toàn diện là "⚡ Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy)".
+3. [Đồng Bộ Hiển Thị Chỉ Số Năng Lượng Trên Toàn Bộ 7 Modal Tổng Kết]:
+   - modal-quiz-result, modal-spelling-result, modal-speaking-result, modal-writing-result, modal-cloze-result, modal-dictation-result, modal-translation-result.
+   - Khi hiệu suất \eta < 95%, hiển thị huy hiệu năng lượng tinh tế: "⚡ Năng lượng tập trung: X% (+Y VoCoin)".
+
+================================================================================
 Phiên bản: v0.10.10-29 (Build 330) - Nâng Cấp VocaHint Chế Độ Dịch Thuật Đa Tầng Thực Dụng: Bóc Tách Từ Phụ (Secondary Vocab), Cấu Trúc Collocation/Ngữ Pháp, Khung Mở Đầu Câu (Sentence Starter) & Bản Dịch Tham Khảo Chuẩn Bản Ngữ (Vấn Đề 7)
 ================================================================================
 1. [Khắc Phục Hoàn Toàn Trùng Lặp Gợi Ý VocaHint Trong Dịch Thuật (06f-translation-engine.js)]:

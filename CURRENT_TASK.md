@@ -1,25 +1,59 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-29 (Build 330)`  
+> **Phiên bản mục tiêu:** `v0.10.10-30 (Build 331)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-29 Build 330)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-30 Build 331)
+
+- [x] **Động Cơ Soft-Cap Logarit Trơn Điều Tiết Năng Lượng Não Bộ & Lạm Phát VoCoin (`02-state-core.js`, `03-auth.js`)**:
+  - Triển khai công thức Soft-Cap logarit tự nhiên trơn tru:
+    $$\eta(E_{\text{today}}) = \frac{1}{1 + \ln\left(1 + \frac{E_{\text{today}}}{K}\right)}$$
+  - Hằng số bão hòa $K$: Free/Standard User = 350, VocaVIP User = 700.
+  - Hàm tiện ích: `getTodayEarnedCoins()`, `recordTodayEarnedCoins(amount)`, `getDailyFatigueEfficiency()`.
+  - Tích hợp vào `calculateSessionFinalPoints` và `calculateSessionFinalPointsV3` để điều tiết thưởng học tập (`finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency))`).
+  - Ghi nhận lịch sử học tập vào storage key `vocaflow_daily_study_coins_{YYYY-MM-DD}_{uid}` theo múi giờ GMT+7, tự động reset vào 00:00 hàng ngày.
+  - Tự động tích lũy trong `addLedgerEntry` khi type là `STUDY_*` và `amount > 0`.
+
+- [x] **Đồng Bộ Giao Diện Huy Hiệu Năng Lượng Tiếp Thu Não Bộ Trên 7 Chế Độ Học**:
+  - Thuật ngữ tích cực & thân thiện: **"⚡ Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy)"**, tuyệt đối không dùng từ "Thuế" hay "Phạt".
+  - Hiển thị thông báo năng lượng khi $\eta < 0.95$ (ví dụ: `⚡ Năng lượng tập trung: 72% (+X VoCoin)`).
+  - Tích hợp `updateModalBrainEnergyIndicator` trên 7 Modal kết quả:
+    + Trắc Nghiệm (`modal-quiz-result.html`, `05-quiz-engine.js`)
+    + Chính Tả (`modal-spelling-result.html`, `06-spelling-engine.js`)
+    + Luyện Nói AI (`modal-speaking-result.html`, `07-speaking-engine.js`)
+    + Viết Câu AI (`modal-writing-result.html`, `06c-writing-engine.js`)
+    + Điền Từ Cloze (`modal-cloze-result.html`, `06d-cloze-engine.js`)
+    + Nghe Gõ Câu Dictation (`modal-dictation-result.html`, `06e-dictation-engine.js`)
+    + Dịch Thuật Song Phương (`modal-translation-result.html`, `06f-translation-engine.js`)
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-30 Build 331`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-30 (Build 331)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-30 (Build 331)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-30 (Build 331)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-30 Build 331`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-30'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-30 (Build 331)'`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-30 Build 331`)
+  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-30 Build 331`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-30`)
+  - `pubspec.yaml` (`version: 0.10.10+331`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-30`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-30 (Build 331)`)
+  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-29 Build 330)
 
 - [x] **Vấn đề 7: Nâng Cấp Gợi Ý VocaHint Đa Tầng Thực Dụng Trong Dịch Thuật Song Phương (`06f-translation-engine.js`)**:
   - Khắc phục hoàn toàn việc gợi ý trùng lặp Target Word (từ vựng trọng tâm đã có sẵn trên huy hiệu `🎯 Từ vựng trọng tâm`).
-  - **Kiểu 1 (Secondary Vocabulary)**: Bổ sung thuật toán `extractSecondaryVocabHint` bóc tách và dịch nghĩa các từ phụ/từ khó khác trong câu nguồn (như `shoplifters` ➔ kẻ trộm đồ / kẻ ăn cắp vặt, `police` ➔ cảnh sát).
-  - **Kiểu 2 (Collocation & Grammar Structure)**: Bổ sung gợi ý cụm từ kết hợp và cấu trúc ngữ pháp/thì câu (`grammarStructureHint`).
-  - **Kiểu 3 (Sentence Starter Framing)**: Gợi ý khung mở đầu câu tự nhiên trong ngôn ngữ đích (`sentenceFramingClue`, ví dụ: `"Cảnh sát sẽ..."` hoặc `"The police will..."`).
+  - **Kiểu 1 (Secondary Vocabulary)**: Bổ sung thuật toán `extractSecondaryVocabHint` bóc tách và dịch nghĩa các từ phụ/từ khó khác trong câu nguồn.
+  - **Kiểu 2 (Collocation & Grammar Structure)**: Bổ sung gợi ý cụm từ kết hợp và cấu trúc ngữ pháp/thì câu.
+  - **Kiểu 3 (Sentence Starter Framing)**: Gợi ý khung mở đầu câu tự nhiên trong ngôn ngữ đích.
   - **Kiểu 4 (Full Benchmark Translation & Polished Nuance)**: Bản dịch tham khảo hoàn chỉnh và gợi ý chữ cái mở đầu mặt nạ (Tầng 3).
-  - Tối ưu 3 tầng gợi ý nấc thang trong `useTranslationHint()` tiêu tốn VocaHint hợp lý và mang lại giá trị học tập tối đa cho người học.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-29 Build 330`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-29 (Build 330)`.
-
----
+  - Tối ưu 3 tầng gợi ý nấc thang trong `useTranslationHint()` tiêu tốn VocaHint hợp lý.
 
 ## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-28 Build 329)
 

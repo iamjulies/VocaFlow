@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.9-50)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-30 Build 331)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -3795,6 +3795,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
+      // Record study VoCoin into Daily Soft-Cap Diminishing Returns Tracker
+      if (type && type.startsWith('STUDY') && numAmount > 0) {
+        if (typeof recordTodayEarnedCoins === 'function') {
+          recordTodayEarnedCoins(numAmount);
+        }
+      }
+
       const balanceAfter = (typeof explicitBalanceAfter === 'number' && !isNaN(explicitBalanceAfter))
         ? explicitBalanceAfter
         : getUserPoints();
@@ -6518,9 +6525,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-29 / Build 330)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-30 / Build 331)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-30': {
+        postId: 'official_update_v0_10_10_30',
+        releaseTime: '2026-09-17T23:30:00.000Z',
+        title: '⚡ Ra Mắt Động Cơ Năng Lượng Não Bộ & Điều Tiết Lạm Phát VoCoin Trơn Tru (v0.10.10-30 Build 331)!',
+        summary: 'Triển khai công thức Soft-Cap Logarit tự nhiên điều tiết tỷ lệ nhận VoCoin theo mức năng lượng tiếp thu não bộ hàng ngày mà không gây sụt giảm đột ngột hay điểm âm, đồng bộ huy hiệu năng lượng trên 7 chế độ học tập.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-30 (Build 331)!\n\n✨ Những điểm mới nổi bật:\n⚡ Động Cơ Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy Soft-Cap): Triển khai công thức Soft-Cap logarit tự nhiên trơn tru giúp điều hòa lượng VoCoin tích lũy khi học tập liên tục trong ngày, mô phỏng sinh động quy luật giảm dần sự tập trung của não bộ mà không bao giờ rơi về 0 hay điểm âm.\n🎯 Hằng Số Bão Hòa K Chuyên Biệt: Chuẩn hóa ngưỡng năng lượng cho người dùng Phổ thông (K = 350) và hội viên VocaVIP (K = 700) với mức tích lũy bền bỉ và ưu đãi vượt trội.\n🌟 Thuật Ngữ Thân Thiện & Tích Cực: Khung ngôn ngữ "Năng Lượng Tiếp Thu Não Bộ", tôn vinh nỗ lực học tập của người học.\n📊 Huy Hiệu Năng Lượng Trên 7 Chế Độ Học: Tự động hiển thị mức năng lượng tiếp thu thực tế trên màn hình tổng kết kết quả của toàn bộ 7 chế độ học tập khi vượt mốc học tập chuyên sâu trong ngày.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ tin cậy tuyệt đối cho toàn bộ số dư và sổ cái tài chính VoCoin.\n\nChúc bạn có những giờ phút học tập hiệu quả và tràn đầy năng lượng cùng VocaFlow! 🚀⚡`
+      },
       'v0.10.10-29': {
         postId: 'official_update_v0_10_10_29',
         releaseTime: '2026-09-17T21:15:00.000Z',

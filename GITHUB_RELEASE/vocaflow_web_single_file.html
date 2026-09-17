@@ -5359,7 +5359,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-29 (Build 330)</span>
+            <span class="mini-footer-version">v0.10.10-30 (Build 331)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5583,7 +5583,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-24 (Build 325)</span>
+            <span class="mini-footer-version">v0.10.10-30 (Build 331)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -7088,6 +7088,7 @@
               <span>💰</span> VoCoin nhận được
             </div>
             <div id="quiz-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+60 VoCoin</div>
+            <div id="quiz-res-energy-box" style="display: none; margin-top: 4px;"></div>
           </div>
 
           <!-- 3. Tổng thời gian -->
@@ -7399,6 +7400,7 @@
               <span>💰</span> VoCoin nhận được
             </div>
             <div id="spk-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+            <div id="spk-res-energy-box" style="display: none; margin-top: 4px;"></div>
           </div>
 
           <!-- 3. Điểm phát âm TB -->
@@ -7604,6 +7606,7 @@
               <span>💰</span> VoCoin nhận được
             </div>
             <div id="writing-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+            <div id="writing-res-energy-box" style="display: none; margin-top: 4px;"></div>
           </div>
 
           <!-- 3. Điểm hành văn TB -->
@@ -7695,6 +7698,7 @@
               <span>💰</span> VoCoin nhận được
             </div>
             <div id="spelling-res-points" style="font-size: 16px; font-weight: 800; color: #f59e0b; font-family: monospace;">+465 VoCoin</div>
+            <div id="spelling-res-energy-box" style="display: none; margin-top: 4px;"></div>
           </div>
 
           <!-- 3. Tổng thời gian -->
@@ -7904,6 +7908,7 @@
       <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
         <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">💰 VoCoin nhận được</div>
         <div id="translation-res-points" style="font-size: 18px; font-weight: 800; color: #fbbf24;">+0 Xu</div>
+        <div id="translation-res-energy-box" style="display: none; margin-top: 4px;"></div>
       </div>
 
       <!-- TILE 3: ĐIỂM DỊCH THUẬT TB -->
@@ -11848,7 +11853,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-29 (Build 330)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-30 (Build 331)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12791,6 +12796,7 @@
               <span>💰</span> VoCoin nhận được
             </div>
             <div id="cloze-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+            <div id="cloze-res-energy-box" style="display: none; margin-top: 4px;"></div>
           </div>
 
           <!-- 3. Số từ đúng / Điểm TB -->
@@ -12997,6 +13003,7 @@
             <span>💰</span> VoCoin nhận được
           </div>
           <div id="dictation-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+          <div id="dictation-res-energy-box" style="display: none; margin-top: 4px;"></div>
         </div>
 
         <!-- 3. Điểm nghe gõ TB -->
@@ -13371,7 +13378,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-29 Build 330)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-30 Build 331)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -13836,15 +13843,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-29 Build 330)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-30 Build 331)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-29 Build 330)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-30 Build 331)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-29';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-29 (Build 330)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-30';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-30 (Build 331)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -14447,6 +14454,61 @@ window.initSpaRouter = initSpaRouter;
       return 0;
     }
 
+    // =========================================================================
+    // UNIFIED DAILY SOFT-CAP DIMINISHING RETURNS ENGINE (v0.10.10-30 Build 331)
+    // Brain Focus Energy (Năng lượng tiếp thu não bộ) with Smooth Natural Logarithm
+    // Formula: eta(E_today) = 1 / (1 + ln(1 + E_today / K))
+    // =========================================================================
+    function getTodayString() {
+      return (typeof getTodayDateString === 'function') ? getTodayDateString() : new Date().toISOString().slice(0, 10);
+    }
+    window.getTodayString = getTodayString;
+
+    function getTodayEarnedCoins() {
+      const today = getTodayString();
+      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+      const key = `vocaflow_daily_study_coins_${today}_${uid}`;
+      const val = parseInt(localStorage.getItem(key) || '0', 10);
+      return isNaN(val) ? 0 : Math.max(0, val);
+    }
+    window.getTodayEarnedCoins = getTodayEarnedCoins;
+
+    function recordTodayEarnedCoins(amount) {
+      const num = Number(amount) || 0;
+      if (num <= 0) return getTodayEarnedCoins();
+      const today = getTodayString();
+      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+      const key = `vocaflow_daily_study_coins_${today}_${uid}`;
+      const current = getTodayEarnedCoins();
+      const updated = current + Math.round(num);
+      localStorage.setItem(key, updated.toString());
+      return updated;
+    }
+    window.recordTodayEarnedCoins = recordTodayEarnedCoins;
+
+    function getDailyFatigueEfficiency(customEarned = null, customIsVip = null) {
+      const earnedToday = (typeof customEarned === 'number') ? customEarned : getTodayEarnedCoins();
+      const isVip = (typeof customIsVip === 'boolean') ? customIsVip : ((typeof isUserVip === 'function') ? isUserVip() : false);
+      const K = isVip ? 700 : 350;
+      const ratio = earnedToday / K;
+      const eta = 1 / (1 + Math.log(1 + ratio));
+      return Math.max(0.05, Math.min(1.0, Math.round(eta * 1000) / 1000));
+    }
+    window.getDailyFatigueEfficiency = getDailyFatigueEfficiency;
+
+    function updateModalBrainEnergyIndicator(elementId, res) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      if (res && typeof res.energyEfficiency === 'number' && res.energyEfficiency < 0.95) {
+        const pct = res.energyPercent || res.energyPct || Math.round(res.energyEfficiency * 100);
+        el.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #38bdf8; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.35); border-radius: 6px; padding: 2px 6px;">⚡ Năng lượng tập trung: ${pct}% (+${res.finalPts} VoCoin)</span>`;
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+    window.updateModalBrainEnergyIndicator = updateModalBrainEnergyIndicator;
+
     function calculateSessionFinalPoints(basePoints, doneCount, totalCount, isCompleted = false) {
       const total = totalCount || 1;
       const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
@@ -14466,13 +14528,17 @@ window.initSpaRouter = initSpaRouter;
 
       const combinedMult = Math.round((completionMult * deckLengthMult) * 1000) / 1000;
 
+      let rawFinalPts = 0;
       let finalPts = 0;
+      const energyEfficiency = getDailyFatigueEfficiency();
+
       if (basePoints > 0) {
-        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
         // balance_vip: VIP earns +150% coins
         if (isVip) {
-          finalPts = Math.round(finalPts * 1.5);
+          rawFinalPts = Math.round(rawFinalPts * 1.5);
         }
+        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
       } else if (basePoints < 0) {
         if (done <= 5) {
           const divisor = Math.max(0.1, combinedMult);
@@ -14484,10 +14550,14 @@ window.initSpaRouter = initSpaRouter;
         if (isVip) {
           finalPts = Math.round(finalPts / 1.25);
         }
+        rawFinalPts = finalPts;
       }
 
       return {
         finalPts,
+        rawFinalPts,
+        energyEfficiency,
+        energyPercent: Math.round(energyEfficiency * 100),
         completionMult,
         deckLengthMult,
         combinedMult,
@@ -14547,12 +14617,16 @@ window.initSpaRouter = initSpaRouter;
 
       const combinedMult = Math.round((completionMult * scaleMult) * 1000) / 1000;
 
+      let rawFinalPts = 0;
       let finalPts = 0;
+      const energyEfficiency = getDailyFatigueEfficiency();
+
       if (basePoints > 0) {
-        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
         if (isVip) {
-          finalPts = Math.round(finalPts * 1.5);
+          rawFinalPts = Math.round(rawFinalPts * 1.5);
         }
+        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
       } else if (basePoints < 0) {
         const ratio = total > 0 ? (done / total) : 0;
         const multiplier = Math.max(1.1, 1.6 - ratio);
@@ -14560,10 +14634,14 @@ window.initSpaRouter = initSpaRouter;
         if (isVip) {
           finalPts = Math.round(finalPts / 1.25);
         }
+        rawFinalPts = finalPts;
       }
 
       return {
         finalPts,
+        rawFinalPts,
+        energyEfficiency,
+        energyPercent: Math.round(energyEfficiency * 100),
         completionMult,
         deckLengthMult: scaleMult,
         combinedMult,
@@ -17913,7 +17991,7 @@ window.initSpaRouter = initSpaRouter;
 
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.9-50)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-30 Build 331)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -21708,6 +21786,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
+      // Record study VoCoin into Daily Soft-Cap Diminishing Returns Tracker
+      if (type && type.startsWith('STUDY') && numAmount > 0) {
+        if (typeof recordTodayEarnedCoins === 'function') {
+          recordTodayEarnedCoins(numAmount);
+        }
+      }
+
       const balanceAfter = (typeof explicitBalanceAfter === 'number' && !isNaN(explicitBalanceAfter))
         ? explicitBalanceAfter
         : getUserPoints();
@@ -24431,9 +24516,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-29 / Build 330)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-30 / Build 331)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-30': {
+        postId: 'official_update_v0_10_10_30',
+        releaseTime: '2026-09-17T23:30:00.000Z',
+        title: '⚡ Ra Mắt Động Cơ Năng Lượng Não Bộ & Điều Tiết Lạm Phát VoCoin Trơn Tru (v0.10.10-30 Build 331)!',
+        summary: 'Triển khai công thức Soft-Cap Logarit tự nhiên điều tiết tỷ lệ nhận VoCoin theo mức năng lượng tiếp thu não bộ hàng ngày mà không gây sụt giảm đột ngột hay điểm âm, đồng bộ huy hiệu năng lượng trên 7 chế độ học tập.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-30 (Build 331)!\n\n✨ Những điểm mới nổi bật:\n⚡ Động Cơ Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy Soft-Cap): Triển khai công thức Soft-Cap logarit tự nhiên trơn tru giúp điều hòa lượng VoCoin tích lũy khi học tập liên tục trong ngày, mô phỏng sinh động quy luật giảm dần sự tập trung của não bộ mà không bao giờ rơi về 0 hay điểm âm.\n🎯 Hằng Số Bão Hòa K Chuyên Biệt: Chuẩn hóa ngưỡng năng lượng cho người dùng Phổ thông (K = 350) và hội viên VocaVIP (K = 700) với mức tích lũy bền bỉ và ưu đãi vượt trội.\n🌟 Thuật Ngữ Thân Thiện & Tích Cực: Khung ngôn ngữ "Năng Lượng Tiếp Thu Não Bộ", tôn vinh nỗ lực học tập của người học.\n📊 Huy Hiệu Năng Lượng Trên 7 Chế Độ Học: Tự động hiển thị mức năng lượng tiếp thu thực tế trên màn hình tổng kết kết quả của toàn bộ 7 chế độ học tập khi vượt mốc học tập chuyên sâu trong ngày.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ tin cậy tuyệt đối cho toàn bộ số dư và sổ cái tài chính VoCoin.\n\nChúc bạn có những giờ phút học tập hiệu quả và tràn đầy năng lượng cùng VocaFlow! 🚀⚡`
+      },
       'v0.10.10-29': {
         postId: 'official_update_v0_10_10_29',
         releaseTime: '2026-09-17T21:15:00.000Z',
@@ -34119,8 +34211,10 @@ Yêu cầu nghiêm ngặt:
       const spq = (totalSeconds / total).toFixed(1);
 
       let finalDeckMult = 1.0;
+      let quizSettlementRes = null;
       try {
         const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        quizSettlementRes = res;
         quizPointsEarned = res.finalPts;
         finalDeckMult = res.deckLengthMult || 1.0;
         if (quizPointsEarned !== 0) {
@@ -34174,6 +34268,10 @@ Yêu cầu nghiêm ngặt:
       if (hintsEl) hintsEl.textContent = (quizHintsUsed || 0) + ' lượt';
       if (skipsEl) skipsEl.textContent = (quizSkipCount || 0) + ' câu';
       if (wrongsEl) wrongsEl.textContent = (quizWrongCount || 0) + ' câu';
+
+      if (typeof updateModalBrainEnergyIndicator === 'function') {
+        updateModalBrainEnergyIndicator('quiz-res-energy-box', quizSettlementRes);
+      }
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');
@@ -35613,6 +35711,30 @@ function finishWritingSession() {
     diffBadge.textContent = `✍️ Cấp độ: ${cfg.label} (x${cfg.diffMult})`;
   }
 
+  // Balance v3 Bonus Breakdown & Energy Indicator
+  const bonusBox = document.getElementById('writing-res-bonus-box');
+  let writingRes = null;
+  try {
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+    } else if (typeof calculateSessionFinalPoints === 'function') {
+      writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+    }
+  } catch (e) {}
+
+  if (bonusBox && writingRes) {
+    if (writingRes.completionMult > 1.0 || writingRes.deckLengthMult > 1.0 || writingRes.milestoneBonus > 0) {
+      bonusBox.style.display = 'block';
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.completionMult}</strong> • Quy mô: <strong>x${writingRes.deckLengthMult}</strong>${writingRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${writingRes.milestoneBonus} Xu</strong>` : ''}`;
+    } else {
+      bonusBox.style.display = 'none';
+    }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function' && writingRes) {
+    updateModalBrainEnergyIndicator('writing-res-energy-box', writingRes);
+  }
+
   // Wrong words banner
   const wrongBanner = document.getElementById('writing-res-wrong-banner');
   const wrongCountEl = document.getElementById('writing-res-wrong-count');
@@ -35767,7 +35889,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-29 Build 330 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-30 Build 331 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -37450,6 +37572,31 @@ function finishClozeSession() {
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
   if (diffBadge) diffBadge.textContent = `🧩 Cấp độ: ${diffCfg.label} (x${diffCfg.diffMult})`;
 
+  // Balance v3 Bonus Breakdown & Energy Indicator
+  const bonusBox = document.getElementById('cloze-res-bonus-box');
+  let clozeRes = null;
+  try {
+    const total = clozePassagesList.length || 1;
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      clozeRes = calculateSessionFinalPointsV3(clozeSessionPointsEarned, total, total, true);
+    } else if (typeof calculateSessionFinalPoints === 'function') {
+      clozeRes = calculateSessionFinalPoints(clozeSessionPointsEarned, total, total, true);
+    }
+  } catch (e) {}
+
+  if (bonusBox && clozeRes) {
+    if (clozeRes.completionMult > 1.0 || clozeRes.deckLengthMult > 1.0 || clozeRes.milestoneBonus > 0) {
+      bonusBox.style.display = 'block';
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.completionMult}</strong> • Quy mô: <strong>x${clozeRes.deckLengthMult}</strong>${clozeRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${clozeRes.milestoneBonus} Xu</strong>` : ''}`;
+    } else {
+      bonusBox.style.display = 'none';
+    }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function' && clozeRes) {
+    updateModalBrainEnergyIndicator('cloze-res-energy-box', clozeRes);
+  }
+
   // Wrong words retry banner (Issue 8 & 11)
   const wrongBanner = document.getElementById('cloze-res-wrong-banner');
   const wrongCountEl = document.getElementById('cloze-res-wrong-count');
@@ -37580,7 +37727,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-29 Build 330 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-30 Build 331 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -38900,6 +39047,10 @@ function finishDictationSession() {
     }
   }
 
+  if (typeof updateModalBrainEnergyIndicator === 'function') {
+    updateModalBrainEnergyIndicator('dictation-res-energy-box', res);
+  }
+
   // Unpassed / Wrong words retry banner
   const wrongWordsUnique = [];
   const seen = new Set();
@@ -39040,7 +39191,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-29 Build 330 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-30 Build 331 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -40318,6 +40469,10 @@ function finishTranslationSession() {
     } else {
       bonusBox.style.display = 'none';
     }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function') {
+    updateModalBrainEnergyIndicator('translation-res-energy-box', res);
   }
 
   // Unpassed / Wrong words retry banner
@@ -41625,8 +41780,10 @@ window.exitTranslationMode = exitTranslationMode;
       }
 
       let finalDeckMult = 1.0;
+      let spellingSettlementRes = null;
       try {
         const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        spellingSettlementRes = res;
         spellingPointsEarned = res.finalPts;
         finalDeckMult = res.deckLengthMult || 1.0;
         if (spellingPointsEarned !== 0) {
@@ -41669,6 +41826,10 @@ window.exitTranslationMode = exitTranslationMode;
       if (hintsEl) hintsEl.textContent = (spellingHintsUsed || 0) + ' lượt';
       if (skipsEl) skipsEl.textContent = (spellingSkipCount || 0) + ' từ';
       if (wrongsEl) wrongsEl.textContent = (spellingWrongCount || 0) + ' lần';
+
+      if (typeof updateModalBrainEnergyIndicator === 'function') {
+        updateModalBrainEnergyIndicator('spelling-res-energy-box', spellingSettlementRes);
+      }
 
       // WRONG WORDS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('spelling-res-wrong-banner');
@@ -43278,6 +43439,9 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
           const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
           bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
           bonusBoxEl.style.display = 'block';
+          if (typeof updateModalBrainEnergyIndicator === 'function') {
+            updateModalBrainEnergyIndicator('spk-res-energy-box', res);
+          }
         } catch (e) {
           bonusBoxEl.style.display = 'none';
         }

@@ -1,0 +1,48 @@
+v0.10.10-31
+> Hợp nhất Công thức Quyết toán Unified Balance v4 & Trọng số Chế độ
+# Refactor: Implement Unified Balance v4 Engine Across All Study Modes (v0.10.10-30)
+
+Refactor and replace all fragmented reward calculations (`balance_v2`, `balance_v3`, `balance_vip`) across all modules into a single, unified master formula.
+
+### 1. Unified Master Formula
+$$\text{FinalVoCoin} = \left\lfloor \left( \sum_{i=1}^{N_{\text{done}}} \text{Base}_i \times W_{\text{mode}} \times M_{\text{diff}} \right) \times \Phi(N_{\text{done}}) \times \Psi\left(\frac{N_{\text{done}}}{N_{\text{total}}}\right) \times M_{\text{VIP}} \times \eta(E_{\text{today}}) \right\rfloor$$
+
+### 2. Parameter Specifications
+1. **Mode Cognitive Weight ($W_{\text{mode}}$)**:
+   - `autofc` (Auto Flashcard): **0.0** (CRITICAL: Auto Flashcard does NOT award VoCoin, purely passive review).
+   - `quiz` (Trắc nghiệm): **1.0** (Base = 3 VoCoin/câu).
+   - `spelling` (Luyện viết): **1.3** (Base = 4 VoCoin/từ).
+   - `speaking` (Luyện nói AI): **1.8** (Base = syllableCount * 3 VoCoin).
+   - `dictation` (Nghe gõ câu β): **2.4** (Base = 10 VoCoin/câu).
+   - `cloze` (Điền từ đoạn văn β): **2.8** (Base = 4 VoCoin/ô khuyết).
+   - `translation` (Dịch thuật song phương β): **3.0** (Base = 12 VoCoin/câu).
+   - `writing` (Luyện viết câu AI β): **3.5** (Base = 15 VoCoin/câu đoạn).
+
+2. **Volume Scaling Factor ($\Phi(N_{\text{done}})$)**:
+   Thưởng cho khối lượng thực học:
+   $$\Phi(N_{\text{done}}) = 1.0 + 0.3 \times \frac{N_{\text{done}}}{N_{\text{done}} + 15}$$
+
+3. **Commitment Factor ($\Psi(r)$ where $r = \frac{N_{\text{done}}}{N_{\text{total}}}$)**:
+   Phạt bỏ dở giữa chừng theo hàm bậc hai (triệt tiêu nghịch lý chọn set 100 từ làm 2 từ nhiều điểm hơn set 20 từ làm 2 từ):
+   $$\Psi(r) = 0.2 + 0.8 \times r^2 \quad (0.01 \le r \le 1.0)$$
+
+4. **VIP Multiplier ($M_{\text{VIP}}$)**:
+   - Free user: **1.0x**
+   - VocaVIP: **1.25x** (Fixed standard multiplier across all modes).
+
+5. **Soft-Cap Efficiency ($\eta$)**:
+   - Integrates directly with `getDailyFatigueEfficiency()` from Prompt 1.
+
+### 3. Module Integration Tasks
+1. In `08-wallet-economy.js`:
+   - Export `calculateUnifiedSessionPoints(mode, rawItemPointsSum, doneCount, totalCount, difficultyMult)`.
+   - Return `{ finalPoints, metrics: { modeWeight, volumeMult, commitmentMult, vipMult, fatigueEfficiency } }`.
+2. Connect this function to:
+   - `05-quiz-engine.js` (`finishQuizSession`, `exitQuizEarly`)
+   - `06-spelling-engine.js` (`finishSpellingSession`, `exitSpellingEarly`)
+   - `07-speaking-engine.js` (`finishSpeakingSession`, `exitSpeakingEarly`)
+   - `06c-writing-engine.js` (`finishWritingSession`, `exitWritingEarly`)
+   - `06d-cloze-engine.js` (`finishClozeSession`, `exitClozeEarly`)
+   - `06e-dictation-engine.js` (`finishDictationSession`, `exitDictationEarly`)
+   - `06f-translation-engine.js` (`finishTranslationSession`, `exitTranslationEarly`)
+3. Ensure `modal-study-exit-confirm` calculates and previews the exact VoCoin payout using this formula before the user confirms early exit.

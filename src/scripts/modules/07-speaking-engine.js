@@ -839,6 +839,9 @@
           const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
           bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
           bonusBoxEl.style.display = 'block';
+          if (typeof updateModalBrainEnergyIndicator === 'function') {
+            updateModalBrainEnergyIndicator('spk-res-energy-box', res);
+          }
         } catch (e) {
           bonusBoxEl.style.display = 'none';
         }

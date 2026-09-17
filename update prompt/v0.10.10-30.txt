@@ -1,0 +1,34 @@
+v0.10.10-30
+> Triển khai Động cơ Soft-Cap Logarit Trơn (Hạn mức Năng Lượng / Chống Lạm Phát)
+# Feature: Implement Unified Daily Soft-Cap Diminishing Returns Engine (v0.10.10-30)
+
+We need to implement a mathematical Soft-Cap Diminishing Marginal Returns system to regulate VoCoin inflation smoothly without cliff-drops or negative values.
+
+### 1. Mathematical Specifications
+Use the Natural Logarithm Smooth Soft-Cap formula:
+$$\eta(E_{\text{today}}) = \frac{1}{1 + \ln\left(1 + \frac{E_{\text{today}}}{K}\right)}$$
+
+- `E_today`: Total VoCoin earned by the user today (excluding GiftCodes, Deck sales, or Admin adjustments; only counting study rewards).
+- `K` (Saturation Constant):
+  - Standard/Free User: $K = 350$.
+  - VocaVIP User: $K = 700$.
+- Efficiency threshold: $\eta(0) = 1.0$. As $E_{\text{today}}$ increases, $\eta$ scales down smoothly (never reaching 0).
+
+### 2. Implementation Requirements
+1. **Daily Tracking**:
+   - Store and retrieve `dailyEarnedVoCoin` with local date key `vocaflow_daily_study_coins_{YYYY-MM-DD}_{uid}`.
+   - Ensure local date resolution uses GMT+7 (`getTodayString()`), resetting automatically at 00:00.
+   - Provide helper functions:
+     - `getTodayEarnedCoins()`: Returns integer of study VoCoin earned today.
+     - `recordTodayEarnedCoins(amount)`: Adds `amount` to today's tally and caches to localStorage.
+     - `getDailyFatigueEfficiency()`: Computes $\eta(E_{\text{today}})$ based on current user VIP status.
+
+2. **UI & Terminology Framing**:
+   - NEVER use the word "Tax" or "Penalty" for this mechanic.
+   - Frame this as **"Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy)"**.
+   - In result celebration modals (`modal-quiz-result`, `modal-spelling-result`, `modal-speaking-result`, `modal-writing-result`, `modal-cloze-result`, `modal-dictation-result`, `modal-translation-result`), if $\eta < 0.95$, display a subtle energy indicator:
+     - Example: `⚡ Năng lượng tập trung: 72% (+X VoCoin)`.
+
+3. **Data Safety**:
+   - Do NOT overwrite existing user balance or ledger entries.
+   - Only multiply study session rewards before appending to `addLedgerEntry('STUDY', ...)`.

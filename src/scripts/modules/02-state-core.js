@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-29 Build 330)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-30 Build 331)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-29 Build 330)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-30 Build 331)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-29';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-29 (Build 330)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-30';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-30 (Build 331)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -609,6 +609,61 @@
       return 0;
     }
 
+    // =========================================================================
+    // UNIFIED DAILY SOFT-CAP DIMINISHING RETURNS ENGINE (v0.10.10-30 Build 331)
+    // Brain Focus Energy (Năng lượng tiếp thu não bộ) with Smooth Natural Logarithm
+    // Formula: eta(E_today) = 1 / (1 + ln(1 + E_today / K))
+    // =========================================================================
+    function getTodayString() {
+      return (typeof getTodayDateString === 'function') ? getTodayDateString() : new Date().toISOString().slice(0, 10);
+    }
+    window.getTodayString = getTodayString;
+
+    function getTodayEarnedCoins() {
+      const today = getTodayString();
+      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+      const key = `vocaflow_daily_study_coins_${today}_${uid}`;
+      const val = parseInt(localStorage.getItem(key) || '0', 10);
+      return isNaN(val) ? 0 : Math.max(0, val);
+    }
+    window.getTodayEarnedCoins = getTodayEarnedCoins;
+
+    function recordTodayEarnedCoins(amount) {
+      const num = Number(amount) || 0;
+      if (num <= 0) return getTodayEarnedCoins();
+      const today = getTodayString();
+      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+      const key = `vocaflow_daily_study_coins_${today}_${uid}`;
+      const current = getTodayEarnedCoins();
+      const updated = current + Math.round(num);
+      localStorage.setItem(key, updated.toString());
+      return updated;
+    }
+    window.recordTodayEarnedCoins = recordTodayEarnedCoins;
+
+    function getDailyFatigueEfficiency(customEarned = null, customIsVip = null) {
+      const earnedToday = (typeof customEarned === 'number') ? customEarned : getTodayEarnedCoins();
+      const isVip = (typeof customIsVip === 'boolean') ? customIsVip : ((typeof isUserVip === 'function') ? isUserVip() : false);
+      const K = isVip ? 700 : 350;
+      const ratio = earnedToday / K;
+      const eta = 1 / (1 + Math.log(1 + ratio));
+      return Math.max(0.05, Math.min(1.0, Math.round(eta * 1000) / 1000));
+    }
+    window.getDailyFatigueEfficiency = getDailyFatigueEfficiency;
+
+    function updateModalBrainEnergyIndicator(elementId, res) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      if (res && typeof res.energyEfficiency === 'number' && res.energyEfficiency < 0.95) {
+        const pct = res.energyPercent || res.energyPct || Math.round(res.energyEfficiency * 100);
+        el.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #38bdf8; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.35); border-radius: 6px; padding: 2px 6px;">⚡ Năng lượng tập trung: ${pct}% (+${res.finalPts} VoCoin)</span>`;
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+    window.updateModalBrainEnergyIndicator = updateModalBrainEnergyIndicator;
+
     function calculateSessionFinalPoints(basePoints, doneCount, totalCount, isCompleted = false) {
       const total = totalCount || 1;
       const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
@@ -628,13 +683,17 @@
 
       const combinedMult = Math.round((completionMult * deckLengthMult) * 1000) / 1000;
 
+      let rawFinalPts = 0;
       let finalPts = 0;
+      const energyEfficiency = getDailyFatigueEfficiency();
+
       if (basePoints > 0) {
-        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
         // balance_vip: VIP earns +150% coins
         if (isVip) {
-          finalPts = Math.round(finalPts * 1.5);
+          rawFinalPts = Math.round(rawFinalPts * 1.5);
         }
+        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
       } else if (basePoints < 0) {
         if (done <= 5) {
           const divisor = Math.max(0.1, combinedMult);
@@ -646,10 +705,14 @@
         if (isVip) {
           finalPts = Math.round(finalPts / 1.25);
         }
+        rawFinalPts = finalPts;
       }
 
       return {
         finalPts,
+        rawFinalPts,
+        energyEfficiency,
+        energyPercent: Math.round(energyEfficiency * 100),
         completionMult,
         deckLengthMult,
         combinedMult,
@@ -709,12 +772,16 @@
 
       const combinedMult = Math.round((completionMult * scaleMult) * 1000) / 1000;
 
+      let rawFinalPts = 0;
       let finalPts = 0;
+      const energyEfficiency = getDailyFatigueEfficiency();
+
       if (basePoints > 0) {
-        finalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
+        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
         if (isVip) {
-          finalPts = Math.round(finalPts * 1.5);
+          rawFinalPts = Math.round(rawFinalPts * 1.5);
         }
+        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
       } else if (basePoints < 0) {
         const ratio = total > 0 ? (done / total) : 0;
         const multiplier = Math.max(1.1, 1.6 - ratio);
@@ -722,10 +789,14 @@
         if (isVip) {
           finalPts = Math.round(finalPts / 1.25);
         }
+        rawFinalPts = finalPts;
       }
 
       return {
         finalPts,
+        rawFinalPts,
+        energyEfficiency,
+        energyPercent: Math.round(energyEfficiency * 100),
         completionMult,
         deckLengthMult: scaleMult,
         combinedMult,

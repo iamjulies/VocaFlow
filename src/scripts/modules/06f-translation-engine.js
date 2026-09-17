@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-29 Build 330 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-30 Build 331 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -1277,6 +1277,10 @@ function finishTranslationSession() {
     } else {
       bonusBox.style.display = 'none';
     }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function') {
+    updateModalBrainEnergyIndicator('translation-res-energy-box', res);
   }
 
   // Unpassed / Wrong words retry banner

@@ -1889,8 +1889,10 @@ Yêu cầu nghiêm ngặt:
       const spq = (totalSeconds / total).toFixed(1);
 
       let finalDeckMult = 1.0;
+      let quizSettlementRes = null;
       try {
         const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        quizSettlementRes = res;
         quizPointsEarned = res.finalPts;
         finalDeckMult = res.deckLengthMult || 1.0;
         if (quizPointsEarned !== 0) {
@@ -1944,6 +1946,10 @@ Yêu cầu nghiêm ngặt:
       if (hintsEl) hintsEl.textContent = (quizHintsUsed || 0) + ' lượt';
       if (skipsEl) skipsEl.textContent = (quizSkipCount || 0) + ' câu';
       if (wrongsEl) wrongsEl.textContent = (quizWrongCount || 0) + ' câu';
+
+      if (typeof updateModalBrainEnergyIndicator === 'function') {
+        updateModalBrainEnergyIndicator('quiz-res-energy-box', quizSettlementRes);
+      }
 
       // WRONG QUESTIONS RETRY BANNER (v0.10.9-37)
       const wrongBannerEl = document.getElementById('quiz-res-wrong-banner');

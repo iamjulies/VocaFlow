@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-29 Build 330 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-30 Build 331 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1681,6 +1681,31 @@ function finishClozeSession() {
   if (hintsSkipsEl) hintsSkipsEl.textContent = `${clozeHintsUsed} gợi ý • ${clozeSkipsUsed} skip`;
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
   if (diffBadge) diffBadge.textContent = `🧩 Cấp độ: ${diffCfg.label} (x${diffCfg.diffMult})`;
+
+  // Balance v3 Bonus Breakdown & Energy Indicator
+  const bonusBox = document.getElementById('cloze-res-bonus-box');
+  let clozeRes = null;
+  try {
+    const total = clozePassagesList.length || 1;
+    if (typeof calculateSessionFinalPointsV3 === 'function') {
+      clozeRes = calculateSessionFinalPointsV3(clozeSessionPointsEarned, total, total, true);
+    } else if (typeof calculateSessionFinalPoints === 'function') {
+      clozeRes = calculateSessionFinalPoints(clozeSessionPointsEarned, total, total, true);
+    }
+  } catch (e) {}
+
+  if (bonusBox && clozeRes) {
+    if (clozeRes.completionMult > 1.0 || clozeRes.deckLengthMult > 1.0 || clozeRes.milestoneBonus > 0) {
+      bonusBox.style.display = 'block';
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.completionMult}</strong> • Quy mô: <strong>x${clozeRes.deckLengthMult}</strong>${clozeRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${clozeRes.milestoneBonus} Xu</strong>` : ''}`;
+    } else {
+      bonusBox.style.display = 'none';
+    }
+  }
+
+  if (typeof updateModalBrainEnergyIndicator === 'function' && clozeRes) {
+    updateModalBrainEnergyIndicator('cloze-res-energy-box', clozeRes);
+  }
 
   // Wrong words retry banner (Issue 8 & 11)
   const wrongBanner = document.getElementById('cloze-res-wrong-banner');
