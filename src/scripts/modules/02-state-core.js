@@ -1,12 +1,12 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-25 Build 326)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-26 Build 327)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-25 Build 326)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-26 Build 327)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-25';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-25 (Build 326)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-26';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-26 (Build 327)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -743,14 +743,29 @@
     // =========================================================================
     let pendingStudyEarlyExitCallback = null;
 
-    function promptStudyEarlyExit({ mode, done, total, basePoints, onConfirmExit }) {
+    function promptStudyEarlyExit(modeOrObj, doneArg, totalArg, basePointsArg, onConfirmExitArg) {
+      let mode, done, total, basePoints, onConfirmExit;
+      if (typeof modeOrObj === 'object' && modeOrObj !== null) {
+        mode = modeOrObj.mode;
+        done = modeOrObj.done ?? modeOrObj.completedCount ?? 0;
+        total = modeOrObj.total ?? modeOrObj.totalCount ?? 1;
+        basePoints = modeOrObj.basePoints ?? modeOrObj.currentPointsEarned ?? 0;
+        onConfirmExit = modeOrObj.onConfirmExit;
+      } else {
+        mode = modeOrObj;
+        done = doneArg ?? 0;
+        total = totalArg ?? 1;
+        basePoints = basePointsArg ?? 0;
+        onConfirmExit = onConfirmExitArg;
+      }
+
       // If user hasn't made any progress (done === 0 and 0 points), exit immediately without warning
       if ((done <= 0 && basePoints === 0) || !total) {
         if (typeof onConfirmExit === 'function') onConfirmExit();
         return;
       }
 
-      const isExtended = ['writing', 'cloze', 'dictation'].includes(mode);
+      const isExtended = ['writing', 'cloze', 'dictation', 'translation'].includes(mode);
 
       // Calculate Official Balance (v3 for Extended Modes, v2 for Core Modes)
       const resApplied = isExtended 
@@ -794,14 +809,15 @@
         autofc: 'phiên Auto Flashcard',
         writing: 'bài Luyện Viết Câu (Writing β)',
         cloze: 'bài Điền Đoạn Văn (Cloze β)',
-        dictation: 'bài Nghe Chép Câu (Dictation β)'
+        dictation: 'bài Nghe Chép Câu (Dictation β)',
+        translation: 'bài Dịch Thuật (Translation β)'
       };
       const titleEl = document.getElementById('study-exit-modal-title');
       if (titleEl) titleEl.textContent = `Bạn Đang Làm Dở ${modeTitles[mode] || 'Bài Học'}!`;
 
       const pct = Math.round((done / total) * 100);
       const progEl = document.getElementById('study-exit-progress-text');
-      if (progEl) progEl.textContent = `${done} / ${total} ${(['quiz', 'writing', 'cloze', 'dictation'].includes(mode)) ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
+      if (progEl) progEl.textContent = `${done} / ${total} ${(['quiz', 'writing', 'cloze', 'dictation', 'translation'].includes(mode)) ? 'câu' : (mode === 'autofc' ? 'thẻ' : 'từ')} (${pct}%)`;
 
       const basePtsEl = document.getElementById('study-exit-base-points-text');
       if (basePtsEl) {

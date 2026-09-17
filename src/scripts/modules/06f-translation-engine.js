@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-25 Build 326 - TRANSLATION LAB VIP β)
-// Bidirectional Translation Engine (EN ↔ VI) with Strict AI Grading & Balance v3
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-26 Build 327 - TRANSLATION LAB VIP β)
+// Bidirectional Translation Engine (EN ↔ VI) with Semantic AI Grading & Balance v3
 // =========================================================================
 
 let translationQuestionsList = [];
@@ -201,20 +201,41 @@ function confirmStartTranslationFromModal() {
 window.confirmStartTranslationFromModal = confirmStartTranslationFromModal;
 
 // =========================================================================
-// 4. TASK GENERATOR (EN ↔ VI WITH POS-AWARE TEMPLATES)
+// 4. TASK GENERATOR (EN ↔ VI WITH CONTEXT-AWARE & DOMAIN-SENSITIVE TEMPLATES)
 // =========================================================================
+function extractCleanPrimaryMeaning(rawDefVi, term) {
+  if (!rawDefVi || typeof rawDefVi !== 'string') return (term || '').toLowerCase();
+  let clean = rawDefVi.trim();
+  // Remove parenthetical details: (Wi-Fi, Bluetooth), (v.v.), (IELTS), etc.
+  clean = clean.replace(/\([^)]*\)/g, ' ').replace(/\[[^\]]*\]/g, ' ').trim();
+  clean = clean.replace(/^["'“”]|["'“”]$/g, '').trim();
+  // Remove leading generic explanatory phrases
+  clean = clean.replace(/^(thuộc về|có tính chất|mang tính chất|mang tính|dùng để|chỉ|hành động|sự|người|khả năng|tính chất)\s+/i, '').trim();
+  const parts = clean.split(/[,;\/\n•\-]+/).map(p => p.trim()).filter(Boolean);
+  if (parts.length > 0) {
+    for (const p of parts) {
+      const sub = p.replace(/^(thuộc về|có tính chất|mang tính chất|mang tính|dùng để|chỉ|hành động|sự|người|khả năng|tính chất)\s+/i, '').trim();
+      if (sub && sub.split(/\s+/).length <= 4) {
+        return sub.toLowerCase();
+      }
+    }
+    return parts[0].toLowerCase();
+  }
+  return clean.toLowerCase() || (term || '').toLowerCase();
+}
+
 function generateTranslationTaskForWord(mainWord, difficulty, direction) {
   const term = (mainWord.term || '').trim();
   const rawPos = (mainWord.partOfSpeech || 'noun').toLowerCase();
   const pos = rawPos.includes('verb') ? 'verb' : (rawPos.includes('adj') ? 'adjective' : (rawPos.includes('adv') ? 'adverb' : 'noun'));
   const rawDefVi = mainWord.definitionVi || mainWord.definition || '';
   const defVi = rawDefVi.replace(/^["'“”]|["'“”]$/g, '').trim();
-  const safeMeaning = defVi ? defVi.toLowerCase() : term;
+  const cleanMeaning = extractCleanPrimaryMeaning(defVi, term);
 
   let enSentence = '';
   let viSentence = '';
 
-  // 1. Check if existing example fits
+  // 1. Check if existing example fits and is clean
   if (mainWord.exampleSentence || mainWord.example) {
     const rawEx = (mainWord.exampleSentence || mainWord.example).trim();
     if (typeof sanitizeEnglishDictationSentence === 'function') {
@@ -226,72 +247,149 @@ function generateTranslationTaskForWord(mainWord, difficulty, direction) {
     }
   }
 
-  // 2. High-Quality POS Templates if no natural custom pair available
+  // 2. High-Quality Context & Semantic Domain Templates
   if (!enSentence || !viSentence) {
+    const lowerTerm = term.toLowerCase();
+    const lowerDef = defVi.toLowerCase();
+
+    // Detect semantic domain
+    const isTech = /wire|wifi|bluetooth|digital|network|software|online|comput|device|tech|app|server|data|electric|robot|battery|system|program/.test(lowerTerm) || /không dây|kỹ thuật số|mạng|phần mềm|trực tuyến|máy tính|thiết bị|công nghệ|dữ liệu|điện/.test(lowerDef);
+    const isPersonality = /resilient|optimistic|diligent|honest|kind|patient|brave|calm|confident|persever|passion|enthusiast|ambitious|creative|humble|generous|loyal|disciplined|careful/.test(lowerTerm) || /kiên cường|lạc quan|chăm chỉ|trung thực|tốt bụng|kiên nhẫn|dũng cảm|bình tĩnh|tự tin|kiên trì|đam mê|nhiệt huyết|sáng tạo/.test(lowerDef);
+    const isAcademic = /academic|theory|hypothes|method|research|science|concept|analy|framework|phenomenon|experiment|intellectual|scholar|study|formula|statistic|literat/.test(lowerTerm) || /học thuật|lý thuyết|giả thuyết|phương pháp|nghiên cứu|khoa học|khái niệm|phân tích|khuôn khổ|hiện tượng|thí nghiệm|học giả/.test(lowerDef);
+    const isBusiness = /manage|company|market|invest|economy|revenue|negotiate|colleague|corporat|client|customer|project|strategy|budget|leader|profit/.test(lowerTerm) || /quản lý|công ty|thị trường|đầu tư|kinh tế|doanh thu|đàm phán|đồng nghiệp|khách hàng|dự án|chiến lược|ngân sách|lợi nhuận/.test(lowerDef);
+
     if (difficulty === 'easy') {
-      if (pos === 'verb') {
-        const verbPairs = [
-          { en: `We need to ${term} carefully to achieve great results.`, vi: `Chúng ta cần phải ${safeMeaning} một cách cẩn thận để đạt được kết quả tuyệt vời.` },
-          { en: `She wants to ${term} every morning to stay healthy.`, vi: `Cô ấy muốn ${safeMeaning} vào mỗi buổi sáng để duy trì sức khỏe tốt.` },
-          { en: `They decided to ${term} together before the meeting.`, vi: `Họ đã quyết định cùng nhau ${safeMeaning} trước khi cuộc họp diễn ra.` }
-        ];
-        const p = verbPairs[Math.floor(Math.random() * verbPairs.length)];
-        enSentence = p.en; viSentence = p.vi;
-      } else if (pos === 'adjective') {
-        const adjPairs = [
-          { en: `The weather today is surprisingly ${term} and pleasant.`, vi: `Thời tiết hôm nay thật bất ngờ khi rất ${safeMeaning} và dễ chịu.` },
-          { en: `She gave a very ${term} explanation during the lesson.`, vi: `Cô ấy đã đưa ra một lời giải thích rất ${safeMeaning} trong suốt buổi học.` },
-          { en: `This was a truly ${term} experience for our team.`, vi: `Đây thực sự là một trải nghiệm ${safeMeaning} đối với cả đội ngũ chúng tôi.` }
-        ];
-        const p = adjPairs[Math.floor(Math.random() * adjPairs.length)];
-        enSentence = p.en; viSentence = p.vi;
-      } else if (pos === 'adverb') {
-        const advPairs = [
-          { en: `She completed the challenging assignment ${term}.`, vi: `Cô ấy đã hoàn thành bài tập đầy thử thách một cách ${safeMeaning}.` },
-          { en: `The system operates ${term} even during peak hours.`, vi: `Hệ thống vận hành một cách ${safeMeaning} ngay cả trong những khung giờ cao điểm.` }
-        ];
-        const p = advPairs[Math.floor(Math.random() * advPairs.length)];
-        enSentence = p.en; viSentence = p.vi;
+      if (isTech) {
+        if (pos === 'adjective') {
+          const pairs = [
+            { en: `This new device supports ${term} connectivity.`, vi: `Thiết bị mới này hỗ trợ kết nối ${cleanMeaning}.` },
+            { en: `We should use ${term} solutions for greater convenience.`, vi: `Chúng ta nên sử dụng các giải pháp ${cleanMeaning} để tiện lợi hơn.` }
+          ];
+          const p = pairs[Math.floor(Math.random() * pairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        } else if (pos === 'verb') {
+          enSentence = `You can easily ${term} files between these devices.`;
+          viSentence = `Bạn có thể dễ dàng ${cleanMeaning} tệp giữa các thiết bị này.`;
+        } else {
+          enSentence = `The engineer developed a modern ${term} for our system.`;
+          viSentence = `Kỹ sư đã phát triển một ${cleanMeaning} hiện đại cho hệ thống của chúng tôi.`;
+        }
+      } else if (isPersonality) {
+        if (pos === 'adjective') {
+          const pairs = [
+            { en: `She always maintains a ${term} attitude at work.`, vi: `Cô ấy luôn giữ một thái độ ${cleanMeaning} trong công việc.` },
+            { en: `His ${term} nature helps him overcome every difficulty.`, vi: `Bản tính ${cleanMeaning} giúp anh ấy vượt qua mọi khó khăn.` }
+          ];
+          const p = pairs[Math.floor(Math.random() * pairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        } else {
+          enSentence = `Showing true ${term} is essential for personal growth.`;
+          viSentence = `Thể hiện sự ${cleanMeaning} đích thực là điều thiết yếu để phát triển bản thân.`;
+        }
+      } else if (isAcademic) {
+        if (pos === 'adjective') {
+          const pairs = [
+            { en: `This was a truly ${term} experience for our team.`, vi: `Đây là một trải nghiệm ${cleanMeaning} thực sự đối với đội của chúng ta.` },
+            { en: `She presented a very ${term} perspective on the topic.`, vi: `Cô ấy đã trình bày một góc nhìn rất ${cleanMeaning} về chủ đề này.` }
+          ];
+          const p = pairs[Math.floor(Math.random() * pairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        } else {
+          enSentence = `The professor clearly explained this ${term} today.`,
+          viSentence = `Hôm nay giáo sư đã giải thích rõ ràng ${cleanMeaning} này.`;
+        }
+      } else if (isBusiness) {
+        if (pos === 'verb') {
+          enSentence = `Our team decided to ${term} with the new partners.`;
+          viSentence = `Đội ngũ của chúng tôi đã quyết định ${cleanMeaning} với các đối tác mới.`;
+        } else if (pos === 'adjective') {
+          enSentence = `They designed a highly ${term} plan for the upcoming launch.`;
+          viSentence = `Họ đã thiết kế một kế hoạch rất ${cleanMeaning} cho đợt ra mắt sắp tới.`;
+        } else {
+          enSentence = `The manager introduced a clear ${term} for the department.`;
+          viSentence = `Người quản lý đã đưa ra một ${cleanMeaning} rõ ràng cho bộ phận.`;
+        }
       } else {
-        const nounPairs = [
-          { en: `The teacher clearly explained the importance of this ${term}.`, vi: `Giáo viên đã giải thích rõ ràng tầm quan trọng của ${safeMeaning} này.` },
-          { en: `They found useful information about this ${term} today.`, vi: `Họ đã tìm thấy thông tin hữu ích về ${safeMeaning} này vào hôm nay.` },
-          { en: `Our main goal is to understand how this ${term} works.`, vi: `Mục tiêu chính của chúng tôi là hiểu rõ cách thức ${safeMeaning} này vận hành.` }
-        ];
-        const p = nounPairs[Math.floor(Math.random() * nounPairs.length)];
-        enSentence = p.en; viSentence = p.vi;
+        // General Easy
+        if (pos === 'verb') {
+          const vPairs = [
+            { en: `We need to ${term} carefully to achieve our goals.`, vi: `Chúng ta cần phải ${cleanMeaning} cẩn thận để đạt được mục tiêu của mình.` },
+            { en: `They decided to ${term} together before making a decision.`, vi: `Họ đã quyết định cùng nhau ${cleanMeaning} trước khi đưa ra quyết định.` }
+          ];
+          const p = vPairs[Math.floor(Math.random() * vPairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        } else if (pos === 'adjective') {
+          const aPairs = [
+            { en: `This is a very ${term} factor for our project.`, vi: `Đây là một yếu tố rất ${cleanMeaning} đối với dự án của chúng ta.` },
+            { en: `They found a ${term} method to solve the daily issue.`, vi: `Họ đã tìm ra một phương pháp ${cleanMeaning} để giải quyết vấn đề hàng ngày.` }
+          ];
+          const p = aPairs[Math.floor(Math.random() * aPairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        } else if (pos === 'adverb') {
+          enSentence = `She handled the situation ${term} during the crisis.`;
+          viSentence = `Cô ấy đã xử lý tình huống một cách ${cleanMeaning} trong suốt cuộc khủng hoảng.`;
+        } else {
+          const nPairs = [
+            { en: `The teacher explained the practical value of this ${term}.`, vi: `Giáo viên đã giải thích giá trị thực tiễn của ${cleanMeaning} này.` },
+            { en: `They found reliable information about this ${term} online.`, vi: `Họ đã tìm thấy thông tin đáng tin cậy về ${cleanMeaning} này trên mạng.` }
+          ];
+          const p = nPairs[Math.floor(Math.random() * nPairs.length)];
+          enSentence = p.en; viSentence = p.vi;
+        }
       }
     } else if (difficulty === 'medium') {
-      if (pos === 'verb') {
-        const verbMed = [
-          { en: `Students who actively learn to ${term} tend to solve complex problems much faster.`, vi: `Những học sinh chủ động học cách ${safeMeaning} có xu hướng giải quyết các vấn đề phức tạp nhanh hơn nhiều.` },
-          { en: `The management team encourages all staff members to ${term} whenever new challenges arise.`, vi: `Ban quản lý khuyến khích tất cả nhân viên ${safeMeaning} bất cứ khi nào có thách thức mới phát sinh.` }
-        ];
-        const p = verbMed[Math.floor(Math.random() * verbMed.length)];
-        enSentence = p.en; viSentence = p.vi;
-      } else if (pos === 'adjective') {
-        const adjMed = [
-          { en: `Having a ${term} mindset allows researchers to uncover surprising insights in modern science.`, vi: `Có một tư duy ${safeMeaning} cho phép các nhà nghiên cứu khám phá ra những hiểu biết bất ngờ trong khoa học hiện đại.` },
-          { en: `The company established a ${term} framework that supports continuous innovation and collaboration.`, vi: `Công ty đã thiết lập một khuôn khổ ${safeMeaning} hỗ trợ sự đổi mới và hợp tác liên tục.` }
-        ];
-        const p = adjMed[Math.floor(Math.random() * adjMed.length)];
-        enSentence = p.en; viSentence = p.vi;
+      if (isTech) {
+        if (pos === 'adjective') {
+          enSentence = `The company recently introduced a ${term} solution that significantly improves network efficiency.`;
+          viSentence = `Công ty gần đây đã giới thiệu một giải pháp ${cleanMeaning} giúp cải thiện đáng kể hiệu suất mạng.`;
+        } else if (pos === 'verb') {
+          enSentence = `Developers actively learn to ${term} new features in order to enhance user experience.`;
+          viSentence = `Các lập trình viên chủ động học cách ${cleanMeaning} các tính năng mới nhằm nâng cao trải nghiệm người dùng.`;
+        } else {
+          enSentence = `Building an advanced ${term} requires close collaboration across multiple engineering teams.`;
+          viSentence = `Việc xây dựng một ${cleanMeaning} tiên tiến đòi hỏi sự hợp tác chặt chẽ giữa nhiều đội ngũ kỹ thuật.`;
+        }
+      } else if (isPersonality) {
+        if (pos === 'adjective') {
+          enSentence = `Having a ${term} mindset allows students to stay focused and overcome challenging examinations.`;
+          viSentence = `Có một tư duy ${cleanMeaning} cho phép học sinh giữ vững sự tập trung và vượt qua các kỳ thi đầy thử thách.`;
+        } else {
+          enSentence = `Through hard work and unwavering ${term}, the founders turned their startup into a market leader.`;
+          viSentence = `Nhờ làm việc chăm chỉ và sự ${cleanMeaning} không lay chuyển, các nhà sáng lập đã biến công ty khởi nghiệp của mình thành doanh nghiệp dẫn đầu thị trường.`;
+        }
+      } else if (isAcademic) {
+        if (pos === 'adjective') {
+          enSentence = `The university established a rigorous ${term} curriculum designed to foster critical thinking skills.`;
+          viSentence = `Trường đại học đã thiết lập một chương trình giảng dạy ${cleanMeaning} nghiêm ngặt nhằm bồi dưỡng kỹ năng tư duy phản biện.`;
+        } else {
+          enSentence = `Researchers presented groundbreaking findings on this ${term} during the international symposium.`;
+          viSentence = `Các nhà nghiên cứu đã trình bày những phát hiện đột phá về ${cleanMeaning} này trong hội nghị chuyên đề quốc tế.`;
+        }
       } else {
-        const nounMed = [
-          { en: `Students who thoroughly understand the value of ${term} usually perform significantly better on their exams.`, vi: `Những học sinh hiểu thấu đáo giá trị của ${safeMeaning} thường đạt kết quả tốt hơn đáng kể trong các kỳ thi.` },
-          { en: `Our development team decided to adopt a modern ${term} in order to improve overall system reliability.`, vi: `Đội ngũ phát triển của chúng tôi quyết định áp dụng một ${safeMeaning} hiện đại nhằm nâng cao độ tin cậy của toàn bộ hệ thống.` }
-        ];
-        const p = nounMed[Math.floor(Math.random() * nounMed.length)];
-        enSentence = p.en; viSentence = p.vi;
+        // General Medium
+        if (pos === 'verb') {
+          enSentence = `Students who actively learn to ${term} tend to solve complex problems much faster.`;
+          viSentence = `Những học sinh chủ động học cách ${cleanMeaning} có xu hướng giải quyết các vấn đề phức tạp nhanh hơn nhiều.`;
+        } else if (pos === 'adjective') {
+          enSentence = `The organization adopted a ${term} framework that supports continuous innovation and collaboration.`;
+          viSentence = `Tổ chức đã áp dụng một khuôn khổ ${cleanMeaning} hỗ trợ sự đổi mới và hợp tác liên tục.`;
+        } else {
+          enSentence = `Professionals who master this essential ${term} usually perform significantly better in their careers.`;
+          viSentence = `Những chuyên gia nắm vững ${cleanMeaning} thiết yếu này thường đạt hiệu quả công việc tốt hơn đáng kể trong sự nghiệp.`;
+        }
       }
     } else {
-      // Hard
-      const hardPairs = [
-        { en: `Although many distinguished scholars debated the exact scope of ${term}, everyone agreed that its practical application is indispensable for long-term institutional success.`, vi: `Mặc dù nhiều học giả uy tín đã tranh luận về phạm vi chính xác của ${safeMeaning}, mọi người đều nhất trí rằng ứng dụng thực tiễn của nó là không thể thiếu cho sự thành công lâu dài của tổ chức.` },
-        { en: `The international council has officially introduced rigorous standards regarding ${term} to safeguard ethical compliance and foster transparent international collaboration.`, vi: `Hội đồng quốc tế đã chính thức ban hành các tiêu chuẩn nghiêm ngặt liên quan đến ${safeMeaning} nhằm đảm bảo tính tuân thủ đạo đức và thúc đẩy sự hợp tác quốc tế minh bạch.` }
-      ];
-      const p = hardPairs[Math.floor(Math.random() * hardPairs.length)];
-      enSentence = p.en; viSentence = p.vi;
+      // Hard (> 18 words)
+      if (isTech) {
+        enSentence = `The international cybersecurity board officially implemented rigorous standards regarding ${term} infrastructure to safeguard sensitive corporate communications from sophisticated digital threats.`;
+        viSentence = `Hội đồng an ninh mạng quốc tế đã chính thức áp dụng các tiêu chuẩn nghiêm ngặt liên quan đến hạ tầng ${cleanMeaning} nhằm bảo vệ các kênh liên lạc nhạy cảm của doanh nghiệp trước các mối đe dọa kỹ thuật số tinh vi.`;
+      } else if (isPersonality || isAcademic) {
+        enSentence = `Although many distinguished scholars debated the exact scope of ${term}, everyone agreed that cultivating such principles is indispensable for sustainable institutional excellence.`;
+        viSentence = `Mặc dù nhiều học giả uy tín đã tranh luận về phạm vi chính xác của ${cleanMeaning}, mọi người đều nhất trí rằng việc nuôi dưỡng những nguyên tắc như vậy là không thể thiếu cho sự phát triển xuất sắc bền vững của tổ chức.`;
+      } else {
+        enSentence = `Senior executives and industry specialists concurred that integrating a comprehensive ${term} methodology will substantially enhance operational resilience across global supply chains.`;
+        viSentence = `Các nhà điều hành cấp cao và chuyên gia đầu ngành đều đồng thuận rằng việc tích hợp một phương pháp luận ${cleanMeaning} toàn diện sẽ nâng cao đáng kể khả năng phục hồi vận hành trên toàn bộ chuỗi cung ứng toàn cầu.`;
+      }
     }
   }
 
@@ -302,6 +400,7 @@ function generateTranslationTaskForWord(mainWord, difficulty, direction) {
     englishSentence: enSentence,
     vietnameseSentence: viSentence,
     targetWord: term,
+    cleanMeaning: cleanMeaning,
     partOfSpeech: pos,
     definitionVi: defVi,
     direction: direction
@@ -653,7 +752,7 @@ function skipTranslationQuestion() {
 window.skipTranslationQuestion = skipTranslationQuestion;
 
 // =========================================================================
-// 8. GEMINI AI TRANSLATION EVALUATION ENGINE (Strict & Unforgiving)
+// 8. GEMINI AI TRANSLATION EVALUATION ENGINE (Semantic Equivalence & Natural Phrasing)
 // =========================================================================
 async function submitTranslationEvaluation() {
   const inputArea = document.getElementById('translation-input-text');
@@ -688,29 +787,34 @@ async function submitTranslationEvaluation() {
   const sourceSentence = translationCurrentSourceText;
   const benchmarkSentence = translationCurrentBenchmarkText;
 
-  const prompt = `You are a strict, professional translation examiner and linguist grading a bidirectional translation exam.
-Exam mode: ${direction === 'en_to_vi' ? 'English to Vietnamese' : 'Vietnamese to English'}
+  const prompt = `You are an expert bilingual linguist and fair examiner evaluating a student's translation.
+Exam Direction: ${direction === 'en_to_vi' ? 'English to Vietnamese' : 'Vietnamese to English'}
 Target Word: "${targetWord}" (Meaning: "${targetDef}")
-Original Source Sentence: "${sourceSentence}"
-Benchmark Reference Translation: "${benchmarkSentence}"
-Student's Submitted Translation: "${userTranslation}"
+Source Sentence: "${sourceSentence}"
+Benchmark Reference: "${benchmarkSentence}"
+Student's Translation: "${userTranslation}"
 
-GRADING POLICY (STRICT & UNFORGIVING):
-1. Score Range: 0 to 100.
-2. Dock points heavily for:
-   - Grammatical errors, wrong verb tenses, incorrect articles (a/an/the), wrong prepositions (-15 to -25 pts).
-   - Distorted meaning, reversed clauses, or hallucinated facts (-30 to -50 pts).
-   - Omission or wrong usage of the target keyword "${targetWord}" (-20 pts).
-   - Unnatural word-for-word translation that sounds robotic or unidiomatic (-10 to -20 pts).
-3. Award 90-100 ONLY for highly accurate, fluent, and natural translations that sound native.
+EVALUATION RULES & CORE PHILOSOPHY (SEMANTIC EQUIVALENCE & NATURAL FLUENCY):
+1. Grade primarily on SEMANTIC EQUIVALENCE, GRAMMATICAL INTEGRITY, and NATURAL FLOW (Score 0-100).
+2. DO NOT require word-for-word matching with the Benchmark Reference. There are multiple natural ways to translate a sentence.
+3. BE HIGHLY FLEXIBLE WITH:
+   - Pronouns & Perspective in Vietnamese: "chúng tôi", "chúng ta", "đội ngũ của chúng tôi", "nhóm mình", "tôi", "mình", etc.
+   - Word order variations that sound natural in Vietnamese (e.g., "đây thực sự là..." vs "đây là một... thực sự", "rất quan trọng đối với..." vs "đối với... là rất quan trọng").
+   - Contextually valid synonyms (e.g., "cơ hội" / "dịp", "trải nghiệm" / "kinh nghiệm", "học tập" / "học hỏi", "phát triển" / "tiến bộ", "tuyệt vời" / "rất tốt").
+4. CRITICAL RULE: NEVER accuse the student of "word-by-word translation" (dịch từng từ) if their sentence is grammatically sound, conveys the full meaning naturally, and flows well.
+5. SCORING SCALE:
+   - 90 - 100: Excellent/Natural. Conveys full meaning accurately and idiomatically.
+   - 80 - 89: Good. Meaning is accurate, minor style or slight phrasing variance.
+   - 70 - 79: Acceptable. Core meaning intact, minor grammatical or word-choice flaw.
+   - Below 70: Inaccurate or distorted meaning, severe grammatical breakdown, or missing target keyword concept.
 
 OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
 {
   "score": <number 0-100>,
   "passedFloor": <boolean, true if score >= ${translationFloorScore}>,
-  "verdict": "<short concise verdict in Vietnamese, max 25 words>",
+  "verdict": "<encouraging concise verdict in Vietnamese, max 25 words>",
   "analysis": {
-    "grammar": "<detailed feedback on grammar, structure & accuracy in Vietnamese, max 40 words>",
+    "grammar": "<clear feedback on grammar & fluency in Vietnamese, max 40 words>",
     "nuance": "<nuance and vocabulary choice analysis in Vietnamese, max 35 words>",
     "errors": "<specific errors detected, or 'Không có lỗi đáng kể' in Vietnamese>"
   },
@@ -732,44 +836,67 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
   }
 
   if (!evalResult || typeof evalResult.score !== 'number') {
-    evalResult = fallbackHeuristicTranslationGrading(userTranslation, benchmarkSentence, targetWord, direction);
+    evalResult = fallbackHeuristicTranslationGrading(userTranslation, benchmarkSentence, targetWord, targetDef, direction);
   }
 
   renderTranslationEvaluationResult(evalResult, userTranslation);
 }
 window.submitTranslationEvaluation = submitTranslationEvaluation;
 
-function fallbackHeuristicTranslationGrading(userTrans, benchmark, targetWord, direction) {
-  const cleanUser = userTrans.toLowerCase().trim();
-  const cleanBench = benchmark.toLowerCase().trim();
-  const userTokens = cleanUser.split(/\s+/);
-  const benchTokens = cleanBench.split(/\s+/);
+function fallbackHeuristicTranslationGrading(userTrans, benchmark, targetWord, targetDef, direction) {
+  const cleanUser = (userTrans || '').toLowerCase().trim();
+  const cleanBench = (benchmark || '').toLowerCase().trim();
+  
+  // Stopwords list
+  const viStopwords = new Set(['là', 'của', 'và', 'có', 'để', 'cho', 'những', 'các', 'một', 'với', 'trong', 'ở', 'thì', 'mà', 'rằng', 'được', 'bị', 'do', 'từ', 'này', 'đó', 'ấy']);
+  const enStopwords = new Set(['the', 'a', 'an', 'is', 'are', 'was', 'were', 'of', 'to', 'in', 'for', 'on', 'with', 'as', 'by', 'at', 'from', 'that', 'this', 'it']);
+  const stopwords = direction === 'en_to_vi' ? viStopwords : enStopwords;
+
+  const tokenize = (str) => str.replace(/[.,/#!$%^&*;:{}=\-_`~()?"'“”!]/g, '').split(/\s+/).filter(Boolean);
+  const userTokens = tokenize(cleanUser);
+  const benchTokens = tokenize(cleanBench);
+  const benchContentTokens = benchTokens.filter(t => !stopwords.has(t));
 
   let matchCount = 0;
   userTokens.forEach(t => {
     if (benchTokens.includes(t)) matchCount++;
   });
-  const overlapRatio = benchTokens.length > 0 ? (matchCount / benchTokens.length) : 0.5;
+
+  let contentMatchCount = 0;
+  benchContentTokens.forEach(t => {
+    if (cleanUser.includes(t)) contentMatchCount++;
+  });
+
+  const contentRatio = benchContentTokens.length > 0 ? (contentMatchCount / benchContentTokens.length) : 0.7;
   const lenRatio = Math.min(userTokens.length, benchTokens.length) / Math.max(userTokens.length, benchTokens.length);
 
-  let baseScore = Math.round((overlapRatio * 60) + (lenRatio * 30) + 10);
-  if (direction === 'vi_to_en' && targetWord && cleanUser.includes(targetWord.toLowerCase())) {
-    baseScore = Math.min(100, baseScore + 10);
+  // Keyword check
+  let keywordBonus = 0;
+  if (direction === 'vi_to_en') {
+    if (targetWord && cleanUser.includes(targetWord.toLowerCase())) keywordBonus = 15;
+  } else {
+    const cleanMeaning = extractCleanPrimaryMeaning(targetDef || '', targetWord || '');
+    if (cleanMeaning && cleanUser.includes(cleanMeaning.toLowerCase())) keywordBonus = 15;
   }
-  baseScore = Math.max(30, Math.min(95, baseScore));
+
+  let baseScore = Math.round((contentRatio * 55) + (lenRatio * 30) + keywordBonus);
+  if (userTokens.length >= 4 && contentRatio >= 0.4) {
+    baseScore = Math.max(82, baseScore); // Generous for complete, reasonable attempts
+  }
+  baseScore = Math.max(35, Math.min(95, baseScore));
 
   const passed = baseScore >= translationFloorScore;
   return {
     score: baseScore,
     passedFloor: passed,
-    verdict: passed ? 'Bản dịch đạt chuẩn ngữ nghĩa và truyền tải thông điệp tốt.' : 'Bản dịch chưa đạt điểm sàn, cần chú ý cấu trúc câu và từ vựng.',
+    verdict: passed ? 'Bản dịch đạt chuẩn ngữ nghĩa và truyền tải thông điệp tự nhiên.' : 'Bản dịch cần chú ý hơn về cấu trúc ngữ pháp và từ vựng trọng tâm.',
     analysis: {
-      grammar: passed ? 'Cấu trúc câu cơ bản hoàn chỉnh và diễn đạt tương đối rõ ràng.' : 'Còn một số điểm chưa chuẩn xác về ngữ pháp hoặc trật tự từ trong câu.',
-      nuance: 'Sắc thái câu phù hợp với ngữ cảnh giao tiếp thông thường.',
-      errors: passed ? 'Không có lỗi nghiêm trọng.' : 'Câu còn mang tính dịch thô từng từ (word-by-word).'
+      grammar: passed ? 'Cấu trúc câu hoàn chỉnh, diễn đạt mạch lạc và đúng ngữ cảnh.' : 'Còn một số điểm chưa chuẩn xác về cấu trúc ngữ pháp hoặc trật tự từ.',
+      nuance: 'Sắc thái câu phù hợp với ngữ cảnh giao tiếp thực tế.',
+      errors: passed ? 'Không có lỗi đáng kể' : 'Cần trau chuốt thêm từ vựng để câu văn lưu loát hơn.'
     },
     polishedRewrite: benchmark,
-    tip: 'Hãy chú ý liên từ nối và cách dùng cụm từ cố định (collocations) để câu văn mượt mà hơn.'
+    tip: 'Hãy chú ý liên từ nối và cách kết hợp từ tự nhiên (collocations) để câu văn trôi chảy hơn.'
   };
 }
 
@@ -1008,6 +1135,28 @@ window.restartCurrentTranslationSession = restartCurrentTranslationSession;
 // =========================================================================
 function exitTranslationMode(force = false) {
   if (translationIsCompleted || force) {
+    // Settle points if any
+    if (translationSessionPointsEarned > 0 && !translationIsCompleted) {
+      const total = translationQuestionsList.length || 1;
+      const done = translationGradedIndices.size;
+      const isComp = false;
+      let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
+      if (typeof calculateSessionFinalPointsV3 === 'function') {
+        res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
+      } else if (typeof calculateSessionFinalPoints === 'function') {
+        res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
+      }
+      const finalPts = res.finalPts;
+      if (finalPts > 0) {
+        if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
+        if (typeof addLedgerEntry === 'function') {
+          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult})`);
+        }
+        if (typeof saveDatabase === 'function') saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+      }
+    }
+
     if (studySourceContext === 'review-queue' || !currentDeckId) {
       showScreen('screen-decks');
       if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
@@ -1022,16 +1171,9 @@ function exitTranslationMode(force = false) {
   const done = translationGradedIndices.size;
 
   if (done > 0 && done < total) {
-    if (typeof openStudyExitConfirmModal === 'function') {
-      openStudyExitConfirmModal({
-        mode: 'translation',
-        modeLabel: 'Dịch Thuật Song Phương (VIP β)',
-        completedCount: done,
-        totalCount: total,
-        currentPointsEarned: translationSessionPointsEarned,
-        onConfirmExit: () => {
-          exitTranslationMode(true);
-        }
+    if (typeof promptStudyEarlyExit === 'function') {
+      promptStudyEarlyExit('translation', done, total, translationSessionPointsEarned, () => {
+        exitTranslationMode(true);
       });
       return;
     }

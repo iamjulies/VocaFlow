@@ -1,39 +1,30 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-25 (Build 326)`  
+> **Phiên bản mục tiêu:** `v0.10.10-26 (Build 327)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-25 Build 326)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-26 Build 327)
 
-- [x] **Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β)**:
-  - Extended Learning Mode thứ 4 độc quyền dành riêng cho VIP User (`isVip` / `role === 'vip'`), đánh dấu `(β)`.
-  - 2 Chế độ dịch con (Direction):
-    + `en_to_vi` (English ➔ Vietnamese): Đọc hiểu câu tiếng Anh chứa từ vựng trọng tâm, dịch sát nghĩa và tự nhiên sang tiếng Việt.
-    + `vi_to_en` (Vietnamese ➔ English): Đọc câu tiếng Việt mang trọn vẹn ngữ nghĩa, dịch chính xác sang tiếng Anh chuẩn ngữ pháp, thì và từ vựng.
-  - 3 Cấp độ thử thách & Hệ số thưởng (Difficulty):
-    + 🟢 Dễ (Easy): Câu ngắn ≤ 10 từ, điểm sàn 70đ, hệ số x1.2.
-    + 🟡 Trung Bình (Medium): Câu ghép 10-18 từ, điểm sàn 80đ, hệ số x1.8.
-    + 🔴 Khó (Hard): Câu phức & học thuật > 18 từ, điểm sàn 90đ, hệ số x2.4.
-  - Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Chuyên Sâu:
-    + Chấm nghiêm khắc, trừ điểm thẳng tay khi sai ngữ pháp, thì, mạo từ, đảo nghĩa, dịch thô cứng nhắc.
-    + 3 Thẻ nhận xét đa tầng: 🎯 Điểm số & Đánh giá tổng quan, 🔍 Phân tích lỗi & Sắc thái ngữ nghĩa, ✨ Bản dịch đề xuất nâng cấp & Mẹo dịch chuyên sâu.
-  - VocaHint 3 Tầng & Gợi Ý Thừa Kế POS-Aware:
-    + Tầng 1: Cấu trúc câu & thì ngữ pháp.
-    + Tầng 2: Từ khóa trọng tâm và loại từ (Noun, Verb, Adj, Adv).
-    + Tầng 3: Khung dịch / Gợi ý mở đầu câu.
-  - Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai:
-    + Mọi câu dịch dưới điểm sàn tự động đưa từ gốc vào Sổ Tay Lỗi Sai (`addWordToMistakeList(word, 'translation')`).
-  - Dashboard Mừng Công 5 Ô Chỉ Số Đẳng Cấp:
-    + Hiển thị 5 ô: Tỉ lệ đạt sàn, VoCoin nhận được, Điểm dịch TB, Trợ giúp đã dùng, Tổng thời gian.
-    + Tích hợp Banner Luyện Lại Từ Chưa Đạt Sàn và dọn dẹp âm thanh pháo hoa ngay khi đóng modal.
-  - Đồng bộ hoàn hảo ví thực tế VocaHint & VocaSkip, tích hợp Màn hình cảnh báo thoát giữa chừng (Early Exit Modal) và kết toán theo chuẩn Balance v3.
-  - Đặt nút truy cập viền neon xoay tròn conic-gradient ở cả Deck Detail và Review Queue Modal.
+- [x] **Vấn đề 1: Nâng Cấp AI Chấm Bài Dịch Thuật & Heuristic Fallback (`06f-translation-engine.js`)**:
+  - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.
+  - Linh hoạt tuyệt đối với đại từ nhân xưng ("chúng tôi" / "chúng ta" / "nhóm mình"), trật tự từ tự nhiên ("thực sự là..." vs "là... thực sự") và các từ đồng nghĩa ngữ cảnh.
+  - Tuyệt đối không trừ điểm oan hoặc cáo buộc sai "dịch word-by-word" khi người học dịch tự nhiên, đủ ý và đúng ngữ pháp.
+  - Heuristic Fallback cải tiến: Bóc tách stopwords, kiểm tra độ phủ từ vựng ngữ nghĩa cốt lõi và tặng điểm thưởng cho bản dịch trọn vẹn (85-95đ).
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-25 Build 326`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-25 (Build 326)`.
+- [x] **Vấn đề 2: Tích Hợp Màn Hình Cảnh Báo Thoát Giữa Chừng (`06f-translation-engine.js`, `02-state-core.js`)**:
+  - Tích hợp modal cảnh báo thoát giữa chừng (`modal-study-exit-confirm`) cho Dịch Thuật Song Phương (VIP β).
+  - Hiển thị tiến độ câu đã làm, số câu tổng và kết toán điểm thưởng theo chuẩn Balance v3 (Extended Lab β) trước khi rời màn hình.
+
+- [x] **Vấn đề 3: Chuẩn Hóa Thuật Toán Sinh Câu Hỏi Dịch Thuật Ngữ Cảnh (`06f-translation-engine.js`)**:
+  - Bổ sung hàm `extractCleanPrimaryMeaning(rawDefVi, term)` bóc tách toàn bộ chú thích ngoặc (ví dụ "(Wi-Fi, Bluetooth)") và từ bổ nghĩa dài dòng.
+  - Phân loại từ vựng thành 5 miền ngữ cảnh chuyên biệt: Công nghệ/Thiết bị (Tech), Nhân cách/Tư duy (Personality), Học thuật/Nghiên cứu (Academic), Kinh doanh/Công sở (Business), Đời sống & Xã hội (General).
+  - Đảm bảo 100% các câu hỏi sinh ra đều tự nhiên, chuẩn mực, loại bỏ triệt để các câu ngô nghê hoặc vô nghĩa.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-26 Build 327`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-26 (Build 327)`.
 
 ---
 

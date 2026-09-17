@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-25 / Build 326)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-26 / Build 327)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-26': {
+        postId: 'official_update_v0_10_10_26',
+        releaseTime: '2026-09-17T17:30:00.000Z',
+        title: '🌐 Nâng Cấp AI Chấm Dịch Thuật & Sửa Triệt Để Sinh Câu Ngữ Cảnh (v0.10.10-26 Build 327)!',
+        summary: 'Nâng cấp AI chấm bài dịch theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), tích hợp Hộp thoại Cảnh Báo Thoát Giữa Chừng kèm kết toán Balance v3, và chuẩn hóa 100% thuật toán sinh câu hỏi dịch thuật tự nhiên theo ngữ cảnh.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-26 (Build 327)!\n\n✨ Những điểm mới nổi bật:\n🧠 Nâng Cấp AI Chấm Bài Dịch Thuật (Semantic Equivalence): Chấm điểm công tâm theo độ tương đương ngữ nghĩa, độ trôi chảy và cấu trúc câu. Linh hoạt tuyệt đối với đại từ nhân xưng ("chúng tôi" / "chúng ta" / "nhóm mình"), trật tự từ tự nhiên và từ đồng nghĩa ngữ cảnh; loại bỏ hoàn toàn việc trừ điểm oan và cáo buộc "dịch word-by-word" khi người học dịch tự nhiên.\n🚪 Hộp Thoại Cảnh Báo Thoát Giữa Chừng: Bổ sung modal cảnh báo khi người học rời bài dịch dở dang, hiển thị tiến độ và kết toán điểm thưởng Balance v3 (Extended Lab β) an toàn trước khi chuyển màn hình.\n🌐 Sinh Câu Hỏi Ngữ Cảnh Tự Nhiên 100%: Tách lọc sạch sẽ các chú thích ngoặc từ điển (ví dụ "(Wi-Fi, Bluetooth)"), phân loại từ vựng vào 5 miền ngữ cảnh chuyên biệt (Công nghệ/Thiết bị, Nhân cách/Tư duy, Học thuật/Nghiên cứu, Công sở/Kinh doanh, Đời sống), xóa bỏ vĩnh viễn các câu ghép từ ngô nghê hoặc vô nghĩa.\n⚡ Đồng Bộ Toàn Diện & Trải Nghiệm Mượt Mà: Cập nhật hệ thống thông báo tím và đồng bộ dữ liệu phiên học an toàn.\n\nChúc bạn có những giờ phút luyện dịch thuật đỉnh cao và đầy hứng khởi cùng VocaFlow! 🚀🌐`
+      },
       'v0.10.10-25': {
         postId: 'official_update_v0_10_10_25',
         releaseTime: '2026-09-17T17:00:00.000Z',

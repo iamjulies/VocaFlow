@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v0.10.10-26 (Build 327) - Nâng Cấp AI Chấm Bài Dịch Thuật Theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Tích Hợp Cảnh Báo Thoát Giữa Chừng Kèm Kết Toán Balance v3 & Chuẩn Hóa 100% Thuật Toán Sinh Câu Ngữ Cảnh Tự Nhiên
+================================================================================
+1. [Nâng Cấp AI Chấm Bài & Heuristic Fallback (06f-translation-engine.js)]:
+   - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.
+   - Linh hoạt tuyệt đối với đại từ nhân xưng ("chúng tôi" / "chúng ta" / "nhóm mình"), trật tự từ tự nhiên ("thực sự là..." vs "là... thực sự") và các từ đồng nghĩa ngữ cảnh.
+   - Tuyệt đối không trừ điểm oan hoặc cáo buộc sai "dịch word-by-word" khi người học dịch tự nhiên, đủ ý và đúng ngữ pháp.
+   - Heuristic Fallback cải tiến: Bóc tách stopwords, kiểm tra độ phủ từ vựng ngữ nghĩa cốt lõi và tặng điểm thưởng cho bản dịch trọn vẹn (85-95đ).
+2. [Tích Hợp Màn Hình Cảnh Báo Thoát Giữa Chừng (06f-translation-engine.js, 02-state-core.js)]:
+   - Tích hợp modal cảnh báo thoát giữa chừng (modal-study-exit-confirm) cho Dịch Thuật Song Phương (VIP β).
+   - Hiển thị tiến độ câu đã làm, số câu tổng và kết toán điểm thưởng theo chuẩn Balance v3 (Extended Lab β) trước khi rời màn hình.
+3. [Chuẩn Hóa Thuật Toán Sinh Câu Hỏi Dịch Thuật Ngữ Cảnh (06f-translation-engine.js)]:
+   - Bổ sung hàm extractCleanPrimaryMeaning(rawDefVi, term) bóc tách toàn bộ chú thích ngoặc (ví dụ "(Wi-Fi, Bluetooth)") và từ bổ nghĩa dài dòng.
+   - Phân loại từ vựng thành 5 miền ngữ cảnh chuyên biệt: Công nghệ/Thiết bị (Tech), Nhân cách/Tư duy (Personality), Học thuật/Nghiên cứu (Academic), Kinh doanh/Công sở (Business), Đời sống & Xã hội (General).
+   - Đảm bảo 100% các câu hỏi sinh ra đều tự nhiên, chuẩn mực, loại bỏ triệt để các câu ngô nghê hoặc vô nghĩa.
+
+================================================================================
 Phiên bản: v0.10.10-25 (Build 326) - Ra Mắt Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β), AI Chấm Bài Nghiêm Khắc & Phân Tích Chuyên Sâu, 3 Cấp Độ Thử Thách (Dễ, TB, Khó), Gợi Ý VocaHint 3 Tầng POS-Aware, Đồng Bộ Sổ Tay Lỗi Sai & Dashboard Tổng Kết 5 Ô Chỉ Số
 ================================================================================
 1. [Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β) (06f-translation-engine.js, screen-translation.html, modal-translation-setup.html, modal-translation-result.html)]:
