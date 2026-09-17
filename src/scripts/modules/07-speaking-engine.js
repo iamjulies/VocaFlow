@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-14 Build 315)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-31 Build 332)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -478,17 +478,19 @@
       try {
         if (speakingSessionPointsEarned !== 0) {
           const isComp = done >= total && total > 0;
-          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
-          const finalPts = res.finalPts;
+          const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, done, total, diffM)
+            : calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
             const newBalance = Math.max(0, getUserPoints() + finalPts);
             setUserPoints(newBalance);
-            const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
-            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')', newBalance);
-            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
+            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + ')', newBalance);
+            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (Cam kết x' + (res.metrics?.commitmentMult ?? res.completionMult) + ', Quy mô x' + (res.metrics?.volumeMult ?? res.deckLengthMult) + ')');
           }
           speakingSessionPointsEarned = 0;
         }
@@ -836,8 +838,11 @@
 
       if (bonusBoxEl) {
         try {
-          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
+          const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, speakingCompletedWords, totalWords, diffM)
+            : calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (res.metrics?.modeWeight || 1.8) + ' • Quy mô x' + (res.metrics?.volumeMult || res.deckLengthMult) + (res.isVipBonus ? ' • VIP x1.25' : '');
           bonusBoxEl.style.display = 'block';
           if (typeof updateModalBrainEnergyIndicator === 'function') {
             updateModalBrainEnergyIndicator('spk-res-energy-box', res);

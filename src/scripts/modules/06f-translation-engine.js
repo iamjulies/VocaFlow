@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-30 Build 331 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-31 Build 332 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -1212,7 +1212,9 @@ function finishTranslationSession() {
   const isComp = done >= total && total > 0;
 
   let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-  if (typeof calculateSessionFinalPointsV3 === 'function') {
+  if (typeof calculateUnifiedSessionPoints === 'function') {
+    res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+  } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
     res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
@@ -1223,7 +1225,7 @@ function finishTranslationSession() {
     if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('translation');
@@ -1271,9 +1273,9 @@ function finishTranslationSession() {
   // Bonus breakdown pill
   const bonusBox = document.getElementById('translation-res-bonus-box');
   if (bonusBox) {
-    if (res.completionMult > 1.0 || res.deckLengthMult > 1.0 || res.milestoneBonus > 0) {
+    if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.completionMult}</strong> • Quy mô: <strong>x${res.deckLengthMult}</strong>${res.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${res.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 3.0}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1363,7 +1365,9 @@ function exitTranslationMode(force = false) {
       const done = translationGradedIndices.size;
       const isComp = false;
       let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-      if (typeof calculateSessionFinalPointsV3 === 'function') {
+      if (typeof calculateUnifiedSessionPoints === 'function') {
+        res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+      } else if (typeof calculateSessionFinalPointsV3 === 'function') {
         res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
       } else if (typeof calculateSessionFinalPoints === 'function') {
         res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
@@ -1372,7 +1376,7 @@ function exitTranslationMode(force = false) {
       if (finalPts > 0) {
         if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
         if (typeof addLedgerEntry === 'function') {
-          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult})`);
+          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult || 1.0})`);
         }
         if (typeof saveDatabase === 'function') saveDatabase(true);
         if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
@@ -1394,8 +1398,12 @@ function exitTranslationMode(force = false) {
 
   if (done > 0 && done < total) {
     if (typeof promptStudyEarlyExit === 'function') {
-      promptStudyEarlyExit('translation', done, total, translationSessionPointsEarned, () => {
-        exitTranslationMode(true);
+      promptStudyEarlyExit({
+        mode: 'translation',
+        done,
+        total,
+        basePoints: translationSessionPointsEarned,
+        onConfirmExit: () => exitTranslationMode(true)
       });
       return;
     }

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-15 Build 316 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -1167,11 +1167,13 @@ function finishWritingSession() {
     diffBadge.textContent = `✍️ Cấp độ: ${cfg.label} (x${cfg.diffMult})`;
   }
 
-  // Balance v3 Bonus Breakdown & Energy Indicator
+  // Unified Balance v4 Bonus Breakdown & Energy Indicator
   const bonusBox = document.getElementById('writing-res-bonus-box');
   let writingRes = null;
   try {
-    if (typeof calculateSessionFinalPointsV3 === 'function') {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions);
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
     } else if (typeof calculateSessionFinalPoints === 'function') {
       writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
@@ -1179,9 +1181,9 @@ function finishWritingSession() {
   } catch (e) {}
 
   if (bonusBox && writingRes) {
-    if (writingRes.completionMult > 1.0 || writingRes.deckLengthMult > 1.0 || writingRes.milestoneBonus > 0) {
+    if (writingRes.commitmentFactor < 1.0 || writingRes.volumeMultiplier > 1.0 || (writingRes.vipMultiplier && writingRes.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.completionMult}</strong> • Quy mô: <strong>x${writingRes.deckLengthMult}</strong>${writingRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${writingRes.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.commitmentFactor || writingRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${writingRes.volumeMultiplier || writingRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${writingRes.modeWeight || 3.5}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1277,7 +1279,10 @@ function doExecuteExitWriting(done, total) {
     const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
     let res = null;
-    if (typeof calculateSessionFinalPointsV3 === 'function') {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      res = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, done, total);
+      finalPts = res.finalPts;
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     } else if (typeof calculateSessionFinalPoints === 'function') {

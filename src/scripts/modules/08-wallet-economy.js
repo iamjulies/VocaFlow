@@ -1,10 +1,14 @@
 // =========================================================================
-
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.9-48)
-
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-31 Build 332)
 // VoCoin wallet, Ledger, Flow streak calendar, Freeze protection & referral codes
-
 // =========================================================================
+
+    // =========================================================================
+    // UNIFIED BALANCE V4 MASTER EXPORT (v0.10.10-31 Build 332)
+    // =========================================================================
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      window.calculateUnifiedSessionPoints = calculateUnifiedSessionPoints;
+    }
 
     // =========================================================================
     // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-14 / Build 315)

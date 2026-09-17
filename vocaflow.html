@@ -5359,7 +5359,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-30 (Build 331)</span>
+            <span class="mini-footer-version">v0.10.10-31 (Build 332)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5583,7 +5583,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-30 (Build 331)</span>
+            <span class="mini-footer-version">v0.10.10-31 (Build 332)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -7994,32 +7994,32 @@
       </div>
     </div>
 
-    <!-- ECONOMY CALCULATION CARDS: BALANCE V2 VS BALANCE V1 -->
+    <!-- ECONOMY CALCULATION CARDS: UNIFIED BALANCE V4 VS LEGACY -->
     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
       
-      <!-- CARD 1: BALANCE V2 (OFFICIAL APPLIED ENGINE) -->
+      <!-- CARD 1: UNIFIED BALANCE V4 (OFFICIAL APPLIED ENGINE) -->
       <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1)); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 14px; padding: 12px 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span style="font-size: 15px;">🌟</span>
-            <strong id="study-exit-v2-title-label" style="font-size: 13px; color: #34d399;">Thực Nhận Theo Balance v2 (Chính thức):</strong>
+            <strong id="study-exit-v2-title-label" style="font-size: 13px; color: #34d399;">Thực Nhận Theo Unified Balance v4 (Chính thức):</strong>
           </div>
           <span id="study-exit-v2-badge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 800; font-size: 12.5px; padding: 3px 8px; border: 1px solid rgba(16, 185, 129, 0.35);">+0 VoCoin</span>
         </div>
         <div id="study-exit-v2-details" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
-          • Hệ số hoàn thành dở dang: <strong style="color: var(--text);" id="study-exit-v2-mult">x0.25</strong><br>
-          • Hệ số quy mô bài học: <strong style="color: var(--text);" id="study-exit-v2-deck-mult">x1.0</strong><br>
-          • Thưởng mốc vượt trội: <strong style="color: var(--text);" id="study-exit-v2-milestone">+0 VoCoin</strong>
+          • Hệ số cam kết hoàn thành (Ψ): <strong style="color: var(--text);" id="study-exit-v2-mult">x1.0</strong><br>
+          • Hệ số khối lượng thực học (Φ): <strong style="color: var(--text);" id="study-exit-v2-deck-mult">x1.0</strong><br>
+          • Trọng số & Năng lượng não bộ: <strong style="color: var(--text);" id="study-exit-v2-milestone">W_mode x1.0 • Năng lượng 100%</strong>
         </div>
       </div>
 
-      <!-- CARD 2: BALANCE V1 COMPARISON -->
+      <!-- CARD 2: LEGACY COMPARISON -->
       <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="font-size: 12px; color: var(--text-muted);">
-            <span>📊</span> So sánh nếu tính theo <strong>Balance v1</strong> (Gốc):
+            <span>📊</span> So sánh nếu tính theo <strong>Tuyến tính cũ</strong>:
           </div>
-          <span id="study-exit-v1-result" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">+0 VoCoin (x0.25)</span>
+          <span id="study-exit-v1-result" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">+0 VoCoin (x1.0)</span>
         </div>
       </div>
 
@@ -11853,7 +11853,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-30 (Build 331)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-31 (Build 332)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13378,7 +13378,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-30 Build 331)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-31 Build 332)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -13843,15 +13843,19 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-30 Build 331)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-31 Build 332)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-30 Build 331)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-31 Build 332)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-30';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-30 (Build 331)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-31';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-31 (Build 332)';
+    const VOCAFLOW_APP_BUILD = 332;
+    window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
+    window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
+    window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -14426,36 +14430,32 @@ window.initSpaRouter = initSpaRouter;
     let spellingIsCompleted = false;
 
     // =========================================================================
-    // BALANCE V2 & V3 MULTI-TIER REWARD SETTLEMENT ENGINE (v0.10.10-9)
+    // UNIFIED BALANCE V4 MASTER ENGINE (v0.10.10-31 Build 332)
+    // Master Formula:
+    // FinalVoCoin = floor( (sum(Base_i) * W_mode * M_diff) * Phi(N_done) * Psi(N_done / N_total) * M_VIP * eta(E_today) )
     // =========================================================================
-    function getIncompleteSessionMultiplier(done, total) {
-      if (total <= 0 || done <= 0) return 0.25;
-      const ratio = done / total;
-      if (ratio < 0.3) return 0.25;
-      if (ratio < 0.6) return 0.50;
-      if (ratio < 0.9) return 0.75;
-      return 0.90;
-    }
+    const MODE_COGNITIVE_WEIGHTS = {
+      autofc: 0.0,
+      quiz: 1.0,
+      spelling: 1.3,
+      speaking: 1.8,
+      dictation: 2.4,
+      cloze: 2.8,
+      translation: 3.0,
+      writing: 3.5
+    };
+    window.MODE_COGNITIVE_WEIGHTS = MODE_COGNITIVE_WEIGHTS;
 
-    function getSessionDeckSizeMultiplier(doneCount) {
-      if (doneCount >= 100) return 1.5;
-      if (doneCount >= 70) return 1.35;
-      if (doneCount >= 50) return 1.25;
-      if (doneCount >= 30) return 1.15;
-      if (doneCount >= 15) return 1.05;
+    function getModeCognitiveWeight(mode) {
+      if (!mode) return 1.0;
+      const clean = String(mode).toLowerCase().replace(/[^a-z]/g, '');
+      if (typeof MODE_COGNITIVE_WEIGHTS[clean] === 'number') return MODE_COGNITIVE_WEIGHTS[clean];
       return 1.0;
     }
-
-    function getSessionMilestoneBonus(doneCount) {
-      if (doneCount >= 100) return 150;
-      if (doneCount >= 70) return 75;
-      if (doneCount >= 50) return 40;
-      if (doneCount >= 25) return 15;
-      return 0;
-    }
+    window.getModeCognitiveWeight = getModeCognitiveWeight;
 
     // =========================================================================
-    // UNIFIED DAILY SOFT-CAP DIMINISHING RETURNS ENGINE (v0.10.10-30 Build 331)
+    // UNIFIED DAILY SOFT-CAP DIMINISHING RETURNS ENGINE (v0.10.10-31 Build 332)
     // Brain Focus Energy (Năng lượng tiếp thu não bộ) with Smooth Natural Logarithm
     // Formula: eta(E_today) = 1 / (1 + ln(1 + E_today / K))
     // =========================================================================
@@ -14501,7 +14501,8 @@ window.initSpaRouter = initSpaRouter;
       if (!el) return;
       if (res && typeof res.energyEfficiency === 'number' && res.energyEfficiency < 0.95) {
         const pct = res.energyPercent || res.energyPct || Math.round(res.energyEfficiency * 100);
-        el.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #38bdf8; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.35); border-radius: 6px; padding: 2px 6px;">⚡ Năng lượng tập trung: ${pct}% (+${res.finalPts} VoCoin)</span>`;
+        const pts = res.finalPoints ?? res.finalPts ?? 0;
+        el.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #38bdf8; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.35); border-radius: 6px; padding: 2px 6px;">⚡ Năng lượng tập trung: ${pct}% (+${pts} VoCoin)</span>`;
         el.style.display = 'block';
       } else {
         el.style.display = 'none';
@@ -14509,153 +14510,118 @@ window.initSpaRouter = initSpaRouter;
     }
     window.updateModalBrainEnergyIndicator = updateModalBrainEnergyIndicator;
 
-    function calculateSessionFinalPoints(basePoints, doneCount, totalCount, isCompleted = false) {
-      const total = totalCount || 1;
-      const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
+    function calculateUnifiedSessionPoints(mode, rawItemPointsSum, doneCount, totalCount, difficultyMult = 1.0) {
+      const normMode = (mode || 'quiz').toLowerCase().replace(/[^a-z]/g, '');
+      const W_mode = getModeCognitiveWeight(normMode);
+      
+      const done = Math.max(0, Number(doneCount) || 0);
+      const total = Math.max(1, Number(totalCount) || done || 1);
+      const rawSum = Number(rawItemPointsSum) || 0;
+      const M_diff = Math.max(0.1, Number(difficultyMult) || 1.0);
+      
+      const eta = getDailyFatigueEfficiency();
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const M_vip = isVip ? 1.25 : 1.0;
 
-      let completionMult = isCompleted ? 1.0 : getIncompleteSessionMultiplier(done, total);
-      let deckLengthMult = getSessionDeckSizeMultiplier(done);
-      let milestoneBonus = (basePoints > 0) ? getSessionMilestoneBonus(done) : 0;
-
-      const isVip = isUserVip();
-      if (isVip) {
-        completionMult = Math.round((completionMult + 0.1) * 1000) / 1000;
-        deckLengthMult = Math.round((deckLengthMult + 0.1) * 1000) / 1000;
-        if (milestoneBonus > 0) {
-          milestoneBonus = Math.round(milestoneBonus * 1.1);
-        }
+      if (W_mode === 0 || normMode === 'autofc' || rawSum === 0) {
+        return {
+          finalPoints: 0,
+          finalPts: 0,
+          rawItemPointsSum: rawSum,
+          mode: normMode,
+          metrics: {
+            modeWeight: W_mode,
+            difficultyMult: M_diff,
+            volumeMult: 1.0,
+            commitmentMult: 1.0,
+            vipMult: M_vip,
+            fatigueEfficiency: eta,
+            energyEfficiency: eta,
+            energyPercent: Math.round(eta * 100),
+            ratio: 1.0
+          },
+          energyEfficiency: eta,
+          energyPercent: Math.round(eta * 100),
+          completionMult: 1.0,
+          deckLengthMult: 1.0,
+          milestoneBonus: 0,
+          combinedMult: 0,
+          isVipBonus: isVip,
+          done,
+          total,
+          isCompleted: done >= total && total > 0,
+          balanceVersion: 'v4'
+        };
       }
 
-      const combinedMult = Math.round((completionMult * deckLengthMult) * 1000) / 1000;
+      // 1. Volume Scaling Factor: Phi(N_done) = 1.0 + 0.3 * (N_done / (N_done + 15))
+      const volumeMult = Math.round((1.0 + 0.3 * (done / (done + 15))) * 10000) / 10000;
 
-      let rawFinalPts = 0;
-      let finalPts = 0;
-      const energyEfficiency = getDailyFatigueEfficiency();
+      // 2. Commitment Factor: Psi(r) = 0.2 + 0.8 * r^2
+      const r = Math.max(0, Math.min(1.0, done / total));
+      const commitmentMult = Math.round((0.2 + 0.8 * (r * r)) * 10000) / 10000;
 
-      if (basePoints > 0) {
-        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
-        // balance_vip: VIP earns +150% coins
-        if (isVip) {
-          rawFinalPts = Math.round(rawFinalPts * 1.5);
-        }
-        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
-      } else if (basePoints < 0) {
-        if (done <= 5) {
-          const divisor = Math.max(0.1, combinedMult);
-          finalPts = Math.min(basePoints, Math.round(basePoints / divisor));
-        } else {
-          finalPts = basePoints;
-        }
-        // balance_vip: Early quit penalty mitigated by 125% (penalized 20% less / divided by 1.25)
-        if (isVip) {
-          finalPts = Math.round(finalPts / 1.25);
-        }
-        rawFinalPts = finalPts;
+      let finalPoints = 0;
+      if (rawSum > 0) {
+        const baseWeighted = rawSum * W_mode * M_diff;
+        const subTotal = baseWeighted * volumeMult * commitmentMult * M_vip * eta;
+        finalPoints = Math.max(1, Math.floor(subTotal));
+      } else if (rawSum < 0) {
+        const penaltyRatio = Math.max(1.0, 2.0 - commitmentMult);
+        const mitigated = isVip ? (rawSum / 1.25) : rawSum;
+        finalPoints = Math.min(rawSum, Math.round(mitigated * penaltyRatio));
       }
+
+      const combinedMult = Math.round((W_mode * M_diff * volumeMult * commitmentMult * M_vip) * 1000) / 1000;
 
       return {
-        finalPts,
-        rawFinalPts,
-        energyEfficiency,
-        energyPercent: Math.round(energyEfficiency * 100),
-        completionMult,
-        deckLengthMult,
+        finalPoints,
+        finalPts: finalPoints,
+        rawItemPointsSum: rawSum,
+        mode: normMode,
+        metrics: {
+          modeWeight: W_mode,
+          difficultyMult: M_diff,
+          volumeMult,
+          commitmentMult,
+          vipMult: M_vip,
+          fatigueEfficiency: eta,
+          energyEfficiency: eta,
+          energyPercent: Math.round(eta * 100),
+          ratio: r
+        },
+        energyEfficiency: eta,
+        energyPercent: Math.round(eta * 100),
+        completionMult: commitmentMult,
+        deckLengthMult: volumeMult,
+        milestoneBonus: 0,
         combinedMult,
-        milestoneBonus,
         isVipBonus: isVip,
         done,
         total,
-        balanceVersion: 'v2'
+        isCompleted: done >= total && total > 0,
+        balanceVersion: 'v4'
       };
     }
+    window.calculateUnifiedSessionPoints = calculateUnifiedSessionPoints;
+
+    // Backwards compatibility wrappers
+    function calculateSessionFinalPoints(basePoints, doneCount, totalCount, isCompleted = false) {
+      const total = totalCount || 1;
+      const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
+      return calculateUnifiedSessionPoints('quiz', basePoints, done, total, 1.0);
+    }
     window.calculateSessionFinalPoints = calculateSessionFinalPoints;
-
-    // =========================================================================
-    // BALANCE V3: EXTENDED LEARNING MODES ENGINE (v0.10.10-9)
-    // For high-challenge skills: Writing β, Cloze β, Dictation β
-    // =========================================================================
-    function getExtendedSessionMilestoneBonus(doneCount) {
-      if (doneCount >= 20) return 80;
-      if (doneCount >= 10) return 40;
-      if (doneCount >= 5) return 15;
-      return 0;
-    }
-
-    function getExtendedSessionScaleMultiplier(doneCount) {
-      if (doneCount >= 20) return 1.25;
-      if (doneCount >= 10) return 1.15;
-      if (doneCount >= 5) return 1.05;
-      return 1.0;
-    }
-
-    function getExtendedIncompleteSessionMultiplier(done, total) {
-      if (total <= 0 || done <= 0) return 0.15;
-      const ratio = done / total;
-      if (ratio < 0.25) return 0.15; // Strict anti-farming penalty on high-reward AI prompts
-      if (ratio < 0.50) return 0.35;
-      if (ratio < 0.75) return 0.60;
-      if (ratio < 1.0) return 0.80;
-      return 1.0;
-    }
 
     function calculateSessionFinalPointsV3(basePoints, doneCount, totalCount, isCompleted = false) {
       const total = totalCount || 1;
       const done = isCompleted ? total : Math.min(total, Math.max(0, doneCount || 0));
-
-      let completionMult = isCompleted ? 1.0 : getExtendedIncompleteSessionMultiplier(done, total);
-      let scaleMult = getExtendedSessionScaleMultiplier(done);
-      let milestoneBonus = (basePoints > 0) ? getExtendedSessionMilestoneBonus(done) : 0;
-
-      const isVip = isUserVip();
-      if (isVip) {
-        completionMult = Math.round((completionMult + 0.1) * 1000) / 1000;
-        scaleMult = Math.round((scaleMult + 0.1) * 1000) / 1000;
-        if (milestoneBonus > 0) {
-          milestoneBonus = Math.round(milestoneBonus * 1.15);
-        }
-      }
-
-      const combinedMult = Math.round((completionMult * scaleMult) * 1000) / 1000;
-
-      let rawFinalPts = 0;
-      let finalPts = 0;
-      const energyEfficiency = getDailyFatigueEfficiency();
-
-      if (basePoints > 0) {
-        rawFinalPts = Math.round(basePoints * combinedMult) + milestoneBonus;
-        if (isVip) {
-          rawFinalPts = Math.round(rawFinalPts * 1.5);
-        }
-        finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency));
-      } else if (basePoints < 0) {
-        const ratio = total > 0 ? (done / total) : 0;
-        const multiplier = Math.max(1.1, 1.6 - ratio);
-        finalPts = Math.min(basePoints, Math.round(basePoints * multiplier));
-        if (isVip) {
-          finalPts = Math.round(finalPts / 1.25);
-        }
-        rawFinalPts = finalPts;
-      }
-
-      return {
-        finalPts,
-        rawFinalPts,
-        energyEfficiency,
-        energyPercent: Math.round(energyEfficiency * 100),
-        completionMult,
-        deckLengthMult: scaleMult,
-        combinedMult,
-        milestoneBonus,
-        isVipBonus: isVip,
-        done,
-        total,
-        balanceVersion: 'v3'
-      };
+      return calculateUnifiedSessionPoints('translation', basePoints, done, total, 1.0);
     }
     window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
 
     // =========================================================================
-    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-9)
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-31)
     // =========================================================================
     let pendingStudyEarlyExitCallback = null;
 
@@ -14681,21 +14647,13 @@ window.initSpaRouter = initSpaRouter;
         return;
       }
 
-      const isExtended = ['writing', 'cloze', 'dictation', 'translation'].includes(mode);
+      // Calculate Official Unified Balance v4
+      const resApplied = calculateUnifiedSessionPoints(mode, basePoints, done, total, 1.0);
 
-      // Calculate Official Balance (v3 for Extended Modes, v2 for Core Modes)
-      const resApplied = isExtended 
-        ? calculateSessionFinalPointsV3(basePoints, done, total, false)
-        : calculateSessionFinalPoints(basePoints, done, total, false);
-
-      // Calculate Balance v1 (Legacy comparison)
-      const v1Mult = isExtended ? getExtendedIncompleteSessionMultiplier(done, total) : getIncompleteSessionMultiplier(done, total);
-      let v1Pts = 0;
-      if (basePoints > 0) {
-        v1Pts = Math.round(basePoints * v1Mult);
-      } else if (basePoints < 0) {
-        v1Pts = Math.min(basePoints, Math.round(basePoints / Math.max(0.2, v1Mult)));
-      }
+      // Calculate legacy comparison
+      const ratio = total > 0 ? (done / total) : 0;
+      const legacyMult = Math.round((0.2 + 0.8 * ratio) * 100) / 100;
+      const v1Pts = Math.round(basePoints * legacyMult);
 
       // Store callback
       pendingStudyEarlyExitCallback = onConfirmExit;
@@ -14703,14 +14661,9 @@ window.initSpaRouter = initSpaRouter;
       // Update Modal UI
       const modal = document.getElementById('modal-study-exit-confirm');
       if (!modal) {
-        // Fallback: If modal element not found, use friendly native confirm
         const signApplied = resApplied.finalPts >= 0 ? '+' : '';
-        const signV1 = v1Pts >= 0 ? '+' : '';
-        const vipPerkText = resApplied.isVipBonus ? ' (👑 Balance VIP: Thưởng Xu 150%, Giảm phạt 125%)' : '';
-        const balLabel = isExtended ? 'Balance v3 (Extended Lab β)' : 'Balance v2 (Chính thức)';
-        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total} ${isExtended ? 'câu' : 'từ'})!\n\n` +
-          `• Theo ${balLabel}: Bạn sẽ nhận ${signApplied}${resApplied.finalPts} VoCoin (Hoàn thành x${resApplied.completionMult}, Quy mô x${resApplied.deckLengthMult}${resApplied.milestoneBonus > 0 ? ', Thưởng mốc +' + resApplied.milestoneBonus + 'đ' : ''})${vipPerkText}\n` +
-          `• Theo Balance v1 (Gốc): ${signV1}${v1Pts} VoCoin (x${v1Mult})\n\n` +
+        const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total})!\n\n` +
+          `• Theo Unified Balance v4: Bạn sẽ nhận ${signApplied}${resApplied.finalPts} VoCoin (Trọng số W_mode x${resApplied.metrics.modeWeight}, Hoàn thành x${resApplied.metrics.commitmentMult}, Quy mô x${resApplied.metrics.volumeMult})\n` +
           `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
         if (window.confirm(msg)) {
           if (typeof onConfirmExit === 'function') onConfirmExit();
@@ -14751,24 +14704,24 @@ window.initSpaRouter = initSpaRouter;
 
       const v2TitleLabel = document.getElementById('study-exit-v2-title-label');
       if (v2TitleLabel) {
-        v2TitleLabel.textContent = isExtended ? 'Thực Nhận Theo Balance v3 (Extended Lab β):' : 'Thực Nhận Theo Balance v2 (Chính thức):';
+        v2TitleLabel.textContent = 'Thực Nhận Theo Unified Balance v4 (Chính thức):';
       }
 
       const multEl = document.getElementById('study-exit-v2-mult');
-      if (multEl) multEl.textContent = `x${resApplied.completionMult}`;
+      if (multEl) multEl.textContent = `x${resApplied.metrics.commitmentMult}`;
 
       const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
-      if (deckMultEl) deckMultEl.textContent = `x${resApplied.deckLengthMult}`;
+      if (deckMultEl) deckMultEl.textContent = `x${resApplied.metrics.volumeMult}`;
 
       const milestoneEl = document.getElementById('study-exit-v2-milestone');
       if (milestoneEl) {
-        const vipNote = resApplied.isVipBonus ? ' (👑 VIP x1.5 Xu / -125% phạt)' : '';
-        milestoneEl.textContent = `+${resApplied.milestoneBonus} VoCoin${vipNote}`;
+        const vipNote = resApplied.isVipBonus ? ' (👑 VIP x1.25)' : '';
+        milestoneEl.textContent = `W_mode x${resApplied.metrics.modeWeight}${vipNote} • Năng lượng ${resApplied.metrics.energyPercent}%`;
       }
 
       const v1ResEl = document.getElementById('study-exit-v1-result');
       if (v1ResEl) {
-        v1ResEl.textContent = `${v1Pts >= 0 ? '+' : ''}${v1Pts} VoCoin (x${v1Mult})`;
+        v1ResEl.textContent = `${v1Pts >= 0 ? '+' : ''}${v1Pts} VoCoin (x${legacyMult})`;
       }
 
       const confirmBtn = document.getElementById('btn-study-confirm-exit');
@@ -17991,7 +17944,7 @@ window.initSpaRouter = initSpaRouter;
 
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-30 Build 331)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-31 Build 332)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -24516,9 +24469,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-30 / Build 331)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-31 / Build 332)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-31': {
+        postId: 'official_update_v0_10_10_31',
+        releaseTime: '2026-09-17T23:55:00.000Z',
+        title: '⚖️ Đột Phá Động Cơ Thưởng Thống Nhất Toàn Bộ 7 Chế Độ Học Unified Balance v4 (v0.10.10-31 Build 332)!',
+        summary: 'Thống nhất công thức tính thưởng VoCoin chuẩn toán học xuyên suốt 7 chế độ học tập (Quiz, Spelling, Speaking, Dictation, Cloze, Translation, Writing), tối ưu trọng số nhận thức, hệ số cam kết hoàn thành chống trục lợi và tích hợp năng lượng não bộ.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-31 (Build 332)!\n\n✨ Những điểm mới nổi bật:\n⚖️ Động Cơ Thưởng Thống Nhất Unified Balance v4: Chuẩn hóa 100% công thức tính thưởng VoCoin xuyên suốt toàn bộ 7 chế độ học tập (Quiz x1.0, Spelling x1.3, Speaking x1.8, Dictation x2.4, Cloze x2.8, Translation x3.0, Writing x3.5).\n🧠 Trọng Số Nhận Thức Phản Ánh Nỗ Lực Não Bộ: Định giá phần thưởng công bằng tương xứng với độ khó nhận thức và năng lượng trí tuệ của từng phương pháp học.\n📈 Hàm Quy Mô Khối Lượng Tự Nhiên Phi Tuyến (Volume Scaling): Thưởng thêm liên tục theo số lượng câu/từ hoàn thành mà không tạo bước nhảy gãy khúc.\n🔒 Hệ Số Cam Kết Hoàn Thành Bậc 2 Chống Trục Lợi (Commitment Factor): Tính toán chuẩn xác tỷ lệ hoàn thành buổi học (r = done/total), trả thưởng xứng đáng khi kết thúc trọn vẹn và ngăn chặn triệt để hành vi thoát sớm săn thưởng ảo.\n⚡ Đồng Bộ Toàn Diện & Trải Nghiệm Mượt Mà: Tích hợp bảng xem trước thưởng khi thoát sớm và đồng bộ năng lượng tiếp thu não bộ an toàn trên đám mây.\n\nChúc bạn có những giờ phút học tập hiệu quả và chinh phục kho tàng VoCoin xứng đáng cùng VocaFlow! 🚀⚖️`
+      },
       'v0.10.10-30': {
         postId: 'official_update_v0_10_10_30',
         releaseTime: '2026-09-17T23:30:00.000Z',
@@ -32321,11 +32281,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     window.checkWordTermDuplicate = checkWordTermDuplicate;
 
 // =========================================================================
-
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.9-48)
-
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-31 Build 332)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
-
 // =========================================================================
 
     // =========================================================================
@@ -34213,10 +34170,12 @@ Yêu cầu nghiêm ngặt:
       let finalDeckMult = 1.0;
       let quizSettlementRes = null;
       try {
-        const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        const res = (typeof calculateUnifiedSessionPoints === 'function')
+          ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, total, total, 1.0)
+          : calculateSessionFinalPoints(quizPointsEarned, total, total, true);
         quizSettlementRes = res;
-        quizPointsEarned = res.finalPts;
-        finalDeckMult = res.deckLengthMult || 1.0;
+        quizPointsEarned = res.finalPoints ?? res.finalPts;
+        finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
         if (quizPointsEarned !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
           const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
@@ -34449,10 +34408,12 @@ Yêu cầu nghiêm ngặt:
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
       try {
-        // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
+        // Unified Balance v4 incomplete session settlement (v0.10.10-31 Build 332)
         if (!quizIsCompleted && quizPointsEarned !== 0) {
-          const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
-          const finalPts = res.finalPts;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, done, total, 1.0)
+            : calculateSessionFinalPoints(quizPointsEarned, done, total, false);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
@@ -34464,9 +34425,8 @@ Yêu cầu nghiêm ngặt:
               showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
               addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`, newBalance);
             } else {
-              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
-              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
-              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`, newBalance);
+              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} VoCoin!`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult})`, newBalance);
             }
           }
           quizPointsEarned = finalPts;
@@ -34543,7 +34503,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-15 Build 316 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -35711,11 +35671,13 @@ function finishWritingSession() {
     diffBadge.textContent = `✍️ Cấp độ: ${cfg.label} (x${cfg.diffMult})`;
   }
 
-  // Balance v3 Bonus Breakdown & Energy Indicator
+  // Unified Balance v4 Bonus Breakdown & Energy Indicator
   const bonusBox = document.getElementById('writing-res-bonus-box');
   let writingRes = null;
   try {
-    if (typeof calculateSessionFinalPointsV3 === 'function') {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions);
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
     } else if (typeof calculateSessionFinalPoints === 'function') {
       writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
@@ -35723,9 +35685,9 @@ function finishWritingSession() {
   } catch (e) {}
 
   if (bonusBox && writingRes) {
-    if (writingRes.completionMult > 1.0 || writingRes.deckLengthMult > 1.0 || writingRes.milestoneBonus > 0) {
+    if (writingRes.commitmentFactor < 1.0 || writingRes.volumeMultiplier > 1.0 || (writingRes.vipMultiplier && writingRes.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.completionMult}</strong> • Quy mô: <strong>x${writingRes.deckLengthMult}</strong>${writingRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${writingRes.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.commitmentFactor || writingRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${writingRes.volumeMultiplier || writingRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${writingRes.modeWeight || 3.5}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -35821,7 +35783,10 @@ function doExecuteExitWriting(done, total) {
     const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
     let res = null;
-    if (typeof calculateSessionFinalPointsV3 === 'function') {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      res = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, done, total);
+      finalPts = res.finalPts;
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       res = calculateSessionFinalPointsV3(writingSessionPointsEarned, done, total, isComp);
       finalPts = res.finalPts;
     } else if (typeof calculateSessionFinalPoints === 'function') {
@@ -35889,7 +35854,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-30 Build 331 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-31 Build 332 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -37572,12 +37537,14 @@ function finishClozeSession() {
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
   if (diffBadge) diffBadge.textContent = `🧩 Cấp độ: ${diffCfg.label} (x${diffCfg.diffMult})`;
 
-  // Balance v3 Bonus Breakdown & Energy Indicator
+  // Unified Balance v4 Bonus Breakdown & Energy Indicator
   const bonusBox = document.getElementById('cloze-res-bonus-box');
   let clozeRes = null;
   try {
     const total = clozePassagesList.length || 1;
-    if (typeof calculateSessionFinalPointsV3 === 'function') {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      clozeRes = calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, total, total);
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       clozeRes = calculateSessionFinalPointsV3(clozeSessionPointsEarned, total, total, true);
     } else if (typeof calculateSessionFinalPoints === 'function') {
       clozeRes = calculateSessionFinalPoints(clozeSessionPointsEarned, total, total, true);
@@ -37585,9 +37552,9 @@ function finishClozeSession() {
   } catch (e) {}
 
   if (bonusBox && clozeRes) {
-    if (clozeRes.completionMult > 1.0 || clozeRes.deckLengthMult > 1.0 || clozeRes.milestoneBonus > 0) {
+    if (clozeRes.commitmentFactor < 1.0 || clozeRes.volumeMultiplier > 1.0 || (clozeRes.vipMultiplier && clozeRes.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.completionMult}</strong> • Quy mô: <strong>x${clozeRes.deckLengthMult}</strong>${clozeRes.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${clozeRes.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.commitmentFactor || clozeRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${clozeRes.volumeMultiplier || clozeRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${clozeRes.modeWeight || 2.8}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -37653,12 +37620,14 @@ function doExecuteExitCloze(done, total) {
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeClozeResultModal();
 
-  // Early exit points settlement via Balance v3 (Extended Lab β)
+  // Early exit points settlement via Unified Balance v4
   if (!clozeIsCompleted && clozeSessionPointsEarned !== 0) {
     const isComp = done >= total && total > 0;
-    const res = (typeof calculateSessionFinalPointsV3 === 'function')
-      ? calculateSessionFinalPointsV3(clozeSessionPointsEarned, done, total, isComp)
-      : calculateSessionFinalPoints(clozeSessionPointsEarned, done, total, isComp);
+    const res = (typeof calculateUnifiedSessionPoints === 'function')
+      ? calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, done, total)
+      : (typeof calculateSessionFinalPointsV3 === 'function')
+        ? calculateSessionFinalPointsV3(clozeSessionPointsEarned, done, total, isComp)
+        : calculateSessionFinalPoints(clozeSessionPointsEarned, done, total, isComp);
     const finalPts = res.finalPts;
 
     if (finalPts !== 0 && typeof setUserPoints === 'function') {
@@ -37667,12 +37636,12 @@ function doExecuteExitCloze(done, total) {
       setUserPoints(Math.max(0, getUserPoints() + finalPts));
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} đoạn (+${res.milestoneBonus} Xu)` : '';
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_CLOZE', finalPts, `Điền từ Cloze Test "${deckTitle}" (${done}/${total} đoạn, x${res.combinedMult}${bonusText})`);
+        addLedgerEntry('STUDY_CLOZE', finalPts, `Điền từ Cloze Test "${deckTitle}" (${done}/${total} đoạn, x${res.combinedMult || 1.0}${bonusText})`);
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       if (typeof showToast === 'function') {
-        showToast(`🎉 Cloze Test: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
+        showToast(`🎉 Cloze Test: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
       }
     }
     clozeSessionPointsEarned = 0;
@@ -37727,7 +37696,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-30 Build 331 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -38981,7 +38950,9 @@ function finishDictationSession() {
   const isComp = done >= total && total > 0;
 
   let res = { finalPts: dictationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-  if (typeof calculateSessionFinalPointsV3 === 'function') {
+  if (typeof calculateUnifiedSessionPoints === 'function') {
+    res = calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total);
+  } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
     res = calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
@@ -38992,7 +38963,7 @@ function finishDictationSession() {
     if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('dictation');
@@ -39039,9 +39010,9 @@ function finishDictationSession() {
   // Bonus breakdown pill
   const bonusBox = document.getElementById('dictation-res-bonus-box');
   if (bonusBox) {
-    if (res.completionMult > 1.0 || res.deckLengthMult > 1.0 || res.milestoneBonus > 0) {
+    if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.completionMult}</strong> • Quy mô: <strong>x${res.deckLengthMult}</strong>${res.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${res.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 2.4}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -39144,12 +39115,14 @@ function doExecuteExitDictation(done, total) {
   if (typeof stopAllAudio === 'function') stopAllAudio();
   if (typeof closeModal === 'function') closeModal('modal-dictation-result');
 
-  // Early exit points settlement via Balance v3 (Extended Lab β)
+  // Early exit points settlement via Unified Balance v4
   if (!dictationIsCompleted && dictationSessionPointsEarned !== 0) {
     const isComp = done >= total && total > 0;
-    const res = (typeof calculateSessionFinalPointsV3 === 'function')
-      ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
-      : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
+    const res = (typeof calculateUnifiedSessionPoints === 'function')
+      ? calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total)
+      : (typeof calculateSessionFinalPointsV3 === 'function')
+        ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
+        : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
     const finalPts = res.finalPts;
 
     if (finalPts !== 0 && typeof setUserPoints === 'function') {
@@ -39158,12 +39131,12 @@ function doExecuteExitDictation(done, total) {
       setUserPoints(Math.max(0, getUserPoints() + finalPts));
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       if (typeof showToast === 'function') {
-        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
+        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
       }
     }
     dictationSessionPointsEarned = 0;
@@ -39191,7 +39164,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-30 Build 331 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-31 Build 332 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -40404,7 +40377,9 @@ function finishTranslationSession() {
   const isComp = done >= total && total > 0;
 
   let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-  if (typeof calculateSessionFinalPointsV3 === 'function') {
+  if (typeof calculateUnifiedSessionPoints === 'function') {
+    res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+  } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
     res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
@@ -40415,7 +40390,7 @@ function finishTranslationSession() {
     if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('translation');
@@ -40463,9 +40438,9 @@ function finishTranslationSession() {
   // Bonus breakdown pill
   const bonusBox = document.getElementById('translation-res-bonus-box');
   if (bonusBox) {
-    if (res.completionMult > 1.0 || res.deckLengthMult > 1.0 || res.milestoneBonus > 0) {
+    if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.completionMult}</strong> • Quy mô: <strong>x${res.deckLengthMult}</strong>${res.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${res.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 3.0}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -40555,7 +40530,9 @@ function exitTranslationMode(force = false) {
       const done = translationGradedIndices.size;
       const isComp = false;
       let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-      if (typeof calculateSessionFinalPointsV3 === 'function') {
+      if (typeof calculateUnifiedSessionPoints === 'function') {
+        res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+      } else if (typeof calculateSessionFinalPointsV3 === 'function') {
         res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
       } else if (typeof calculateSessionFinalPoints === 'function') {
         res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
@@ -40564,7 +40541,7 @@ function exitTranslationMode(force = false) {
       if (finalPts > 0) {
         if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
         if (typeof addLedgerEntry === 'function') {
-          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult})`);
+          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult || 1.0})`);
         }
         if (typeof saveDatabase === 'function') saveDatabase(true);
         if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
@@ -40586,8 +40563,12 @@ function exitTranslationMode(force = false) {
 
   if (done > 0 && done < total) {
     if (typeof promptStudyEarlyExit === 'function') {
-      promptStudyEarlyExit('translation', done, total, translationSessionPointsEarned, () => {
-        exitTranslationMode(true);
+      promptStudyEarlyExit({
+        mode: 'translation',
+        done,
+        total,
+        basePoints: translationSessionPointsEarned,
+        onConfirmExit: () => exitTranslationMode(true)
       });
       return;
     }
@@ -40598,11 +40579,8 @@ function exitTranslationMode(force = false) {
 window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
-
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.9-48)
-
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-31 Build 332)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
-
 // =========================================================================
 
         // =========================================================================
@@ -41782,10 +41760,17 @@ window.exitTranslationMode = exitTranslationMode;
       let finalDeckMult = 1.0;
       let spellingSettlementRes = null;
       try {
-        const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        let diffM = 1.0;
+        try {
+          const m = getSpellingMultipliers();
+          diffM = m?.diffMult || 1.0;
+        } catch (e) {}
+        const res = (typeof calculateUnifiedSessionPoints === 'function')
+          ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, totalWords, totalWords, diffM)
+          : calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
         spellingSettlementRes = res;
-        spellingPointsEarned = res.finalPts;
-        finalDeckMult = res.deckLengthMult || 1.0;
+        spellingPointsEarned = res.finalPoints ?? res.finalPts;
+        finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
         if (spellingPointsEarned !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
           const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
@@ -41992,8 +41977,15 @@ window.exitTranslationMode = exitTranslationMode;
       try {
         // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
         if (!spellingIsCompleted && spellingPointsEarned !== 0) {
-          const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
-          const finalPts = res.finalPts;
+          let diffM = 1.0;
+          try {
+            const m = getSpellingMultipliers();
+            diffM = m?.diffMult || 1.0;
+          } catch (e) {}
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, done, total, diffM)
+            : calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
@@ -42005,9 +41997,8 @@ window.exitTranslationMode = exitTranslationMode;
               showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
               addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`, newBalance);
             } else {
-              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
-              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`, newBalance);
+              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} Xu!`);
+              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult})`, newBalance);
             }
           }
           spellingPointsEarned = finalPts;
@@ -42599,7 +42590,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-14 Build 315)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-31 Build 332)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -43078,17 +43069,19 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
       try {
         if (speakingSessionPointsEarned !== 0) {
           const isComp = done >= total && total > 0;
-          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
-          const finalPts = res.finalPts;
+          const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, done, total, diffM)
+            : calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
             const newBalance = Math.max(0, getUserPoints() + finalPts);
             setUserPoints(newBalance);
-            const bonusText = res.milestoneBonus > 0 ? ' + Thưởng mốc ' + done + ' từ (+' + res.milestoneBonus + ' VoCoin)' : '';
-            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + bonusText + ')', newBalance);
-            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (x' + res.completionMult + ' hoàn thành, x' + res.deckLengthMult + ' quy mô' + bonusText + ')');
+            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + ')', newBalance);
+            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (Cam kết x' + (res.metrics?.commitmentMult ?? res.completionMult) + ', Quy mô x' + (res.metrics?.volumeMult ?? res.deckLengthMult) + ')');
           }
           speakingSessionPointsEarned = 0;
         }
@@ -43436,8 +43429,11 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
 
       if (bonusBoxEl) {
         try {
-          const res = calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Balance v2:</strong> Hệ số hoàn thành x' + res.completionMult + ' • Hệ số quy mô x' + res.deckLengthMult + (res.milestoneBonus > 0 ? ' • Thưởng mốc +' + res.milestoneBonus + ' VoCoin' : '');
+          const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, speakingCompletedWords, totalWords, diffM)
+            : calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (res.metrics?.modeWeight || 1.8) + ' • Quy mô x' + (res.metrics?.volumeMult || res.deckLengthMult) + (res.isVipBonus ? ' • VIP x1.25' : '');
           bonusBoxEl.style.display = 'block';
           if (typeof updateModalBrainEnergyIndicator === 'function') {
             updateModalBrainEnergyIndicator('spk-res-energy-box', res);
@@ -45202,12 +45198,16 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 
 // =========================================================================
-
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.9-48)
-
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-31 Build 332)
 // VoCoin wallet, Ledger, Flow streak calendar, Freeze protection & referral codes
-
 // =========================================================================
+
+    // =========================================================================
+    // UNIFIED BALANCE V4 MASTER EXPORT (v0.10.10-31 Build 332)
+    // =========================================================================
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      window.calculateUnifiedSessionPoints = calculateUnifiedSessionPoints;
+    }
 
     // =========================================================================
     // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-14 / Build 315)

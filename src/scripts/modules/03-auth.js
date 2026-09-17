@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-30 Build 331)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-31 Build 332)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -6525,9 +6525,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-30 / Build 331)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-31 / Build 332)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-31': {
+        postId: 'official_update_v0_10_10_31',
+        releaseTime: '2026-09-17T23:55:00.000Z',
+        title: '⚖️ Đột Phá Động Cơ Thưởng Thống Nhất Toàn Bộ 7 Chế Độ Học Unified Balance v4 (v0.10.10-31 Build 332)!',
+        summary: 'Thống nhất công thức tính thưởng VoCoin chuẩn toán học xuyên suốt 7 chế độ học tập (Quiz, Spelling, Speaking, Dictation, Cloze, Translation, Writing), tối ưu trọng số nhận thức, hệ số cam kết hoàn thành chống trục lợi và tích hợp năng lượng não bộ.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-31 (Build 332)!\n\n✨ Những điểm mới nổi bật:\n⚖️ Động Cơ Thưởng Thống Nhất Unified Balance v4: Chuẩn hóa 100% công thức tính thưởng VoCoin xuyên suốt toàn bộ 7 chế độ học tập (Quiz x1.0, Spelling x1.3, Speaking x1.8, Dictation x2.4, Cloze x2.8, Translation x3.0, Writing x3.5).\n🧠 Trọng Số Nhận Thức Phản Ánh Nỗ Lực Não Bộ: Định giá phần thưởng công bằng tương xứng với độ khó nhận thức và năng lượng trí tuệ của từng phương pháp học.\n📈 Hàm Quy Mô Khối Lượng Tự Nhiên Phi Tuyến (Volume Scaling): Thưởng thêm liên tục theo số lượng câu/từ hoàn thành mà không tạo bước nhảy gãy khúc.\n🔒 Hệ Số Cam Kết Hoàn Thành Bậc 2 Chống Trục Lợi (Commitment Factor): Tính toán chuẩn xác tỷ lệ hoàn thành buổi học (r = done/total), trả thưởng xứng đáng khi kết thúc trọn vẹn và ngăn chặn triệt để hành vi thoát sớm săn thưởng ảo.\n⚡ Đồng Bộ Toàn Diện & Trải Nghiệm Mượt Mà: Tích hợp bảng xem trước thưởng khi thoát sớm và đồng bộ năng lượng tiếp thu não bộ an toàn trên đám mây.\n\nChúc bạn có những giờ phút học tập hiệu quả và chinh phục kho tàng VoCoin xứng đáng cùng VocaFlow! 🚀⚖️`
+      },
       'v0.10.10-30': {
         postId: 'official_update_v0_10_10_30',
         releaseTime: '2026-09-17T23:30:00.000Z',

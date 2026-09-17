@@ -1,9 +1,6 @@
 // =========================================================================
-
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.9-48)
-
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-31 Build 332)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
-
 // =========================================================================
 
         // =========================================================================
@@ -1183,10 +1180,17 @@
       let finalDeckMult = 1.0;
       let spellingSettlementRes = null;
       try {
-        const res = calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
+        let diffM = 1.0;
+        try {
+          const m = getSpellingMultipliers();
+          diffM = m?.diffMult || 1.0;
+        } catch (e) {}
+        const res = (typeof calculateUnifiedSessionPoints === 'function')
+          ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, totalWords, totalWords, diffM)
+          : calculateSessionFinalPoints(spellingPointsEarned, totalWords, totalWords, true);
         spellingSettlementRes = res;
-        spellingPointsEarned = res.finalPts;
-        finalDeckMult = res.deckLengthMult || 1.0;
+        spellingPointsEarned = res.finalPoints ?? res.finalPts;
+        finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
         if (spellingPointsEarned !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
           const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
@@ -1393,8 +1397,15 @@
       try {
         // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
         if (!spellingIsCompleted && spellingPointsEarned !== 0) {
-          const res = calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
-          const finalPts = res.finalPts;
+          let diffM = 1.0;
+          try {
+            const m = getSpellingMultipliers();
+            diffM = m?.diffMult || 1.0;
+          } catch (e) {}
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, done, total, diffM)
+            : calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
@@ -1406,9 +1417,8 @@
               showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
               addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`, newBalance);
             } else {
-              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} từ (+${res.milestoneBonus} Xu)` : '';
-              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Hoàn thành x${res.completionMult}, Độ dài x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} Xu!`);
-              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult}${bonusText})`, newBalance);
+              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} Xu!`);
+              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult})`, newBalance);
             }
           }
           spellingPointsEarned = finalPts;

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-30 Build 331 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1253,7 +1253,9 @@ function finishDictationSession() {
   const isComp = done >= total && total > 0;
 
   let res = { finalPts: dictationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
-  if (typeof calculateSessionFinalPointsV3 === 'function') {
+  if (typeof calculateUnifiedSessionPoints === 'function') {
+    res = calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total);
+  } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
     res = calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
@@ -1264,7 +1266,7 @@ function finishDictationSession() {
     if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('dictation');
@@ -1311,9 +1313,9 @@ function finishDictationSession() {
   // Bonus breakdown pill
   const bonusBox = document.getElementById('dictation-res-bonus-box');
   if (bonusBox) {
-    if (res.completionMult > 1.0 || res.deckLengthMult > 1.0 || res.milestoneBonus > 0) {
+    if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.completionMult}</strong> • Quy mô: <strong>x${res.deckLengthMult}</strong>${res.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${res.milestoneBonus} Xu</strong>` : ''}`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 2.4}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1416,12 +1418,14 @@ function doExecuteExitDictation(done, total) {
   if (typeof stopAllAudio === 'function') stopAllAudio();
   if (typeof closeModal === 'function') closeModal('modal-dictation-result');
 
-  // Early exit points settlement via Balance v3 (Extended Lab β)
+  // Early exit points settlement via Unified Balance v4
   if (!dictationIsCompleted && dictationSessionPointsEarned !== 0) {
     const isComp = done >= total && total > 0;
-    const res = (typeof calculateSessionFinalPointsV3 === 'function')
-      ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
-      : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
+    const res = (typeof calculateUnifiedSessionPoints === 'function')
+      ? calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total)
+      : (typeof calculateSessionFinalPointsV3 === 'function')
+        ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
+        : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
     const finalPts = res.finalPts;
 
     if (finalPts !== 0 && typeof setUserPoints === 'function') {
@@ -1430,12 +1434,12 @@ function doExecuteExitDictation(done, total) {
       setUserPoints(Math.max(0, getUserPoints() + finalPts));
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       if (typeof showToast === 'function') {
-        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu (x${res.completionMult} hoàn thành, x${res.deckLengthMult} quy mô${bonusText})`);
+        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
       }
     }
     dictationSessionPointsEarned = 0;

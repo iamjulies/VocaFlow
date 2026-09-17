@@ -1,9 +1,6 @@
 // =========================================================================
-
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.9-48)
-
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-31 Build 332)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
-
 // =========================================================================
 
     // =========================================================================
@@ -1891,10 +1888,12 @@ Yêu cầu nghiêm ngặt:
       let finalDeckMult = 1.0;
       let quizSettlementRes = null;
       try {
-        const res = calculateSessionFinalPoints(quizPointsEarned, total, total, true);
+        const res = (typeof calculateUnifiedSessionPoints === 'function')
+          ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, total, total, 1.0)
+          : calculateSessionFinalPoints(quizPointsEarned, total, total, true);
         quizSettlementRes = res;
-        quizPointsEarned = res.finalPts;
-        finalDeckMult = res.deckLengthMult || 1.0;
+        quizPointsEarned = res.finalPoints ?? res.finalPts;
+        finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
         if (quizPointsEarned !== 0) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
           const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
@@ -2127,10 +2126,12 @@ Yêu cầu nghiêm ngặt:
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
       try {
-        // Progressive incomplete session leniency / penalty (v0.10.9-alpha-23 - Balance v2)
+        // Unified Balance v4 incomplete session settlement (v0.10.10-31 Build 332)
         if (!quizIsCompleted && quizPointsEarned !== 0) {
-          const res = calculateSessionFinalPoints(quizPointsEarned, done, total, false);
-          const finalPts = res.finalPts;
+          const res = (typeof calculateUnifiedSessionPoints === 'function')
+            ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, done, total, 1.0)
+            : calculateSessionFinalPoints(quizPointsEarned, done, total, false);
+          const finalPts = res.finalPoints ?? res.finalPts;
 
           if (finalPts !== 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
@@ -2142,9 +2143,8 @@ Yêu cầu nghiêm ngặt:
               showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
               addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`, newBalance);
             } else {
-              const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} VoCoin)` : '';
-              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Hoàn thành x${res.completionMult}, Quy mô x${res.deckLengthMult}${bonusText}): Nhận +${finalPts} VoCoin!`);
-              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult}${bonusText})`, newBalance);
+              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} VoCoin!`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult})`, newBalance);
             }
           }
           quizPointsEarned = finalPts;

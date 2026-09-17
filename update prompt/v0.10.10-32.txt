@@ -1,0 +1,3 @@
+v0.10.10-32
+- Vấn đề 1: Chưa tích hợp các GIF mèo méo meo vào cho 4 chế độ học mở rộng mới.
+- Vấn đề 2: Chưa tích hợp các âm thanh đúng/sai/bỏ quả vào cho 4 chế độ học mở rộng mới.

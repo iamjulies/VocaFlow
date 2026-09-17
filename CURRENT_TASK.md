@@ -1,46 +1,52 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-30 (Build 331)`  
+> **Phiên bản mục tiêu:** `v0.10.10-31 (Build 332)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-30 Build 331)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-31 Build 332)
 
-- [x] **Động Cơ Soft-Cap Logarit Trơn Điều Tiết Năng Lượng Não Bộ & Lạm Phát VoCoin (`02-state-core.js`, `03-auth.js`)**:
-  - Triển khai công thức Soft-Cap logarit tự nhiên trơn tru:
-    $$\eta(E_{\text{today}}) = \frac{1}{1 + \ln\left(1 + \frac{E_{\text{today}}}{K}\right)}$$
-  - Hằng số bão hòa $K$: Free/Standard User = 350, VocaVIP User = 700.
-  - Hàm tiện ích: `getTodayEarnedCoins()`, `recordTodayEarnedCoins(amount)`, `getDailyFatigueEfficiency()`.
-  - Tích hợp vào `calculateSessionFinalPoints` và `calculateSessionFinalPointsV3` để điều tiết thưởng học tập (`finalPts = Math.max(1, Math.round(rawFinalPts * energyEfficiency))`).
-  - Ghi nhận lịch sử học tập vào storage key `vocaflow_daily_study_coins_{YYYY-MM-DD}_{uid}` theo múi giờ GMT+7, tự động reset vào 00:00 hàng ngày.
-  - Tự động tích lũy trong `addLedgerEntry` khi type là `STUDY_*` và `amount > 0`.
+- [x] **Hợp Nhất Động Cơ Thưởng Toàn Bộ 7 Chế Độ Học Unified Balance v4 (`02-state-core.js`, `08-wallet-economy.js`)**:
+  - Triển khai công thức toán học hợp nhất:
+    $$\text{FinalVoCoin} = \left\lfloor \left( \sum_{i=1}^{N_{\text{done}}} \text{Base}_i \times W_{\text{mode}} \times M_{\text{diff}} \right) \times \Phi(N_{\text{done}}) \times \Psi\left(\frac{N_{\text{done}}}{N_{\text{total}}}\right) \times M_{\text{VIP}} \times \eta(E_{\text{today}}) \right\rfloor$$
+  - Bảng trọng số nhận thức chuẩn hóa ($W_{\text{mode}}$):
+    + `autofc`: 0.0 (Ôn tập thụ động, không thưởng VoCoin)
+    + `quiz`: 1.0 (Trắc nghiệm nhận diện: Base = 3 VoCoin/câu)
+    + `spelling`: 1.3 (Gõ chính tả từ vựng: Base = 4 VoCoin/từ)
+    + `speaking`: 1.8 (Luyện phát âm AI âm vị: Base = syllableCount * 3 VoCoin/từ)
+    + `dictation`: 2.4 (Nghe gõ câu hoàn chỉnh: Base = 10 VoCoin/câu)
+    + `cloze`: 2.8 (Đọc hiểu điền đoạn văn: Base = 4 VoCoin/ô khuyết)
+    + `translation`: 3.0 (Dịch thuật song phương: Base = 12 VoCoin/câu)
+    + `writing`: 3.5 (Tự do sáng tạo viết câu: Base = 15 VoCoin/câu đoạn)
+  - Hàm quy mô khối lượng tự nhiên phi tuyến: $\Phi(N_{\text{done}}) = 1.0 + 0.3 \times \frac{N_{\text{done}}}{N_{\text{done}} + 15}$
+  - Hệ số cam kết hoàn thành bậc 2 chống trục lợi: $\Psi(r) = 0.2 + 0.8 \times r^2$ với $r = \frac{N_{\text{done}}}{N_{\text{total}}}$
+  - Kết nối và tái định tuyến hàm `calculateSessionFinalPoints` và `calculateSessionFinalPointsV3` tương thích ngược 100%.
 
-- [x] **Đồng Bộ Giao Diện Huy Hiệu Năng Lượng Tiếp Thu Não Bộ Trên 7 Chế Độ Học**:
-  - Thuật ngữ tích cực & thân thiện: **"⚡ Năng Lượng Tiếp Thu Não Bộ (Brain Focus Energy)"**, tuyệt đối không dùng từ "Thuế" hay "Phạt".
-  - Hiển thị thông báo năng lượng khi $\eta < 0.95$ (ví dụ: `⚡ Năng lượng tập trung: 72% (+X VoCoin)`).
-  - Tích hợp `updateModalBrainEnergyIndicator` trên 7 Modal kết quả:
-    + Trắc Nghiệm (`modal-quiz-result.html`, `05-quiz-engine.js`)
-    + Chính Tả (`modal-spelling-result.html`, `06-spelling-engine.js`)
-    + Luyện Nói AI (`modal-speaking-result.html`, `07-speaking-engine.js`)
-    + Viết Câu AI (`modal-writing-result.html`, `06c-writing-engine.js`)
-    + Điền Từ Cloze (`modal-cloze-result.html`, `06d-cloze-engine.js`)
-    + Nghe Gõ Câu Dictation (`modal-dictation-result.html`, `06e-dictation-engine.js`)
-    + Dịch Thuật Song Phương (`modal-translation-result.html`, `06f-translation-engine.js`)
+- [x] **Đồng Bộ Khắp 7 Study Engines & Modal Cảnh Báo Thoát Sớm**:
+  - Cập nhật 7 study engines:
+    + Quiz (`05-quiz-engine.js`)
+    + Spelling (`06-spelling-engine.js`)
+    + Speaking (`07-speaking-engine.js`)
+    + Writing (`06c-writing-engine.js`)
+    + Cloze (`06d-cloze-engine.js`)
+    + Dictation (`06e-dictation-engine.js`)
+    + Translation (`06f-translation-engine.js`)
+  - Cập nhật `modal-study-exit-confirm.html` và `promptStudyEarlyExit` hiển thị đầy đủ bảng phân tích 4 thông số Unified Balance v4 (Trọng số $W_{\text{mode}}$, Hệ số hoàn thành $\Psi(r)$, Khối lượng $\Phi(N_{\text{done}})$, Năng lượng não bộ $\eta$).
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-30 Build 331`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-30 (Build 331)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-30 (Build 331)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-30 (Build 331)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-30 Build 331`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-30'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-30 (Build 331)'`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-30 Build 331`)
-  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-30 Build 331`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-30`)
-  - `pubspec.yaml` (`version: 0.10.10+331`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-30`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-30 (Build 331)`)
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-31 Build 332`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-31 (Build 332)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-31 (Build 332)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-31 (Build 332)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-31 Build 332`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-31'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-31 (Build 332)'`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-31 Build 332` & registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-31 Build 332`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-31`)
+  - `pubspec.yaml` (`version: 0.10.10+332`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-31`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-31 (Build 332)`)
   - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
 
 ---
