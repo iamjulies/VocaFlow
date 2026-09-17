@@ -1,0 +1,91 @@
+<!-- ========================================================================= -->
+<!-- MODAL: TRANSLATION RESULT CELEBRATION (v0.10.10-25 VIP β - 5-TILE DASHBOARD) -->
+<!-- ========================================================================= -->
+<div class="modal-overlay" id="modal-translation-result">
+  <div class="modal" style="max-width: 580px; text-align: center;">
+    
+    <!-- TROPHY HEADER -->
+    <div style="font-size: 50px; margin-bottom: 6px; animation: bounce 1s infinite alternate;">🏆</div>
+    <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: 800; color: var(--text);">
+      Xuất Sắc! Hoàn Thành Bài Luyện Dịch!
+    </h2>
+    <div id="translation-res-deck-title" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+      Bộ từ vựng VocaFlow
+    </div>
+
+    <!-- DIFFICULTY & DIRECTION BADGE -->
+    <div style="margin-bottom: 18px;">
+      <span class="badge" id="translation-res-difficulty-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 20px;">
+        🌐 Chiều: 🇬🇧 ➔ 🇻🇳 • 🟢 Cấp độ: Dễ (x1.2)
+      </span>
+    </div>
+
+    <!-- 5-TILE STATS CELEBRATION DASHBOARD -->
+    <div class="cloze-res-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+      
+      <!-- TILE 1: TỈ LỆ ĐẠT SÀN -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">🎯 Tỉ lệ đạt sàn</div>
+        <div id="translation-res-floor-ratio" style="font-size: 18px; font-weight: 800; color: #10b981;">0/0 (0%)</div>
+      </div>
+
+      <!-- TILE 2: VOCOIN NHẬN ĐƯỢC -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">💰 VoCoin nhận được</div>
+        <div id="translation-res-points" style="font-size: 18px; font-weight: 800; color: #fbbf24;">+0 Xu</div>
+      </div>
+
+      <!-- TILE 3: ĐIỂM DỊCH THUẬT TB -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">⚡ Điểm dịch TB</div>
+        <div id="translation-res-avg-score" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0 / 100</div>
+      </div>
+
+      <!-- TILE 4: TRỢ GIÚP ĐÃ DÙNG (SPAN 2 COLS ON MOBILE IF NEEDED) -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border); grid-column: span 1;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">💡 Trợ giúp đã dùng</div>
+        <div id="translation-res-hints-skips" style="font-size: 13.5px; font-weight: 700; color: #c084fc; margin-top: 4px;">0 gợi ý • 0 skip</div>
+      </div>
+
+      <!-- TILE 5: TỔNG THỜI GIAN -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border); grid-column: span 2;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">⏱️ Tổng thời gian luyện tập</div>
+        <div id="translation-res-duration" style="font-size: 16px; font-weight: 800; color: var(--text);">00:00</div>
+      </div>
+
+    </div>
+
+    <!-- BALANCE V3 BONUS BREAKDOWN PILL -->
+    <div id="translation-res-bonus-box" style="display: none; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #cbd5e1; margin-bottom: 16px;">
+      <!-- Populated via JS -->
+    </div>
+
+    <!-- UNPASSED / WRONG WORDS RETRY BANNER -->
+    <div id="translation-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 16px;">❌</span>
+          <strong style="color: #f87171; font-size: 13px;" id="translation-res-wrong-count">0 từ chưa đạt chuẩn điểm sàn</strong>
+        </div>
+        <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 10.5px;">Đã lưu vào Sổ Từ Sai</span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.5;">
+        Luyện dịch lại ngay những câu chứa từ vựng chưa đạt điểm sàn để nắm chắc cấu trúc câu và sắc thái ngữ nghĩa!
+      </p>
+      <button class="btn btn-sm" id="translation-btn-retry-wrong" onclick="retryTranslationWrongWordsOnly()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; font-weight: 700; width: 100%; border-radius: 8px; padding: 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+        🔄 Luyện Lại Riêng Các Câu Chưa Đạt Chuẩn
+      </button>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button class="btn btn-outline" id="translation-btn-finish-study" onclick="closeTranslationResultModal(); exitTranslationMode();" style="flex: 1; padding: 10px; font-weight: 700;">
+        🚪 Về VocaDeck
+      </button>
+      <button class="btn btn-primary" onclick="closeTranslationResultModal(); restartCurrentTranslationSession();" style="flex: 1.2; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 10px; font-weight: 700; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+        🔄 Luyện Lại Toàn Bộ
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-24 / Build 325)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-25 / Build 326)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-25': {
+        postId: 'official_update_v0_10_10_25',
+        releaseTime: '2026-09-17T17:00:00.000Z',
+        title: '🌐 Ra Mắt Chế Độ Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β) (v0.10.10-25 Build 326)!',
+        summary: 'Chế độ Luyện Dịch Song Phương Anh - Việt và Việt - Anh (VIP β) với AI Gemini Flash chấm bài nghiêm khắc, 3 cấp độ thử thách, gợi ý VocaHint 3 tầng POS-aware, đồng bộ Sổ Tay Lỗi Sai và Dashboard tổng kết 5 ô chỉ số.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-25 (Build 326)!\n\n✨ Những điểm mới nổi bật:\n🌐 Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β): Chế độ học mở rộng thứ 4 độc quyền dành riêng cho VIP User, hỗ trợ 2 hướng dịch Anh ➔ Việt (Đọc hiểu ngữ cảnh và dịch mượt mà sang tiếng Việt) và Việt ➔ Anh (Chuyển ngữ chính xác ngữ pháp, từ vựng và thì sang tiếng Anh).\n🎯 3 Cấp Độ Thử Thách & Điểm Sàn Chuẩn Mực: Dễ (🟢 ≤10 từ, sàn 70đ, hệ số x1.2), Trung Bình (🟡 10-18 từ, sàn 80đ, hệ số x1.8), Khó (🔴 >18 từ câu phức học thuật, sàn 90đ, hệ số x2.4).\n🧠 AI Chấm Bài Nghiêm Khắc & Phân Tích Chuyên Sâu: Gemini Flash đánh giá chi tiết với 3 thẻ nhận xét (Điểm số & Tổng quan, Phân tích lỗi & Sắc thái ngữ nghĩa, Bản dịch đề xuất nâng cấp & Mẹo dịch), trừ điểm nghiêm khắc khi sai ngữ pháp, thì, mạo từ hoặc dịch thô.\n💡 VocaHint 3 Tầng & POS-Aware Clues: Tầng 1 (Cấu trúc câu & thì ngữ pháp), Tầng 2 (Từ khóa trọng tâm theo loại từ POS), Tầng 3 (Khung dịch / Gợi ý mở đầu).\n🏆 Dashboard Mừng Công 5 Ô Chỉ Số: Tỉ lệ đạt sàn, VoCoin nhận được, Điểm dịch TB, Trợ giúp đã dùng, Tổng thời gian kèm nút Luyện Lại Từ Chưa Đạt Sàn.\n📕 Đồng Bộ Sổ Tay Lỗi Sai: Tự động ghi nhận từ vựng chưa đạt điểm sàn vào Sổ Tay Lỗi Sai để rèn luyện lại sau phiên học.\n\nChúc bạn có những giờ phút nâng cao trình độ dịch thuật đỉnh cao cùng VocaFlow! 🚀🌐`
+      },
       'v0.10.10-24': {
         postId: 'official_update_v0_10_10_24',
         releaseTime: '2026-09-17T16:00:00.000Z',

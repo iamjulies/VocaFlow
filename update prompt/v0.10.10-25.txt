@@ -1,0 +1,27 @@
+v0.10.10-25
+[ĐỌC KĨ PHẦN SAU]
+=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
+[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
+2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading (đã hoàn thành)
+3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (đã hoàn thành)
+4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng
+Cơ chế:  chọn từ bất kì trong số các từ được chọn -> AI tạo câu văn ngắn/trung/dài từ đó ->user dịch sang ngôn ngữ khác -> gửi cho AI chấm, nhận xét và đề xuất nâng cấp
+Gồm 2 chế độ con:
+- English -> Vietnamese: tức là dịch câu từ tiếng anh sang tiếng việt
+- Vietnamese -> English; thì ngược lại
+Gồm 3 cấp độ:
+- Dễ: dịch câu ngắn, điểm sàn 70
+- Trung bình: dịch câu trung bình, điểm sàn 80
+- Khó: dịch câu dài, điểm sàn 90
+AI chấm bài phải liêm khiết, chấm thẳng tay và kh nhân nhượng nhất là với những lỗi cơ bản
+Đồng bộ số VocaHint và VocaSkip theo đúng số lượng thực.
+Khi nhấn tắt màn hình kết thúc thì tiếng pháo hoa cũng phải tắt phụt theo.
+Các câu làm sai sẽ khiến "từ mẹ" bị cho vào bộ từ sai để ôn luyện thêm.
+xu, điểm rèn luyện và thời gian học chế độ này cũng được tính vào biểu đồ 7 ngày
+Có nút truy cập ở cả deck và queue
+Chế độ "Dịch thuật" chỉ dành cho vip user -> Khóa đối với guest và user thường
+Thêm  màn hình cảnh báo thoát giữa chừng như mấy chế độ khác
+màn hình tổng kết phải đúng giống như mấy chế độ khác
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+

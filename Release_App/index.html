@@ -5481,8 +5481,8 @@
               <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-dictation" onclick="openDictationSetupModal(true)" id="btn-study-dictation-selected" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
                 <span>👑</span> <span>Nghe Gõ (VIP β)</span><span id="dictation-count-label"></span>
               </button>
-              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-translation study-mode-btn-disabled" id="btn-study-translation-selected" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" title="Dịch thuật song phương (Sắp ra mắt)">
-                <span>🌐</span> <span>Dịch Thuật (β)</span>
+              <button class="btn btn-primary btn-sm btn-extended-mode btn-extended-translation" onclick="openTranslationSetupModal(true)" id="btn-study-translation-selected" title="Luyện dịch thuật song phương Anh - Việt & AI chấm điểm (Translation Lab VIP β)">
+                <span>👑</span> <span>Dịch Thuật (VIP β)</span><span id="translation-count-label"></span>
               </button>
             </div>
           </div>
@@ -6543,6 +6543,189 @@
       </div>
     </section>
 
+    <!-- ================================================================= -->
+    <!-- SCREEN: BIDIRECTIONAL TRANSLATION LAB (v0.10.10-25 VIP β)           -->
+    <!-- ================================================================= -->
+    <section id="screen-translation" class="screen" style="max-width: 840px; margin: 0 auto; padding-bottom: 40px;">
+      <!-- TOP NAVIGATION & STATUS BAR -->
+      <div class="deck-detail-nav" style="margin-bottom: 16px;">
+        <div class="deck-detail-left">
+          <button class="btn btn-outline btn-icon btn-sm" onclick="exitTranslationMode()" title="Quay lại danh sách từ">
+            <svg class="icon icon-sm"><use href="#i-arrow-back"/></svg>
+          </button>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h1 class="screen-title" style="font-size: 18px; margin: 0;">🌐 Dịch Thuật Song Phương (VIP β)</h1>
+              <span class="badge" id="translation-direction-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 700; font-size: 11px;">
+                🇬🇧 ➔ 🇻🇳 Anh - Việt
+              </span>
+              <span class="badge" id="translation-difficulty-badge" style="background: rgba(14, 165, 233, 0.18); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.35); font-weight: 700; font-size: 11px;">
+                🟢 Dễ (x1.2)
+              </span>
+            </div>
+            <span id="translation-deck-title" style="font-size: 12px; color: var(--text-muted);">Bộ từ đang luyện</span>
+          </div>
+        </div>
+
+        <div class="deck-detail-right" style="display: flex; align-items: center; gap: 8px;">
+          <span id="translation-counter" class="badge" style="background: var(--surface-elevated); border: 1px solid var(--border); font-size: 12px; padding: 4px 10px; font-weight: 700; color: var(--text);">
+            Câu 1 / 10
+          </span>
+          <span id="translation-score-badge" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 12px; padding: 4px 10px; font-weight: 700;">
+            Bài: +0đ
+          </span>
+        </div>
+      </div>
+
+      <!-- MAIN TRANSLATION CARD -->
+      <div class="card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 16px;">
+        
+        <!-- SOURCE SENTENCE & TARGET WORD PROMPT BOX -->
+        <div style="background: var(--surface-elevated); border-radius: 14px; border: 1px solid var(--border); padding: 18px; margin-bottom: 18px; position: relative;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="translation-prompt-lang-label" style="font-size: 11.5px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">
+                📝 CÂU NGUỒN CẦN DỊCH:
+              </span>
+            </div>
+
+            <!-- Speech Audio Button for English Sentence -->
+            <button id="btn-translation-speak-source" class="btn btn-outline btn-sm" onclick="speakTranslationSourceSentence()" style="padding: 3px 10px; height: 28px; font-size: 12px; border-color: rgba(16, 185, 129, 0.4); color: #34d399; background: rgba(16, 185, 129, 0.08); display: flex; align-items: center; gap: 5px;" title="Nghe phát âm câu tiếng Anh">
+              <span style="font-size: 14px;">🔊</span> <span>Nghe Câu</span>
+            </button>
+          </div>
+
+          <!-- Source Sentence Text -->
+          <div id="translation-source-text" style="font-size: 17px; font-weight: 600; line-height: 1.6; color: var(--text); margin-bottom: 12px; word-break: break-word;">
+            <!-- Rendered via JS -->
+          </div>
+
+          <!-- Target Word Highlight Clue -->
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 10px; border-top: 1px dashed var(--border);">
+            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">🎯 Từ vựng trọng tâm:</span>
+            <div id="translation-target-chips" style="display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <strong id="translation-word-term" style="color: #38bdf8; font-size: 13px;">...</strong>
+              <span id="translation-word-pos" class="badge" style="font-size: 10.5px; background: rgba(56, 189, 248, 0.15); color: #38bdf8;">noun</span>
+              <span id="translation-word-meaning" style="font-size: 12px; color: var(--text-muted); font-style: italic;">...</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PROGRESSIVE VOCAHINT BOX -->
+        <div id="translation-hint-box" style="display: none; margin-bottom: 16px; padding: 12px 16px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #fbbf24; font-size: 12.5px; margin-bottom: 4px;">
+            <span>💡 Gợi ý VocaHint:</span>
+          </div>
+          <div id="translation-hint-content" style="font-size: 13px; color: var(--text); line-height: 1.6;"></div>
+        </div>
+
+        <!-- USER TRANSLATION INPUT AREA -->
+        <div style="margin-bottom: 16px;">
+          <label for="translation-input-text" id="translation-input-label" style="display: block; font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+            ✍️ Nhập bản dịch tiếng Việt của bạn:
+          </label>
+          <textarea id="translation-input-text" rows="3" class="form-textarea" placeholder="Nhập bản dịch chuẩn xác, tự nhiên và đúng ngữ cảnh..." style="width: 100%; font-size: 15px; line-height: 1.6; border-radius: 12px; padding: 12px 14px; border: 2px solid var(--border); background: var(--surface-elevated); color: var(--text); resize: vertical; box-sizing: border-box;"></textarea>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 11px; color: var(--text-muted);">
+            <span>Mẹo: Nhấn <code>Ctrl + Enter</code> để nộp bản dịch nhanh</span>
+            <span id="translation-char-counter">0 ký tự • 0 từ</span>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS: HINT, SKIP, SUBMIT -->
+        <div id="translation-actions-row" style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-outline btn-sm" id="btn-translation-hint" onclick="useTranslationHint()" style="color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); font-weight: 600; font-size: 12px;" title="Dùng 1 VocaHint để mở gợi ý dịch">
+              <span>💡 Gợi ý</span> <span id="translation-hint-count-badge">(5)</span>
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-translation-skip" onclick="skipTranslationQuestion()" style="color: #94a3b8; border-color: var(--border); font-size: 12px;" title="Dùng 1 VocaSkip để bỏ qua câu này">
+              <span>⏭️ Bỏ qua</span> <span id="translation-skip-count-badge">(3)</span>
+            </button>
+          </div>
+
+          <button class="btn btn-primary" id="btn-translation-submit" onclick="submitTranslationEvaluation()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 8px 22px; font-size: 13.5px; border-radius: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+            🚀 Chấm Điểm AI
+          </button>
+        </div>
+
+        <!-- AI LOADING SPINNER (Visible while AI evaluates) -->
+        <div id="translation-ai-loading" style="display: none; text-align: center; padding: 25px 10px; margin-top: 16px; background: var(--surface-elevated); border-radius: 12px; border: 1px solid var(--border);">
+          <div class="ai-spinner-container" style="margin: 0 auto 10px auto;">
+            <div class="ai-spinner-outer-ring" style="border-top-color: #10b981; border-right-color: #059669;"></div>
+            <div class="ai-spinner-inner-ring" style="border-top-color: #34d399; border-left-color: #10b981;"></div>
+            <div class="ai-spinner-center-icon">🌐</div>
+          </div>
+          <h4 style="margin: 0 0 4px 0; color: var(--text); font-size: 14.5px; font-weight: 700;">
+            Gemini AI đang chấm bản dịch & phân tích sắc thái<span class="ai-loading-dots"><span>.</span><span>.</span><span>.</span></span>
+          </h4>
+          <p style="font-size: 12px; margin: 0; color: var(--text-muted);">
+            Đánh giá tính chính xác ngữ nghĩa, cấu trúc ngữ pháp và độ tự nhiên chuẩn bản xứ
+          </p>
+        </div>
+
+        <!-- EVALUATION & RESULT PANEL (Appears after submission) -->
+        <div id="translation-result-panel" style="display: none; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border);">
+          
+          <!-- Floor Score Banner -->
+          <div id="translation-verdict-banner" style="padding: 12px 16px; border-radius: 12px; margin-bottom: 14px; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div id="translation-verdict-text">✅ Đạt chuẩn sàn 70đ! (+15 Xu)</div>
+            <div id="translation-score-display" class="badge" style="font-size: 13px; font-weight: 800;">100 / 100đ</div>
+          </div>
+
+          <!-- 3 DIAGNOSTIC FEEDBACK CARDS (Grammar, Nuance, Suggestions) -->
+          <div id="translation-feedback-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+            
+            <!-- Card 1: Tổng quan & Điểm số -->
+            <div class="cloze-explanation-card cloze-card-grammar" id="translation-card-overview" style="margin: 0;">
+              <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #38bdf8; font-size: 12.5px; margin-bottom: 4px;">
+                <span>🎯</span> <span>Đánh Giá Ngữ Nghĩa & Tổng Quan:</span>
+              </div>
+              <div id="translation-feedback-verdict" style="font-size: 13px; color: var(--text); line-height: 1.5;"></div>
+            </div>
+
+            <!-- Card 2: Phân tích lỗi sai & Ngữ pháp -->
+            <div class="cloze-explanation-card cloze-card-colloc" id="translation-card-grammar" style="margin: 0;">
+              <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #f59e0b; font-size: 12.5px; margin-bottom: 4px;">
+                <span>🔍</span> <span>Phân Tích Chi Tiết Lỗi Sai & Sắc Thái:</span>
+              </div>
+              <div id="translation-feedback-grammar" style="font-size: 13px; color: var(--text); line-height: 1.5;"></div>
+            </div>
+
+            <!-- Card 3: Bản dịch đề xuất nâng cấp & Mẹo -->
+            <div class="cloze-explanation-card cloze-card-context" id="translation-card-suggestion" style="margin: 0;">
+              <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #34d399; font-size: 12.5px; margin-bottom: 4px;">
+                <span>✨</span> <span>Bản Dịch Đề Xuất Nâng Cấp (Polished Rewrite):</span>
+              </div>
+              <div id="translation-feedback-suggestion" style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.6; margin-bottom: 4px;"></div>
+              <div id="translation-feedback-tip" style="font-size: 12px; color: var(--text-muted); line-height: 1.5;"></div>
+            </div>
+
+          </div>
+
+          <!-- Reference Benchmark Translation Box -->
+          <div style="background: var(--surface-elevated); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8;">📖 Bản dịch tham khảo chuẩn:</span>
+              <button id="btn-translation-speak-ref" class="btn btn-outline btn-icon btn-sm" onclick="speakTranslationRefSentence()" title="Nghe phát âm" style="padding: 2px 6px; height: 26px; display: none;">
+                <svg class="icon icon-sm"><use href="#i-volume"/></svg>
+              </button>
+            </div>
+            <div id="translation-reference-text" style="font-size: 14.5px; font-weight: 600; color: var(--text); line-height: 1.6;"></div>
+          </div>
+
+          <!-- Next Button -->
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="btn btn-primary" id="btn-translation-next" onclick="nextTranslationQuestion()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; padding: 10px 24px; font-size: 14px; border-radius: 10px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+              <span>Câu Tiếp Theo</span> <span>➡️</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
     <section id="screen-autofc" class="screen">
       <div class="top-nav">
         <button class="btn btn-outline btn-icon" onclick="exitAutoFlashcard()" title="Thoát">
@@ -7547,6 +7730,208 @@
       </div>
     </div>
   </div>
+
+<!-- MODAL: TRANSLATION SETUP (v0.10.10-25 VIP β) -->
+<div class="modal-overlay" id="modal-translation-setup">
+  <div class="modal" style="max-width: 560px;">
+    <div class="modal-title">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 22px;">🌐</span>
+        <div>
+          <strong style="font-size: 16px;">Thiết Lập Dịch Thuật Song Phương (VIP β)</strong>
+          <div id="translation-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Luyện tập dịch thuật 2 chiều Anh - Việt và nhận xét chuyên sâu từ Gemini AI</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-icon" onclick="closeModal('modal-translation-setup')"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+
+    <!-- 1. CHỌN CHIỀU DỊCH THUẬT -->
+    <div style="margin-bottom: 16px;">
+      <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">1. Chọn Chiều Dịch Thuật:</label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="translation-direction-cards-container">
+        <!-- ANH -> VIỆT -->
+        <div class="translation-dir-card" id="translation-dir-card-en_to_vi" onclick="selectTranslationSetupDirection('en_to_vi')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 18px;">🇬🇧 ➔ 🇻🇳</span>
+            <strong style="font-size: 13px; color: #34d399;">Anh ➔ Việt</strong>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4;">Đọc hiểu câu tiếng Anh và diễn đạt sang tiếng Việt tự nhiên, thoát ý.</p>
+        </div>
+
+        <!-- VIỆT -> ANH -->
+        <div class="translation-dir-card" id="translation-dir-card-vi_to_en" onclick="selectTranslationSetupDirection('vi_to_en')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 18px;">🇻🇳 ➔ 🇬🇧</span>
+            <strong style="font-size: 13px; color: #38bdf8;">Việt ➔ Anh</strong>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4;">Đọc câu tiếng Việt và dịch sang câu tiếng Anh chuẩn ngữ pháp, tự nhiên.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. CHỌN CẤP ĐỘ THỬ THÁCH -->
+    <div style="margin-bottom: 16px;">
+      <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">2. Chọn Cấp Độ Thử Thách & Độ Dài Câu:</label>
+      <div style="display: flex; flex-direction: column; gap: 8px;" id="translation-difficulty-cards-container">
+        <!-- DỄ -->
+        <div class="translation-diff-card" id="translation-diff-card-easy" onclick="selectTranslationSetupDifficulty('easy')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🟢</span>
+              <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
+              <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px; font-weight: 700;">x1.2</span>
+            </div>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu ngắn &le; 10 từ. Cấu trúc câu đơn giản, rõ ý. Điểm sàn 70đ.</p>
+        </div>
+        <!-- TRUNG BÌNH -->
+        <div class="translation-diff-card" id="translation-diff-card-medium" onclick="selectTranslationSetupDifficulty('medium')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🟡</span>
+              <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
+              <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10.5px; font-weight: 700;">x1.8</span>
+            </div>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu ghép 10-18 từ. Chứa mệnh đề quan hệ hoặc liên từ logic. Điểm sàn 80đ.</p>
+        </div>
+        <!-- KHÓ -->
+        <div class="translation-diff-card" id="translation-diff-card-hard" onclick="selectTranslationSetupDifficulty('hard')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🔴</span>
+              <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
+              <span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10.5px; font-weight: 700;">x2.4</span>
+            </div>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu phức & học thuật &gt; 18 từ. Sắc thái ngôn từ chuyên sâu, cấu trúc nâng cao. Điểm sàn 90đ.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. CHỌN SỐ LƯỢNG CÂU HỎI -->
+    <div style="margin-bottom: 16px;">
+      <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">3. Số Lượng Câu Luyện Tập:</label>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+        <button type="button" class="btn btn-outline translation-qc-btn active" id="translation-qc-5" onclick="selectTranslationSetupQuestionCount('5')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-color: #10b981; background: rgba(16,185,129,0.15); color: var(--text); border-radius: 10px;">5 câu</button>
+        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-10" onclick="selectTranslationSetupQuestionCount('10')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 10px;">10 câu</button>
+        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-custom" onclick="selectTranslationSetupQuestionCount('custom')" style="padding: 4px; font-size: 11px; font-weight: 700; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span>Tùy chỉnh:</span>
+          <input type="number" id="translation-qc-custom-input" min="1" max="999" value="15" oninput="handleTranslationCustomQuestionCountInput(this.value)" onclick="event.stopPropagation(); selectTranslationSetupQuestionCount('custom');" style="width: 48px; height: 20px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); color: var(--text); margin-top: 2px;">
+        </button>
+        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-all" onclick="selectTranslationSetupQuestionCount('all')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 10px;">Tất cả</button>
+      </div>
+    </div>
+
+    <!-- 4. SHUFFLE TOGGLE -->
+    <div style="margin-bottom: 20px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+      <label for="translation-setup-shuffle-checkbox" style="font-size: 12.5px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 16px;">🔀</span>
+        <span>Trộn ngẫu nhiên thứ tự các câu</span>
+      </label>
+      <input type="checkbox" id="translation-setup-shuffle-checkbox" class="form-checkbox" checked style="width: 18px; height: 18px; cursor: pointer;">
+    </div>
+
+    <div class="modal-actions" style="margin-top: 10px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-translation-setup')" style="flex: 1;">Hủy</button>
+      <button class="btn btn-primary" onclick="confirmStartTranslationFromModal()" style="flex: 2; background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(16,185,129,0.35);">
+        🚀 Bắt Đầu Dịch Thuật
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: TRANSLATION RESULT CELEBRATION (v0.10.10-25 VIP β - 5-TILE DASHBOARD) -->
+<!-- ========================================================================= -->
+<div class="modal-overlay" id="modal-translation-result">
+  <div class="modal" style="max-width: 580px; text-align: center;">
+    
+    <!-- TROPHY HEADER -->
+    <div style="font-size: 50px; margin-bottom: 6px; animation: bounce 1s infinite alternate;">🏆</div>
+    <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: 800; color: var(--text);">
+      Xuất Sắc! Hoàn Thành Bài Luyện Dịch!
+    </h2>
+    <div id="translation-res-deck-title" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+      Bộ từ vựng VocaFlow
+    </div>
+
+    <!-- DIFFICULTY & DIRECTION BADGE -->
+    <div style="margin-bottom: 18px;">
+      <span class="badge" id="translation-res-difficulty-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 20px;">
+        🌐 Chiều: 🇬🇧 ➔ 🇻🇳 • 🟢 Cấp độ: Dễ (x1.2)
+      </span>
+    </div>
+
+    <!-- 5-TILE STATS CELEBRATION DASHBOARD -->
+    <div class="cloze-res-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+      
+      <!-- TILE 1: TỈ LỆ ĐẠT SÀN -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">🎯 Tỉ lệ đạt sàn</div>
+        <div id="translation-res-floor-ratio" style="font-size: 18px; font-weight: 800; color: #10b981;">0/0 (0%)</div>
+      </div>
+
+      <!-- TILE 2: VOCOIN NHẬN ĐƯỢC -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">💰 VoCoin nhận được</div>
+        <div id="translation-res-points" style="font-size: 18px; font-weight: 800; color: #fbbf24;">+0 Xu</div>
+      </div>
+
+      <!-- TILE 3: ĐIỂM DỊCH THUẬT TB -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">⚡ Điểm dịch TB</div>
+        <div id="translation-res-avg-score" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0 / 100</div>
+      </div>
+
+      <!-- TILE 4: TRỢ GIÚP ĐÃ DÙNG (SPAN 2 COLS ON MOBILE IF NEEDED) -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border); grid-column: span 1;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">💡 Trợ giúp đã dùng</div>
+        <div id="translation-res-hints-skips" style="font-size: 13.5px; font-weight: 700; color: #c084fc; margin-top: 4px;">0 gợi ý • 0 skip</div>
+      </div>
+
+      <!-- TILE 5: TỔNG THỜI GIAN -->
+      <div style="background: var(--surface-elevated); padding: 12px 8px; border-radius: 12px; border: 1px solid var(--border); grid-column: span 2;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">⏱️ Tổng thời gian luyện tập</div>
+        <div id="translation-res-duration" style="font-size: 16px; font-weight: 800; color: var(--text);">00:00</div>
+      </div>
+
+    </div>
+
+    <!-- BALANCE V3 BONUS BREAKDOWN PILL -->
+    <div id="translation-res-bonus-box" style="display: none; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #cbd5e1; margin-bottom: 16px;">
+      <!-- Populated via JS -->
+    </div>
+
+    <!-- UNPASSED / WRONG WORDS RETRY BANNER -->
+    <div id="translation-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 16px;">❌</span>
+          <strong style="color: #f87171; font-size: 13px;" id="translation-res-wrong-count">0 từ chưa đạt chuẩn điểm sàn</strong>
+        </div>
+        <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 10.5px;">Đã lưu vào Sổ Từ Sai</span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.5;">
+        Luyện dịch lại ngay những câu chứa từ vựng chưa đạt điểm sàn để nắm chắc cấu trúc câu và sắc thái ngữ nghĩa!
+      </p>
+      <button class="btn btn-sm" id="translation-btn-retry-wrong" onclick="retryTranslationWrongWordsOnly()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; font-weight: 700; width: 100%; border-radius: 8px; padding: 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+        🔄 Luyện Lại Riêng Các Câu Chưa Đạt Chuẩn
+      </button>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button class="btn btn-outline" id="translation-btn-finish-study" onclick="closeTranslationResultModal(); exitTranslationMode();" style="flex: 1; padding: 10px; font-weight: 700;">
+        🚪 Về VocaDeck
+      </button>
+      <button class="btn btn-primary" onclick="closeTranslationResultModal(); restartCurrentTranslationSession();" style="flex: 1.2; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 10px; font-weight: 700; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+        🔄 Luyện Lại Toàn Bộ
+      </button>
+    </div>
+
+  </div>
+</div>
 
 <!-- MODAL: STUDY SESSION EARLY EXIT CONFIRMATION (v0.10.9-alpha-23) -->
 <div class="modal-overlay" id="modal-study-exit-confirm" style="z-index: 99999;">
@@ -9041,8 +9426,8 @@
           <button class="btn btn-primary btn-extended-mode btn-extended-dictation" id="btn-review-dictation" onclick="launchReviewDueWords('dictation')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Luyện nghe cả câu & chép chính tả (Sentence Dictation VIP β)">
             <span>👑</span> <span id="label-review-dictation">Nghe Gõ (VIP β)</span>
           </button>
-          <button class="btn btn-primary btn-extended-mode btn-extended-translation study-mode-btn-disabled" id="btn-review-translation" onclick="showToast('🌐 Chế độ Dịch Thuật Song Phương (VIP β) đang được phát triển!')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Dịch thuật song phương (Sắp ra mắt)">
-            <span>🌐</span> <span>Dịch Thuật (β)</span>
+          <button class="btn btn-primary btn-extended-mode btn-extended-translation" id="btn-review-translation" onclick="launchReviewDueWords('translation')" style="font-weight: 700; font-size: 12px; padding: 8px; height: auto;" title="Luyện dịch thuật song phương Anh - Việt & AI chấm điểm (Translation Lab VIP β)">
+            <span>👑</span> <span id="label-review-translation">Dịch Thuật (VIP β)</span>
           </button>
         </div>
       </div>
@@ -11435,7 +11820,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-24 (Build 325)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-25 (Build 326)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -12958,7 +13343,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-24 Build 325)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-25 Build 326)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -13229,6 +13614,10 @@ function navigateToRoute(route, isPopState = false) {
         startDictationMode();
         return;
       }
+      if ((secondSegment === 'translation' || secondSegment === 'dich' || secondSegment === 'translate') && typeof startTranslationMode === 'function') {
+        startTranslationMode();
+        return;
+      }
     }
 
     // 7. Clean primary navigation and modal routes
@@ -13419,15 +13808,15 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-24 Build 325)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-25 Build 326)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-24 Build 325)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-25 Build 326)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-24';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-24 (Build 325)';
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-25';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-25 (Build 326)';
 
     // =========================================================================
     // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
@@ -23998,9 +24387,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-24 / Build 325)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-25 / Build 326)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-25': {
+        postId: 'official_update_v0_10_10_25',
+        releaseTime: '2026-09-17T17:00:00.000Z',
+        title: '🌐 Ra Mắt Chế Độ Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β) (v0.10.10-25 Build 326)!',
+        summary: 'Chế độ Luyện Dịch Song Phương Anh - Việt và Việt - Anh (VIP β) với AI Gemini Flash chấm bài nghiêm khắc, 3 cấp độ thử thách, gợi ý VocaHint 3 tầng POS-aware, đồng bộ Sổ Tay Lỗi Sai và Dashboard tổng kết 5 ô chỉ số.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-25 (Build 326)!\n\n✨ Những điểm mới nổi bật:\n🌐 Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β): Chế độ học mở rộng thứ 4 độc quyền dành riêng cho VIP User, hỗ trợ 2 hướng dịch Anh ➔ Việt (Đọc hiểu ngữ cảnh và dịch mượt mà sang tiếng Việt) và Việt ➔ Anh (Chuyển ngữ chính xác ngữ pháp, từ vựng và thì sang tiếng Anh).\n🎯 3 Cấp Độ Thử Thách & Điểm Sàn Chuẩn Mực: Dễ (🟢 ≤10 từ, sàn 70đ, hệ số x1.2), Trung Bình (🟡 10-18 từ, sàn 80đ, hệ số x1.8), Khó (🔴 >18 từ câu phức học thuật, sàn 90đ, hệ số x2.4).\n🧠 AI Chấm Bài Nghiêm Khắc & Phân Tích Chuyên Sâu: Gemini Flash đánh giá chi tiết với 3 thẻ nhận xét (Điểm số & Tổng quan, Phân tích lỗi & Sắc thái ngữ nghĩa, Bản dịch đề xuất nâng cấp & Mẹo dịch), trừ điểm nghiêm khắc khi sai ngữ pháp, thì, mạo từ hoặc dịch thô.\n💡 VocaHint 3 Tầng & POS-Aware Clues: Tầng 1 (Cấu trúc câu & thì ngữ pháp), Tầng 2 (Từ khóa trọng tâm theo loại từ POS), Tầng 3 (Khung dịch / Gợi ý mở đầu).\n🏆 Dashboard Mừng Công 5 Ô Chỉ Số: Tỉ lệ đạt sàn, VoCoin nhận được, Điểm dịch TB, Trợ giúp đã dùng, Tổng thời gian kèm nút Luyện Lại Từ Chưa Đạt Sàn.\n📕 Đồng Bộ Sổ Tay Lỗi Sai: Tự động ghi nhận từ vựng chưa đạt điểm sàn vào Sổ Tay Lỗi Sai để rèn luyện lại sau phiên học.\n\nChúc bạn có những giờ phút nâng cao trình độ dịch thuật đỉnh cao cùng VocaFlow! 🚀🌐`
+      },
       'v0.10.10-24': {
         postId: 'official_update_v0_10_10_24',
         releaseTime: '2026-09-17T16:00:00.000Z',
@@ -30386,12 +30782,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         return;
       }
 
-      // Issue 13 & 22: Cloze & Dictation Modes VIP Check
-      if ((mode === 'cloze' || mode === 'dictation') && typeof isUserVip === 'function' && !isUserVip()) {
+      // Issue 13, 22 & 25: Cloze, Dictation & Translation Modes VIP Check
+      if ((mode === 'cloze' || mode === 'dictation' || mode === 'translation') && typeof isUserVip === 'function' && !isUserVip()) {
         closeModal('modal-review-queue');
         const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
-        const modeTitle = mode === 'cloze' ? 'Chế độ Điền Từ Đoạn Văn (VIP β)' : 'Chế độ Nghe Gõ Câu (VIP β)';
-        const modeIcon = mode === 'cloze' ? '🧩 🔒' : '🎧 🔒';
+        const modeTitles = {
+          cloze: 'Chế độ Điền Từ Đoạn Văn (VIP β)',
+          dictation: 'Chế độ Nghe Gõ Câu (VIP β)',
+          translation: 'Chế độ Dịch Thuật Song Phương (VIP β)'
+        };
+        const modeIcons = {
+          cloze: '🧩 🔒',
+          dictation: '🎧 🔒',
+          translation: '🌐 🔒'
+        };
+        const modeTitle = modeTitles[mode] || 'Chế độ học tập VIP β';
+        const modeIcon = modeIcons[mode] || '👑 🔒';
         if (isGuest && typeof openGuestFeatureLockModal === 'function') {
           openGuestFeatureLockModal(mode, modeTitle, modeIcon, 'Tính Năng Độc Quyền VocaVIP');
         } else if (typeof openVipPricingModal === 'function') {
@@ -30429,6 +30835,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           openDictationSetupModal(false, targetList);
         } else {
           showToast('⚠️ Chưa thể khởi chạy chế độ Nghe Gõ Câu Dictation!');
+        }
+      } else if (mode === 'translation') {
+        if (typeof openTranslationSetupModal === 'function') {
+          openTranslationSetupModal(false, targetList);
+        } else {
+          showToast('⚠️ Chưa thể khởi chạy chế độ Dịch Thuật Song Phương!');
         }
       }
     }
@@ -35283,7 +35695,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-24 Build 325 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-25 Build 326 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -37096,7 +37508,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-24 Build 325 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-25 Build 326 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -38554,6 +38966,1049 @@ function doExecuteExitDictation(done, total) {
   }
 }
 window.exitDictationMode = exitDictationMode;
+
+// =========================================================================
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-25 Build 326 - TRANSLATION LAB VIP β)
+// Bidirectional Translation Engine (EN ↔ VI) with Strict AI Grading & Balance v3
+// =========================================================================
+
+let translationQuestionsList = [];
+let currentTranslationIndex = 0;
+let currentTranslationDifficulty = localStorage.getItem('vocaflow_translation_difficulty') || 'easy';
+let selectedTranslationSetupDifficulty = 'easy';
+let currentTranslationDirection = localStorage.getItem('vocaflow_translation_direction') || 'en_to_vi'; // 'en_to_vi' | 'vi_to_en'
+let selectedTranslationSetupDirection = 'en_to_vi';
+let translationSetupQuestionCount = 'all'; // '5' | '10' | 'custom' | 'all'
+let translationSetupCustomCountValue = null;
+let translationSetupUseSelection = false;
+let translationSetupCustomWordList = null;
+
+let translationFloorScore = 70;
+let translationDiffMult = 1.2;
+let translationCurrentSourceText = '';
+let translationCurrentBenchmarkText = '';
+let translationCurrentWordRef = null;
+let translationHintsRevealed = 0;
+let translationSessionPointsEarned = 0;
+let translationSessionWrongWords = [];
+let translationSessionScores = [];
+let translationHintsUsedTotal = 0;
+let translationSkipsUsedTotal = 0;
+let translationGradedIndices = new Set();
+let translationStartTime = 0;
+let translationIsCompleted = false;
+
+// =========================================================================
+// 1. DIFFICULTY CONFIGURATION
+// =========================================================================
+function getTranslationDifficultyConfig(diff) {
+  if (diff === 'hard') {
+    return {
+      floorScore: 90,
+      diffMult: 2.4,
+      minWords: 18,
+      baseXu: 24,
+      label: '🔴 Khó'
+    };
+  }
+  if (diff === 'medium') {
+    return {
+      floorScore: 80,
+      diffMult: 1.8,
+      minWords: 10,
+      baseXu: 18,
+      label: '🟡 Trung Bình'
+    };
+  }
+  return {
+    floorScore: 70,
+    diffMult: 1.2,
+    minWords: 5,
+    baseXu: 12,
+    label: '🟢 Dễ'
+  };
+}
+
+// =========================================================================
+// 2. VIP ACCESS CHECKER
+// =========================================================================
+function checkTranslationVipAccess() {
+  if (typeof currentUser === 'undefined' || !currentUser) {
+    if (typeof showToast === 'function') {
+      showToast('🔒 Chế độ Dịch Thuật Song Phương (VIP β) yêu cầu đăng nhập tài khoản VIP!');
+    }
+    if (typeof openAuthModal === 'function') openAuthModal('login');
+    return false;
+  }
+  if (!currentUser.isVip && currentUser.role !== 'vip') {
+    if (typeof showToast === 'function') {
+      showToast('👑 Chế độ Dịch Thuật Song Phương (VIP β) chỉ dành riêng cho thành viên VIP!');
+    }
+    if (typeof openVipPricingModal === 'function') {
+      openVipPricingModal();
+    } else if (typeof openFeatureGuestLockModal === 'function') {
+      openFeatureGuestLockModal('translation');
+    }
+    return false;
+  }
+  return true;
+}
+
+// =========================================================================
+// 3. SETUP MODAL CONTROLLER
+// =========================================================================
+function openTranslationSetupModal(useSelection = false, customWordList = null) {
+  if (!checkTranslationVipAccess()) return;
+
+  translationSetupUseSelection = useSelection;
+  translationSetupCustomWordList = customWordList;
+
+  selectedTranslationSetupDifficulty = currentTranslationDifficulty;
+  selectedTranslationSetupDirection = currentTranslationDirection;
+  selectTranslationSetupDifficulty(selectedTranslationSetupDifficulty);
+  selectTranslationSetupDirection(selectedTranslationSetupDirection);
+
+  let targetWords = [];
+  if (customWordList) {
+    targetWords = customWordList;
+  } else if (useSelection && selectedWordIds.size > 0) {
+    targetWords = words.filter(w => selectedWordIds.has(w.id));
+  } else if (currentDeckId) {
+    targetWords = words.filter(w => w.deckId === currentDeckId);
+  }
+
+  const sub = document.getElementById('translation-setup-subtitle');
+  if (sub) {
+    const dirText = selectedTranslationSetupDirection === 'en_to_vi' ? 'Anh ➔ Việt' : 'Việt ➔ Anh';
+    sub.textContent = `${targetWords.length} từ vựng sẵn sàng • Chiều: ${dirText}`;
+  }
+
+  const shuffleCb = document.getElementById('translation-setup-shuffle-checkbox');
+  if (shuffleCb) shuffleCb.checked = true;
+
+  selectTranslationSetupQuestionCount('all');
+  openModal('modal-translation-setup');
+}
+window.openTranslationSetupModal = openTranslationSetupModal;
+
+function selectTranslationSetupDirection(direction) {
+  selectedTranslationSetupDirection = direction;
+  ['en_to_vi', 'vi_to_en'].forEach(d => {
+    const card = document.getElementById('translation-dir-card-' + d);
+    if (card) {
+      if (d === direction) {
+        card.style.borderColor = d === 'en_to_vi' ? '#10b981' : '#0ea5e9';
+        card.style.background = 'rgba(16, 185, 129, 0.08)';
+      } else {
+        card.style.borderColor = 'var(--border)';
+        card.style.background = 'var(--surface-elevated)';
+      }
+    }
+  });
+}
+window.selectTranslationSetupDirection = selectTranslationSetupDirection;
+
+function selectTranslationSetupDifficulty(diff) {
+  selectedTranslationSetupDifficulty = diff;
+  ['easy', 'medium', 'hard'].forEach(d => {
+    const card = document.getElementById('translation-diff-card-' + d);
+    if (card) {
+      if (d === diff) {
+        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444' };
+        card.style.borderColor = colors[d];
+        card.style.background = 'rgba(16, 185, 129, 0.08)';
+      } else {
+        card.style.borderColor = 'var(--border)';
+        card.style.background = 'var(--surface-elevated)';
+      }
+    }
+  });
+}
+window.selectTranslationSetupDifficulty = selectTranslationSetupDifficulty;
+
+function selectTranslationSetupQuestionCount(countMode) {
+  translationSetupQuestionCount = countMode;
+  ['5', '10', 'custom', 'all'].forEach(k => {
+    const btn = document.getElementById('translation-qc-' + k);
+    if (btn) {
+      if (k === countMode) {
+        btn.classList.add('active');
+        btn.style.borderColor = '#10b981';
+        btn.style.background = 'rgba(16, 185, 129, 0.15)';
+        btn.style.color = 'var(--text)';
+      } else {
+        btn.classList.remove('active');
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+      }
+    }
+  });
+}
+window.selectTranslationSetupQuestionCount = selectTranslationSetupQuestionCount;
+
+function handleTranslationCustomQuestionCountInput(val) {
+  const n = parseInt(val, 10);
+  if (!isNaN(n) && n > 0) {
+    translationSetupCustomCountValue = n;
+  }
+}
+window.handleTranslationCustomQuestionCountInput = handleTranslationCustomQuestionCountInput;
+
+function confirmStartTranslationFromModal() {
+  currentTranslationDifficulty = selectedTranslationSetupDifficulty;
+  currentTranslationDirection = selectedTranslationSetupDirection;
+  localStorage.setItem('vocaflow_translation_difficulty', currentTranslationDifficulty);
+  localStorage.setItem('vocaflow_translation_direction', currentTranslationDirection);
+
+  const shuffleCb = document.getElementById('translation-setup-shuffle-checkbox');
+  const doShuffle = shuffleCb ? shuffleCb.checked : true;
+
+  closeModal('modal-translation-setup');
+  startTranslationMode(translationSetupUseSelection, translationSetupCustomWordList, doShuffle);
+}
+window.confirmStartTranslationFromModal = confirmStartTranslationFromModal;
+
+// =========================================================================
+// 4. TASK GENERATOR (EN ↔ VI WITH POS-AWARE TEMPLATES)
+// =========================================================================
+function generateTranslationTaskForWord(mainWord, difficulty, direction) {
+  const term = (mainWord.term || '').trim();
+  const rawPos = (mainWord.partOfSpeech || 'noun').toLowerCase();
+  const pos = rawPos.includes('verb') ? 'verb' : (rawPos.includes('adj') ? 'adjective' : (rawPos.includes('adv') ? 'adverb' : 'noun'));
+  const rawDefVi = mainWord.definitionVi || mainWord.definition || '';
+  const defVi = rawDefVi.replace(/^["'“”]|["'“”]$/g, '').trim();
+  const safeMeaning = defVi ? defVi.toLowerCase() : term;
+
+  let enSentence = '';
+  let viSentence = '';
+
+  // 1. Check if existing example fits
+  if (mainWord.exampleSentence || mainWord.example) {
+    const rawEx = (mainWord.exampleSentence || mainWord.example).trim();
+    if (typeof sanitizeEnglishDictationSentence === 'function') {
+      const sanitized = sanitizeEnglishDictationSentence(rawEx, mainWord.exampleTranslationVi || '');
+      if (sanitized.cleanSentence && sanitized.extractedVi && !sanitized.extractedVi.startsWith('Câu ví dụ')) {
+        enSentence = sanitized.cleanSentence;
+        viSentence = sanitized.extractedVi;
+      }
+    }
+  }
+
+  // 2. High-Quality POS Templates if no natural custom pair available
+  if (!enSentence || !viSentence) {
+    if (difficulty === 'easy') {
+      if (pos === 'verb') {
+        const verbPairs = [
+          { en: `We need to ${term} carefully to achieve great results.`, vi: `Chúng ta cần phải ${safeMeaning} một cách cẩn thận để đạt được kết quả tuyệt vời.` },
+          { en: `She wants to ${term} every morning to stay healthy.`, vi: `Cô ấy muốn ${safeMeaning} vào mỗi buổi sáng để duy trì sức khỏe tốt.` },
+          { en: `They decided to ${term} together before the meeting.`, vi: `Họ đã quyết định cùng nhau ${safeMeaning} trước khi cuộc họp diễn ra.` }
+        ];
+        const p = verbPairs[Math.floor(Math.random() * verbPairs.length)];
+        enSentence = p.en; viSentence = p.vi;
+      } else if (pos === 'adjective') {
+        const adjPairs = [
+          { en: `The weather today is surprisingly ${term} and pleasant.`, vi: `Thời tiết hôm nay thật bất ngờ khi rất ${safeMeaning} và dễ chịu.` },
+          { en: `She gave a very ${term} explanation during the lesson.`, vi: `Cô ấy đã đưa ra một lời giải thích rất ${safeMeaning} trong suốt buổi học.` },
+          { en: `This was a truly ${term} experience for our team.`, vi: `Đây thực sự là một trải nghiệm ${safeMeaning} đối với cả đội ngũ chúng tôi.` }
+        ];
+        const p = adjPairs[Math.floor(Math.random() * adjPairs.length)];
+        enSentence = p.en; viSentence = p.vi;
+      } else if (pos === 'adverb') {
+        const advPairs = [
+          { en: `She completed the challenging assignment ${term}.`, vi: `Cô ấy đã hoàn thành bài tập đầy thử thách một cách ${safeMeaning}.` },
+          { en: `The system operates ${term} even during peak hours.`, vi: `Hệ thống vận hành một cách ${safeMeaning} ngay cả trong những khung giờ cao điểm.` }
+        ];
+        const p = advPairs[Math.floor(Math.random() * advPairs.length)];
+        enSentence = p.en; viSentence = p.vi;
+      } else {
+        const nounPairs = [
+          { en: `The teacher clearly explained the importance of this ${term}.`, vi: `Giáo viên đã giải thích rõ ràng tầm quan trọng của ${safeMeaning} này.` },
+          { en: `They found useful information about this ${term} today.`, vi: `Họ đã tìm thấy thông tin hữu ích về ${safeMeaning} này vào hôm nay.` },
+          { en: `Our main goal is to understand how this ${term} works.`, vi: `Mục tiêu chính của chúng tôi là hiểu rõ cách thức ${safeMeaning} này vận hành.` }
+        ];
+        const p = nounPairs[Math.floor(Math.random() * nounPairs.length)];
+        enSentence = p.en; viSentence = p.vi;
+      }
+    } else if (difficulty === 'medium') {
+      if (pos === 'verb') {
+        const verbMed = [
+          { en: `Students who actively learn to ${term} tend to solve complex problems much faster.`, vi: `Những học sinh chủ động học cách ${safeMeaning} có xu hướng giải quyết các vấn đề phức tạp nhanh hơn nhiều.` },
+          { en: `The management team encourages all staff members to ${term} whenever new challenges arise.`, vi: `Ban quản lý khuyến khích tất cả nhân viên ${safeMeaning} bất cứ khi nào có thách thức mới phát sinh.` }
+        ];
+        const p = verbMed[Math.floor(Math.random() * verbMed.length)];
+        enSentence = p.en; viSentence = p.vi;
+      } else if (pos === 'adjective') {
+        const adjMed = [
+          { en: `Having a ${term} mindset allows researchers to uncover surprising insights in modern science.`, vi: `Có một tư duy ${safeMeaning} cho phép các nhà nghiên cứu khám phá ra những hiểu biết bất ngờ trong khoa học hiện đại.` },
+          { en: `The company established a ${term} framework that supports continuous innovation and collaboration.`, vi: `Công ty đã thiết lập một khuôn khổ ${safeMeaning} hỗ trợ sự đổi mới và hợp tác liên tục.` }
+        ];
+        const p = adjMed[Math.floor(Math.random() * adjMed.length)];
+        enSentence = p.en; viSentence = p.vi;
+      } else {
+        const nounMed = [
+          { en: `Students who thoroughly understand the value of ${term} usually perform significantly better on their exams.`, vi: `Những học sinh hiểu thấu đáo giá trị của ${safeMeaning} thường đạt kết quả tốt hơn đáng kể trong các kỳ thi.` },
+          { en: `Our development team decided to adopt a modern ${term} in order to improve overall system reliability.`, vi: `Đội ngũ phát triển của chúng tôi quyết định áp dụng một ${safeMeaning} hiện đại nhằm nâng cao độ tin cậy của toàn bộ hệ thống.` }
+        ];
+        const p = nounMed[Math.floor(Math.random() * nounMed.length)];
+        enSentence = p.en; viSentence = p.vi;
+      }
+    } else {
+      // Hard
+      const hardPairs = [
+        { en: `Although many distinguished scholars debated the exact scope of ${term}, everyone agreed that its practical application is indispensable for long-term institutional success.`, vi: `Mặc dù nhiều học giả uy tín đã tranh luận về phạm vi chính xác của ${safeMeaning}, mọi người đều nhất trí rằng ứng dụng thực tiễn của nó là không thể thiếu cho sự thành công lâu dài của tổ chức.` },
+        { en: `The international council has officially introduced rigorous standards regarding ${term} to safeguard ethical compliance and foster transparent international collaboration.`, vi: `Hội đồng quốc tế đã chính thức ban hành các tiêu chuẩn nghiêm ngặt liên quan đến ${safeMeaning} nhằm đảm bảo tính tuân thủ đạo đức và thúc đẩy sự hợp tác quốc tế minh bạch.` }
+      ];
+      const p = hardPairs[Math.floor(Math.random() * hardPairs.length)];
+      enSentence = p.en; viSentence = p.vi;
+    }
+  }
+
+  const isEnToVi = (direction === 'en_to_vi');
+  return {
+    sourceText: isEnToVi ? enSentence : viSentence,
+    benchmarkText: isEnToVi ? viSentence : enSentence,
+    englishSentence: enSentence,
+    vietnameseSentence: viSentence,
+    targetWord: term,
+    partOfSpeech: pos,
+    definitionVi: defVi,
+    direction: direction
+  };
+}
+
+// =========================================================================
+// 5. ENGINE START & RENDER
+// =========================================================================
+function startTranslationMode(fromSelection = false, customWordList = null, doShuffle = true) {
+  if (!checkTranslationVipAccess()) return;
+  if (!currentDeckId && !customWordList) return;
+
+  studySourceContext = customWordList ? 'review-queue' : 'deck';
+
+  let targetWords = [];
+  if (customWordList) {
+    targetWords = customWordList;
+  } else if (fromSelection && selectedWordIds.size > 0) {
+    targetWords = words.filter(w => selectedWordIds.has(w.id));
+  } else {
+    targetWords = words.filter(w => w.deckId === currentDeckId);
+  }
+
+  if (targetWords.length === 0) {
+    if (typeof showToast === 'function') {
+      showToast('⚠️ Không có từ vựng nào để bắt đầu dịch thuật!');
+    }
+    return;
+  }
+
+  let baseWords = [...targetWords];
+  if (doShuffle) {
+    baseWords.sort(() => Math.random() - 0.5);
+  }
+
+  // Question count limiter
+  if (translationSetupQuestionCount === '5') {
+    baseWords = baseWords.slice(0, 5);
+  } else if (translationSetupQuestionCount === '10') {
+    baseWords = baseWords.slice(0, 10);
+  } else if (translationSetupQuestionCount === 'custom' && translationSetupCustomCountValue) {
+    baseWords = baseWords.slice(0, translationSetupCustomCountValue);
+  }
+
+  const cfg = getTranslationDifficultyConfig(currentTranslationDifficulty);
+  translationFloorScore = cfg.floorScore;
+  translationDiffMult = cfg.diffMult;
+
+  translationQuestionsList = baseWords.map(w => {
+    const task = generateTranslationTaskForWord(w, currentTranslationDifficulty, currentTranslationDirection);
+    return {
+      mainWord: w,
+      task: task
+    };
+  });
+
+  currentTranslationIndex = 0;
+  translationSessionPointsEarned = 0;
+  translationSessionWrongWords = [];
+  translationSessionScores = [];
+  translationHintsUsedTotal = 0;
+  translationSkipsUsedTotal = 0;
+  translationGradedIndices.clear();
+  translationStartTime = Date.now();
+  translationIsCompleted = false;
+
+  const curDeck = decks.find(d => d.id === currentDeckId);
+  const deckTitleEl = document.getElementById('translation-deck-title');
+  if (deckTitleEl) {
+    deckTitleEl.textContent = curDeck ? curDeck.title : (customWordList ? 'Hàng Đợi Ôn Tập' : 'Bộ từ');
+  }
+
+  const scoreBadge = document.getElementById('translation-score-badge');
+  if (scoreBadge) scoreBadge.textContent = 'Bài: +0đ';
+
+  updateTranslationHeaderBadges();
+  showScreen('screen-translation');
+  renderTranslationCurrentQuestion();
+}
+window.startTranslationMode = startTranslationMode;
+
+function updateTranslationHeaderBadges() {
+  const dirBadge = document.getElementById('translation-direction-badge');
+  if (dirBadge) {
+    if (currentTranslationDirection === 'en_to_vi') {
+      dirBadge.textContent = '🇬🇧 ➔ 🇻🇳 Anh - Việt';
+      dirBadge.style.color = '#34d399';
+      dirBadge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+      dirBadge.style.background = 'rgba(16, 185, 129, 0.18)';
+    } else {
+      dirBadge.textContent = '🇻🇳 ➔ 🇬🇧 Việt - Anh';
+      dirBadge.style.color = '#38bdf8';
+      dirBadge.style.borderColor = 'rgba(14, 165, 233, 0.35)';
+      dirBadge.style.background = 'rgba(14, 165, 233, 0.18)';
+    }
+  }
+
+  const diffBadge = document.getElementById('translation-difficulty-badge');
+  if (diffBadge) {
+    const cfg = getTranslationDifficultyConfig(currentTranslationDifficulty);
+    diffBadge.textContent = `${cfg.label} (x${translationDiffMult})`;
+  }
+}
+
+function renderTranslationCurrentQuestion() {
+  if (translationQuestionsList.length === 0) return;
+  const q = translationQuestionsList[currentTranslationIndex];
+  if (!q) return;
+
+  translationHintsRevealed = 0;
+  translationCurrentWordRef = q.mainWord;
+  translationCurrentSourceText = q.task.sourceText;
+  translationCurrentBenchmarkText = q.task.benchmarkText;
+
+  // Counter
+  const counterEl = document.getElementById('translation-counter');
+  if (counterEl) {
+    counterEl.textContent = `Câu ${currentTranslationIndex + 1} / ${translationQuestionsList.length}`;
+  }
+
+  // Source text & prompt label
+  const promptLabel = document.getElementById('translation-prompt-lang-label');
+  const sourceTextEl = document.getElementById('translation-source-text');
+  const inputLabel = document.getElementById('translation-input-label');
+  const inputArea = document.getElementById('translation-input-text');
+
+  if (promptLabel) {
+    promptLabel.textContent = q.task.direction === 'en_to_vi' ? '🇬🇧 CÂU TIẾNG ANH CẦN DỊCH:' : '🇻🇳 CÂU TIẾNG VIỆT CẦN DỊCH:';
+    promptLabel.style.color = q.task.direction === 'en_to_vi' ? '#10b981' : '#38bdf8';
+  }
+
+  if (sourceTextEl) {
+    sourceTextEl.textContent = translationCurrentSourceText;
+  }
+
+  // Audio button visibility
+  const speakSourceBtn = document.getElementById('btn-translation-speak-source');
+  if (speakSourceBtn) {
+    speakSourceBtn.style.display = q.task.direction === 'en_to_vi' ? 'flex' : 'none';
+  }
+
+  // Target word clue
+  const termEl = document.getElementById('translation-word-term');
+  const posEl = document.getElementById('translation-word-pos');
+  const meaningEl = document.getElementById('translation-word-meaning');
+  if (termEl) termEl.textContent = q.mainWord.term || '';
+  if (posEl) posEl.textContent = q.mainWord.partOfSpeech || 'noun';
+  if (meaningEl) meaningEl.textContent = q.mainWord.definitionVi || q.mainWord.definition || '';
+
+  // Input area setup
+  if (inputLabel) {
+    inputLabel.textContent = q.task.direction === 'en_to_vi' ? '✍️ Nhập bản dịch tiếng Việt của bạn:' : '✍️ Nhập bản dịch tiếng Anh của bạn:';
+  }
+  if (inputArea) {
+    inputArea.value = '';
+    inputArea.disabled = false;
+    inputArea.placeholder = q.task.direction === 'en_to_vi' ? 'Nhập bản dịch tiếng Việt mượt mà, đúng ngữ cảnh...' : 'Type your natural, grammatically correct English translation...';
+    inputArea.focus();
+  }
+
+  // Character counter reset
+  updateTranslationCharCounter();
+
+  // Reset hints & evaluation panels
+  const hintBox = document.getElementById('translation-hint-box');
+  const resultPanel = document.getElementById('translation-result-panel');
+  const aiLoading = document.getElementById('translation-ai-loading');
+  const actionsRow = document.getElementById('translation-actions-row');
+
+  if (hintBox) hintBox.style.display = 'none';
+  if (resultPanel) resultPanel.style.display = 'none';
+  if (aiLoading) aiLoading.style.display = 'none';
+  if (actionsRow) actionsRow.style.display = 'flex';
+
+  updateTranslationWalletBadges();
+}
+
+function updateTranslationCharCounter() {
+  const inputArea = document.getElementById('translation-input-text');
+  const counterEl = document.getElementById('translation-char-counter');
+  if (!inputArea || !counterEl) return;
+  const val = inputArea.value || '';
+  const charCount = val.length;
+  const wordCount = val.trim() ? val.trim().split(/\s+/).length : 0;
+  counterEl.textContent = `${charCount} ký tự • ${wordCount} từ`;
+}
+
+// Attach input & keydown events
+document.addEventListener('DOMContentLoaded', () => {
+  const textarea = document.getElementById('translation-input-text');
+  if (textarea) {
+    textarea.addEventListener('input', updateTranslationCharCounter);
+    textarea.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        submitTranslationEvaluation();
+      }
+    });
+  }
+});
+
+// =========================================================================
+// 6. AUDIO / TTS PLAYBACK
+// =========================================================================
+function speakTranslationSourceSentence() {
+  const q = translationQuestionsList[currentTranslationIndex];
+  if (!q) return;
+  const textToSpeak = q.task.direction === 'en_to_vi' ? translationCurrentSourceText : translationCurrentBenchmarkText;
+  if (typeof speakText === 'function' && textToSpeak) {
+    speakText(textToSpeak, 'en-US');
+  }
+}
+window.speakTranslationSourceSentence = speakTranslationSourceSentence;
+
+function speakTranslationRefSentence() {
+  const q = translationQuestionsList[currentTranslationIndex];
+  if (!q) return;
+  const textToSpeak = q.task.direction === 'vi_to_en' ? translationCurrentBenchmarkText : translationCurrentSourceText;
+  if (typeof speakText === 'function' && textToSpeak) {
+    speakText(textToSpeak, 'en-US');
+  }
+}
+window.speakTranslationRefSentence = speakTranslationRefSentence;
+
+// =========================================================================
+// 7. VOCAHINT 3-TIER & VOCASKIP
+// =========================================================================
+function updateTranslationWalletBadges() {
+  const hintsCount = typeof getUserHints === 'function' ? getUserHints() : 0;
+  const skipsCount = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+
+  const hintBadge = document.getElementById('translation-hint-count-badge');
+  const skipBadge = document.getElementById('translation-skip-count-badge');
+
+  if (hintBadge) hintBadge.textContent = `(${hintsCount})`;
+  if (skipBadge) skipBadge.textContent = `(${skipsCount})`;
+}
+
+function useTranslationHint() {
+  const currentHints = typeof getUserHints === 'function' ? getUserHints() : 0;
+  if (currentHints <= 0) {
+    if (typeof showToast === 'function') showToast('⚠️ Bạn đã hết VocaHint! Hãy ghé Cửa Hàng để nạp thêm nhé.');
+    if (typeof openShopModal === 'function') openShopModal();
+    return;
+  }
+
+  setUserHints(currentHints - 1);
+  translationHintsUsedTotal++;
+  if (typeof addLedgerEntry === 'function') {
+    addLedgerEntry('HINT_USED', 0, `Sử dụng 1 VocaHint trong Dịch Thuật (còn ${currentHints - 1})`);
+  }
+  updateTranslationWalletBadges();
+
+  translationHintsRevealed++;
+  const hintBox = document.getElementById('translation-hint-box');
+  const hintContent = document.getElementById('translation-hint-content');
+  const q = translationQuestionsList[currentTranslationIndex];
+  if (!hintBox || !hintContent || !q) return;
+
+  hintBox.style.display = 'block';
+  const isEnToVi = (q.task.direction === 'en_to_vi');
+  const term = q.mainWord.term || '';
+  const meaning = q.mainWord.definitionVi || q.mainWord.definition || '';
+  const pos = q.mainWord.partOfSpeech || 'từ vựng';
+
+  if (isEnToVi) {
+    if (translationHintsRevealed === 1) {
+      hintContent.innerHTML = `
+        <div>
+          🎯 <strong>Từ khóa chính:</strong> <code>${escapeHtml(term)}</code> (${escapeHtml(pos)}: <em>${escapeHtml(meaning)}</em>)<br>
+          💡 <strong>Mẹo dịch:</strong> Xác định rõ chủ ngữ và động từ chính của câu trước khi chuyển ngữ sang tiếng Việt.
+        </div>
+      `;
+    } else if (translationHintsRevealed === 2) {
+      const benchmarkWords = (translationCurrentBenchmarkText || '').split(/\s+/);
+      const halfLen = Math.max(3, Math.floor(benchmarkWords.length / 2));
+      const firstHalf = benchmarkWords.slice(0, halfLen).join(' ');
+      hintContent.innerHTML = `
+        <div>
+          🔗 <strong>Gợi ý nửa đầu câu tiếng Việt:</strong> <span style="color: #34d399; font-weight: 600;">"${escapeHtml(firstHalf)}..."</span><br>
+          📝 <strong>Lưu ý:</strong> Diễn đạt tự nhiên, tránh dịch word-by-word (từng chữ một).
+        </div>
+      `;
+    } else {
+      hintContent.innerHTML = `
+        <div>
+          🇻🇳 <strong>Bản dịch tham khảo gợi ý:</strong><br>
+          <span style="color: #38bdf8; font-weight: 700; font-size: 13.5px;">"${escapeHtml(translationCurrentBenchmarkText)}"</span>
+        </div>
+      `;
+    }
+  } else {
+    // vi_to_en
+    if (translationHintsRevealed === 1) {
+      hintContent.innerHTML = `
+        <div>
+          🎯 <strong>Từ vựng tiếng Anh cần dùng:</strong> <code>${escapeHtml(term)}</code> (${escapeHtml(pos)})<br>
+          💡 <strong>Cấu trúc ngữ pháp:</strong> Hãy chú ý chia thì của động từ và sử dụng mạo từ (a/an/the) phù hợp.
+        </div>
+      `;
+    } else if (translationHintsRevealed === 2) {
+      const enWords = (translationCurrentBenchmarkText || '').split(/\s+/);
+      const firstThree = enWords.slice(0, Math.min(4, enWords.length)).join(' ');
+      hintContent.innerHTML = `
+        <div>
+          🔗 <strong>Cụm từ mở đầu tiếng Anh:</strong> <span style="color: #38bdf8; font-weight: 600;">"${escapeHtml(firstThree)}..."</span><br>
+          📝 Đảm bảo câu có đầy đủ Chủ ngữ + Vị ngữ hoàn chỉnh.
+        </div>
+      `;
+    } else {
+      const enWords = (translationCurrentBenchmarkText || '').split(/\s+/);
+      const masked = enWords.map(w => {
+        const clean = w.replace(/^[^\w]+|[^\w]+$/g, '');
+        if (clean.length <= 1) return w;
+        return clean[0] + '_'.repeat(Math.min(5, clean.length - 1));
+      }).join(' ');
+      hintContent.innerHTML = `
+        <div>
+          🔤 <strong>Khung chữ cái đầu của câu tiếng Anh:</strong><br>
+          <code style="color: #fbbf24; font-size: 13px; font-weight: 700;">${escapeHtml(masked)}</code>
+        </div>
+      `;
+    }
+  }
+}
+window.useTranslationHint = useTranslationHint;
+
+function skipTranslationQuestion() {
+  const currentSkips = typeof getUserSkips === 'function' ? getUserSkips() : 0;
+  if (currentSkips <= 0) {
+    if (typeof showToast === 'function') showToast('⚠️ Bạn đã hết VocaSkip! Hãy ghé Cửa Hàng để nạp thêm nhé.');
+    if (typeof openShopModal === 'function') openShopModal();
+    return;
+  }
+
+  setUserSkips(currentSkips - 1);
+  translationSkipsUsedTotal++;
+  if (typeof addLedgerEntry === 'function') {
+    addLedgerEntry('SKIP_USED', 0, `Sử dụng 1 VocaSkip trong Dịch Thuật (còn ${currentSkips - 1})`);
+  }
+  updateTranslationWalletBadges();
+
+  if (typeof showToast === 'function') {
+    showToast('⏭️ Đã bỏ qua câu này!');
+  }
+  nextTranslationQuestion();
+}
+window.skipTranslationQuestion = skipTranslationQuestion;
+
+// =========================================================================
+// 8. GEMINI AI TRANSLATION EVALUATION ENGINE (Strict & Unforgiving)
+// =========================================================================
+async function submitTranslationEvaluation() {
+  const inputArea = document.getElementById('translation-input-text');
+  if (!inputArea) return;
+  const userTranslation = (inputArea.value || '').trim();
+
+  if (!userTranslation) {
+    if (typeof showToast === 'function') showToast('⚠️ Vui lòng nhập bản dịch trước khi gửi chấm điểm nhé!');
+    inputArea.focus();
+    return;
+  }
+
+  const wordCount = userTranslation.split(/\s+/).length;
+  if (wordCount < 2) {
+    if (typeof showToast === 'function') showToast('⚠️ Bản dịch quá ngắn! Vui lòng hoàn thành trọn vẹn cả câu.');
+    return;
+  }
+
+  inputArea.disabled = true;
+  const actionsRow = document.getElementById('translation-actions-row');
+  const aiLoading = document.getElementById('translation-ai-loading');
+  const resultPanel = document.getElementById('translation-result-panel');
+
+  if (actionsRow) actionsRow.style.display = 'none';
+  if (aiLoading) aiLoading.style.display = 'block';
+  if (resultPanel) resultPanel.style.display = 'none';
+
+  const q = translationQuestionsList[currentTranslationIndex];
+  const direction = q.task.direction;
+  const targetWord = q.mainWord.term;
+  const targetDef = q.mainWord.definitionVi || q.mainWord.definition;
+  const sourceSentence = translationCurrentSourceText;
+  const benchmarkSentence = translationCurrentBenchmarkText;
+
+  const prompt = `You are a strict, professional translation examiner and linguist grading a bidirectional translation exam.
+Exam mode: ${direction === 'en_to_vi' ? 'English to Vietnamese' : 'Vietnamese to English'}
+Target Word: "${targetWord}" (Meaning: "${targetDef}")
+Original Source Sentence: "${sourceSentence}"
+Benchmark Reference Translation: "${benchmarkSentence}"
+Student's Submitted Translation: "${userTranslation}"
+
+GRADING POLICY (STRICT & UNFORGIVING):
+1. Score Range: 0 to 100.
+2. Dock points heavily for:
+   - Grammatical errors, wrong verb tenses, incorrect articles (a/an/the), wrong prepositions (-15 to -25 pts).
+   - Distorted meaning, reversed clauses, or hallucinated facts (-30 to -50 pts).
+   - Omission or wrong usage of the target keyword "${targetWord}" (-20 pts).
+   - Unnatural word-for-word translation that sounds robotic or unidiomatic (-10 to -20 pts).
+3. Award 90-100 ONLY for highly accurate, fluent, and natural translations that sound native.
+
+OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
+{
+  "score": <number 0-100>,
+  "passedFloor": <boolean, true if score >= ${translationFloorScore}>,
+  "verdict": "<short concise verdict in Vietnamese, max 25 words>",
+  "analysis": {
+    "grammar": "<detailed feedback on grammar, structure & accuracy in Vietnamese, max 40 words>",
+    "nuance": "<nuance and vocabulary choice analysis in Vietnamese, max 35 words>",
+    "errors": "<specific errors detected, or 'Không có lỗi đáng kể' in Vietnamese>"
+  },
+  "polishedRewrite": "<natural, native-like translation rewrite in target language>",
+  "tip": "<actionable translation tip or idiom in Vietnamese, max 30 words>"
+}`;
+
+  let evalResult = null;
+  try {
+    if (typeof callGeminiAiModel === 'function') {
+      const rawRes = await callGeminiAiModel(prompt, 'fast', 0.2);
+      if (rawRes) {
+        const cleanJson = rawRes.replace(/```json/gi, '').replace(/```/g, '').trim();
+        evalResult = JSON.parse(cleanJson);
+      }
+    }
+  } catch (err) {
+    console.warn('Gemini Translation evaluation API error, using heuristic fallback:', err);
+  }
+
+  if (!evalResult || typeof evalResult.score !== 'number') {
+    evalResult = fallbackHeuristicTranslationGrading(userTranslation, benchmarkSentence, targetWord, direction);
+  }
+
+  renderTranslationEvaluationResult(evalResult, userTranslation);
+}
+window.submitTranslationEvaluation = submitTranslationEvaluation;
+
+function fallbackHeuristicTranslationGrading(userTrans, benchmark, targetWord, direction) {
+  const cleanUser = userTrans.toLowerCase().trim();
+  const cleanBench = benchmark.toLowerCase().trim();
+  const userTokens = cleanUser.split(/\s+/);
+  const benchTokens = cleanBench.split(/\s+/);
+
+  let matchCount = 0;
+  userTokens.forEach(t => {
+    if (benchTokens.includes(t)) matchCount++;
+  });
+  const overlapRatio = benchTokens.length > 0 ? (matchCount / benchTokens.length) : 0.5;
+  const lenRatio = Math.min(userTokens.length, benchTokens.length) / Math.max(userTokens.length, benchTokens.length);
+
+  let baseScore = Math.round((overlapRatio * 60) + (lenRatio * 30) + 10);
+  if (direction === 'vi_to_en' && targetWord && cleanUser.includes(targetWord.toLowerCase())) {
+    baseScore = Math.min(100, baseScore + 10);
+  }
+  baseScore = Math.max(30, Math.min(95, baseScore));
+
+  const passed = baseScore >= translationFloorScore;
+  return {
+    score: baseScore,
+    passedFloor: passed,
+    verdict: passed ? 'Bản dịch đạt chuẩn ngữ nghĩa và truyền tải thông điệp tốt.' : 'Bản dịch chưa đạt điểm sàn, cần chú ý cấu trúc câu và từ vựng.',
+    analysis: {
+      grammar: passed ? 'Cấu trúc câu cơ bản hoàn chỉnh và diễn đạt tương đối rõ ràng.' : 'Còn một số điểm chưa chuẩn xác về ngữ pháp hoặc trật tự từ trong câu.',
+      nuance: 'Sắc thái câu phù hợp với ngữ cảnh giao tiếp thông thường.',
+      errors: passed ? 'Không có lỗi nghiêm trọng.' : 'Câu còn mang tính dịch thô từng từ (word-by-word).'
+    },
+    polishedRewrite: benchmark,
+    tip: 'Hãy chú ý liên từ nối và cách dùng cụm từ cố định (collocations) để câu văn mượt mà hơn.'
+  };
+}
+
+function renderTranslationEvaluationResult(evalResult, userTranslation) {
+  const aiLoading = document.getElementById('translation-ai-loading');
+  const resultPanel = document.getElementById('translation-result-panel');
+  if (aiLoading) aiLoading.style.display = 'none';
+  if (resultPanel) resultPanel.style.display = 'block';
+
+  const score = Math.max(0, Math.min(100, parseInt(evalResult.score, 10) || 50));
+  const passed = score >= translationFloorScore;
+
+  translationGradedIndices.add(currentTranslationIndex);
+  translationSessionScores.push(score);
+
+  // Verdict banner styling
+  const verdictBanner = document.getElementById('translation-verdict-banner');
+  const verdictText = document.getElementById('translation-verdict-text');
+  const scoreDisplay = document.getElementById('translation-score-display');
+
+  const cfg = getTranslationDifficultyConfig(currentTranslationDifficulty);
+  const earnedCoins = passed ? Math.round(cfg.baseXu * translationDiffMult) : 0;
+  if (earnedCoins > 0) translationSessionPointsEarned += earnedCoins;
+
+  if (verdictBanner) {
+    verdictBanner.style.background = passed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+    verdictBanner.style.border = `1px solid ${passed ? '#10b981' : '#ef4444'}`;
+    verdictBanner.style.color = passed ? '#34d399' : '#f87171';
+  }
+  if (verdictText) {
+    verdictText.textContent = passed ? `✅ Đạt sàn ${translationFloorScore}đ! (+${earnedCoins} Xu)` : `❌ Chưa đạt sàn ${translationFloorScore}đ (0 Xu)`;
+  }
+  if (scoreDisplay) {
+    scoreDisplay.textContent = `${score} / 100đ`;
+    scoreDisplay.style.background = passed ? '#10b981' : '#ef4444';
+    scoreDisplay.style.color = '#fff';
+  }
+
+  // Update session score badge in header
+  const scoreBadge = document.getElementById('translation-score-badge');
+  if (scoreBadge) scoreBadge.textContent = `Bài: +${translationSessionPointsEarned}đ`;
+
+  // 3 Feedback Cards
+  const vEl = document.getElementById('translation-feedback-verdict');
+  const gEl = document.getElementById('translation-feedback-grammar');
+  const sEl = document.getElementById('translation-feedback-suggestion');
+  const tEl = document.getElementById('translation-feedback-tip');
+
+  if (vEl) vEl.textContent = evalResult.verdict || (passed ? 'Bản dịch tốt!' : 'Cần cải thiện bản dịch.');
+  if (gEl) {
+    const gText = evalResult.analysis?.grammar || '';
+    const errText = evalResult.analysis?.errors && evalResult.analysis?.errors !== 'Không có lỗi đáng kể' ? ` • Lỗi: ${evalResult.analysis.errors}` : '';
+    gEl.textContent = `${gText}${errText}`;
+  }
+  if (sEl) sEl.textContent = `"${evalResult.polishedRewrite || translationCurrentBenchmarkText}"`;
+  if (tEl) tEl.textContent = `💡 Mẹo dịch thuật: ${evalResult.tip || 'Luyện tập thường xuyên để nâng cao phản xạ dịch thuật ngữ cảnh.'}`;
+
+  // Reference Benchmark Box
+  const refTextEl = document.getElementById('translation-reference-text');
+  const speakRefBtn = document.getElementById('btn-translation-speak-ref');
+  const q = translationQuestionsList[currentTranslationIndex];
+
+  if (refTextEl) refTextEl.textContent = `"${translationCurrentBenchmarkText}"`;
+  if (speakRefBtn) {
+    speakRefBtn.style.display = q.task.direction === 'vi_to_en' ? 'flex' : 'none';
+  }
+
+  // Handle Mistake Tracking for unpassed questions
+  if (!passed && translationCurrentWordRef) {
+    translationSessionWrongWords.push(translationCurrentWordRef);
+    if (typeof addWordToMistakeList === 'function') {
+      addWordToMistakeList(translationCurrentWordRef, 'translation');
+    }
+  }
+}
+
+// =========================================================================
+// 9. NAVIGATION & FINISH SESSION
+// =========================================================================
+function nextTranslationQuestion() {
+  if (currentTranslationIndex < translationQuestionsList.length - 1) {
+    currentTranslationIndex++;
+    renderTranslationCurrentQuestion();
+  } else {
+    finishTranslationSession();
+  }
+}
+window.nextTranslationQuestion = nextTranslationQuestion;
+
+function finishTranslationSession() {
+  translationIsCompleted = true;
+
+  const total = translationQuestionsList.length || 1;
+  const done = translationGradedIndices.size;
+  const isComp = done >= total && total > 0;
+
+  let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
+  if (typeof calculateSessionFinalPointsV3 === 'function') {
+    res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
+  } else if (typeof calculateSessionFinalPoints === 'function') {
+    res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
+  }
+
+  const finalPts = res.finalPts;
+  if (finalPts > 0) {
+    if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
+    if (typeof addLedgerEntry === 'function') {
+      const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
+      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult}${bonusText})`);
+    }
+    if (typeof recordStudyFlowAction === 'function') {
+      recordStudyFlowAction('translation');
+    }
+    if (typeof saveDatabase === 'function') saveDatabase(true);
+    if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+  }
+
+  // Duration
+  const durationSec = translationStartTime > 0 ? Math.max(1, Math.floor((Date.now() - translationStartTime) / 1000)) : 0;
+  const mins = Math.floor(durationSec / 60);
+  const secs = durationSec % 60;
+  const durationStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  if (done > 0 && typeof addDailyStudySeconds === 'function') {
+    addDailyStudySeconds(durationSec, 'translation');
+  }
+
+  // Calculate Average Accuracy Score & Pass Rate
+  let avgScore = 0;
+  if (translationSessionScores.length > 0) {
+    const sum = translationSessionScores.reduce((a, b) => a + b, 0);
+    avgScore = Math.round(sum / translationSessionScores.length);
+  }
+  const passedCount = translationSessionScores.filter(s => s >= translationFloorScore).length;
+  const floorRatioPct = total > 0 ? Math.round((passedCount / total) * 100) : 0;
+
+  // Populate 5-Tile Stats Dashboard
+  const floorRatioEl = document.getElementById('translation-res-floor-ratio');
+  const pointsEl = document.getElementById('translation-res-points');
+  const avgScoreEl = document.getElementById('translation-res-avg-score');
+  const hintsSkipsEl = document.getElementById('translation-res-hints-skips');
+  const durationEl = document.getElementById('translation-res-duration');
+  const diffBadgeEl = document.getElementById('translation-res-difficulty-badge');
+
+  if (floorRatioEl) floorRatioEl.textContent = `${passedCount}/${total} (${floorRatioPct}%)`;
+  if (pointsEl) pointsEl.textContent = `+${finalPts} VoCoin`;
+  if (avgScoreEl) avgScoreEl.textContent = `${avgScore} / 100`;
+  if (hintsSkipsEl) hintsSkipsEl.textContent = `${translationHintsUsedTotal} gợi ý • ${translationSkipsUsedTotal} skip`;
+  if (durationEl) durationEl.textContent = durationStr;
+
+  const cfg = getTranslationDifficultyConfig(currentTranslationDifficulty);
+  const dirLabel = currentTranslationDirection === 'en_to_vi' ? '🇬🇧 ➔ 🇻🇳' : '🇻🇳 ➔ 🇬🇧';
+  if (diffBadgeEl) diffBadgeEl.textContent = `🌐 Chiều: ${dirLabel} • ${cfg.label} (x${translationDiffMult})`;
+
+  // Bonus breakdown pill
+  const bonusBox = document.getElementById('translation-res-bonus-box');
+  if (bonusBox) {
+    if (res.completionMult > 1.0 || res.deckLengthMult > 1.0 || res.milestoneBonus > 0) {
+      bonusBox.style.display = 'block';
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.completionMult}</strong> • Quy mô: <strong>x${res.deckLengthMult}</strong>${res.milestoneBonus > 0 ? ` • Thưởng mốc: <strong>+${res.milestoneBonus} Xu</strong>` : ''}`;
+    } else {
+      bonusBox.style.display = 'none';
+    }
+  }
+
+  // Unpassed / Wrong words retry banner
+  const wrongWordsUnique = [];
+  const seen = new Set();
+  translationSessionWrongWords.forEach(w => {
+    if (!w) return;
+    const k = (w.id || w.term || '').toLowerCase();
+    if (k && !seen.has(k)) {
+      seen.add(k);
+      wrongWordsUnique.push(w);
+    }
+  });
+
+  const wrongBanner = document.getElementById('translation-res-wrong-banner');
+  const wrongCountEl = document.getElementById('translation-res-wrong-count');
+  const retryBtn = document.getElementById('translation-btn-retry-wrong');
+
+  if (wrongWordsUnique.length > 0) {
+    if (wrongBanner) wrongBanner.style.display = 'block';
+    if (wrongCountEl) wrongCountEl.textContent = `❌ Từ chưa đạt chuẩn: ${wrongWordsUnique.length} từ`;
+    if (retryBtn) retryBtn.textContent = `🔄 Luyện Lại Riêng ${wrongWordsUnique.length} từ chưa đạt sàn`;
+  } else {
+    if (wrongBanner) wrongBanner.style.display = 'none';
+  }
+
+  if (typeof playVocaSfx === 'function') {
+    playVocaSfx('fireworks');
+  }
+  openModal('modal-translation-result');
+}
+window.finishTranslationSession = finishTranslationSession;
+
+function closeTranslationResultModal() {
+  if (typeof stopVocaSfx === 'function') {
+    stopVocaSfx('fireworks');
+  } else if (typeof sfxAudio !== 'undefined' && sfxAudio) {
+    try { sfxAudio.pause(); sfxAudio.currentTime = 0; } catch (e) {}
+  }
+  closeModal('modal-translation-result');
+}
+window.closeTranslationResultModal = closeTranslationResultModal;
+
+function retryTranslationWrongWordsOnly() {
+  const wrongWordsUnique = [];
+  const seen = new Set();
+  translationSessionWrongWords.forEach(w => {
+    if (!w) return;
+    const k = (w.id || w.term || '').toLowerCase();
+    if (k && !seen.has(k)) {
+      seen.add(k);
+      wrongWordsUnique.push(w);
+    }
+  });
+
+  closeTranslationResultModal();
+  if (wrongWordsUnique.length > 0) {
+    startTranslationMode(false, wrongWordsUnique, true);
+  } else {
+    if (typeof showToast === 'function') showToast('🎉 Không có từ nào bị sai để luyện lại!');
+  }
+}
+window.retryTranslationWrongWordsOnly = retryTranslationWrongWordsOnly;
+
+function restartCurrentTranslationSession() {
+  closeTranslationResultModal();
+  const originalWords = translationQuestionsList.map(q => q.mainWord);
+  startTranslationMode(false, originalWords, true);
+}
+window.restartCurrentTranslationSession = restartCurrentTranslationSession;
+
+// =========================================================================
+// 10. EARLY EXIT & STATE MANAGEMENT
+// =========================================================================
+function exitTranslationMode(force = false) {
+  if (translationIsCompleted || force) {
+    if (studySourceContext === 'review-queue' || !currentDeckId) {
+      showScreen('screen-decks');
+      if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+    } else {
+      showScreen('screen-deck-detail');
+      if (typeof refreshActiveScreenData === 'function') refreshActiveScreenData();
+    }
+    return;
+  }
+
+  const total = translationQuestionsList.length || 1;
+  const done = translationGradedIndices.size;
+
+  if (done > 0 && done < total) {
+    if (typeof openStudyExitConfirmModal === 'function') {
+      openStudyExitConfirmModal({
+        mode: 'translation',
+        modeLabel: 'Dịch Thuật Song Phương (VIP β)',
+        completedCount: done,
+        totalCount: total,
+        currentPointsEarned: translationSessionPointsEarned,
+        onConfirmExit: () => {
+          exitTranslationMode(true);
+        }
+      });
+      return;
+    }
+  }
+
+  exitTranslationMode(true);
+}
+window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
 

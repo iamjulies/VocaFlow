@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-25 (Build 326) - Ra Mắt Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β), AI Chấm Bài Nghiêm Khắc & Phân Tích Chuyên Sâu, 3 Cấp Độ Thử Thách (Dễ, TB, Khó), Gợi Ý VocaHint 3 Tầng POS-Aware, Đồng Bộ Sổ Tay Lỗi Sai & Dashboard Tổng Kết 5 Ô Chỉ Số
+================================================================================
+1. [Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β) (06f-translation-engine.js, screen-translation.html, modal-translation-setup.html, modal-translation-result.html)]:
+   - Extended Learning Mode thứ 4 độc quyền dành riêng cho VIP User (Role VIP/isVip), đánh dấu (β).
+   - 2 Chế độ dịch con (Direction):
+     + en_to_vi (English ➔ Vietnamese): Đọc hiểu câu tiếng Anh chứa từ vựng trọng tâm, dịch sát nghĩa và tự nhiên sang tiếng Việt.
+     + vi_to_en (Vietnamese ➔ English): Đọc câu tiếng Việt mang trọn vẹn ngữ nghĩa, dịch chính xác sang tiếng Anh chuẩn ngữ pháp, thì và từ vựng.
+   - 3 Cấp độ thử thách & Hệ số thưởng (Difficulty):
+     + 🟢 Dễ (Easy): Câu ngắn ≤ 10 từ, điểm sàn 70đ, hệ số x1.2.
+     + 🟡 Trung Bình (Medium): Câu ghép 10-18 từ, điểm sàn 80đ, hệ số x1.8.
+     + 🔴 Khó (Hard): Câu phức & học thuật > 18 từ, điểm sàn 90đ, hệ số x2.4.
+   - Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Chuyên Sâu:
+     + Chấm nghiêm khắc, trừ điểm thẳng tay khi sai ngữ pháp, thì, mạo từ, đảo nghĩa, dịch thô cứng nhắc.
+     + 3 Thẻ nhận xét đa tầng: 🎯 Điểm số & Đánh giá tổng quan, 🔍 Phân tích lỗi & Sắc thái ngữ nghĩa, ✨ Bản dịch đề xuất nâng cấp & Mẹo dịch chuyên sâu.
+   - VocaHint 3 Tầng & Gợi Ý Thừa Kế POS-Aware:
+     + Tầng 1: Cấu trúc câu & thì ngữ pháp.
+     + Tầng 2: Từ khóa trọng tâm và loại từ (Noun, Verb, Adj, Adv).
+     + Tầng 3: Khung dịch / Gợi ý mở đầu câu.
+   - Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai:
+     + Mọi câu dịch dưới điểm sàn tự động đưa từ gốc vào Sổ Tay Lỗi Sai (addWordToMistakeList(word, 'translation')).
+   - Dashboard Mừng Công 5 Ô Chỉ Số Đẳng Cấp:
+     + Hiển thị 5 ô: Tỉ lệ đạt sàn, VoCoin nhận được, Điểm dịch TB, Trợ giúp đã dùng, Tổng thời gian.
+     + Tích hợp Banner Luyện Lại Từ Chưa Đạt Sàn và dọn dẹp âm thanh pháo hoa ngay khi đóng modal.
+   - Đồng bộ hoàn hảo ví thực tế VocaHint & VocaSkip, tích hợp Màn hình cảnh báo thoát giữa chừng (Early Exit Modal) và kết toán theo chuẩn Balance v3.
+
+================================================================================
 Phiên bản: v0.10.10-24 (Build 325) - Bản Dịch Tiếng Việt Chuẩn Xác 100% Cho Nghe Gõ Câu (Issue 7), Chuẩn Hóa Modal Tổng Kết 5 Ô Chỉ Số Đẳng Cấp Kèm Banner Luyện Lại Từ Chưa Đạt Sàn (Issue 8), Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai Từ Mọi Thiết Bị (Issue 9), Hiệu Chỉnh VocaHint 3 Tầng Nghe Gõ Câu (Issue 10), Làm Sạch Tiếng Việt Trong Câu Âm Thanh TTS (Issue 11) & Khắc Phục Lỗi Template Ngữ Nghĩa POS (Issue 12)
 ================================================================================
 1. [Bản Dịch Tiếng Việt Chuẩn Xác 100% Cho Nghe Gõ Câu (Issue 7) (06e-dictation-engine.js)]:

@@ -2603,12 +2603,22 @@
         return;
       }
 
-      // Issue 13 & 22: Cloze & Dictation Modes VIP Check
-      if ((mode === 'cloze' || mode === 'dictation') && typeof isUserVip === 'function' && !isUserVip()) {
+      // Issue 13, 22 & 25: Cloze, Dictation & Translation Modes VIP Check
+      if ((mode === 'cloze' || mode === 'dictation' || mode === 'translation') && typeof isUserVip === 'function' && !isUserVip()) {
         closeModal('modal-review-queue');
         const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
-        const modeTitle = mode === 'cloze' ? 'Chế độ Điền Từ Đoạn Văn (VIP β)' : 'Chế độ Nghe Gõ Câu (VIP β)';
-        const modeIcon = mode === 'cloze' ? '🧩 🔒' : '🎧 🔒';
+        const modeTitles = {
+          cloze: 'Chế độ Điền Từ Đoạn Văn (VIP β)',
+          dictation: 'Chế độ Nghe Gõ Câu (VIP β)',
+          translation: 'Chế độ Dịch Thuật Song Phương (VIP β)'
+        };
+        const modeIcons = {
+          cloze: '🧩 🔒',
+          dictation: '🎧 🔒',
+          translation: '🌐 🔒'
+        };
+        const modeTitle = modeTitles[mode] || 'Chế độ học tập VIP β';
+        const modeIcon = modeIcons[mode] || '👑 🔒';
         if (isGuest && typeof openGuestFeatureLockModal === 'function') {
           openGuestFeatureLockModal(mode, modeTitle, modeIcon, 'Tính Năng Độc Quyền VocaVIP');
         } else if (typeof openVipPricingModal === 'function') {
@@ -2646,6 +2656,12 @@
           openDictationSetupModal(false, targetList);
         } else {
           showToast('⚠️ Chưa thể khởi chạy chế độ Nghe Gõ Câu Dictation!');
+        }
+      } else if (mode === 'translation') {
+        if (typeof openTranslationSetupModal === 'function') {
+          openTranslationSetupModal(false, targetList);
+        } else {
+          showToast('⚠️ Chưa thể khởi chạy chế độ Dịch Thuật Song Phương!');
         }
       }
     }

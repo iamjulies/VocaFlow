@@ -1,37 +1,39 @@
-# CURRENT TASK & TRẠNG THÁI CÔNG VIỆI HIỆN TẠI (VOCAFLOW)
+# CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-24 (Build 325)`  
+> **Phiên bản mục tiêu:** `v0.10.10-25 (Build 326)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-24 Build 325)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-25 Build 326)
 
-- [x] **Vấn đề 7: Bản Dịch Tiếng Việt Chuẩn Xác 100% Cho Nghe Gõ Câu (`06e-dictation-engine.js`)**:
-  - Xóa bỏ triệt để các chuỗi placeholder tạm bợ (`"Câu ví dụ rèn luyện từ \"...\": ..."`).
-  - Tích hợp từ điển mẫu câu theo POS (Noun, Verb, Adjective, Adverb) với bản dịch tiếng Việt 100% tự nhiên, sát ngữ cảnh thực tế.
+- [x] **Chế Độ Học Tập Dịch Thuật Song Phương (Bidirectional Translation Lab VIP β)**:
+  - Extended Learning Mode thứ 4 độc quyền dành riêng cho VIP User (`isVip` / `role === 'vip'`), đánh dấu `(β)`.
+  - 2 Chế độ dịch con (Direction):
+    + `en_to_vi` (English ➔ Vietnamese): Đọc hiểu câu tiếng Anh chứa từ vựng trọng tâm, dịch sát nghĩa và tự nhiên sang tiếng Việt.
+    + `vi_to_en` (Vietnamese ➔ English): Đọc câu tiếng Việt mang trọn vẹn ngữ nghĩa, dịch chính xác sang tiếng Anh chuẩn ngữ pháp, thì và từ vựng.
+  - 3 Cấp độ thử thách & Hệ số thưởng (Difficulty):
+    + 🟢 Dễ (Easy): Câu ngắn ≤ 10 từ, điểm sàn 70đ, hệ số x1.2.
+    + 🟡 Trung Bình (Medium): Câu ghép 10-18 từ, điểm sàn 80đ, hệ số x1.8.
+    + 🔴 Khó (Hard): Câu phức & học thuật > 18 từ, điểm sàn 90đ, hệ số x2.4.
+  - Trí Tuệ Nhân Tạo Gemini AI Chấm Điểm & Phân Tích Chuyên Sâu:
+    + Chấm nghiêm khắc, trừ điểm thẳng tay khi sai ngữ pháp, thì, mạo từ, đảo nghĩa, dịch thô cứng nhắc.
+    + 3 Thẻ nhận xét đa tầng: 🎯 Điểm số & Đánh giá tổng quan, 🔍 Phân tích lỗi & Sắc thái ngữ nghĩa, ✨ Bản dịch đề xuất nâng cấp & Mẹo dịch chuyên sâu.
+  - VocaHint 3 Tầng & Gợi Ý Thừa Kế POS-Aware:
+    + Tầng 1: Cấu trúc câu & thì ngữ pháp.
+    + Tầng 2: Từ khóa trọng tâm và loại từ (Noun, Verb, Adj, Adv).
+    + Tầng 3: Khung dịch / Gợi ý mở đầu câu.
+  - Tự Động Lưu Từ Sai Vào Sổ Tay Lỗi Sai:
+    + Mọi câu dịch dưới điểm sàn tự động đưa từ gốc vào Sổ Tay Lỗi Sai (`addWordToMistakeList(word, 'translation')`).
+  - Dashboard Mừng Công 5 Ô Chỉ Số Đẳng Cấp:
+    + Hiển thị 5 ô: Tỉ lệ đạt sàn, VoCoin nhận được, Điểm dịch TB, Trợ giúp đã dùng, Tổng thời gian.
+    + Tích hợp Banner Luyện Lại Từ Chưa Đạt Sàn và dọn dẹp âm thanh pháo hoa ngay khi đóng modal.
+  - Đồng bộ hoàn hảo ví thực tế VocaHint & VocaSkip, tích hợp Màn hình cảnh báo thoát giữa chừng (Early Exit Modal) và kết toán theo chuẩn Balance v3.
+  - Đặt nút truy cập viền neon xoay tròn conic-gradient ở cả Deck Detail và Review Queue Modal.
 
-- [x] **Vấn đề 8: Chuẩn Hóa Modal Tổng Kết 5 Ô Chỉ Số Đẳng Cấp Kèm Banner Luyện Lại (`modal-dictation-result.html`, `06e-dictation-engine.js`)**:
-  - Nâng cấp modal tổng kết sau bài nghe gõ lên chuẩn Dashboard 5 ô (`🎯 Tỉ lệ đạt sàn`, `💰 VoCoin nhận được`, `⚡ Điểm nghe gõ TB`, `💡 Trợ giúp đã dùng`, `⏱️ Tổng thời gian`).
-  - Tích hợp banner luyện lại các từ chưa đạt sàn (`retryDictationWrongWordsOnly()`) kèm cúp vàng 🏆, huy hiệu cấp độ và hệ số nhân điểm (x1.2, x1.8, x2.4, x3.6).
-
-- [x] **Vấn đề 9: Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai Từ Mọi Thiết Bị (`03-auth.js`)**:
-  - Sửa thuật toán `mergeCloudDataIntoLocal`: Giữ lại toàn bộ các từ làm sai từ thiết bị khác chưa bị tombstone xoá, giải quyết triệt để tình trạng mất từ sai khi đồng bộ trên nhiều máy.
-
-- [x] **Vấn đề 10: Hiệu Chỉnh VocaHint 3 Tầng Nghe Gõ Câu (`06e-dictation-engine.js`)**:
-  - Tầng 1: Gợi ý chức năng ngữ nghĩa, từ loại và từ khóa (không làm lộ bản dịch).
-  - Tầng 2: Bản dịch tiếng Việt hoàn chỉnh.
-  - Tầng 3: Khung chữ cái đầu của các từ trong câu.
-
-- [x] **Vấn đề 11: Làm Sạch Tiếng Việt Trong Câu Âm Thanh TTS (`06e-dictation-engine.js`)**:
-  - Thêm hàm `sanitizeEnglishDictationSentence` bóc tách các đoạn tiếng Việt trong ngoặc ra khỏi câu đọc TTS để Google TTS và Web Speech API phát âm chuẩn xác 100% tiếng Anh, đồng thời giữ phần tiếng Việt làm bản dịch.
-
-- [x] **Vấn đề 12: Khắc Phục Lỗi Template Ngữ Nghĩa POS (`06e-dictation-engine.js`)**:
-  - Thay thế các câu vô nghĩa ghép cứng bằng mẫu câu theo từ loại (Danh từ, Động từ, Tính từ, Trạng từ) kết hợp ngữ nghĩa tự nhiên.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-24 Build 325`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-24 (Build 325)`.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-25 Build 326`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-25 (Build 326)`.
 
 ---
 

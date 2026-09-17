@@ -47,6 +47,7 @@ $screensOrder = @(
     "screen-writing.html",
     "screen-cloze.html",
     "screen-dictation.html",
+    "screen-translation.html",
     "screen-autofc.html"
 )
 $screensBuilder = [System.Text.StringBuilder]::new()
@@ -70,6 +71,8 @@ $modalsOrder = @(
     "modal-writing-setup.html",
     "modal-writing-result.html",
     "modal-spelling-result.html",
+    "modal-translation-setup.html",
+    "modal-translation-result.html",
     "modal-study-exit-confirm.html",
     "modal-quiz-setup.html",
     "modal-ai-deck-studio.html",

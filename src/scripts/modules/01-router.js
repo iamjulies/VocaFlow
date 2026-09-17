@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-24 Build 325)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-25 Build 326)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -268,6 +268,10 @@ function navigateToRoute(route, isPopState = false) {
       }
       if ((secondSegment === 'dictation' || secondSegment === 'nghego') && typeof startDictationMode === 'function') {
         startDictationMode();
+        return;
+      }
+      if ((secondSegment === 'translation' || secondSegment === 'dich' || secondSegment === 'translate') && typeof startTranslationMode === 'function') {
+        startTranslationMode();
         return;
       }
     }
