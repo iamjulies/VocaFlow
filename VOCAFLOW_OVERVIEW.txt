@@ -1,4 +1,19 @@
 ================================================================================
+Phiên bản: v0.10.10-28 (Build 329) - Đột Phá Gemini AI Sinh Câu Dịch Thuật Trực Tiếp Theo Ngữ Cảnh Tự Nhiên, Màn Hình Báo Lỗi Kèm Nút Thử Lại & Thoát, Hợp Nhất Thẻ Nhận Xét Card 3 Tích Hợp Nút Nghe TTS & Xóa Bỏ Hộp Gợi Ý Trùng Lặp (Vấn Đề 5 & 6)
+================================================================================
+1. [Đột Phá Gemini AI Sinh Trực Tiếp Toàn Bộ Câu Hỏi Dịch Thuật (06f-translation-engine.js, screen-translation.html)]:
+   - Tích hợp trực tiếp Google Gemini Flash-Lite (gemini-3.5-flash-lite, gemini-3.1-flash-lite, gemini-2.5-flash-lite, gemini-3.8-flash, v.v.) tự động tạo câu hỏi dịch thuật song phương giàu ngữ cảnh cho từng từ vựng mục tiêu (như flexitime, fatigue, conflict, v.v.).
+   - Loại bỏ hoàn toàn các mẫu câu tĩnh lặp lại cứng nhắc dạng "Understanding the importance of this flexitime/fatigue helps improve our daily work.".
+   - Xử lý phân cấp độ khó (easy: ≤10 từ, medium: 10-18 từ, hard: >18 từ câu ghép/phức) và hướng dịch (en_to_vi / vi_to_en) chuẩn mực.
+2. [Màn Hình Báo Lỗi Tinh Tế & Nút Thử Lại / Thoát (06f-translation-engine.js, screen-translation.html)]:
+   - Khi ngoại tuyến hoặc API gặp sự cố (hết quota, sai key, ngắt mạng), hiển thị rõ ràng card báo lỗi (#translation-error-card) kèm thông điệp hướng dẫn chi tiết.
+   - Trang bị 2 nút hành động: "🔄 Thử Lại" (retryGenerateTranslationTasks) và "🚪 Thoát" (exitTranslationMode), loại bỏ hoàn toàn việc âm thầm sinh câu tĩnh sai lệch.
+3. [Hợp Nhất Bản Dịch Đề Xuất Nâng Cấp Card 3 & Xóa Bỏ Hộp Trùng Lặp (06f-translation-engine.js, screen-translation.html)]:
+   - Hợp nhất toàn diện nội dung gợi ý vào Card 3 (Bản Dịch Đề Xuất Nâng Cấp - Polished Rewrite) kèm mẹo dịch thuật chuyên sâu.
+   - Bổ sung nút 🔊 Nghe phát âm chuẩn TTS (btn-translation-speak-suggestion / speakTranslationSuggestionSentence) cho câu tiếng Anh đề xuất.
+   - Xóa bỏ triệt để hộp gợi ý thứ 4 trùng lặp (Reference Benchmark Translation Box) gây rối mắt giao diện người dùng.
+
+================================================================================
 Phiên bản: v0.10.10-27 (Build 328) - Nâng Cấp Gemini Flash-Lite & Flash Chấm Dịch Thuật Trực Tiếp, Luân Chuyển Model Đa Khóa Failover, Bản Dịch Đề Xuất Polished Rewrite Chuẩn Bản Xứ & Chuẩn Hóa Toàn Diện Mẫu Câu Sinh Tự Động (Vấn Đề 4)
 ================================================================================
 1. [Nâng Cấp Động Cơ Gọi Gemini AI Chấm Dịch Thuật Trực Tiếp (06f-translation-engine.js)]:

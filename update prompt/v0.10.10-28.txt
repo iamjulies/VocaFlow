@@ -1,0 +1,12 @@
+v0.10.10-28
+[ĐỌC KĨ PHẦN SAU]
+=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
+[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
+2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading (đã hoàn thành)
+3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (đã hoàn thành)
+4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng
+- Vấn để 5: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 180616.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 180720.png",... lỗi trong khâu tạo câu tiếng anh bằng AI. hiện tại t làm thì nó cứ theo mẫu như này thôi ấy, cứ understanding the... làm t khó chịu và khó hiểu lắm... chắc đây là fallback à? vậy tức là gemini-3.5-flashlite của t kh xuất hiện? where is he? và cách xử trí cho tất cả trường hợp mà gọi AI kh đc thì kh phải là tạo fallback nhé, mà là hiện thông báo lỗi, có nút nhấn tạo lại và nút thoát nhé.
+- Vấn đề 6: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 180713.png" lỗi lặp lại nhiều lần câu gợi ý cải thiện nầy.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+

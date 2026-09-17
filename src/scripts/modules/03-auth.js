@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-27 / Build 328)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-28 / Build 329)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-28': {
+        postId: 'official_update_v0_10_10_28',
+        releaseTime: '2026-09-17T18:30:00.000Z',
+        title: '🌐 Đột Phá Gemini AI Sinh Câu Dịch Thuật & Hợp Nhất Thẻ Nhận Xét Chuẩn Xác (v0.10.10-28 Build 329)!',
+        summary: 'Tích hợp Gemini Flash-Lite sinh trực tiếp 100% câu hỏi dịch thuật tự nhiên theo ngữ cảnh thực tế, xử lý lỗi thông minh với nút Thử Lại & Thoát, tinh gọn thẻ nhận xét Card 3 tích hợp nút nghe phát âm TTS và loại bỏ triệt để hộp gợi ý trùng lặp.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-28 (Build 329)!\n\n✨ Những điểm mới nổi bật:\n🧠 Đột Phá Gemini Flash-Lite Sinh Câu Hỏi Dịch Thuật Tự Nhiên: Trực tiếp gọi Gemini Flash-Lite tạo các câu văn phong phú, thực tế và giàu ngữ cảnh cho từng từ vựng (như flexitime, fatigue, conflict, v.v.), xóa bỏ hoàn toàn các mẫu câu tĩnh lặp lại vô vị dạng "Understanding the importance of this...".\n🛡️ Màn Hình Báo Lỗi Tinh Tế & Nút Thử Lại / Thoát: Trong trường hợp ngoại tuyến hoặc API gặp sự cố, hệ thống hiển thị màn hình thông báo rõ ràng kèm nút "🔄 Thử Lại" và "🚪 Thoát", không âm thầm sinh câu tĩnh sai lệch.\n✨ Hợp Nhất Gợi Ý Card 3 & Tích Hợp Âm Thanh TTS: Gộp trọn vẹn bản dịch đề xuất nâng cao (Polished Rewrite) và mẹo dịch thuật vào Card 3 kèm nút 🔊 Nghe phát âm chuẩn bản xứ, loại bỏ hoàn toàn hộp đề xuất thứ 4 trùng lặp gây rối mắt.\n⚡ Đồng Bộ Toàn Diện & Trải Nghiệm Mượt Mà: Đảm bảo độ mượt mà và tin cậy tuyệt đối cho quá trình rèn luyện kỹ năng dịch thuật.\n\nChúc bạn có những giờ phút nâng cao kỹ năng dịch thuật tuyệt vời nhất cùng VocaFlow! 🚀🌐`
+      },
       'v0.10.10-27': {
         postId: 'official_update_v0_10_10_27',
         releaseTime: '2026-09-17T18:00:00.000Z',

@@ -1,29 +1,29 @@
-# CURRENT TASK & TRẠNG THÁI CÔNG VIỆI HIỆN TẠI (VOCAFLOW)
+# CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-27 (Build 328)`  
+> **Phiên bản mục tiêu:** `v0.10.10-28 (Build 329)`  
 > **Cập nhật lần cuối:** 2026-09-17  
-> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-27 Build 328)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-28 Build 329)
 
-- [x] **Vấn đề 4: Nâng Cấp Gemini Flash-Lite & Flash Chấm Dịch Thuật Trực Tiếp, Luân Chuyển Model Đa Khóa Failover, Bản Dịch Đề Xuất Polished Rewrite Chuẩn Bản Xứ & Chuẩn Hóa Toàn Diện Mẫu Câu Sinh Tự Động (`06f-translation-engine.js`)**:
-  - Tích hợp trực tiếp Google Gemini API (`models/generateContent`) với danh sách khóa dự phòng (`getStoredApiKeys()`) và cơ chế luân chuyển model tự động (`getGeminiModelsForTier('fast')` / `'deep'`).
-  - Hỗ trợ đầy đủ các model thế hệ mới: `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-3.8-flash`, v.v., kèm timeout 16s và lưu vết model hoạt động ổn định nhất (`saveWorkingGeminiModel`).
-  - Áp dụng `responseMimeType: "application/json"` với prompt phân tích ngữ nghĩa, ngữ pháp và độ trôi chảy nghiêm ngặt.
-  - Tinh chỉnh prompt AI yêu cầu trả về bản dịch đề xuất (`polishedRewrite`) mang văn phong tự nhiên, đúng sắc thái ngữ cảnh và ngữ điệu bản xứ, không dịch máy móc thô cứng từng từ.
-  - Thẻ nhận xét thứ 3 hiển thị bản dịch trau chuốt kèm mẹo nâng tầm câu văn.
-  - Bổ sung nhóm ngữ nghĩa chuyên biệt cho các từ vựng mang tính Xung đột / Tranh chấp / Thách thức (`conflict`, `dispute`, `crisis`, `tension`, v.v.).
-  - Loại bỏ triệt để hiện tượng ghép từ sai cấu trúc (ví dụ: "We need to conflict carefully..." hay "mâu thuẫn xung đột cẩn thận"), thay bằng các mẫu câu chuẩn bản ngữ ("Good communication helps prevent conflict between colleagues." -> "Giao tiếp tốt giúp ngăn ngừa xung đột giữa các đồng nghiệp.").
-  - Tối ưu trích xuất nghĩa tiếng Việt cốt lõi (`extractCleanPrimaryMeaning`), lược bỏ các cụm từ ghép đồng nghĩa rườm rà.
+- [x] **Vấn đề 5: Đột Phá Gemini AI Sinh Trực Tiếp Toàn Bộ Câu Hỏi Dịch Thuật & Màn Hình Báo Lỗi Rõ Ràng (`06f-translation-engine.js`, `screen-translation.html`)**:
+  - Trực tiếp gọi Google Gemini Flash-Lite (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-3.8-flash`, v.v.) tự động sinh câu hỏi ngữ cảnh mượt mà, đúng ngữ pháp và sinh động cho từng từ vựng mục tiêu (như `flexitime`, `fatigue`, `conflict`, v.v.).
+  - Xóa bỏ triệt để các mẫu câu tĩnh lặp lại cứng nhắc dạng `"Understanding the importance of this flexitime/fatigue helps improve our daily work."`.
+  - Thiết kế màn hình báo lỗi `#translation-error-card` khi không có mạng hoặc API thất bại kèm 2 nút hành động: `"🔄 Thử Lại"` (`retryGenerateTranslationTasks`) và `"🚪 Thoát"` (`exitTranslationMode`), không âm thầm sinh câu tĩnh sai lệch.
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-27 Build 328`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-27 (Build 328)`.
+- [x] **Vấn đề 6: Hợp Nhất Bản Dịch Đề Xuất Nâng Cấp Card 3 Tích Hợp Nút Nghe TTS & Xóa Bỏ Hộp Trùng Lặp (`06f-translation-engine.js`, `screen-translation.html`)**:
+  - Gộp trọn vẹn bản dịch trau chuốt (Polished Rewrite) và mẹo dịch thuật vào Card 3.
+  - Bổ sung nút 🔊 Nghe phát âm TTS (`#btn-translation-speak-suggestion` / `speakTranslationSuggestionSentence`).
+  - Xóa bỏ triệt để hộp gợi ý thứ 4 trùng lặp (`Reference Benchmark Translation Box`) gây dư thừa và rối mắt giao diện.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-28 Build 329`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-28 (Build 329)`.
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-26 Build 327)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-27 Build 328)
 
 - [x] **Vấn đề 1: Nâng Cấp AI Chấm Bài Dịch Thuật & Heuristic Fallback (`06f-translation-engine.js`)**:
   - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.
