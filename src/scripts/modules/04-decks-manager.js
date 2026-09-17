@@ -1066,16 +1066,17 @@
 
         const isPinned = !!deck.isPinned;
         const isArchived = !!deck.isArchived;
-        const isVipDeck = !!(deck.isVipOnly || deck.isVipExclusive || deck.isVip || (deck.tags && deck.tags.includes('vip')) || (deck.title && deck.title.includes('(VIP)')));
+        const isVipDeck = typeof isDeckVip === 'function' ? isDeckVip(deck) : !!(deck.isVipOnly || deck.isVipExclusive || deck.isVip || (deck.tags && deck.tags.includes('vip')) || (deck.title && deck.title.includes('(VIP)')));
+        const isLocked = typeof isDeckLockedForUser === 'function' ? isDeckLockedForUser(deck) : false;
 
         const card = document.createElement('div');
-        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '') + (isVipDeck ? ' vip-deck-card' : '');
+        card.className = 'deck-card' + (isPinned ? ' pinned' : '') + (isArchived ? ' archived' : '') + (isVipDeck ? ' vip-deck-card' : '') + (isLocked ? ' vip-deck-locked' : '');
         card.innerHTML = `
           ${!isVipDeck ? `<div class="deck-card-strip" style="background-color: ${deck.color || '#4f46e5'}"></div>` : ''}
           <div class="deck-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap;">
               <h3 class="deck-title">${escapeHtml(deck.title)}</h3>
-              ${isVipDeck ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>' : ''}
+              ${isVipDeck ? (isLocked ? '<span class="badge" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(239,68,68,0.6); padding: 1px 6px; box-shadow: 0 0 8px rgba(239,68,68,0.4);">🔒 VIP Đã Khóa</span>' : '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; font-size: 10px; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">👑 VIP</span>') : ''}
               ${isPinned ? '<span class="badge badge-pinned" title="VocaDeck đã được ghim lên đầu"><svg class="icon icon-sm"><use href="#i-pin"/></svg> Đã ghim</span>' : ''}
               ${isArchived ? '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;"><svg class="icon icon-sm"><use href="#i-archive"/></svg> Đã lưu trữ</span>' : ''}
             </div>
@@ -1089,6 +1090,12 @@
             <span>Mức độ thuộc: ${avgScore}%</span>
             <span>Đã thuộc: ${mastered}/${total}</span>
           </div>
+          ${isLocked ? `
+            <div style="margin-top: 8px; background: rgba(239,68,68,0.12); border: 1px dashed rgba(239,68,68,0.4); border-radius: 8px; padding: 6px 10px; font-size: 11px; color: #fca5a5; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+              <span>🔒 Hết hạn VIP - Cần gia hạn</span>
+              <button type="button" class="btn btn-sm" style="padding: 2px 8px; font-size: 10.5px; background: #ef4444; color: white; border: none; font-weight: 700; border-radius: 6px; cursor: pointer;" onclick="event.stopPropagation(); if (typeof openVipModal === 'function') openVipModal(); else openAuthModal('vip');">Gia hạn</button>
+            </div>
+          ` : ''}
           ${(() => {
             const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
             return `
@@ -1116,6 +1123,12 @@
         `;
         card.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
+          if (isDeckLockedForUser(deck)) {
+            alert(`🔒 Bộ từ "${deck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+            if (typeof openVipModal === 'function') openVipModal();
+            else if (typeof openAuthModal === 'function') openAuthModal('vip');
+            return;
+          }
           openDeckDetail(deck.id);
         });
         container.appendChild(card);
@@ -1195,6 +1208,14 @@
       selectedWordIds.clear();
       const deck = decks.find(d => d.id === deckId);
       if (!deck) return;
+
+      if (typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(deck)) {
+        alert(`🔒 Bộ từ "${deck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+        if (typeof openVipModal === 'function') openVipModal();
+        else if (typeof openAuthModal === 'function') openAuthModal('vip');
+        showScreen('screen-decks');
+        return;
+      }
 
       // Automatically reconcile and clean any duplicate words inside this deck
       reconcileDuplicateWordsInDecks(deckId, false);
@@ -2184,11 +2205,12 @@
     function getDueReviewWords() {
       const now = Date.now();
       const msPerDay = 24 * 60 * 60 * 1000;
-      // Exclude words belonging to archived decks
+      // Exclude words belonging to archived decks and locked VIP decks
       const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
+      const lockedDeckIds = new Set(decks.filter(d => typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(d)).map(d => d.id));
 
       return words.filter(w => {
-        if (archivedDeckIds.has(w.deckId)) return false;
+        if (archivedDeckIds.has(w.deckId) || lockedDeckIds.has(w.deckId)) return false;
         const score = getWordScore(w);
         if (score <= 0 && !w.srsLastReview && !w.lastReviewedAt) return false;
 
@@ -2220,7 +2242,8 @@
       container.style.display = 'block';
 
       const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
-      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && getWordScore(w) > 0);
+      const lockedDeckIds = new Set(decks.filter(d => typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(d)).map(d => d.id));
+      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && !lockedDeckIds.has(w.deckId) && getWordScore(w) > 0);
       const dueWords = getDueReviewWords();
       reviewDueWordsList = dueWords;
 
@@ -2273,7 +2296,8 @@
 
     function openReviewQueueModal() {
       const archivedDeckIds = new Set(decks.filter(d => !!d.isArchived).map(d => d.id));
-      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && getWordScore(w) > 0);
+      const lockedDeckIds = new Set(decks.filter(d => typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(d)).map(d => d.id));
+      const learnedWords = words.filter(w => !archivedDeckIds.has(w.deckId) && !lockedDeckIds.has(w.deckId) && getWordScore(w) > 0);
       const dueWords = getDueReviewWords();
       reviewQueueMasterList = dueWords.length > 0 ? dueWords : [...learnedWords];
       reviewDueWordsList = reviewQueueMasterList;
@@ -2294,7 +2318,7 @@
 
         let opts = `<option value="all">📁 Tất cả VocaDeck (${reviewQueueMasterList.length})</option>`;
         decks.forEach(d => {
-          if (!d.isArchived && deckCounts[d.id]) {
+          if (!d.isArchived && !(typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(d)) && deckCounts[d.id]) {
             opts += `<option value="${d.id}">📁 ${escapeHtml(d.title)} (${deckCounts[d.id]})</option>`;
           }
         });

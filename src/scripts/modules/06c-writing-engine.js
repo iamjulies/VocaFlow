@@ -167,6 +167,16 @@ function ensureMinimumWritingWords(targetWords) {
 }
 
 function openWritingSetupModal(useSelection = false, customWordList = null) {
+  if (!customWordList && currentDeckId) {
+    const curDeck = decks.find(d => d.id === currentDeckId);
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
+
   if (typeof isUserVip === 'function' && !isUserVip()) {
     if (!currentUser || !currentUser.email) {
       alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nVui lòng đăng nhập và nâng cấp VIP để mở khóa.');
@@ -337,6 +347,13 @@ function startWritingMode(fromSelection = false, customWordList = null) {
   if (!currentDeckId && !customWordList) return;
   const deck = decks.find(d => d.id === currentDeckId);
   if (!deck && !customWordList) return;
+
+  if (!customWordList && deck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(deck)) {
+    alert(`🔒 Bộ từ "${deck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+    if (typeof openVipModal === 'function') openVipModal();
+    else if (typeof openAuthModal === 'function') openAuthModal('vip');
+    return;
+  }
 
   studySourceContext = customWordList ? 'review-queue' : 'deck';
   

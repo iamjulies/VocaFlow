@@ -195,6 +195,22 @@
       box-shadow: 0 10px 30px rgba(245, 158, 11, 0.35);
     }
 
+    /* VIP Locked Deck Card State (v0.10.10-33) */
+    .deck-card.vip-deck-locked {
+      border: 1.5px solid rgba(239, 68, 68, 0.5) !important;
+      box-shadow: 0 4px 18px rgba(239, 68, 68, 0.22) !important;
+      position: relative !important;
+    }
+    .deck-card.vip-deck-locked::before {
+      background: conic-gradient(transparent, #ef4444, #dc2626, #f87171, transparent 40%) !important;
+    }
+    .deck-card.vip-deck-locked .deck-title {
+      color: #fca5a5 !important;
+    }
+    .deck-card.vip-deck-locked:hover {
+      box-shadow: 0 10px 30px rgba(239, 68, 68, 0.35) !important;
+    }
+
     /* VIP Plan Pricing Cards Light Effect */
     .vip-plan-card {
       position: relative !important;

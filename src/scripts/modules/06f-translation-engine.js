@@ -77,6 +77,27 @@ function getTranslationDifficultyConfig(diff) {
 // 2. VIP ACCESS CHECKER
 // =========================================================================
 function checkTranslationVipAccess() {
+  if (typeof isUserVip === 'function') {
+    if (!isUserVip()) {
+      if (typeof currentUser === 'undefined' || !currentUser || !currentUser.email) {
+        if (typeof showToast === 'function') {
+          showToast('🔒 Chế độ Dịch Thuật Song Phương (VIP β) yêu cầu đăng nhập tài khoản VIP!');
+        }
+        if (typeof openAuthModal === 'function') openAuthModal('login');
+      } else {
+        if (typeof showToast === 'function') {
+          showToast('👑 Chế độ Dịch Thuật Song Phương (VIP β) chỉ dành riêng cho thành viên VIP!');
+        }
+        if (typeof openVipPricingModal === 'function') {
+          openVipPricingModal();
+        } else if (typeof openVipModal === 'function') {
+          openVipModal();
+        }
+      }
+      return false;
+    }
+    return true;
+  }
   if (typeof currentUser === 'undefined' || !currentUser) {
     if (typeof showToast === 'function') {
       showToast('🔒 Chế độ Dịch Thuật Song Phương (VIP β) yêu cầu đăng nhập tài khoản VIP!');
@@ -103,6 +124,16 @@ function checkTranslationVipAccess() {
 // =========================================================================
 function openTranslationSetupModal(useSelection = false, customWordList = null) {
   if (!checkTranslationVipAccess()) return;
+
+  if (!customWordList && typeof currentDeckId !== 'undefined' && currentDeckId) {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
 
   translationSetupUseSelection = useSelection;
   translationSetupCustomWordList = customWordList;
@@ -455,6 +486,16 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
 async function startTranslationMode(fromSelection = false, customWordList = null, doShuffle = true) {
   if (!checkTranslationVipAccess()) return;
   if (!currentDeckId && !customWordList) return;
+
+  if (!customWordList && currentDeckId) {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
 
   studySourceContext = customWordList ? 'review-queue' : 'deck';
 

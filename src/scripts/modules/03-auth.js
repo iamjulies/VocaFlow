@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-33 Build 334)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -6525,9 +6525,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-31 / Build 332)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-33': {
+        postId: 'official_update_v0_10_10_33',
+        releaseTime: '2026-09-18T01:00:00.000Z',
+        title: '👑 Nâng Cấp Quà Tặng Giới Thiệu +3 Ngày VocaVIP & Cơ Chế Khóa Bộ Từ VIP Hết Hạn (v0.10.10-33 Build 334)!',
+        summary: 'Nâng cấp phần thưởng người được mời lên +3 ngày VocaVIP Hoàng Gia (người mời nhận +1 ngày), bổ sung cơ chế khóa tự động bộ từ VIP khi hết hạn thuê bao VIP và tối ưu giao diện VocaShop.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-33 (Build 334)!\n\n✨ Những điểm mới nổi bật:\n🎁 Nâng Cấp Quà Tặng Mã Giới Thiệu: Người được mời (tân thủ) khi nhập mã sẽ nhận ngay +3 Ngày VocaVIP Hoàng Gia (thay vì 1 ngày như trước); Người mời nhận +1 Ngày VocaVIP.\n🔒 Cơ Chế Tự Động Khóa Bộ Từ VIP Hết Hạn: Bảo vệ tối đa giá trị gói VocaVIP — các bộ từ VIP đã tải về sẽ tự động khóa và gắn huy hiệu cảnh báo khi gói VIP hết hạn, ngăn chặn truy cập học tập trái phép và tự động loại trừ khỏi hàng đợi ôn tập SM-2.\n🛍️ Tối Ưu Hóa Giao Diện VocaShop: Dọn dẹp các khối quy định cũ, mang lại trải nghiệm mua sắm và gia hạn VIP gọn gàng, thanh lịch và trực quan hơn.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ ổn định và tính nhất quán cao nhất trên toàn bộ hệ thống.\n\nChúc bạn có những giờ phút học tập hiệu quả và chinh phục kho tàng từ vựng đỉnh cao cùng VocaFlow! 🚀👑`
+      },
       'v0.10.10-32': {
         postId: 'official_update_v0_10_10_32',
         releaseTime: '2026-09-18T00:15:00.000Z',

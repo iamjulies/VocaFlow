@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-33 Build 334)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 
@@ -57,6 +57,16 @@
 
     function openQuizSetupModal(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
 
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
         alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để tạo bài trắc nghiệm Quiz (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
@@ -1221,6 +1231,17 @@ Yêu cầu nghiêm ngặt:
 
     function startQuizMode(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
+
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       quizSessionWrongWords = [];
       let deckWords = customWordList || getFilteredDeckWords();

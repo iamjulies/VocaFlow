@@ -1,47 +1,42 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-32 (Build 333)`  
+> **Phiên bản mục tiêu:** `v0.10.10-33 (Build 334)`  
 > **Cập nhật lần cuối:** 2026-09-18  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-32 Build 333)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-33 Build 334)
 
-- [x] **Vấn đề 1: Tích Hợp VIP Cat Meme Reactions Cho 4 Chế Độ Mở Rộng (`06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`)**:
-  - Viết câu (Writing): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn (≥60), ngược lại gọi `triggerVipMemeReaction('fail')`.
-  - Điền từ (Cloze): Gọi `triggerVipMemeReaction('right')` khi đúng 100% các ô khuyết, ngược lại gọi `triggerVipMemeReaction('fail')`.
-  - Nghe gõ câu (Dictation): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn/passed, ngược lại gọi `triggerVipMemeReaction('fail')`.
-  - Dịch thuật (Translation): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn (≥60), ngược lại gọi `triggerVipMemeReaction('fail')`.
-  - Defensive guard kiểm tra an toàn `typeof triggerVipMemeReaction === 'function'` không làm crash khi offline hoặc không phải VIP.
+- [x] **Vấn đề 4: Nâng Cấp Hệ Thống Quà Tặng Mã Mời Bạn Bè (`08-wallet-economy.js`, `10-lucky-wheel.js`, `modal-referral.html`, `modal-shop.html`)**:
+  - Người được mời (tân thủ) khi nhập mã nhận ngay **+3 Ngày VocaVIP Hoàng Gia** (trước đây là +1 ngày).
+  - Người mời nhận **+1 Ngày VocaVIP Hoàng Gia** khi bạn bè nhập mã giới thiệu.
+  - Bổ sung hàm `grantVipDaysBonus(days, source, reason)` trong `10-lucky-wheel.js` hỗ trợ cộng dồn số ngày VIP bất kỳ.
+  - Cập nhật toàn bộ thông báo hòm thư, sổ cái tài chính VoCoin và bản sao chép nội dung modal.
 
-- [x] **Vấn đề 2: Tích Hợp Đồng Bộ Âm Thanh Sống Động (`playVocaSfx`) Cho 4 Chế Độ Mở Rộng**:
-  - Chuẩn hóa các kênh âm thanh: `playVocaSfx('correct')`, `playVocaSfx('wrong')`, `playVocaSfx('pop')` cho gợi ý manh mối VocaHint, `playVocaSfx('skip')` khi bỏ qua, và `playVocaSfx('fireworks')` khi hoàn thành phiên học.
-  - Thay thế toàn bộ mã âm thanh cũ không đồng bộ (`playVocaSfx('success')` -> `'correct'`).
+- [x] **Vấn đề 5: Cơ Chế Khóa Tự Động Bộ Từ VIP Khi Hết Hạn Thuê Bao (`02-state-core.js`, `04-decks-manager.js`, `05-quiz-engine.js` -> `07-speaking-engine.js`, `app.css`)**:
+  - Bổ sung hàm nhận diện `isDeckVip(deck)` và `isDeckLockedForUser(deck)` trong `02-state-core.js`.
+  - Khi tài khoản hết hạn VIP (`!isUserVip() && isDeckVip(deck)`):
+    + Thẻ bộ từ trong danh sách hiển thị viền đỏ gradient, huy hiệu `🔒 VIP Đã Khóa`, dải thông báo cảnh báo hết hạn và khóa tương tác mở chi tiết/học tập.
+    + Chặn mở chi tiết `openDeckDetail` và toàn bộ 7 chế độ học tập (Quiz, Spelling, Speaking, Auto Flashcard, Writing, Cloze, Dictation, Translation) kèm thông báo mở modal gia hạn VIP.
+    + Tự động lọc và loại trừ toàn bộ từ vựng thuộc các bộ từ VIP bị khóa ra khỏi hàng đợi ôn tập ngắt quãng (SM-2 / Spaced Repetition Due Queue).
 
-- [x] **Vấn đề 3: Chuẩn Hóa & Đồng Bộ Toàn Diện 7 Modal Thiết Lập Khắp Ứng Dụng (Study Setup Modals)**:
-  - **3 Chế độ cốt lõi** (`modal-quiz-setup.html`, `modal-spelling-setup.html`, `modal-speaking-setup.html`):
-    + 4 Cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 TB (x1.5), 🔴 Khó (x2.0), 🟣 Siêu Khó (x2.5).
-    + Xóa bỏ triệt để văn bản hardcoded cũ trong Quiz ("+3% Thuộc, +3 VoCoin (Sai: -2 VoCoin)"), thay bằng mô tả Unified Balance v4.
-    + Bổ sung cấp độ Extreme (🟣 Siêu Khó x2.5, điểm sàn 95, 2 lần nghe + 2 lần thu âm) cho Speaking Setup.
-    + Thống nhất khu vực manh mối gợi ý, huy hiệu hệ số và checkbox trộn câu hỏi (Shuffle Toggle).
-  - **4 Chế độ mở rộng** (`modal-writing-setup.html`, `modal-cloze-setup.html`, `modal-dictation-setup.html`, `modal-translation-setup.html`):
-    + 4 Cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 TB (x1.8), 🔴 Khó (x2.8), 🔥 Siêu Khó / Chuyên Gia (x4.0).
-    + Lưới chọn số lượng câu hỏi 4 nút: `[ 5 Câu ]`, `[ 10 Câu ]`, `[ Tự nhập... ]`, `[ Toàn Bộ ]`.
-    + Chuẩn hóa max-width 540px, bố cục responsive hiện đại, hỗ trợ shuffle toggle.
+- [x] **Vấn đề 6: Dọn Dẹp & Tối Ưu Hóa Giao Diện VocaShop (`modal-shop.html`)**:
+  - Loại bỏ hoàn toàn khối bảng quy tắc kinh tế cũ (`balance_v1` & `balance_v2`) trong `modal-shop.html`.
+  - Cập nhật biểu ngữ giới thiệu bạn bè thành `Mời Bạn Bè - Bạn Nhận +1 Ngày VocaVIP, Bạn Bè Nhận +3 Ngày VocaVIP`.
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-32 Build 333`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-32 (Build 333)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-32 (Build 333)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-32 (Build 333)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-32 Build 333`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-32'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-32 (Build 333)'`, `VOCAFLOW_APP_BUILD = 333`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-32 Build 333` & registry)
-  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-32 Build 333`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-32`)
-  - `pubspec.yaml` (`version: 0.10.10+333`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-32`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-32 (Build 333)`)
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-33 Build 334`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-33 (Build 334)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-33 (Build 334)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-33 (Build 334)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-33 Build 334`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-33'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-33 (Build 334)'`, `VOCAFLOW_APP_BUILD = 334`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-33 Build 334` & registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-33 Build 334`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-33`)
+  - `pubspec.yaml` (`version: 0.10.10+334`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-33`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-33 (Build 334)`)
   - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
 
 ---

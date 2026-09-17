@@ -1,4 +1,22 @@
 ================================================================================
+Phiên bản: v0.10.10-33 (Build 334) - Nâng Cấp Quà Tặng Giới Thiệu +3 Ngày VocaVIP Hoàng Gia Cho Tân Thủ, Triển Khai Cơ Chế Khóa Tự Động Bộ Từ VIP Hết Hạn & Dọn Dẹp Giao Diện VocaShop
+================================================================================
+1. [Nâng Cấp Hệ Thống Quà Tặng Mã Mời Bạn Bè (Referral Reward System - Vấn đề 4)]:
+   - Người được mời (tân thủ) khi nhập mã giới thiệu hợp lệ nhận ngay +3 Ngày VocaVIP Hoàng Gia (trước đây là +1 ngày).
+   - Người mời nhận +1 Ngày VocaVIP Hoàng Gia khi bạn bè nhập mã giới thiệu.
+   - Thêm hàm đa năng grantVipDaysBonus(days, source, reason) trong 10-lucky-wheel.js hỗ trợ cộng dồn số ngày VIP bất kỳ.
+   - Cập nhật toàn bộ thông báo hòm thư (inbox notification), lịch sử giao dịch số dư (ledger) và giao diện modal giới thiệu (modal-referral.html, modal-shop.html).
+2. [Cơ Chế Khóa Tự Động Bộ Từ VIP Khi Hết Hạn Thuê Bao (VIP Expiration Lock - Vấn đề 5)]:
+   - Bổ sung helper nhận diện isDeckVip(deck) và isDeckLockedForUser(deck) trong 02-state-core.js.
+   - Khi tài khoản hết hạn VIP (!isUserVip() && isDeckVip(deck)):
+     + Thẻ bộ từ trong màn hình chính hiển thị viền đỏ gradient, huy hiệu 🔒 VIP Đã Khóa, dải thông báo cảnh báo hết hạn và khóa tương tác mở chi tiết/học tập.
+     + Chặn truy cập trực tiếp qua router/URL và toàn bộ 7 chế độ học tập (Quiz, Spelling, Speaking, Auto Flashcard, Writing, Cloze, Dictation, Translation) kèm thông báo hướng dẫn gia hạn và mở modal VIP.
+     + Tự động lọc và loại trừ toàn bộ từ vựng thuộc các bộ từ VIP bị khóa ra khỏi hàng đợi ôn tập ngắt quãng (SM-2 / Spaced Repetition Due Queue).
+3. [Dọn Dẹp & Tối Ưu Hóa Giao Diện VocaShop (Vấn đề 6)]:
+   - Loại bỏ hoàn toàn khối bảng quy tắc kinh tế cũ (balance_v1 & balance_v2) trong modal-shop.html.
+   - Giữ lại giao diện cửa hàng gọn gàng, thanh lịch, làm nổi bật các gói nạp VoCoin và thuê bao VocaVIP.
+
+================================================================================
 Phiên bản: v0.10.10-32 (Build 333) - Tích Hợp Toàn Diện Hiệu Ứng Phản Ứng VIP Cat Meme & Bộ Âm Thanh Sống Động Cho 4 Chế Độ Học Mở Rộng, Đồng Bộ & Chuẩn Hóa Toàn Diện 7 Modal Thiết Lập Khắp Toàn Bộ Ứng Dụng Chuẩn Unified Balance v4
 ================================================================================
 1. [Tích Hợp Toàn Diện VIP Cat Meme Reactions Cho 4 Chế Độ Học Mở Rộng (06c-writing-engine.js, 06d-cloze-engine.js, 06e-dictation-engine.js, 06f-translation-engine.js)]:

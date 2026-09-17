@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-33 Build 334)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-32 Build 333)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-33 Build 334)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-32';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-32 (Build 333)';
-    const VOCAFLOW_APP_BUILD = 333;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-33';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-33 (Build 334)';
+    const VOCAFLOW_APP_BUILD = 334;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -393,6 +393,31 @@
       return isUserVip() ? userVipTier : 'none';
     }
     window.getUserVipTier = getUserVipTier;
+
+    // =========================================================================
+    // VIP DECK IDENTIFICATION & EXPIRATION LOCK ENGINE (v0.10.10-33)
+    // =========================================================================
+    function isDeckVip(deck) {
+      if (!deck) return false;
+      return !!(
+        deck.isVipOnly === true ||
+        deck.isVipExclusive === true ||
+        deck.isVip === true ||
+        (Array.isArray(deck.tags) && deck.tags.some(t => typeof t === 'string' && t.toLowerCase() === 'vip')) ||
+        (typeof deck.title === 'string' && (deck.title.includes('(VIP)') || deck.title.includes('👑 VIP') || deck.title.includes('[VIP]'))) ||
+        (typeof deck.id === 'string' && deck.id.startsWith('lib_deck_vip_'))
+      );
+    }
+    window.isDeckVip = isDeckVip;
+
+    function isDeckLockedForUser(deck) {
+      if (!deck) return false;
+      if (!isDeckVip(deck)) return false;
+      const activeVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      if (activeVip) return false;
+      return true;
+    }
+    window.isDeckLockedForUser = isDeckLockedForUser;
 
     function setAdminVipStatus(enable, tier = 'lifetime', durationDays = 0) {
       adminVipOverride = enable;

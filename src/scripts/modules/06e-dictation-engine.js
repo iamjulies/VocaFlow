@@ -92,6 +92,16 @@ function getDictationDifficultyConfig(diff) {
 // 2. SETUP MODAL HANDLERS & VIP CHECK
 // =========================================================================
 function openDictationSetupModal(useSelection = false, customWordList = null) {
+  if (!customWordList && typeof currentDeckId !== 'undefined' && currentDeckId) {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
+
   if (typeof isUserVip === 'function' && !isUserVip()) {
     const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
     if (isGuest && typeof openGuestFeatureLockModal === 'function') {
@@ -390,6 +400,16 @@ function generateSentenceForWord(mainWord, difficulty, poolWords = []) {
 function startDictationMode(fromSelection = false, customWordList = null, doShuffle = true) {
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   if (typeof stopAllAudio === 'function') stopAllAudio();
+
+  if (!customWordList && typeof currentDeckId !== 'undefined' && currentDeckId) {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
 
   let targetWords = [];
   if (customWordList && customWordList.length > 0) {

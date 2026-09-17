@@ -1733,17 +1733,19 @@
       if (currentUser) currentUser.referredBy = rawCode;
       sessionStorage.removeItem('vocaflow_pending_ref_code');
 
-      // 2. Award Newbie Rewards: +1 Day VIP + 100 Xu + 3 Hints + 1 Lucky Spin (v0.10.8-alpha-10.3)
-      const vipGrantRes = grantVipOneDayBonus();
+      // 2. Award Newbie Rewards: +3 Days VIP + 100 Xu + 3 Hints + 1 Lucky Spin (v0.10.10-33)
+      const vipGrantRes = (typeof grantVipDaysBonus === 'function')
+        ? grantVipDaysBonus(3, 'referral_newbie', '🎁 Quà Tân Thủ: +3 Ngày VocaVIP Hoàng Gia')
+        : grantVipOneDayBonus();
       setUserPoints(getUserPoints() + 100);
       setUserHints(getUserHints() + 3);
       setLuckySpinsCount(getLuckySpinsCount() + 1);
       if (typeof recordAdWatched === 'function') recordAdWatched();
 
       // 3. Ledger entry & notifications
-      addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode}`);
+      addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode} (+3 Ngày VocaVIP)`);
       if (typeof addNotification === 'function') {
-        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +1 Ngày VocaVIP', `Bạn đã nhận được +1 Ngày VocaVIP Hoàng Gia, 100 VoCoin, +3 VocaHint và +1 VocaSpin từ mã ${rawCode}!`);
+        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +3 Ngày VocaVIP', `Bạn đã nhận được +3 Ngày VocaVIP Hoàng Gia, 100 VoCoin, +3 VocaHint và +1 VocaSpin từ mã ${rawCode}!`);
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();

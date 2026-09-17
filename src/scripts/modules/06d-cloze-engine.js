@@ -176,6 +176,16 @@ function ensureMinimumClozeWords(targetWords) {
 }
 
 function openClozeSetupModal(useSelection = false, customWordList = null) {
+  if (!customWordList && typeof currentDeckId !== 'undefined' && currentDeckId) {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+      alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+      if (typeof openVipModal === 'function') openVipModal();
+      else if (typeof openAuthModal === 'function') openAuthModal('vip');
+      return;
+    }
+  }
+
   // Issue 13: Cloze Mode is strictly for VIP members
   if (typeof isUserVip === 'function' && !isUserVip()) {
     const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
@@ -268,6 +278,13 @@ async function startClozeMode(fromSelection = false, customWordList = null, tota
   if (typeof currentDeckId === 'undefined' && !customWordList) return;
   const deck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
   if (!deck && !customWordList) return;
+
+  if (!customWordList && deck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(deck)) {
+    alert(`🔒 Bộ từ "${deck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+    if (typeof openVipModal === 'function') openVipModal();
+    else if (typeof openAuthModal === 'function') openAuthModal('vip');
+    return;
+  }
 
   if (typeof studySourceContext !== 'undefined') {
     studySourceContext = customWordList ? 'review-queue' : 'deck';

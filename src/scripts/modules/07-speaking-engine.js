@@ -301,6 +301,17 @@
 
     function openSpeakingSetupModal(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
+
       if (!hasAtLeastOneApiKey()) {
         alert('🔒 Chức năng Luyện Nói (Speaking) yêu cầu kết nối ít nhất 1 Google Gemini API Key để AI có thể phân tích và chấm điểm phát âm của bạn.\n\nVui lòng vào Cài Đặt (Settings) để thêm API key!');
         openSettingsModal();
@@ -385,6 +396,17 @@
       if (selectedSpeakingSetupDifficulty) {
         currentSpeakingDifficulty = selectedSpeakingSetupDifficulty;
       }
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
+
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       speakingSessionWrongWords = [];
       let targetWords = customWordList || getFilteredDeckWords();
@@ -2124,6 +2146,17 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       isAutoFcMiniMode = false;
       const miniEl = document.getElementById('autofc-mini-player');
       if (miniEl) miniEl.style.display = 'none';
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
+
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       let deckWords = customWordList || getFilteredDeckWords();
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {

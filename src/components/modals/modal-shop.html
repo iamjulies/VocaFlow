@@ -47,10 +47,10 @@
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
             <span style="font-size: 18px;">🎁</span>
-            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Cả 2 Cùng Nhận +1 Ngày VocaVIP</strong>
+            <strong style="font-size: 13.5px; color: #f472b6;">Mời Bạn Bè - Bạn Nhận +1 Ngày VocaVIP, Bạn Bè Nhận +3 Ngày VocaVIP</strong>
             <span class="badge" style="font-size: 9.5px; background: rgba(236,72,153,0.2); color: #f472b6; font-weight: 700;">Thưởng VocaVIP</span>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted);">Chia sẻ mã mời: Bạn nhận +1 Ngày VocaVIP, bạn bè nhận ngay 100 VoCoin & Quà tân thủ!</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Chia sẻ mã mời: Bạn nhận +1 Ngày VocaVIP, bạn bè nhận ngay +3 Ngày VocaVIP & Quà tân thủ!</div>
         </div>
         <button type="button" class="btn btn-sm" onclick="event.stopPropagation(); openReferralModal();" style="white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #ec4899, #a855f7); color: white; border: none; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 3px 10px rgba(236,72,153,0.35); cursor: pointer;">
           Mời Ngay
@@ -263,39 +263,6 @@
           <button class="btn btn-primary btn-sm" id="btn-shop-buy-freeze" onclick="buyFlowFreezeItem()" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; font-weight: 700; padding: 6px 14px; white-space: nowrap;">
             Mua (200 VoCoin)
           </button>
-        </div>
-      </div>
-<div style="background: rgba(0,0,0,0.15); padding: 12px 14px; border-radius: 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.06);">
-        <div>
-          <strong style="color: var(--text);">🎯 Quy tắc điểm Trắc Nghiệm (Theo Cấp Độ Thử Thách - balance_v1):</strong><br>
-          • 🟢 <strong>Dễ:</strong> Đúng (+3% thuộc, +3 VoCoin) • Sai (-2% thuộc, -2 VoCoin)<br>
-          • 🟡 <strong>Trung bình:</strong> Đúng (+5% thuộc, +5 VoCoin) • Sai (-3% thuộc, -3 VoCoin)<br>
-          • 🔴 <strong>Khó:</strong> Đúng (+7% thuộc, +7 VoCoin) • Sai (-4% thuộc, -4 VoCoin)<br>
-          • 🟣 <strong>Cực khó:</strong> Đúng (+9% thuộc, +9 VoCoin) • Sai (-5% thuộc, -5 VoCoin)
-        </div>
-        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
-          <strong style="color: var(--text);">✍️ Quy tắc điểm Luyện Viết (Spelling - balance_v1):</strong><br>
-          • 💰 <strong>VoCoin nhận:</strong> Nhận theo ký tự × Hệ số cấp độ (Dễ x1.0, TB x1.5, Khó x2.0, Siêu Khó x2.5) × Hệ số manh mối (3 manh mối x1.0, 2 manh mối x1.2, 1 manh mối x1.5). Giới hạn tối đa/từ: Dễ (8 VoCoin), TB (12 VoCoin), Khó (16 VoCoin), Siêu Khó (22 VoCoin).<br>
-          • 📈 <strong>Điểm tinh thông:</strong> Tăng chuẩn theo cấp độ, giới hạn tối đa/từ: Dễ (+4%), TB (+6%), Khó (+8%), Siêu Khó (+10%).<br>
-          • 🔊 <strong>Giới hạn nghe phát âm:</strong> Dễ (6 lần), TB (5 lần), Khó (4 lần), Siêu Khó (3 lần)/từ.<br>
-          • ❌ <strong>Gõ sai / Bỏ qua:</strong> Ở Siêu Khó phạt 75% điểm câu; các cấp độ khác phạt nhẹ theo số ô sai; Bỏ qua không bị trừ phạt.
-        </div>
-        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
-          <strong style="color: var(--text);">🎙️ Quy tắc điểm Luyện Nói (balance_v1):</strong><br>
-          • 👑 <strong>Điểm 100 (Hoàn Hảo):</strong> +10 VoCoin • 🌟 +5% Mức độ thuộc từ (Bắn pháo hoa 🎉)<br>
-          • 🪙 <strong>Điểm 80 - 99 (Chuẩn xác):</strong> +5 VoCoin • 📈 +2% Mức độ thuộc từ<br>
-          • 💡 <strong>Dưới 80 điểm:</strong> Không cộng VoCoin • Nhận chẩn đoán chi tiết âm vị và lời khuyên khẩu hình tiếng Việt để luyện lại.
-        </div>
-        <div style="border-top: 1px dashed var(--border); padding-top: 6px;">
-          <strong style="color: var(--text);">⚖️ Quy tắc Hệ số Tích Lũy Khối Lượng Thực Học (balance_v2):</strong><br>
-          • 📏 <strong>Hệ số độ dài (Theo số từ thực học):</strong> ≤5 từ (x0.8), ≤10 từ (x0.9), ≤25 từ (x1.0), ≤45 từ (x1.1), ≤70 từ (x1.2), >70 từ (x1.3).<br>
-          • ⏱️ <strong>Hệ số hoàn thành thông minh:</strong> Ôn tập SRS / Session lớn (≥50 từ) hoặc làm ≥30 từ luôn nhận trọn vẹn <strong>x1.0</strong>; Làm ≥15 từ (x0.85); Làm ≥8 từ (x0.7); Làm ≥4 từ (x0.5); Dưới 4 từ và bỏ dở (x0.25).<br>
-          • 🎁 <strong>Thưởng Cột Mốc Phiên Dài:</strong> Đạt mốc 25 từ (+15 VoCoin), 50 từ (+40 VoCoin), 70 từ (+75 VoCoin), 100 từ (+150 VoCoin).<br>
-          • ✖️ <strong>Tổng VoCoin nhận:</strong> (Điểm gốc × Hệ số hoàn thành × Hệ số độ dài) + Thưởng cột mốc.<br>
-          • ➗ <strong>Phạt bỏ dở khi âm điểm:</strong> Chỉ phạt chia hệ số khi mới làm 1-5 từ mà thoát ngang (-10 VoCoin ÷ 0.2 = -50 VoCoin).
-        </div>
-        <div style="border-top: 1px dashed var(--border); padding-top: 6px; color: #34d399; font-weight: 600;">
-          🎁 Tặng sẵn <strong>5 VocaHint</strong> và <strong>3 VocaSkip</strong> miễn phí cho tài khoản mới!
         </div>
       </div>
     </div>

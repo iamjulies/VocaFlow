@@ -569,33 +569,37 @@
       openModal('modal-lucky-wheel');
     }
 
-    function grantVipOneDayBonus() {
+    function grantVipDaysBonus(days = 1, source = 'referral', reason = '') {
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
       const isCurrentlyVip = isUserVip();
+      const grantMs = Math.max(1, days) * ONE_DAY_MS;
       
       // ONLY true LIFETIME VIP gets converted to Xu + Hints
       if (isCurrentlyVip && userVipTier === 'lifetime') {
-        setUserPoints(getUserPoints() + 300);
-        setUserHints(getUserHints() + 5);
-        addLedgerEntry('LUCKY_WHEEL', 300, '👑 Giải Độc Đắc: +1 Ngày VocaVIP (Đã quy đổi 300 VoCoin + 5 VocaHint cho VocaVIP Trọn Đời)');
+        const coinBonus = days * 300;
+        const hintBonus = days * 5;
+        setUserPoints(getUserPoints() + coinBonus);
+        setUserHints(getUserHints() + hintBonus);
+        addLedgerEntry('VIP_BONUS', coinBonus, `👑 Thưởng +${days} Ngày VocaVIP (Đã quy đổi ${coinBonus} VoCoin + ${hintBonus} VocaHint cho VocaVIP Trọn Đời)`);
         saveDatabase(true);
         pushCurrentDatabaseToCloud();
-        return { isLifetime: true, message: '👑 Bạn đã sở hữu VocaVIP Trọn Đời! Đã tặng thêm 300 VoCoin & 5 VocaHint!' };
+        return { isLifetime: true, message: `👑 Bạn đã sở hữu VocaVIP Trọn Đời! Đã tặng thêm ${coinBonus} VoCoin & ${hintBonus} VocaHint!` };
       }
 
-      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly 24 hours with Bulletproof Protection
+      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly days * 24 hours with Bulletproof Protection
       const highWater = getVipHighWaterExp();
       const currentExp = (highWater && highWater > Date.now()) ? highWater : Date.now();
-      const newExp = currentExp + ONE_DAY_MS;
+      const newExp = currentExp + grantMs;
       const targetTier = (userVipTier && userVipTier !== 'none') ? userVipTier : 'monthly';
       
-      const vRes = applyVipState(true, targetTier, newExp, 'lucky_wheel', false);
+      const vRes = applyVipState(true, targetTier, newExp, source, false);
       userIsVip = vRes.userIsVip;
       userVipTier = vRes.userVipTier;
       userVipExpiresAt = vRes.userVipExpiresAt;
 
       const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
-      addLedgerEntry('LUCKY_WHEEL', 0, `👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`);
+      const ledgerText = reason || `👑 Thưởng +${days} Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`;
+      addLedgerEntry('VIP_BONUS', 0, ledgerText);
 
       saveDatabase(true);
       pushCurrentDatabaseToCloud();
@@ -603,8 +607,14 @@
       if (typeof initGlobalVipRegistry === 'function') initGlobalVipRegistry();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
-      return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted };
+      return { isLifetime: false, newExpiry: userVipExpiresAt, formatted: expiryDateFormatted, daysGranted: days };
     }
+    window.grantVipDaysBonus = grantVipDaysBonus;
+
+    function grantVipOneDayBonus() {
+      return grantVipDaysBonus(1, 'lucky_wheel', '👑 Trúng Giải Độc Đắc: +1 Ngày VIP Hoàng Gia');
+    }
+    window.grantVipOneDayBonus = grantVipOneDayBonus;
 
     // =========================================================================
     // MONETAG ADS & PASSIVE ADS ENGINE (v0.10.9-alpha-12)

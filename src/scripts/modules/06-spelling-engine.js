@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-33 Build 334)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 
@@ -100,6 +100,16 @@
 
     function openSpellingSetupModal(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
 
       if (!customWordList && useSelectionOnly && selectedWordIds.size > 0 && selectedWordIds.size < 5) {
         alert(`⚠️ Vui lòng chọn tối thiểu 5 từ vựng để luyện viết chính tả (hiện chỉ chọn ${selectedWordIds.size} từ)!`);
@@ -304,6 +314,17 @@
 
     function startSpellingMode(useSelectionOnly = false, customWordList = null) {
       dismissMiniAutoFlashcardIfActive();
+
+      if (!customWordList && currentDeckId) {
+        const curDeck = decks.find(d => d.id === currentDeckId);
+        if (curDeck && typeof isDeckLockedForUser === 'function' && isDeckLockedForUser(curDeck)) {
+          alert(`🔒 Bộ từ "${curDeck.title}" thuộc đặc quyền VocaVIP!\n\nGói VocaVIP của bạn đã hết hạn. Vui lòng gia hạn hoặc nâng cấp VocaVIP để tiếp tục mở khóa học bộ từ này nhé!`);
+          if (typeof openVipModal === 'function') openVipModal();
+          else if (typeof openAuthModal === 'function') openAuthModal('vip');
+          return;
+        }
+      }
+
       studySourceContext = customWordList ? 'review-queue' : 'deck';
       spellingSessionWrongWords = [];
       let deckWords = customWordList || getFilteredDeckWords();
