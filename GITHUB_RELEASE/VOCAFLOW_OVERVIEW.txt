@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-24 (Build 325) - Bản Dịch Tiếng Việt Chuẩn Xác 100% Cho Nghe Gõ Câu (Issue 7), Chuẩn Hóa Modal Tổng Kết 5 Ô Chỉ Số Đẳng Cấp Kèm Banner Luyện Lại Từ Chưa Đạt Sàn (Issue 8), Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai Từ Mọi Thiết Bị (Issue 9), Hiệu Chỉnh VocaHint 3 Tầng Nghe Gõ Câu (Issue 10), Làm Sạch Tiếng Việt Trong Câu Âm Thanh TTS (Issue 11) & Khắc Phục Lỗi Template Ngữ Nghĩa POS (Issue 12)
+================================================================================
+1. [Bản Dịch Tiếng Việt Chuẩn Xác 100% Cho Nghe Gõ Câu (Issue 7) (06e-dictation-engine.js)]:
+   - Xóa bỏ triệt để các chuỗi placeholder tạm bợ ("Câu ví dụ rèn luyện từ...").
+   - Mọi câu mẫu và câu sinh tự động trong chế độ Nghe Gõ Câu đều sở hữu bản dịch tiếng Việt 100% mượt mà, tự nhiên và sát nghĩa ngữ cảnh.
+
+2. [Chuẩn Hóa Modal Tổng Kết 5 Ô Chỉ Số Đẳng Cấp Kèm Banner Luyện Lại (Issue 8) (modal-dictation-result.html, 06e-dictation-engine.js, app.css)]:
+   - Nâng cấp modal tổng kết sau bài nghe gõ lên chuẩn Dashboard 5 ô (🎯 Tỉ lệ đạt sàn, 💰 VoCoin nhận được, ⚡ Điểm nghe gõ TB, 💡 Trợ giúp đã dùng, ⏱️ Tổng thời gian).
+   - Tích hợp Banner Luyện Lại Từ Chưa Đạt Sàn ("🔄 Luyện Lại ... Từ Chưa Đạt Sàn") cho phép người học bấm ôn luyện ngay lập tức danh sách câu sai.
+   - Thêm cúp vàng 🏆, huy hiệu độ khó và hệ số nhân điểm (x1.2, x1.8, x2.4, x3.6).
+
+3. [Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai Từ Mọi Thiết Bị (Issue 9) (03-auth.js, 05-quiz-engine.js)]:
+   - Tối ưu thuật toán mergeCloudDataIntoLocal: giữ lại toàn bộ các từ làm sai mới từ thiết bị khác chưa bị tombstone xoá, đảm bảo đồng bộ 2 chiều liền mạch trên mọi thiết bị.
+
+4. [Hiệu Chỉnh VocaHint 3 Tầng Nghe Gõ Câu (Issue 10) (06e-dictation-engine.js)]:
+   - Tầng 1: Gợi ý chức năng ngữ nghĩa, loại từ và từ khóa mà không lộ toàn bộ bản dịch tiếng Việt.
+   - Tầng 2: Cung cấp toàn bộ bản dịch tiếng Việt hoàn chỉnh.
+   - Tầng 3: Khung chữ cái đầu của các từ trong câu.
+
+5. [Làm Sạch Tiếng Việt Trong Câu Âm Thanh TTS (Issue 11) (06e-dictation-engine.js)]:
+   - Bộ lọc sanitizeEnglishDictationSentence tự động bóc tách các đoạn tiếng Việt nằm trong dấu ngoặc đơn/kép ra khỏi chuỗi phát âm TTS, giữ giọng đọc tiếng Anh thuần khiết và lưu phần tiếng Việt làm bản dịch.
+
+6. [Khắc Phục Lỗi Template Ngữ Nghĩa POS (Issue 12) (06e-dictation-engine.js)]:
+   - Thay thế toàn bộ các mẫu câu cứng nhắc bằng hệ thống template thông minh theo đúng loại từ (Noun, Verb, Adjective, Adverb) với ngữ nghĩa tự nhiên, phong phú.
+
+================================================================================
 Phiên bản: v0.10.10-23 (Build 324) - Viền Ánh Sáng Neon Xoay Tròn Conic-Gradient Cho Cụm Nút Chế Độ Mở Rộng (β) Phong Cách VIP Deck & Huy Hiệu Trưng Bày (Issue 5), Tích Hợp Màn Hình Cảnh Báo Thoát Giữa Chừng (Early Exit Modal) Cho Điền Từ Cloze (Issue 22) & Nghe Gõ Câu (Issue 6) Kèm Kết Toán Chuẩn Balance v3
 ================================================================================
 1. [Hiệu Ứng Viền Ánh Sáng Neon Xoay Tròn Conic-Gradient Cho Cụm Nút Chế Độ Học Mở Rộng (β) (Issue 5) (app.css, screen-deck-detail.html, modal-review-queue.html)]:

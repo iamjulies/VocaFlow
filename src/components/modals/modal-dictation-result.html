@@ -1,41 +1,92 @@
-<!-- MODAL: DICTATION RESULT CELEBRATION (v0.10.10-22 VIP β) -->
-<div class="modal-overlay" id="modal-dictation-result">
-  <div class="modal" style="max-width: 520px; text-align: center;">
-    <div style="font-size: 48px; margin-bottom: 8px; animation: bounce 0.6s ease;">🎉</div>
-    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 4px; color: var(--text);">Hoàn Thành Bài Luyện Nghe Gõ Câu!</h2>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Bạn đã xuất sắc hoàn thành buổi luyện nghe chép câu chuẩn xác</p>
+<!-- MODAL: DICTATION RESULT CELEBRATION (v0.10.10-24 VIP β - FULL SENTENCE DICTATION) -->
+<div class="modal-overlay" id="modal-dictation-result" style="z-index: 10000;">
+  <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
+    <!-- Canvas for dynamic fireworks particles -->
+    <canvas id="dictation-fireworks-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
 
-    <!-- STATS SUMMARY CARDS -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;">
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 8px;">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Số câu luyện</div>
-        <strong id="dictation-res-total-count" style="font-size: 16px; color: var(--text);">0 câu</strong>
-      </div>
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 8px;">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Độ chính xác</div>
-        <strong id="dictation-res-accuracy" style="font-size: 16px; color: #34d399;">100%</strong>
-      </div>
-      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 10px 8px;">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">Thưởng Xu</div>
-        <strong id="dictation-res-coins" style="font-size: 16px; color: #fbbf24;">+0 Xu</strong>
-      </div>
-    </div>
+    <div style="position: relative; z-index: 1;">
+      <!-- Top Icon & Header -->
+      <div id="dictation-res-badge-icon" style="font-size: 52px; margin-bottom: 6px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(139, 92, 246, 0.4));">🏆</div>
+      <h2 id="dictation-res-title" style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Hoàn Thành Nghe Gõ Câu!</h2>
+      <p id="dictation-res-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Bạn đã hoàn thành phiên luyện nghe chép câu và rèn luyện phản xạ thính giác.</p>
 
-    <!-- MISTAKES SUMMARY (If any) -->
-    <div id="dictation-res-mistakes-container" style="display: none; text-align: left; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 10px 14px; margin-bottom: 18px;">
-      <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #f87171; margin-bottom: 6px;">
-        <span>📕 Các từ cần chú ý (Đã thêm vào Sổ tay từ sai):</span>
+      <div style="margin-bottom: 16px;">
+        <span id="dictation-res-difficulty-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3);">🎧 Cấp độ: 🟢 Dễ (x1.2)</span>
       </div>
-      <div id="dictation-res-mistakes-list" style="font-size: 12px; color: var(--text); display: flex; flex-wrap: wrap; gap: 6px;"></div>
-    </div>
 
-    <div class="modal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-      <button class="btn btn-outline" onclick="closeDictationResultModal()" style="flex: 1; font-weight: 700;">
-        Về Bộ Từ
-      </button>
-      <button class="btn btn-primary" onclick="closeDictationResultModal(); openDictationSetupModal(dictationSetupUseSelection, dictationSetupCustomWordList);" style="flex: 1.5; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; font-weight: 700;">
-        🔄 Luyện Tập Lại
-      </button>
+      <!-- 5-Tile Stats Dashboard -->
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+        <!-- 1. Tỉ lệ đạt điểm sàn -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+          <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+            <span>🎯</span> Tỉ lệ đạt sàn
+          </div>
+          <div id="dictation-res-floor-ratio" style="font-size: 15px; font-weight: 800; color: #10b981; font-family: monospace;">0/0 (0%)</div>
+        </div>
+
+        <!-- 2. VoCoin nhận được -->
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+          <div style="font-size: 11px; color: #fbbf24; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+            <span>💰</span> VoCoin nhận được
+          </div>
+          <div id="dictation-res-points" style="font-size: 15px; font-weight: 800; color: #f59e0b; font-family: monospace;">+0 VoCoin</div>
+        </div>
+
+        <!-- 3. Điểm nghe gõ TB -->
+        <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+          <div style="font-size: 11px; color: #a78bfa; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+            <span>⚡</span> Điểm nghe gõ TB
+          </div>
+          <div id="dictation-res-avg-score" style="font-size: 15px; font-weight: 800; color: #8b5cf6; font-family: monospace;">0 / 100</div>
+        </div>
+
+        <!-- 4. VocaHint / Skip đã dùng -->
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 12px; padding: 10px 12px; text-align: left;">
+          <div style="font-size: 11px; color: #f472b6; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+            <span>💡</span> Trợ giúp đã dùng
+          </div>
+          <div id="dictation-res-hints-skips" style="font-size: 15px; font-weight: 800; color: #ec4899; font-family: monospace;">0 gợi ý • 0 skip</div>
+        </div>
+
+        <!-- 5. Tổng thời gian (Span 2 cols) -->
+        <div style="grid-column: span 2; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11.5px; color: #60a5fa; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span>⏱️</span> Tổng thời gian
+          </div>
+          <div id="dictation-res-duration" style="font-size: 14px; font-weight: 800; color: #3b82f6; font-family: monospace;">00:00</div>
+        </div>
+      </div>
+
+      <!-- Bonus breakdown pill -->
+      <div id="dictation-res-bonus-box" style="display: none; background: rgba(139, 92, 246, 0.08); border: 1px dashed rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 8px 12px; font-size: 11.5px; color: #c4b5fd; margin-bottom: 12px; text-align: center;">
+        <!-- Injected dynamically -->
+      </div>
+
+      <!-- UNPASSED / WRONG WORDS RETRY BANNER -->
+      <div id="dictation-res-wrong-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="font-size: 12.5px; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px;">
+            <span>❌</span> <span>Từ chưa đạt chuẩn: <strong id="dictation-res-wrong-count">0 từ</strong></span>
+          </div>
+          <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 10px; font-weight: 700;">Đã lưu vào Sổ Từ Sai</span>
+        </div>
+        <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+          Luyện nghe lại ngay những câu chứa từ chưa đạt điểm sàn để rèn luyện phản xạ thính giác và chính tả!
+        </div>
+        <button class="btn btn-primary" onclick="retryDictationWrongWordsOnly()" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; font-weight: 700; padding: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+          <svg class="icon icon-sm"><use href="#i-repeat"/></svg> <span>Luyện Lại Riêng <span id="dictation-res-wrong-btn-label">0 từ</span></span>
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-outline" onclick="closeDictationResultModal(); openDictationSetupModal(dictationSetupUseSelection, dictationSetupCustomWordList);" style="flex: 1; justify-content: center; font-weight: 700;">
+          🔁 Luyện Lại
+        </button>
+        <button class="btn btn-primary" onclick="closeDictationResultModal(); exitDictationMode();" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);">
+          🚪 Về VocaDeck
+        </button>
+      </div>
     </div>
   </div>
 </div>

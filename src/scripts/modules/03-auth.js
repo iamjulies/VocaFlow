@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-23 / Build 324)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-24 / Build 325)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-24': {
+        postId: 'official_update_v0_10_10_24',
+        releaseTime: '2026-09-17T16:00:00.000Z',
+        title: '🎧 Nâng Cấp Toàn Diện Nghe Gõ Câu (VIP β) & Chuẩn Hóa Dashboard 5 Ô (v0.10.10-24 Build 325)!',
+        summary: 'Bổ sung dịch nghĩa tiếng Việt 100% tự nhiên cho Nghe Gõ Câu, nâng cấp Modal Tổng Kết 5 ô chỉ số chuẩn Writing/Cloze, đồng bộ 2 chiều Sổ Tay Lỗi Sai từ mọi thiết bị, hiệu chỉnh 3 tầng VocaHint và làm sạch hoàn toàn tiếng Việt trong câu TTS.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-24 (Build 325)!\n\n✨ Những điểm mới nổi bật:\n🇻🇳 Bản Dịch Tiếng Việt Chuẩn Xác 100%: Toàn bộ câu mẫu và câu sinh tự động trong chế độ Nghe Gõ Câu đều sở hữu bản dịch tiếng Việt mượt mà, tự nhiên, xóa bỏ hoàn toàn các chuỗi tạm (placeholder).\n🏆 Modal Tổng Kết 5 Ô Chỉ Số Đẳng Cấp: Nâng cấp bảng mừng công sau bài nghe gõ với 5 ô chỉ số chuyên sâu (Tỉ lệ đạt sàn, VoCoin nhận được, Điểm nghe gõ TB, Trợ giúp đã dùng, Tổng thời gian) kèm banner luyện lại từ chưa đạt chuẩn.\n🔄 Đồng Bộ 2 Chiều Sổ Tay Lỗi Sai: Tối ưu thuật toán đồng bộ đám mây giúp các từ sai trên mọi thiết bị được giữ trọn vẹn và cập nhật ngay lập tức.\n💡 Tinh Chỉnh VocaHint 3 Tầng: Tầng 1 (Gợi ý ngữ nghĩa & loại từ không lộ nghĩa), Tầng 2 (Bản dịch tiếng Việt hoàn chỉnh), Tầng 3 (Khung chữ cái đầu).\n🧹 Làm Sạch Âm Thanh TTS: Loại bỏ triệt để các đoạn tiếng Việt trong ngoặc khi phát âm thanh tiếng Anh chuẩn qua Web Speech & Google TTS.\n\nChúc bạn có những giờ phút luyện nghe gõ câu thật hiệu quả và thú vị cùng VocaFlow! 🚀🎧`
+      },
       'v0.10.10-23': {
         postId: 'official_update_v0_10_10_23',
         releaseTime: '2026-09-17T15:00:00.000Z',
@@ -10112,9 +10119,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                       lastMistakeAt: finalTime,
                       modesFailed: mergedModes
                     });
+                  } else {
+                    // v0.10.10-24: Add non-tombstoned remote mistake item so mistakes recorded on other devices sync
+                    mergedMap.set(key, { ...item });
                   }
-                  // If item is in remoteMistakes but NOT in localMistakes while hasLocalMistakeStorage is true,
-                  // it was already learned/removed locally, so do not resurrect.
                 }
               }
             });
