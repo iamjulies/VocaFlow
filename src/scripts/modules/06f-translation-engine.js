@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-28 Build 329 - TRANSLATION LAB VIP β)
-// Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation & Balance v3
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-29 Build 330 - TRANSLATION LAB VIP β)
+// Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
 let translationQuestionsList = [];
@@ -231,6 +231,103 @@ function extractCleanPrimaryMeaning(rawDefVi, term) {
   return clean.toLowerCase() || (term || '').toLowerCase();
 }
 
+// v0.10.10-29: Intelligent Secondary Vocabulary & Phrase Extractor for VocaHint
+function extractSecondaryVocabHint(sourceText, targetWord, isEnToVi, benchmarkText) {
+  if (!sourceText) return null;
+  const englishText = isEnToVi ? sourceText : benchmarkText;
+  if (!englishText) return null;
+
+  const targetClean = (targetWord || '').toLowerCase().trim();
+  const stopwords = new Set([
+    'the','a','an','this','that','these','those','is','are','was','were','be','been','being',
+    'have','has','had','do','does','did','will','would','shall','should','can','could','may',
+    'might','must','to','of','in','on','at','by','for','with','about','against','between',
+    'into','through','during','before','after','above','below','from','up','down','off','over',
+    'under','again','further','then','once','here','there','when','where','why','how','all',
+    'any','both','each','few','more','most','other','some','such','no','nor','not','only','own',
+    'same','so','than','too','very','s','t','just','don','should','now','and','but','or','as',
+    'if','while','it','he','she','they','we','you','i','me','him','her','us','them','my','your',
+    'his','their','our','its','who','whom','which','what','whose'
+  ]);
+
+  const rawTokens = englishText.match(/[a-zA-Z]+(?:'[a-zA-Z]+)?/g) || [];
+  const candidates = [];
+
+  for (const rawToken of rawTokens) {
+    const lower = rawToken.toLowerCase();
+    if (stopwords.has(lower)) continue;
+    if (lower === targetClean) continue;
+    if (lower.startsWith(targetClean) || targetClean.startsWith(lower)) continue;
+    if (lower.length <= 3) continue;
+    candidates.push(rawToken);
+  }
+
+  if (candidates.length === 0) return null;
+
+  // Check in-memory deck words database first
+  const localDb = (typeof words !== 'undefined' && Array.isArray(words)) ? words : [];
+  for (const c of candidates) {
+    const cLower = c.toLowerCase();
+    const found = localDb.find(w => (w.term || '').toLowerCase() === cLower);
+    if (found) {
+      return {
+        word: c,
+        meaning: extractCleanPrimaryMeaning(found.definitionVi || found.definition, found.term)
+      };
+    }
+  }
+
+  // Common high-frequency contextual & academic dictionary map
+  const commonVocabMap = {
+    'police': 'cảnh sát / lực lượng thực thi pháp luật',
+    'shoplifters': 'kẻ trộm đồ trong cửa hàng / kẻ ăn cắp vặt',
+    'shoplifter': 'kẻ trộm đồ trong cửa hàng / kẻ ăn cắp vặt',
+    'employee': 'nhân viên / người lao động',
+    'employees': 'các nhân viên / đội ngũ nhân sự',
+    'workplace': 'nơi làm việc / môi trường công sở',
+    'company': 'công ty / doanh nghiệp',
+    'companies': 'các công ty / doanh nghiệp',
+    'balance': 'sự cân bằng / trạng thái cân đối',
+    'maintain': 'duy trì / giữ gìn',
+    'productivity': 'năng suất / hiệu quả làm việc',
+    'severely': 'nghiêm trọng / nặng nề',
+    'chronic': 'mãn tính / kéo dài dai dẳng',
+    'communication': 'giao tiếp / truyền đạt thông tin',
+    'essential': 'cần thiết / thiết yếu',
+    'resolve': 'giải quyết / tháo gỡ',
+    'strategy': 'chiến lược / phương kế',
+    'decision': 'quyết định / phán quyết',
+    'technology': 'công nghệ / giải pháp kỹ thuật',
+    'development': 'sự phát triển / quá trình tiến bộ',
+    'environment': 'môi trường / hoàn cảnh xung quanh',
+    'experience': 'kinh nghiệm / trải nghiệm thực tế',
+    'relationship': 'mối quan hệ / sự gắn kết',
+    'community': 'cộng đồng / tập thể',
+    'opportunity': 'cơ hội / thời cơ',
+    'challenge': 'thử thách / khó khăn',
+    'benefit': 'lợi ích / quyền lợi',
+    'flexible': 'linh hoạt / uyển chuyển',
+    'schedule': 'lịch trình / thời gian biểu'
+  };
+
+  for (const c of candidates) {
+    const cLower = c.toLowerCase();
+    if (commonVocabMap[cLower]) {
+      return {
+        word: c,
+        meaning: commonVocabMap[cLower]
+      };
+    }
+  }
+
+  // Fallback candidate
+  const best = candidates[candidates.length - 1] || candidates[0];
+  return {
+    word: best,
+    meaning: 'từ vựng bổ trợ trong câu'
+  };
+}
+
 async function generateTranslationTasksWithGemini(targetWords, difficulty, direction) {
   if (!targetWords || targetWords.length === 0) return null;
 
@@ -256,9 +353,13 @@ CONFIGURATION:
 MANDATORY LINGUISTIC RULES:
 1. Every sentence MUST be 100% natural, idiomatically fluent, and reflect authentic native usage of the specific target word in its correct part of speech.
 2. ABSOLUTELY FORBIDDEN: NEVER use repetitive generic template formulas like "Understanding the importance of this [word] helps improve our daily work" or awkward literal verb attachments.
-3. For each word, create a vivid real-world context (e.g. workplace, business, technology, education, psychology, health, personal growth, society).
+3. For each word, create a vivid real-world context (e.g. workplace, business, technology, education, law, psychology, health, personal growth, society).
 4. Provide an accurate, elegant, and native-sounding translation in the other language.
-5. Provide a short VocaHint keyword clue (keyVocabularyClue in Vietnamese) and grammar structure hint (grammarStructureHint in Vietnamese).
+5. Provide helpful and useful hints:
+   - "secondaryVocabClue": The meaning in Vietnamese of ANOTHER difficult or prominent non-stopword in this sentence (do NOT repeat the targetWord itself!). Example: for "The police will prosecute all shoplifters", secondaryVocabClue should be "shoplifters: kẻ trộm đồ / kẻ ăn cắp vặt".
+   - "keyVocabularyClue": A natural collocation phrase or context clue in Vietnamese.
+   - "grammarStructureHint": Structural or tense clue in Vietnamese.
+   - "sentenceFramingClue": A natural starter phrase in the target language.
 
 OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
 {
@@ -268,8 +369,10 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
       "targetWord": "<term>",
       "englishSentence": "<natural English sentence containing targetWord>",
       "vietnameseSentence": "<accurate and fluent Vietnamese translation>",
-      "keyVocabularyClue": "<short keyword / collocation clue in Vietnamese>",
-      "grammarStructureHint": "<grammar structure / tense clue in Vietnamese>"
+      "secondaryVocabClue": "<translation of another key word/phrase in sentence>",
+      "keyVocabularyClue": "<short collocation / contextual clue in Vietnamese>",
+      "grammarStructureHint": "<grammar structure / tense clue in Vietnamese>",
+      "sentenceFramingClue": "<natural starter phrase in target language>"
     }
   ]
 }`;
@@ -427,8 +530,10 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
       const matched = aiTasks.find(t => t.index === idx || (t.targetWord && t.targetWord.toLowerCase() === w.term.toLowerCase())) || aiTasks[idx];
       const enSentence = matched ? matched.englishSentence : (w.exampleSentence || `We should study ${w.term} in context.`);
       const viSentence = matched ? matched.vietnameseSentence : (w.exampleTranslationVi || `Chúng ta nên học ${extractCleanPrimaryMeaning(w.definitionVi, w.term)} trong ngữ cảnh.`);
-      const keyClue = matched ? matched.keyVocabularyClue : '';
-      const grammarHint = matched ? matched.grammarStructureHint : '';
+      const keyClue = matched ? (matched.keyVocabularyClue || '') : '';
+      const grammarHint = matched ? (matched.grammarStructureHint || '') : '';
+      const secondaryVocab = matched ? (matched.secondaryVocabClue || '') : '';
+      const framingClue = matched ? (matched.sentenceFramingClue || '') : '';
 
       const isEnToVi = (direction === 'en_to_vi');
       const taskObj = {
@@ -442,7 +547,9 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
         definitionVi: w.definitionVi || w.definition || '',
         direction: direction,
         keyVocabularyClue: keyClue,
-        grammarStructureHint: grammarHint
+        grammarStructureHint: grammarHint,
+        secondaryVocabClue: secondaryVocab,
+        sentenceFramingClue: framingClue
       };
 
       return {
@@ -660,63 +767,140 @@ function useTranslationHint() {
   const isEnToVi = (q.task.direction === 'en_to_vi');
   const term = q.mainWord.term || '';
   const meaning = q.mainWord.definitionVi || q.mainWord.definition || '';
-  const pos = q.mainWord.partOfSpeech || 'từ vựng';
+  const pos = q.mainWord.partOfSpeech || 'noun';
 
   if (isEnToVi) {
     if (translationHintsRevealed === 1) {
+      // Tầng 1: Gợi ý từ vựng phụ khác trong câu + Cụm từ Collocation & Cấu trúc ngữ pháp
+      const secondaryVocab = q.task.secondaryVocabClue || extractSecondaryVocabHint(translationCurrentSourceText, term, true, translationCurrentBenchmarkText);
+      const collocationClue = q.task.keyVocabularyClue || '';
+      const grammarHint = q.task.grammarStructureHint || '';
+
+      let vocabHtml = '';
+      if (secondaryVocab) {
+        if (typeof secondaryVocab === 'string') {
+          vocabHtml = `<div style="margin-bottom: 6px;">🎯 <strong>Từ vựng phụ trong câu:</strong> <span style="color: #38bdf8; font-weight: 600;">${escapeHtml(secondaryVocab)}</span></div>`;
+        } else if (secondaryVocab.word) {
+          vocabHtml = `<div style="margin-bottom: 6px;">🎯 <strong>Từ vựng phụ trong câu:</strong> <code style="color: #38bdf8; font-size: 13px; font-weight: 700;">${escapeHtml(secondaryVocab.word)}</code> ➔ <em>${escapeHtml(secondaryVocab.meaning)}</em></div>`;
+        }
+      }
+
+      let extraHtml = '';
+      if (collocationClue) {
+        extraHtml += `<div style="margin-bottom: 4px;">💡 <strong>Cụm kết hợp & ngữ cảnh:</strong> <span style="color: #fbbf24; font-weight: 600;">${escapeHtml(collocationClue)}</span></div>`;
+      }
+      if (grammarHint) {
+        extraHtml += `<div style="margin-bottom: 4px;">📐 <strong>Cấu trúc câu:</strong> <span style="color: var(--text);">${escapeHtml(grammarHint)}</span></div>`;
+      }
+      if (!extraHtml && !vocabHtml) {
+        extraHtml = `<div style="margin-bottom: 4px;">💡 <strong>Mẹo dịch:</strong> Phân tích thành phần Chủ ngữ + Động từ chính + Tân ngữ để chuyển ngữ tự nhiên sang tiếng Việt.</div>`;
+      }
+
       hintContent.innerHTML = `
-        <div>
-          🎯 <strong>Từ khóa chính:</strong> <code>${escapeHtml(term)}</code> (${escapeHtml(pos)}: <em>${escapeHtml(meaning)}</em>)<br>
-          💡 <strong>Mẹo dịch:</strong> Xác định rõ chủ ngữ và động từ chính của câu trước khi chuyển ngữ sang tiếng Việt.
+        <div style="background: rgba(245, 158, 11, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #fbbf24;">
+          <div style="font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">💡 GỢI Ý TẦNG 1: TỪ VỰNG PHỤ & CỤM DIỄN ĐẠT</div>
+          ${vocabHtml}
+          ${extraHtml}
         </div>
       `;
     } else if (translationHintsRevealed === 2) {
+      // Tầng 2: Khung dịch mở đầu câu tự nhiên
+      const framingClue = q.task.sentenceFramingClue;
       const benchmarkWords = (translationCurrentBenchmarkText || '').split(/\s+/);
-      const halfLen = Math.max(3, Math.floor(benchmarkWords.length / 2));
-      const firstHalf = benchmarkWords.slice(0, halfLen).join(' ');
+      const halfLen = Math.max(3, Math.min(6, Math.floor(benchmarkWords.length / 2)));
+      const starter = framingClue || benchmarkWords.slice(0, halfLen).join(' ');
+
       hintContent.innerHTML = `
-        <div>
-          🔗 <strong>Gợi ý nửa đầu câu tiếng Việt:</strong> <span style="color: #34d399; font-weight: 600;">"${escapeHtml(firstHalf)}..."</span><br>
-          📝 <strong>Lưu ý:</strong> Diễn đạt tự nhiên, tránh dịch word-by-word (từng chữ một).
+        <div style="background: rgba(52, 211, 153, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #34d399;">
+          <div style="font-size: 11px; font-weight: 700; color: #34d399; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">🔗 GỢI Ý TẦNG 2: KHUNG DỊCH MỞ ĐẦU CÂU</div>
+          <div style="margin-bottom: 6px;">
+            Gợi ý mở đầu: <strong style="color: #34d399; font-size: 14px;">"${escapeHtml(starter)}..."</strong>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+            ✨ Mẹo dịch: Dịch thoát ý tự nhiên, không nhất thiết phải dịch thô từng từ (word-by-word).
+          </div>
         </div>
       `;
     } else {
+      // Tầng 3: Toàn bộ bản dịch chuẩn tham khảo
       hintContent.innerHTML = `
-        <div>
-          🇻🇳 <strong>Bản dịch tham khảo gợi ý:</strong><br>
-          <span style="color: #38bdf8; font-weight: 700; font-size: 13.5px;">"${escapeHtml(translationCurrentBenchmarkText)}"</span>
+        <div style="background: rgba(56, 189, 248, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #38bdf8;">
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">🇻🇳 GỢI Ý TẦNG 3: BẢN DỊCH THAM KHẢO CHUẨN</div>
+          <div style="color: #38bdf8; font-weight: 700; font-size: 14px; margin-bottom: 6px; line-height: 1.5;">
+            "${escapeHtml(translationCurrentBenchmarkText)}"
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">
+            💡 Hãy đối chiếu với bản dịch của bạn để trau chuốt câu văn gãy gọn nhất.
+          </div>
         </div>
       `;
     }
   } else {
     // vi_to_en
     if (translationHintsRevealed === 1) {
+      // Tầng 1: Gợi ý từ vựng tiếng Anh bổ trợ & Cấu trúc thì/ngữ pháp
+      const secondaryVocab = q.task.secondaryVocabClue || extractSecondaryVocabHint(translationCurrentBenchmarkText, term, false, translationCurrentSourceText);
+      const collocationClue = q.task.keyVocabularyClue || '';
+      const grammarHint = q.task.grammarStructureHint || '';
+
+      let vocabHtml = '';
+      if (secondaryVocab) {
+        if (typeof secondaryVocab === 'string') {
+          vocabHtml = `<div style="margin-bottom: 6px;">🎯 <strong>Từ vựng tiếng Anh bổ trợ:</strong> <span style="color: #38bdf8; font-weight: 600;">${escapeHtml(secondaryVocab)}</span></div>`;
+        } else if (secondaryVocab.word) {
+          vocabHtml = `<div style="margin-bottom: 6px;">🎯 <strong>Từ vựng tiếng Anh bổ trợ:</strong> <code style="color: #38bdf8; font-size: 13px; font-weight: 700;">${escapeHtml(secondaryVocab.word)}</code> ➔ <em>${escapeHtml(secondaryVocab.meaning)}</em></div>`;
+        }
+      }
+
+      let extraHtml = '';
+      if (grammarHint) {
+        extraHtml += `<div style="margin-bottom: 4px;">📐 <strong>Cấu trúc & thì ngữ pháp:</strong> <span style="color: #fbbf24; font-weight: 600;">${escapeHtml(grammarHint)}</span></div>`;
+      }
+      if (collocationClue) {
+        extraHtml += `<div style="margin-bottom: 4px;">💡 <strong>Cụm từ gợi ý:</strong> <span style="color: var(--text);">${escapeHtml(collocationClue)}</span></div>`;
+      }
+
       hintContent.innerHTML = `
-        <div>
-          🎯 <strong>Từ vựng tiếng Anh cần dùng:</strong> <code>${escapeHtml(term)}</code> (${escapeHtml(pos)})<br>
-          💡 <strong>Cấu trúc ngữ pháp:</strong> Hãy chú ý chia thì của động từ và sử dụng mạo từ (a/an/the) phù hợp.
+        <div style="background: rgba(245, 158, 11, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #fbbf24;">
+          <div style="font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">💡 GỢI Ý TẦNG 1: TỪ VỰNG BỔ TRỢ & CẤU TRÚC TIẾNG ANH</div>
+          ${vocabHtml}
+          ${extraHtml}
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">📝 Chú ý: Chia đúng thì của động từ và mạo từ (a/an/the) phù hợp.</div>
         </div>
       `;
     } else if (translationHintsRevealed === 2) {
+      // Tầng 2: Cụm từ mở đầu tiếng Anh
       const enWords = (translationCurrentBenchmarkText || '').split(/\s+/);
       const firstThree = enWords.slice(0, Math.min(4, enWords.length)).join(' ');
       hintContent.innerHTML = `
-        <div>
-          🔗 <strong>Cụm từ mở đầu tiếng Anh:</strong> <span style="color: #38bdf8; font-weight: 600;">"${escapeHtml(firstThree)}..."</span><br>
-          📝 Đảm bảo câu có đầy đủ Chủ ngữ + Vị ngữ hoàn chỉnh.
+        <div style="background: rgba(52, 211, 153, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #34d399;">
+          <div style="font-size: 11px; font-weight: 700; color: #34d399; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">🔗 GỢI Ý TẦNG 2: CỤM TỪ MỞ ĐẦU TIẾNG ANH</div>
+          <div style="margin-bottom: 6px;">
+            Khung mở đầu: <strong style="color: #38bdf8; font-size: 14px;">"${escapeHtml(firstThree)}..."</strong>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+            ✨ Đảm bảo câu có đầy đủ Chủ ngữ (Subject) + Vị ngữ (Predicate) hoàn chỉnh.
+          </div>
         </div>
       `;
     } else {
+      // Tầng 3: Khung chữ cái đầu & câu tiếng Anh chuẩn
       const enWords = (translationCurrentBenchmarkText || '').split(/\s+/);
       const masked = enWords.map(w => {
         const clean = w.replace(/^[^\w]+|[^\w]+$/g, '');
         if (clean.length <= 1) return w;
         return clean[0] + '_'.repeat(Math.min(5, clean.length - 1));
       }).join(' ');
+
       hintContent.innerHTML = `
-        <div>
-          🔤 <strong>Khung chữ cái đầu của câu tiếng Anh:</strong><br>
-          <code style="color: #fbbf24; font-size: 13px; font-weight: 700;">${escapeHtml(masked)}</code>
+        <div style="background: rgba(56, 189, 248, 0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #38bdf8;">
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">🔤 GỢI Ý TẦNG 3: KHUNG CHỮ CÁI ĐẦU & CÂU TIẾNG ANH CHUẨN</div>
+          <div style="margin-bottom: 6px;">
+            <code style="color: #fbbf24; font-size: 13.5px; font-weight: 700; letter-spacing: 0.5px;">${escapeHtml(masked)}</code>
+          </div>
+          <div style="color: #38bdf8; font-weight: 600; font-size: 13.5px; margin-top: 6px;">
+            "${escapeHtml(translationCurrentBenchmarkText)}"
+          </div>
         </div>
       `;
     }

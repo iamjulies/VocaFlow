@@ -6518,9 +6518,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
     // =========================================================================
-    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-28 / Build 329)
+    // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-29 / Build 330)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-29': {
+        postId: 'official_update_v0_10_10_29',
+        releaseTime: '2026-09-17T21:15:00.000Z',
+        title: '💡 Đột Phá VocaHint Đa Tầng Luyện Dịch Song Phương & Gợi Ý Từ Phụ Ngữ Cảnh (v0.10.10-29 Build 330)!',
+        summary: 'Nâng cấp toàn diện VocaHint trong Chế độ Luyện Dịch Song Phương: Tự động bóc tách và dịch nghĩa các từ vựng phụ trong câu, gợi ý cụm từ Collocation và khung dịch mở đầu tự nhiên, xóa bỏ hoàn toàn việc lặp lại từ trọng tâm đã có trên đề bài.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-29 (Build 330)!\n\n✨ Những điểm mới nổi bật:\n💡 Đột Phá VocaHint Đa Tầng Thông Minh (Translation Lab VIP β): Nâng cấp VocaHint thành công cụ trợ giúp đắc lực và thực chất cho người học dịch thuật. Khi mở gợi ý Tầng 1, hệ thống tự động bóc tách từ vựng phụ / từ khó khác trong câu (như shoplifters ➔ kẻ trộm đồ, employees ➔ nhân viên) kèm cụm từ kết hợp Collocation và cấu trúc ngữ pháp, không bao giờ lặp lại định nghĩa từ vựng trọng tâm đã hiện sẵn ở phần đề bài.\n🔗 Khung Dịch Mở Đầu Tự Nhiên (Tier 2 Framing): Tầng 2 gợi ý cụm từ mở đầu câu mượt mà theo cả 2 hướng Anh-Việt và Việt-Anh, giúp bạn định hình ngay lối diễn đạt bản xứ gãy gọn.\n🇻🇳 Bản Dịch Tham Khảo Chuẩn & Mẹo Trau Chuốt (Tier 3): Cung cấp toàn bộ câu dịch đối chiếu chuẩn mực để hoàn thiện kỹ năng chuyển ngữ.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ mượt mà và tin cậy tuyệt đối cho quá trình rèn luyện kỹ năng dịch thuật.\n\nChúc bạn có những giờ phút nâng cao kỹ năng dịch thuật tuyệt vời nhất cùng VocaFlow! 🚀🌐`
+      },
       'v0.10.10-28': {
         postId: 'official_update_v0_10_10_28',
         releaseTime: '2026-09-17T18:30:00.000Z',

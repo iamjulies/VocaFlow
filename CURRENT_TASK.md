@@ -1,29 +1,27 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-28 (Build 329)`  
+> **Phiên bản mục tiêu:** `v0.10.10-29 (Build 330)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-28 Build 329)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-29 Build 330)
 
-- [x] **Vấn đề 5: Đột Phá Gemini AI Sinh Trực Tiếp Toàn Bộ Câu Hỏi Dịch Thuật & Màn Hình Báo Lỗi Rõ Ràng (`06f-translation-engine.js`, `screen-translation.html`)**:
-  - Trực tiếp gọi Google Gemini Flash-Lite (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-3.8-flash`, v.v.) tự động sinh câu hỏi ngữ cảnh mượt mà, đúng ngữ pháp và sinh động cho từng từ vựng mục tiêu (như `flexitime`, `fatigue`, `conflict`, v.v.).
-  - Xóa bỏ triệt để các mẫu câu tĩnh lặp lại cứng nhắc dạng `"Understanding the importance of this flexitime/fatigue helps improve our daily work."`.
-  - Thiết kế màn hình báo lỗi `#translation-error-card` khi không có mạng hoặc API thất bại kèm 2 nút hành động: `"🔄 Thử Lại"` (`retryGenerateTranslationTasks`) và `"🚪 Thoát"` (`exitTranslationMode`), không âm thầm sinh câu tĩnh sai lệch.
+- [x] **Vấn đề 7: Nâng Cấp Gợi Ý VocaHint Đa Tầng Thực Dụng Trong Dịch Thuật Song Phương (`06f-translation-engine.js`)**:
+  - Khắc phục hoàn toàn việc gợi ý trùng lặp Target Word (từ vựng trọng tâm đã có sẵn trên huy hiệu `🎯 Từ vựng trọng tâm`).
+  - **Kiểu 1 (Secondary Vocabulary)**: Bổ sung thuật toán `extractSecondaryVocabHint` bóc tách và dịch nghĩa các từ phụ/từ khó khác trong câu nguồn (như `shoplifters` ➔ kẻ trộm đồ / kẻ ăn cắp vặt, `police` ➔ cảnh sát).
+  - **Kiểu 2 (Collocation & Grammar Structure)**: Bổ sung gợi ý cụm từ kết hợp và cấu trúc ngữ pháp/thì câu (`grammarStructureHint`).
+  - **Kiểu 3 (Sentence Starter Framing)**: Gợi ý khung mở đầu câu tự nhiên trong ngôn ngữ đích (`sentenceFramingClue`, ví dụ: `"Cảnh sát sẽ..."` hoặc `"The police will..."`).
+  - **Kiểu 4 (Full Benchmark Translation & Polished Nuance)**: Bản dịch tham khảo hoàn chỉnh và gợi ý chữ cái mở đầu mặt nạ (Tầng 3).
+  - Tối ưu 3 tầng gợi ý nấc thang trong `useTranslationHint()` tiêu tốn VocaHint hợp lý và mang lại giá trị học tập tối đa cho người học.
 
-- [x] **Vấn đề 6: Hợp Nhất Bản Dịch Đề Xuất Nâng Cấp Card 3 Tích Hợp Nút Nghe TTS & Xóa Bỏ Hộp Trùng Lặp (`06f-translation-engine.js`, `screen-translation.html`)**:
-  - Gộp trọn vẹn bản dịch trau chuốt (Polished Rewrite) và mẹo dịch thuật vào Card 3.
-  - Bổ sung nút 🔊 Nghe phát âm TTS (`#btn-translation-speak-suggestion` / `speakTranslationSuggestionSentence`).
-  - Xóa bỏ triệt để hộp gợi ý thứ 4 trùng lặp (`Reference Benchmark Translation Box`) gây dư thừa và rối mắt giao diện.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-28 Build 329`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-28 (Build 329)`.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-29 Build 330`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-29 (Build 330)`.
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-27 Build 328)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-28 Build 329)
 
 - [x] **Vấn đề 1: Nâng Cấp AI Chấm Bài Dịch Thuật & Heuristic Fallback (`06f-translation-engine.js`)**:
   - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.

@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v0.10.10-29 (Build 330) - Nâng Cấp VocaHint Chế Độ Dịch Thuật Đa Tầng Thực Dụng: Bóc Tách Từ Phụ (Secondary Vocab), Cấu Trúc Collocation/Ngữ Pháp, Khung Mở Đầu Câu (Sentence Starter) & Bản Dịch Tham Khảo Chuẩn Bản Ngữ (Vấn Đề 7)
+================================================================================
+1. [Khắc Phục Hoàn Toàn Trùng Lặp Gợi Ý VocaHint Trong Dịch Thuật (06f-translation-engine.js)]:
+   - Nhận diện vấn đề: Từ vựng trọng tâm (Target Word) và định nghĩa vốn đã luôn hiển thị cố định ở huy hiệu mục tiêu (Target Word Chip) ngay trên ô nhập. Việc gợi ý lại chính từ này ở Tầng 1 trước đây gây dư thừa và lãng phí lượt gợi ý.
+   - Bổ sung thuật toán tự động bóc tách từ vựng phụ/từ khó trong câu (extractSecondaryVocabHint), loại bỏ stopwords và lọc ra các từ quan trọng khác trong câu cùng nghĩa tương ứng (ví dụ: "shoplifters" -> kẻ trộm đồ / kẻ ăn cắp vặt, "police" -> cảnh sát).
+2. [Cung Cấp 4 Kiểu Gợi Ý Đa Dạng & Thực Dụng (06f-translation-engine.js)]:
+   - Kiểu 1 (Secondary Vocabulary): Cung cấp nghĩa các từ phụ, từ khó khác trong câu nguồn để gỡ nút thắt ngữ cảnh.
+   - Kiểu 2 (Collocation & Grammar Structure): Gợi ý cấu trúc kết hợp từ và thì/ngữ pháp (ví dụ: "will + V_inf", "prosecute sb for sth").
+   - Kiểu 3 (Sentence Starter Framing): Gợi ý cụm mở đầu câu tự nhiên trong ngôn ngữ đích (ví dụ: "Cảnh sát sẽ..." cho Anh-Việt, "The police will..." cho Việt-Anh).
+   - Kiểu 4 (Full Benchmark Translation & Polished Nuance): Bản dịch hoàn chỉnh kèm chữ cái mở đầu mặt nạ (masked hints).
+3. [Tối Ưu 3 Tầng Gợi Ý Nấc Thang (useTranslationHint)]:
+   - Tầng 1: Hiển thị ngay từ phụ quan trọng + cấu trúc ngữ pháp/collocation bổ trợ.
+   - Tầng 2: Mở khóa khung mở đầu câu tự nhiên (Sentence Starter Framing).
+   - Tầng 3: Cung cấp bản dịch tham khảo hoàn chỉnh và chữ cái gợi ý từng từ.
+
+================================================================================
 Phiên bản: v0.10.10-28 (Build 329) - Đột Phá Gemini AI Sinh Câu Dịch Thuật Trực Tiếp Theo Ngữ Cảnh Tự Nhiên, Màn Hình Báo Lỗi Kèm Nút Thử Lại & Thoát, Hợp Nhất Thẻ Nhận Xét Card 3 Tích Hợp Nút Nghe TTS & Xóa Bỏ Hộp Gợi Ý Trùng Lặp (Vấn Đề 5 & 6)
 ================================================================================
 1. [Đột Phá Gemini AI Sinh Trực Tiếp Toàn Bộ Câu Hỏi Dịch Thuật (06f-translation-engine.js, screen-translation.html)]:
