@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-26 Build 327)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-27 Build 328)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 

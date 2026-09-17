@@ -1,4 +1,19 @@
 ================================================================================
+Phiên bản: v0.10.10-27 (Build 328) - Nâng Cấp Gemini Flash-Lite & Flash Chấm Dịch Thuật Trực Tiếp, Luân Chuyển Model Đa Khóa Failover, Bản Dịch Đề Xuất Polished Rewrite Chuẩn Bản Xứ & Chuẩn Hóa Toàn Diện Mẫu Câu Sinh Tự Động (Vấn Đề 4)
+================================================================================
+1. [Nâng Cấp Động Cơ Gọi Gemini AI Chấm Dịch Thuật Trực Tiếp (06f-translation-engine.js)]:
+   - Tích hợp trực tiếp API Google Gemini (models/generateContent) với danh sách khóa dự phòng (getStoredApiKeys()) và cơ chế luân chuyển model thông minh (getGeminiModelsForTier('fast') / 'deep').
+   - Hỗ trợ đầy đủ các model thế hệ mới: gemini-3.5-flash-lite, gemini-3.1-flash-lite, gemini-2.5-flash-lite, gemini-3.8-flash, v.v., kèm timeout 16s và lưu vết model hoạt động ổn định nhất (saveWorkingGeminiModel).
+   - Áp dụng responseMimeType: "application/json" với prompt phân tích ngữ nghĩa, ngữ pháp và độ trôi chảy nghiêm ngặt.
+2. [Bản Dịch Đề Xuất Polished Rewrite Uyển Chuyển & Chuẩn Bản Xứ (06f-translation-engine.js)]:
+   - Tinh chỉnh prompt AI yêu cầu trả về bản dịch đề xuất (polishedRewrite) mang văn phong tự nhiên, đúng sắc thái ngữ cảnh và ngữ điệu bản xứ, không dịch máy móc thô cứng từng từ.
+   - Thẻ nhận xét thứ 3 hiển thị bản dịch trau chuốt kèm mẹo nâng tầm câu văn.
+3. [Chuẩn Hóa Toàn Diện Mẫu Câu Sinh Tự Động Theo Ngữ Nghĩa (06f-translation-engine.js)]:
+   - Bổ sung nhóm ngữ nghĩa chuyên biệt cho các từ vựng mang tính Xung đột / Tranh chấp / Thách thức (conflict, dispute, crisis, tension, v.v.).
+   - Loại bỏ triệt để hiện tượng ghép từ sai cấu trúc (ví dụ: "We need to conflict carefully..." hay "mâu thuẫn xung đột cẩn thận"), thay bằng các mẫu câu chuẩn bản ngữ ("Good communication helps prevent conflict between colleagues." -> "Giao tiếp tốt giúp ngăn ngừa xung đột giữa các đồng nghiệp.").
+   - Tối ưu trích xuất nghĩa tiếng Việt cốt lõi (extractCleanPrimaryMeaning), lược bỏ các cụm từ ghép đồng nghĩa rườm rà.
+
+================================================================================
 Phiên bản: v0.10.10-26 (Build 327) - Nâng Cấp AI Chấm Bài Dịch Thuật Theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Tích Hợp Cảnh Báo Thoát Giữa Chừng Kèm Kết Toán Balance v3 & Chuẩn Hóa 100% Thuật Toán Sinh Câu Ngữ Cảnh Tự Nhiên
 ================================================================================
 1. [Nâng Cấp AI Chấm Bài & Heuristic Fallback (06f-translation-engine.js)]:

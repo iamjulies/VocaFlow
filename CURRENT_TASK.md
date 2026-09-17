@@ -1,12 +1,29 @@
-# CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
+# CURRENT TASK & TRẠNG THÁI CÔNG VIỆI HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-26 (Build 327)`  
+> **Phiên bản mục tiêu:** `v0.10.10-27 (Build 328)`  
 > **Cập nhật lần cuối:** 2026-09-17  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-26 Build 327)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-27 Build 328)
+
+- [x] **Vấn đề 4: Nâng Cấp Gemini Flash-Lite & Flash Chấm Dịch Thuật Trực Tiếp, Luân Chuyển Model Đa Khóa Failover, Bản Dịch Đề Xuất Polished Rewrite Chuẩn Bản Xứ & Chuẩn Hóa Toàn Diện Mẫu Câu Sinh Tự Động (`06f-translation-engine.js`)**:
+  - Tích hợp trực tiếp Google Gemini API (`models/generateContent`) với danh sách khóa dự phòng (`getStoredApiKeys()`) và cơ chế luân chuyển model tự động (`getGeminiModelsForTier('fast')` / `'deep'`).
+  - Hỗ trợ đầy đủ các model thế hệ mới: `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-3.8-flash`, v.v., kèm timeout 16s và lưu vết model hoạt động ổn định nhất (`saveWorkingGeminiModel`).
+  - Áp dụng `responseMimeType: "application/json"` với prompt phân tích ngữ nghĩa, ngữ pháp và độ trôi chảy nghiêm ngặt.
+  - Tinh chỉnh prompt AI yêu cầu trả về bản dịch đề xuất (`polishedRewrite`) mang văn phong tự nhiên, đúng sắc thái ngữ cảnh và ngữ điệu bản xứ, không dịch máy móc thô cứng từng từ.
+  - Thẻ nhận xét thứ 3 hiển thị bản dịch trau chuốt kèm mẹo nâng tầm câu văn.
+  - Bổ sung nhóm ngữ nghĩa chuyên biệt cho các từ vựng mang tính Xung đột / Tranh chấp / Thách thức (`conflict`, `dispute`, `crisis`, `tension`, v.v.).
+  - Loại bỏ triệt để hiện tượng ghép từ sai cấu trúc (ví dụ: "We need to conflict carefully..." hay "mâu thuẫn xung đột cẩn thận"), thay bằng các mẫu câu chuẩn bản ngữ ("Good communication helps prevent conflict between colleagues." -> "Giao tiếp tốt giúp ngăn ngừa xung đột giữa các đồng nghiệp.").
+  - Tối ưu trích xuất nghĩa tiếng Việt cốt lõi (`extractCleanPrimaryMeaning`), lược bỏ các cụm từ ghép đồng nghĩa rườm rà.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-27 Build 328`)**:
+  - Đồng bộ 11 file hệ thống sang `v0.10.10-27 (Build 328)`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-26 Build 327)
 
 - [x] **Vấn đề 1: Nâng Cấp AI Chấm Bài Dịch Thuật & Heuristic Fallback (`06f-translation-engine.js`)**:
   - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.
@@ -22,13 +39,6 @@
   - Bổ sung hàm `extractCleanPrimaryMeaning(rawDefVi, term)` bóc tách toàn bộ chú thích ngoặc (ví dụ "(Wi-Fi, Bluetooth)") và từ bổ nghĩa dài dòng.
   - Phân loại từ vựng thành 5 miền ngữ cảnh chuyên biệt: Công nghệ/Thiết bị (Tech), Nhân cách/Tư duy (Personality), Học thuật/Nghiên cứu (Academic), Kinh doanh/Công sở (Business), Đời sống & Xã hội (General).
   - Đảm bảo 100% các câu hỏi sinh ra đều tự nhiên, chuẩn mực, loại bỏ triệt để các câu ngô nghê hoặc vô nghĩa.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-26 Build 327`)**:
-  - Đồng bộ 11 file hệ thống sang `v0.10.10-26 (Build 327)`.
-
----
-
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC
 
 - [x] **Ra mắt Chế độ Nghe Gõ Câu (Full Sentence Dictation VIP β - Luyện Kỹ Năng Listening)**:
   - Triển khai `06e-dictation-engine.js`, `screen-dictation.html`, `modal-dictation-setup.html`, `modal-dictation-result.html`.

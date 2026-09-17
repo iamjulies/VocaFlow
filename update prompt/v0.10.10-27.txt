@@ -1,0 +1,12 @@
+v0.10.10-27
+[ĐỌC KĨ PHẦN SAU]
+=> Từ tiềm năng này tao quyết định phát triển các tính năng học mới (beta):
+[Cả 3 tính năng học này cần được đánh dấu (β) để thể hiện đang trong quá trình phát triển. Tao xin phép gọi 3 cái này là Extended Learning Modes, còn 4 chế độ cũ kia là Learning Modes thôi.]
+1. Viết câu có nghĩa dùng (các) từ mà đề bài yêu cầu -> Kĩ năng Writing (đã hoàn thành)
+2. Cloze Test (Điền từ vào đoạn văn có bối cảnh) -> Kĩ năng Reading (đã hoàn thành)
+3. Full Sentence Dictation (Nghe cả câu và gõ lại) -> Kĩ năng Listening (đã hoàn thành)
+4. Chế độ học tập dịch thuật song phương -> Kĩ năng gì không quan trọng
+- Vấn để 4: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-17 174128.png" cái kết quả chấm như thế này khiến tao cảm thấy đang kh dùng AI để chấm hoặc là chưa cẩn thận và tâm huyết lắm ấy. kiểu t nghĩ phải dùng gemini-3.5-flashlite chẳng hạn để chấm... chứ đọc mấy câu này nó cứ sượng sượng, nó vô nghĩa mà nó gượng gạo tại nó cứ bị cứng nhắc theo nghĩa gốc của từ ấy mà kh biết biến tấu để dễ đọc, dễ nghe dễ hiểu hơn.
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
+
