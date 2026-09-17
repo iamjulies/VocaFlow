@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-31 Build 332)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-32 Build 333)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -127,6 +127,7 @@
 
     // Difficulty Config Engine
     function getSpeakingDifficultyConfig(diff) {
+      if (diff === 'extreme') return { floorScore: 95, diffMult: 2.5, maxTakes: 2, maxListens: 2, minClues: 1, maxClues: 1 };
       if (diff === 'hard') return { floorScore: 90, diffMult: 2.0, maxTakes: 3, maxListens: 3, minClues: 1, maxClues: 1 };
       if (diff === 'medium') return { floorScore: 80, diffMult: 1.5, maxTakes: 4, maxListens: 4, minClues: 2, maxClues: 2 };
       return { floorScore: 70, diffMult: 1.0, maxTakes: 5, maxListens: 5, minClues: 3, maxClues: 3 };
@@ -144,7 +145,7 @@
         if (ipa && audio) return 1.0;
         return 1.0;
       }
-      if (d === 'hard') {
+      if (d === 'hard' || d === 'extreme') {
         if (def && !ipa && !audio) return 1.5;
         if (!def && ipa && !audio) return 1.25;
         if (!def && !ipa && audio) return 1.0;
@@ -166,11 +167,11 @@
         openSettingsModal();
         return;
       }
-      if (!['easy', 'medium', 'hard'].includes(diff)) diff = 'easy';
+      if (!['easy', 'medium', 'hard', 'extreme'].includes(diff)) diff = 'easy';
       selectedSpeakingSetupDifficulty = diff;
       currentSpeakingDifficulty = diff;
 
-      ['easy', 'medium', 'hard'].forEach(d => {
+      ['easy', 'medium', 'hard', 'extreme'].forEach(d => {
         const card = document.getElementById('speaking-diff-card-' + d);
         if (!card) return;
         if (d === diff) {
@@ -183,6 +184,9 @@
           } else if (d === 'hard') {
             card.style.borderColor = '#f87171';
             card.style.background = 'rgba(239, 68, 68, 0.12)';
+          } else if (d === 'extreme') {
+            card.style.borderColor = '#c084fc';
+            card.style.background = 'rgba(168, 85, 247, 0.12)';
           }
         } else {
           card.style.borderColor = 'var(--border)';

@@ -1,3 +1,4 @@
 v0.10.10-32
 - Vấn đề 1: Chưa tích hợp các GIF mèo méo meo vào cho 4 chế độ học mở rộng mới.
 - Vấn đề 2: Chưa tích hợp các âm thanh đúng/sai/bỏ quả vào cho 4 chế độ học mở rộng mới.
+- Vấn đề 3: Chưa cập nhật các cơ chế balance lên các màn hình thiết lập chế độ học kìa. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000030.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000037.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000042.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000049.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000056.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000102.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 000109.png" Các màn hình thiết lập này cũng chưa được đồng bộ trình bày giống kiểu cách với nhau, t muốn 3 chế độ thường trình bày giống nhau và 4 chế độ mở rộng giống nhau.

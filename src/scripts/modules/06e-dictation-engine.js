@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-32 Build 333 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -39,26 +39,26 @@ function getDictationDifficultyConfig(diff) {
   if (diff === 'expert') {
     return {
       floorScore: 90,
-      diffMult: 3.6,
+      diffMult: 4.0,
       maxListens: 2,
       minWords: 20,
       maxWords: 30,
       targetWordCount: 3,
       showTargetWords: 0,
-      baseXu: 36,
+      baseXu: 40,
       label: '🔥 Siêu Khó'
     };
   }
   if (diff === 'hard') {
     return {
       floorScore: 90,
-      diffMult: 2.4,
+      diffMult: 2.8,
       maxListens: 3,
       minWords: 12,
       maxWords: 20,
       targetWordCount: 3,
       showTargetWords: 2,
-      baseXu: 24,
+      baseXu: 28,
       label: '🔴 Khó'
     };
   }
@@ -77,13 +77,13 @@ function getDictationDifficultyConfig(diff) {
   }
   return {
     floorScore: 70,
-    diffMult: 1.2,
+    diffMult: 1.0,
     maxListens: 5,
     minWords: 5,
     maxWords: 10,
     targetWordCount: 1,
     showTargetWords: 1,
-    baseXu: 12,
+    baseXu: 10,
     label: '🟢 Dễ'
   };
 }
@@ -1166,6 +1166,7 @@ async function submitDictationEvaluation() {
       scoreDisplay.style.color = '#ffffff';
       scoreDisplay.textContent = `${accuracyScore} / 100đ`;
       if (typeof playVocaSfx === 'function') playVocaSfx('correct');
+      if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
     } else {
       verdictBanner.style.background = 'rgba(239, 68, 68, 0.15)';
       verdictBanner.style.border = '1px solid #ef4444';
@@ -1175,6 +1176,7 @@ async function submitDictationEvaluation() {
       scoreDisplay.style.color = '#ffffff';
       scoreDisplay.textContent = `${accuracyScore} / 100đ`;
       if (typeof playVocaSfx === 'function') playVocaSfx('wrong');
+      if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('fail');
 
       if (dictationCurrentWordRef) {
         if (typeof addWordToMistakeList === 'function') {

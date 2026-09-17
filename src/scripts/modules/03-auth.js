@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-31 Build 332)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-32 Build 333)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -6528,6 +6528,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-31 / Build 332)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-32': {
+        postId: 'official_update_v0_10_10_32',
+        releaseTime: '2026-09-18T00:15:00.000Z',
+        title: '🐱 Tích Hợp VIP Cat Meme, Âm Thanh SFX & Đồng Bộ 7 Màn Hình Thiết Lập Học Tập (v0.10.10-32 Build 333)!',
+        summary: 'Tích hợp đầy đủ phản ứng GIF mèo méo meo VIP và âm thanh SFX đúng/sai/bỏ qua cho 4 chế độ mở rộng (Writing, Cloze, Dictation, Translation), đồng bộ toàn diện bố cục và cơ chế Unified Balance v4 trên toàn bộ 7 màn hình thiết lập chế độ học tập.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-32 (Build 333)!\n\n✨ Những điểm mới nổi bật:\n🐱 Tích Hợp VIP Cat Meme Reactions: Thưởng thức phản ứng động GIF mèo méo meo hài hước khi hoàn thành câu đúng hoặc sai trong cả 4 chế độ mở rộng (Viết Câu, Điền Từ, Nghe Gõ Câu, Dịch Thuật).\n🔊 Âm Thanh SFX Trực Quan Sống Động: Kích hoạt âm thanh Correct, Wrong, Skip, Pop và Fireworks khi giải bài và tổng kết cho toàn bộ 4 chế độ mở rộng.\n⚖️ Đồng Bộ 7 Màn Hình Thiết Lập Chuẩn Unified Balance v4: Chuẩn hóa toàn diện giao diện và thông số 3 chế độ học cốt lõi (Quiz, Spelling, Speaking) và 4 chế độ mở rộng (Writing, Cloze, Dictation, Translation) với hệ số x1.0, x1.8, x2.8, x4.0 và thanh chọn số câu học 4 nút tinh tế.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ ổn định và tính nhất quán cao nhất trên mọi thiết bị.\n\nChúc bạn có những giờ phút học tập thật vui vẻ và tràn đầy cảm hứng cùng VocaFlow! 🚀🐱`
+      },
       'v0.10.10-31': {
         postId: 'official_update_v0_10_10_31',
         releaseTime: '2026-09-17T23:55:00.000Z',

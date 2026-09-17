@@ -1,0 +1,3 @@
+v0.10.10-33
+- Vấn đề 4: Chỉnh sửa lại phần thưởng nhập mã mời. Người mời: +1 ngày vocavip; người được mời: +3 ngày vocavip.
+- Vấn đề 5: Thêm cơ chế khóa bộ từ vip đã tải về khi mà hết thời hạn gói vip (hiện tại là chỉ cần có vip 1 ngày và tải về là dùng được mãi mãi, nhưng mà như thế thì mất hết giá trị của gói vip).

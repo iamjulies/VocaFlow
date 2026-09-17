@@ -1,57 +1,52 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-31 (Build 332)`  
-> **Cập nhật lần cuối:** 2026-09-17  
+> **Phiên bản mục tiêu:** `v0.10.10-32 (Build 333)`  
+> **Cập nhật lần cuối:** 2026-09-18  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-31 Build 332)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-32 Build 333)
 
-- [x] **Hợp Nhất Động Cơ Thưởng Toàn Bộ 7 Chế Độ Học Unified Balance v4 (`02-state-core.js`, `08-wallet-economy.js`)**:
-  - Triển khai công thức toán học hợp nhất:
-    $$\text{FinalVoCoin} = \left\lfloor \left( \sum_{i=1}^{N_{\text{done}}} \text{Base}_i \times W_{\text{mode}} \times M_{\text{diff}} \right) \times \Phi(N_{\text{done}}) \times \Psi\left(\frac{N_{\text{done}}}{N_{\text{total}}}\right) \times M_{\text{VIP}} \times \eta(E_{\text{today}}) \right\rfloor$$
-  - Bảng trọng số nhận thức chuẩn hóa ($W_{\text{mode}}$):
-    + `autofc`: 0.0 (Ôn tập thụ động, không thưởng VoCoin)
-    + `quiz`: 1.0 (Trắc nghiệm nhận diện: Base = 3 VoCoin/câu)
-    + `spelling`: 1.3 (Gõ chính tả từ vựng: Base = 4 VoCoin/từ)
-    + `speaking`: 1.8 (Luyện phát âm AI âm vị: Base = syllableCount * 3 VoCoin/từ)
-    + `dictation`: 2.4 (Nghe gõ câu hoàn chỉnh: Base = 10 VoCoin/câu)
-    + `cloze`: 2.8 (Đọc hiểu điền đoạn văn: Base = 4 VoCoin/ô khuyết)
-    + `translation`: 3.0 (Dịch thuật song phương: Base = 12 VoCoin/câu)
-    + `writing`: 3.5 (Tự do sáng tạo viết câu: Base = 15 VoCoin/câu đoạn)
-  - Hàm quy mô khối lượng tự nhiên phi tuyến: $\Phi(N_{\text{done}}) = 1.0 + 0.3 \times \frac{N_{\text{done}}}{N_{\text{done}} + 15}$
-  - Hệ số cam kết hoàn thành bậc 2 chống trục lợi: $\Psi(r) = 0.2 + 0.8 \times r^2$ với $r = \frac{N_{\text{done}}}{N_{\text{total}}}$
-  - Kết nối và tái định tuyến hàm `calculateSessionFinalPoints` và `calculateSessionFinalPointsV3` tương thích ngược 100%.
+- [x] **Vấn đề 1: Tích Hợp VIP Cat Meme Reactions Cho 4 Chế Độ Mở Rộng (`06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`)**:
+  - Viết câu (Writing): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn (≥60), ngược lại gọi `triggerVipMemeReaction('fail')`.
+  - Điền từ (Cloze): Gọi `triggerVipMemeReaction('right')` khi đúng 100% các ô khuyết, ngược lại gọi `triggerVipMemeReaction('fail')`.
+  - Nghe gõ câu (Dictation): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn/passed, ngược lại gọi `triggerVipMemeReaction('fail')`.
+  - Dịch thuật (Translation): Gọi `triggerVipMemeReaction('right')` khi đạt điểm sàn (≥60), ngược lại gọi `triggerVipMemeReaction('fail')`.
+  - Defensive guard kiểm tra an toàn `typeof triggerVipMemeReaction === 'function'` không làm crash khi offline hoặc không phải VIP.
 
-- [x] **Đồng Bộ Khắp 7 Study Engines & Modal Cảnh Báo Thoát Sớm**:
-  - Cập nhật 7 study engines:
-    + Quiz (`05-quiz-engine.js`)
-    + Spelling (`06-spelling-engine.js`)
-    + Speaking (`07-speaking-engine.js`)
-    + Writing (`06c-writing-engine.js`)
-    + Cloze (`06d-cloze-engine.js`)
-    + Dictation (`06e-dictation-engine.js`)
-    + Translation (`06f-translation-engine.js`)
-  - Cập nhật `modal-study-exit-confirm.html` và `promptStudyEarlyExit` hiển thị đầy đủ bảng phân tích 4 thông số Unified Balance v4 (Trọng số $W_{\text{mode}}$, Hệ số hoàn thành $\Psi(r)$, Khối lượng $\Phi(N_{\text{done}})$, Năng lượng não bộ $\eta$).
+- [x] **Vấn đề 2: Tích Hợp Đồng Bộ Âm Thanh Sống Động (`playVocaSfx`) Cho 4 Chế Độ Mở Rộng**:
+  - Chuẩn hóa các kênh âm thanh: `playVocaSfx('correct')`, `playVocaSfx('wrong')`, `playVocaSfx('pop')` cho gợi ý manh mối VocaHint, `playVocaSfx('skip')` khi bỏ qua, và `playVocaSfx('fireworks')` khi hoàn thành phiên học.
+  - Thay thế toàn bộ mã âm thanh cũ không đồng bộ (`playVocaSfx('success')` -> `'correct'`).
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-31 Build 332`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-31 (Build 332)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-31 (Build 332)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-31 (Build 332)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-31 Build 332`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-31'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-31 (Build 332)'`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-31 Build 332` & registry)
-  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-31 Build 332`)
-  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-31`)
-  - `pubspec.yaml` (`version: 0.10.10+332`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-31`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-31 (Build 332)`)
+- [x] **Vấn đề 3: Chuẩn Hóa & Đồng Bộ Toàn Diện 7 Modal Thiết Lập Khắp Ứng Dụng (Study Setup Modals)**:
+  - **3 Chế độ cốt lõi** (`modal-quiz-setup.html`, `modal-spelling-setup.html`, `modal-speaking-setup.html`):
+    + 4 Cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 TB (x1.5), 🔴 Khó (x2.0), 🟣 Siêu Khó (x2.5).
+    + Xóa bỏ triệt để văn bản hardcoded cũ trong Quiz ("+3% Thuộc, +3 VoCoin (Sai: -2 VoCoin)"), thay bằng mô tả Unified Balance v4.
+    + Bổ sung cấp độ Extreme (🟣 Siêu Khó x2.5, điểm sàn 95, 2 lần nghe + 2 lần thu âm) cho Speaking Setup.
+    + Thống nhất khu vực manh mối gợi ý, huy hiệu hệ số và checkbox trộn câu hỏi (Shuffle Toggle).
+  - **4 Chế độ mở rộng** (`modal-writing-setup.html`, `modal-cloze-setup.html`, `modal-dictation-setup.html`, `modal-translation-setup.html`):
+    + 4 Cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 TB (x1.8), 🔴 Khó (x2.8), 🔥 Siêu Khó / Chuyên Gia (x4.0).
+    + Lưới chọn số lượng câu hỏi 4 nút: `[ 5 Câu ]`, `[ 10 Câu ]`, `[ Tự nhập... ]`, `[ Toàn Bộ ]`.
+    + Chuẩn hóa max-width 540px, bố cục responsive hiện đại, hỗ trợ shuffle toggle.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-32 Build 333`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-32 (Build 333)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-32 (Build 333)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-32 (Build 333)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-32 Build 333`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-32'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-32 (Build 333)'`, `VOCAFLOW_APP_BUILD = 333`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-32 Build 333` & registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `06f-translation-engine.js` (`v0.10.10-32 Build 333`)
+  - `sw.js` & `Release_App/sw.js` & `GITHUB_RELEASE/sw.js` (`vocaflow-pwa-v0.10.10-32`)
+  - `pubspec.yaml` (`version: 0.10.10+333`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-32`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-32 (Build 333)`)
   - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-29 Build 330)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-31 Build 332)
 
 - [x] **Vấn đề 7: Nâng Cấp Gợi Ý VocaHint Đa Tầng Thực Dụng Trong Dịch Thuật Song Phương (`06f-translation-engine.js`)**:
   - Khắc phục hoàn toàn việc gợi ý trùng lặp Target Word (từ vựng trọng tâm đã có sẵn trên huy hiệu `🎯 Từ vựng trọng tâm`).

@@ -1,11 +1,11 @@
-<!-- MODAL: TRANSLATION SETUP (v0.10.10-25 VIP β) -->
+<!-- MODAL: TRANSLATION SETUP (v0.10.10-32 VIP β) -->
 <div class="modal-overlay" id="modal-translation-setup">
-  <div class="modal" style="max-width: 560px;">
+  <div class="modal" style="max-width: 540px;">
     <div class="modal-title">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 22px;">🌐</span>
         <div>
-          <strong style="font-size: 16px;">Thiết Lập Dịch Thuật Song Phương (VIP β)</strong>
+          <strong style="font-size: 16px;">Thiết Lập Dịch Thuật Song Phương (Translation VIP β)</strong>
           <div id="translation-setup-subtitle" style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">Luyện tập dịch thuật 2 chiều Anh - Việt và nhận xét chuyên sâu từ Gemini AI</div>
         </div>
       </div>
@@ -46,8 +46,9 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 17px;">🟢</span>
               <strong style="font-size: 13.5px; color: #34d399;">Cấp độ DỄ (Easy)</strong>
-              <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10.5px; font-weight: 700;">x1.2</span>
+              <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px;">x1.0 Điểm</span>
             </div>
+            <span style="font-size: 11px; color: #34d399; font-weight: 700;">+12 Xu/câu</span>
           </div>
           <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu ngắn &le; 10 từ. Cấu trúc câu đơn giản, rõ ý. Điểm sàn 70đ.</p>
         </div>
@@ -57,8 +58,9 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 17px;">🟡</span>
               <strong style="font-size: 13.5px; color: #fbbf24;">Cấp độ TRUNG BÌNH (Medium)</strong>
-              <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10.5px; font-weight: 700;">x1.8</span>
+              <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px;">x1.8 Điểm</span>
             </div>
+            <span style="font-size: 11px; color: #fbbf24; font-weight: 700;">+22 Xu/câu</span>
           </div>
           <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu ghép 10-18 từ. Chứa mệnh đề quan hệ hoặc liên từ logic. Điểm sàn 80đ.</p>
         </div>
@@ -68,25 +70,45 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 17px;">🔴</span>
               <strong style="font-size: 13.5px; color: #f87171;">Cấp độ KHÓ (Hard)</strong>
-              <span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10.5px; font-weight: 700;">x2.4</span>
+              <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 10px;">x2.8 Điểm</span>
             </div>
+            <span style="font-size: 11px; color: #f87171; font-weight: 700;">+34 Xu/câu</span>
           </div>
-          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu phức & học thuật &gt; 18 từ. Sắc thái ngôn từ chuyên sâu, cấu trúc nâng cao. Điểm sàn 90đ.</p>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Câu phức & học thuật 18-25 từ. Sắc thái ngôn từ chuyên sâu. Điểm sàn 90đ.</p>
+        </div>
+        <!-- SIÊU KHÓ -->
+        <div class="translation-diff-card" id="translation-diff-card-expert" onclick="selectTranslationSetupDifficulty('expert')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 17px;">🔥</span>
+              <strong style="font-size: 13.5px; color: #ec4899;">Cấp độ SIÊU KHÓ (Master)</strong>
+              <span class="badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 10px;">x4.0 Điểm</span>
+            </div>
+            <span style="font-size: 11px; color: #ec4899; font-weight: 700;">+48 Xu/câu</span>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Đoạn câu phức hợp &gt; 25 từ. Sắc thái văn phong nâng cao. Điểm sàn 95đ.</p>
         </div>
       </div>
     </div>
 
-    <!-- 3. CHỌN SỐ LƯỢNG CÂU HỎI -->
+    <!-- 3. SỐ LƯỢNG CÂU HỎI TRONG PHIÊN HỌC -->
     <div style="margin-bottom: 16px;">
-      <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">3. Số Lượng Câu Luyện Tập:</label>
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-        <button type="button" class="btn btn-outline translation-qc-btn active" id="translation-qc-5" onclick="selectTranslationSetupQuestionCount('5')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-color: #10b981; background: rgba(16,185,129,0.15); color: var(--text); border-radius: 10px;">5 câu</button>
-        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-10" onclick="selectTranslationSetupQuestionCount('10')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 10px;">10 câu</button>
-        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-custom" onclick="selectTranslationSetupQuestionCount('custom')" style="padding: 4px; font-size: 11px; font-weight: 700; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span>Tùy chỉnh:</span>
-          <input type="number" id="translation-qc-custom-input" min="1" max="999" value="15" oninput="handleTranslationCustomQuestionCountInput(this.value)" onclick="event.stopPropagation(); selectTranslationSetupQuestionCount('custom');" style="width: 48px; height: 20px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); color: var(--text); margin-top: 2px;">
+      <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">
+        3. Số Lượng Câu Luyện Tập:
+      </label>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+        <button type="button" class="btn btn-outline translation-qcount-btn active" id="translation-qc-5" onclick="selectTranslationSetupQuestionCount(5)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; border-color: #10b981; background: rgba(16,185,129,0.15); color: var(--text); text-align: center;">
+          5 Câu
         </button>
-        <button type="button" class="btn btn-outline translation-qc-btn" id="translation-qc-all" onclick="selectTranslationSetupQuestionCount('all')" style="padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 10px;">Tất cả</button>
+        <button type="button" class="btn btn-outline translation-qcount-btn" id="translation-qc-10" onclick="selectTranslationSetupQuestionCount(10)" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+          10 Câu
+        </button>
+        <div class="translation-qcount-btn" id="translation-qc-custom" style="border-radius: 10px; padding: 4px 6px; font-weight: 700; font-size: 12px; border: 1px solid var(--border); background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('translation-qc-custom-input')?.focus()">
+          <input type="number" id="translation-qc-custom-input" min="1" max="999" placeholder="Tự nhập..." oninput="handleTranslationCustomQuestionCountInput(this.value)" onfocus="selectTranslationSetupQuestionCount('custom')" style="width: 100%; border: none; background: transparent; color: var(--text); font-weight: 700; text-align: center; font-size: 11.5px; outline: none; padding: 4px 0;">
+        </div>
+        <button type="button" class="btn btn-outline translation-qcount-btn" id="translation-qc-all" onclick="selectTranslationSetupQuestionCount('all')" style="border-radius: 10px; padding: 8px 2px; font-weight: 700; font-size: 12px; text-align: center;">
+          Toàn Bộ
+        </button>
       </div>
     </div>
 

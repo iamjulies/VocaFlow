@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-31 Build 332 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-32 Build 333 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -964,7 +964,8 @@ function renderWritingEvaluationResult(evalData, question) {
       rewardCont.innerHTML = `<span class="badge" style="font-size: 13px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">💰 +${earnedXu} VoCoin • 📈 +${cfg.masteryBonus}% Mastery</span>`;
     }
 
-    if (typeof playVocaSfx === 'function') playVocaSfx('success');
+    if (typeof playVocaSfx === 'function') playVocaSfx('correct');
+    if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
 
   } else {
     question.status = 'failed';
@@ -996,6 +997,7 @@ function renderWritingEvaluationResult(evalData, question) {
     }
 
     if (typeof playVocaSfx === 'function') playVocaSfx('wrong');
+    if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('fail');
   }
 }
 
@@ -1024,6 +1026,7 @@ function useWritingHint() {
     showToast('💡 Đã dùng 50 VoCoin để đổi 1 gợi ý VocaHint.');
   }
 
+  if (typeof playVocaSfx === 'function') playVocaSfx('pop');
   writingHintsUsed++;
   updateWritingWalletUI();
 

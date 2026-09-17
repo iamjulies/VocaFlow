@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-31 Build 332 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-32 Build 333 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -37,12 +37,21 @@ let translationIsCompleted = false;
 // 1. DIFFICULTY CONFIGURATION
 // =========================================================================
 function getTranslationDifficultyConfig(diff) {
+  if (diff === 'expert') {
+    return {
+      floorScore: 95,
+      diffMult: 4.0,
+      minWords: 22,
+      baseXu: 48,
+      label: '🔥 Siêu Khó'
+    };
+  }
   if (diff === 'hard') {
     return {
       floorScore: 90,
-      diffMult: 2.4,
+      diffMult: 2.8,
       minWords: 18,
-      baseXu: 24,
+      baseXu: 34,
       label: '🔴 Khó'
     };
   }
@@ -51,13 +60,13 @@ function getTranslationDifficultyConfig(diff) {
       floorScore: 80,
       diffMult: 1.8,
       minWords: 10,
-      baseXu: 18,
+      baseXu: 22,
       label: '🟡 Trung Bình'
     };
   }
   return {
     floorScore: 70,
-    diffMult: 1.2,
+    diffMult: 1.0,
     minWords: 5,
     baseXu: 12,
     label: '🟢 Dễ'
@@ -145,11 +154,11 @@ window.selectTranslationSetupDirection = selectTranslationSetupDirection;
 
 function selectTranslationSetupDifficulty(diff) {
   selectedTranslationSetupDifficulty = diff;
-  ['easy', 'medium', 'hard'].forEach(d => {
+  ['easy', 'medium', 'hard', 'expert'].forEach(d => {
     const card = document.getElementById('translation-diff-card-' + d);
     if (card) {
       if (d === diff) {
-        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444' };
+        const colors = { easy: '#10b981', medium: '#f59e0b', hard: '#ef4444', expert: '#ec4899' };
         card.style.borderColor = colors[d];
         card.style.background = 'rgba(16, 185, 129, 0.08)';
       } else {
@@ -166,7 +175,7 @@ function selectTranslationSetupQuestionCount(countMode) {
   ['5', '10', 'custom', 'all'].forEach(k => {
     const btn = document.getElementById('translation-qc-' + k);
     if (btn) {
-      if (k === countMode) {
+      if (String(k) === String(countMode)) {
         btn.classList.add('active');
         btn.style.borderColor = '#10b981';
         btn.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -756,6 +765,7 @@ function useTranslationHint() {
     addLedgerEntry('HINT_USED', 0, `Sử dụng 1 VocaHint trong Dịch Thuật (còn ${currentHints - 1})`);
   }
   updateTranslationWalletBadges();
+  if (typeof playVocaSfx === 'function') playVocaSfx('pop');
 
   translationHintsRevealed++;
   const hintBox = document.getElementById('translation-hint-box');
@@ -926,6 +936,7 @@ function skipTranslationQuestion() {
   if (typeof showToast === 'function') {
     showToast('⏭️ Đã bỏ qua câu này!');
   }
+  if (typeof playVocaSfx === 'function') playVocaSfx('skip');
   nextTranslationQuestion();
 }
 window.skipTranslationQuestion = skipTranslationQuestion;
@@ -1151,6 +1162,14 @@ function renderTranslationEvaluationResult(evalResult, userTranslation) {
     scoreDisplay.textContent = `${score} / 100đ`;
     scoreDisplay.style.background = passed ? '#10b981' : '#ef4444';
     scoreDisplay.style.color = '#fff';
+  }
+
+  // Play SFX & trigger VIP Cat Meme
+  if (typeof playVocaSfx === 'function') {
+    playVocaSfx(passed ? 'correct' : 'wrong');
+  }
+  if (typeof triggerVipMemeReaction === 'function') {
+    triggerVipMemeReaction(passed ? 'right' : 'fail');
   }
 
   // Update session score badge in header

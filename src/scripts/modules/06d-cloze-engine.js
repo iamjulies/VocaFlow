@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-31 Build 332 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-32 Build 333 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1593,9 +1593,12 @@ function evaluateClozeResults() {
     }
   }
 
-  // Play sound
+  // Play sound & Trigger VIP Cat Meme
   if (typeof playVocaSfx === 'function') {
     playVocaSfx(accuracyPct >= 80 ? 'correct' : 'wrong');
+  }
+  if (typeof triggerVipMemeReaction === 'function') {
+    triggerVipMemeReaction(accuracyPct >= 80 ? 'right' : 'fail');
   }
 
   // Auto-scroll to result panel

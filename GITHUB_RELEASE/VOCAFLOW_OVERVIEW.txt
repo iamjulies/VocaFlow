@@ -1,4 +1,31 @@
 ================================================================================
+Phiên bản: v0.10.10-32 (Build 333) - Tích Hợp Toàn Diện Hiệu Ứng Phản Ứng VIP Cat Meme & Bộ Âm Thanh Sống Động Cho 4 Chế Độ Học Mở Rộng, Đồng Bộ & Chuẩn Hóa Toàn Diện 7 Modal Thiết Lập Khắp Toàn Bộ Ứng Dụng Chuẩn Unified Balance v4
+================================================================================
+1. [Tích Hợp Toàn Diện VIP Cat Meme Reactions Cho 4 Chế Độ Học Mở Rộng (06c-writing-engine.js, 06d-cloze-engine.js, 06e-dictation-engine.js, 06f-translation-engine.js)]:
+   - Kích hoạt phản ứng Meme Mèo VIP tương tác (triggerVipMemeReaction('right' | 'fail')) khi người học đánh giá/chấm điểm hoàn thành câu:
+     + Chế độ Viết Câu (Writing Mode): Kích hoạt 'right' khi đạt điểm sàn ≥ 60 hoặc 'fail' khi dưới sàn.
+     + Chế độ Đọc Hiểu Điền Đoạn Văn (Cloze Mode): Kích hoạt 'right' khi điền đúng toàn bộ hoặc 'fail' khi có lỗi sai.
+     + Chế độ Nghe Viết Chính Tả (Dictation Mode): Kích hoạt 'right' khi đạt điểm xuất sắc/chấp nhận được (isPassed) hoặc 'fail' khi chưa đạt.
+     + Chế độ Dịch Thuật Song Phương (Translation Mode): Kích hoạt 'right' khi đạt điểm pass (score >= 60) hoặc 'fail' khi dưới 60.
+   - Cơ chế bọc phòng vệ (defensive guard) an toàn tuyệt đối khi người dùng tắt meme hoặc không kích hoạt VIP.
+2. [Tích Hợp Đồng Bộ Bộ Hiệu Ứng Âm Thanh Sống Động (playVocaSfx)]:
+   - Bổ sung âm thanh trực quan cho toàn bộ 4 chế độ mở rộng:
+     + playVocaSfx('correct'): Khi trả lời chính xác / đạt điểm sàn cao.
+     + playVocaSfx('wrong'): Khi trả lời sai / điểm dưới sàn.
+     + playVocaSfx('skip'): Khi bấm bỏ qua câu hỏi.
+     + playVocaSfx('pop'): Khi mở manh mối / gợi ý VocaHint từng nấc thang.
+     + playVocaSfx('fireworks'): Khi hoàn thành trọn vẹn toàn bộ phiên học và mở modal chúc mừng kết quả.
+3. [Đồng Bộ & Chuẩn Hóa Toàn Diện 7 Modal Thiết Lập (Study Setup Modals)]:
+   - 3 Chế độ cốt lõi (modal-quiz-setup, modal-spelling-setup, modal-speaking-setup):
+     + Chuẩn hóa 4 thẻ cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 Trung Bình (x1.5), 🔴 Khó (x2.0), 🟣 Siêu Khó (x2.5).
+     + Xóa bỏ hoàn toàn các mô tả tĩnh lỗi thời của hệ thống kinh tế cũ trong modal Trắc nghiệm (loại bỏ "+3% Thuộc, +3 VoCoin (Sai: -2 VoCoin)"), thay bằng mô tả tính năng nhận diện, thời gian và manh mối theo chuẩn Unified Balance v4.
+     + Thống nhất khu vực bật/tắt manh mối gợi ý linh hoạt kèm huy hiệu hệ số (Multiplier Badge) và nút bật trộn ngẫu nhiên thứ tự từ (Shuffle Toggle).
+   - 4 Chế độ mở rộng (modal-writing-setup, modal-cloze-setup, modal-dictation-setup, modal-translation-setup):
+     + Chuẩn hóa 4 thẻ cấp độ thử thách đồng nhất: 🟢 Dễ (x1.0), 🟡 Trung Bình (x1.8), 🔴 Khó (x2.8), 🔥 Siêu Khó / Chuyên Gia (x4.0).
+     + Chuẩn hóa lưới chọn số lượng câu hỏi 4 nút phản hồi nhanh: [ 5 Câu ], [ 10 Câu ], [ Tự nhập... ], [ Toàn Bộ ].
+     + Bố cục cân đối chuẩn giao diện max-width 540px, tích hợp nút trộn ngẫu nhiên thứ tự câu hỏi và ghi nhớ cấu hình vào localStorage.
+
+================================================================================
 Phiên bản: v0.10.10-31 (Build 332) - Đột Phá Động Cơ Thưởng Thống Nhất Toàn Bộ Chế Độ Học Unified Balance v4 Chuẩn Toán Học Phi Tuyến (Trọng Số Nhận Thức Chế Độ, Khối Lượng Tự Nhiên & Hệ Số Cam Kết Bậc 2)
 ================================================================================
 1. [Hợp Nhất Động Cơ Thưởng Unified Balance v4 Cho Mọi Chế Độ Học (02-state-core.js, 08-wallet-economy.js)]:
