@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-32 Build 333 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-34 Build 335 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1672,13 +1672,26 @@ function finishClozeSession() {
   }
 
   // Final session points settlement
-  if (clozeSessionPointsEarned > 0 && typeof setUserPoints === 'function') {
+  const totalBlanks = clozeSessionTotalBlanksCount || 1;
+  const clozeItems = [];
+  for (let i = 0; i < totalBlanks; i++) {
+    clozeItems.push(i < clozeSessionCorrectBlanksCount ? 100 : 0);
+  }
+  const clozeExpRes = (typeof calculateUnifiedStudyExp === 'function')
+    ? calculateUnifiedStudyExp('cloze', clozeItems, totalBlanks, currentClozeDifficulty)
+    : { finalExp: 0 };
+
+  if (clozeExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+    addStudyExp(clozeExpRes.finalExp, 'cloze');
+  }
+
+  if ((clozeSessionPointsEarned > 0 || (clozeExpRes && clozeExpRes.finalExp > 0)) && typeof setUserPoints === 'function') {
     const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
     const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
-
-    setUserPoints(Math.max(0, getUserPoints() + clozeSessionPointsEarned));
+    const newBal = Math.max(0, getUserPoints() + clozeSessionPointsEarned);
+    setUserPoints(newBal);
     if (typeof addLedgerEntry === 'function') {
-      addLedgerEntry('STUDY_CLOZE', clozeSessionPointsEarned, `Điền từ Cloze Test "${deckTitle}" (+${clozeSessionPointsEarned} Xu)`);
+      addLedgerEntry('STUDY_CLOZE', clozeSessionPointsEarned, `Điền từ Cloze Test "${deckTitle}" (+${clozeSessionPointsEarned} Xu)`, newBal, { studyExp: clozeExpRes?.finalExp || 0 });
     }
     if (typeof saveDatabase === 'function') saveDatabase(true);
     if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
@@ -1687,6 +1700,7 @@ function finishClozeSession() {
   // Populate Celebration Modal (Issue 11 - 5-tile dashboard layout)
   const ratioEl = document.getElementById('cloze-res-floor-ratio');
   const pointsEl = document.getElementById('cloze-res-points');
+  const expEl = document.getElementById('cloze-res-exp');
   const avgEl = document.getElementById('cloze-res-avg-score');
   const hintsSkipsEl = document.getElementById('cloze-res-hints-skips');
   const durationEl = document.getElementById('cloze-res-duration');
@@ -1697,6 +1711,7 @@ function finishClozeSession() {
 
   if (ratioEl) ratioEl.textContent = `${clozeSessionCorrectBlanksCount}/${clozeSessionTotalBlanksCount} (${overallAccuracy}%)`;
   if (pointsEl) pointsEl.textContent = `+${clozeSessionPointsEarned} VoCoin`;
+  if (expEl) expEl.textContent = `+${clozeExpRes?.finalExp || 0} EXP`;
   if (avgEl) avgEl.textContent = `${clozeSessionCorrectBlanksCount} / ${clozeSessionTotalBlanksCount} từ`;
   if (hintsSkipsEl) hintsSkipsEl.textContent = `${clozeHintsUsed} gợi ý • ${clozeSkipsUsed} skip`;
   if (durationEl) durationEl.textContent = `${mins}:${secs}`;
@@ -1772,6 +1787,7 @@ function exitClozeMode() {
         done,
         total,
         basePoints: clozeSessionPointsEarned,
+        difficulty: currentClozeDifficulty,
         onConfirmExit: () => doExecuteExitCloze(done, total)
       });
       return;
@@ -1786,27 +1802,41 @@ function doExecuteExitCloze(done, total) {
   closeClozeResultModal();
 
   // Early exit points settlement via Unified Balance v4
-  if (!clozeIsCompleted && clozeSessionPointsEarned !== 0) {
+  if (!clozeIsCompleted && (clozeSessionPointsEarned !== 0 || done > 0)) {
     const isComp = done >= total && total > 0;
     const res = (typeof calculateUnifiedSessionPoints === 'function')
       ? calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, done, total)
       : (typeof calculateSessionFinalPointsV3 === 'function')
         ? calculateSessionFinalPointsV3(clozeSessionPointsEarned, done, total, isComp)
         : calculateSessionFinalPoints(clozeSessionPointsEarned, done, total, isComp);
-    const finalPts = res.finalPts;
+    const finalPts = res.finalPoints ?? res.finalPts;
 
-    if (finalPts !== 0 && typeof setUserPoints === 'function') {
+    const totalBlanks = clozeSessionTotalBlanksCount || done;
+    const clozeItems = [];
+    for (let i = 0; i < (clozeSessionTotalBlanksCount || done); i++) {
+      clozeItems.push(i < clozeSessionCorrectBlanksCount ? 100 : 0);
+    }
+    const expRes = (typeof calculateUnifiedStudyExp === 'function')
+      ? calculateUnifiedStudyExp('cloze', clozeItems.length > 0 ? clozeItems : new Array(done).fill(100), totalBlanks, currentClozeDifficulty)
+      : { finalExp: 0 };
+
+    if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+      addStudyExp(expRes.finalExp, 'cloze');
+    }
+
+    if ((finalPts !== 0 || expRes.finalExp > 0) && typeof setUserPoints === 'function') {
       const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
       const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
-      setUserPoints(Math.max(0, getUserPoints() + finalPts));
-      const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} đoạn (+${res.milestoneBonus} Xu)` : '';
+      const newBalance = Math.max(0, getUserPoints() + finalPts);
+      setUserPoints(newBalance);
+      const bonusText = (res.metrics?.volumeMult > 1.0) ? ` + Quy mô x${res.metrics?.volumeMult}` : '';
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_CLOZE', finalPts, `Điền từ Cloze Test "${deckTitle}" (${done}/${total} đoạn, x${res.combinedMult || 1.0}${bonusText})`);
+        addLedgerEntry('STUDY_CLOZE', finalPts, `Điền từ Cloze Test "${deckTitle}" (${done}/${total} đoạn, x${res.combinedMult || 1.0}${bonusText})`, newBalance, { studyExp: expRes.finalExp });
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       if (typeof showToast === 'function') {
-        showToast(`🎉 Cloze Test: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
+        showToast(`🎉 Cloze Test: ${finalPts > 0 ? '+' : ''}${finalPts} VoCoin • +${expRes.finalExp} EXP`);
       }
     }
     clozeSessionPointsEarned = 0;

@@ -1,4 +1,19 @@
 ================================================================================
+Phiên bản: v0.10.10-34 (Build 335) - Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine), Tách Biệt Hoàn Toàn VoCoin (Soft-Cap) và Điểm Rèn Luyện (Bảo Toàn Học Thuật) Cho Tất Cả 8 Chế Độ Học Tập
+================================================================================
+1. [Triển Khai Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine)]:
+   - Xây dựng hàm lõi calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount, difficultyMultOrOptions) trong 02-state-core.js áp dụng công thức toán học thống nhất cho cả 8 chế độ học:
+     FinalEXP = floor((Sum BaseEXP * QualityFactor_i) * W_mode * M_diff * Phi(N_done) * Psi(N_done/N_total) * M_VIP * M_Flow)
+   - Thiết lập bảng trọng số độ khó học thuật W_mode: Auto Flashcard (0.2), Quiz (1.0), Spelling (1.3), Speaking (1.8), Dictation (2.4), Cloze (2.8), Translation (3.0), Writing (3.5).
+   - Hệ số chất lượng QualityFactor_i: Phạt nặng đoán mò (< 60 điểm -> 0.10), nâng bậc chính xác (>= 60 điểm -> (score/100)^2).
+   - Bảo toàn tính học thuật tuyệt đối: Điểm EXP là điểm số thực tế đại diện cho năng lực học tập, KHÔNG bị giới hạn bởi Soft-Cap Năng Lượng Não Bộ (Brain Energy) của VoCoin.
+2. [Tích Hợp Toàn Diện 8 Chế Độ Học Tập & Bảng Kết Toán Modal]:
+   - Tích hợp động cơ tính EXP và cộng điểm học thuật addStudyExp() vào toàn bộ 8 chế độ học: Trắc nghiệm (Quiz), Luyện viết (Spelling), Luyện nói (Speaking), Auto Flashcard, Viết câu (Writing), Điền đoạn văn (Cloze), Nghe chép (Dictation), Dịch thuật (Translation).
+   - Cập nhật 7 Modal Kết quả ăn mừng và Modal Xác nhận thoát sớm (Early Exit Confirm Modal) hiển thị song song cả VoCoin và EXP nhận được trực quan.
+3. [Đồng Bộ 7-Point Version Consistency & Multi-Deploy (v0.10.10-34 Build 335)]:
+   - Đồng bộ nhất quán toàn bộ 7 điểm phiên bản trong hệ thống.
+
+================================================================================
 Phiên bản: v0.10.10-33 (Build 334) - Nâng Cấp Quà Tặng Giới Thiệu +3 Ngày VocaVIP Hoàng Gia Cho Tân Thủ, Triển Khai Cơ Chế Khóa Tự Động Bộ Từ VIP Hết Hạn & Dọn Dẹp Giao Diện VocaShop
 ================================================================================
 1. [Nâng Cấp Hệ Thống Quà Tặng Mã Mời Bạn Bè (Referral Reward System - Vấn đề 4)]:

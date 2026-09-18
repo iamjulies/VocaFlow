@@ -1,0 +1,69 @@
+v0.10.10-34
+# Yêu Cầu Kỹ Thuật: Chuẩn Hóa Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine)
+
+Hãy thiết kế và triển khai một hàm tính Điểm Rèn Luyện (Study EXP / Training Points) duy nhất, công bằng và chuẩn xác về mặt toán học cho toàn bộ các chế độ học tập trong ứng dụng.
+
+---
+
+### 1. Phân Định Bản Chất: Điểm Rèn Luyện (EXP) vs VoCoin
+- **VoCoin:** Là tiền tệ kinh tế (dùng để mua sắm vật phẩm, mở khóa nội dung), chịu sự điều tiết của hàm Soft-Cap Logarit (giảm dần khi cày cuốc quá nhiều trong ngày).
+- **Điểm Rèn Luyện (EXP):** Là thước đo học thuật và danh dự (dùng để đua Top Bảng Xếp Hạng, thăng cấp học viên, vẽ biểu đồ hiệu suất 7 ngày). Điểm này **tích lũy vĩnh viễn, không bị đánh thuế Soft-Cap** nhưng bắt buộc phải dựa chặt chẽ trên **Chất lượng làm bài thực tế** (đúng càng nhiều, điểm càng cao).
+
+---
+
+### 2. Mô Hình Toán Học Quyết Toán EXP
+
+$$\text{FinalEXP} = \left\lfloor \left( \sum_{i=1}^{N_{\text{done}}} \text{BaseEXP} \times \text{QualityFactor}_i \right) \times W_{\text{mode}} \times M_{\text{diff}} \times \Phi(N_{\text{done}}) \times \Psi\left(\frac{N_{\text{done}}}{N_{\text{total}}}\right) \times M_{\text{VIP}} \times M_{\text{Flow}} \right\rfloor$$
+
+#### Chi tiết các tham số:
+1. **Điểm Cơ Sở ($\text{BaseEXP}$):** Mặc định $10\text{ EXP}$ cho mỗi từ/câu hỏi tiêu chuẩn.
+2. **Hàm Chất Lượng Điểm Số ($\text{QualityFactor}_i$):**
+   - Đánh giá dựa trên điểm số thực tế ($\text{Score}_i \in [0, 100]$):
+     $$\text{QualityFactor}_i = \left(\frac{\text{Score}_i}{100}\right)^2$$
+   - Nếu $\text{Score}_i \ge 60$ (đạt chuẩn): Áp dụng công thức lũy thừa bậc 2 (ví dụ: 100đ $\to 1.0$, 90đ $\to 0.81$, 80đ $\to 0.64$).
+   - Nếu $\text{Score}_i < 60$ (dưới điểm sàn/làm sai): Cố định nhận điểm an ủi tối thiểu là $0.10$ (tức $1\text{ EXP}$) để khích lệ nỗ lực.
+3. **Trọng Số Nhận Thức Chế Độ ($W_{\text{mode}}$):**
+   - Chế độ cốt lõi:
+     - `autofc` (Auto Flashcard): **$0.2$** *(Lưu ý: Không thưởng VoCoin nhưng vẫn thưởng lượng EXP nhẹ vì có công ôn tập SRS).*
+     - `quiz` (Trắc nghiệm): **$1.0$**
+     - `spelling` (Luyện viết): **$1.3$**
+     - `speaking` (Luyện nói AI): **$1.8$**
+   - Chế độ mở rộng nâng cao ($\beta$):
+     - `dictation` (Nghe gõ câu): **$2.4$**
+     - `cloze` (Điền từ đoạn văn): **$2.8$**
+     - `translation` (Dịch thuật song phương): **$3.0$**
+     - `writing` (Luyện viết câu AI): **$3.5$**
+4. **Hệ Số Độ Khó Thử Thách ($M_{\text{diff}}$):**
+   - Dễ: $1.0\times$
+   - Trung Bình: $1.5\times$
+   - Khó: $2.0\times$
+   - Siêu Khó / Chuyên Gia: $2.5\times$ (hoặc $3.0\times$ tùy chế độ)
+5. **Thưởng Khối Lượng Thực Học ($\Phi(N_{\text{done}})$):**
+   - Dựa trên số từ/câu thực tế đã làm:
+     $$\Phi(N_{\text{done}}) = 1.0 + 0.3 \times \frac{N_{\text{done}}}{N_{\text{done}} + 15}$$
+6. **Hệ Số Cam Kết Hoàn Thành ($\Psi(r)$ với $r = \frac{N_{\text{done}}}{N_{\text{total}}}$):**
+   - Phạt trượt mượt mà khi bỏ dở bài học giữa chừng:
+     $$\Psi(r) = 0.2 + 0.8 \times r^2 \quad (0.01 \le r \le 1.0)$$
+7. **Đặc Quyền VocaVIP ($M_{\text{VIP}}$):**
+   - Tài khoản thường: $1.0\times$
+   - Tài khoản VocaVIP: **$1.25\times$** cố định.
+8. **Thưởng Chuỗi Ngày Học ($M_{\text{Flow}}$):**
+   - Thưởng thêm cho học viên duy trì chuỗi Streak kỷ luật:
+     $$M_{\text{Flow}} = 1.0 + \min\left(0.20, \text{FlowStreak} \times 0.01\right)$$
+   *(Mỗi ngày Streak tăng $+1\%$, chạm trần tối đa $+20\%$ khi đạt Streak $\ge 20$ ngày).*
+
+---
+
+### 3. Nhiệm Vụ Triển Khai Cụ Thể
+
+1. **Xây dựng hàm tập trung:**
+   - Tạo hàm `calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount)` nhận vào danh sách kết quả chi tiết từng câu trong phiên học.
+   - Trả về số nguyên `finalExp` (tối thiểu là $1$).
+
+2. **Tích hợp vào toàn bộ 8 chế độ học tập:**
+   - Gọi hàm quyết toán này khi hoàn thành trọn vẹn bài học hoặc khi xác nhận thoát bài dở dang ở cả 8 chế độ: Auto Flashcard, Quiz, Spelling, Speaking, Writing, Cloze, Dictation, Translation.
+   - Cộng dồn điểm EXP vào tổng điểm rèn luyện tài khoản, cập nhật số liệu ngày trong biểu đồ hiệu suất 7 ngày, và đồng bộ dữ liệu lên Cloud.
+
+3. **Cập nhật giao diện (UI/UX):**
+   - Hiển thị chính xác số Điểm Rèn Luyện kiếm được trên toàn bộ các Modal Tổng kết ăn mừng kết quả phiên học.
+   - Trong Modal cảnh báo thoát sớm, tính toán và hiển thị trước số Điểm Rèn Luyện thực nhận theo tỷ lệ cam kết để học viên cân nhắc trước khi rời bài học.

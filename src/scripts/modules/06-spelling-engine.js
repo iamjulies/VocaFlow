@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-33 Build 334)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-34 Build 335)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 
@@ -1200,6 +1200,7 @@
 
       let finalDeckMult = 1.0;
       let spellingSettlementRes = null;
+      let spellingExpRes = null;
       try {
         let diffM = 1.0;
         try {
@@ -1212,11 +1213,31 @@
         spellingSettlementRes = res;
         spellingPointsEarned = res.finalPoints ?? res.finalPts;
         finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
-        if (spellingPointsEarned !== 0) {
+
+        // Calculate Unified Study EXP (v0.10.10-34)
+        const spellingItems = [];
+        for (let i = 0; i < totalWords; i++) {
+          spellingItems.push(i < correctWordsCount ? 100 : 0);
+        }
+        spellingExpRes = (typeof calculateUnifiedStudyExp === 'function')
+          ? calculateUnifiedStudyExp('spelling', spellingItems, totalWords, currentSpellingDifficulty)
+          : { finalExp: 0 };
+
+        if (spellingExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+          addStudyExp(spellingExpRes.finalExp, 'spelling');
+        }
+
+        if (spellingPointsEarned !== 0 || (spellingExpRes && spellingExpRes.finalExp > 0)) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Luyện viết';
           const newBalance = Math.max(0, getUserPoints() + spellingPointsEarned);
           setUserPoints(newBalance);
-          addLedgerEntry(spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', spellingPointsEarned, `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`, newBalance);
+          addLedgerEntry(
+            spellingPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT',
+            spellingPointsEarned,
+            `Hoàn thành Luyện viết "${curDeckTitle}" (${correctWordsCount}/${totalWords} từ, x${res.combinedMult})`,
+            newBalance,
+            { studyExp: spellingExpRes?.finalExp || 0 }
+          );
           saveDatabase(true);
         }
       } catch (errPoints) {
@@ -1225,6 +1246,7 @@
 
       const scoreRatioEl = document.getElementById('spelling-res-score-ratio');
       const pointsEl = document.getElementById('spelling-res-points');
+      const expEl = document.getElementById('spelling-res-exp');
       const durationEl = document.getElementById('spelling-res-duration');
       const spwEl = document.getElementById('spelling-res-spw');
       const hintsEl = document.getElementById('spelling-res-hints');
@@ -1247,6 +1269,7 @@
 
       if (scoreRatioEl) scoreRatioEl.textContent = correctWordsCount + '/' + totalWords + ' (' + accuracyPct + '%)';
       if (pointsEl) pointsEl.textContent = (spellingPointsEarned >= 0 ? '+' : '') + spellingPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
+      if (expEl) expEl.textContent = '+' + (spellingExpRes?.finalExp || 0) + ' EXP';
       if (durationEl) durationEl.textContent = durationText;
       if (spwEl) spwEl.textContent = spw + 's / từ';
       if (hintsEl) hintsEl.textContent = (spellingHintsUsed || 0) + ' lượt';
@@ -1399,6 +1422,7 @@
           done,
           total,
           basePoints: spellingPointsEarned,
+          difficulty: currentSpellingDifficulty,
           onConfirmExit: () => doExecuteExitSpelling(done, total)
         });
         return;
@@ -1416,8 +1440,8 @@
       }
 
       try {
-        // Progressive incomplete session leniency / penalty combined (v0.10.6c / v0.10.9-alpha-23)
-        if (!spellingIsCompleted && spellingPointsEarned !== 0) {
+        // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
+        if (!spellingIsCompleted && (spellingPointsEarned !== 0 || done > 0)) {
           let diffM = 1.0;
           try {
             const m = getSpellingMultipliers();
@@ -1428,18 +1452,27 @@
             : calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
           const finalPts = res.finalPoints ?? res.finalPts;
 
-          if (finalPts !== 0) {
+          const itemsToScore = new Array(done).fill(100);
+          const expRes = (typeof calculateUnifiedStudyExp === 'function')
+            ? calculateUnifiedStudyExp('spelling', itemsToScore, total, currentSpellingDifficulty)
+            : { finalExp: 0 };
+
+          if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+            addStudyExp(expRes.finalExp, 'spelling');
+          }
+
+          if (finalPts !== 0 || expRes.finalExp > 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const curDeckTitle = curDeck ? curDeck.title : 'Luyện viết';
             const pctText = Math.round((done / total) * 100);
             const newBalance = Math.max(0, getUserPoints() + finalPts);
             setUserPoints(newBalance);
             if (finalPts < 0) {
-              showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} Xu!`);
-              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`, newBalance);
+              showToast(`⚠️ Bỏ dở Luyện viết khi âm điểm (${done}/${total} từ - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin • +${expRes.finalExp} EXP!`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" khi âm điểm (${done}/${total} từ, phạt /${res.combinedMult})`, newBalance, { studyExp: expRes.finalExp });
             } else {
-              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} Xu!`);
-              addLedgerEntry('STUDY', finalPts, `Học Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult})`, newBalance);
+              showToast(`🎉 Bỏ dở Luyện viết (${done}/${total} từ - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} VoCoin • +${expRes.finalExp} EXP!`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở Luyện viết "${curDeckTitle}" (${done}/${total} từ, x${res.combinedMult})`, newBalance, { studyExp: expRes.finalExp });
             }
           }
           spellingPointsEarned = finalPts;

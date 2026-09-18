@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-32 Build 333 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-34 Build 335 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1284,11 +1284,23 @@ function finishDictationSession() {
   }
 
   const finalPts = res.finalPts;
-  if (finalPts > 0) {
-    if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
+
+  // Calculate Unified Study EXP (v0.10.10-34)
+  const dictationExpItems = dictationSessionScores.length > 0 ? dictationSessionScores : new Array(done).fill(80);
+  const dictationExpRes = (typeof calculateUnifiedStudyExp === 'function')
+    ? calculateUnifiedStudyExp('dictation', dictationExpItems, total, currentDictationDifficulty)
+    : { finalExp: 0 };
+
+  if (dictationExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+    addStudyExp(dictationExpRes.finalExp, 'dictation');
+  }
+
+  if (finalPts > 0 || (dictationExpRes && dictationExpRes.finalExp > 0)) {
+    const newBal = Math.max(0, (typeof getUserPoints === 'function' ? getUserPoints() : 0) + finalPts);
+    if (typeof setUserPoints === 'function') setUserPoints(newBal);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
+      addLedgerEntry('STUDY_DICTATION', finalPts, `Luyện Nghe Gõ Câu (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`, newBal, { studyExp: dictationExpRes?.finalExp || 0 });
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('dictation');
@@ -1318,6 +1330,7 @@ function finishDictationSession() {
   // Populate 5-Tile Stats Dashboard
   const floorRatioEl = document.getElementById('dictation-res-floor-ratio');
   const pointsEl = document.getElementById('dictation-res-points');
+  const expEl = document.getElementById('dictation-res-exp');
   const avgScoreEl = document.getElementById('dictation-res-avg-score');
   const hintsSkipsEl = document.getElementById('dictation-res-hints-skips');
   const durationEl = document.getElementById('dictation-res-duration');
@@ -1325,6 +1338,7 @@ function finishDictationSession() {
 
   if (floorRatioEl) floorRatioEl.textContent = `${passedCount}/${total} (${floorRatioPct}%)`;
   if (pointsEl) pointsEl.textContent = `+${finalPts} VoCoin`;
+  if (expEl) expEl.textContent = `+${dictationExpRes?.finalExp || 0} EXP`;
   if (avgScoreEl) avgScoreEl.textContent = `${avgScore} / 100`;
   if (hintsSkipsEl) hintsSkipsEl.textContent = `${dictationHintsUsedTotal} gợi ý • ${dictationSkipsUsedTotal} skip`;
   if (durationEl) durationEl.textContent = durationStr;
@@ -1423,6 +1437,7 @@ function exitDictationMode() {
         done,
         total,
         basePoints: dictationSessionPointsEarned,
+        difficulty: currentDictationDifficulty,
         onConfirmExit: () => doExecuteExitDictation(done, total)
       });
       return;
@@ -1441,27 +1456,37 @@ function doExecuteExitDictation(done, total) {
   if (typeof closeModal === 'function') closeModal('modal-dictation-result');
 
   // Early exit points settlement via Unified Balance v4
-  if (!dictationIsCompleted && dictationSessionPointsEarned !== 0) {
+  if (!dictationIsCompleted && (dictationSessionPointsEarned !== 0 || done > 0)) {
     const isComp = done >= total && total > 0;
     const res = (typeof calculateUnifiedSessionPoints === 'function')
       ? calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total)
       : (typeof calculateSessionFinalPointsV3 === 'function')
         ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
         : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);
-    const finalPts = res.finalPts;
+    const finalPts = res.finalPoints ?? res.finalPts;
 
-    if (finalPts !== 0 && typeof setUserPoints === 'function') {
+    const dictationExpItems = dictationSessionScores.length > 0 ? dictationSessionScores : new Array(done).fill(80);
+    const expRes = (typeof calculateUnifiedStudyExp === 'function')
+      ? calculateUnifiedStudyExp('dictation', dictationExpItems, total, currentDictationDifficulty)
+      : { finalExp: 0 };
+
+    if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+      addStudyExp(expRes.finalExp, 'dictation');
+    }
+
+    if ((finalPts !== 0 || expRes.finalExp > 0) && typeof setUserPoints === 'function') {
       const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
       const deckTitle = curDeck ? curDeck.title : 'Bộ từ vựng';
-      setUserPoints(Math.max(0, getUserPoints() + finalPts));
-      const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
+      const newBalance = Math.max(0, getUserPoints() + finalPts);
+      setUserPoints(newBalance);
+      const bonusText = (res.metrics?.volumeMult > 1.0) ? ` + Quy mô x${res.metrics?.volumeMult}` : '';
       if (typeof addLedgerEntry === 'function') {
-        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
+        addLedgerEntry('STUDY_DICTATION', finalPts, `Nghe gõ câu "${deckTitle}" (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`, newBalance, { studyExp: expRes.finalExp });
       }
       if (typeof saveDatabase === 'function') saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
       if (typeof showToast === 'function') {
-        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} Xu`);
+        showToast(`🎉 Nghe Gõ Câu: ${finalPts > 0 ? '+' : ''}${finalPts} VoCoin • +${expRes.finalExp} EXP`);
       }
     }
     dictationSessionPointsEarned = 0;

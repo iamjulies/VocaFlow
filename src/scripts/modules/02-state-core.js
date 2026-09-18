@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-33 Build 334)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-34 Build 335)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-33 Build 334)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-34 Build 335)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-33';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-33 (Build 334)';
-    const VOCAFLOW_APP_BUILD = 334;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-34';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-34 (Build 335)';
+    const VOCAFLOW_APP_BUILD = 335;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -801,24 +801,223 @@
     window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
 
     // =========================================================================
-    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-31)
+    // UNIFIED STUDY EXP / TRAINING POINTS ENGINE (v0.10.10-34)
+    // Formula: FinalEXP = floor( (Sum_i 10 * Quality_i) * W_mode * M_diff * Phi(N_done) * Psi(N_done/N_total) * M_VIP * M_Flow )
+    // =========================================================================
+    const STORAGE_KEY_USER_STUDY_EXP = 'vocaflow_user_study_exp';
+
+    function getUserStudyExp() {
+      const raw = localStorage.getItem(STORAGE_KEY_USER_STUDY_EXP);
+      if (raw !== null) {
+        const parsed = parseInt(raw, 10);
+        return isNaN(parsed) ? 0 : Math.max(0, parsed);
+      }
+      if (currentUser && typeof currentUser.studyExp === 'number') {
+        return Math.max(0, currentUser.studyExp);
+      }
+      return 0;
+    }
+    window.getUserStudyExp = getUserStudyExp;
+
+    function setUserStudyExp(val) {
+      const clean = Math.max(0, parseInt(val, 10) || 0);
+      localStorage.setItem(STORAGE_KEY_USER_STUDY_EXP, clean.toString());
+      if (currentUser) {
+        currentUser.studyExp = clean;
+        currentUser.trainingExp = clean;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+      saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
+    }
+    window.setUserStudyExp = setUserStudyExp;
+
+    function addStudyExp(amount, mode = 'study', details = '') {
+      const num = Math.max(0, parseInt(amount, 10) || 0);
+      if (num <= 0) return getUserStudyExp();
+      const current = getUserStudyExp();
+      const updated = current + num;
+      setUserStudyExp(updated);
+
+      // Track daily study exp for 7-day chart & analytics
+      const today = (typeof getTodayString === 'function') ? getTodayString() : new Date().toISOString().slice(0, 10);
+      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+      const dailyKey = `vocaflow_daily_study_exp_${today}_${uid}`;
+      const curDaily = parseInt(localStorage.getItem(dailyKey) || '0', 10) || 0;
+      localStorage.setItem(dailyKey, (curDaily + num).toString());
+
+      return updated;
+    }
+    window.addStudyExp = addStudyExp;
+
+    function calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount, difficultyMultOrOptions = 1.0) {
+      const normMode = (mode || 'quiz').toLowerCase().replace(/[^a-z]/g, '');
+
+      // 1. Mode Cognitive Weight (W_mode)
+      const modeWeights = {
+        'autofc': 0.2,
+        'flashcard': 0.2,
+        'quiz': 1.0,
+        'spelling': 1.3,
+        'speaking': 1.8,
+        'dictation': 2.4,
+        'cloze': 2.8,
+        'translation': 3.0,
+        'writing': 3.5
+      };
+      const W_mode = (typeof modeWeights[normMode] === 'number') ? modeWeights[normMode] : (getModeCognitiveWeight(normMode) || 1.0);
+
+      // 2. Parse Items & N_done / N_total
+      let items = [];
+      if (Array.isArray(sessionItems)) {
+        items = sessionItems;
+      } else if (typeof sessionItems === 'number') {
+        const count = Math.max(0, Math.floor(sessionItems));
+        items = new Array(count).fill(100);
+      }
+
+      const done = items.length;
+      const total = Math.max(1, Number(totalExpectedCount) || done || 1);
+
+      if (done === 0) {
+        return {
+          finalExp: 0,
+          baseExpSum: 0,
+          qualitySum: 0,
+          done: 0,
+          total,
+          ratio: 0,
+          metrics: {
+            modeWeight: W_mode,
+            diffMultiplier: 1.0,
+            volumeMult: 1.0,
+            commitmentMult: 0.2,
+            vipMult: 1.0,
+            flowMult: 1.0,
+            streak: 0
+          }
+        };
+      }
+
+      // 3. Quality Factor Sum: Sum_i (BaseEXP * QualityFactor_i) with BaseEXP = 10
+      const BASE_EXP = 10;
+      let baseExpSum = 0;
+      let qualitySum = 0;
+
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i];
+        let score = 0;
+        if (typeof it === 'number') {
+          score = it;
+        } else if (typeof it === 'boolean') {
+          score = it ? 100 : 0;
+        } else if (it && typeof it === 'object') {
+          if (typeof it.score === 'number') score = it.score;
+          else if (typeof it.accuracy === 'number') score = it.accuracy;
+          else if (typeof it.isCorrect === 'boolean') score = it.isCorrect ? 100 : 0;
+          else if (typeof it.passed === 'boolean') score = it.passed ? 100 : 0;
+          else score = 100;
+        } else {
+          score = 100;
+        }
+
+        score = Math.max(0, Math.min(100, score));
+        let qFactor = 0.10; // Floor consolation
+        if (score >= 60) {
+          qFactor = Math.pow(score / 100, 2);
+        }
+        qualitySum += qFactor;
+        baseExpSum += BASE_EXP * qFactor;
+      }
+
+      // 4. Difficulty Multiplier (M_diff)
+      let M_diff = 1.0;
+      if (typeof difficultyMultOrOptions === 'number') {
+        M_diff = Math.max(0.1, difficultyMultOrOptions);
+      } else if (typeof difficultyMultOrOptions === 'string') {
+        const dStr = difficultyMultOrOptions.toLowerCase();
+        if (dStr.includes('easy') || dStr.includes('dễ')) M_diff = 1.0;
+        else if (dStr.includes('medium') || dStr.includes('trung')) M_diff = 1.5;
+        else if (dStr.includes('hard') || dStr.includes('khó')) M_diff = 2.0;
+        else if (dStr.includes('expert') || dStr.includes('chuyên') || dStr.includes('siêu')) M_diff = 2.5;
+        else M_diff = 1.0;
+      } else if (difficultyMultOrOptions && typeof difficultyMultOrOptions === 'object') {
+        if (typeof difficultyMultOrOptions.diffMultiplier === 'number') M_diff = difficultyMultOrOptions.diffMultiplier;
+        else if (typeof difficultyMultOrOptions.difficultyMult === 'number') M_diff = difficultyMultOrOptions.difficultyMult;
+      }
+
+      // 5. Volume Scaling Factor: Phi(N_done) = 1.0 + 0.3 * (N_done / (N_done + 15))
+      const volumeMult = Math.round((1.0 + 0.3 * (done / (done + 15))) * 10000) / 10000;
+
+      // 6. Commitment Factor: Psi(r) = 0.2 + 0.8 * r^2 where r = done / total (0.01 <= r <= 1.0)
+      const r = Math.max(0.01, Math.min(1.0, done / total));
+      const commitmentMult = Math.round((0.2 + 0.8 * (r * r)) * 10000) / 10000;
+
+      // 7. VIP Multiplier (M_VIP): 1.25 if VIP, 1.0 otherwise
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const M_vip = isVip ? 1.25 : 1.0;
+
+      // 8. Flow Streak Multiplier (M_Flow): 1.0 + min(0.20, FlowStreak * 0.01)
+      let flowStreak = 0;
+      try {
+        if (typeof calculateCurrentFlow === 'function') {
+          flowStreak = calculateCurrentFlow().currentFlow || 0;
+        } else {
+          flowStreak = parseInt(localStorage.getItem('vocaflow_flow_days') || localStorage.getItem('vocaflow_streak_days') || '0', 10) || 0;
+        }
+      } catch (e) { flowStreak = 0; }
+      flowStreak = Math.max(0, flowStreak);
+      const flowMult = Math.round((1.0 + Math.min(0.20, flowStreak * 0.01)) * 10000) / 10000;
+
+      // 9. Final EXP Calculation (Floor, with minimum 1 EXP if done >= 1)
+      const rawExpProduct = baseExpSum * W_mode * M_diff * volumeMult * commitmentMult * M_vip * flowMult;
+      const finalExp = Math.max(1, Math.floor(rawExpProduct));
+
+      return {
+        finalExp,
+        baseExpSum: Math.round(baseExpSum * 100) / 100,
+        qualitySum: Math.round(qualitySum * 100) / 100,
+        done,
+        total,
+        ratio: r,
+        metrics: {
+          modeWeight: W_mode,
+          diffMultiplier: M_diff,
+          volumeMult,
+          commitmentMult,
+          vipMult: M_vip,
+          flowMult,
+          streak: flowStreak
+        }
+      };
+    }
+    window.calculateUnifiedStudyExp = calculateUnifiedStudyExp;
+
+    // =========================================================================
+    // STUDY SESSION EARLY EXIT CONFIRMATION & SETTLEMENT ENGINE (v0.10.10-34)
     // =========================================================================
     let pendingStudyEarlyExitCallback = null;
 
-    function promptStudyEarlyExit(modeOrObj, doneArg, totalArg, basePointsArg, onConfirmExitArg) {
-      let mode, done, total, basePoints, onConfirmExit;
+    function promptStudyEarlyExit(modeOrObj, doneArg, totalArg, basePointsArg, onConfirmExitArg, customItemsArg = null) {
+      let mode, done, total, basePoints, onConfirmExit, sessionItems, diffM;
       if (typeof modeOrObj === 'object' && modeOrObj !== null) {
         mode = modeOrObj.mode;
         done = modeOrObj.done ?? modeOrObj.completedCount ?? 0;
         total = modeOrObj.total ?? modeOrObj.totalCount ?? 1;
         basePoints = modeOrObj.basePoints ?? modeOrObj.currentPointsEarned ?? 0;
         onConfirmExit = modeOrObj.onConfirmExit;
+        sessionItems = modeOrObj.sessionItems ?? modeOrObj.items ?? null;
+        diffM = modeOrObj.difficultyMult ?? modeOrObj.diffMultiplier ?? 1.0;
       } else {
         mode = modeOrObj;
         done = doneArg ?? 0;
         total = totalArg ?? 1;
         basePoints = basePointsArg ?? 0;
         onConfirmExit = onConfirmExitArg;
+        sessionItems = customItemsArg;
+        diffM = 1.0;
       }
 
       // If user hasn't made any progress (done === 0 and 0 points), exit immediately without warning
@@ -827,8 +1026,11 @@
         return;
       }
 
-      // Calculate Official Unified Balance v4
-      const resApplied = calculateUnifiedSessionPoints(mode, basePoints, done, total, 1.0);
+      // Calculate Official Unified Balance v4 (VoCoin)
+      const resApplied = calculateUnifiedSessionPoints(mode, basePoints, done, total, diffM);
+
+      // Calculate Unified Study EXP
+      const expRes = calculateUnifiedStudyExp(mode, sessionItems || done, total, diffM);
 
       // Calculate legacy comparison
       const ratio = total > 0 ? (done / total) : 0;
@@ -843,7 +1045,8 @@
       if (!modal) {
         const signApplied = resApplied.finalPts >= 0 ? '+' : '';
         const msg = `⚠️ Bạn đang làm dở bài học (${done}/${total})!\n\n` +
-          `• Theo Unified Balance v4: Bạn sẽ nhận ${signApplied}${resApplied.finalPts} VoCoin (Trọng số W_mode x${resApplied.metrics.modeWeight}, Hoàn thành x${resApplied.metrics.commitmentMult}, Quy mô x${resApplied.metrics.volumeMult})\n` +
+          `• VoCoin thực nhận: ${signApplied}${resApplied.finalPts} Xu\n` +
+          `• Điểm Rèn Luyện thực nhận: +${expRes.finalExp} EXP\n\n` +
           `Bạn có chắc chắn muốn thoát dở dang ngay lúc này không?`;
         if (window.confirm(msg)) {
           if (typeof onConfirmExit === 'function') onConfirmExit();
@@ -870,13 +1073,13 @@
 
       const basePtsEl = document.getElementById('study-exit-base-points-text');
       if (basePtsEl) {
-        basePtsEl.textContent = `${basePoints >= 0 ? '+' : ''}${basePoints} VoCoin`;
+        basePtsEl.textContent = `${basePoints >= 0 ? '+' : ''}${basePoints} VoCoin • +${expRes.finalExp} EXP`;
         basePtsEl.style.color = basePoints >= 0 ? '#34d399' : '#f87171';
       }
 
       const v2Badge = document.getElementById('study-exit-v2-badge');
       if (v2Badge) {
-        v2Badge.textContent = `${resApplied.finalPts >= 0 ? '+' : ''}${resApplied.finalPts} VoCoin`;
+        v2Badge.innerHTML = `<span>${resApplied.finalPts >= 0 ? '+' : ''}${resApplied.finalPts} Xu</span> <span style="font-size: 11px; opacity: 0.85; margin-left: 4px;">(+${expRes.finalExp} EXP)</span>`;
         v2Badge.style.background = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
         v2Badge.style.color = resApplied.finalPts >= 0 ? '#34d399' : '#f87171';
         v2Badge.style.borderColor = resApplied.finalPts >= 0 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)';
@@ -884,19 +1087,20 @@
 
       const v2TitleLabel = document.getElementById('study-exit-v2-title-label');
       if (v2TitleLabel) {
-        v2TitleLabel.textContent = 'Thực Nhận Theo Unified Balance v4 (Chính thức):';
+        v2TitleLabel.textContent = 'Thực Nhận Theo Quyết Toán Chính Thức:';
       }
 
       const multEl = document.getElementById('study-exit-v2-mult');
-      if (multEl) multEl.textContent = `x${resApplied.metrics.commitmentMult}`;
+      if (multEl) multEl.textContent = `x${resApplied.metrics.commitmentMult} (Cam kết Ψ)`;
 
       const deckMultEl = document.getElementById('study-exit-v2-deck-mult');
-      if (deckMultEl) deckMultEl.textContent = `x${resApplied.metrics.volumeMult}`;
+      if (deckMultEl) deckMultEl.textContent = `x${resApplied.metrics.volumeMult} (Quy mô Φ)`;
 
       const milestoneEl = document.getElementById('study-exit-v2-milestone');
       if (milestoneEl) {
         const vipNote = resApplied.isVipBonus ? ' (👑 VIP x1.25)' : '';
-        milestoneEl.textContent = `W_mode x${resApplied.metrics.modeWeight}${vipNote} • Năng lượng ${resApplied.metrics.energyPercent}%`;
+        const streakNote = expRes.metrics.streak > 0 ? ` • 🔥 Chuỗi ${expRes.metrics.streak} ngày (x${expRes.metrics.flowMult})` : '';
+        milestoneEl.textContent = `W_mode x${resApplied.metrics.modeWeight}${vipNote}${streakNote} • Năng lượng ${resApplied.metrics.energyPercent}%`;
       }
 
       const v1ResEl = document.getElementById('study-exit-v1-result');
@@ -907,11 +1111,11 @@
       const confirmBtn = document.getElementById('btn-study-confirm-exit');
       if (confirmBtn) {
         if (resApplied.finalPts < 0) {
-          confirmBtn.textContent = `🚪 Thoát (Bị trừ ${Math.abs(resApplied.finalPts)} Xu)`;
+          confirmBtn.textContent = `🚪 Thoát (Trừ ${Math.abs(resApplied.finalPts)} Xu • +${expRes.finalExp} EXP)`;
         } else if (resApplied.finalPts > 0) {
-          confirmBtn.textContent = `🚪 Thoát (Nhận +${resApplied.finalPts} Xu)`;
+          confirmBtn.textContent = `🚪 Thoát (Nhận +${resApplied.finalPts} Xu • +${expRes.finalExp} EXP)`;
         } else {
-          confirmBtn.textContent = `🚪 Vẫn Muốn Thoát`;
+          confirmBtn.textContent = `🚪 Thoát (Nhận +${expRes.finalExp} EXP)`;
         }
       }
 
@@ -3600,7 +3804,14 @@
         let studyPoints = 0;
 
         if (isCurrent) {
-          // Current user: aggregate from userLedger
+          // Current user: check daily study exp tracker or aggregate from userLedger
+          const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
+          const dailyKey = `vocaflow_daily_study_exp_${dateStr}_${uid}`;
+          const storedDailyExp = parseInt(localStorage.getItem(dailyKey) || '0', 10);
+          if (storedDailyExp > 0) {
+            studyPoints = storedDailyExp;
+          }
+
           if (Array.isArray(userLedger)) {
             userLedger.forEach(entry => {
               if (!entry || !entry.timestamp) return;
@@ -3613,8 +3824,12 @@
                 if (entry.amount && entry.amount > 0) {
                   vocoinsEarned += entry.amount;
                 }
-                if (entry.type && String(entry.type).startsWith('STUDY')) {
-                  studyPoints += Math.max(0, entry.amount || 0);
+                if (studyPoints === 0) {
+                  if (typeof entry.studyExp === 'number' && entry.studyExp > 0) {
+                    studyPoints += entry.studyExp;
+                  } else if (entry.type && String(entry.type).startsWith('STUDY')) {
+                    studyPoints += Math.max(0, entry.amount || 0);
+                  }
                 }
               }
             });
@@ -3642,14 +3857,18 @@
               const eDateStr = `${eY}-${eM}-${eD}`;
               if (eDateStr === dateStr) {
                 if (entry.amount && entry.amount > 0) vocoinsEarned += entry.amount;
-                if (entry.type && String(entry.type).startsWith('STUDY')) studyPoints += Math.max(0, entry.amount || 0);
+                if (typeof entry.studyExp === 'number' && entry.studyExp > 0) {
+                  studyPoints += entry.studyExp;
+                } else if (entry.type && String(entry.type).startsWith('STUDY')) {
+                  studyPoints += Math.max(0, entry.amount || 0);
+                }
               }
             });
           } else if (targetAuthor?.dailyStats && typeof targetAuthor.dailyStats === 'object') {
             const ds = targetAuthor.dailyStats[dateStr];
             if (ds) {
               vocoinsEarned = ds.vocoinsEarned || ds.coins || 0;
-              studyPoints = ds.studyPoints || ds.points || 0;
+              studyPoints = ds.studyExp || ds.studyPoints || ds.points || 0;
             }
           }
         }

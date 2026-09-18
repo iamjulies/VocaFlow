@@ -1908,6 +1908,7 @@ Yêu cầu nghiêm ngặt:
 
       let finalDeckMult = 1.0;
       let quizSettlementRes = null;
+      let quizExpRes = null;
       try {
         const res = (typeof calculateUnifiedSessionPoints === 'function')
           ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, total, total, 1.0)
@@ -1915,11 +1916,31 @@ Yêu cầu nghiêm ngặt:
         quizSettlementRes = res;
         quizPointsEarned = res.finalPoints ?? res.finalPts;
         finalDeckMult = res.metrics?.volumeMult || res.deckLengthMult || 1.0;
-        if (quizPointsEarned !== 0) {
+
+        // Calculate Unified Study EXP (v0.10.10-34)
+        const quizItems = [];
+        for (let i = 0; i < total; i++) {
+          quizItems.push(i < quizCorrectCount ? 100 : 0);
+        }
+        quizExpRes = (typeof calculateUnifiedStudyExp === 'function')
+          ? calculateUnifiedStudyExp('quiz', quizItems, total, currentQuizDifficulty)
+          : { finalExp: 0 };
+
+        if (quizExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+          addStudyExp(quizExpRes.finalExp, 'quiz');
+        }
+
+        if (quizPointsEarned !== 0 || (quizExpRes && quizExpRes.finalExp > 0)) {
           const curDeckTitle = (typeof currentDeck !== 'undefined' && currentDeck?.title) || 'Quiz';
           const newBalance = Math.max(0, getUserPoints() + quizPointsEarned);
           setUserPoints(newBalance);
-          addLedgerEntry(quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT', quizPointsEarned, `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`, newBalance);
+          addLedgerEntry(
+            quizPointsEarned > 0 ? 'STUDY' : 'PENALTY_QUIT',
+            quizPointsEarned,
+            `Hoàn thành bài Quiz "${curDeckTitle}" (${quizCorrectCount}/${total} câu, x${res.combinedMult})`,
+            newBalance,
+            { studyExp: quizExpRes?.finalExp || 0 }
+          );
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         }
@@ -1960,7 +1981,14 @@ Yêu cầu nghiêm ngặt:
         diffBadgeEl.textContent = '🎯 Cấp độ: ' + getDifficultyLabel(currentQuizDifficulty);
       }
       if (scoreRatioEl) scoreRatioEl.textContent = quizCorrectCount + '/' + total + ' (' + accuracyPct + '%)';
-      if (pointsEl) pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin (Quy mô x' + finalDeckMult + ')';
+      if (pointsEl) {
+        const expText = quizExpRes && quizExpRes.finalExp > 0 ? ` • +${quizExpRes.finalExp} EXP` : '';
+        pointsEl.textContent = (quizPointsEarned >= 0 ? '+' : '') + quizPointsEarned + ' VoCoin' + expText;
+      }
+      const expTileEl = document.getElementById('quiz-res-exp');
+      if (expTileEl && quizExpRes) {
+        expTileEl.textContent = `+${quizExpRes.finalExp} EXP (Điểm Rèn Luyện)`;
+      }
       if (durationEl) durationEl.textContent = durationText;
       if (spqEl) spqEl.textContent = spq + 's / câu';
       if (hintsEl) hintsEl.textContent = (quizHintsUsed || 0) + ' lượt';
@@ -2121,20 +2149,27 @@ Yêu cầu nghiêm ngặt:
       const total = quizTotalQuestions || (quizList ? quizList.length : 1);
       const done = Math.min(total, quizIndex + (quizIsAnswered ? 1 : 0));
 
+      const doneItems = [];
+      for (let i = 0; i < done; i++) {
+        doneItems.push(i < quizCorrectCount ? 100 : 0);
+      }
+
       if (!quizIsCompleted && (done > 0 || quizPointsEarned !== 0)) {
         promptStudyEarlyExit({
           mode: 'quiz',
           done,
           total,
           basePoints: quizPointsEarned,
-          onConfirmExit: () => doExecuteExitQuiz(done, total)
+          sessionItems: doneItems,
+          difficultyMult: currentQuizDifficulty,
+          onConfirmExit: () => doExecuteExitQuiz(done, total, doneItems)
         });
         return;
       }
-      doExecuteExitQuiz(done, total);
+      doExecuteExitQuiz(done, total, doneItems);
     }
 
-    function doExecuteExitQuiz(done, total) {
+    function doExecuteExitQuiz(done, total, doneItems = null) {
       stopAllAudio();
 
       if (quizStartTime > 0) {
@@ -2147,25 +2182,34 @@ Yêu cầu nghiêm ngặt:
         try { if (typeof recordStudyFlowAction === 'function') recordStudyFlowAction('quiz'); } catch (e) {}
       }
       try {
-        // Unified Balance v4 incomplete session settlement (v0.10.10-31 Build 332)
-        if (!quizIsCompleted && quizPointsEarned !== 0) {
+        // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
+        if (!quizIsCompleted && (quizPointsEarned !== 0 || done > 0)) {
           const res = (typeof calculateUnifiedSessionPoints === 'function')
             ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, done, total, 1.0)
             : calculateSessionFinalPoints(quizPointsEarned, done, total, false);
           const finalPts = res.finalPoints ?? res.finalPts;
 
-          if (finalPts !== 0) {
+          const itemsToScore = doneItems || new Array(done).fill(100);
+          const expRes = (typeof calculateUnifiedStudyExp === 'function')
+            ? calculateUnifiedStudyExp('quiz', itemsToScore, total, currentQuizDifficulty)
+            : { finalExp: 0 };
+
+          if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+            addStudyExp(expRes.finalExp, 'quiz');
+          }
+
+          if (finalPts !== 0 || expRes.finalExp > 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const curDeckTitle = curDeck ? curDeck.title : 'Quiz';
             const pctText = Math.round((done / total) * 100);
             const newBalance = Math.max(0, getUserPoints() + finalPts);
             setUserPoints(newBalance);
             if (finalPts < 0) {
-              showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin!`);
-              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`, newBalance);
+              showToast(`⚠️ Bỏ dở Quiz khi âm điểm (${done}/${total} câu - ${pctText}% • Phạt chia /${res.combinedMult}): Trừ ${finalPts} VoCoin • +${expRes.finalExp} EXP!`);
+              addLedgerEntry('PENALTY_QUIT', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" khi âm điểm (${done}/${total} câu, phạt /${res.combinedMult})`, newBalance, { studyExp: expRes.finalExp });
             } else {
-              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}, Quy mô x${res.metrics?.volumeMult ?? res.deckLengthMult}): Nhận +${finalPts} VoCoin!`);
-              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult})`, newBalance);
+              showToast(`🎉 Bỏ dở Quiz (${done}/${total} câu - ${pctText}% • Cam kết x${res.metrics?.commitmentMult ?? res.completionMult}): Nhận +${finalPts} VoCoin • +${expRes.finalExp} EXP!`);
+              addLedgerEntry('STUDY', finalPts, `Bỏ dở bài Quiz "${curDeckTitle}" (${done}/${total} câu, x${res.combinedMult})`, newBalance, { studyExp: expRes.finalExp });
             }
           }
           quizPointsEarned = finalPts;

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-34 Build 335)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -473,6 +473,7 @@
           done,
           total,
           basePoints: speakingSessionPointsEarned,
+          difficulty: currentSpeakingDifficulty,
           onConfirmExit: () => doExecuteExitSpeaking(done, total)
         });
         return;
@@ -502,7 +503,8 @@
       }
 
       try {
-        if (speakingSessionPointsEarned !== 0) {
+        // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
+        if (speakingSessionPointsEarned !== 0 || done > 0) {
           const isComp = done >= total && total > 0;
           const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
           const res = (typeof calculateUnifiedSessionPoints === 'function')
@@ -510,13 +512,23 @@
             : calculateSessionFinalPoints(speakingSessionPointsEarned, done, total, isComp);
           const finalPts = res.finalPoints ?? res.finalPts;
 
-          if (finalPts !== 0) {
+          const allScores = speakingSessionTakes.map(t => t.score);
+          const itemsToScore = allScores.length > 0 ? allScores : new Array(done).fill(80);
+          const expRes = (typeof calculateUnifiedStudyExp === 'function')
+            ? calculateUnifiedStudyExp('speaking', itemsToScore, total, currentSpeakingDifficulty)
+            : { finalExp: 0 };
+
+          if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+            addStudyExp(expRes.finalExp, 'speaking');
+          }
+
+          if (finalPts !== 0 || expRes.finalExp > 0) {
             const curDeck = decks.find(d => d.id === currentDeckId);
             const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
             const newBalance = Math.max(0, getUserPoints() + finalPts);
             setUserPoints(newBalance);
-            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + ')', newBalance);
-            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin (Cam kết x' + (res.metrics?.commitmentMult ?? res.completionMult) + ', Quy mô x' + (res.metrics?.volumeMult ?? res.deckLengthMult) + ')');
+            addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + done + '/' + total + ' từ, x' + res.combinedMult + ')', newBalance, { studyExp: expRes.finalExp });
+            showToast('🎉 Speaking: ' + (finalPts > 0 ? '+' : '') + finalPts + ' VoCoin • +' + expRes.finalExp + ' EXP (Cam kết x' + (res.metrics?.commitmentMult ?? res.completionMult) + ', Quy mô x' + (res.metrics?.volumeMult ?? res.deckLengthMult) + ')');
           }
           speakingSessionPointsEarned = 0;
         }
@@ -855,6 +867,13 @@
       const allScores = speakingSessionTakes.map(t => t.score);
       const avgScore = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : (speakingFloorScore || 80);
       if (avgScoreEl) avgScoreEl.textContent = avgScore + ' / 100';
+
+      const speakingExpItems = allScores.length > 0 ? allScores : (speakingCompletedWords > 0 ? new Array(speakingCompletedWords).fill(80) : []);
+      const speakingExpRes = (typeof calculateUnifiedStudyExp === 'function')
+        ? calculateUnifiedStudyExp('speaking', speakingExpItems, totalWords, currentSpeakingDifficulty)
+        : { finalExp: 0 };
+      const expEl = document.getElementById('spk-res-exp') || document.getElementById('speaking-res-exp');
+      if (expEl) expEl.textContent = '+' + (speakingExpRes?.finalExp || 0) + ' EXP';
 
       if (diffBadgeEl) {
         const totalMult = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
@@ -2362,11 +2381,27 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       if (autoFlashcardList && autoFlashcardList.length > 0) {
         const reviewedCards = autoFlashcardList.slice(0, Math.min(autoFlashcardList.length, autoFlashcardIndex + 1));
+        const done = reviewedCards.length;
+        const total = autoFlashcardList.length;
         if (typeof recordStudySessionWordReviews === 'function') {
           recordStudySessionWordReviews(reviewedCards);
         }
         if (typeof removeWordFromMistakeList === 'function') {
           reviewedCards.forEach(w => removeWordFromMistakeList(w, true));
+        }
+
+        // Unified Study EXP for Auto Flashcard (v0.10.10-34)
+        if (done > 0) {
+          const expRes = (typeof calculateUnifiedStudyExp === 'function')
+            ? calculateUnifiedStudyExp('autofc', new Array(done).fill(100), total, 1.0)
+            : { finalExp: 0 };
+          if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+            addStudyExp(expRes.finalExp, 'autofc');
+            const curDeck = decks.find(d => d.id === currentDeckId);
+            const deckTitle = curDeck ? curDeck.title : 'Auto Flashcard';
+            addLedgerEntry('STUDY', 0, `Học Auto Flashcard "${deckTitle}" (${done}/${total} thẻ)`, getUserPoints(), { studyExp: expRes.finalExp });
+            showToast(`🎧 Auto Flashcard: +${expRes.finalExp} EXP (${done}/${total} thẻ)`);
+          }
         }
       }
       saveDatabase(true);

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-32 Build 333 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-34 Build 335 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -1281,11 +1281,23 @@ function finishTranslationSession() {
   }
 
   const finalPts = res.finalPts;
-  if (finalPts > 0) {
-    if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
+
+  // Calculate Unified Study EXP (v0.10.10-34)
+  const translationExpItems = translationSessionScores.length > 0 ? translationSessionScores : new Array(done).fill(80);
+  const translationExpRes = (typeof calculateUnifiedStudyExp === 'function')
+    ? calculateUnifiedStudyExp('translation', translationExpItems, total, currentTranslationDifficulty)
+    : { finalExp: 0 };
+
+  if (translationExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+    addStudyExp(translationExpRes.finalExp, 'translation');
+  }
+
+  if (finalPts > 0 || (translationExpRes && translationExpRes.finalExp > 0)) {
+    const newBal = Math.max(0, (typeof getUserPoints === 'function' ? getUserPoints() : 0) + finalPts);
+    if (typeof setUserPoints === 'function') setUserPoints(newBal);
     if (typeof addLedgerEntry === 'function') {
       const bonusText = res.milestoneBonus > 0 ? ` + Thưởng mốc ${done} câu (+${res.milestoneBonus} Xu)` : '';
-      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`);
+      addLedgerEntry('STUDY_TRANSLATION', finalPts, `Dịch Thuật Song Phương (${done}/${total} câu, x${res.combinedMult || 1.0}${bonusText})`, newBal, { studyExp: translationExpRes?.finalExp || 0 });
     }
     if (typeof recordStudyFlowAction === 'function') {
       recordStudyFlowAction('translation');
@@ -1315,6 +1327,7 @@ function finishTranslationSession() {
   // Populate 5-Tile Stats Dashboard
   const floorRatioEl = document.getElementById('translation-res-floor-ratio');
   const pointsEl = document.getElementById('translation-res-points');
+  const expEl = document.getElementById('translation-res-exp');
   const avgScoreEl = document.getElementById('translation-res-avg-score');
   const hintsSkipsEl = document.getElementById('translation-res-hints-skips');
   const durationEl = document.getElementById('translation-res-duration');
@@ -1322,6 +1335,7 @@ function finishTranslationSession() {
 
   if (floorRatioEl) floorRatioEl.textContent = `${passedCount}/${total} (${floorRatioPct}%)`;
   if (pointsEl) pointsEl.textContent = `+${finalPts} VoCoin`;
+  if (expEl) expEl.textContent = `+${translationExpRes?.finalExp || 0} EXP`;
   if (avgScoreEl) avgScoreEl.textContent = `${avgScore} / 100`;
   if (hintsSkipsEl) hintsSkipsEl.textContent = `${translationHintsUsedTotal} gợi ý • ${translationSkipsUsedTotal} skip`;
   if (durationEl) durationEl.textContent = durationStr;
@@ -1419,10 +1433,10 @@ window.restartCurrentTranslationSession = restartCurrentTranslationSession;
 // =========================================================================
 function exitTranslationMode(force = false) {
   if (translationIsCompleted || force) {
-    // Settle points if any
-    if (translationSessionPointsEarned > 0 && !translationIsCompleted) {
-      const total = translationQuestionsList.length || 1;
-      const done = translationGradedIndices.size;
+    // Settle points and exp if any
+    const total = translationQuestionsList.length || 1;
+    const done = translationGradedIndices.size;
+    if (!translationIsCompleted && (translationSessionPointsEarned !== 0 || done > 0)) {
       const isComp = false;
       let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
       if (typeof calculateUnifiedSessionPoints === 'function') {
@@ -1433,14 +1447,29 @@ function exitTranslationMode(force = false) {
         res = calculateSessionFinalPoints(translationSessionPointsEarned, done, total, isComp);
       }
       const finalPts = res.finalPts;
-      if (finalPts > 0) {
-        if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + finalPts);
+
+      const translationExpItems = translationSessionScores.length > 0 ? translationSessionScores : new Array(done).fill(80);
+      const expRes = (typeof calculateUnifiedStudyExp === 'function')
+        ? calculateUnifiedStudyExp('translation', translationExpItems, total, currentTranslationDifficulty)
+        : { finalExp: 0 };
+
+      if (expRes.finalExp > 0 && typeof addStudyExp === 'function') {
+        addStudyExp(expRes.finalExp, 'translation');
+      }
+
+      if (finalPts !== 0 || expRes.finalExp > 0) {
+        const newBalance = Math.max(0, (typeof getUserPoints === 'function' ? getUserPoints() : 0) + finalPts);
+        if (typeof setUserPoints === 'function') setUserPoints(newBalance);
         if (typeof addLedgerEntry === 'function') {
-          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult || 1.0})`);
+          addLedgerEntry('STUDY_TRANSLATION_PARTIAL', finalPts, `Dịch Thuật (Thoát sớm ${done}/${total} câu, x${res.combinedMult || 1.0})`, newBalance, { studyExp: expRes.finalExp });
         }
         if (typeof saveDatabase === 'function') saveDatabase(true);
         if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+        if (typeof showToast === 'function') {
+          showToast(`🎉 Dịch Thuật: ${finalPts > 0 ? '+' : ''}${finalPts} VoCoin • +${expRes.finalExp} EXP`);
+        }
       }
+      translationSessionPointsEarned = 0;
     }
 
     if (studySourceContext === 'review-queue' || !currentDeckId) {
@@ -1463,6 +1492,7 @@ function exitTranslationMode(force = false) {
         done,
         total,
         basePoints: translationSessionPointsEarned,
+        difficulty: currentTranslationDifficulty,
         onConfirmExit: () => exitTranslationMode(true)
       });
       return;

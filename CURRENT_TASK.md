@@ -1,47 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-33 (Build 334)`  
+> **Phiên bản mục tiêu:** `v0.10.10-34 (Build 335)`  
 > **Cập nhật lần cuối:** 2026-09-18  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-33 Build 334)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-34 Build 335)
 
-- [x] **Vấn đề 4: Nâng Cấp Hệ Thống Quà Tặng Mã Mời Bạn Bè (`08-wallet-economy.js`, `10-lucky-wheel.js`, `modal-referral.html`, `modal-shop.html`)**:
-  - Người được mời (tân thủ) khi nhập mã nhận ngay **+3 Ngày VocaVIP Hoàng Gia** (trước đây là +1 ngày).
-  - Người mời nhận **+1 Ngày VocaVIP Hoàng Gia** khi bạn bè nhập mã giới thiệu.
-  - Bổ sung hàm `grantVipDaysBonus(days, source, reason)` trong `10-lucky-wheel.js` hỗ trợ cộng dồn số ngày VIP bất kỳ.
-  - Cập nhật toàn bộ thông báo hòm thư, sổ cái tài chính VoCoin và bản sao chép nội dung modal.
+- [x] **Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine - `02-state-core.js`)**:
+  - Xây dựng hàm lõi `calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount, difficultyMultOrOptions)` áp dụng công thức toán học chuẩn xác cho cả 8 chế độ học:
+    $$\text{FinalEXP} = \left\lfloor \left( \sum_{i=1}^{N_{\text{done}}} \text{BaseEXP} \times \text{QualityFactor}_i \right) \times W_{\text{mode}} \times M_{\text{diff}} \times \Phi(N_{\text{done}}) \times \Psi\left(\frac{N_{\text{done}}}{N_{\text{total}}}\right) \times M_{\text{VIP}} \times M_{\text{Flow}} \right\rfloor$$
+  - Bảng trọng số chế độ $W_{\text{mode}}$: Auto Flashcard (0.2), Quiz (1.0), Spelling (1.3), Speaking (1.8), Dictation (2.4), Cloze (2.8), Translation (3.0), Writing (3.5).
+  - Hệ số chất lượng $\text{QualityFactor}_i$: Điểm $< 60 \implies 0.10$ (phạt nặng đoán mò); Điểm $\ge 60 \implies (\text{score}/100)^2$.
+  - Bảo toàn giá trị học thuật: Điểm Rèn Luyện (EXP) là điểm tích lũy học tập thực tế, **không bị áp trần Soft-Cap Năng Lượng Não Bộ (Brain Energy)** của đồng VoCoin.
 
-- [x] **Vấn đề 5: Cơ Chế Khóa Tự Động Bộ Từ VIP Khi Hết Hạn Thuê Bao (`02-state-core.js`, `04-decks-manager.js`, `05-quiz-engine.js` -> `07-speaking-engine.js`, `app.css`)**:
-  - Bổ sung hàm nhận diện `isDeckVip(deck)` và `isDeckLockedForUser(deck)` trong `02-state-core.js`.
-  - Khi tài khoản hết hạn VIP (`!isUserVip() && isDeckVip(deck)`):
-    + Thẻ bộ từ trong danh sách hiển thị viền đỏ gradient, huy hiệu `🔒 VIP Đã Khóa`, dải thông báo cảnh báo hết hạn và khóa tương tác mở chi tiết/học tập.
-    + Chặn mở chi tiết `openDeckDetail` và toàn bộ 7 chế độ học tập (Quiz, Spelling, Speaking, Auto Flashcard, Writing, Cloze, Dictation, Translation) kèm thông báo mở modal gia hạn VIP.
-    + Tự động lọc và loại trừ toàn bộ từ vựng thuộc các bộ từ VIP bị khóa ra khỏi hàng đợi ôn tập ngắt quãng (SM-2 / Spaced Repetition Due Queue).
+- [x] **Tích Hợp Toàn Diện 8 Chế Độ Học & Bảng Kết Toán Modal (`05-quiz-engine.js` -> `07-speaking-engine.js`)**:
+  - Tích hợp `calculateUnifiedStudyExp` và `addStudyExp` vào toàn bộ 8 chế độ học: Trắc nghiệm (Quiz), Luyện viết (Spelling), Luyện nói (Speaking), Auto Flashcard, Viết câu (Writing), Điền đoạn văn (Cloze), Nghe chép (Dictation), Dịch thuật (Translation).
+  - Cập nhật 7 Modal Kết Quả và Modal Xác Nhận Thoát Sớm hiển thị đồng thời cả VoCoin nhận được và Điểm EXP nhận được.
 
-- [x] **Vấn đề 6: Dọn Dẹp & Tối Ưu Hóa Giao Diện VocaShop (`modal-shop.html`)**:
-  - Loại bỏ hoàn toàn khối bảng quy tắc kinh tế cũ (`balance_v1` & `balance_v2`) trong `modal-shop.html`.
-  - Cập nhật biểu ngữ giới thiệu bạn bè thành `Mời Bạn Bè - Bạn Nhận +1 Ngày VocaVIP, Bạn Bè Nhận +3 Ngày VocaVIP`.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-33 Build 334`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-33 (Build 334)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-33 (Build 334)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-33 (Build 334)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-33 Build 334`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-33'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-33 (Build 334)'`, `VOCAFLOW_APP_BUILD = 334`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-33 Build 334` & registry)
-  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-33 Build 334`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-33`)
-  - `pubspec.yaml` (`version: 0.10.10+334`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-33`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-33 (Build 334)`)
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-34 Build 335`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-34 (Build 335)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-34 (Build 335)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-34 (Build 335)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-34 Build 335`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-34'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-34 (Build 335)'`, `VOCAFLOW_APP_BUILD = 335`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-34 Build 335` & registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-34 Build 335`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-34`)
+  - `pubspec.yaml` (`version: 0.10.10+335`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-34`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-34 (Build 335)`)
   - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-31 Build 332)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-33 Build 334)
 
 - [x] **Vấn đề 7: Nâng Cấp Gợi Ý VocaHint Đa Tầng Thực Dụng Trong Dịch Thuật Song Phương (`06f-translation-engine.js`)**:
   - Khắc phục hoàn toàn việc gợi ý trùng lặp Target Word (từ vựng trọng tâm đã có sẵn trên huy hiệu `🎯 Từ vựng trọng tâm`).

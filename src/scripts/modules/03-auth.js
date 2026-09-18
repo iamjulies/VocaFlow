@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-33 Build 334)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-34 Build 335)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -3786,7 +3786,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       console.warn('Error loading ledger/purchased decks:', e);
     }
 
-    function addLedgerEntry(type, amount, description, explicitBalanceAfter) {
+    function addLedgerEntry(type, amount, description, explicitBalanceAfter, options = null) {
       if (isGuest()) return; // Never record guest transactions into user account ledger
       const numAmount = Number(amount) || 0;
       
@@ -3806,6 +3806,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         ? explicitBalanceAfter
         : getUserPoints();
 
+      let studyExpVal = 0;
+      if (options && typeof options === 'object' && typeof options.studyExp === 'number') {
+        studyExpVal = options.studyExp;
+      } else if (typeof options === 'number') {
+        studyExpVal = options;
+      }
+
       const tx = {
         id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         timestamp: new Date().toISOString(),
@@ -3814,6 +3821,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         balanceAfter: balanceAfter,
         description: description || 'Giao dịch ví'
       };
+      if (studyExpVal > 0) {
+        tx.studyExp = studyExpVal;
+      }
 
       userLedger.unshift(tx);
       // Clean up any legacy 0-amount or VIP_DAILY_SPIN entries
@@ -6528,6 +6538,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-34': {
+        postId: 'official_update_v0_10_10_34',
+        releaseTime: '2026-09-18T18:00:00.000Z',
+        title: '🎯 Chuẩn Hóa Động Cơ Điểm Rèn Luyện Thống Nhất Unified Study EXP (v0.10.10-34 Build 335)!',
+        summary: 'Thiết kế và triển khai động cơ tính Điểm Rèn Luyện (Study EXP) duy nhất, chuẩn xác toán học cho toàn bộ 8 chế độ học tập, tách biệt tuyệt đối khỏi Soft-Cap VoCoin và tích lũy vĩnh viễn theo chất lượng thực học.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-34 (Build 335)!\n\n✨ Những điểm mới nổi bật:\n🎯 Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine): Chuẩn hóa công thức toán học tính EXP vĩnh viễn trên toàn bộ 8 chế độ học tập (Auto Flashcard x0.2, Quiz x1.0, Spelling x1.3, Speaking x1.8, Dictation x2.4, Cloze x2.8, Translation x3.0, Writing x3.5).\n💡 Phân Định Rõ Ràng EXP vs VoCoin: VoCoin là tiền tệ kinh tế (chịu Soft-Cap tập trung), còn Điểm Rèn Luyện là thước đo học thuật danh dự, tích lũy vĩnh viễn không bị đánh thuế, phản ánh đúng chất lượng làm bài thực tế.\n🏆 Tích Hợp Hệ Số Chất Lượng (QualityFactor), Khối Lượng (Volume Scaling), Cam Kết (Commitment Ratio), Chuỗi Flow Streak (+1%/ngày) & Đặc Quyền VocaVIP (x1.25).\n📊 Hiển Thị Minh Bạch Trên Toàn Bộ Modal Kết Quả & Cảnh Báo Thoát Sớm: Xem trước chính xác EXP thực nhận trước khi kết thúc bài học.\n⚡ Đồng Bộ Toàn Diện & Trải Nghiệm Mượt Mà: Đảm bảo độ tin cậy và hiệu năng cao nhất trên toàn hệ thống.\n\nChúc bạn có những giờ phút học tập tràn đầy cảm hứng và bứt phá bảng vàng danh dự cùng VocaFlow! 🚀🎯`
+      },
       'v0.10.10-33': {
         postId: 'official_update_v0_10_10_33',
         releaseTime: '2026-09-18T01:00:00.000Z',
