@@ -260,6 +260,7 @@
 
       return notif;
     }
+    window.addNotification = addNotification;
 
     async function syncNotificationsWithCloud() {
       if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_')) return;
@@ -579,6 +580,11 @@
           typeColor = '#34d399';
           typeBg = 'rgba(16,185,129,0.12)';
           typeBorder = 'rgba(16,185,129,0.3)';
+        } else if (n.type === 'VIP_EXPIRING' || tLower.includes('hết hạn')) {
+          typeIcon = '⏳';
+          typeColor = '#f59e0b';
+          typeBg = 'rgba(245,158,11,0.22)';
+          typeBorder = 'rgba(245,158,11,0.6)';
         } else if (n.type === 'VIP_BONUS' || tLower.includes('vip') || tLower.includes('quà tân thủ')) {
           typeIcon = '👑';
           typeColor = '#fbbf24';

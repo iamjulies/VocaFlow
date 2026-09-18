@@ -1,5 +1,5 @@
-v0.10.10-36
-- Vấn đề x: Hệ thống đã có 4 chế độ mở rộng (Writing, Cloze, Dictation, Translation) nhưng các thành tựu mới chỉ đang gắn liền với các chế độ cũ:
+v0.10.10-36 (NÂNG CẤP HỆ THỐNG THÀNH TỰU)
+- Vấn đề 12: Hệ thống đã có 4 chế độ mở rộng (Writing, Cloze, Dictation, Translation) nhưng các thành tựu mới chỉ đang gắn liền với các chế độ cũ:
 + Nhóm 1: Bộ Tứ Kỹ Năng Mở Rộng (Extended Labs $\beta$)
 ✍️ Cây Bút Học Thuật (Academic Scribe) – Bậc Vàng: Đạt từ $90\text{ điểm}$ trở lên ở chế độ Viết Câu (Sentence Writing) cấp độ Siêu Khó (Expert $\times 4.0$, ẩn nghĩa tiếng Việt).
 📖 Bậc Thầy Ngữ Cảnh (Context Detective) – Bậc Vàng: Điền đúng $100\%$ toàn bộ ô trống trong một bài đọc Cloze Test có độ dài từ $10\text{ ô trống}$ trở lên mà không dùng VocaSkip.
@@ -11,6 +11,7 @@ v0.10.10-36
 🌊 Dòng Chảy Thép (Unstoppable Flow) – Bậc Thần Thoại: Duy trì chuỗi Flow Streak 30 ngày liên tục mà tuyệt đối không tiêu thụ bất kỳ lượt FlowFreeze nào.
 + Nhóm 3: Đời Sống Cộng Đồng & Mạng Xã Hội (VocaCommunity)
 💬 Tiếng Nói Cộng Đồng (Inspiring Voice) – Bậc Đồng: Đăng một bài viết trên VocaCommunity.
-👥 Bạn Của CEO (CEO's Buddy) – Bậc Bạc: Được @iamjulies follow.
+👥 Bạn Của CEO (CEO's Buddy) – Bậc Bạc: Được @iamjulies (UID: MjfiTs6bthWAjB6Me200uHKlGFc2) follow.
 + Nhóm 4: Trải Nghiệm Độc Đáo (Easter Egg & VIP):
 🐾 Đại Ca Nuôi Mèo (Meme Connoisseur) – Bậc Đồng: Điều kiện: Kích hoạt đủ $50\text{ lần}$ phản ứng biểu cảm Meme Mèo VIP (cả đúng lẫn sai) trong các phòng Lab.
+- Vấn đề 13: Khi có thành tựu đã hoàn thành mà chưa nhận xu thưởng thì hiện dấu chấm đỏ kèm số chỉ ở nút nhấn vào xem thành tựu

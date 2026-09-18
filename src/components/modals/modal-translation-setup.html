@@ -15,23 +15,32 @@
     <!-- 1. CHỌN CHIỀU DỊCH THUẬT -->
     <div style="margin-bottom: 16px;">
       <label style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block;">1. Chọn Chiều Dịch Thuật:</label>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="translation-direction-cards-container">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;" id="translation-direction-cards-container">
         <!-- ANH -> VIỆT -->
-        <div class="translation-dir-card" id="translation-dir-card-en_to_vi" onclick="selectTranslationSetupDirection('en_to_vi')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="font-size: 18px;">🇬🇧 ➔ 🇻🇳</span>
-            <strong style="font-size: 13px; color: #34d399;">Anh ➔ Việt</strong>
+        <div class="translation-dir-card" id="translation-dir-card-en_to_vi" onclick="selectTranslationSetupDirection('en_to_vi')" style="background: var(--surface-elevated); border: 2px solid #10b981; border-radius: 12px; padding: 10px 8px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span style="font-size: 16px;">🇬🇧➔🇻🇳</span>
+            <strong style="font-size: 12.5px; color: #34d399;">Anh ➔ Việt</strong>
           </div>
-          <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4;">Đọc hiểu câu tiếng Anh và diễn đạt sang tiếng Việt tự nhiên, thoát ý.</p>
+          <p style="font-size: 10.5px; color: var(--text-muted); margin: 0; line-height: 1.35;">Dịch câu Anh sang tiếng Việt tự nhiên.</p>
         </div>
 
         <!-- VIỆT -> ANH -->
-        <div class="translation-dir-card" id="translation-dir-card-vi_to_en" onclick="selectTranslationSetupDirection('vi_to_en')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="font-size: 18px;">🇻🇳 ➔ 🇬🇧</span>
-            <strong style="font-size: 13px; color: #38bdf8;">Việt ➔ Anh</strong>
+        <div class="translation-dir-card" id="translation-dir-card-vi_to_en" onclick="selectTranslationSetupDirection('vi_to_en')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 8px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span style="font-size: 16px;">🇻🇳➔🇬🇧</span>
+            <strong style="font-size: 12.5px; color: #38bdf8;">Việt ➔ Anh</strong>
           </div>
-          <p style="font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4;">Đọc câu tiếng Việt và dịch sang câu tiếng Anh chuẩn ngữ pháp, tự nhiên.</p>
+          <p style="font-size: 10.5px; color: var(--text-muted); margin: 0; line-height: 1.35;">Dịch câu Việt sang tiếng Anh chuẩn.</p>
+        </div>
+
+        <!-- NGẪU NHIÊN -->
+        <div class="translation-dir-card" id="translation-dir-card-random" onclick="selectTranslationSetupDirection('random')" style="background: var(--surface-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 10px 8px; cursor: pointer; transition: all 0.2s;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span style="font-size: 16px;">🔀</span>
+            <strong style="font-size: 12.5px; color: #c084fc;">Ngẫu Nhiên</strong>
+          </div>
+          <p style="font-size: 10.5px; color: var(--text-muted); margin: 0; line-height: 1.35;">Đan xen 50/50 cả 2 chiều Anh ↔ Việt.</p>
         </div>
       </div>
     </div>

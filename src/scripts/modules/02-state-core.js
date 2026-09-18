@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-34 Build 335)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-35 Build 336)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-34 Build 335)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-35 Build 336)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-34';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-34 (Build 335)';
-    const VOCAFLOW_APP_BUILD = 335;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-35';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-35 (Build 336)';
+    const VOCAFLOW_APP_BUILD = 336;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -274,7 +274,7 @@
     }
 
     function applyVipState(enable, tier = 'monthly', expiresAt = 0, source = 'system', allowDowngrade = false) {
-      const tierRanks = { 'none': 0, 'monthly': 1, 'yearly': 2, 'lifetime': 3 };
+      const tierRanks = { 'none': 0, 'try': 1, 'monthly': 2, 'yearly': 3, 'lifetime': 4 };
       const currentTier = userVipTier || 'none';
       const incomingTier = tier || 'none';
 
@@ -329,8 +329,41 @@
           autoPostMilestoneToCommunity('vip_upgrade', { tier: userVipTier });
         }
       }
+      checkAndTriggerVipExpirationWarning();
       return { userIsVip, userVipTier, userVipExpiresAt };
     }
+
+    function checkAndTriggerVipExpirationWarning() {
+      try {
+        if (!isUserVip()) return;
+        if (userVipTier === 'lifetime') return;
+        const now = Date.now();
+        const expTime = userVipExpiresAt || 0;
+        const remainingMs = expTime - now;
+        // Trigger if remaining time is under 24 hours (and greater than 0)
+        if (remainingMs > 0 && remainingMs <= 24 * 60 * 60 * 1000) {
+          const hoursLeft = Math.max(1, Math.round(remainingMs / (60 * 60 * 1000)));
+          const uid = (currentUser && currentUser.uid) ? currentUser.uid : 'local';
+          const daySlot = Math.floor(expTime / (24 * 60 * 60 * 1000));
+          const notifId = `vip_exp_warn_${uid}_${daySlot}`;
+          const tierLabel = (userVipTier === 'try') ? 'VocaVIP TRY' : (userVipTier === 'monthly' ? 'VIP Tháng' : 'VIP Năm');
+
+          if (typeof addNotification === 'function') {
+            addNotification(
+              'VIP_EXPIRING',
+              `⏳ Gói ${tierLabel} của bạn sắp hết hạn trong ${hoursLeft} giờ tới!`,
+              `Quyền lợi VIP không giới hạn tính năng sẽ kết thúc vào hôm nay. Hãy gia hạn ngay trong Cửa Hàng để duy trì chuỗi học và các đặc quyền VIP nhé!`,
+              'OPEN_SHOP',
+              { tab: 'vip' },
+              notifId
+            );
+          }
+        }
+      } catch (err) {
+        console.warn('VIP expiration warning trigger error:', err);
+      }
+    }
+    window.checkAndTriggerVipExpirationWarning = checkAndTriggerVipExpirationWarning;
 
     // Auto-heal regression: checks if user had VIP around 31/8/2027 that was reverted from 3/9/2027
     function autoHealVipRegression() {

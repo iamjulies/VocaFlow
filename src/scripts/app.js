@@ -405,6 +405,7 @@
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
+    if (typeof checkAndTriggerVipExpirationWarning === 'function') checkAndTriggerVipExpirationWarning();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
     if (typeof initSpaRouter === 'function') {
       initSpaRouter();

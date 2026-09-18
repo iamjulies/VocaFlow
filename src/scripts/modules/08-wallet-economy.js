@@ -1735,7 +1735,7 @@
 
       // 2. Award Newbie Rewards: +3 Days VIP + 100 Xu + 3 Hints + 1 Lucky Spin (v0.10.10-33)
       const vipGrantRes = (typeof grantVipDaysBonus === 'function')
-        ? grantVipDaysBonus(3, 'referral_newbie', '🎁 Quà Tân Thủ: +3 Ngày VocaVIP Hoàng Gia')
+        ? grantVipDaysBonus(3, 'referral_newbie', '🎁 Quà Tân Thủ: +3 Ngày VocaVIP TRY')
         : grantVipOneDayBonus();
       setUserPoints(getUserPoints() + 100);
       setUserHints(getUserHints() + 3);
@@ -1743,9 +1743,9 @@
       if (typeof recordAdWatched === 'function') recordAdWatched();
 
       // 3. Ledger entry & notifications
-      addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode} (+3 Ngày VocaVIP)`);
+      addLedgerEntry('REFERRAL_NEWBIE_GIFT', 100, `🎁 Quà tân thủ khi nhập mã giới thiệu: ${rawCode} (+3 Ngày VocaVIP TRY)`);
       if (typeof addNotification === 'function') {
-        addNotification('VIP_BONUS', '👑 Quà Tân Thủ: +3 Ngày VocaVIP', `Bạn đã nhận được +3 Ngày VocaVIP Hoàng Gia, 100 VoCoin, +3 VocaHint và +1 VocaSpin từ mã ${rawCode}!`);
+        addNotification('VIP_BONUS', '✨ Quà Tân Thủ: +3 Ngày VocaVIP TRY', `Bạn đã nhận được +3 Ngày VocaVIP TRY, 100 VoCoin, +3 VocaHint và +1 VocaSpin từ mã ${rawCode}!`);
       }
       saveDatabase(true);
       pushCurrentDatabaseToCloud();

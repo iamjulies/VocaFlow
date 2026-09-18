@@ -2,4 +2,5 @@ v0.10.10-35
 - Vấn đề 7: Kiểm tra lại tất cả cơ chế cộng xu, cộng điểm rèn luyện ở 7 chế độ học đã đầy đủ và trơn tru mượt mà chưa (t thấy là chưa mượt lắm nha, t thấy và nghĩ là có lỗi)
 - Vấn đề 8: Thiếu trigger cảnh báo hết hạn VocaVip: Khi thời hạn VIP còn dưới 24 giờ tự động gửi một thông báo đẩy nổi bật vào VocaNoti
 - Vấn đề 9: Thêm 1 nút ngẫu nhiên ngay bên cạnh 2 nút chọn dịch Anh -> Việt, Việt -> Anh đi. nó sẽ có chức năng là ngẫu nhiên 1 trong 2 chế độ này á. "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-18 235319.png" nói chung là chiều dịch "Ngẫu nhiên" á mày...
-- Vấn đề 10: 
+- Vấn đề 10: Không gỡ hiệu ứng tên VIP khi mà đã hết thời hạn VIP: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 000251.png" là tên khi nhìn từ nơi khác, "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 000320.png" ảnh khi xem trong pub profile -> đã hết VIp nhưng vẫn chưa gỡ hiệu ứng.
+- Vấn đề 11: cũng là 2 ảnh ở vấn đề 10, với những user mà kh mua vocavip mà chỉ nhận thông qua vocawheel hay mã mời tân thủ thì không được gẵn mác VocaVIP Monthly/Yearly/Lifetime ở cổng quản trị mà chỉ được gắn là "VocaVIP Try" thôi. khi hết VIp tự động gỡ

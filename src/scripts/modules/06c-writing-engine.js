@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-34 Build 335 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -1177,6 +1177,35 @@ function finishWritingSession() {
     recordStudySessionWordReviews(reviewedWords);
   }
 
+  // Calculate unified points & settle wallet
+  let writingRes = null;
+  let finalPts = writingSessionPointsEarned;
+  try {
+    if (typeof calculateUnifiedSessionPoints === 'function') {
+      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions);
+      finalPts = writingRes.finalPoints ?? writingRes.finalPts ?? writingSessionPointsEarned;
+    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
+      writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+      finalPts = writingRes.finalPoints ?? writingRes.finalPts ?? writingSessionPointsEarned;
+    } else if (typeof calculateSessionFinalPoints === 'function') {
+      writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
+      finalPts = writingRes.finalPoints ?? writingRes.finalPts ?? writingSessionPointsEarned;
+    }
+  } catch (e) {}
+
+  if ((finalPts !== 0 || (writingExpRes && writingExpRes.finalExp > 0)) && typeof setUserPoints === 'function') {
+    const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+    const deckTitle = curDeck ? curDeck.title : 'Bộ từ';
+    const newBalance = Math.max(0, (typeof getUserPoints === 'function' ? getUserPoints() : 0) + finalPts);
+    setUserPoints(newBalance);
+    if (typeof addLedgerEntry === 'function') {
+      const bonusMsg = (writingRes && writingRes.milestoneBonus > 0) ? ` + Thưởng mốc ${passedQuestions} câu (+${writingRes.milestoneBonus} Xu)` : '';
+      addLedgerEntry('STUDY_WRITING', finalPts, `Luyện viết câu AI "${deckTitle}" (${passedQuestions}/${totalQuestions} câu${bonusMsg})`, newBalance, { studyExp: writingExpRes?.finalExp || 0 });
+    }
+    if (typeof saveDatabase === 'function') saveDatabase(true);
+    if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+  }
+
   // Update Result Modal Elements
   const ratioEl = document.getElementById('writing-res-floor-ratio');
   const pointsEl = document.getElementById('writing-res-points');
@@ -1187,7 +1216,7 @@ function finishWritingSession() {
   const diffBadge = document.getElementById('writing-res-difficulty-badge');
 
   if (ratioEl) ratioEl.textContent = `${passedQuestions}/${totalQuestions} (${passedRatio}%)`;
-  if (pointsEl) pointsEl.textContent = `${writingSessionPointsEarned >= 0 ? '+' : ''}${writingSessionPointsEarned} VoCoin`;
+  if (pointsEl) pointsEl.textContent = `${finalPts >= 0 ? '+' : ''}${finalPts} VoCoin`;
   if (expEl) expEl.textContent = `+${writingExpRes?.finalExp || 0} EXP`;
   if (avgEl) avgEl.textContent = `${avgScore} / 100`;
   if (hintsSkipsEl) hintsSkipsEl.textContent = `${writingHintsUsed} gợi ý • ${writingSkipsUsed} skip`;
@@ -1200,16 +1229,6 @@ function finishWritingSession() {
 
   // Unified Balance v4 Bonus Breakdown & Energy Indicator
   const bonusBox = document.getElementById('writing-res-bonus-box');
-  let writingRes = null;
-  try {
-    if (typeof calculateUnifiedSessionPoints === 'function') {
-      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions);
-    } else if (typeof calculateSessionFinalPointsV3 === 'function') {
-      writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
-    } else if (typeof calculateSessionFinalPoints === 'function') {
-      writingRes = calculateSessionFinalPoints(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
-    }
-  } catch (e) {}
 
   if (bonusBox && writingRes) {
     if (writingRes.commitmentFactor < 1.0 || writingRes.volumeMultiplier > 1.0 || (writingRes.vipMultiplier && writingRes.vipMultiplier > 1.0)) {
@@ -1307,7 +1326,7 @@ function doExecuteExitWriting(done, total) {
     recordStudySessionWordReviews(reviewedWords);
   }
 
-  if (writingSessionPointsEarned !== 0 || done > 0) {
+  if (!writingIsCompleted && (writingSessionPointsEarned !== 0 || done > 0)) {
     const isComp = done >= total && total > 0;
     let finalPts = writingSessionPointsEarned;
     let res = null;

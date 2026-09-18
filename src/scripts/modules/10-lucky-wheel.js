@@ -586,11 +586,11 @@
         return { isLifetime: true, message: `👑 Bạn đã sở hữu VocaVIP Trọn Đời! Đã tặng thêm ${coinBonus} VoCoin & ${hintBonus} VocaHint!` };
       }
 
-      // For Monthly, Yearly or Non-VIP: Extend expiration by exactly days * 24 hours with Bulletproof Protection
+      // For Monthly, Yearly, Try or Non-VIP: Extend expiration by exactly days * 24 hours with Bulletproof Protection
       const highWater = getVipHighWaterExp();
       const currentExp = (highWater && highWater > Date.now()) ? highWater : Date.now();
       const newExp = currentExp + grantMs;
-      const targetTier = (userVipTier && userVipTier !== 'none') ? userVipTier : 'monthly';
+      const targetTier = (userVipTier && userVipTier !== 'none' && userVipTier !== 'try') ? userVipTier : 'try';
       
       const vRes = applyVipState(true, targetTier, newExp, source, false);
       userIsVip = vRes.userIsVip;
@@ -598,7 +598,8 @@
       userVipExpiresAt = vRes.userVipExpiresAt;
 
       const expiryDateFormatted = new Date(userVipExpiresAt).toLocaleDateString('vi-VN');
-      const ledgerText = reason || `👑 Thưởng +${days} Ngày VIP Hoàng Gia (Hạn mới: ${expiryDateFormatted})`;
+      const tierLabel = (targetTier === 'try') ? 'VocaVIP TRY' : (targetTier === 'monthly' ? 'VIP Tháng' : 'VIP Năm');
+      const ledgerText = reason || `👑 Thưởng +${days} Ngày ${tierLabel} (Hạn mới: ${expiryDateFormatted})`;
       addLedgerEntry('VIP_BONUS', 0, ledgerText);
 
       saveDatabase(true);

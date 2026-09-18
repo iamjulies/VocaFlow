@@ -1,4 +1,27 @@
 ================================================================================
+Phiên bản: v0.10.10-35 (Build 336) - Hoàn Thiện Kết Toán Điểm Thống Nhất Cho Luyện Nói & Viết Câu, Cảnh Báo Hết Hạn VIP Tự Động (VocaNoti), Dịch Thuật Ngẫu Nhiên & Phân Cấp Gói VocaVIP TRY
+================================================================================
+1. [Hoàn Thiện Kết Toán Điểm Thống Nhất Toàn Bộ 7 Chế Độ Học Tập (Vấn đề 7)]:
+   - Khắc phục triệt để lỗi thiếu kết toán số dư ví VoCoin (setUserPoints, addLedgerEntry) và Điểm Rèn Luyện (addStudyExp) trong 07-speaking-engine.js (finishSpeakingSession) và 06c-writing-engine.js (finishWritingSession).
+   - Bảo vệ an toàn chống kết toán trùng lặp khi người dùng bấm nút thoát sớm sau khi đã hiển thị modal tổng kết.
+   - Sửa lỗi typo sự kiện thành tích recordLessonCompleted('speaking').
+2. [Cảnh Báo Hết Hạn VIP Tự Động Trong VocaNoti (Vấn đề 8)]:
+   - Triển khai checkAndTriggerVipExpirationWarning() trong 02-state-core.js và app.js tự động kiểm tra thời hạn thuê bao VocaVIP.
+   - Khi thời gian VIP còn lại <= 24h (remainingMs > 0 && remainingMs <= 86400000), hệ thống tự động phát thông báo khẩn cấp (VIP_EXPIRING) kèm thời gian đếm ngược trực quan và nút mở trực tiếp bảng giá gia hạn VocaVIP.
+   - Cơ chế lọc trùng lặp theo mốc ngày hết hạn (lastExpWarningDate) tránh gửi thông báo lặp lại phiền hà.
+3. [Dịch Thuật Song Phương Ngẫu Nhiên 50/50 (Random Direction - Vấn đề 9)]:
+   - Bổ sung nút chọn chiều "🔀 Ngẫu Nhiên" vào modal-translation-setup.html bên cạnh "Anh ➔ Việt" và "Việt ➔ Anh".
+   - Trong 06f-translation-engine.js, khi chọn chế độ Ngẫu Nhiên, mỗi câu hỏi được tự động gán ngẫu nhiên 50% câu hỏi là Anh ➔ Việt và 50% câu hỏi là Việt ➔ Anh.
+   - Cập nhật huy hiệu thanh tiêu đề, nhãn yêu cầu câu hỏi và modal kết quả hiển thị linh hoạt theo từng chiều câu hỏi.
+4. [Tự Động Thu Hồi Hiệu Ứng VIP Hết Hạn (Vấn đề 10)]:
+   - Rà soát và loại bỏ triệt để hiệu ứng hào quang vàng, vương miện hoàng gia 👑 và huy hiệu VIP khi tài khoản hết hạn trên Publisher Portal (fetchAdminStudentsList, renderAdminStudentsTable), Bảng xếp hạng và Hồ sơ công khai (openPublicProfileByAuthor).
+5. [Phân Cấp Gói Trải Nghiệm "✨ VocaVIP TRY" (Vấn đề 11)]:
+   - Thiết lập cấp độ tier 'try' riêng biệt cho các trường hợp nhận VIP miễn phí qua Vòng quay may mắn (grantVipDaysBonus) và Mã giới thiệu tân thủ.
+   - Hiển thị nhãn huy hiệu "✨ VocaVIP TRY" phân biệt với các gói trả phí chính thức (Monthly, Yearly, Lifetime). Tự động thu hồi và gỡ bỏ khi hết hạn.
+6. [Đồng Bộ 7-Point Version Consistency & Multi-Deploy (v0.10.10-35 Build 336)]:
+   - Đồng bộ nhất quán toàn bộ 7 điểm phiên bản trong hệ thống.
+
+================================================================================
 Phiên bản: v0.10.10-34 (Build 335) - Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine), Tách Biệt Hoàn Toàn VoCoin (Soft-Cap) và Điểm Rèn Luyện (Bảo Toàn Học Thuật) Cho Tất Cả 8 Chế Độ Học Tập
 ================================================================================
 1. [Triển Khai Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine)]:

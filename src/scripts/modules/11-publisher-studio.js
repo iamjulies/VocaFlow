@@ -25,6 +25,7 @@
       const rawText = (typeof avatarVal === 'string' && avatarVal.trim()) ? avatarVal.trim()[0].toUpperCase() : '👤';
       return '<span style="font-size: ' + fontSize + 'px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; width: ' + size + 'px; height: ' + size + 'px; font-weight: 800; color: white;">' + escapeHtml(rawText) + '</span>';
     }
+    window.renderAvatarHtml = renderAvatarHtml;
 
     function getUserAvatar(userObj = null) {
       const target = userObj || currentUser;
@@ -41,6 +42,7 @@
       const name = (target && (target.displayName || target.email)) || 'VocaFlow';
       return name.trim()[0].toUpperCase();
     }
+    window.getUserAvatar = getUserAvatar;
 
 
     // =========================================================================

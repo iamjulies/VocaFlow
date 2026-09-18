@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-34 Build 335)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-35 Build 336)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -503,8 +503,8 @@
       }
 
       try {
-        // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
-        if (speakingSessionPointsEarned !== 0 || done > 0) {
+        // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement (early exit only)
+        if (!speakingIsCompleted && (speakingSessionPointsEarned !== 0 || done > 0)) {
           const isComp = done >= total && total > 0;
           const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
           const res = (typeof calculateUnifiedSessionPoints === 'function')
@@ -855,8 +855,41 @@
       const skipsUsedEl = document.getElementById('spk-res-skips-used');
       const bonusBoxEl = document.getElementById('spk-res-bonus-box');
 
+      const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
+      let spkRes = null;
+      let finalPts = speakingSessionPointsEarned;
+      try {
+        spkRes = (typeof calculateUnifiedSessionPoints === 'function')
+          ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, speakingCompletedWords, totalWords, diffM)
+          : calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, true);
+        finalPts = spkRes.finalPoints ?? spkRes.finalPts ?? speakingSessionPointsEarned;
+      } catch (e) {}
+
+      const speakingExpItems = speakingSessionTakes.length > 0
+        ? speakingSessionTakes.map(t => t.score)
+        : new Array(speakingCompletedWords || 1).fill(speakingFloorScore || 80);
+      const speakingExpRes = (typeof calculateUnifiedStudyExp === 'function')
+        ? calculateUnifiedStudyExp('speaking', speakingExpItems, totalWords, currentSpeakingDifficulty)
+        : { finalExp: 0 };
+
+      if (speakingExpRes.finalExp > 0 && typeof addStudyExp === 'function') {
+        addStudyExp(speakingExpRes.finalExp, 'speaking');
+      }
+
+      if ((finalPts !== 0 || (speakingExpRes && speakingExpRes.finalExp > 0)) && typeof setUserPoints === 'function') {
+        const curDeck = (typeof decks !== 'undefined') ? decks.find(d => d.id === currentDeckId) : null;
+        const deckTitle = curDeck ? curDeck.title : 'VocaDeck';
+        const newBalance = Math.max(0, (typeof getUserPoints === 'function' ? getUserPoints() : 0) + finalPts);
+        setUserPoints(newBalance);
+        if (typeof addLedgerEntry === 'function') {
+          addLedgerEntry('STUDY_SPEAKING', finalPts, 'Luyện nói AI "' + deckTitle + '" (' + speakingCompletedWords + '/' + totalWords + ' từ, x' + (spkRes?.combinedMult || 1.0) + ')', newBalance, { studyExp: speakingExpRes?.finalExp || 0 });
+        }
+        if (typeof saveDatabase === 'function') saveDatabase(true);
+        if (typeof pushCurrentDatabaseToCloud === 'function') pushCurrentDatabaseToCloud();
+      }
+
       if (floorRatioEl) floorRatioEl.textContent = floorTakes + '/' + totalTakes + ' (' + floorRatePct + '%)';
-      if (pointsEl) pointsEl.textContent = (speakingSessionPointsEarned >= 0 ? '+' : '') + speakingSessionPointsEarned + ' VoCoin';
+      if (pointsEl) pointsEl.textContent = (finalPts >= 0 ? '+' : '') + finalPts + ' VoCoin';
       if (skipsUsedEl) skipsUsedEl.textContent = skipsUsed + ' lượt';
 
       const durationSec = Math.max(1, Math.round((Date.now() - speakingStartTime) / 1000));
@@ -868,10 +901,6 @@
       const avgScore = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : (speakingFloorScore || 80);
       if (avgScoreEl) avgScoreEl.textContent = avgScore + ' / 100';
 
-      const speakingExpItems = allScores.length > 0 ? allScores : (speakingCompletedWords > 0 ? new Array(speakingCompletedWords).fill(80) : []);
-      const speakingExpRes = (typeof calculateUnifiedStudyExp === 'function')
-        ? calculateUnifiedStudyExp('speaking', speakingExpItems, totalWords, currentSpeakingDifficulty)
-        : { finalExp: 0 };
       const expEl = document.getElementById('spk-res-exp') || document.getElementById('speaking-res-exp');
       if (expEl) expEl.textContent = '+' + (speakingExpRes?.finalExp || 0) + ' EXP';
 
@@ -881,16 +910,12 @@
         diffBadgeEl.textContent = (labels[currentSpeakingDifficulty] || '🟢 Cấp độ: Dễ') + ' (x' + totalMult + ')';
       }
 
-      if (bonusBoxEl) {
+      if (bonusBoxEl && spkRes) {
         try {
-          const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
-          const res = (typeof calculateUnifiedSessionPoints === 'function')
-            ? calculateUnifiedSessionPoints('speaking', speakingSessionPointsEarned, speakingCompletedWords, totalWords, diffM)
-            : calculateSessionFinalPoints(speakingSessionPointsEarned, speakingCompletedWords, totalWords, speakingCompletedWords >= totalWords);
-          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (res.metrics?.modeWeight || 1.8) + ' • Quy mô x' + (res.metrics?.volumeMult || res.deckLengthMult) + (res.isVipBonus ? ' • VIP x1.25' : '');
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (spkRes.metrics?.modeWeight || 1.8) + ' • Quy mô x' + (spkRes.metrics?.volumeMult || spkRes.deckLengthMult || 1.0) + (spkRes.isVipBonus ? ' • VIP x1.25' : '');
           bonusBoxEl.style.display = 'block';
           if (typeof updateModalBrainEnergyIndicator === 'function') {
-            updateModalBrainEnergyIndicator('spk-res-energy-box', res);
+            updateModalBrainEnergyIndicator('spk-res-energy-box', spkRes);
           }
         } catch (e) {
           bonusBoxEl.style.display = 'none';
@@ -927,7 +952,7 @@
 
       openModal('modal-speaking-result');
       playVocaSfx('fireworks', true);
-      if (typeof recordLessonCompleted === 'function') recordLessonCompleted('quiz');
+      if (typeof recordLessonCompleted === 'function') recordLessonCompleted('speaking');
       if (durationSec > 0 && typeof addDailyStudySeconds === 'function') {
         addDailyStudySeconds(durationSec, 'speaking');
       }

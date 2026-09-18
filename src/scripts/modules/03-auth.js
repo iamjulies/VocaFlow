@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-34 Build 335)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-35 Build 336)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -2019,6 +2019,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         fetchAdminVipActivations();
       }
     }
+    window.switchPublisherTab = switchPublisherTab;
 
     async function fetchAdminStudentsList() {
       const container = document.getElementById('admin-students-list-container');
@@ -2089,8 +2090,28 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const rawAv = prof.avatar || u.avatar || '';
           const avatar = (typeof rawAv === 'string' && (rawAv.startsWith('data:image') || rawAv.startsWith('http'))) ? rawAv : '';
 
-          const isVipStudent = (currentUser && currentUser.uid === uid) ? isUserVip() : (prof.isVip === true || u.isVip === true);
-          const vipTierStudent = (currentUser && currentUser.uid === uid) ? getUserVipTier() : (prof.vipTier || u.vipTier || 'none');
+          const rawVip = (prof.isVip === true || u.isVip === true);
+          const rawTier = (prof.vipTier || u.vipTier || 'none');
+          const vipExp = Number(prof.vipExpiresAt || u.vipExpiresAt || 0);
+
+          let isVipStudent = false;
+          let vipTierStudent = 'none';
+
+          if (currentUser && currentUser.uid === uid) {
+            isVipStudent = isUserVip();
+            vipTierStudent = getUserVipTier();
+          } else if (rawVip) {
+            if (rawTier === 'lifetime') {
+              isVipStudent = true;
+              vipTierStudent = 'lifetime';
+            } else if (vipExp > 0 && vipExp > Date.now()) {
+              isVipStudent = true;
+              vipTierStudent = rawTier || 'try';
+            } else {
+              isVipStudent = false;
+              vipTierStudent = 'none';
+            }
+          }
 
           let spins = 0;
           if (currentUser && currentUser.uid === uid) {
@@ -2113,8 +2134,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           else if (u.flow && typeof u.flow.freezes === 'number') freezes = u.flow.freezes;
           else if (eco.flowFreezes !== undefined) freezes = parseInt(eco.flowFreezes, 10) || 0;
 
-          const vipExp = prof.vipExpiresAt || u.vipExpiresAt || 0;
-
           studentsList.push({
             uid: uid,
             shortUid: getShortUidUpper(uid),
@@ -2135,7 +2154,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             rawWords: uWords,
             isVip: isVipStudent,
             vipTier: vipTierStudent,
-            vipExpiresAt: vipExp
+            vipExpiresAt: isVipStudent ? vipExp : 0
           });
         }
 
@@ -2162,6 +2181,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Lỗi khi tải dữ liệu Flower: ' + escapeHtml(err.message || 'Lỗi không xác định') + '</div>';
       }
     }
+    window.fetchAdminStudentsList = fetchAdminStudentsList;
 
     function filterAdminStudents(query) {
       renderAdminStudentsTable(query);
@@ -2174,9 +2194,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const searchInput = document.getElementById('admin-students-search-input');
       const q = (filterQuery || (searchInput ? searchInput.value : '')).toLowerCase().trim();
 
-      const filtered = adminStudentsData.filter(s => {
+      const dataList = (window.adminStudentsData && Array.isArray(window.adminStudentsData)) ? window.adminStudentsData : ((typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) ? adminStudentsData : []);
+      const filtered = dataList.filter(s => {
+        if (!s) return false;
         if (!q) return true;
-        return s.displayName.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.uid.toLowerCase().includes(q);
+        return (s.displayName || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q) || (s.uid || '').toLowerCase().includes(q);
       });
 
       if (filtered.length === 0) {
@@ -2204,9 +2226,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                         <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
                         <span class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(s.displayName)}</span>
                       </span>
-                      <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 1px solid rgba(251,191,36,0.5); font-weight: 800; padding: 1px 6px;">VocaVIP ${s.vipTier ? s.vipTier.toUpperCase() : ''}</span>
+                      ${s.vipTier === 'try' ? `
+                        <span class="badge" style="font-size: 9.5px; background: rgba(139,92,246,0.18); color: #c084fc; border: 1px solid rgba(139,92,246,0.45); font-weight: 800; padding: 1px 6px;">✨ VocaVIP TRY</span>
+                      ` : `
+                        <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 1px solid rgba(251,191,36,0.5); font-weight: 800; padding: 1px 6px;">👑 VocaVIP ${s.vipTier ? s.vipTier.toUpperCase() : ''}</span>
+                      `}
                     ` : `
                       <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ Flower">${escapeHtml(s.displayName)}</span>
+                      <span class="badge" style="font-size: 9.5px; background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.12); padding: 1px 6px;">Thường (Free)</span>
                     `}
                     <span class="badge" onclick="event.stopPropagation(); copyTextToClipboard('${escapeHtml(s.uid)}', 'Đã sao chép UID: ${escapeHtml(s.uid)}')" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.18); color: #a5b4fc; padding: 2px 8px; border-radius: 6px; font-family: monospace; cursor: pointer; border: 1px solid rgba(99, 102, 241, 0.35); user-select: all;" title="Bấm để sao chép toàn bộ UID">UID: ${escapeHtml(s.uid)} 📋</span>
                   </div>
@@ -2258,6 +2285,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       html += '</div>';
       container.innerHTML = html;
     }
+    window.renderAdminStudentsTable = renderAdminStudentsTable;
+    window.filterAdminStudents = filterAdminStudents;
 
     async function deleteStudentAccountOnCloud(uid, displayName) {
       if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản "${displayName}" (UID: ${uid}) khỏi hệ thống không?`)) return;
@@ -5012,11 +5041,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             pubSubBadgeEl.style.fontWeight = '800';
             pubSubBadgeEl.style.border = '1px solid rgba(251,191,36,0.5)';
           } else if (isAuthorVip) {
-            pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
-            pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
-            pubSubBadgeEl.style.color = '#fbbf24';
-            pubSubBadgeEl.style.fontWeight = '700';
-            pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+            if (authorVipTier === 'try') {
+              pubSubBadgeEl.innerHTML = '✨ Thành Viên VocaVIP TRY';
+              pubSubBadgeEl.style.background = 'rgba(139, 92, 246, 0.15)';
+              pubSubBadgeEl.style.color = '#c084fc';
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+            } else {
+              pubSubBadgeEl.innerHTML = '👑 Thành Viên VocaVIP';
+              pubSubBadgeEl.style.background = 'rgba(245, 158, 11, 0.15)';
+              pubSubBadgeEl.style.color = '#fbbf24';
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+            }
           } else {
             pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
             pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -5035,21 +5072,30 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             pubBadgeEl.style.border = '1px solid rgba(255,255,255,0.4)';
             pubBadgeEl.style.boxShadow = '0 2px 14px rgba(168,85,247,0.5)';
           } else if (isAuthorVip) {
-            const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
-            if (durationLabel !== 'Hết hạn') {
-              pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
-              pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-              pubBadgeEl.style.color = '#ffffff';
+            if (authorVipTier === 'try') {
+              pubBadgeEl.innerHTML = '✨ VocaVIP TRY';
+              pubBadgeEl.style.background = 'rgba(139,92,246,0.2)';
+              pubBadgeEl.style.color = '#c084fc';
               pubBadgeEl.style.fontWeight = '800';
-              pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
-              pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+              pubBadgeEl.style.border = '1px solid rgba(139,92,246,0.5)';
+              pubBadgeEl.style.boxShadow = '0 2px 10px rgba(139,92,246,0.3)';
             } else {
-              pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
-              pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
-              pubBadgeEl.style.color = '#a5b4fc';
-              pubBadgeEl.style.fontWeight = '700';
-              pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
-              pubBadgeEl.style.boxShadow = 'none';
+              const durationLabel = formatVipDurationText(authorVipExpiresAt, authorVipTier);
+              if (durationLabel !== 'Hết hạn') {
+                pubBadgeEl.innerHTML = `👑 VIP ${durationLabel}`;
+                pubBadgeEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                pubBadgeEl.style.color = '#ffffff';
+                pubBadgeEl.style.fontWeight = '800';
+                pubBadgeEl.style.border = '1px solid rgba(251,191,36,0.6)';
+                pubBadgeEl.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
+              } else {
+                pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
+                pubBadgeEl.style.background = 'rgba(99, 102, 241, 0.2)';
+                pubBadgeEl.style.color = '#a5b4fc';
+                pubBadgeEl.style.fontWeight = '700';
+                pubBadgeEl.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+                pubBadgeEl.style.boxShadow = 'none';
+              }
             }
           } else {
             pubBadgeEl.textContent = '🌟 Tác Giả Đóng Góp';
@@ -6538,6 +6584,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-35': {
+        postId: 'official_update_v0_10_10_35',
+        releaseTime: '2026-09-19T00:00:00.000Z',
+        title: '🛡️ Tối Ưu Quyền Lợi VocaVIP, Thông Báo Hết Hạn & Dịch Thuật Đa Chiều (v0.10.10-35 Build 336)!',
+        summary: 'Hoàn thiện kết toán Điểm Rèn Luyện & VoCoin toàn diện cho Luyện Nói & Viết Câu; kích hoạt chuông cảnh báo hết hạn VIP tự động trong VocaNoti; bổ sung chế độ Dịch Thuật Ngẫu Nhiên 50/50; dọn dẹp hào quang vương miện khi hết hạn VIP và phân cấp gói ✨ VocaVIP TRY.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-35 (Build 336)!\n\n✨ Những điểm mới nổi bật:\n🎯 Đồng Bộ Quyền Lợi & Kết Toán Điểm Thống Nhất: Hoàn thiện kết toán Điểm Rèn Luyện (Study EXP) và VoCoin cho toàn bộ 7 chế độ học tập bao gồm Luyện Nói (Speaking) và Viết Câu (Writing).\n⏰ Cảnh Báo Hết Hạn VIP Tự Động (VocaNoti): Hệ thống tự động gửi thông báo nhắc nhở khi thời gian VocaVIP còn ≤ 24 giờ để học viên chủ động gia hạn quyền lợi.\n🔀 Dịch Thuật Ngẫu Nhiên (Random Direction): Chế độ Dịch Thuật Song Phương VIP β bổ sung tùy chọn đảo chiều ngẫu nhiên 50/50 giữa Anh ➔ Việt và Việt ➔ Anh trên từng câu hỏi.\n👑 Tự Động Thu Hồi Hiệu Ứng VIP Hết Hạn: Dọn dẹp triệt để hào quang vàng, vương miện và huy hiệu VIP khi hết hạn trên Publisher Portal, Bảng xếp hạng và Hồ sơ công khai.\n✨ Phân Cấp Gói Trải Nghiệm "VocaVIP TRY": Phân biệt rõ ràng gói trải nghiệm (Vòng quay may mắn, Nhập mã giới thiệu) với nhãn ✨ VocaVIP TRY và các gói trả phí chính thức.\n\nChúc bạn có những giờ phút học tập hiệu quả và chinh phục mọi mục tiêu ngoại ngữ cùng VocaFlow! 🚀🌟`
+      },
       'v0.10.10-34': {
         postId: 'official_update_v0_10_10_34',
         releaseTime: '2026-09-18T18:00:00.000Z',

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-34 Build 335 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 

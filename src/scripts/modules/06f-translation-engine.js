@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-34 Build 335 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-35 Build 336 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -154,7 +154,9 @@ function openTranslationSetupModal(useSelection = false, customWordList = null) 
 
   const sub = document.getElementById('translation-setup-subtitle');
   if (sub) {
-    const dirText = selectedTranslationSetupDirection === 'en_to_vi' ? 'Anh ➔ Việt' : 'Việt ➔ Anh';
+    let dirText = 'Anh ➔ Việt';
+    if (selectedTranslationSetupDirection === 'vi_to_en') dirText = 'Việt ➔ Anh';
+    else if (selectedTranslationSetupDirection === 'random') dirText = 'Ngẫu Nhiên 🔀';
     sub.textContent = `${targetWords.length} từ vựng sẵn sàng • Chiều: ${dirText}`;
   }
 
@@ -168,12 +170,20 @@ window.openTranslationSetupModal = openTranslationSetupModal;
 
 function selectTranslationSetupDirection(direction) {
   selectedTranslationSetupDirection = direction;
-  ['en_to_vi', 'vi_to_en'].forEach(d => {
+  ['en_to_vi', 'vi_to_en', 'random'].forEach(d => {
     const card = document.getElementById('translation-dir-card-' + d);
     if (card) {
       if (d === direction) {
-        card.style.borderColor = d === 'en_to_vi' ? '#10b981' : '#0ea5e9';
-        card.style.background = 'rgba(16, 185, 129, 0.08)';
+        if (d === 'en_to_vi') {
+          card.style.borderColor = '#10b981';
+          card.style.background = 'rgba(16, 185, 129, 0.08)';
+        } else if (d === 'vi_to_en') {
+          card.style.borderColor = '#0ea5e9';
+          card.style.background = 'rgba(14, 165, 233, 0.08)';
+        } else {
+          card.style.borderColor = '#a855f7';
+          card.style.background = 'rgba(168, 85, 247, 0.08)';
+        }
       } else {
         card.style.borderColor = 'var(--border)';
         card.style.background = 'var(--surface-elevated)';
@@ -387,7 +397,7 @@ CONFIGURATION:
   * easy: Short, natural single-clause sentence (<= 10 words). Clear everyday context.
   * medium: Natural compound sentence (10-18 words) in authentic workplace, study, or communication context.
   * hard: Sophisticated, complex academic/professional sentence (> 18 words) with nuanced clauses.
-- Direction: "${direction}" (${direction === 'en_to_vi' ? 'English Source Sentence -> Vietnamese Target Translation' : 'Vietnamese Source Sentence -> English Target Translation'})
+- Direction: "${direction}" (${direction === 'en_to_vi' ? 'English Source Sentence -> Vietnamese Target Translation' : (direction === 'vi_to_en' ? 'Vietnamese Source Sentence -> English Target Translation' : 'Random Bidirectional Translation (Mixture of EN->VI and VI->EN)')})
 - Target Words: ${JSON.stringify(sampleWords)}
 
 MANDATORY LINGUISTIC RULES:
@@ -585,7 +595,8 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
       const secondaryVocab = matched ? (matched.secondaryVocabClue || '') : '';
       const framingClue = matched ? (matched.sentenceFramingClue || '') : '';
 
-      const isEnToVi = (direction === 'en_to_vi');
+      const isEnToVi = (direction === 'random') ? (Math.random() < 0.5) : (direction === 'en_to_vi');
+      const qDirection = isEnToVi ? 'en_to_vi' : 'vi_to_en';
       const taskObj = {
         sourceText: isEnToVi ? enSentence : viSentence,
         benchmarkText: isEnToVi ? viSentence : enSentence,
@@ -595,7 +606,7 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
         cleanMeaning: extractCleanPrimaryMeaning(w.definitionVi || w.definition, w.term),
         partOfSpeech: w.partOfSpeech || 'noun',
         definitionVi: w.definitionVi || w.definition || '',
-        direction: direction,
+        direction: qDirection,
         keyVocabularyClue: keyClue,
         grammarStructureHint: grammarHint,
         secondaryVocabClue: secondaryVocab,
@@ -643,11 +654,16 @@ function updateTranslationHeaderBadges() {
       dirBadge.style.color = '#34d399';
       dirBadge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
       dirBadge.style.background = 'rgba(16, 185, 129, 0.18)';
-    } else {
+    } else if (currentTranslationDirection === 'vi_to_en') {
       dirBadge.textContent = '🇻🇳 ➔ 🇬🇧 Việt - Anh';
       dirBadge.style.color = '#38bdf8';
       dirBadge.style.borderColor = 'rgba(14, 165, 233, 0.35)';
       dirBadge.style.background = 'rgba(14, 165, 233, 0.18)';
+    } else {
+      dirBadge.textContent = '🔀 Song Phương (Ngẫu Nhiên)';
+      dirBadge.style.color = '#c084fc';
+      dirBadge.style.borderColor = 'rgba(168, 85, 247, 0.35)';
+      dirBadge.style.background = 'rgba(168, 85, 247, 0.18)';
     }
   }
 
@@ -1341,7 +1357,7 @@ function finishTranslationSession() {
   if (durationEl) durationEl.textContent = durationStr;
 
   const cfg = getTranslationDifficultyConfig(currentTranslationDifficulty);
-  const dirLabel = currentTranslationDirection === 'en_to_vi' ? '🇬🇧 ➔ 🇻🇳' : '🇻🇳 ➔ 🇬🇧';
+  const dirLabel = currentTranslationDirection === 'en_to_vi' ? '🇬🇧 ➔ 🇻🇳' : (currentTranslationDirection === 'vi_to_en' ? '🇻🇳 ➔ 🇬🇧' : '🔀 Ngẫu Nhiên');
   if (diffBadgeEl) diffBadgeEl.textContent = `🌐 Chiều: ${dirLabel} • ${cfg.label} (x${translationDiffMult})`;
 
   // Bonus breakdown pill
