@@ -1,4 +1,23 @@
 ================================================================================
+Phiên bản: v0.10.10-37 (Build 338) - Cổng Quản Trị Upgrade & Phát Hành Coupon / Sale Day (Coupon Codes, Sale Day Campaigns, Custom VIP TRY Days, Student Quick Pill Filters, Direct VIP Expiration Display)
+================================================================================
+1. [Tùy Chỉnh Số Ngày VocaVIP TRY Trong Sửa Ví (Vấn đề 14)]:
+   - Bổ sung tùy chọn custom_try kèm ô nhập số ngày linh hoạt (preset 3, 7, 14, 30 ngày hoặc tự nhập số nguyên dương) vào bảng Sửa Ví học viên.
+   - Gán tag ✨ VocaVIP TRY và tính toán hạn dùng chính xác (vipExpiresAt = Date.now() + customDays * 86400000).
+2. [Phát Hành Coupon Code & Chiến Dịch Sale Day Trên Cổng Quản Trị (Vấn đề 15)]:
+   - Coupon Codes: Cho phép Publisher/Admin phát hành mã giảm giá đa dạng (% hoặc VNĐ, áp dụng cho vip/shop/all, đơn tối thiểu, giảm tối đa, hạn dùng, giới hạn 1 lần/học viên), lưu trữ Cloud Realtime Database `/coupon_codes/${code}.json`, quản lý danh sách trực quan, tra cứu và xóa mã trên Cloud.
+   - Checkout VocaVIP Coupon: Tích hợp ô nhập mã coupon trên Bảng Giá VIP (modal-vip-pricing.html), tự động kiểm tra tính hợp lệ và hạn mức, tính toán chiết khấu, tự động sinh lại mã thanh toán VietQR và ghi nhận lịch sử áp dụng `/user_coupons/${uid}/${code}.json`.
+   - Chiến Dịch Sale Day Toàn Sàn: Thiết lập chiến dịch Flash Sale toàn sàn với % chiết khấu và thời hạn, lưu Cloud `/active_sale_campaign.json`, tự động kích hoạt banner thông báo rực rỡ và giảm giá toàn bộ VocaShop & Bảng Giá VIP.
+3. [Gọn Gàng Thẻ VoCoin Trên Dashboard Quản Lý Flower (Vấn đề 16)]:
+   - Rút gọn thẻ VoCoin trên Dashboard chỉ hiển thị "💰 Tổng VoCoin: X VoCoin", loại bỏ chuỗi giải thích dài dòng để giao diện gọn gàng, thanh thoát.
+4. [Bộ Lọc Nhanh Dạng Pill Cho Danh Sách Flower (Vấn đề 17)]:
+   - Tích hợp 3 nút pill Tất Cả, 👑 VIP, 🆓 Free kèm số lượng học viên đếm tự động dưới ô tìm kiếm để lọc nhanh danh sách Flower tức thì.
+5. [Hiển Thị Mốc Hết Hạn VIP Trực Tiếp Trên Thẻ Học Viên (Vấn đề 18)]:
+   - Hiển thị trực tiếp hạn dùng VIP dạng badge "⏳ Hạn: DD/MM/YYYY (còn X ngày)" hoặc "(Vĩnh viễn)" / "(Đã hết hạn)" ngay dưới huy hiệu VIP trên thẻ học viên.
+6. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-37 Build 338)]:
+   - Đồng bộ nhất quán toàn diện 7 điểm phiên bản trên Web PWA, Windows App, Flutter config, Service Worker và Release Scripts.
+
+================================================================================
 Phiên bản: v0.10.10-36 (Build 337) - Cuộc Cách Mạng Thành Tích (Achievement Revolution: 50 Badges) & Hệ Thống Chấm Đỏ Báo Hiệu Phần Thưởng Chưa Nhận
 ================================================================================
 1. [Mở Rộng Hệ Thống Thành Tích Lên 50 Danh Hiệu (Vấn đề 12)]:

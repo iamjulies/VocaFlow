@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-36 Build 337)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-37 Build 338)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-36 Build 337)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-37 Build 338)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-36';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-36 (Build 337)';
-    const VOCAFLOW_APP_BUILD = 337;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-37';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-37 (Build 338)';
+    const VOCAFLOW_APP_BUILD = 338;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -2345,6 +2345,23 @@
         }
       } catch (cloudErr) {
         console.warn('Cloud gift check error:', cloudErr);
+      }
+
+      // 4. Try checking if it is a Coupon Code (v0.10.10-37 Issue 15)
+      try {
+        const cRes = await fetch(`${rtdbUrl}/coupon_codes/${encodeURIComponent(code)}.json`);
+        if (cRes.ok) {
+          const cData = await cRes.json();
+          if (cData && typeof cData === 'object' && cData.isActive !== false) {
+            const discountDisplay = cData.discountType === 'percent' ? `${cData.discountValue}%` : `${(cData.discountValue || 0).toLocaleString('vi-VN')}đ`;
+            msg.style.display = 'block';
+            msg.style.color = '#38bdf8';
+            msg.innerHTML = `🎟️ Mã <strong>${escapeHtml(code)}</strong> là Mã Giảm Giá Coupon (Giảm <strong>${discountDisplay}</strong>)!<br><span style="font-size:11px;color:var(--text-muted);">Mã này áp dụng khi thanh toán Gói VocaVIP tại Bảng Giá VIP.</span>`;
+            return;
+          }
+        }
+      } catch (cErr) {
+        console.warn('Cloud coupon check error:', cErr);
       }
 
       msg.style.display = 'block';

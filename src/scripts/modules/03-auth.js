@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-36 Build 337)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-37 Build 338)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -388,11 +388,31 @@
 
       const vipSelect = document.getElementById('adjust-wallet-vip-select');
       const vipBadge = document.getElementById('adjust-current-vip-badge');
-      if (vipSelect) vipSelect.value = (student.isVip && student.vipTier) ? student.vipTier : 'none';
-      if (vipBadge) vipBadge.textContent = student.isVip ? ('VocaVIP ' + (student.vipTier || '').toUpperCase()) : 'Chưa có VocaVIP';
+      const customContainer = document.getElementById('adjust-wallet-vip-custom-days-container');
+      const customDaysInput = document.getElementById('adjust-wallet-vip-custom-days-input');
+
+      if (student.isVip && student.vipTier === 'try') {
+        if (vipSelect) vipSelect.value = 'custom_try';
+        if (customContainer) customContainer.style.display = 'block';
+        const remainingDays = student.vipExpiresAt ? Math.max(1, Math.ceil((student.vipExpiresAt - Date.now()) / 86400000)) : 7;
+        if (customDaysInput) customDaysInput.value = remainingDays;
+        if (vipBadge) vipBadge.textContent = '✨ VocaVIP TRY (' + remainingDays + ' ngày)';
+      } else {
+        if (vipSelect) vipSelect.value = (student.isVip && student.vipTier) ? student.vipTier : 'none';
+        if (customContainer) customContainer.style.display = 'none';
+        if (vipBadge) vipBadge.textContent = student.isVip ? ('VocaVIP ' + (student.vipTier || '').toUpperCase()) : 'Chưa có VocaVIP';
+      }
 
       openModal('modal-admin-adjust-wallet');
     }
+
+    function handleAdjustWalletVipSelectChange(val) {
+      const customContainer = document.getElementById('adjust-wallet-vip-custom-days-container');
+      if (customContainer) {
+        customContainer.style.display = val === 'custom_try' ? 'block' : 'none';
+      }
+    }
+    window.handleAdjustWalletVipSelectChange = handleAdjustWalletVipSelectChange;
 
     function addAdjustPoints(amount) {
       const input = document.getElementById('adjust-wallet-points-input');
@@ -453,10 +473,22 @@
       const newFreezes = parseInt(frzInput ? frzInput.value : '0', 10) || 0;
 
       const vipSelect = document.getElementById('adjust-wallet-vip-select');
-      const selectedVipTier = vipSelect ? vipSelect.value : 'none';
-      const isVipGranted = (selectedVipTier !== 'none');
-      const durationDays = selectedVipTier === 'monthly' ? 30 : (selectedVipTier === 'yearly' ? 365 : 0);
-      const newVipExpiresAt = (isVipGranted && durationDays > 0) ? (Date.now() + durationDays * 86400000) : 0;
+      const rawSelectedVipTier = vipSelect ? vipSelect.value : 'none';
+      let selectedVipTier = rawSelectedVipTier;
+      let durationDays = 0;
+
+      if (rawSelectedVipTier === 'custom_try') {
+        selectedVipTier = 'try';
+        const customDaysInput = document.getElementById('adjust-wallet-vip-custom-days-input');
+        durationDays = parseInt(customDaysInput ? customDaysInput.value : '7', 10) || 7;
+      } else if (rawSelectedVipTier === 'monthly') {
+        durationDays = 30;
+      } else if (rawSelectedVipTier === 'yearly') {
+        durationDays = 365;
+      }
+
+      const isVipGranted = (rawSelectedVipTier !== 'none');
+      const newVipExpiresAt = (isVipGranted && durationDays > 0) ? (Date.now() + durationDays * 86400000) : (rawSelectedVipTier === 'lifetime' ? 0 : 0);
 
       const btn = document.getElementById('btn-save-adjust-wallet');
       if (btn) btn.textContent = '⏳ Đang lưu lên Cloud...';
@@ -2164,16 +2196,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const totalDecks = adminStudentsData.reduce((sum, s) => sum + s.deckCount, 0);
         const totalWords = adminStudentsData.reduce((sum, s) => sum + s.wordCount, 0);
         const totalPoints = adminStudentsData.reduce((sum, s) => sum + s.points, 0);
-        const totalHints = adminStudentsData.reduce((sum, s) => sum + s.hints, 0);
-        const totalSkips = adminStudentsData.reduce((sum, s) => sum + s.skips, 0);
 
         const sCountEl = document.getElementById('admin-stat-total-students');
         const dCountEl = document.getElementById('admin-stat-total-decks');
         const pCountEl = document.getElementById('admin-stat-total-points');
 
-        if (sCountEl) sCountEl.textContent = totalStudents + ' người';
+        if (sCountEl) sCountEl.textContent = totalStudents + ' Flower';
         if (dCountEl) dCountEl.textContent = totalDecks + ' bộ (' + totalWords + ' từ)';
-        if (pCountEl) pCountEl.textContent = totalPoints + ' VoCoin (' + totalHints + ' VocaHint, ' + totalSkips + ' VocaSkip)';
+        if (pCountEl) pCountEl.textContent = totalPoints.toLocaleString() + ' VoCoin';
+
+        // Update Pill Counts (v0.10.10-37)
+        const vipCount = adminStudentsData.filter(s => s.isVip).length;
+        const freeCount = totalStudents - vipCount;
+        const pillAll = document.getElementById('admin-pill-count-all');
+        const pillVip = document.getElementById('admin-pill-count-vip');
+        const pillFree = document.getElementById('admin-pill-count-free');
+        if (pillAll) pillAll.textContent = totalStudents;
+        if (pillVip) pillVip.textContent = vipCount;
+        if (pillFree) pillFree.textContent = freeCount;
 
         renderAdminStudentsTable();
       } catch (err) {
@@ -2182,6 +2222,54 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
     window.fetchAdminStudentsList = fetchAdminStudentsList;
+
+    let adminStudentsPillFilter = 'all';
+
+    function setAdminStudentsPillFilter(filter) {
+      adminStudentsPillFilter = filter || 'all';
+      const btnAll = document.getElementById('btn-student-filter-all');
+      const btnVip = document.getElementById('btn-student-filter-vip');
+      const btnFree = document.getElementById('btn-student-filter-free');
+
+      if (btnAll) {
+        if (adminStudentsPillFilter === 'all') {
+          btnAll.className = 'btn btn-sm btn-primary';
+          btnAll.style.background = 'var(--primary)';
+          btnAll.style.color = 'white';
+        } else {
+          btnAll.className = 'btn btn-sm btn-outline';
+          btnAll.style.background = 'transparent';
+          btnAll.style.color = 'var(--text-muted)';
+        }
+      }
+
+      if (btnVip) {
+        if (adminStudentsPillFilter === 'vip') {
+          btnVip.className = 'btn btn-sm btn-primary';
+          btnVip.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          btnVip.style.color = 'white';
+        } else {
+          btnVip.className = 'btn btn-sm btn-outline';
+          btnVip.style.background = 'transparent';
+          btnVip.style.color = '#fbbf24';
+        }
+      }
+
+      if (btnFree) {
+        if (adminStudentsPillFilter === 'free') {
+          btnFree.className = 'btn btn-sm btn-primary';
+          btnFree.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          btnFree.style.color = 'white';
+        } else {
+          btnFree.className = 'btn btn-sm btn-outline';
+          btnFree.style.background = 'transparent';
+          btnFree.style.color = 'var(--text-muted)';
+        }
+      }
+
+      renderAdminStudentsTable();
+    }
+    window.setAdminStudentsPillFilter = setAdminStudentsPillFilter;
 
     function filterAdminStudents(query) {
       renderAdminStudentsTable(query);
@@ -2197,12 +2285,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const dataList = (window.adminStudentsData && Array.isArray(window.adminStudentsData)) ? window.adminStudentsData : ((typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) ? adminStudentsData : []);
       const filtered = dataList.filter(s => {
         if (!s) return false;
+        if (adminStudentsPillFilter === 'vip' && !s.isVip) return false;
+        if (adminStudentsPillFilter === 'free' && s.isVip) return false;
         if (!q) return true;
         return (s.displayName || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q) || (s.uid || '').toLowerCase().includes(q);
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">Không tìm thấy Flower nào phù hợp với từ khóa "' + escapeHtml(q) + '".</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--text-muted);">Không tìm thấy Flower nào phù hợp với bộ lọc hiện tại.</div>';
         return;
       }
 
@@ -2210,6 +2300,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       filtered.forEach(s => {
         const avatarDisplay = s.avatar || (s.displayName ? s.displayName.trim()[0] : 'U').toUpperCase();
         const formattedDate = s.lastSync ? formatDateTime(s.lastSync) : 'Chưa đồng bộ';
+
+        // Format direct VIP expiration string (v0.10.10-37 Issue 18)
+        let vipExpiryBadgeHtml = '';
+        if (s.isVip) {
+          if (s.vipTier === 'lifetime' || !s.vipExpiresAt || s.vipExpiresAt > Date.now() + 80 * 365 * 86400000) {
+            vipExpiryBadgeHtml = '<span class="badge" style="font-size: 10px; background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px; font-weight: 700;">⏳ Hạn: <strong style="color: #ffd700;">Vĩnh viễn</strong></span>';
+          } else if (s.vipExpiresAt < Date.now()) {
+            const expDate = new Date(s.vipExpiresAt);
+            const expDateStr = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
+            vipExpiryBadgeHtml = `<span class="badge" style="font-size: 10px; background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 1px 6px; font-weight: 700;">⏳ Hạn: ${expDateStr} (<strong style="color: #ef4444;">Đã hết hạn</strong>)</span>`;
+          } else {
+            const expDate = new Date(s.vipExpiresAt);
+            const expDateStr = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
+            const daysLeft = Math.max(1, Math.ceil((s.vipExpiresAt - Date.now()) / 86400000));
+            vipExpiryBadgeHtml = `<span class="badge" style="font-size: 10px; background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(16,185,129,0.4); padding: 1px 6px; font-weight: 700;">⏳ Hạn: <strong style="color: #6ee7b7;">${expDateStr}</strong> (còn ${daysLeft} ngày)</span>`;
+          }
+        }
 
         html += `
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;">
@@ -2231,6 +2338,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                       ` : `
                         <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 1px solid rgba(251,191,36,0.5); font-weight: 800; padding: 1px 6px;">👑 VocaVIP ${s.vipTier ? s.vipTier.toUpperCase() : ''}</span>
                       `}
+                      ${vipExpiryBadgeHtml}
                     ` : `
                       <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ Flower">${escapeHtml(s.displayName)}</span>
                       <span class="badge" style="font-size: 9.5px; background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.12); padding: 1px 6px;">Thường (Free)</span>
@@ -2561,6 +2669,446 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
     }
 
+    // =========================================================================
+    // PUBLISHER COUPON CODES & SALE DAY ENGINE (v0.10.10-37 Build 338)
+    // =========================================================================
+    let currentPublisherCodeSubtab = 'giftcodes';
+
+    function switchPublisherCodeSubtab(subtab) {
+      currentPublisherCodeSubtab = subtab || 'giftcodes';
+      const isGift = currentPublisherCodeSubtab === 'giftcodes';
+      const isCoupon = currentPublisherCodeSubtab === 'coupons';
+      const isSale = currentPublisherCodeSubtab === 'saleday';
+
+      const giftView = document.getElementById('pub-subtab-giftcodes');
+      const couponView = document.getElementById('pub-subtab-coupons');
+      const saleView = document.getElementById('pub-subtab-saleday');
+
+      if (giftView) giftView.style.display = isGift ? 'block' : 'none';
+      if (couponView) couponView.style.display = isCoupon ? 'block' : 'none';
+      if (saleView) saleView.style.display = isSale ? 'block' : 'none';
+
+      const giftBtn = document.getElementById('pub-subtab-btn-giftcodes');
+      const couponBtn = document.getElementById('pub-subtab-btn-coupons');
+      const saleBtn = document.getElementById('pub-subtab-btn-saleday');
+
+      if (giftBtn) {
+        giftBtn.className = isGift ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+        giftBtn.style.background = isGift ? 'var(--primary)' : 'transparent';
+        giftBtn.style.color = isGift ? 'white' : 'var(--text-muted)';
+      }
+      if (couponBtn) {
+        couponBtn.className = isCoupon ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+        couponBtn.style.background = isCoupon ? 'linear-gradient(135deg, #0284c7, #0369a1)' : 'transparent';
+        couponBtn.style.color = isCoupon ? 'white' : '#38bdf8';
+      }
+      if (saleBtn) {
+        saleBtn.className = isSale ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+        saleBtn.style.background = isSale ? 'linear-gradient(135deg, #ec4899, #db2777)' : 'transparent';
+        saleBtn.style.color = isSale ? 'white' : '#f472b6';
+      }
+
+      if (isGift) refreshAdminGiftCodesList();
+      if (isCoupon) refreshAdminCouponCodesList();
+      if (isSale) refreshAdminSaleCampaignUI();
+    }
+    window.switchPublisherCodeSubtab = switchPublisherCodeSubtab;
+
+    function handleAdminCouponTypeChange(type) {
+      const valLabel = document.getElementById('admin-coupon-val-label');
+      const maxDisContainer = document.getElementById('admin-coupon-max-discount-container');
+      const valInput = document.getElementById('admin-coupon-value');
+      if (type === 'fixed') {
+        if (valLabel) valLabel.textContent = 'Mức Giảm (VNĐ):';
+        if (maxDisContainer) maxDisContainer.style.display = 'none';
+        if (valInput && parseInt(valInput.value, 10) < 1000) valInput.value = '50000';
+      } else {
+        if (valLabel) valLabel.textContent = 'Mức Giảm (%):';
+        if (maxDisContainer) maxDisContainer.style.display = 'block';
+        if (valInput && parseInt(valInput.value, 10) > 100) valInput.value = '20';
+      }
+    }
+    window.handleAdminCouponTypeChange = handleAdminCouponTypeChange;
+
+    async function createAdminCouponCode() {
+      const codeInput = document.getElementById('admin-coupon-code');
+      const typeInput = document.getElementById('admin-coupon-type');
+      const valInput = document.getElementById('admin-coupon-value');
+      const scopeInput = document.getElementById('admin-coupon-scope');
+      const minSpendInput = document.getElementById('admin-coupon-min-spend');
+      const maxDiscountInput = document.getElementById('admin-coupon-max-discount');
+      const expiryInput = document.getElementById('admin-coupon-expiry');
+      const oncePerUserInput = document.getElementById('admin-coupon-once-per-user');
+
+      if (!codeInput || !valInput) return;
+
+      const rawCode = (codeInput.value || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      if (!rawCode) {
+        alert('Vui lòng nhập mã Coupon (VD: VIP2026)!');
+        return;
+      }
+
+      const discountType = typeInput ? typeInput.value : 'percent';
+      const discountValue = parseInt(valInput.value, 10) || 0;
+      if (discountValue <= 0) {
+        alert('Mức giảm giá phải lớn hơn 0!');
+        return;
+      }
+      if (discountType === 'percent' && (discountValue < 1 || discountValue > 100)) {
+        alert('Mức giảm theo % phải từ 1% đến 100%!');
+        return;
+      }
+
+      const scope = scopeInput ? scopeInput.value : 'all';
+      const minSpend = parseInt(minSpendInput ? minSpendInput.value : '0', 10) || 0;
+      const maxDiscount = parseInt(maxDiscountInput ? maxDiscountInput.value : '0', 10) || 0;
+      const oncePerUser = oncePerUserInput ? oncePerUserInput.checked : true;
+
+      let expiresAt = null;
+      const expiryVal = expiryInput?.value || 'never';
+      if (expiryVal === '1h') expiresAt = new Date(Date.now() + 3600 * 1000).toISOString();
+      else if (expiryVal === '24h') expiresAt = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+      else if (expiryVal === '3d') expiresAt = new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString();
+      else if (expiryVal === '7d') expiresAt = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
+      else if (expiryVal === '30d') expiresAt = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const payload = {
+          code: rawCode,
+          discountType: discountType,
+          discountValue: discountValue,
+          scope: scope,
+          minSpend: minSpend,
+          maxDiscount: maxDiscount,
+          expiresAt: expiresAt,
+          oncePerUser: oncePerUser,
+          isActive: true,
+          createdAt: new Date().toISOString()
+        };
+
+        const res = await fetch(`${rtdbUrl}/coupon_codes/${rawCode}.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast(`🚀 Đã phát hành mã giảm giá Coupon "${rawCode}" lên Cloud thành công!`);
+          codeInput.value = '';
+          refreshAdminCouponCodesList();
+        } else {
+          alert('Không thể lưu mã giảm giá lên Cloud. Kiểm tra quyền hoặc kết nối!');
+        }
+      } catch (err) {
+        alert('Lỗi tạo mã giảm giá: ' + err.message);
+      }
+    }
+    window.createAdminCouponCode = createAdminCouponCode;
+
+    async function refreshAdminCouponCodesList() {
+      const listContainer = document.getElementById('admin-active-coupons-list');
+      if (!listContainer) return;
+      listContainer.innerHTML = '<em>Đang kết nối Cloud tải danh sách mã giảm giá...</em>';
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/coupon_codes.json${authParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!data || Object.keys(data).length === 0) {
+            listContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 10px;">Chưa có mã giảm giá Coupon nào trên Cloud. Hãy tạo mã đầu tiên ở trên!</div>';
+            return;
+          }
+
+          let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+          for (const [codeKey, cData] of Object.entries(data)) {
+            if (!cData) continue;
+            const isExpired = cData.expiresAt && (new Date(cData.expiresAt).getTime() < Date.now());
+            const expiryStr = cData.expiresAt ? formatDateTime(cData.expiresAt) : 'Vĩnh viễn';
+            const statusBadge = isExpired
+              ? '<span class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; font-size: 10px;">🔴 Hết hạn</span>'
+              : '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px;">🟢 Hoạt động</span>';
+
+            const discountDisplay = cData.discountType === 'percent'
+              ? `-${cData.discountValue}%`
+              : `-${(cData.discountValue || 0).toLocaleString('vi-VN')}đ`;
+
+            const scopeText = cData.scope === 'vip' ? '👑 Chỉ VocaVIP' : (cData.scope === 'shop' ? '🏪 Chỉ VocaShop' : '🌐 Toàn Sàn');
+            const minSpendText = cData.minSpend > 0 ? `Đơn tối thiểu: ${cData.minSpend.toLocaleString('vi-VN')}đ` : 'Không giới hạn đơn';
+            const maxDisText = (cData.discountType === 'percent' && cData.maxDiscount > 0) ? ` • Giảm tối đa: ${cData.maxDiscount.toLocaleString('vi-VN')}đ` : '';
+
+            html += `
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-elevated); padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: #38bdf8; font-family: monospace; font-size: 14px; letter-spacing: 0.5px;">${escapeHtml(cData.code || codeKey)}</strong>
+                    <span class="badge" style="background: rgba(56,189,248,0.2); color: #38bdf8; font-weight: 800; font-size: 11px;">${discountDisplay}</span>
+                    <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px;">${scopeText}</span>
+                    ${cData.oncePerUser ? '<span class="badge" style="background: rgba(168,85,247,0.15); color: #c084fc; font-size: 10px;">1 lần/user</span>' : ''}
+                    ${statusBadge}
+                  </div>
+                  <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">
+                    💰 ${minSpendText}${maxDisText} • ⏰ Hạn: <strong style="color: var(--text);">${expiryStr}</strong>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px;" onclick="copyGiftCodeToClipboard('${escapeHtml(cData.code || codeKey)}')">📋 Copy</button>
+                  <button class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px; color: var(--danger); border-color: rgba(239,68,68,0.3);" onclick="deleteAdminCouponCode('${escapeHtml(codeKey)}')">🗑️ Xóa</button>
+                </div>
+              </div>
+            `;
+          }
+          html += '</div>';
+          listContainer.innerHTML = html;
+        } else {
+          listContainer.innerHTML = '<div style="color: var(--danger);">Không tải được danh sách từ Cloud.</div>';
+        }
+      } catch (err) {
+        listContainer.innerHTML = `<div style="color: var(--text-muted);">Lỗi kết nối: ${err.message}</div>`;
+      }
+    }
+    window.refreshAdminCouponCodesList = refreshAdminCouponCodesList;
+
+    async function deleteAdminCouponCode(codeKey) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa mã giảm giá "${codeKey}" khỏi Cloud?`)) return;
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        await fetch(`${rtdbUrl}/coupon_codes/${encodeURIComponent(codeKey)}.json${authParam}`, {
+          method: 'DELETE'
+        });
+        showToast(`🗑️ Đã xóa mã giảm giá "${codeKey}"!`);
+        refreshAdminCouponCodesList();
+      } catch (err) {
+        alert('Lỗi xóa mã: ' + err.message);
+      }
+    }
+    window.deleteAdminCouponCode = deleteAdminCouponCode;
+
+    // SALE DAY CAMPAIGN FUNCTIONS (v0.10.10-37 Issue 15)
+    async function saveAdminSaleCampaign() {
+      const nameInput = document.getElementById('admin-sale-name');
+      const pctInput = document.getElementById('admin-sale-percent');
+      const scopeInput = document.getElementById('admin-sale-scope');
+      const durationInput = document.getElementById('admin-sale-duration');
+      const bannerInput = document.getElementById('admin-sale-banner-text');
+      const activeCheckbox = document.getElementById('admin-sale-active-checkbox');
+
+      const name = (nameInput ? nameInput.value : '').trim() || '🎉 SIÊU SALE HỆ THỐNG';
+      const discountPct = Math.min(90, Math.max(5, parseInt(pctInput ? pctInput.value : '25', 10) || 25));
+      const scope = scopeInput ? scopeInput.value : 'all';
+      const durationVal = durationInput ? durationInput.value : '7d';
+      const isActive = activeCheckbox ? activeCheckbox.checked : true;
+
+      let expiresAt = null;
+      if (durationVal === '24h') expiresAt = Date.now() + 24 * 3600 * 1000;
+      else if (durationVal === '3d') expiresAt = Date.now() + 3 * 24 * 3600 * 1000;
+      else if (durationVal === '7d') expiresAt = Date.now() + 7 * 24 * 3600 * 1000;
+      else if (durationVal === '30d') expiresAt = Date.now() + 30 * 24 * 3600 * 1000;
+
+      const bannerText = (bannerInput ? bannerInput.value : '').trim() || `🔥 ${name}! Giảm ngay ${discountPct}% toàn bộ VocaShop & Gói VocaVIP!`;
+
+      const campaignPayload = {
+        name: name,
+        discountPct: discountPct,
+        scope: scope,
+        bannerText: bannerText,
+        startsAt: Date.now(),
+        expiresAt: expiresAt,
+        active: isActive,
+        updatedAt: new Date().toISOString()
+      };
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        const res = await fetch(`${rtdbUrl}/active_sale_campaign.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(campaignPayload)
+        });
+
+        if (res.ok) {
+          window.vocaflow_active_sale_campaign = campaignPayload;
+          try {
+            localStorage.setItem('vocaflow_active_sale_campaign', JSON.stringify(campaignPayload));
+          } catch(e) {}
+
+          showToast(`⚡ Đã ${isActive ? 'kích hoạt' : 'cập nhật'} chiến dịch Sale Day "${name}" (${discountPct}%) thành công!`);
+          refreshAdminSaleCampaignUI();
+          if (typeof renderStoreEventDiscountBanners === 'function') renderStoreEventDiscountBanners();
+        } else {
+          alert('Không thể cập nhật chiến dịch lên Cloud!');
+        }
+      } catch (e) {
+        alert('Lỗi lưu chiến dịch: ' + e.message);
+      }
+    }
+    window.saveAdminSaleCampaign = saveAdminSaleCampaign;
+
+    async function toggleAdminSaleCampaign(forceActive = null) {
+      let campaign = window.vocaflow_active_sale_campaign || null;
+      if (!campaign) {
+        try {
+          const cached = localStorage.getItem('vocaflow_active_sale_campaign');
+          if (cached) campaign = JSON.parse(cached);
+        } catch (e) {}
+      }
+
+      const newActiveState = (forceActive !== null) ? forceActive : (campaign ? !campaign.active : false);
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      try {
+        await fetch(`${rtdbUrl}/active_sale_campaign/active.json${authParam}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newActiveState)
+        });
+
+        if (campaign) {
+          campaign.active = newActiveState;
+          window.vocaflow_active_sale_campaign = campaign;
+          try {
+            localStorage.setItem('vocaflow_active_sale_campaign', JSON.stringify(campaign));
+          } catch(e) {}
+        }
+
+        showToast(newActiveState ? '🟢 Đã BẬT chiến dịch Sale Day!' : '⏹️ Đã TẮT chiến dịch Sale Day!');
+        refreshAdminSaleCampaignUI();
+        if (typeof renderStoreEventDiscountBanners === 'function') renderStoreEventDiscountBanners();
+      } catch (e) {
+        alert('Lỗi: ' + e.message);
+      }
+    }
+    window.toggleAdminSaleCampaign = toggleAdminSaleCampaign;
+
+    async function refreshAdminSaleCampaignUI() {
+      const card = document.getElementById('admin-active-sale-card');
+      const badge = document.getElementById('admin-sale-status-badge');
+      const activeCheckbox = document.getElementById('admin-sale-active-checkbox');
+      const nameInput = document.getElementById('admin-sale-name');
+      const pctInput = document.getElementById('admin-sale-percent');
+      const bannerInput = document.getElementById('admin-sale-banner-text');
+
+      const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+      const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+      let campaign = null;
+      try {
+        const res = await fetch(`${rtdbUrl}/active_sale_campaign.json${authParam}`);
+        if (res.ok) {
+          campaign = await res.json();
+          if (campaign) {
+            window.vocaflow_active_sale_campaign = campaign;
+            try {
+              localStorage.setItem('vocaflow_active_sale_campaign', JSON.stringify(campaign));
+            } catch(e) {}
+          }
+        }
+      } catch(e) {
+        campaign = window.vocaflow_active_sale_campaign || null;
+      }
+
+      if (!campaign || !campaign.name) {
+        if (card) card.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 10px;">Chưa có chiến dịch Sale Day nào được thiết lập.</div>';
+        if (badge) { badge.textContent = '⚪ Chưa Bật'; badge.style.background = 'rgba(255,255,255,0.1)'; badge.style.color = 'var(--text-muted)'; }
+        if (activeCheckbox) activeCheckbox.checked = false;
+        return;
+      }
+
+      const isExpired = campaign.expiresAt && campaign.expiresAt < Date.now();
+      const isLive = campaign.active && !isExpired;
+
+      if (badge) {
+        if (isLive) {
+          badge.textContent = '🟢 Đang Bật & Hoạt Động';
+          badge.style.background = 'rgba(16,185,129,0.2)';
+          badge.style.color = '#34d399';
+        } else if (isExpired) {
+          badge.textContent = '🔴 Đã Hết Hạn';
+          badge.style.background = 'rgba(239,68,68,0.2)';
+          badge.style.color = '#f87171';
+        } else {
+          badge.textContent = '⏹️ Đã Tạm Dừng';
+          badge.style.background = 'rgba(245,158,11,0.2)';
+          badge.style.color = '#fbbf24';
+        }
+      }
+
+      if (activeCheckbox) activeCheckbox.checked = !!campaign.active;
+      if (nameInput && !nameInput.value) nameInput.value = campaign.name || '';
+      if (pctInput && !pctInput.value) pctInput.value = campaign.discountPct || 30;
+      if (bannerInput && !bannerInput.value) bannerInput.value = campaign.bannerText || '';
+
+      if (card) {
+        const expiryStr = campaign.expiresAt ? formatDateTime(campaign.expiresAt) : 'Vô thời hạn (Thủ công)';
+        const scopeStr = campaign.scope === 'vip' ? '👑 Chỉ Gói VIP' : (campaign.scope === 'shop' ? '🏪 Chỉ VocaShop' : '🌐 Toàn Sàn (VIP & Shop)');
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #f472b6; display: flex; align-items: center; gap: 6px;">
+                <span>⚡</span> <span>${escapeHtml(campaign.name)}</span>
+                <span class="badge" style="background: rgba(236,72,153,0.25); color: #f472b6; font-weight: 800; font-size: 11px;">GIẢM ${campaign.discountPct}%</span>
+                <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px;">${scopeStr}</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--text); margin-top: 4px;">
+                📢 "${escapeHtml(campaign.bannerText || '')}"
+              </div>
+              <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">
+                ⏰ Hạn chiến dịch: <strong style="color: var(--text);">${expiryStr}</strong>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm ${isLive ? 'btn-outline' : 'btn-primary'}" onclick="toggleAdminSaleCampaign(${!isLive})" style="font-size: 11.5px; font-weight: 700;">
+                ${isLive ? '⏹️ Tạm Dừng' : '▶️ Bật Lại'}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+    window.refreshAdminSaleCampaignUI = refreshAdminSaleCampaignUI;
+
+    async function fetchActiveSaleCampaignFromCloud() {
+      try {
+        const rtdbUrl = firebaseConfig.databaseURL || 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const res = await fetch(`${rtdbUrl}/active_sale_campaign.json`);
+        if (res.ok) {
+          const campaign = await res.json();
+          if (campaign && campaign.active && (!campaign.expiresAt || campaign.expiresAt > Date.now())) {
+            window.vocaflow_active_sale_campaign = campaign;
+            try {
+              localStorage.setItem('vocaflow_active_sale_campaign', JSON.stringify(campaign));
+            } catch(e) {}
+          } else {
+            window.vocaflow_active_sale_campaign = null;
+          }
+        }
+      } catch (e) {
+        try {
+          const cached = localStorage.getItem('vocaflow_active_sale_campaign');
+          if (cached) {
+            const camp = JSON.parse(cached);
+            if (camp && camp.active && (!camp.expiresAt || camp.expiresAt > Date.now())) {
+              window.vocaflow_active_sale_campaign = camp;
+            }
+          }
+        } catch(err) {}
+      }
+      if (typeof renderStoreEventDiscountBanners === 'function') {
+        renderStoreEventDiscountBanners();
+      }
+    }
+    window.fetchActiveSaleCampaignFromCloud = fetchActiveSaleCampaignFromCloud;
 
     // =========================================================================
     // CREATOR FOLLOW & SOCIAL GRAPH ENGINE (v0.10.7d / v0.10.9-64 Anti-Resurrect)
@@ -6600,6 +7148,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-37': {
+        postId: 'official_update_v0_10_10_37',
+        releaseTime: '2026-09-19T22:00:00.000Z',
+        title: '🎟️ Cổng Quản Trị Upgrade: Coupon Code, Chiến Dịch Sale Day & Tùy Biến VocaVIP TRY (v0.10.10-37 Build 338)!',
+        summary: 'Tùy chỉnh số ngày VocaVIP TRY linh hoạt; hệ thống phát hành Coupon Code & Chiến dịch Sale Day toàn sàn trên Publisher Portal; thanh toán VIP áp dụng mã giảm giá tức thì; bộ lọc Flower nhanh dạng Pill và hiển thị trực tiếp hạn VIP.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-37 (Build 338)!\n\n✨ Những điểm mới nổi bật:\n✨ Tùy Chỉnh Số Ngày VocaVIP TRY: Admin/Publisher có thể cấp thử nghiệm VocaVIP với số ngày tùy chọn linh hoạt (preset 3, 7, 14, 30 ngày hoặc tự nhập) trong bảng Sửa Ví.\n🎟️ Hệ Thống Coupon Code Thông Minh: Phát hành và quản lý mã giảm giá đa dạng (% hoặc VNĐ, đơn tối thiểu, giảm tối đa, thời hạn dùng, giới hạn 1 lần/học viên) đồng bộ đám mây Cloud.\n⚡ Chiến Dịch Sale Day Toàn Sàn: Kích hoạt giảm giá toàn bộ VocaShop & Bảng Giá VIP kèm banner thông báo nổi bật rực rỡ.\n💳 Áp Dụng Mã Giảm Giá Khi Mua VIP: Học viên có thể nhập mã Coupon trực tiếp trên Bảng Giá VIP để nhận ưu đãi thanh toán và tạo mã VietQR tự động điều chỉnh giá trị.\n🎯 Bộ Lọc Học Viên Nhanh Dạng Pill: Dễ dàng phân loại danh sách học viên theo Tất Cả, 👑 VIP, hoặc 🆓 Free kèm số lượng đếm trực quan.\n⏳ Hiển Thị Trực Tiếp Hạn Dùng VIP: Theo dõi ngày hết hạn VIP chính xác ngay trên từng thẻ học viên trong Dashboard Quản lý Flower.\n\nChúc bạn có những giờ phút học tập tuyệt vời và tận hưởng các ưu đãi hấp dẫn cùng VocaFlow! 🚀🎟️`
+      },
       'v0.10.10-36': {
         postId: 'official_update_v0_10_10_36',
         releaseTime: '2026-09-19T14:00:00.000Z',

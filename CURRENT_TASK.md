@@ -1,43 +1,48 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-36 (Build 337)`  
+> **Phiên bản mục tiêu:** `v0.10.10-37 (Build 338)`  
 > **Cập nhật lần cuối:** 2026-09-19  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-36 Build 337)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-37 Build 338)
 
-- [x] **Vấn đề 12: Mở Rộng Hệ Thống Thành Tích Lên 50 Danh Hiệu (`12-achievements.js`, `08-wallet-economy.js`, `02-state-core.js`, `03-auth.js`, `05-quiz-engine.js`, `06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`)**:
-  - Bổ sung 10 danh hiệu mới phân bổ vào 4 nhóm:
-    - *Extended Labs β*: `extended_writing_expert_90` (Bút Lực Thượng Thừa), `extended_context_detective` (Thám Tử Văn Cảnh), `extended_golden_ears` (Đôi Tai Vàng), `extended_bilingual_master` (Bậc Thầy Song Ngữ).
-    - *Ý Chí & Kỷ Luật*: `discipline_atomic_focus` (Tập Trung Nguyên Tử), `discipline_clean_slate` (Dọn Sạch Bảng Vàng), `discipline_unstoppable_flow` (Dòng Chảy Bất Tận).
-    - *VocaCommunity*: `community_inspiring_voice` (Tiếng Nói Truyền Cảm Hứng), `community_ceos_buddy` (Bạn Đồng Hành Của CEO).
-    - *Easter Egg & VIP*: `easter_meme_connoisseur` (Con Nghiện Meme - Secret).
-  - Tích hợp logic kích hoạt và theo dõi tiến độ đầy đủ trên toàn bộ các engine liên quan.
+- [x] **Vấn đề 14: Tùy Chỉnh Số Ngày VocaVIP TRY Trong Sửa Ví (`modal-profile.html`, `03-auth.js`)**:
+  - Bổ sung tùy chọn `custom_try` và container `#adjust-wallet-vip-custom-days-container` với các nút preset (3, 7, 14, 30 ngày) và ô nhập tùy biến.
+  - Xử lý gán tag `✨ VocaVIP TRY` và tính toán `vipExpiresAt` chính xác trong `saveAdjustStudentWalletCloud()`.
 
-- [x] **Vấn đề 13: Hệ Thống Chấm Đỏ Báo Hiệu Phần Thưởng Chưa Nhận (`12-achievements.js`, `header.html`, `modal-profile.html`, `modal-achievements.html`)**:
-  - Triển khai `getUnclaimedAchievementsCount()` và `updateAchievementsBadgeUI()`.
-  - Cập nhật chấm đỏ và số lượng trên 5 điểm truy cập: Nút 3 chấm Header (`#header-more-dot-badge`), Mục menu Header (`#header-more-achieve-badge`), Nút Highlights Profile (`#profile-unclaimed-achieve-badge`), Nút Tab Danh Hiệu Profile (`#profile-tab-btn-achieve-badge`), Nút Panel Profile (`#profile-tab-unclaimed-achieve-badge`).
-  - Cập nhật số đếm 50 danh hiệu đồng bộ trên modal thành tích và header.
+- [x] **Vấn đề 15: Phát Hành Coupon Code & Chiến Dịch Sale Day Trên Cổng Quản Trị (`modal-publisher.html`, `modal-vip-pricing.html`, `03-auth.js`, `08-wallet-economy.js`, `02-state-core.js`)**:
+  - *Coupon Codes*: Tab quản trị phát hành mã giảm giá đa dạng (%/VNĐ, hạn mức, thời hạn, 1 lần/học viên), lưu trữ Cloud RTDB `/coupon_codes/${code}.json`, bảng quản lý mã Cloud Realtime.
+  - *VocaVIP Checkout Coupon*: Ô nhập mã coupon trên Bảng Giá VIP, kiểm tra hợp lệ, chiết khấu và tự động tạo lại VietQR, lưu lịch sử `/user_coupons/${uid}/${code}.json`.
+  - *Chiến Dịch Sale Day Toàn Sàn*: Tạo/bật/tắt campaign giảm giá toàn sàn Flash Sale trên Cloud `/active_sale_campaign.json`, banner thông báo rực rỡ và áp dụng giảm giá toàn diện VocaShop & Bảng Giá VIP.
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-36 Build 337`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-36 (Build 337)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-36 (Build 337)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-36 (Build 337)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-36 Build 337`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-36'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-36 (Build 337)'`, `VOCAFLOW_APP_BUILD = 337`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-36 Build 337` & registry)
-  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-36 Build 337`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-36`)
-  - `pubspec.yaml` (`version: 0.10.10+337`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-36`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-36 (Build 337)`)
-  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
+- [x] **Vấn đề 16: Gọn Gàng Thẻ VoCoin Trên Dashboard Quản Lý Flower (`modal-publisher.html`)**:
+  - Rút gọn thẻ VoCoin chỉ hiển thị `💰 Tổng VoCoin: X VoCoin`, loại bỏ chuỗi giải thích dài dòng.
+
+- [x] **Vấn đề 17: Bộ Lọc Nhanh Dạng Pill Cho Danh Sách Flower (`modal-publisher.html`, `03-auth.js`)**:
+  - 3 nút pill `Tất cả`, `👑 VIP`, `🆓 Free` kèm số lượng đếm tự động dưới ô tìm kiếm để lọc nhanh danh sách Flower tức thì.
+
+- [x] **Vấn đề 18: Hiển Thị Mốc Hết Hạn VIP Trực Tiếp Trên Thẻ Học Viên (`03-auth.js`)**:
+  - Hiển thị badge `⏳ Hạn: DD/MM/YYYY (còn X ngày)` hoặc `(Vĩnh viễn)` / `(Đã hết hạn)` ngay dưới huy hiệu VIP trên thẻ học viên.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-37 Build 338`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-37 (Build 338)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-37 (Build 338)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-37 (Build 338)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-37 Build 338`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-37'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-37 (Build 338)'`, `VOCAFLOW_APP_BUILD = 338`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-37 Build 338` & What's new registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `08-wallet-economy.js` (`v0.10.10-37 Build 338`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-37`)
+  - `pubspec.yaml` (`version: 0.10.10+338`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-37`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-37 (Build 338)`)
+  - `VOCAFLOW_OVERVIEW.txt`
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-35 Build 336)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-36 Build 337)
 
 - [x] **Vấn đề 7: Hoàn Thiện Kết Toán Điểm Thống Nhất Toàn Diện Cho Luyện Nói & Viết Câu (`07-speaking-engine.js`, `06c-writing-engine.js`)**:
   - Khắc phục triệt để lỗi thiếu kết toán số dư ví VoCoin (`setUserPoints`, `addLedgerEntry`) và Điểm Rèn Luyện (`addStudyExp`) trong `finishSpeakingSession()` và `finishWritingSession()`.

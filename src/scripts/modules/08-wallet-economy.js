@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-32 Build 333)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-37 Build 338)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -13,7 +13,30 @@
     // =========================================================================
     // SPECIAL PROMOTION & EVENT DISCOUNT ENGINE (v0.10.10-14 / Build 315)
     // =========================================================================
-    function getStoreActiveDiscount() {
+    function getStoreActiveDiscount(targetScope = 'all') {
+      // 0. Cloud Active Sale Campaign (v0.10.10-37 Issue 15)
+      let campaign = (typeof window !== 'undefined' && window.vocaflow_active_sale_campaign) ? window.vocaflow_active_sale_campaign : null;
+      if (!campaign) {
+        try {
+          const cached = localStorage.getItem('vocaflow_active_sale_campaign');
+          if (cached) campaign = JSON.parse(cached);
+        } catch (e) {}
+      }
+
+      if (campaign && campaign.active && (!campaign.expiresAt || campaign.expiresAt > Date.now()) && (!campaign.startsAt || campaign.startsAt <= Date.now())) {
+        if (!campaign.scope || campaign.scope === 'all' || campaign.scope === targetScope || targetScope === 'all') {
+          const pct = campaign.discountPct || 25;
+          return {
+            isDiscountActive: true,
+            discountPct: pct,
+            discountRate: pct / 100,
+            eventName: campaign.name || '⚡ SIÊU SALE HỆ THỐNG',
+            badgeText: `🔥 SALE -${pct}%`,
+            bannerText: campaign.bannerText || `🔥 ${campaign.name}! Giảm giá ${pct}% toàn bộ Cửa Hàng VocaShop & Gói VocaVIP!`
+          };
+        }
+      }
+
       if (typeof getActiveSpecialEventInfo === 'function') {
         const ev = getActiveSpecialEventInfo();
         if (ev) {
@@ -1957,7 +1980,7 @@
       updateShopBonusesUI();
     }
 
-    // Auto-detect referral code from URL query params on startup
+    // Auto-detect referral code from URL query params on startup & fetch Sale Day Campaign
     window.addEventListener('DOMContentLoaded', () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1966,6 +1989,10 @@
           sessionStorage.setItem('vocaflow_pending_ref_code', refCode.trim().toUpperCase());
         }
       } catch (e) {}
+
+      if (typeof fetchActiveSaleCampaignFromCloud === 'function') {
+        fetchActiveSaleCampaignFromCloud();
+      }
     });
 
     // DECK COLOR PALETTE PRESETS (v0.0.10.3h)
@@ -2292,13 +2319,25 @@
   }
   window.getCleanTransferSyntax = getCleanTransferSyntax;
 
+  let currentAppliedVipCoupon = null;
+
   function selectVipPlan(tier, name, priceStr, amount) {
     switchVipPlanTab(tier);
-    const discount = getStoreActiveDiscount();
+    const discount = getStoreActiveDiscount('vip');
     const finalAmount = applyStoreDiscountToPrice(amount);
     const finalPriceStr = discount.isDiscountActive ? `${finalAmount.toLocaleString('vi-VN')}đ (-${discount.discountPct}%)` : priceStr;
     const syntax = getCleanTransferSyntax(tier);
-    currentSelectedVipPlan = { tier, name, priceStr: finalPriceStr, amount: finalAmount, syntax };
+    currentSelectedVipPlan = { tier, name, baseAmount: amount, priceStr: finalPriceStr, amount: finalAmount, syntax };
+    currentAppliedVipCoupon = null;
+
+    // Reset coupon UI
+    const couponInput = document.getElementById('vip-coupon-input');
+    const couponFeedback = document.getElementById('vip-coupon-feedback');
+    if (couponInput) couponInput.value = '';
+    if (couponFeedback) {
+      couponFeedback.style.display = 'none';
+      couponFeedback.innerHTML = '';
+    }
 
     const box = document.getElementById('vip-payment-info-box');
     const planNameEl = document.getElementById('vip-selected-plan-name');
@@ -2347,6 +2386,137 @@
     }
   }
 
+  async function applyVipCouponCode() {
+    const input = document.getElementById('vip-coupon-input');
+    const feedback = document.getElementById('vip-coupon-feedback');
+    if (!input) return;
+
+    const code = (input.value || '').trim().toUpperCase();
+    if (!code) {
+      if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#f87171';
+        feedback.textContent = 'Vui lòng nhập mã giảm giá Coupon!';
+      }
+      return;
+    }
+
+    if (!currentSelectedVipPlan) {
+      if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#f87171';
+        feedback.textContent = 'Vui lòng chọn 1 gói VIP trước khi áp dụng mã!';
+      }
+      return;
+    }
+
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.style.color = '#38bdf8';
+      feedback.textContent = 'Đang kiểm tra mã giảm giá trên Cloud...';
+    }
+
+    const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
+    const authParam = (currentUser && currentUser.idToken) ? `?auth=${currentUser.idToken}` : '';
+
+    try {
+      const res = await fetch(`${rtdbUrl}/coupon_codes/${encodeURIComponent(code)}.json${authParam}`);
+      if (!res.ok) {
+        throw new Error('Lỗi kết nối kiểm tra mã');
+      }
+      const coupon = await res.json();
+      if (!coupon || coupon.isActive === false) {
+        if (feedback) {
+          feedback.style.color = '#f87171';
+          feedback.textContent = `❌ Mã giảm giá "${code}" không tồn tại hoặc đã hết hiệu lực!`;
+        }
+        return;
+      }
+
+      if (coupon.expiresAt && new Date(coupon.expiresAt).getTime() < Date.now()) {
+        if (feedback) {
+          feedback.style.color = '#f87171';
+          feedback.textContent = `❌ Mã giảm giá "${code}" đã hết hạn sử dụng!`;
+        }
+        return;
+      }
+
+      if (coupon.scope && coupon.scope !== 'all' && coupon.scope !== 'vip') {
+        if (feedback) {
+          feedback.style.color = '#f87171';
+          feedback.textContent = `❌ Mã giảm giá "${code}" không áp dụng cho Gói VocaVIP!`;
+        }
+        return;
+      }
+
+      const basePlanAmount = currentSelectedVipPlan.baseAmount || currentSelectedVipPlan.amount || 299000;
+      if (coupon.minSpend && basePlanAmount < coupon.minSpend) {
+        if (feedback) {
+          feedback.style.color = '#f87171';
+          feedback.textContent = `❌ Đơn hàng tối thiểu để dùng mã này là ${coupon.minSpend.toLocaleString('vi-VN')}đ!`;
+        }
+        return;
+      }
+
+      // Check if already used
+      if (coupon.oncePerUser && currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
+        try {
+          const usedRes = await fetch(`${rtdbUrl}/user_coupons/${currentUser.uid}/${encodeURIComponent(code)}.json${authParam}`);
+          if (usedRes.ok) {
+            const usedData = await usedRes.json();
+            if (usedData) {
+              if (feedback) {
+                feedback.style.color = '#f87171';
+                feedback.textContent = `❌ Bạn đã sử dụng mã giảm giá "${code}" trước đó rồi!`;
+              }
+              return;
+            }
+          }
+        } catch(e) {}
+      }
+
+      // Calculate discount
+      let discountAmt = 0;
+      if (coupon.discountType === 'percent') {
+        discountAmt = Math.round(basePlanAmount * (coupon.discountValue / 100));
+        if (coupon.maxDiscount && coupon.maxDiscount > 0) {
+          discountAmt = Math.min(discountAmt, coupon.maxDiscount);
+        }
+      } else {
+        discountAmt = coupon.discountValue || 0;
+      }
+
+      const finalPrice = Math.max(0, basePlanAmount - discountAmt);
+      currentAppliedVipCoupon = { ...coupon, discountAmt, finalPrice };
+      currentSelectedVipPlan.amount = finalPrice;
+      currentSelectedVipPlan.priceStr = `${finalPrice.toLocaleString('vi-VN')}đ (-${discountAmt.toLocaleString('vi-VN')}đ)`;
+
+      const planPriceEl = document.getElementById('vip-selected-plan-price');
+      const payAmountDisplay = document.getElementById('vip-pay-amount-display');
+      const qrImg = document.getElementById('vip-vietqr-img');
+
+      if (planPriceEl) planPriceEl.textContent = `${finalPrice.toLocaleString('vi-VN')}đ`;
+      if (payAmountDisplay) payAmountDisplay.textContent = `${finalPrice.toLocaleString('vi-VN')}đ (Đã giảm ${discountAmt.toLocaleString('vi-VN')}đ)`;
+
+      if (qrImg) {
+        const syntax = currentSelectedVipPlan.syntax || getCleanTransferSyntax(currentSelectedVipPlan.tier);
+        qrImg.src = `https://img.vietqr.io/image/970422-0916541813-compact2.png?amount=${finalPrice}&addInfo=${encodeURIComponent(syntax)}&accountName=NONG%20DUC%20HAO`;
+      }
+
+      if (feedback) {
+        feedback.style.color = '#34d399';
+        feedback.innerHTML = `🎉 Áp dụng mã <strong>${escapeHtml(code)}</strong> thành công! Giảm ngay <strong>${discountAmt.toLocaleString('vi-VN')}đ</strong>.`;
+      }
+      showToast(`🎉 Đã áp dụng mã Coupon ${code}: Giảm ${discountAmt.toLocaleString('vi-VN')}đ!`);
+    } catch (err) {
+      if (feedback) {
+        feedback.style.color = '#f87171';
+        feedback.textContent = 'Lỗi áp dụng mã: ' + err.message;
+      }
+    }
+  }
+  window.applyVipCouponCode = applyVipCouponCode;
+
   function copyAccountNumber() {
     const accEl = document.getElementById('vip-acc-number');
     if (accEl) {
@@ -2391,6 +2561,8 @@
       userId: userId,
       userEmail: userEmail,
       userName: userName,
+      appliedCoupon: currentAppliedVipCoupon ? currentAppliedVipCoupon.code : null,
+      couponDiscount: currentAppliedVipCoupon ? currentAppliedVipCoupon.discountAmt : 0,
       timestamp: Date.now(),
       createdAt: new Date().toISOString(),
       status: 'pending_verification'
@@ -2400,6 +2572,16 @@
     // Push order to Firebase RTDB for Admin verification
     const rtdbUrl = (typeof firebaseConfig !== 'undefined' && firebaseConfig.databaseURL) ? firebaseConfig.databaseURL : 'https://vocaflow-e866c-default-rtdb.asia-southeast1.firebasedatabase.app';
     const authParam = (currentUser && currentUser.idToken) ? '?auth=' + currentUser.idToken : '';
+
+    // Record coupon usage if single use
+    if (currentAppliedVipCoupon && currentAppliedVipCoupon.oncePerUser && userId && !userId.startsWith('guest_') && userId !== 'GUEST') {
+      fetch(`${rtdbUrl}/user_coupons/${userId}/${encodeURIComponent(currentAppliedVipCoupon.code)}.json${authParam}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usedAt: new Date().toISOString(), orderId: orderId })
+      }).catch(e => console.warn('Could not record coupon usage:', e));
+    }
+    currentAppliedVipCoupon = null;
 
     // 1. Push to global pending VIP orders queue
     fetch(`${rtdbUrl}/vip_orders/${orderId}.json${authParam}`, {

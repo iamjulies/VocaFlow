@@ -5,7 +5,7 @@
           <span style="font-size: 20px;">👑</span>
           <div>
             <strong style="font-size: 16px; color: #c084fc;">Cổng Quản Trị &amp; Quản Lý Flower (Publisher Portal)</strong>
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Quản lý toàn bộ Flower, ví điểm, mã quà tặng và kho VocaLib trên Firebase Cloud</div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Quản lý toàn bộ Flower, ví điểm, mã quà tặng, mã giảm giá và chiến dịch Sale Day</div>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-publisher')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -17,7 +17,7 @@
           <span>👥</span> <strong>Quản Lý Flower</strong>
         </button>
         <button class="btn btn-sm btn-outline" id="pub-tab-btn-codes" onclick="switchPublisherTab('codes')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
-          <span>🎁</span> <strong>Mã Quà Tặng</strong>
+          <span>🎁</span> <strong>Mã Quà &amp; Khuyến Mãi</strong>
         </button>
         <button class="btn btn-sm btn-outline" id="pub-tab-btn-wallet" onclick="switchPublisherTab('wallet')" style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12px;">
           <span>⚡</span> <strong>God Mode Ví Của Bạn</strong>
@@ -44,17 +44,24 @@
             <div id="admin-stat-total-decks" style="font-size: 13px; font-weight: 800; color: #10b981;">0 bộ (0 từ)</div>
           </div>
           <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-size: 11px; color: #fbbf24; font-weight: 700;">💰 VoCoin &amp; Hint</div>
+            <div style="font-size: 11px; color: #fbbf24; font-weight: 700;">💰 Tổng VoCoin</div>
             <div id="admin-stat-total-points" style="font-size: 13px; font-weight: 800; color: #f59e0b;">0 VoCoin</div>
           </div>
         </div>
 
         <!-- SEARCH & ACTION BAR -->
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 6px;">
           <input type="text" id="admin-students-search-input" class="form-input" placeholder="🔍 Tìm kiếm Flower theo Tên, Email hoặc UID..." style="flex: 1; font-size: 12px; padding: 6px 10px;" oninput="filterAdminStudents(this.value)">
           <button class="btn btn-outline btn-sm" onclick="fetchAdminStudentsList()" style="white-space: nowrap; display: flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 6px 10px;">
             🔄 Làm Mới
           </button>
+        </div>
+
+        <!-- QUICK FILTER PILLS (v0.10.10-37 - Tất cả, VIP, Free) -->
+        <div style="display: flex; gap: 6px; margin-bottom: 8px; align-items: center;" id="admin-students-filter-pills">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-student-filter-all" onclick="setAdminStudentsPillFilter('all')" style="border-radius: 20px; font-size: 11px; padding: 3px 12px; font-weight: 700;">Tất cả (<span id="admin-pill-count-all">0</span>)</button>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-student-filter-vip" onclick="setAdminStudentsPillFilter('vip')" style="border-radius: 20px; font-size: 11px; padding: 3px 12px; font-weight: 700; border-color: rgba(245,158,11,0.4); color: #fbbf24;">👑 VIP (<span id="admin-pill-count-vip">0</span>)</button>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-student-filter-free" onclick="setAdminStudentsPillFilter('free')" style="border-radius: 20px; font-size: 11px; padding: 3px 12px; font-weight: 700; border-color: rgba(255,255,255,0.2); color: var(--text-muted);">🆓 Free (<span id="admin-pill-count-free">0</span>)</button>
         </div>
 
         <!-- STUDENTS LIST CONTAINER (FULL HEIGHT, SINGLE SCROLLBAR) -->
@@ -65,51 +72,213 @@
         </div>
       </div>
 
-      <!-- TAB 2: GIFT CODE STUDIO -->
+      <!-- TAB 2: GIFT CODES, COUPONS & SALE DAY STUDIO (v0.10.10-37) -->
       <div id="pub-tab-content-codes" style="display: none; flex: 1; overflow-y: auto;">
-        <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo &amp; Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 10px;">
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
-              <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
-            </div>
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Số VocaHint:</label>
-              <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
-            </div>
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Số VocaSkip:</label>
-              <input type="number" id="admin-code-skips" class="form-input" value="10" style="padding: 6px 10px; font-size: 12px;">
-            </div>
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Số VoCoin:</label>
-              <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
-            </div>
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted);">Hạn Sử Dụng:</label>
-              <select id="admin-code-expiry" class="form-select" style="padding: 6px 8px; font-size: 12px;">
-                <option value="never">Vô thời hạn</option>
-                <option value="1h">1 Giờ</option>
-                <option value="24h">24 Giờ (1 Ngày)</option>
-                <option value="3d">3 Ngày</option>
-                <option value="7d" selected>7 Ngày (1 Tuần)</option>
-                <option value="30d">30 Ngày (1 Tháng)</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
-            🚀 Phát Hành Mã Quà Tặng Lên Cloud
+        <!-- SUB-TAB SWITCHER -->
+        <div style="display: flex; gap: 6px; margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; border: 1px solid var(--border);">
+          <button type="button" class="btn btn-sm btn-primary" id="pub-subtab-btn-giftcodes" onclick="switchPublisherCodeSubtab('giftcodes')" style="flex: 1; font-size: 11.5px; padding: 5px 8px; font-weight: 700;">
+            🎁 Mã Quà Tặng (Gift)
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" id="pub-subtab-btn-coupons" onclick="switchPublisherCodeSubtab('coupons')" style="flex: 1; font-size: 11.5px; padding: 5px 8px; font-weight: 700; color: #38bdf8; border-color: rgba(56,189,248,0.3);">
+            🎟️ Mã Giảm Giá (Coupon)
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" id="pub-subtab-btn-saleday" onclick="switchPublisherCodeSubtab('saleday')" style="flex: 1; font-size: 11.5px; padding: 5px 8px; font-weight: 700; color: #f472b6; border-color: rgba(236,72,153,0.3);">
+            ⚡ Chiến Dịch Sale Day
           </button>
         </div>
 
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Đang Hoạt Động Trên Cloud:</strong>
-            <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+        <!-- SUB-TAB 1: GIFT CODES -->
+        <div id="pub-subtab-giftcodes">
+          <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px;">🎁 Tạo &amp; Phát Hành Mã Quà Tặng Mới (Cloud Realtime)</div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 10px;">
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Mã Code (Tùy chọn):</label>
+                <input type="text" id="admin-code-name" class="form-input" placeholder="VD: HOCVIEN2026..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Số VocaHint:</label>
+                <input type="number" id="admin-code-hints" class="form-input" value="50" style="padding: 6px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Số VocaSkip:</label>
+                <input type="number" id="admin-code-skips" class="form-input" value="10" style="padding: 6px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Số VoCoin:</label>
+                <input type="number" id="admin-code-points" class="form-input" value="200" style="padding: 6px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Hạn Sử Dụng:</label>
+                <select id="admin-code-expiry" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                  <option value="never">Vô thời hạn</option>
+                  <option value="1h">1 Giờ</option>
+                  <option value="24h">24 Giờ (1 Ngày)</option>
+                  <option value="3d">3 Ngày</option>
+                  <option value="7d" selected>7 Ngày (1 Tuần)</option>
+                  <option value="30d">30 Ngày (1 Tháng)</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-success btn-sm" onclick="createAdminGiftCode()" style="width: 100%;">
+              🚀 Phát Hành Mã Quà Tặng Lên Cloud
+            </button>
           </div>
-          <div id="admin-active-codes-list" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
-            <em>Đang tải danh sách mã...</em>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Quà Tặng Đang Hoạt Động Trên Cloud:</strong>
+              <button class="btn btn-outline btn-sm" onclick="refreshAdminGiftCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+            </div>
+            <div id="admin-active-codes-list" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
+              <em>Đang tải danh sách mã...</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 2: COUPON CODES (v0.10.10-37 Issue 15) -->
+        <div id="pub-subtab-coupons" style="display: none;">
+          <div style="background: var(--surface-elevated); border: 1px solid rgba(56,189,248,0.3); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">🎟️ Tạo &amp; Phát Hành Mã Giảm Giá Coupon Mới (Cloud Realtime)</div>
+            <div style="display: grid; grid-template-columns: 1.8fr 1.2fr 1fr 1.2fr; gap: 8px; margin-bottom: 10px;">
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Mã Coupon (*):</label>
+                <input type="text" id="admin-coupon-code" class="form-input" placeholder="VD: VIP2026, SALE50K..." style="padding: 6px 10px; font-size: 12px; text-transform: uppercase; font-family: monospace; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Loại Giảm Giá:</label>
+                <select id="admin-coupon-type" class="form-select" style="padding: 6px 8px; font-size: 12px;" onchange="handleAdminCouponTypeChange(this.value)">
+                  <option value="percent" selected>% Phần trăm</option>
+                  <option value="fixed">💵 VNĐ Cố định</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);" id="admin-coupon-val-label">Mức Giảm (%):</label>
+                <input type="number" id="admin-coupon-value" class="form-input" value="20" min="1" max="100" style="padding: 6px 10px; font-size: 12px; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Áp Dụng Cho:</label>
+                <select id="admin-coupon-scope" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                  <option value="all" selected>Toàn sàn (VIP &amp; Shop)</option>
+                  <option value="vip">Chỉ Gói VocaVIP</option>
+                  <option value="shop">Chỉ VocaShop</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.2fr 1.2fr 1.2fr 1.4fr; gap: 8px; margin-bottom: 12px;">
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Đơn Tối Thiểu (VNĐ):</label>
+                <input type="number" id="admin-coupon-min-spend" class="form-input" value="0" step="10000" style="padding: 6px 10px; font-size: 12px;">
+              </div>
+              <div id="admin-coupon-max-discount-container">
+                <label style="font-size: 11px; color: var(--text-muted);">Giảm Tối Đa (VNĐ, 0 = ko GH):</label>
+                <input type="number" id="admin-coupon-max-discount" class="form-input" value="0" step="10000" style="padding: 6px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Hạn Sử Dụng:</label>
+                <select id="admin-coupon-expiry" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                  <option value="never">Vô thời hạn</option>
+                  <option value="1h">1 Giờ</option>
+                  <option value="24h">24 Giờ (1 Ngày)</option>
+                  <option value="3d">3 Ngày</option>
+                  <option value="7d" selected>7 Ngày (1 Tuần)</option>
+                  <option value="30d">30 Ngày (1 Tháng)</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; padding-top: 14px;">
+                <input type="checkbox" id="admin-coupon-once-per-user" checked style="width: 16px; height: 16px; cursor: pointer;">
+                <label for="admin-coupon-once-per-user" style="font-size: 11px; color: var(--text); cursor: pointer; user-select: none;">Giới hạn 1 lần/học viên</label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-sm" onclick="createAdminCouponCode()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; font-weight: 700;">
+              🚀 Phát Hành Mã Giảm Giá Coupon Lên Cloud
+            </button>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 13px; color: var(--text);">📋 Danh Sách Mã Giảm Giá Đang Hoạt Động:</strong>
+              <button class="btn btn-outline btn-sm" onclick="refreshAdminCouponCodesList()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+            </div>
+            <div id="admin-active-coupons-list" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px; font-size: 12px;">
+              <em>Đang tải danh sách coupon...</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 3: SALE DAY CAMPAIGNS (v0.10.10-37 Issue 15) -->
+        <div id="pub-subtab-saleday" style="display: none;">
+          <div style="background: var(--surface-elevated); border: 1px solid rgba(236,72,153,0.35); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 13px; font-weight: 700; color: #f472b6; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span>⚡</span> <span>Cấu Hình Chiến Dịch Siêu Sale Toàn Sàn (Sale Day Campaigns)</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+              Khi chiến dịch được kích hoạt, hệ thống sẽ tự động hiển thị banner thông báo nổi bật trên Topbar, VocaShop &amp; Bảng Giá VocaVIP, đồng thời áp dụng mức giảm giá trực tiếp theo % cho tất cả người dùng.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1.2fr 1.2fr; gap: 8px; margin-bottom: 10px;">
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Tên Chiến Dịch (*):</label>
+                <input type="text" id="admin-sale-name" class="form-input" placeholder="VD: 🎉 NGÀY HỘI HỌC TẬP 2026 - SIÊU SALE" style="padding: 6px 10px; font-size: 12px; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Mức Giảm Giá (%):</label>
+                <input type="number" id="admin-sale-percent" class="form-input" value="30" min="5" max="90" style="padding: 6px 10px; font-size: 12px; font-weight: 800; color: #f472b6;">
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Phạm Vi Áp Dụng:</label>
+                <select id="admin-sale-scope" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                  <option value="all" selected>Toàn Sàn (VIP &amp; Shop)</option>
+                  <option value="vip">Chỉ Bảng Giá VIP</option>
+                  <option value="shop">Chỉ VocaShop</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted);">Thời Hạn Chiến Dịch:</label>
+                <select id="admin-sale-duration" class="form-select" style="padding: 6px 8px; font-size: 12px;">
+                  <option value="24h">24 Giờ (1 Ngày)</option>
+                  <option value="3d">3 Ngày</option>
+                  <option value="7d" selected>7 Ngày (1 Tuần)</option>
+                  <option value="30d">30 Ngày (1 Tháng)</option>
+                  <option value="always">Bật cho đến khi tắt thủ công</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="font-size: 11px; color: var(--text-muted);">Nội Dung Thông Điệp / Banner:</label>
+              <input type="text" id="admin-sale-banner-text" class="form-input" placeholder="VD: 🔥 Siêu Sale Ngày Hội Học Tập! Giảm ngay 30% toàn bộ VocaShop & Gói VocaVIP!" style="padding: 6px 10px; font-size: 12px;">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <label for="admin-sale-active-checkbox" style="font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="admin-sale-active-checkbox" checked style="width: 16px; height: 16px; cursor: pointer;">
+                <span>Kích hoạt chiến dịch Sale Day ngay lập tức</span>
+              </label>
+              <span id="admin-sale-status-badge" class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10.5px;">🟢 Đang Bật</span>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary btn-sm" onclick="saveAdminSaleCampaign()" style="flex: 2; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; padding: 7px 14px;">
+                💾 Lưu &amp; Phát Lệnh Chiến Dịch Lên Cloud
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="toggleAdminSaleCampaign(false)" style="flex: 1; border-color: rgba(239,68,68,0.4); color: #f87171;">
+                ⏹️ Tắt Chiến Dịch
+              </button>
+            </div>
+          </div>
+
+          <!-- CURRENT LIVE SALE CAMPAIGN CARD -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 13px; color: var(--text);">📢 Chiến Dịch Đang Chạy Trên Toàn Hệ Thống:</strong>
+              <button class="btn btn-outline btn-sm" onclick="refreshAdminSaleCampaignUI()" style="font-size: 11px; padding: 2px 8px;">🔄 Làm mới</button>
+            </div>
+            <div id="admin-active-sale-card" style="background: rgba(0,0,0,0.2); border-radius: 10px; padding: 12px; border: 1px solid var(--border);">
+              <em>Đang tải trạng thái chiến dịch...</em>
+            </div>
           </div>
         </div>
       </div>

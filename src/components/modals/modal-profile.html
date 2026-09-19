@@ -540,12 +540,26 @@
             <label class="form-label" style="font-weight: 700; color: #fbbf24; margin: 0;">👑 Gói Hội Viên VocaVIP:</label>
             <span id="adjust-current-vip-badge" style="font-size: 11px; color: #fbbf24; font-weight: 700;"></span>
           </div>
-          <select id="adjust-wallet-vip-select" class="form-input" style="font-size: 13.5px; font-weight: 700; color: #fbbf24; background: var(--surface);">
+          <select id="adjust-wallet-vip-select" class="form-input" style="font-size: 13.5px; font-weight: 700; color: #fbbf24; background: var(--surface);" onchange="handleAdjustWalletVipSelectChange(this.value)">
             <option value="none">⚪ Không có VocaVIP (Tài khoản Thường)</option>
             <option value="monthly">🥉 Gói VocaVIP 1 Tháng (+30 ngày)</option>
             <option value="yearly">🥈 Gói VocaVIP 1 Năm (+365 ngày)</option>
             <option value="lifetime">👑 Gói VocaVIP Trọn Đời (Vĩnh Viễn)</option>
+            <option value="custom_try">✨ Tùy chỉnh ngày dùng thử (VocaVIP TRY)</option>
           </select>
+          <div id="adjust-wallet-vip-custom-days-container" style="display: none; margin-top: 8px; background: rgba(139,92,246,0.1); border: 1px dashed rgba(139,92,246,0.4); border-radius: 10px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="adjust-wallet-vip-custom-days-input" style="font-size: 11.5px; font-weight: 700; color: #c084fc;">🎁 Số ngày tặng VocaVIP TRY:</label>
+              <span class="badge" style="font-size: 9px; background: rgba(139,92,246,0.25); color: #c084fc; font-weight: 800;">Tag: VocaVIP TRY</span>
+            </div>
+            <input type="number" id="adjust-wallet-vip-custom-days-input" class="form-input" value="7" min="1" max="365" placeholder="Nhập số ngày (VD: 3, 7, 14, 30...)" style="font-size: 13px; font-weight: 700; color: #c084fc;">
+            <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline btn-sm" style="font-size: 10.5px; padding: 2px 7px; color: #c084fc; border-color: rgba(139,92,246,0.3);" onclick="document.getElementById('adjust-wallet-vip-custom-days-input').value = 3;">3 ngày</button>
+              <button type="button" class="btn btn-outline btn-sm" style="font-size: 10.5px; padding: 2px 7px; color: #c084fc; border-color: rgba(139,92,246,0.3);" onclick="document.getElementById('adjust-wallet-vip-custom-days-input').value = 7;">7 ngày</button>
+              <button type="button" class="btn btn-outline btn-sm" style="font-size: 10.5px; padding: 2px 7px; color: #c084fc; border-color: rgba(139,92,246,0.3);" onclick="document.getElementById('adjust-wallet-vip-custom-days-input').value = 14;">14 ngày</button>
+              <button type="button" class="btn btn-outline btn-sm" style="font-size: 10.5px; padding: 2px 7px; color: #c084fc; border-color: rgba(139,92,246,0.3);" onclick="document.getElementById('adjust-wallet-vip-custom-days-input').value = 30;">30 ngày</button>
+            </div>
+          </div>
         </div>
       </div>
 
